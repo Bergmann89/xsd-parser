@@ -1,0 +1,3 @@
+<tns:Foo xmlns:tns="http://example.com">
+  <tns:Bar tns:a="a-string" tns:b="b-string" />
+</tns:Foo>

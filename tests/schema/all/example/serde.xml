@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:Foo xmlns:tns="http://example.com">
+    <tns:Once>111</tns:Once>
+    <tns:Optional>222</tns:Optional>
+    <tns:OnceSpecify>333</tns:OnceSpecify>
+    <tns:TwiceOrMore>444</tns:TwiceOrMore>
+    <tns:TwiceOrMore>555</tns:TwiceOrMore>
+    <tns:TwiceOrMore>666</tns:TwiceOrMore>
+</tns:Foo>

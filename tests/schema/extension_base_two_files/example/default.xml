@@ -1,0 +1,7 @@
+<tns:Foo xmlns:tns="http://example.com" xmlns:other="http://other.example.com">
+  <tns:a>150</tns:a>
+  <tns:b>
+    <other:b>3</other:b>
+    <other:c>string</other:c>
+  </tns:b>
+</tns:Foo>

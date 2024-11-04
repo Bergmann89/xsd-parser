@@ -1,0 +1,22 @@
+#![allow(missing_docs, unreachable_pub)]
+
+mod all;
+mod any;
+mod choice;
+mod enumeration;
+mod extension_base;
+mod extension_base_multilayer;
+mod extension_base_two_files;
+mod list;
+mod ref_to_attribute;
+mod sequence;
+mod sequence_with_choice;
+mod simple_type;
+mod static_list;
+mod tuple_with_integer;
+mod tuple_with_string;
+mod tuple_with_vec;
+mod type_name_clash;
+mod union;
+mod xml_schema;
+mod xsd_string;

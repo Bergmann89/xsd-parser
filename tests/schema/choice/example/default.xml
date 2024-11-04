@@ -1,0 +1,3 @@
+<tns:Foo xmlns:tns="http://example.com">
+    <tns:Baz>3</tns:Baz>
+</tns:Foo>

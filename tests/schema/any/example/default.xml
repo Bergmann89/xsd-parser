@@ -1,0 +1,5 @@
+<tns:Foo xmlns:tns="http://example.com">
+  <AnyElement />
+  <tns:Name>abcd</tns:Name>
+  <AnyElement />
+</tns:Foo>

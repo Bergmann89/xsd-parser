@@ -1,0 +1,7 @@
+<tns:Foo xmlns:tns="http://example.com">
+  <tns:Messages>
+    <tns:aa>3</tns:aa>
+    <tns:bb>qwe</tns:bb>
+    <tns:a>rty</tns:a>
+  </tns:Messages>
+</tns:Foo>

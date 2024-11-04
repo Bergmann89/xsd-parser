@@ -1,0 +1,71 @@
+[package]
+name = "xsd-parser"
+version = "0.1.0"
+authors = [
+    "Bergmann89 <info@bergmann89.de>",
+]
+edition = "2021"
+license = "MIT"
+description = "Rust code generator for XML schema files"
+repository = "https://github.com/Bergmann89/xsd-parser"
+homepage = "https://github.com/Bergmann89/xsd-parser"
+
+[features]
+# Enable support for async XML processing
+async = [ "tokio" ]
+
+# Enable support for web resolvers
+web-resolver = [ "reqwest" ]
+
+# Helper feature to automatically update all code expectations of the tests
+update-expectations = [ ]
+
+[dependencies]
+anyhow = "1.0"
+bitflags = "2.7"
+futures = "0.3"
+Inflector = "0.11"
+proc-macro2 = "1.0"
+quick-xml = { version = "0.37", features = ["serialize", "async-tokio"] }
+quote = "1.0"
+reqwest = { version = "0.12", features = ["blocking"], optional = true }
+serde = { version = "1.0", features = ["derive"] }
+smallvec = "1.13"
+thiserror = "2.0.0"
+tokio = { version = "1.41", optional = true }
+tracing = "0.1"
+url = "2.5.3"
+
+[dev-dependencies]
+serde-xml-rs = "0.6"
+text-diff = "0.4"
+tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }
+
+[build-dependencies]
+regex = "1.11"
+
+[lints.rust]
+future_incompatible = { level = "warn", priority = -1}
+incomplete_features = "allow"
+missing_debug_implementations = { level = "warn", priority = -1}
+missing_docs  = { level = "warn", priority = -1}
+nonstandard_style = { level = "warn", priority = -1}
+rust_2018_idioms = { level = "warn", priority = -1}
+rust_2021_compatibility = { level = "warn", priority = -1}
+unreachable_pub  = { level = "warn", priority = -1}
+unused = { level = "warn", priority = -1}
+
+[lints.clippy]
+cast_possible_truncation = "warn"
+default_trait_access = "allow"
+explicit_iter_loop = "allow"
+match_same_arms = "allow"
+match_wildcard_for_single_variants = "allow"
+missing_panics_doc = "allow"
+module_name_repetitions = "allow"
+no_effect_underscore_binding = "allow"
+pedantic = { level = "warn", priority = -1}
+similar_names = "allow"
+single_match_else = "allow"
+struct_field_names = "allow"
+uninlined_format_args = "allow"

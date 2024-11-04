@@ -1,0 +1,347 @@
+use std::borrow::Cow;
+use std::fmt::Debug;
+use std::io::Write;
+use std::mem::replace;
+
+use quick_xml::{
+    escape::escape,
+    events::{BytesEnd, BytesStart, BytesText, Event},
+    Writer,
+};
+
+use super::{Error, ErrorKind, RawByteStr};
+
+/// Trait that defines the [`Serializer`] for a type.
+pub trait WithSerializer: Sized {
+    /// The serializer to use for this type.
+    type Serializer<'x>: Serializer<'x, Self>
+    where
+        Self: 'x;
+}
+
+impl<X> WithSerializer for X
+where
+    X: SerializeBytes + Debug,
+{
+    type Serializer<'x>
+        = ContentSerializer<'x, X>
+    where
+        Self: 'x;
+}
+
+/// Trait that defines a serializer that can be used to destruct a type to
+/// suitable XML [`Event`]s.
+pub trait Serializer<'ser, T>: Iterator<Item = Result<Event<'ser>, Error>> + Debug + Sized {
+    /// Initializes a new serializer from the passed `value`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] is the serializer could not be initialized.
+    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error>;
+}
+
+/// Trait that could be implemented by types to support serialization to XML
+/// using the [`quick_xml`] crate.
+pub trait SerializeSync: Sized {
+    /// Error returned by the `serialize` method.
+    type Error;
+
+    /// Serializes the type to XML using the provided `writer`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable error if the operation was not successful.
+    fn serialize<W: Write>(&self, root: &str, writer: &mut Writer<W>) -> Result<(), Self::Error>;
+}
+
+impl<X> SerializeSync for X
+where
+    X: WithSerializer,
+{
+    type Error = Error;
+
+    fn serialize<W: Write>(&self, root: &str, writer: &mut Writer<W>) -> Result<(), Self::Error> {
+        SerializeHelper::new(self, Some(root), writer)?.serialize_sync()
+    }
+}
+
+/// Trait that could be implemented by types to support asynchronous serialization
+/// to XML using the [`quick_xml`] crate.
+#[cfg(feature = "async")]
+pub trait SerializeAsync: Sized {
+    /// Future that is returned by the `serialize_async` method.
+    type Future<'x>: std::future::Future<Output = Result<(), Self::Error>> + 'x
+    where
+        Self: 'x;
+
+    /// Error returned by the `serialize_async` method.
+    type Error;
+
+    /// Asynchronously serializes the type to XML using the provided `writer`.
+    fn serialize_async<'a, W: tokio::io::AsyncWrite + Unpin>(
+        &'a self,
+        root: &'a str,
+        writer: &'a mut Writer<W>,
+    ) -> Self::Future<'a>;
+}
+
+#[cfg(feature = "async")]
+impl<X> SerializeAsync for X
+where
+    X: WithSerializer,
+{
+    type Future<'x>
+        = std::pin::Pin<Box<dyn std::future::Future<Output = Result<(), Self::Error>> + 'x>>
+    where
+        X: 'x;
+
+    type Error = Error;
+
+    fn serialize_async<'a, W: tokio::io::AsyncWrite + Unpin>(
+        &'a self,
+        root: &'a str,
+        writer: &'a mut Writer<W>,
+    ) -> Self::Future<'a> {
+        Box::pin(async move {
+            SerializeHelper::new(self, Some(root), writer)?
+                .serialize_async()
+                .await
+        })
+    }
+}
+
+/// Trait that could be implemented by types to support serialization to
+/// XML byte streams.
+///
+/// This is usually implemented for simple types like numbers, strings or enums.
+pub trait SerializeBytes: Sized {
+    /// Try to serialize the type to bytes.
+    ///
+    /// This is used to serialize the type to attributes or raw element
+    /// content.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the serialization was not successful.
+    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error>;
+}
+
+impl<X> SerializeBytes for X
+where
+    X: ToString,
+{
+    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+        Ok(Some(Cow::Owned(self.to_string())))
+    }
+}
+
+/// Implements a [`Serializer`] for any type that implements [`SerializeBytes`].
+
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub enum ContentSerializer<'ser, T> {
+    Begin {
+        name: &'ser str,
+        value: &'ser T,
+    },
+    Data {
+        name: &'ser str,
+        data: Cow<'ser, str>,
+    },
+    End {
+        name: &'ser str,
+    },
+    Done,
+}
+
+impl<'ser, T> Serializer<'ser, T> for ContentSerializer<'ser, T>
+where
+    T: SerializeBytes + Debug,
+{
+    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
+        let _is_root = is_root;
+
+        Ok(Self::Begin {
+            name: name.ok_or(ErrorKind::MissingName)?,
+            value,
+        })
+    }
+}
+
+impl<'ser, T> Iterator for ContentSerializer<'ser, T>
+where
+    T: SerializeBytes + Debug,
+{
+    type Item = Result<Event<'ser>, Error>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match replace(self, Self::Done) {
+            Self::Begin { name, value } => match value.serialize_bytes() {
+                Ok(None) => Some(Ok(Event::Empty(BytesStart::new(name)))),
+                Ok(Some(data)) => {
+                    if data.contains("]]>") {
+                        return Some(Err(ErrorKind::InvalidData(RawByteStr::from_slice(
+                            data.as_bytes(),
+                        ))
+                        .into()));
+                    }
+
+                    *self = Self::Data { name, data };
+
+                    Some(Ok(Event::Start(BytesStart::new(name))))
+                }
+                Err(error) => Some(Err(error)),
+            },
+            Self::Data { name, data } => {
+                *self = Self::End { name };
+
+                Some(Ok(Event::Text(BytesText::from_escaped(escape(data)))))
+            }
+            Self::End { name } => Some(Ok(Event::End(BytesEnd::new(name)))),
+            Self::Done => None,
+        }
+    }
+}
+
+/// Implements a [`Serializer`] for any type that implements an [`Iterator`]
+/// that emits references to a type that implements [`WithSerializer`].
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub enum IterSerializer<'ser, T, TItem>
+where
+    &'ser T: IntoIterator<Item = &'ser TItem>,
+    <&'ser T as IntoIterator>::IntoIter: Debug,
+    TItem: WithSerializer + 'ser,
+{
+    Pending {
+        name: Option<&'ser str>,
+        iter: <&'ser T as IntoIterator>::IntoIter,
+    },
+    Emitting {
+        name: Option<&'ser str>,
+        iter: <&'ser T as IntoIterator>::IntoIter,
+        serializer: TItem::Serializer<'ser>,
+    },
+    Done,
+}
+
+impl<'ser, T, TItem> Iterator for IterSerializer<'ser, T, TItem>
+where
+    T: 'ser,
+    &'ser T: IntoIterator<Item = &'ser TItem>,
+    <&'ser T as IntoIterator>::IntoIter: Debug,
+    TItem: WithSerializer + 'ser,
+{
+    type Item = Result<Event<'ser>, Error>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            match replace(self, Self::Done) {
+                Self::Pending { name, mut iter } => {
+                    let item = iter.next()?;
+
+                    match Serializer::init(item, name, false) {
+                        Ok(serializer) => {
+                            *self = Self::Emitting {
+                                name,
+                                iter,
+                                serializer,
+                            }
+                        }
+                        Err(error) => return Some(Err(error)),
+                    }
+                }
+                Self::Emitting {
+                    name,
+                    iter,
+                    mut serializer,
+                } => {
+                    if let Some(ret) = serializer.next() {
+                        *self = Self::Emitting {
+                            name,
+                            iter,
+                            serializer,
+                        };
+
+                        return Some(ret);
+                    }
+
+                    *self = Self::Pending { name, iter };
+                }
+                Self::Done => return None,
+            }
+        }
+    }
+}
+
+impl<'ser, T, TItem> Serializer<'ser, T> for IterSerializer<'ser, T, TItem>
+where
+    T: Debug + 'ser,
+    &'ser T: IntoIterator<Item = &'ser TItem>,
+    <&'ser T as IntoIterator>::IntoIter: Debug,
+    TItem: WithSerializer + Debug + 'ser,
+{
+    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
+        let _is_root = is_root;
+
+        Ok(Self::Pending {
+            name,
+            iter: value.into_iter(),
+        })
+    }
+}
+
+/* SerializeHelper */
+
+struct SerializeHelper<'a, T, W>
+where
+    T: WithSerializer + 'a,
+{
+    writer: &'a mut Writer<W>,
+    serializer: T::Serializer<'a>,
+}
+
+impl<'a, T, W> SerializeHelper<'a, T, W>
+where
+    T: WithSerializer,
+{
+    fn new(value: &'a T, name: Option<&'a str>, writer: &'a mut Writer<W>) -> Result<Self, Error> {
+        let serializer = Serializer::init(value, name, true)?;
+
+        Ok(Self { writer, serializer })
+    }
+}
+
+impl<T, W> SerializeHelper<'_, T, W>
+where
+    T: WithSerializer,
+    W: Write,
+{
+    fn serialize_sync(&mut self) -> Result<(), Error> {
+        for event in self.serializer.by_ref() {
+            self.writer
+                .write_event(event?)
+                .map_err(|error| ErrorKind::XmlError(error.into()))?;
+        }
+
+        Ok(())
+    }
+}
+
+#[cfg(feature = "async")]
+impl<T, W> SerializeHelper<'_, T, W>
+where
+    T: WithSerializer,
+    W: tokio::io::AsyncWrite + Unpin,
+{
+    async fn serialize_async(&mut self) -> Result<(), Error> {
+        for event in self.serializer.by_ref() {
+            self.writer
+                .write_event_async(event?)
+                .await
+                .map_err(ErrorKind::XmlError)?;
+        }
+
+        Ok(())
+    }
+}

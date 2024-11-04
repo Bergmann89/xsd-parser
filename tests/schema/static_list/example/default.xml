@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:Array xmlns:tns="http://example.com">
+  <tns:Item>111</tns:Item>
+  <tns:Item>222</tns:Item>
+  <tns:Item>333</tns:Item>
+  <tns:Item>444</tns:Item>
+  <tns:Item>555</tns:Item>
+</tns:Array>

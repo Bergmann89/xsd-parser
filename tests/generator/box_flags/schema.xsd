@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:complexType name="MySequence">
+        <xs:sequence>
+            <xs:element name="a" type="xs:int" />
+            <xs:element name="b" type="xs:string" />
+            <xs:element name="c" type="tns:MyChoice" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MyChoice">
+        <xs:choice>
+            <xs:element name="a" type="xs:int" />
+            <xs:element name="b" type="xs:string" />
+            <xs:element name="c" type="tns:MySequence" />
+        </xs:choice>
+    </xs:complexType>
+</xs:schema>

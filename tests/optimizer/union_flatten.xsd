@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:simpleType name="MyBaseUnion">
+        <xs:union memberTypes="xs:int">
+            <xs:simpleType>
+                <xs:list itemType="xs:unsignedInt" />
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
+    <xs:simpleType name="MyEnum">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Var1" />
+            <xs:enumeration value="Var2" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MyUnion">
+        <xs:union memberTypes="xs:string tns:MyEnum tns:MyBaseUnion" />
+    </xs:simpleType>
+</xs:schema>
