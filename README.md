@@ -6,7 +6,7 @@ This project originated as a fork of [`xsd-parser-rs`](https://github.com/lumeoh
 > This crate is currently in an unstable state. If you encounter any issues, please report them by filing an issue.
 
 ![Crates.io MSRV](https://img.shields.io/crates/msrv/xsd-parser)
-[![Crates.io License](https://img.shields.io/crates/l/xsd-parser)](https://github.com/Bergmann89/xsd-parser/LICENSE)
+[![Crates.io License](https://img.shields.io/crates/l/xsd-parser)](https://github.com/Bergmann89/xsd-parser/blob/master/LICENSE)
 [![Crates.io Version](https://img.shields.io/crates/v/xsd-parser)](https://crates.io/crates/xsd-parser)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/xsd-parser)](https://crates.io/crates/xsd-parser)
 [![docs.rs](https://img.shields.io/docsrs/xsd-parser)](https://docs.rs/xsd-parser)
