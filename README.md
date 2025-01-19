@@ -5,12 +5,7 @@ This project originated as a fork of [`xsd-parser-rs`](https://github.com/lumeoh
 > [!WARNING]
 > This crate is currently in an unstable state. If you encounter any issues, please report them by filing an issue.
 
-![Crates.io MSRV](https://img.shields.io/crates/msrv/xsd-parser)
-[![Crates.io License](https://img.shields.io/crates/l/xsd-parser)](https://github.com/Bergmann89/xsd-parser/blob/master/LICENSE)
-[![Crates.io Version](https://img.shields.io/crates/v/xsd-parser)](https://crates.io/crates/xsd-parser)
-[![Crates.io Total Downloads](https://img.shields.io/crates/d/xsd-parser)](https://crates.io/crates/xsd-parser)
-[![docs.rs](https://img.shields.io/docsrs/xsd-parser)](https://docs.rs/xsd-parser)
-[![Github CI](https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml/badge.svg)](https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml)
+<a href="https://github.com/Bergmann89/xsd-parser/blob/master/LICENSE"><img src="https://img.shields.io/crates/l/xsd-parser" alt="Crates.io License"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/v/xsd-parser" alt="Crates.io Version"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/d/xsd-parser" alt="Crates.io Total Downloads"></a> <a href="https://docs.rs/xsd-parser"><img src="https://img.shields.io/docsrs/xsd-parser" alt="docs.rs"></a> <a href="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml"><img src="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml/badge.svg" alt="Github CI"></a> <a href="https://deps.rs/repo/github/Bergmann89/xsd-parser"><img src="https://deps.rs/repo/github/Bergmann89/xsd-parser/status.svg" alt="Dependency Status"></a>
 
 
 # Overview
