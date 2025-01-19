@@ -10,8 +10,7 @@ This project originated as a fork of [`xsd-parser-rs`](https://github.com/lumeoh
 [![Crates.io Version](https://img.shields.io/crates/v/xsd-parser)](https://crates.io/crates/xsd-parser)
 [![Crates.io Total Downloads](https://img.shields.io/crates/d/xsd-parser)](https://crates.io/crates/xsd-parser)
 [![docs.rs](https://img.shields.io/docsrs/xsd-parser)](https://docs.rs/xsd-parser)
-[![Github CI](https://github.com/Bergmann89/xsd-parser-private/actions/workflows/main.yml/badge.svg)](https://github.com/Bergmann89/xsd-parser-private/actions/workflows/main.yml)
-
+[![Github CI](https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml/badge.svg)](https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml)
 
 
 # Overview
