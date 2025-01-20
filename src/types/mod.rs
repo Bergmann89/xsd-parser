@@ -46,7 +46,7 @@ pub struct Types {
 #[derive(Debug)]
 pub struct Module {
     /// Name of the module (also used as xml prefix).
-    pub name: Name,
+    pub name: Option<Name>,
 
     /// Namespace of the module.
     pub namespace: Namespace,

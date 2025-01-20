@@ -467,8 +467,11 @@ pub(super) fn format_module(
     };
 
     let module = types.modules.get(&ns).ok_or(Error::UnknownNamespace(ns))?;
+    let Some(name) = &module.name else {
+        return Ok(None);
+    };
 
-    Ok(Some(format_module_ident(&module.name)))
+    Ok(Some(format_module_ident(name)))
 }
 
 pub(super) fn format_type_ref(current_ns: Option<NamespaceId>, type_: &TypeRef) -> TokenStream {

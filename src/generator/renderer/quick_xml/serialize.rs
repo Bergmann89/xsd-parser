@@ -312,7 +312,9 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 return None;
             }
 
-            let xmlns = format!("xmlns:{}", module.name);
+            let name = module.name.as_ref()?;
+
+            let xmlns = format!("xmlns:{name}");
             let ns = module.namespace.to_string();
 
             Some(quote! {

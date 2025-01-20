@@ -1403,5 +1403,12 @@ where
 }
 
 fn make_ns_const(module: &Module) -> Ident2 {
-    format_ident!("NS_{}", module.name.to_string().to_screaming_snake_case())
+    format_ident!(
+        "NS_{}",
+        module
+            .name
+            .as_ref()
+            .map_or_else(|| String::from("DEFAULT"), ToString::to_string)
+            .to_screaming_snake_case()
+    )
 }

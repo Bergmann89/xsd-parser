@@ -203,14 +203,15 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn finish(mut self) -> Result<Types, Error> {
         for (id, info) in self.schemas.namespaces() {
-            if let Some(prefix) = &info.prefix {
-                let module = Module {
-                    name: Name::new(prefix.to_string()),
-                    namespace: info.namespace.clone(),
-                };
+            let module = Module {
+                name: info
+                    .prefix
+                    .as_ref()
+                    .map(|prefix| Name::new(prefix.to_string())),
+                namespace: info.namespace.clone(),
+            };
 
-                self.state.types.modules.insert(*id, module);
-            }
+            self.state.types.modules.insert(*id, module);
         }
 
         for (_id, schema) in self.schemas.schemas() {
