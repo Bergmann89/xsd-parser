@@ -53,6 +53,9 @@ where
             ParserError::Resolver(err) => {
                 Self::ParserError(ParserError::Resolver(AnyError::from(err)))
             }
+            ParserError::InvalidFilePath(path) => {
+                Self::ParserError(ParserError::InvalidFilePath(path))
+            }
             ParserError::MissingTargetNamespace => {
                 Self::ParserError(ParserError::MissingTargetNamespace)
             }

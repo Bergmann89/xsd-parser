@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::{BufReader, Error, ErrorKind};
 use std::path::{Path, PathBuf};
 
-use url::Url;
+use url::{Host, Url};
 
 use super::{ResolveRequest, Resolver};
 
@@ -74,14 +74,13 @@ impl Resolver for FileResolver {
         macro_rules! try_resolve {
             ($path:expr) => {{
                 let path = $path;
-                tracing::trace!("Try to resolve \"file://{}\"", path.display());
+                tracing::trace!("Try to resolve file \"{}\"", path.display());
 
                 if let Ok(path) = path.canonicalize() {
-                    let location = format!("file://{}", path.display());
-                    let location = Url::parse(&location).map_err(|err| {
+                    let location = Url::from_file_path(&path).map_err(|()| {
                         Error::new(
                             ErrorKind::InvalidInput,
-                            format!("Invalid URL: {location} ({err})"),
+                            format!("Unable to crate URL from file: {}", path.display()),
                         )
                     })?;
                     let file = File::open(&path)?;
@@ -98,16 +97,20 @@ impl Resolver for FileResolver {
 
         /* HACK:
          *   Relative paths are not supported by url.
-         *   It is interpreted as host, so we join it manually
+         *   The first part of the filepath is interpreted as host, so we join it manually.
          */
-        let location = match (req.requested_location.host(), req.requested_location.path()) {
-            (Some(host), path) => format!("{host}{path}"),
-            (None, path) => path.to_string(),
+        let location = if let Some(Host::Domain(host)) = req.requested_location.host() {
+            decode_file_segments(Some(host), req.requested_location.path())
+        } else if let Ok(location) = req.requested_location.to_file_path() {
+            location
+        } else {
+            decode_file_segments(None, req.requested_location.path())
         };
-        let location = Path::new(&location);
 
         if location.is_absolute() {
-            try_resolve!(location);
+            try_resolve!(&location);
+
+            return Ok(None);
         }
 
         if let Some(path) = self
@@ -115,17 +118,38 @@ impl Resolver for FileResolver {
             .then_some(())
             .and(req.current_location.as_ref())
             .filter(|url| url.scheme() == "file")
-            .map(Url::path)
-            .and_then(|path| Path::new(path).parent())
-            .map(|dir| dir.join(location))
+            .and_then(|url| url.to_file_path().ok())
+            .as_deref()
+            .and_then(Path::parent)
+            .map(|dir| dir.join(&location))
         {
             try_resolve!(path);
         }
 
         for dir in &self.search_paths {
-            try_resolve!(dir.join(location));
+            try_resolve!(dir.join(&location));
         }
 
         Ok(None)
     }
+}
+
+fn decode_file_segments(host: Option<&str>, path: &str) -> PathBuf {
+    let mut buf = String::new();
+
+    if let Some(host) = host {
+        buf.push_str(host);
+    }
+
+    for segment in path.split('/').filter(|s| !s.is_empty()) {
+        #[cfg(windows)]
+        buf.push('\\');
+
+        #[cfg(not(windows))]
+        buf.push('/');
+
+        buf.push_str(segment);
+    }
+
+    PathBuf::from(buf)
 }

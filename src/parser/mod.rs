@@ -199,11 +199,8 @@ where
         self,
         path: P,
     ) -> Result<Self, Error<TResolver::Error>> {
-        let path = path.as_ref();
-
-        let path = path.canonicalize()?;
-        let url = format!("file://{}", path.display());
-        let url = Url::parse(&url)?;
+        let path = path.as_ref().canonicalize()?;
+        let url = Url::from_file_path(&path).map_err(|()| Error::InvalidFilePath(path))?;
 
         self.add_schema_from_url(url)
     }
