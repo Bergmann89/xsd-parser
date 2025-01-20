@@ -32,8 +32,8 @@ impl xsd_parser::WithNamespace for Schema {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl Schema {
@@ -71,8 +71,8 @@ impl xsd_parser::WithNamespace for Include {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Include {
@@ -89,8 +89,8 @@ impl xsd_parser::WithNamespace for Import {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Import {
@@ -114,8 +114,8 @@ impl xsd_parser::WithNamespace for Redefine {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Redefine {
@@ -142,8 +142,8 @@ impl xsd_parser::WithNamespace for Override {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Override {
@@ -163,8 +163,8 @@ impl xsd_parser::WithNamespace for Annotation {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Annotation {
@@ -182,8 +182,8 @@ impl xsd_parser::WithNamespace for DefaultOpenContent {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl DefaultOpenContent {
@@ -217,8 +217,8 @@ impl xsd_parser::WithNamespace for SimpleBaseType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for SimpleBaseType {
@@ -254,8 +254,8 @@ impl xsd_parser::WithNamespace for ComplexBaseType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl ComplexBaseType {
@@ -294,8 +294,8 @@ impl xsd_parser::WithNamespace for GroupType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl GroupType {
@@ -329,8 +329,8 @@ impl xsd_parser::WithNamespace for AttributeGroupType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for AttributeGroupType {
@@ -369,8 +369,8 @@ impl xsd_parser::WithNamespace for ElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl ElementType {
@@ -409,8 +409,8 @@ impl xsd_parser::WithNamespace for AttributeType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl AttributeType {
@@ -434,8 +434,8 @@ impl xsd_parser::WithNamespace for Notation {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Notation {
@@ -450,8 +450,8 @@ impl xsd_parser::WithNamespace for FullDerivationSetType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for FullDerivationSetType {
@@ -473,8 +473,8 @@ impl xsd_parser::WithNamespace for TypeDerivationControlList {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for TypeDerivationControlList {
@@ -499,8 +499,8 @@ impl xsd_parser::WithNamespace for BlockSetType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for BlockSetType {
@@ -522,8 +522,8 @@ impl xsd_parser::WithNamespace for BlockSetItemList {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for BlockSetItemList {
@@ -548,8 +548,8 @@ impl xsd_parser::WithNamespace for FormChoiceType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for FormChoiceType {
@@ -578,8 +578,8 @@ impl xsd_parser::WithNamespace for XpathDefaultNamespaceType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for XpathDefaultNamespaceType {
@@ -603,8 +603,8 @@ impl xsd_parser::WithNamespace for Appinfo {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Appinfo {
@@ -619,8 +619,8 @@ impl xsd_parser::WithNamespace for Documentation {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Documentation {
@@ -638,8 +638,8 @@ impl xsd_parser::WithNamespace for WildcardType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl WildcardType {
@@ -660,8 +660,8 @@ impl xsd_parser::WithNamespace for DefaultOpenContentModeType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for DefaultOpenContentModeType {
@@ -695,8 +695,8 @@ impl xsd_parser::WithNamespace for Restriction {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Restriction {
@@ -713,8 +713,8 @@ impl xsd_parser::WithNamespace for List {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for List {
@@ -731,8 +731,8 @@ impl xsd_parser::WithNamespace for Union {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Union {
@@ -747,8 +747,8 @@ impl xsd_parser::WithNamespace for SimpleDerivationSetType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetType {
@@ -779,8 +779,8 @@ impl xsd_parser::WithNamespace for SimpleContent {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for SimpleContent {
@@ -802,8 +802,8 @@ impl xsd_parser::WithNamespace for ComplexContent {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for ComplexContent {
@@ -820,8 +820,8 @@ impl xsd_parser::WithNamespace for OpenContent {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl OpenContent {
@@ -846,8 +846,8 @@ impl xsd_parser::WithNamespace for AnyAttribute {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl AnyAttribute {
@@ -870,8 +870,8 @@ impl xsd_parser::WithNamespace for AssertionType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for AssertionType {
@@ -886,8 +886,8 @@ impl xsd_parser::WithNamespace for DerivationSetType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for DerivationSetType {
@@ -918,8 +918,8 @@ impl xsd_parser::WithNamespace for Any {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl Any {
@@ -948,8 +948,8 @@ impl xsd_parser::WithNamespace for AllNNIType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for AllNNIType {
@@ -981,8 +981,8 @@ impl xsd_parser::WithNamespace for AltType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for AltType {
@@ -1001,8 +1001,8 @@ impl xsd_parser::WithNamespace for KeybaseType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for KeybaseType {
@@ -1022,8 +1022,8 @@ impl xsd_parser::WithNamespace for Keyref {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Keyref {
@@ -1035,8 +1035,8 @@ impl xsd_parser::WithNamespace for ElementSubstitutionGroupType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for ElementSubstitutionGroupType {
@@ -1062,8 +1062,8 @@ impl xsd_parser::WithNamespace for AttributeUseType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for AttributeUseType {
@@ -1094,8 +1094,8 @@ impl xsd_parser::WithNamespace for NamespaceListType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for NamespaceListType {
@@ -1118,8 +1118,8 @@ impl xsd_parser::WithNamespace for NotNamespaceType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for NotNamespaceType {
@@ -1145,8 +1145,8 @@ impl xsd_parser::WithNamespace for ProcessContentsType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for ProcessContentsType {
@@ -1186,8 +1186,8 @@ impl xsd_parser::WithNamespace for Facet {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Facet {
@@ -1199,8 +1199,8 @@ impl xsd_parser::WithNamespace for UnionMemberTypesType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for UnionMemberTypesType {
@@ -1222,8 +1222,8 @@ impl xsd_parser::WithNamespace for SimpleDerivationSetItemList {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetItemList {
@@ -1264,8 +1264,8 @@ impl xsd_parser::WithNamespace for RestrictionType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for RestrictionType {
@@ -1294,8 +1294,8 @@ impl xsd_parser::WithNamespace for ExtensionType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for ExtensionType {
@@ -1311,8 +1311,8 @@ impl xsd_parser::WithNamespace for OpenContentModeType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for OpenContentModeType {
@@ -1337,8 +1337,8 @@ impl xsd_parser::WithNamespace for QnameListAType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for QnameListAType {
@@ -1360,8 +1360,8 @@ impl xsd_parser::WithNamespace for ReducedDerivationControlList {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for ReducedDerivationControlList {
@@ -1383,8 +1383,8 @@ impl xsd_parser::WithNamespace for QnameListType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for QnameListType {
@@ -1411,8 +1411,8 @@ impl xsd_parser::WithNamespace for Field {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::WithDeserializer for Field {
@@ -1431,8 +1431,8 @@ impl xsd_parser::WithNamespace for DerivationControlType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for DerivationControlType {
@@ -1459,8 +1459,8 @@ impl xsd_parser::WithNamespace for BasicNamespaceListType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for BasicNamespaceListType {
@@ -1486,8 +1486,8 @@ impl xsd_parser::WithNamespace for BasicNamespaceListItemType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for BasicNamespaceListItemType {
@@ -1513,8 +1513,8 @@ impl xsd_parser::WithNamespace for FacetType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl FacetType {
@@ -1536,8 +1536,8 @@ impl xsd_parser::WithNamespace for QnameListAItemType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for QnameListAItemType {
@@ -1562,8 +1562,8 @@ impl xsd_parser::WithNamespace for QnameListItemType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl xsd_parser::quick_xml::DeserializeBytes for QnameListItemType {

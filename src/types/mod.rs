@@ -49,7 +49,7 @@ pub struct Module {
     pub name: Option<Name>,
 
     /// Namespace of the module.
-    pub namespace: Namespace,
+    pub namespace: Option<Namespace>,
 }
 
 impl Types {

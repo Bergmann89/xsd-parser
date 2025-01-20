@@ -272,14 +272,20 @@ impl TypeRenderer {
         let xsd_parser = &data.xsd_parser_crate;
         let type_ident = &data.current_type_ref().type_ident;
 
-        let prefix = if let Some(name) = &module.name {
-            let name = name.to_string();
+        let (prefix, namespace) = match (&module.name, &module.namespace) {
+            (Some(prefix), Some(namespace)) => {
+                let prefix = prefix.to_string();
+                let namespace = namespace.to_string();
 
-            quote!(Some(#name))
-        } else {
-            quote!(None)
+                (quote!(Some(#prefix)), quote!(Some(#namespace)))
+            }
+            (None, Some(namespace)) => {
+                let namespace = namespace.to_string();
+
+                (quote!(None), quote!(Some(#namespace)))
+            }
+            (_, None) => (quote!(None), quote!(None)),
         };
-        let namespace = &module.namespace.to_string();
 
         let code = quote! {
             impl #xsd_parser::WithNamespace for #type_ident {
@@ -287,7 +293,7 @@ impl TypeRenderer {
                     #prefix
                 }
 
-                fn namespace() -> &'static str {
+                fn namespace() -> Option<&'static str> {
                     #namespace
                 }
             }

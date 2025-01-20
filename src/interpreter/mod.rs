@@ -123,7 +123,7 @@ impl<'a> Interpreter<'a> {
     pub fn with_default_typedefs(mut self) -> Result<Self, Error> {
         let xs = self
             .schemas
-            .resolve_namespace(&Namespace::XS)
+            .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {

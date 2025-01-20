@@ -15,7 +15,7 @@ pub trait WithNamespace {
     fn prefix() -> Option<&'static str>;
 
     /// The namespace for this type.
-    fn namespace() -> &'static str;
+    fn namespace() -> Option<&'static str>;
 }
 
 /// Error emitted by the [`generate`](crate::generate) function.
@@ -55,12 +55,6 @@ where
             }
             ParserError::InvalidFilePath(path) => {
                 Self::ParserError(ParserError::InvalidFilePath(path))
-            }
-            ParserError::MissingTargetNamespace => {
-                Self::ParserError(ParserError::MissingTargetNamespace)
-            }
-            ParserError::MissingTargetNamespacePrefix => {
-                Self::ParserError(ParserError::MissingTargetNamespacePrefix)
             }
         }
     }

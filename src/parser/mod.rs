@@ -127,7 +127,7 @@ where
     /// namespaces was encountered.
     pub fn with_namespace(mut self, prefix: NamespacePrefix, namespace: Namespace) -> Self {
         self.schemas
-            .get_or_create_namespace_info_mut(Some(prefix), namespace);
+            .get_or_create_namespace_info_mut(Some(prefix), Some(namespace));
 
         self
     }
@@ -259,12 +259,11 @@ where
         namespaces: &Namespaces,
         current_location: Option<&Url>,
     ) -> Result<(), Error<TResolver::Error>> {
-        let Some(target_ns) = &schema.target_namespace else {
-            return Err(Error::MissingTargetNamespace);
-        };
-        let target_ns = Namespace::from(target_ns.as_bytes().to_owned());
-
-        let prefix = namespaces.get(&target_ns).cloned();
+        let target_ns = schema
+            .target_namespace
+            .as_deref()
+            .map(|ns| Namespace::from(ns.as_bytes().to_owned()));
+        let prefix = namespaces.get(&target_ns).cloned().flatten();
 
         if self.resolve_includes {
             for content in &schema.content {
@@ -297,7 +296,7 @@ struct SchemaReader<R> {
     namespaces: Namespaces,
 }
 
-type Namespaces = BTreeMap<Namespace, NamespacePrefix>;
+type Namespaces = BTreeMap<Option<Namespace>, Option<NamespacePrefix>>;
 
 impl<R> SchemaReader<R> {
     fn new(inner: R) -> Self {
@@ -343,7 +342,9 @@ where
                     let prefix = NamespacePrefix::new(a.key.local_name().as_ref().to_owned());
                     let namespace = Namespace::new(a.value.into_owned());
 
-                    self.namespaces.entry(namespace).or_insert(prefix);
+                    self.namespaces
+                        .entry(Some(namespace))
+                        .or_insert(Some(prefix));
                 }
             }
         }
@@ -354,7 +355,7 @@ where
 
 fn import_req(
     import: &Import,
-    current_ns: Namespace,
+    current_ns: Option<Namespace>,
     current_location: Option<&Url>,
 ) -> Result<Option<ResolveRequest>, UrlParseError> {
     let Some(location) = import.schema_location.as_ref() else {
@@ -367,7 +368,11 @@ fn import_req(
         Url::parse(&format!("file://./{location}"))?
     };
 
-    let mut req = ResolveRequest::new(location).current_ns(current_ns);
+    let mut req = ResolveRequest::new(location);
+
+    if let Some(ns) = current_ns {
+        req = req.current_ns(ns);
+    }
 
     if let Some(ns) = &import.namespace {
         req = req.requested_ns(Namespace::from(ns.as_bytes().to_owned()));
@@ -382,7 +387,7 @@ fn import_req(
 
 fn include_req(
     include: &Include,
-    current_ns: Namespace,
+    current_ns: Option<Namespace>,
     current_location: Option<&Url>,
 ) -> Result<ResolveRequest, UrlParseError> {
     let location = if include.schema_location.starts_with("http") {
@@ -391,7 +396,11 @@ fn include_req(
         Url::parse(&format!("file://./{}", include.schema_location))?
     };
 
-    let mut req = ResolveRequest::new(location).current_ns(current_ns);
+    let mut req = ResolveRequest::new(location);
+
+    if let Some(ns) = current_ns {
+        req = req.current_ns(ns);
+    }
 
     if let Some(current_location) = current_location {
         req = req.current_location(current_location.clone());
