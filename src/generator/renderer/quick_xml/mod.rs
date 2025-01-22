@@ -128,12 +128,17 @@ impl<'a, 'types> AttributeImpl<'a, 'types> {
         let s_name = inner.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
 
-        let tag_name =
-            if let Some(ns) = inner.ident.ns.as_ref().and_then(|ns| types.modules.get(ns)) {
-                format!("{}:{s_name}", ns.name)
-            } else {
-                s_name.clone()
-            };
+        let tag_name = if let Some(m_name) = inner
+            .ident
+            .ns
+            .as_ref()
+            .and_then(|ns| types.modules.get(ns))
+            .and_then(|module| module.name.as_ref())
+        {
+            format!("{m_name}:{s_name}")
+        } else {
+            s_name.clone()
+        };
 
         Self {
             inner,
@@ -159,12 +164,17 @@ impl<'a, 'types> ElementImpl<'a, 'types> {
         let s_name = inner.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
 
-        let tag_name =
-            if let Some(ns) = inner.ident.ns.as_ref().and_then(|ns| types.modules.get(ns)) {
-                format!("{}:{s_name}", ns.name)
-            } else {
-                s_name.clone()
-            };
+        let tag_name = if let Some(m_name) = inner
+            .ident
+            .ns
+            .as_ref()
+            .and_then(|ns| types.modules.get(ns))
+            .and_then(|module| module.name.as_ref())
+        {
+            format!("{m_name}:{s_name}")
+        } else {
+            s_name.clone()
+        };
 
         Self {
             inner,

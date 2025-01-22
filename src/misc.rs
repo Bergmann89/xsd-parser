@@ -12,10 +12,10 @@ use crate::{GeneratorError, InterpreterError, ParserError};
 /// Trait that adds namespace information to a type.
 pub trait WithNamespace {
     /// The default namespace prefix for this type.
-    fn prefix() -> &'static str;
+    fn prefix() -> Option<&'static str>;
 
     /// The namespace for this type.
-    fn namespace() -> &'static str;
+    fn namespace() -> Option<&'static str>;
 }
 
 /// Error emitted by the [`generate`](crate::generate) function.
@@ -53,11 +53,8 @@ where
             ParserError::Resolver(err) => {
                 Self::ParserError(ParserError::Resolver(AnyError::from(err)))
             }
-            ParserError::MissingTargetNamespace => {
-                Self::ParserError(ParserError::MissingTargetNamespace)
-            }
-            ParserError::MissingTargetNamespacePrefix => {
-                Self::ParserError(ParserError::MissingTargetNamespacePrefix)
+            ParserError::InvalidFilePath(path) => {
+                Self::ParserError(ParserError::InvalidFilePath(path))
             }
         }
     }

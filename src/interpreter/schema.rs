@@ -20,6 +20,7 @@ pub(super) struct SchemaInterpreter<'schema, 'state> {
 }
 
 impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
+    #[allow(clippy::unnecessary_literal_unwrap)]
     #[instrument(level = "trace", skip(state, schema, schemas))]
     pub(super) fn process(
         state: &'state mut State<'schema>,
@@ -31,10 +32,10 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
             .as_ref()
             .map(|ns| {
                 let ns = ns.as_bytes().to_owned();
-                let ns = Namespace::from(ns);
+                let ns = Some(Namespace::from(ns));
 
                 let Some(ns) = schemas.resolve_namespace(&ns) else {
-                    return Err(Error::UnknownNamespace(ns));
+                    return Err(Error::UnknownNamespace(ns.unwrap()));
                 };
 
                 Ok(ns)
@@ -272,13 +273,16 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
 /* Helper Methods */
 
 impl SchemaInterpreter<'_, '_> {
+    #[allow(clippy::unnecessary_literal_unwrap)]
     pub(super) fn parse_qname(&self, qname: &QName) -> Result<Ident, Error> {
         let ns = qname
             .namespace()
             .map(|ns| {
+                let ns = Some(ns.clone());
+
                 self.schemas
-                    .resolve_namespace(ns)
-                    .ok_or_else(|| Error::UnknownNamespace(ns.clone()))
+                    .resolve_namespace(&ns)
+                    .ok_or_else(|| Error::UnknownNamespace(ns.unwrap()))
             })
             .transpose()?
             .or(self.state.current_ns());

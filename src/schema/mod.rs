@@ -37,11 +37,11 @@ pub struct Schemas {
 /// Contians the information for a specific namespace.
 #[derive(Debug)]
 pub struct NamespaceInfo {
-    /// First used /known prefix of the namespace.
+    /// First used/known prefix of the namespace or `None` if it is unknown.
     pub prefix: Option<NamespacePrefix>,
 
-    /// URI of the namespace.
-    pub namespace: Namespace,
+    /// URI of the namespace or `None` if it is the global or no namespace.
+    pub namespace: Option<Namespace>,
 
     /// Schema files associated with this namespace.
     pub schemas: Vec<SchemaId>,
@@ -62,7 +62,7 @@ pub type SchemaFiles = BTreeMap<SchemaId, Schema>;
 pub type NamespaceInfos = BTreeMap<NamespaceId, NamespaceInfo>;
 
 /// Map of [`Namespace`] to [`NamespaceId`]
-pub type Namespaces = BTreeMap<Namespace, NamespaceId>;
+pub type Namespaces = BTreeMap<Option<Namespace>, NamespaceId>;
 
 /// Map of [`NamespacePrefix`] to [`NamespaceId`]
 pub type NamespacePrefixes = BTreeMap<NamespacePrefix, NamespaceId>;
@@ -78,7 +78,7 @@ impl Schemas {
     pub fn add_schema(
         &mut self,
         prefix: Option<NamespacePrefix>,
-        namespace: Namespace,
+        namespace: Option<Namespace>,
         schema: Schema,
     ) {
         let schema_id = SchemaId(self.next_schema_id);
@@ -96,7 +96,7 @@ impl Schemas {
     pub fn get_or_create_namespace_info_mut(
         &mut self,
         prefix: Option<NamespacePrefix>,
-        namespace: Namespace,
+        namespace: Option<Namespace>,
     ) -> &mut NamespaceInfo {
         let (ns, id) = match self.known_namespaces.entry(namespace) {
             Entry::Occupied(e) => {
@@ -170,7 +170,10 @@ impl Schemas {
     /// Returns a reference to a specific namespace information instance by using
     /// the namespace URI, or `None` if the schema is not known.
     #[must_use]
-    pub fn get_namespace_info_by_namespace(&self, ns: &Namespace) -> Option<&NamespaceInfo> {
+    pub fn get_namespace_info_by_namespace(
+        &self,
+        ns: &Option<Namespace>,
+    ) -> Option<&NamespaceInfo> {
         let id = self.resolve_namespace(ns)?;
 
         self.get_namespace_info(&id)
@@ -188,7 +191,7 @@ impl Schemas {
     ///
     /// Returns the namespace id of the given namespace `ns`, or `None`.
     #[must_use]
-    pub fn resolve_namespace(&self, ns: &Namespace) -> Option<NamespaceId> {
+    pub fn resolve_namespace(&self, ns: &Option<Namespace>) -> Option<NamespaceId> {
         Some(*self.known_namespaces.get(ns)?)
     }
 }
@@ -198,7 +201,7 @@ impl Schemas {
 impl NamespaceInfo {
     /// Create a new [`NamespaceInfo`] instance from the passed `namespace`.
     #[must_use]
-    pub fn new(namespace: Namespace) -> Self {
+    pub fn new(namespace: Option<Namespace>) -> Self {
         Self {
             prefix: None,
             namespace,

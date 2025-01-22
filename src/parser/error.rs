@@ -1,4 +1,5 @@
 use std::io::Error as IoError;
+use std::path::PathBuf;
 
 use thiserror::Error;
 use url::{ParseError as UrlParseError, Url};
@@ -28,13 +29,11 @@ pub enum Error<E> {
     #[error("Resolver Error: {0}")]
     Resolver(E),
 
-    /// Schema is missing a target namespace!
-    #[error("Schema is missing a target namespace!")]
-    MissingTargetNamespace,
-
-    /// Schema is missing a namespace prefix for the target namespace!
-    #[error("Schema is missing a namespace prefix for the target namespace!")]
-    MissingTargetNamespacePrefix,
+    /// Invalid file path!
+    ///
+    /// Is raised if the file path could not be converted to an [`Url`].
+    #[error("Invalid file path: {0}!")]
+    InvalidFilePath(PathBuf),
 }
 
 impl<E> Error<E> {

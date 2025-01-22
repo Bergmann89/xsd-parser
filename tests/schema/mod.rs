@@ -11,6 +11,7 @@ mod list;
 mod ref_to_attribute;
 mod sequence;
 mod sequence_with_choice;
+mod shiporder;
 mod simple_type;
 mod static_list;
 mod tuple_with_integer;

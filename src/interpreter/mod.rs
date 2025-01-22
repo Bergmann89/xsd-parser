@@ -123,7 +123,7 @@ impl<'a> Interpreter<'a> {
     pub fn with_default_typedefs(mut self) -> Result<Self, Error> {
         let xs = self
             .schemas
-            .resolve_namespace(&Namespace::XS)
+            .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         macro_rules! add {
@@ -203,14 +203,15 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn finish(mut self) -> Result<Types, Error> {
         for (id, info) in self.schemas.namespaces() {
-            if let Some(prefix) = &info.prefix {
-                let module = Module {
-                    name: Name::new(prefix.to_string()),
-                    namespace: info.namespace.clone(),
-                };
+            let module = Module {
+                name: info
+                    .prefix
+                    .as_ref()
+                    .map(|prefix| Name::new(prefix.to_string())),
+                namespace: info.namespace.clone(),
+            };
 
-                self.state.types.modules.insert(*id, module);
-            }
+            self.state.types.modules.insert(*id, module);
         }
 
         for (_id, schema) in self.schemas.schemas() {

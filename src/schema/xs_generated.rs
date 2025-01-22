@@ -29,11 +29,11 @@ pub enum SchemaContent {
     Notation(Notation),
 }
 impl crate::WithNamespace for Schema {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl Schema {
@@ -68,11 +68,11 @@ pub struct Include {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for Include {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Include {
@@ -86,11 +86,11 @@ pub struct Import {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for Import {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Import {
@@ -111,11 +111,11 @@ pub enum RedefineContent {
     AttributeGroup(AttributeGroupType),
 }
 impl crate::WithNamespace for Redefine {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Redefine {
@@ -139,11 +139,11 @@ pub enum OverrideContent {
     Notation(Notation),
 }
 impl crate::WithNamespace for Override {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Override {
@@ -160,11 +160,11 @@ pub enum AnnotationContent {
     Documentation(Documentation),
 }
 impl crate::WithNamespace for Annotation {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Annotation {
@@ -179,11 +179,11 @@ pub struct DefaultOpenContent {
     pub any: WildcardType,
 }
 impl crate::WithNamespace for DefaultOpenContent {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl DefaultOpenContent {
@@ -214,11 +214,11 @@ pub enum SimpleBaseTypeContent {
     Union(Union),
 }
 impl crate::WithNamespace for SimpleBaseType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for SimpleBaseType {
@@ -251,11 +251,11 @@ pub enum ComplexBaseTypeContent {
     Assert(AssertionType),
 }
 impl crate::WithNamespace for ComplexBaseType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl ComplexBaseType {
@@ -291,11 +291,11 @@ pub enum GroupTypeContent {
     Any(Any),
 }
 impl crate::WithNamespace for GroupType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl GroupType {
@@ -326,11 +326,11 @@ pub enum AttributeGroupTypeContent {
     AnyAttribute(AnyAttribute),
 }
 impl crate::WithNamespace for AttributeGroupType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for AttributeGroupType {
@@ -366,11 +366,11 @@ pub enum ElementTypeContent {
     Keyref(Keyref),
 }
 impl crate::WithNamespace for ElementType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl ElementType {
@@ -406,11 +406,11 @@ pub struct AttributeType {
     pub simple_type: Option<SimpleBaseType>,
 }
 impl crate::WithNamespace for AttributeType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl AttributeType {
@@ -431,11 +431,11 @@ pub struct Notation {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for Notation {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Notation {
@@ -447,11 +447,11 @@ pub enum FullDerivationSetType {
     TypeDerivationControlList(TypeDerivationControlList),
 }
 impl crate::WithNamespace for FullDerivationSetType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for FullDerivationSetType {
@@ -470,11 +470,11 @@ impl crate::quick_xml::DeserializeBytes for FullDerivationSetType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
 impl crate::WithNamespace for TypeDerivationControlList {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for TypeDerivationControlList {
@@ -496,11 +496,11 @@ pub enum BlockSetType {
     BlockSetItemList(BlockSetItemList),
 }
 impl crate::WithNamespace for BlockSetType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for BlockSetType {
@@ -519,11 +519,11 @@ impl crate::quick_xml::DeserializeBytes for BlockSetType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
 impl crate::WithNamespace for BlockSetItemList {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for BlockSetItemList {
@@ -545,11 +545,11 @@ pub enum FormChoiceType {
     Unqualified,
 }
 impl crate::WithNamespace for FormChoiceType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for FormChoiceType {
@@ -575,11 +575,11 @@ pub enum XpathDefaultNamespaceType {
     Local,
 }
 impl crate::WithNamespace for XpathDefaultNamespaceType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for XpathDefaultNamespaceType {
@@ -600,11 +600,11 @@ pub struct Appinfo {
     pub source: Option<String>,
 }
 impl crate::WithNamespace for Appinfo {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Appinfo {
@@ -616,11 +616,11 @@ pub struct Documentation {
     pub lang: Option<String>,
 }
 impl crate::WithNamespace for Documentation {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Documentation {
@@ -635,11 +635,11 @@ pub struct WildcardType {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for WildcardType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl WildcardType {
@@ -657,11 +657,11 @@ pub enum DefaultOpenContentModeType {
     Suffix,
 }
 impl crate::WithNamespace for DefaultOpenContentModeType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for DefaultOpenContentModeType {
@@ -692,11 +692,11 @@ pub enum RestrictionContent {
     Facet(Facet),
 }
 impl crate::WithNamespace for Restriction {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Restriction {
@@ -710,11 +710,11 @@ pub struct List {
     pub simple_type: Option<SimpleBaseType>,
 }
 impl crate::WithNamespace for List {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for List {
@@ -728,11 +728,11 @@ pub struct Union {
     pub simple_type: Vec<SimpleBaseType>,
 }
 impl crate::WithNamespace for Union {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Union {
@@ -744,11 +744,11 @@ pub enum SimpleDerivationSetType {
     SimpleDerivationSetItemList(SimpleDerivationSetItemList),
 }
 impl crate::WithNamespace for SimpleDerivationSetType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for SimpleDerivationSetType {
@@ -776,11 +776,11 @@ pub enum SimpleContentContent {
     Extension(ExtensionType),
 }
 impl crate::WithNamespace for SimpleContent {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for SimpleContent {
@@ -799,11 +799,11 @@ pub enum ComplexContentContent {
     Extension(ExtensionType),
 }
 impl crate::WithNamespace for ComplexContent {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for ComplexContent {
@@ -817,11 +817,11 @@ pub struct OpenContent {
     pub any: Option<WildcardType>,
 }
 impl crate::WithNamespace for OpenContent {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl OpenContent {
@@ -843,11 +843,11 @@ pub struct AnyAttribute {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for AnyAttribute {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl AnyAttribute {
@@ -867,11 +867,11 @@ pub struct AssertionType {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for AssertionType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for AssertionType {
@@ -883,11 +883,11 @@ pub enum DerivationSetType {
     ReducedDerivationControlList(ReducedDerivationControlList),
 }
 impl crate::WithNamespace for DerivationSetType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for DerivationSetType {
@@ -915,11 +915,11 @@ pub struct Any {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for Any {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl Any {
@@ -954,11 +954,11 @@ pub enum AltTypeContent {
     ComplexType(ComplexBaseType),
 }
 impl crate::WithNamespace for AltType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for AltType {
@@ -974,11 +974,11 @@ pub struct KeybaseType {
     pub field: Vec<Field>,
 }
 impl crate::WithNamespace for KeybaseType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for KeybaseType {
@@ -995,11 +995,11 @@ pub struct Keyref {
     pub field: Vec<Field>,
 }
 impl crate::WithNamespace for Keyref {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Keyref {
@@ -1008,11 +1008,11 @@ impl crate::quick_xml::WithDeserializer for Keyref {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct ElementSubstitutionGroupType(pub Vec<QName>);
 impl crate::WithNamespace for ElementSubstitutionGroupType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for ElementSubstitutionGroupType {
@@ -1035,11 +1035,11 @@ pub enum AttributeUseType {
     Required,
 }
 impl crate::WithNamespace for AttributeUseType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for AttributeUseType {
@@ -1067,11 +1067,11 @@ pub enum NamespaceListType {
     BasicNamespaceList(BasicNamespaceListType),
 }
 impl crate::WithNamespace for NamespaceListType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for NamespaceListType {
@@ -1091,11 +1091,11 @@ impl crate::quick_xml::DeserializeBytes for NamespaceListType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
 impl crate::WithNamespace for NotNamespaceType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for NotNamespaceType {
@@ -1118,11 +1118,11 @@ pub enum ProcessContentsType {
     Strict,
 }
 impl crate::WithNamespace for ProcessContentsType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for ProcessContentsType {
@@ -1159,11 +1159,11 @@ pub enum Facet {
     ExplicitTimezone(FacetType),
 }
 impl crate::WithNamespace for Facet {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Facet {
@@ -1172,11 +1172,11 @@ impl crate::quick_xml::WithDeserializer for Facet {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct UnionMemberTypesType(pub Vec<QName>);
 impl crate::WithNamespace for UnionMemberTypesType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for UnionMemberTypesType {
@@ -1195,11 +1195,11 @@ impl crate::quick_xml::DeserializeBytes for UnionMemberTypesType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
 impl crate::WithNamespace for SimpleDerivationSetItemList {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for SimpleDerivationSetItemList {
@@ -1237,11 +1237,11 @@ pub enum RestrictionTypeContent {
     Assert(AssertionType),
 }
 impl crate::WithNamespace for RestrictionType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for RestrictionType {
@@ -1267,11 +1267,11 @@ pub enum ExtensionTypeContent {
     Assert(AssertionType),
 }
 impl crate::WithNamespace for ExtensionType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for ExtensionType {
@@ -1284,11 +1284,11 @@ pub enum OpenContentModeType {
     Suffix,
 }
 impl crate::WithNamespace for OpenContentModeType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for OpenContentModeType {
@@ -1310,11 +1310,11 @@ impl crate::quick_xml::DeserializeBytes for OpenContentModeType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
 impl crate::WithNamespace for QnameListAType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for QnameListAType {
@@ -1333,11 +1333,11 @@ impl crate::quick_xml::DeserializeBytes for QnameListAType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
 impl crate::WithNamespace for ReducedDerivationControlList {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for ReducedDerivationControlList {
@@ -1356,11 +1356,11 @@ impl crate::quick_xml::DeserializeBytes for ReducedDerivationControlList {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct QnameListType(pub Vec<QnameListItemType>);
 impl crate::WithNamespace for QnameListType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for QnameListType {
@@ -1384,11 +1384,11 @@ pub struct Field {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for Field {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::WithDeserializer for Field {
@@ -1403,11 +1403,11 @@ pub enum DerivationControlType {
     Union,
 }
 impl crate::WithNamespace for DerivationControlType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for DerivationControlType {
@@ -1431,11 +1431,11 @@ impl crate::quick_xml::DeserializeBytes for DerivationControlType {
 #[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
 impl crate::WithNamespace for BasicNamespaceListType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for BasicNamespaceListType {
@@ -1458,11 +1458,11 @@ pub enum BasicNamespaceListItemType {
     Local,
 }
 impl crate::WithNamespace for BasicNamespaceListItemType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for BasicNamespaceListItemType {
@@ -1485,11 +1485,11 @@ pub struct FacetType {
     pub annotation: Option<Annotation>,
 }
 impl crate::WithNamespace for FacetType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl FacetType {
@@ -1508,11 +1508,11 @@ pub enum QnameListAItemType {
     Defined,
 }
 impl crate::WithNamespace for QnameListAItemType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for QnameListAItemType {
@@ -1534,11 +1534,11 @@ pub enum QnameListItemType {
     DefinedSibling,
 }
 impl crate::WithNamespace for QnameListItemType {
-    fn prefix() -> &'static str {
-        "xs"
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
     }
-    fn namespace() -> &'static str {
-        "http://www.w3.org/2001/XMLSchema"
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
     }
 }
 impl crate::quick_xml::DeserializeBytes for QnameListItemType {

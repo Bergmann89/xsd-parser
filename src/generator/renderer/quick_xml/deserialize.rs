@@ -452,7 +452,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 }
             } else {
                 quote! {
-                    #else_ if attrib.key.local_name() == #b_name {
+                    #else_ if attrib.key.local_name().as_ref() == #b_name {
                         reader.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                     }
                 }
@@ -1391,17 +1391,25 @@ where
     iter.into_iter()
         .collect::<BTreeSet<_>>()
         .into_iter()
-        .map(|ns| {
-            let module = types.modules.get(&ns).expect("Unknown module!");
+        .filter_map(|ns| {
+            let module = types.modules.get(&ns)?;
+            let ns = module.namespace.as_ref()?;
             let const_name = make_ns_const(module);
-            let namespace = Literal::byte_string(&module.namespace.0);
+            let namespace = Literal::byte_string(&ns.0);
 
-            quote! {
+            Some(quote! {
                 const #const_name: &[u8] = #namespace;
-            }
+            })
         })
 }
 
 fn make_ns_const(module: &Module) -> Ident2 {
-    format_ident!("NS_{}", module.name.to_string().to_screaming_snake_case())
+    format_ident!(
+        "NS_{}",
+        module
+            .name
+            .as_ref()
+            .map_or_else(|| String::from("DEFAULT"), ToString::to_string)
+            .to_screaming_snake_case()
+    )
 }

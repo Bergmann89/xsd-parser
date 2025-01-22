@@ -307,18 +307,26 @@ impl ComplexTypeImpl<'_, '_, '_> {
             TypeMode::All | TypeMode::Sequence => self.render_serializer_fn_next_struct(&end_state),
         };
 
-        let xmlns = self.types.modules.values().filter_map(|module| {
-            if module.namespace == Namespace::XS || module.namespace == Namespace::XML {
-                return None;
-            }
+        let xmlns = self
+            .types
+            .modules
+            .values()
+            .filter_map(|module| {
+                let ns = module.namespace.as_ref()?;
+                if *ns == Namespace::XS || *ns == Namespace::XML {
+                    return None;
+                }
 
-            let xmlns = format!("xmlns:{}", module.name);
-            let ns = module.namespace.to_string();
+                let name = module.name.as_ref()?;
 
-            Some(quote! {
-                bytes.push_attribute((#xmlns, #ns));
+                let ns = ns.to_string();
+                let xmlns = format!("xmlns:{name}");
+
+                Some(quote! {
+                    bytes.push_attribute((#xmlns, #ns));
+                })
             })
-        });
+            .collect::<Vec<_>>();
 
         let has_attributes = !self.attributes.is_empty();
         let attributes = self.attributes.iter().map(|attrib| {
@@ -352,6 +360,19 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }
         });
 
+        let bytes_ctor = if xmlns.is_empty() {
+            quote! {
+                let bytes = BytesStart::new(self.name);
+            }
+        } else {
+            quote! {
+                let mut bytes = BytesStart::new(self.name);
+                if self.is_root {
+                    #( #xmlns )*
+                }
+            }
+        };
+
         let event = if self.elements.is_empty() {
             format_ident!("Empty")
         } else {
@@ -362,10 +383,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             None
         } else if has_attributes {
             Some(quote! {
-                let mut bytes = BytesStart::new(self.name);
-                if self.is_root {
-                    #( #xmlns )*
-                }
+                #bytes_ctor
                 match build_attributes(bytes, &self.value) {
                     Ok(bytes) => return Some(Ok(Event::#event(bytes))),
                     Err(error) => {
@@ -377,10 +395,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             })
         } else {
             Some(quote! {
-                let mut bytes = BytesStart::new(self.name);
-                if self.is_root {
-                    #( #xmlns )*
-                }
+                #bytes_ctor
                 return Some(Ok(Event::#event(bytes)))
             })
         };
