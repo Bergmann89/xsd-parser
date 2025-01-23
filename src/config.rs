@@ -358,6 +358,23 @@ impl Config {
 
         self
     }
+
+    /// Set the traits the generated types should derive from.
+    pub fn with_derive<I>(mut self, derive: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        self.generator.derive = Some(
+            derive
+                .into_iter()
+                .map(Into::into)
+                .filter(|s| !s.is_empty())
+                .collect(),
+        );
+
+        self
+    }
 }
 
 impl Default for ParserConfig {

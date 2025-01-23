@@ -6,13 +6,13 @@ use tracing::instrument;
 
 use crate::schema::xs::{
     Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementType, ExtensionType, Facet, FacetType, GroupType, List, Restriction, RestrictionType,
-    SimpleBaseType, SimpleContent, Union, Use,
+    ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
+    Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident, IdentType,
-    Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
+    AbstractInfo, AnyAttributeInfo, AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident,
+    IdentType, Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
 use super::{Error, NameExtend, NameFallback, NameUnwrap, SchemaInterpreter};
@@ -180,15 +180,25 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
 
         if let Some(substitution_group) = &ty.substitution_group {
-            for base in &substitution_group.0 {
-                let base = self.parse_qname(base)?.with_type(IdentType::Element);
-                let ident = self.state.current_ident().unwrap().clone();
-                let base_ty = self.get_element_mut(&base)?;
+            self.walk_substitution_groups(substitution_group, |builder, base_ident| {
+                let ident = builder.state.current_ident().unwrap().clone();
+                let base_ty = builder.get_element_mut(base_ident)?;
+
+                if let Type::Reference(ti) = base_ty {
+                    *base_ty = Type::Abstract(AbstractInfo {
+                        type_: Some(ti.type_.clone()),
+                        derived_types: vec![ti.type_.clone()],
+                    });
+                }
+
                 let Type::Abstract(ai) = base_ty else {
-                    return Err(Error::ExpectedAbstractElement(base.clone()));
+                    return Err(Error::ExpectedAbstractElement(base_ident.clone()));
                 };
+
                 ai.derived_types.push(ident);
-            }
+
+                Ok(())
+            })?;
         }
 
         Ok(())
@@ -857,6 +867,42 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         self.fixed = self.type_mode == TypeMode::Complex;
 
         Ok(())
+    }
+
+    // #[instrument(err, level = "trace", skip(self, f))]
+    fn walk_substitution_groups<F>(
+        &mut self,
+        groups: &ElementSubstitutionGroupType,
+        mut f: F,
+    ) -> Result<(), Error>
+    where
+        F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
+    {
+        fn inner<'x, 'y, 'z, F>(
+            builder: &mut TypeBuilder<'x, 'y, 'z>,
+            groups: &ElementSubstitutionGroupType,
+            f: &mut F,
+        ) -> Result<(), Error>
+        where
+            F: FnMut(&mut TypeBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
+        {
+            for head in &groups.0 {
+                let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
+
+                f(builder, &ident)?;
+
+                if let Some(groups) = builder
+                    .find_element(ident)
+                    .and_then(|x| x.substitution_group.as_ref())
+                {
+                    inner(builder, groups, f)?;
+                }
+            }
+
+            Ok(())
+        }
+
+        inner(self, groups, &mut f)
     }
 
     #[instrument(err, level = "trace", skip(self, f))]
