@@ -420,7 +420,7 @@ pub(super) enum TypeMode {
 
 pub(super) fn format_field_name(name: &Name) -> Cow<'static, str> {
     let ident = name
-        .to_type_named(false, None)
+        .to_type_name(false, None)
         .as_str()
         .unwrap()
         .to_snake_case();
@@ -442,7 +442,7 @@ pub(super) fn format_module_ident(name: &Name) -> Ident2 {
 }
 
 pub(super) fn format_type_name(name: &Name) -> String {
-    name.to_type_named(false, None)
+    name.to_type_name(false, None)
         .as_str()
         .unwrap()
         .to_pascal_case()
@@ -519,7 +519,7 @@ pub(super) fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> 
     match &ident.name {
         Name::Named(s) if s.ends_with(postfix) => Name::Named(s.clone()),
         Name::Named(s) => Name::Named(Cow::Owned(format!("{s}{postfix}"))),
-        name => name.to_type_named(false, None),
+        name => name.to_type_name(false, None),
     }
 }
 

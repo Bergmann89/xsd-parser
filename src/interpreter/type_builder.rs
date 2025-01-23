@@ -524,9 +524,9 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     .extend(true, ty.name.clone())
                     .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
-                    type_name.to_type_named(false, Some(""))
+                    type_name.to_type_name(false, Some(""))
                 } else {
-                    type_name.to_type_named(true, Some("Temp"))
+                    type_name.to_type_name(true, Some("Temp"))
                 };
 
                 let ns = self.state.current_ns();
@@ -831,7 +831,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                         .auto_extend(false, true, self.state)
                         .remove_suffix("Type")
                         .remove_suffix("Content")
-                        .to_type_named(true, Some("Content"));
+                        .to_type_name(true, Some("Content"));
                     let content_ident = Ident::new(content_ident).with_ns(self.state.current_ns());
 
                     self.state
@@ -981,12 +981,12 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             .unwrap_or_unnamed(self.state)
             .remove_suffix("Type")
             .remove_suffix("Content");
-        let field_name = name.to_type_named(true, Some("Content"));
+        let field_name = name.to_type_name(true, Some("Content"));
         let type_name = name
             .auto_extend(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
-            .to_type_named(true, Some("Content"));
+            .to_type_name(true, Some("Content"));
         let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
 
         (field_name, type_)
