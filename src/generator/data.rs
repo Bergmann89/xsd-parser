@@ -8,7 +8,7 @@ use crate::schema::NamespaceId;
 use crate::schema::{xs::Use, MaxOccurs, MinOccurs};
 use crate::types::{
     AbstractInfo, AnyAttributeInfo, AnyInfo, AttributeInfo, ComplexInfo, ElementInfo,
-    EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, UnionInfo, UnionTypeInfo,
+    EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, Types, UnionInfo, UnionTypeInfo,
     VariantInfo,
 };
 
@@ -493,8 +493,8 @@ pub(super) struct ElementData<'types> {
     pub is_abstract: bool,
     pub field_ident: Ident2,
     pub variant_ident: Ident2,
-    pub target_ty: &'types Type,
     pub target_type: TokenStream,
+    pub target_is_complex: bool,
 }
 
 #[derive(Debug)]
@@ -728,9 +728,6 @@ fn make_element_data<'types>(
             }
 
             let current_module = inner.current_module();
-            let Some(target_ty) = inner.types.get(&element.type_) else {
-                return Some(Err(Error::UnknownType(element.type_.clone())));
-            };
             let target_ref = match inner.get_or_create_type_ref(element.type_.clone()) {
                 Ok(target_ref) => target_ref,
                 Err(error) => return Some(Err(error)),
@@ -746,6 +743,8 @@ fn make_element_data<'types>(
                 .is_some_and(|ty| matches!(ty, Type::ComplexType(ci) if ci.is_abstract));
             let field_ident = format_field_ident(&element.ident.name);
             let variant_ident = format_variant_ident(&element.ident.name);
+            let target_is_complex =
+                target_is_complex(&element.type_, inner.types, inner.typedef_mode);
 
             Some(Ok(ElementData {
                 element,
@@ -754,8 +753,8 @@ fn make_element_data<'types>(
                 is_abstract,
                 field_ident,
                 variant_ident,
-                target_ty,
                 target_type,
+                target_is_complex,
             }))
         })
         .collect::<Result<_, _>>()?;
@@ -767,6 +766,20 @@ fn make_element_data<'types>(
     };
 
     Ok((occurs, elements))
+}
+
+fn target_is_complex(ident: &Ident, types: &Types, mode: TypedefMode) -> bool {
+    let Some(ty) = types.get(ident) else {
+        return false;
+    };
+
+    match ty {
+        Type::All(_) | Type::Choice(_) | Type::Sequence(_) | Type::ComplexType(_) => true,
+        Type::Reference(x) if x.is_single() && mode != TypedefMode::NewType => {
+            target_is_complex(&x.type_, types, mode)
+        }
+        _ => false,
+    }
 }
 
 #[instrument(err, level = "trace", skip(inner))]

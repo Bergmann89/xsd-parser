@@ -1,7 +1,3 @@
-pub mod xs {
-    use super::*;
-    pub type IntType = i32;
-}
 pub mod tns {
     use super::*;
     #[derive(Debug, Clone)]
@@ -10,9 +6,9 @@ pub mod tns {
     }
     #[derive(Debug, Clone)]
     pub enum MyChoiceTypeContent {
-        Once(xs::IntType),
-        Optional(xs::IntType),
-        OnceSpecify(xs::IntType),
-        TwiceOrMore(xs::IntType),
+        Once(i32),
+        Optional(i32),
+        OnceSpecify(i32),
+        TwiceOrMore(i32),
     }
 }

@@ -1,7 +1,7 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub name: StringType,
+    pub name: String,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -9,7 +9,6 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type StringType = String;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -22,7 +21,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Name(xsd_parser::quick_xml::ContentSerializer<'ser, StringType>),
+        Name(xsd_parser::quick_xml::ContentSerializer<'ser, String>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -85,12 +84,12 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        name: Option<super::StringType>,
+        name: Option<String>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
-        Name(Option<<StringType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Name(Option<<String as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
     impl FooTypeDeserializer {
@@ -225,9 +224,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <StringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            } = <String as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.name.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(

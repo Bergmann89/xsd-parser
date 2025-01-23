@@ -1,10 +1,10 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub once: IntType,
-    pub optional: Option<IntType>,
-    pub once_specify: IntType,
-    pub twice_or_more: Vec<IntType>,
+    pub once: i32,
+    pub optional: Option<i32>,
+    pub once_specify: i32,
+    pub twice_or_more: Vec<i32>,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -12,7 +12,6 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type IntType = i32;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -25,10 +24,10 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Once(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
-        Optional(xsd_parser::quick_xml::IterSerializer<'ser, Option<IntType>, IntType>),
-        OnceSpecify(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
-        TwiceOrMore(xsd_parser::quick_xml::IterSerializer<'ser, Vec<IntType>, IntType>),
+        Once(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
+        Optional(xsd_parser::quick_xml::IterSerializer<'ser, Option<i32>, i32>),
+        OnceSpecify(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
+        TwiceOrMore(xsd_parser::quick_xml::IterSerializer<'ser, Vec<i32>, i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -151,19 +150,19 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        once: Option<super::IntType>,
-        optional: Option<super::IntType>,
-        once_specify: Option<super::IntType>,
-        twice_or_more: Vec<super::IntType>,
+        once: Option<i32>,
+        optional: Option<i32>,
+        once_specify: Option<i32>,
+        twice_or_more: Vec<i32>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
         Next__,
-        Once(<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Optional(<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        OnceSpecify(<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        TwiceOrMore(<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Once(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Optional(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        OnceSpecify(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        TwiceOrMore(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl FooTypeDeserializer {
         fn from_bytes_start<R>(
@@ -252,7 +251,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             if self.once.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Once")))?;
@@ -277,7 +276,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             if self.optional.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -304,7 +303,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             if self.once_specify.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -331,7 +330,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             self.twice_or_more.push(data);
                         }

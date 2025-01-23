@@ -1,8 +1,8 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub min: IntType,
-    pub max: IntType,
+    pub min: i32,
+    pub max: i32,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -10,7 +10,6 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type IntType = i32;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -23,8 +22,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Min(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
-        Max(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
+        Min(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
+        Max(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -101,14 +100,14 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        min: Option<super::IntType>,
-        max: Option<super::IntType>,
+        min: Option<i32>,
+        max: Option<i32>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
-        Min(Option<<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Max(Option<<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Min(Option<<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Max(Option<<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
     impl FooTypeDeserializer {
@@ -244,7 +243,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.min.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -348,7 +347,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.max.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(

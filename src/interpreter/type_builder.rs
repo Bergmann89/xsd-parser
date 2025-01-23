@@ -125,32 +125,48 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element(&mut self, ident: &Ident, ty: &ElementType) -> Result<(), Error> {
+    pub(super) fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
         use crate::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
+
             init_any!(self, Reference, ReferenceInfo::new(type_), false);
-        }
+        } else {
+            let ident = self
+                .state
+                .current_ident()
+                .unwrap()
+                .clone()
+                .with_type(IdentType::ElementType);
 
-        if let Some(substitution_group) = &ty.substitution_group {
-            for base in &substitution_group.0 {
-                let base = self.parse_qname(base)?.with_type(IdentType::Element);
-                let base_ty = self.get_element_mut(&base)?;
-                let Type::Abstract(ai) = base_ty else {
-                    return Err(Error::ExpectedAbstractElement(base.clone()));
-                };
-                ai.derived_types.push(ident.clone());
-            }
-        }
+            let mut has_content = false;
+            let type_ = self.create_type(ident, |builder| {
+                for c in &ty.content {
+                    match c {
+                        C::Annotation(_)
+                        | C::Key(_)
+                        | C::Alternative(_)
+                        | C::Unique(_)
+                        | C::Keyref(_) => {}
+                        C::SimpleType(x) => {
+                            has_content = true;
+                            builder.apply_simple_type(x)?;
+                        }
+                        C::ComplexType(x) => {
+                            has_content = true;
+                            builder.apply_complex_type(x)?;
+                        }
+                    }
+                }
 
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) | C::Key(_) | C::Alternative(_) | C::Unique(_) | C::Keyref(_) => {}
-                C::SimpleType(x) => self.apply_simple_type(x)?,
-                C::ComplexType(x) => self.apply_complex_type(x)?,
+                Ok(())
+            });
+
+            if has_content {
+                init_any!(self, Reference, ReferenceInfo::new(type_?), false);
             }
-        }
+        };
 
         if ty.abstract_ {
             let type_ = match self.type_.take() {
@@ -161,6 +177,18 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
             let ai = init_any!(self, Abstract);
             ai.type_ = type_;
+        }
+
+        if let Some(substitution_group) = &ty.substitution_group {
+            for base in &substitution_group.0 {
+                let base = self.parse_qname(base)?.with_type(IdentType::Element);
+                let ident = self.state.current_ident().unwrap().clone();
+                let base_ty = self.get_element_mut(&base)?;
+                let Type::Abstract(ai) = base_ty else {
+                    return Err(Error::ExpectedAbstractElement(base.clone()));
+                };
+                ai.derived_types.push(ident);
+            }
         }
 
         Ok(())
@@ -486,24 +514,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 let name = name.clone().or_fallback(type_.name.clone());
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
-                    .with_type(IdentType::Element);
-
-                let ci = get_or_init_type!(self, Sequence);
-                let element = ci.elements.find_or_insert(ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
-                });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
-                element.update(ty);
-            }
-            ElementType {
-                type_: Some(type_),
-                name,
-                ..
-            } => {
-                let type_ = self.parse_qname(type_)?;
-                let name = name.clone().or_fallback(type_.name.clone());
-                let ident = Ident::new(name)
-                    .with_ns(self.state.current_ns())
                     .with_type(IdentType::Element);
 
                 let ci = get_or_init_type!(self, Sequence);

@@ -2,14 +2,13 @@ pub struct Abstract {
     pub content: AbstractContent,
 }
 pub enum AbstractContent {
-    First(First),
-    Second(Second),
+    First(FirstType),
+    Second(SecondType),
 }
-pub struct First {
-    pub a: StringType,
+pub struct FirstType {
+    pub a: String,
 }
-pub enum Second {
+pub enum SecondType {
     Var1,
     Var2,
 }
-pub type StringType = String;

@@ -218,6 +218,8 @@ fn exec_generator(
 
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);
     generator = generator.with_type_postfix(IdentType::Element, config.type_postfix.element);
+    generator =
+        generator.with_type_postfix(IdentType::ElementType, config.type_postfix.element_type);
 
     for (type_, ident) in config.types {
         let ident = resolve_ident(schemas, &ident, type_)?;

@@ -5,8 +5,6 @@ pub struct FooType {
 }
 #[derive(Debug, Clone)]
 pub enum FooTypeContent {
-    Bar(BarType),
-    Baz(BazType),
+    Bar(String),
+    Baz(i32),
 }
-pub type BarType = String;
-pub type BazType = i32;

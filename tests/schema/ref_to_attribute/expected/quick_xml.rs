@@ -1,7 +1,7 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub id: Option<Id>,
+    pub id: Option<String>,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -9,7 +9,6 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type Id = String;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -87,7 +86,7 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        id: Option<super::Id>,
+        id: Option<String>,
     }
     impl FooTypeDeserializer {
         fn from_bytes_start<R>(
@@ -99,7 +98,7 @@ pub mod quick_xml_deserialize {
         {
             use xsd_parser::quick_xml::ErrorKind;
             const NS_TNS: &[u8] = b"http://example.com";
-            let mut id: Option<Id> = None;
+            let mut id: Option<String> = None;
             for attrib in bytes_start.attributes() {
                 let attrib = attrib?;
                 if matches ! (attrib . key . prefix () , Some (x) if x . as_ref () == b"xmlns") {

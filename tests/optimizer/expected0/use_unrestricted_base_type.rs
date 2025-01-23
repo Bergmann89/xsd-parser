@@ -1,11 +1,9 @@
 pub struct FirstRestrictedType {
-    pub a: StringType,
+    pub a: String,
 }
-pub type StringType = String;
 pub struct SecondRestrictedType {
-    pub b: Vec<IntType>,
+    pub b: Vec<i32>,
 }
-pub type IntType = i32;
 pub struct ThirdRestrictedType {
-    pub b: IntType,
+    pub b: i32,
 }

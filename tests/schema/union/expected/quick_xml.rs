@@ -11,15 +11,15 @@ impl xsd_parser::quick_xml::WithDeserializer for FooType {
 }
 #[derive(Debug, Clone)]
 pub enum UnionType {
-    Int(IntType),
-    String(StringType),
+    I32(i32),
+    String(String),
 }
 impl xsd_parser::quick_xml::SerializeBytes for UnionType {
     fn serialize_bytes(
         &self,
     ) -> Result<Option<std::borrow::Cow<'_, str>>, xsd_parser::quick_xml::Error> {
         match self {
-            Self::Int(x) => x.serialize_bytes(),
+            Self::I32(x) => x.serialize_bytes(),
             Self::String(x) => x.serialize_bytes(),
         }
     }
@@ -31,19 +31,17 @@ impl xsd_parser::quick_xml::DeserializeBytes for UnionType {
     {
         use xsd_parser::quick_xml::{Error, ErrorKind};
         let mut errors = Vec::new();
-        match IntType::deserialize_bytes(reader, bytes) {
-            Ok(value) => return Ok(Self::Int(value)),
+        match i32::deserialize_bytes(reader, bytes) {
+            Ok(value) => return Ok(Self::I32(value)),
             Err(error) => errors.push(Box::new(error)),
         }
-        match StringType::deserialize_bytes(reader, bytes) {
+        match String::deserialize_bytes(reader, bytes) {
             Ok(value) => return Ok(Self::String(value)),
             Err(error) => errors.push(Box::new(error)),
         }
         Err(Error::from(ErrorKind::InvalidUnion(errors.into())))
     }
 }
-pub type IntType = i32;
-pub type StringType = String;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]

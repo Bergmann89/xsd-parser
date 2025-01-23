@@ -4,7 +4,6 @@ use tracing::instrument;
 
 use crate::generator::misc::TypeMode;
 use crate::schema::Namespace;
-use crate::types::Type;
 
 use super::super::super::data::{
     AbstractData, ComplexTypeData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
@@ -254,8 +253,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             .map(|f| {
                 let target_type = &f.target_type;
                 let variant_ident = &f.variant_ident;
-
-                let is_complex = matches!(f.target_ty, Type::All(_) | Type::Choice(_) | Type::Sequence(_) | Type::ComplexType(_));
+                let is_complex = f.target_is_complex;
 
                 let serializer = match f.occurs {
                     Occurs::None => unreachable!(),

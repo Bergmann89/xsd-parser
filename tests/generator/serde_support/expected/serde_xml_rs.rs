@@ -2,35 +2,32 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MyAllType {
     #[serde(default, rename = "x")]
-    pub x: Option<BooleanType>,
+    pub x: Option<bool>,
     #[serde(rename = "a")]
-    pub a: IntType,
+    pub a: i32,
     #[serde(rename = "b")]
-    pub b: StringType,
+    pub b: String,
 }
-pub type IntType = i32;
-pub type StringType = String;
-pub type BooleanType = bool;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MyChoiceType {
     #[serde(default, rename = "x")]
-    pub x: Option<BooleanType>,
+    pub x: Option<bool>,
     #[serde(rename = "$value")]
     pub content: MyChoiceTypeContent,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum MyChoiceTypeContent {
     #[serde(rename = "a")]
-    A(IntType),
+    A(i32),
     #[serde(rename = "b")]
-    B(StringType),
+    B(String),
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MySequenceType {
     #[serde(default, rename = "x")]
-    pub x: Option<BooleanType>,
+    pub x: Option<bool>,
     #[serde(rename = "a")]
-    pub a: IntType,
+    pub a: i32,
     #[serde(rename = "b")]
-    pub b: StringType,
+    pub b: String,
 }

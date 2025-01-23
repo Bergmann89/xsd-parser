@@ -4,15 +4,13 @@ pub struct MyChoiceType {
 }
 #[derive(Debug, Clone)]
 pub enum MyChoiceTypeContent {
-    A(IntType),
-    B(StringType),
+    A(i32),
+    B(String),
     C(Box<MySequenceType>),
 }
-pub type IntType = i32;
-pub type StringType = String;
 #[derive(Debug, Clone)]
 pub struct MySequenceType {
-    pub a: IntType,
-    pub b: StringType,
+    pub a: i32,
+    pub b: String,
     pub c: Box<MyChoiceType>,
 }

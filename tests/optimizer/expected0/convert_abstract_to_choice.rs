@@ -1,9 +1,8 @@
 pub struct Abstract(Box<dyn core::any::Any>);
-pub struct First {
-    pub a: StringType,
+pub struct FirstType {
+    pub a: String,
 }
-pub enum Second {
+pub enum SecondType {
     Var1,
     Var2,
 }
-pub type StringType = String;

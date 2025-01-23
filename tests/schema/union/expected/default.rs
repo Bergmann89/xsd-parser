@@ -5,8 +5,6 @@ pub struct FooType {
 }
 #[derive(Debug, Clone)]
 pub enum UnionType {
-    Int(IntType),
-    String(StringType),
+    I32(i32),
+    String(String),
 }
-pub type IntType = i32;
-pub type StringType = String;

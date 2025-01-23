@@ -1,13 +1,11 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub messages: FooTypeMessages,
+    pub messages: FooTypeMessagesType,
 }
 #[derive(Debug, Clone)]
-pub struct FooTypeMessages {
-    pub aa: IntType,
-    pub bb: StringType,
-    pub a: StringType,
+pub struct FooTypeMessagesType {
+    pub aa: i32,
+    pub bb: String,
+    pub a: String,
 }
-pub type IntType = i32;
-pub type StringType = String;

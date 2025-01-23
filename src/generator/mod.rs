@@ -40,7 +40,7 @@ pub struct Generator<'types> {
 
     /* config */
     derive: Vec<Ident2>,
-    postfixes: [String; 5],
+    postfixes: [String; 8],
     box_flags: BoxFlags,
     content_mode: ContentMode,
     typedef_mode: TypedefMode,
@@ -63,11 +63,14 @@ impl<'types> Generator<'types> {
 
             derive: vec![format_ident!("Debug"), format_ident!("Clone")],
             postfixes: [
-                String::from("Type"), // Type
-                String::new(),        // Group
-                String::new(),        // Element
-                String::new(),        // Attribute
-                String::new(),        // AttributeGroup
+                String::from("Type"),        // Type = 0
+                String::new(),               // Group = 1
+                String::from("ElementType"), // Element = 2
+                String::new(),               // ElementType = 3
+                String::new(),               // Attribute = 4
+                String::new(),               // AttributeGroup = 5
+                String::new(),               // BuildIn = 6
+                String::new(),               // Enumeration = 7
             ],
             box_flags: BoxFlags::AUTO,
             content_mode: ContentMode::Auto,

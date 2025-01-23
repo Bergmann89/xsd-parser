@@ -7,7 +7,7 @@ fn generate_default() {
     generate_test(
         "tests/schema/type_name_clash/schema.xsd",
         "tests/schema/type_name_clash/expected/default.rs",
-        Config::default().with_generate([(IdentType::Element, "tns:Foo")]),
+        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
 
@@ -16,7 +16,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/type_name_clash/schema.xsd",
         "tests/schema/type_name_clash/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
@@ -27,7 +27,7 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/schema/type_name_clash/schema.xsd",
         "tests/schema/type_name_clash/expected/serde_xml_rs.rs",
-        Config::default()
+        Config::test_default()
             .with_serde(SerdeSupport::SerdeXmlRs)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
@@ -38,7 +38,7 @@ fn generate_serde_quick_xml() {
     generate_test(
         "tests/schema/type_name_clash/schema.xsd",
         "tests/schema/type_name_clash/expected/serde_quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_serde(SerdeSupport::QuickXml)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
@@ -60,10 +60,10 @@ fn read_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::{Foo, FooTypeBar};
+    use quick_xml::{Foo, FooTypeBarType};
 
     let obj = Foo {
-        bar: FooTypeBar {
+        bar: FooTypeBarType {
             a: Some("a-string".into()),
             b: Some("b-string".into()),
         },

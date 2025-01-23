@@ -1,5 +1,3 @@
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Foo(pub FooType);
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FooType(pub i32);
+pub struct Foo(pub i32);

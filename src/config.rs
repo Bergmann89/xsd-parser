@@ -121,6 +121,9 @@ pub struct TypePostfix {
 
     /// Postfixes added to elements (like `xs:element`).
     pub element: String,
+
+    /// Postfixes added to inline types if elements (like `xs:element`).
+    pub element_type: String,
 }
 
 /// Configuration for the resolver used in [`ParserConfig`].
@@ -321,6 +324,7 @@ impl Default for TypePostfix {
         Self {
             type_: String::from("Type"),
             element: String::new(),
+            element_type: String::from("ElementType"),
         }
     }
 }

@@ -1,7 +1,7 @@
 pub type Array = ArrayType;
 #[derive(Debug, Clone)]
 pub struct ArrayType {
-    pub item: [IntType; 5usize],
+    pub item: [i32; 5usize],
 }
 impl xsd_parser::quick_xml::WithSerializer for ArrayType {
     type Serializer<'x> = quick_xml_serialize::ArrayTypeSerializer<'x>;
@@ -9,7 +9,6 @@ impl xsd_parser::quick_xml::WithSerializer for ArrayType {
 impl xsd_parser::quick_xml::WithDeserializer for ArrayType {
     type Deserializer = quick_xml_deserialize::ArrayTypeDeserializer;
 }
-pub type IntType = i32;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -22,7 +21,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum ArrayTypeSerializerState<'ser> {
         Init__,
-        Item(xsd_parser::quick_xml::IterSerializer<'ser, [IntType; 5usize], IntType>),
+        Item(xsd_parser::quick_xml::IterSerializer<'ser, [i32; 5usize], i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -87,13 +86,13 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct ArrayTypeDeserializer {
-        item: Vec<super::IntType>,
+        item: Vec<i32>,
         state: Box<ArrayTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum ArrayTypeDeserializerState {
         Next__,
-        Item(<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Item(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl ArrayTypeDeserializer {
         fn from_bytes_start<R>(
@@ -179,7 +178,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             self.item.push(data);
                         }

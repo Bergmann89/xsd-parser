@@ -1,37 +1,35 @@
 use serde::{Deserialize, Serialize};
+pub type Shiporder = ShiporderType;
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct Shiporder {
+pub struct ShiporderType {
     #[serde(rename = "orderid")]
-    pub orderid: StringType,
+    pub orderid: String,
     #[serde(rename = "orderperson")]
-    pub orderperson: StringType,
+    pub orderperson: String,
     #[serde(rename = "shipto")]
-    pub shipto: ShiporderShipto,
+    pub shipto: ShiporderShiptoType,
     #[serde(default, rename = "item")]
-    pub item: Vec<ShiporderItem>,
+    pub item: Vec<ShiporderItemType>,
 }
-pub type StringType = String;
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ShiporderShipto {
+pub struct ShiporderShiptoType {
     #[serde(rename = "name")]
-    pub name: StringType,
+    pub name: String,
     #[serde(rename = "address")]
-    pub address: StringType,
+    pub address: String,
     #[serde(rename = "city")]
-    pub city: StringType,
+    pub city: String,
     #[serde(rename = "country")]
-    pub country: StringType,
+    pub country: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ShiporderItem {
+pub struct ShiporderItemType {
     #[serde(rename = "title")]
-    pub title: StringType,
+    pub title: String,
     #[serde(default, rename = "note")]
-    pub note: Option<StringType>,
+    pub note: Option<String>,
     #[serde(rename = "quantity")]
-    pub quantity: PositiveIntegerType,
+    pub quantity: usize,
     #[serde(rename = "price")]
-    pub price: DecimalType,
+    pub price: f64,
 }
-pub type PositiveIntegerType = usize;
-pub type DecimalType = f64;

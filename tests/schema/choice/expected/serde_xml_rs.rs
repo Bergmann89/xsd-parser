@@ -8,9 +8,7 @@ pub struct FooType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum FooTypeContent {
     #[serde(rename = "Bar")]
-    Bar(BarType),
+    Bar(String),
     #[serde(rename = "Baz")]
-    Baz(BazType),
+    Baz(i32),
 }
-pub type BarType = String;
-pub type BazType = i32;

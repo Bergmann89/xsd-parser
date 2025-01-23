@@ -4,9 +4,8 @@ pub struct MyChoiceType {
 }
 #[derive(Debug, Clone)]
 pub enum MyChoiceTypeContent {
-    Once(IntType),
-    Optional(IntType),
-    OnceSpecify(IntType),
-    TwiceOrMore(IntType),
+    Once(i32),
+    Optional(i32),
+    OnceSpecify(i32),
+    TwiceOrMore(i32),
 }
-pub type IntType = i32;

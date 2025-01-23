@@ -3,16 +3,14 @@ pub type Foo = FooType;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FooType {
     #[serde(rename = "Messages")]
-    pub messages: FooTypeMessages,
+    pub messages: FooTypeMessagesType,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FooTypeMessages {
+pub struct FooTypeMessagesType {
     #[serde(rename = "aa")]
-    pub aa: IntType,
+    pub aa: i32,
     #[serde(rename = "bb")]
-    pub bb: StringType,
+    pub bb: String,
     #[serde(rename = "a")]
-    pub a: StringType,
+    pub a: String,
 }
-pub type IntType = i32;
-pub type StringType = String;

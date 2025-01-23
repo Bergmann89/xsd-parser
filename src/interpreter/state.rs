@@ -28,13 +28,12 @@ pub(super) enum Node<'a> {
 }
 
 impl<'a> State<'a> {
+    pub(super) fn current_ident(&self) -> Option<&Ident> {
+        self.type_stack.iter().rev().flatten().next()
+    }
+
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
-        self.type_stack
-            .iter()
-            .rev()
-            .flatten()
-            .next()
-            .and_then(|x| x.ns)
+        self.current_ident().and_then(|x| x.ns)
     }
 
     pub(super) fn last_named_type(&self, stop_at_group: bool) -> Option<&str> {

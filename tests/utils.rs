@@ -21,6 +21,8 @@ use xsd_parser::{
 };
 
 pub trait ConfigEx {
+    fn test_default() -> Self;
+
     fn with_quick_xml(self) -> Self;
 
     fn with_serde(self, serde_support: SerdeSupport) -> Self;
@@ -32,7 +34,15 @@ pub trait ConfigEx {
 
     fn with_generate_flags(self, flags: GenerateFlags) -> Self;
 
+    fn without_generate_flags(self, flags: GenerateFlags) -> Self;
+
+    fn with_optimizer_flags(self, flags: OptimizerFlags) -> Self;
+
+    fn without_optimizer_flags(self, flags: OptimizerFlags) -> Self;
+
     fn with_box_flags(self, flags: BoxFlags) -> Self;
+
+    fn without_box_flags(self, flags: BoxFlags) -> Self;
 
     fn with_content_mode(self, mode: ContentMode) -> Self;
 
@@ -42,6 +52,15 @@ pub trait ConfigEx {
 }
 
 impl ConfigEx for Config {
+    fn test_default() -> Self {
+        let mut config = Config::default();
+
+        config.generator.type_postfix.element_type = "Type".into();
+        config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
+
+        config
+    }
+
     fn with_quick_xml(mut self) -> Self {
         self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
 
@@ -66,13 +85,37 @@ impl ConfigEx for Config {
     }
 
     fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
-        self.generator.flags |= flags;
+        self.generator.flags.insert(flags);
+
+        self
+    }
+
+    fn without_generate_flags(mut self, flags: GenerateFlags) -> Self {
+        self.generator.flags.remove(flags);
+
+        self
+    }
+
+    fn with_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.insert(flags);
+
+        self
+    }
+
+    fn without_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.remove(flags);
 
         self
     }
 
     fn with_box_flags(mut self, flags: BoxFlags) -> Self {
-        self.generator.box_flags |= flags;
+        self.generator.box_flags.insert(flags);
+
+        self
+    }
+
+    fn without_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags.remove(flags);
 
         self
     }
@@ -156,12 +199,31 @@ pub fn optimizer_test<P1, P2, P3, I, T>(
     T: IntoIterator<Item = (IdentType, I)>,
     I: Into<String>,
 {
-    let mut config = Config::default();
+    let mut config = Config::test_default();
+
+    config.optimizer.flags = OptimizerFlags::RESOLVE_TYPEDEFS;
+
+    optimizer_test_with_config(input_xsd, expected_0, expected_1, types, flags, config);
+}
+
+pub fn optimizer_test_with_config<P1, P2, P3, I, T>(
+    input_xsd: P1,
+    expected_0: P2,
+    expected_1: P3,
+    types: T,
+    flags: OptimizerFlags,
+    mut config: Config,
+) where
+    P1: AsRef<Path>,
+    P2: AsRef<Path>,
+    P3: AsRef<Path>,
+    T: IntoIterator<Item = (IdentType, I)>,
+    I: Into<String>,
+{
     config
         .parser
         .schemas
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
-    config.optimizer.flags = OptimizerFlags::empty();
     config.generator.generate = Generate::Types(
         types
             .into_iter()
