@@ -1,7 +1,9 @@
 use std::borrow::Cow;
+use std::fmt::{Debug, Formatter, Result as FmtResult};
 
 use quick_xml::name::{QName as QuickXmlQName, ResolveResult};
 
+use crate::misc::format_utf8_slice;
 use crate::quick_xml::{DeserializeBytes, Error, XmlReader};
 
 use super::Namespace;
@@ -9,7 +11,7 @@ use super::Namespace;
 /// Type that represents a a resolved [`QName`].
 ///
 /// The namespace of this [`QName`] was resolved during deserialization.
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Clone, Eq, PartialEq)]
 pub struct QName {
     raw: Vec<u8>,
     index: Option<usize>,
@@ -58,5 +60,27 @@ impl QName {
 impl DeserializeBytes for QName {
     fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
         Ok(Self::from_reader(reader, bytes))
+    }
+}
+
+#[allow(clippy::missing_fields_in_debug)]
+impl Debug for QName {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        struct Helper<'a>(&'a [u8]);
+
+        impl Debug for Helper<'_> {
+            fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+                write!(f, "b\"")?;
+                format_utf8_slice(self.0, f)?;
+                write!(f, "\"")?;
+
+                Ok(())
+            }
+        }
+
+        f.debug_struct("QName")
+            .field("raw", &Helper(&self.raw))
+            .field("ns", &self.ns)
+            .finish()
     }
 }
