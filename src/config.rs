@@ -10,6 +10,7 @@ pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
 /// Configuration structure for the [`generate`](super::generate) method.
+#[must_use]
 #[derive(Default, Debug, Clone)]
 pub struct Config {
     /// Configuration for the schema parser.
@@ -262,6 +263,100 @@ bitflags! {
         ///
         /// See [`remove_duplicates`](crate::Optimizer::remove_duplicates) for details.
         const REMOVE_DUPLICATES = 1 << 10;
+
+        /// Group that contains all necessary optimization that should be applied
+        /// if code with [`serde`] support should be rendered.
+        const SERDE =  Self::FLATTEN_ELEMENT_CONTENT.bits()
+            | Self::FLATTEN_UNIONS.bits()
+            | Self::MERGE_ENUM_UNIONS.bits();
+    }
+}
+
+impl Config {
+    /// Add optimizer flags to the config.
+    pub fn with_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove optimizer flags to the config.
+    pub fn without_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.remove(flags);
+
+        self
+    }
+
+    /// Add code generator flags to the config.
+    pub fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
+        self.generator.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove code generator flags to the config.
+    pub fn without_generate_flags(mut self, flags: GenerateFlags) -> Self {
+        self.generator.flags.remove(flags);
+
+        self
+    }
+
+    /// Add boxing flags to the code generator config.
+    pub fn with_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags.insert(flags);
+
+        self
+    }
+
+    /// Remove boxing flags to the code generator config.
+    pub fn without_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags.remove(flags);
+
+        self
+    }
+
+    /// Enable code generation for [`quick_xml`] serialization and deserialization.
+    pub fn with_quick_xml(mut self) -> Self {
+        self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
+
+        self
+    }
+
+    /// Set the [`serde`] support.
+    pub fn with_serde_support(mut self, serde_support: SerdeSupport) -> Self {
+        self.generator.serde_support = serde_support;
+
+        if self.generator.serde_support != SerdeSupport::None {
+            self.optimizer.flags |= OptimizerFlags::SERDE;
+        }
+
+        self
+    }
+
+    /// Set the types the code should be generated for.
+    pub fn with_generate<I, T>(mut self, types: I) -> Self
+    where
+        I: IntoIterator<Item = (IdentType, T)>,
+        T: Into<String>,
+    {
+        self.generator.generate =
+            Generate::Types(types.into_iter().map(|(a, b)| (a, b.into())).collect());
+
+        self
+    }
+
+    /// Set the content mode for the generator.
+    pub fn with_content_mode(mut self, mode: ContentMode) -> Self {
+        self.generator.content_mode = mode;
+
+        self
+    }
+
+    /// Set the typedef mode for the generator.
+    pub fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
+        self.generator.typedef_mode = mode;
+
+        self
     }
 }
 

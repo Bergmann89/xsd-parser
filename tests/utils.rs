@@ -12,7 +12,7 @@ use serde::Deserialize;
 use xsd_parser::{
     config::{Config, Generate, OptimizerFlags, Schema},
     generate,
-    generator::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, TypedefMode},
+    generator::GenerateFlags,
     quick_xml::{
         DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer, Writer,
         XmlReader,
@@ -22,33 +22,6 @@ use xsd_parser::{
 
 pub trait ConfigEx {
     fn test_default() -> Self;
-
-    fn with_quick_xml(self) -> Self;
-
-    fn with_serde(self, serde_support: SerdeSupport) -> Self;
-
-    fn with_generate<I, T>(self, types: I) -> Self
-    where
-        I: IntoIterator<Item = (IdentType, T)>,
-        T: Into<String>;
-
-    fn with_generate_flags(self, flags: GenerateFlags) -> Self;
-
-    fn without_generate_flags(self, flags: GenerateFlags) -> Self;
-
-    fn with_optimizer_flags(self, flags: OptimizerFlags) -> Self;
-
-    fn without_optimizer_flags(self, flags: OptimizerFlags) -> Self;
-
-    fn with_box_flags(self, flags: BoxFlags) -> Self;
-
-    fn without_box_flags(self, flags: BoxFlags) -> Self;
-
-    fn with_content_mode(self, mode: ContentMode) -> Self;
-
-    fn with_typedef_mode(self, mode: TypedefMode) -> Self;
-
-    fn with_serde_support(self, mode: SerdeSupport) -> Self;
 }
 
 impl ConfigEx for Config {
@@ -59,83 +32,6 @@ impl ConfigEx for Config {
         config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
 
         config
-    }
-
-    fn with_quick_xml(mut self) -> Self {
-        self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
-
-        self
-    }
-
-    fn with_serde(mut self, serde_support: SerdeSupport) -> Self {
-        self.generator.serde_support = serde_support;
-
-        self
-    }
-
-    fn with_generate<I, T>(mut self, types: I) -> Self
-    where
-        I: IntoIterator<Item = (IdentType, T)>,
-        T: Into<String>,
-    {
-        self.generator.generate =
-            Generate::Types(types.into_iter().map(|(a, b)| (a, b.into())).collect());
-
-        self
-    }
-
-    fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
-        self.generator.flags.insert(flags);
-
-        self
-    }
-
-    fn without_generate_flags(mut self, flags: GenerateFlags) -> Self {
-        self.generator.flags.remove(flags);
-
-        self
-    }
-
-    fn with_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
-        self.optimizer.flags.insert(flags);
-
-        self
-    }
-
-    fn without_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
-        self.optimizer.flags.remove(flags);
-
-        self
-    }
-
-    fn with_box_flags(mut self, flags: BoxFlags) -> Self {
-        self.generator.box_flags.insert(flags);
-
-        self
-    }
-
-    fn without_box_flags(mut self, flags: BoxFlags) -> Self {
-        self.generator.box_flags.remove(flags);
-
-        self
-    }
-
-    fn with_content_mode(mut self, mode: ContentMode) -> Self {
-        self.generator.content_mode = mode;
-
-        self
-    }
-
-    fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
-        self.generator.typedef_mode = mode;
-
-        self
-    }
-
-    fn with_serde_support(mut self, mode: SerdeSupport) -> Self {
-        self.generator.serde_support = mode;
-
-        self
     }
 }
 

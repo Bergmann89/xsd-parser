@@ -673,7 +673,7 @@ impl Optimizer {
 
                 si
             }
-            Type::Sequence(si) => si,
+            Type::All(si) | Type::Sequence(si) => si,
             Type::Reference(ti) if ti.is_single() => {
                 self.flatten_complex(
                     &ti.type_,
@@ -684,7 +684,7 @@ impl Optimizer {
 
                 return;
             }
-            _ => unreachable!(),
+            x => unreachable!("{x:#?}"),
         };
 
         next.count += 1;

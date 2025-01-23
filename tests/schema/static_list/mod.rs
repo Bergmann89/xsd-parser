@@ -28,7 +28,7 @@ fn generate_serde_xml_rs() {
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde(SerdeSupport::SerdeXmlRs)
+            .with_serde_support(SerdeSupport::SerdeXmlRs)
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
 }
@@ -39,7 +39,7 @@ fn generate_serde_quick_xml() {
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/serde_quick_xml.rs",
         Config::test_default()
-            .with_serde(SerdeSupport::QuickXml)
+            .with_serde_support(SerdeSupport::QuickXml)
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
 }
