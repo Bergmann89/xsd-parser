@@ -18,6 +18,15 @@ pub trait WithNamespace {
     fn namespace() -> Option<&'static str>;
 }
 
+/// Trait that is used to get the [`Any`](core::any::Any) trait for a specific type.
+pub trait AsAny: core::any::Any {
+    /// Get a reference to the current object as [`Any`](core::any::Any).
+    fn as_any(&self) -> &dyn core::any::Any;
+
+    /// Get a mutable reference to the current object as [`Any`](core::any::Any).
+    fn as_any_mut(&mut self) -> &mut dyn core::any::Any;
+}
+
 /// Error emitted by the [`generate`](crate::generate) function.
 #[derive(Debug, Error)]
 pub enum Error {

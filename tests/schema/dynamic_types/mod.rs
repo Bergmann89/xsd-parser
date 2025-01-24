@@ -8,7 +8,7 @@ fn generate_default() {
         "tests/schema/dynamic_types/schema.xsd",
         "tests/schema/dynamic_types/expected/default.rs",
         Config::test_default()
-            .with_derive([""])
+            .with_derive(["Debug"])
             .with_generate([(IdentType::Element, "tns:base")]),
     );
 }

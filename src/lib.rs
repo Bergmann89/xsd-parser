@@ -26,7 +26,7 @@ use std::fs::write;
 pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
-pub use misc::{Error, WithNamespace};
+pub use misc::{AsAny, Error, WithNamespace};
 pub use optimizer::Optimizer;
 pub use parser::Parser;
 
@@ -214,6 +214,10 @@ fn exec_generator(
 
     if let Some(derive) = config.derive {
         generator = generator.derive(derive);
+    }
+
+    if let Some(traits) = config.dyn_type_traits {
+        generator = generator.dyn_type_traits(traits);
     }
 
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);

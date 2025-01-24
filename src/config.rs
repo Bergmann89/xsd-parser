@@ -86,6 +86,11 @@ pub struct GeneratorConfig {
     /// See [`derive`](crate::Generator::derive) for more details.
     pub derive: Option<Vec<String>>,
 
+    /// Set the traits that should be implemented by dynamic types.
+    ///
+    /// See [`dyn_type_traits`](crate::Generator::dyn_type_traits) for more details.
+    pub dyn_type_traits: Option<Vec<String>>,
+
     /// Postfixes that should be applied to the name of the different generated
     /// types.
     ///
@@ -420,6 +425,7 @@ impl Default for GeneratorConfig {
             types: vec![],
             derive: None,
             type_postfix: TypePostfix::default(),
+            dyn_type_traits: None,
             box_flags: BoxFlags::AUTO,
             content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,

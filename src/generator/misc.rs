@@ -1,5 +1,6 @@
 use std::borrow::Cow;
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::ops::Deref;
 
 use bitflags::bitflags;
 use inflector::Inflector;
@@ -7,7 +8,7 @@ use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::schema::{MaxOccurs, MinOccurs, NamespaceId};
-use crate::types::{Ident, Name, Type, Types};
+use crate::types::{DynamicInfo, Ident, Name, Type, Types};
 
 use super::Error;
 
@@ -347,6 +348,101 @@ pub(super) struct TypeRef {
     pub boxed_elements: HashSet<Ident>,
 }
 
+/* TraitInfos */
+
+#[derive(Debug)]
+pub(super) struct TraitInfos(BTreeMap<Ident, TraitInfo>);
+
+impl TraitInfos {
+    #[must_use]
+    pub(super) fn new(types: &Types) -> Self {
+        let mut ret = Self(BTreeMap::new());
+
+        for (base_ident, ty) in types.iter() {
+            let Type::Dynamic(ai) = ty else {
+                continue;
+            };
+
+            for type_ident in &ai.derived_types {
+                ret.0
+                    .entry(type_ident.clone())
+                    .or_default()
+                    .traits_all
+                    .insert(base_ident.clone());
+
+                match types.get(type_ident) {
+                    Some(Type::Dynamic(DynamicInfo {
+                        type_: Some(type_ident),
+                        ..
+                    })) => {
+                        ret.0
+                            .entry(type_ident.clone())
+                            .or_default()
+                            .traits_all
+                            .insert(base_ident.clone());
+                    }
+                    Some(Type::Reference(ri)) if ri.is_single() => {
+                        ret.0
+                            .entry(ri.type_.clone())
+                            .or_default()
+                            .traits_all
+                            .insert(base_ident.clone());
+                    }
+                    _ => (),
+                }
+            }
+        }
+
+        for ident in ret.0.keys().cloned().collect::<Vec<_>>() {
+            let mut traits_second_level = BTreeSet::new();
+
+            ret.collect_traits(&ident, 0, &mut traits_second_level);
+
+            let info = ret.0.get_mut(&ident).unwrap();
+            info.traits_direct = info
+                .traits_all
+                .difference(&traits_second_level)
+                .cloned()
+                .collect();
+        }
+
+        ret
+    }
+
+    fn collect_traits(
+        &self,
+        ident: &Ident,
+        depth: usize,
+        traits_second_level: &mut BTreeSet<Ident>,
+    ) {
+        if depth > 1 {
+            traits_second_level.insert(ident.clone());
+        }
+
+        if let Some(info) = self.0.get(ident) {
+            for trait_ in &info.traits_all {
+                self.collect_traits(trait_, depth + 1, traits_second_level);
+            }
+        }
+    }
+}
+
+impl Deref for TraitInfos {
+    type Target = BTreeMap<Ident, TraitInfo>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+/* TraitInfo */
+
+#[derive(Default, Debug)]
+pub(super) struct TraitInfo {
+    pub traits_all: BTreeSet<Ident>,
+    pub traits_direct: BTreeSet<Ident>,
+}
+
 /* StateFlags */
 
 bitflags! {
@@ -416,6 +512,15 @@ pub(super) enum TypeMode {
     Sequence,
 }
 
+/* DynTypeTraits */
+
+#[derive(Default, Debug)]
+pub(super) enum DynTypeTraits {
+    #[default]
+    Auto,
+    Custom(Vec<TokenStream>),
+}
+
 /* Helper */
 
 pub(super) fn format_field_name(name: &Name) -> Cow<'static, str> {
@@ -475,15 +580,15 @@ pub(super) fn format_module(
 }
 
 pub(super) fn format_type_ref(current_ns: Option<NamespaceId>, type_: &TypeRef) -> TokenStream {
-    format_type_ref_ex(current_ns, None, type_)
+    format_type_ref_ex(current_ns, None, &type_.type_ident, type_)
 }
 
 pub(super) fn format_type_ref_ex(
     current_ns: Option<NamespaceId>,
     extra: Option<&TokenStream>,
+    type_ident: &Ident2,
     type_: &TypeRef,
 ) -> TokenStream {
-    let type_ident = &type_.type_ident;
     let module_ident = match (current_ns, type_.ns) {
         (Some(a), Some(b)) if a != b => Some(&type_.module_ident),
         (_, _) => None,
