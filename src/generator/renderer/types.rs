@@ -306,6 +306,8 @@ impl TypeRenderer {
         I: IntoIterator,
         I::Item: Into<TokenStream>,
     {
+        let xsd_parser = &generator.xsd_parser_crate;
+
         let serde: SmallVec<[TokenStream; 2]> = if generator.serde_support == SerdeSupport::None {
             smallvec![]
         } else {
@@ -323,6 +325,11 @@ impl TypeRenderer {
                     _ => quote!(#x),
                 })
                 .chain(serde)
+                .chain(
+                    generator
+                        .check_generate_flags(GenerateFlags::QUICK_XML_SERIALIZE)
+                        .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
+                )
                 .chain(extra.into_iter().map(Into::into))
                 .collect::<Vec<_>>(),
         };

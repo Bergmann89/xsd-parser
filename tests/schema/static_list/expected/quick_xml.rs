@@ -5,6 +5,13 @@ pub struct ArrayType {
 }
 impl xsd_parser::quick_xml::WithSerializer for ArrayType {
     type Serializer<'x> = quick_xml_serialize::ArrayTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::ArrayTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for ArrayType {
     type Deserializer = quick_xml_deserialize::ArrayTypeDeserializer;
@@ -26,13 +33,13 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::ArrayType> for ArrayTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> ArrayTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::ArrayType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("ArrayType");
+            let name = name.unwrap_or("tns:ArrayType");
             Ok(Self {
                 name,
                 value,
@@ -44,18 +51,20 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for ArrayTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     ArrayTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.item, Some("tns:Item"), false) {
-                            Ok(serializer) => {
-                                self.state = ArrayTypeSerializerState::Item(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ArrayTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
+                        {
+                            self.state = ArrayTypeSerializerState::Item(
+                                xsd_parser::quick_xml::IterSerializer::new(
+                                    &self.value.item,
+                                    Some("tns:Item"),
+                                    false,
+                                ),
+                            );
                         }
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {

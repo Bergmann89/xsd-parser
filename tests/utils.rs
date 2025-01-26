@@ -14,7 +14,7 @@ use xsd_parser::{
     generate,
     generator::GenerateFlags,
     quick_xml::{
-        DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer, Writer,
+        DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
         XmlReader,
     },
     types::IdentType,
@@ -161,8 +161,7 @@ where
     let mut content = Vec::new();
     let mut writer = Writer::new(&mut content);
 
-    let mut actual: <T as WithSerializer>::Serializer<'_> =
-        Serializer::init(value, Some(root), true).unwrap();
+    let mut actual = value.serializer(Some(root), true).unwrap();
     let mut expected = Reader::from_file(path).unwrap();
     let mut buffer = Vec::new();
 

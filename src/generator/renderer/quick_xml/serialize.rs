@@ -190,6 +190,7 @@ impl QuickXmlRenderer {
 
 impl ComplexTypeImpl<'_, '_, '_> {
     fn render_serializer(&mut self) -> (TokenStream, TokenStream) {
+        let tag_name = &self.tag_name;
         let type_ident = self.type_ident;
         let xsd_parser = &self.xsd_parser_crate;
         let serializer_ident = &self.serializer_ident;
@@ -199,11 +200,17 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
         let fn_next = self.render_serializer_fn_next();
 
-        let name = Literal::string(&self.ident.name.to_string());
-
         let code = quote! {
             impl #xsd_parser::quick_xml::WithSerializer for #type_ident {
                 type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
+
+                fn serializer<'ser>(
+                    &'ser self,
+                    name: Option<&'ser str>,
+                    is_root: bool
+                ) -> Result<Self::Serializer<'ser>, #xsd_parser::quick_xml::Error> {
+                    quick_xml_serialize::#serializer_ident::new(self, name, is_root)
+                }
             }
         };
 
@@ -218,9 +225,13 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
             #state_type
 
-            impl<'ser> #xsd_parser::quick_xml::Serializer<'ser, super::#type_ident> for #serializer_ident<'ser> {
-                fn init(value: &'ser super::#type_ident, name: Option<&'ser str>, is_root: bool) -> Result<Self, #xsd_parser::quick_xml::Error> {
-                    let name = name.unwrap_or(#name);
+            impl<'ser> #serializer_ident<'ser> {
+                pub(super) fn new(
+                    value: &'ser super::#type_ident,
+                    name: Option<&'ser str>,
+                    is_root: bool
+                ) -> Result<Self, #xsd_parser::quick_xml::Error> {
+                    let name = name.unwrap_or(#tag_name);
 
                     Ok(Self {
                         name,
@@ -348,13 +359,18 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }
         });
 
-        let fn_build_attributes = has_attributes.then(|| quote!{
-            fn build_attributes<'a>(mut bytes: BytesStart<'a>, value: &'a super::#type_ident) -> Result<BytesStart<'a>, Error> {
-                use #xsd_parser::quick_xml::SerializeBytes;
+        let fn_build_attributes = has_attributes.then(|| {
+            quote! {
+                fn build_attributes<'a>(
+                    mut bytes: BytesStart<'a>,
+                    value: &'a super::#type_ident
+                ) -> Result<BytesStart<'a>, Error> {
+                    use #xsd_parser::quick_xml::SerializeBytes;
 
-                #( #attributes )*
+                    #( #attributes )*
 
-                Ok(bytes)
+                    Ok(bytes)
+                }
             }
         });
 
@@ -410,7 +426,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
         quote! {
             fn next(&mut self) -> Option<Self::Item> {
-                use #xsd_parser::quick_xml::{Event, Serializer, BytesEnd, BytesStart, Error};
+                use #xsd_parser::quick_xml::{Event, Serializer, WithSerializer, BytesEnd, BytesStart, Error};
 
                 #fn_build_attributes
 
@@ -443,19 +459,13 @@ impl ComplexTypeImpl<'_, '_, '_> {
             quote!(&self.value.content)
         };
 
-        let variants_init = self.elements.iter().map(|elements| {
-            let field_name = &elements.tag_name;
-            let variant_ident = &elements.variant_ident;
+        let variants_init = self.elements.iter().map(|element| {
+            let variant_ident = &element.variant_ident;
+
+            let init = self.render_serializer_fn_next_init_serializer(element, &quote!(x));
 
             quote! {
-                #content_ident::#variant_ident(x) => match Serializer::init(x, Some(#field_name), false) {
-                    Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
-                    Err(error) => {
-                        self.state = #state_ident::Done__;
-
-                        return Some(Err(error));
-                    }
-                }
+                #content_ident::#variant_ident(x) => #init
             }
         });
 
@@ -500,20 +510,12 @@ impl ComplexTypeImpl<'_, '_, '_> {
             let variant_ident = &element.variant_ident;
 
             let next = if let Some(next) = self.elements.get(i + 1) {
-                let field_name = &next.tag_name;
                 let field_ident = &next.field_ident;
-                let variant_ident = &next.variant_ident;
 
-                quote! {
-                    match Serializer::init(&self.value.#field_ident, Some(#field_name), false) {
-                        Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
-                        Err(error) => {
-                            self.state = #state_ident::Done__;
-
-                            return Some(Err(error));
-                        }
-                    }
-                }
+                self.render_serializer_fn_next_init_serializer(
+                    next,
+                    &quote!(&self.value.#field_ident),
+                )
             } else {
                 quote! {
                     self.state = #state_end,
@@ -533,21 +535,9 @@ impl ComplexTypeImpl<'_, '_, '_> {
         });
 
         let handle_state_init = if let Some(first) = self.elements.first() {
-            let field_name = &first.tag_name;
             let field_ident = &first.field_ident;
-            let variant_ident = &first.variant_ident;
 
-            quote! {
-                match Serializer::init(&self.value.#field_ident, Some(#field_name), false) {
-                    Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
-                    Err(error) => {
-                        self.state = #state_ident::Done__;
-
-                        return Some(Err(error));
-                    }
-                }
-
-            }
+            self.render_serializer_fn_next_init_serializer(first, &quote!(&self.value.#field_ident))
         } else {
             quote! {
                 self.state = #state_end;
@@ -559,6 +549,52 @@ impl ComplexTypeImpl<'_, '_, '_> {
         };
 
         (handle_state_init, handle_state_variants)
+    }
+
+    fn render_serializer_fn_next_init_serializer(
+        &self,
+        element: &ElementImpl<'_, '_>,
+        value: &TokenStream,
+    ) -> TokenStream {
+        let xsd_parser = &self.xsd_parser_crate;
+        let state_ident = &self.serializer_state_ident;
+
+        let field_name = &element.tag_name;
+        let is_complex = element.target_is_complex;
+        let variant_ident = &element.variant_ident;
+
+        match element.occurs {
+            Occurs::None => unreachable!(),
+            Occurs::Single if is_complex => quote! {
+                match WithSerializer::serializer(#value, Some(#field_name), false) {
+                    Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
+                    Err(error) => {
+                        self.state = #state_ident::Done__;
+
+                        return Some(Err(error));
+                    }
+                }
+            },
+            Occurs::Single => quote! {
+                match #xsd_parser::quick_xml::ContentSerializer::new(#value, Some(#field_name), false) {
+                    Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
+                    Err(error) => {
+                        self.state = #state_ident::Done__;
+
+                        return Some(Err(error));
+                    }
+                }
+            },
+            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => quote! {{
+                self.state = #state_ident::#variant_ident(
+                    #xsd_parser::quick_xml::IterSerializer::new(
+                        #value,
+                        Some(#field_name),
+                        false
+                    )
+                );
+            }},
+        }
     }
 }
 

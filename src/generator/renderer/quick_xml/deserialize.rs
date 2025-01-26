@@ -993,17 +993,18 @@ impl ComplexTypeImpl<'_, '_, '_> {
             });
 
             let module = element.ident.ns.and_then(|ns| self.types.modules.get(&ns));
-            let name_matcher = match (element.element_mode, module) {
-                (ElementMode::Element, Some(module)) => {
+            let name_matcher = match (element.is_dynamic, element.element_mode, module) {
+                (false, ElementMode::Element, Some(module)) => {
                     let ns_name = make_ns_const(module);
 
                     quote!(Event::Start(x) | Event::Empty(x) if matches!(reader.resolve_local_name(x.name(), #ns_name), Some(#name)))
                 },
-                (ElementMode::Element, None) => quote!(Event::Start(x) | Event::Empty(x) if x.name().local_name().as_ref() == #name),
-                (ElementMode::Group, _) => quote!(Event::Start(_) | Event::Empty(_)),
+                (false, ElementMode::Element, None) => quote!(Event::Start(x) | Event::Empty(x) if x.name().local_name().as_ref() == #name),
+                (true, _, _) | (_, ElementMode::Group, _) => quote!(Event::Start(_) | Event::Empty(_)),
             };
 
-            let fallback_matcher = element.element_mode.eq(&ElementMode::Element).then(|| quote!{
+            let need_fallback_matcher = element.element_mode == ElementMode::Element && !element.is_dynamic;
+            let fallback_matcher = need_fallback_matcher.then(|| quote!{
                 Event::Start(_) | Event::Empty(_) => {
                     *self.state = #next_state;
 

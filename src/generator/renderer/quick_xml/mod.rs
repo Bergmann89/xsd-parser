@@ -22,6 +22,7 @@ pub(crate) struct QuickXmlRenderer;
 struct ComplexTypeImpl<'a, 'b, 'types> {
     inner: &'a ComplexTypeData<'b, 'types>,
 
+    tag_name: String,
     type_ref: &'a TypeRef,
     type_ident: &'a Ident2,
     content_ident: Ident2,
@@ -60,6 +61,7 @@ struct ElementImpl<'a, 'types> {
 impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
     fn new(inner: &'a ComplexTypeData<'b, 'types>) -> Self {
         let type_ref = inner.current_type_ref();
+        let tag_name = make_tag_name(inner.types, &inner.ident);
 
         let has_attributes = !inner.attributes.is_empty();
         let is_static_complex = matches!(&inner.ty, TypeInfoData::Complex(ci) if !ci.is_dynamic);
@@ -93,6 +95,7 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
         Self {
             inner,
 
+            tag_name,
             type_ref,
             type_ident,
             content_ident,
@@ -126,18 +129,7 @@ impl<'a, 'types> AttributeImpl<'a, 'types> {
     fn new(types: &'types Types, inner: &'a AttributeData<'types>) -> Self {
         let s_name = inner.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-
-        let tag_name = if let Some(m_name) = inner
-            .ident
-            .ns
-            .as_ref()
-            .and_then(|ns| types.modules.get(ns))
-            .and_then(|module| module.name.as_ref())
-        {
-            format!("{m_name}:{s_name}")
-        } else {
-            s_name.clone()
-        };
+        let tag_name = make_tag_name(types, &inner.ident);
 
         Self {
             inner,
@@ -162,18 +154,7 @@ impl<'a, 'types> ElementImpl<'a, 'types> {
     fn new(types: &'types Types, inner: &'a ElementData<'types>) -> Self {
         let s_name = inner.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-
-        let tag_name = if let Some(m_name) = inner
-            .ident
-            .ns
-            .as_ref()
-            .and_then(|ns| types.modules.get(ns))
-            .and_then(|module| module.name.as_ref())
-        {
-            format!("{m_name}:{s_name}")
-        } else {
-            s_name.clone()
-        };
+        let tag_name = make_tag_name(types, &inner.ident);
 
         Self {
             inner,
@@ -228,5 +209,20 @@ impl<'types> Deref for ElementImpl<'_, 'types> {
 
     fn deref(&self) -> &Self::Target {
         self.inner
+    }
+}
+
+fn make_tag_name(types: &Types, ident: &Ident) -> String {
+    let name = ident.name.to_string();
+
+    if let Some(module) = ident
+        .ns
+        .as_ref()
+        .and_then(|ns| types.modules.get(ns))
+        .and_then(|module| module.name.as_ref())
+    {
+        format!("{module}:{name}")
+    } else {
+        name
     }
 }

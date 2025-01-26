@@ -5,6 +5,13 @@ pub struct FooType {
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
@@ -59,13 +66,13 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -77,11 +84,17 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.enum_, Some("tns:Enum"), false) {
+                        match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.enum_,
+                            Some("tns:Enum"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = FooTypeSerializerState::Enum(serializer),
                             Err(error) => {
                                 self.state = FooTypeSerializerState::Done__;

@@ -6,6 +6,13 @@ pub struct FooType {
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
@@ -17,6 +24,13 @@ pub struct BarType {
 }
 impl xsd_parser::quick_xml::WithSerializer for BarType {
     type Serializer<'x> = quick_xml_serialize::BarTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::BarTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for BarType {
     type Deserializer = quick_xml_deserialize::BarTypeDeserializer;
@@ -39,13 +53,13 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -57,11 +71,17 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.a, Some("tns:a"), false) {
+                        match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.a,
+                            Some("tns:a"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = FooTypeSerializerState::A(serializer),
                             Err(error) => {
                                 self.state = FooTypeSerializerState::Done__;
@@ -81,13 +101,17 @@ pub mod quick_xml_serialize {
                             self.state = FooTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match Serializer::init(&self.value.b, Some("tns:b"), false) {
-                            Ok(serializer) => self.state = FooTypeSerializerState::B(serializer),
-                            Err(error) => {
-                                self.state = FooTypeSerializerState::Done__;
-                                return Some(Err(error));
+                        None => {
+                            match WithSerializer::serializer(&self.value.b, Some("tns:b"), false) {
+                                Ok(serializer) => {
+                                    self.state = FooTypeSerializerState::B(serializer)
+                                }
+                                Err(error) => {
+                                    self.state = FooTypeSerializerState::Done__;
+                                    return Some(Err(error));
+                                }
                             }
-                        },
+                        }
                     },
                     FooTypeSerializerState::B(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -123,13 +147,13 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::BarType> for BarTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> BarTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::BarType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("BarType");
+            let name = name.unwrap_or("other:BarType");
             Ok(Self {
                 name,
                 value,
@@ -141,11 +165,17 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for BarTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     BarTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.b, Some("other:b"), false) {
+                        match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.b,
+                            Some("other:b"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = BarTypeSerializerState::B(serializer),
                             Err(error) => {
                                 self.state = BarTypeSerializerState::Done__;
@@ -165,7 +195,11 @@ pub mod quick_xml_serialize {
                             self.state = BarTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match Serializer::init(&self.value.c, Some("other:c"), false) {
+                        None => match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.c,
+                            Some("other:c"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = BarTypeSerializerState::C(serializer),
                             Err(error) => {
                                 self.state = BarTypeSerializerState::Done__;

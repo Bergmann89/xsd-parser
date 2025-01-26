@@ -11,7 +11,7 @@ pub use std::io::Write as XmlWrite;
 
 pub use quick_xml::{
     events::{BytesCData, BytesDecl, BytesEnd, BytesPI, BytesStart, BytesText, Event},
-    name::{LocalName, ResolveResult},
+    name::{LocalName, Namespace, QName, ResolveResult},
     Writer,
 };
 
@@ -24,7 +24,8 @@ pub use self::deserialize::{
 pub use self::error::{Error, Kind as ErrorKind, UnionError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
-    ContentSerializer, IterSerializer, SerializeBytes, SerializeSync, Serializer, WithSerializer,
+    BoxedSerializer, ContentSerializer, IterSerializer, SerializeBytes, SerializeSync, Serializer,
+    WithBoxedSerializer, WithSerializer,
 };
 
 #[cfg(feature = "async")]
