@@ -15,7 +15,7 @@ use super::super::super::data::{
     UnionVariantData,
 };
 use super::super::super::misc::{Occurs, StateFlags, TypeMode, TypedefMode};
-use super::{AttributeImpl, ComplexTypeImpl, ElementImpl, QuickXmlRenderer};
+use super::{AttributeImpl, ComplexTypeImpl, DynamicTypeImpl, ElementImpl, QuickXmlRenderer};
 
 impl QuickXmlRenderer {
     #[instrument(level = "trace", skip(self))]
@@ -75,7 +75,15 @@ impl QuickXmlRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_dynamic_deserialize(&mut self, data: &mut DynamicData<'_, '_>) {
-        crate::unimplemented!();
+        let type_ref = data.current_type_ref_mut();
+        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_DESERIALIZE) {
+            return;
+        }
+
+        let (code, deserializer_code) = DynamicTypeImpl::new(data).render_deserializer();
+
+        data.add_code(code);
+        data.add_quick_xml_deserialize_code(deserializer_code);
     }
 
     #[instrument(level = "trace", skip(self))]
@@ -246,6 +254,195 @@ impl QuickXmlRenderer {
 
         data.add_code(code);
         data.add_quick_xml_deserialize_code(deserializer_code);
+    }
+}
+
+/* DynamicTypeImpl */
+
+impl DynamicTypeImpl<'_, '_, '_> {
+    #[allow(clippy::too_many_lines)]
+    fn render_deserializer(&mut self) -> (TokenStream, TokenStream) {
+        let type_ident = self.type_ident;
+        let xsd_parser = &self.xsd_parser_crate;
+        let deserializer_ident = &self.deserializer_ident;
+
+        let variants = self.derived_types.iter().map(|x| {
+            let type_ident = &x.target_ident;
+            let variant_ident = &x.variant_ident;
+
+            quote! {
+                #variant_ident(<super::#type_ident as #xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+            }
+        });
+
+        let variants_init = self
+            .derived_types
+            .iter()
+            .map(|x| {
+                let b_name = &x.b_name;
+                let target_ident = &x.target_ident;
+                let variant_ident = &x.variant_ident;
+
+                let handler = quote! {
+                    let DeserializerOutput {
+                        data,
+                        deserializer,
+                        event,
+                        allow_any,
+                    } = <super::#target_ident as #xsd_parser::quick_xml::WithDeserializer>::Deserializer::init(reader, event)?;
+
+                    return Ok(DeserializerOutput {
+                        data: data.map(|x| super::#type_ident(Box::new(x))),
+                        deserializer: deserializer.map(Self::#variant_ident),
+                        event,
+                        allow_any,
+                    })
+                };
+
+                if let Some(module) = x.ident.ns.and_then(|ns| self.types.modules.get(&ns)) {
+                    let ns_name = make_ns_const(module);
+
+                    quote! {
+                        if matches!(reader.resolve_local_name(name, #ns_name), Some(#b_name)) {
+                            #handler
+                        }
+                    }
+                } else {
+                    quote! {
+                        if name.as_ref() == #b_name {
+                            #handler
+                        }
+                    }
+                }
+            })
+            .collect::<Vec<_>>();
+
+        let namespace_consts = unique_namespaces(
+            self.types,
+            self.derived_types.iter().filter_map(|x| x.ident.ns),
+        );
+
+        let impl_init = variants_init.is_empty().not().then(|| quote! {
+            let attrib = b.attributes()
+                .find(|attrib| {
+                    let Ok(attrib) = attrib else { return false };
+                    let (resolve, name) = reader.resolve(attrib.key, true);
+
+                    matches!(resolve, ResolveResult::Unbound | ResolveResult::Bound(Namespace(b"http://www.w3.org/2001/XMLSchema-instance")))
+                        && name.as_ref() == b"type"
+                })
+                .transpose()?;
+            let name = attrib.as_ref().map(|attrib| QName(&attrib.value)).unwrap_or_else(|| b.name());
+
+            #( #variants_init )*
+        });
+
+        let impl_next = self.derived_types.iter().map(|x| {
+            let variant_ident = &x.variant_ident;
+
+            quote! {
+                Self::#variant_ident(x) => {
+                    let DeserializerOutput {
+                        data,
+                        deserializer,
+                        event,
+                        allow_any,
+                    } = x.next(reader, event)?;
+
+                    let data = data.map(|x| #type_ident(Box::new(x)));
+                    let deserializer = deserializer.map(|x| Self::#variant_ident(x));
+
+                    Ok(DeserializerOutput {
+                        data,
+                        deserializer,
+                        event,
+                        allow_any,
+                    })
+                },
+            }
+        });
+
+        let impl_finish = self.derived_types.iter().map(|x| {
+            let variant_ident = &x.variant_ident;
+
+            quote! {
+                Self::#variant_ident(x) => Ok(#type_ident(Box::new(x.finish(reader)?))),
+            }
+        });
+
+        let code = quote! {
+            impl #xsd_parser::quick_xml::WithDeserializer for #type_ident {
+                type Deserializer = quick_xml_deserialize::#deserializer_ident;
+            }
+        };
+
+        let deserializer_code = quote! {
+            #[derive(Debug)]
+            pub enum #deserializer_ident {
+                #( #variants )*
+            }
+
+            impl<'de> #xsd_parser::quick_xml::Deserializer<'de, super::#type_ident> for #deserializer_ident {
+                fn init<R>(
+                    reader: &R,
+                    event: #xsd_parser::quick_xml::Event<'de>
+                ) -> #xsd_parser::quick_xml::DeserializerResult<'de, super::#type_ident, Self>
+                where
+                    R: #xsd_parser::quick_xml::XmlReader
+                {
+                    use #xsd_parser::quick_xml::{Event, ResolveResult, QName, Namespace, DeserializerOutput};
+
+                    #( #namespace_consts )*
+
+                    let (Event::Start(b) | Event::Empty(b)) = &event else {
+                        return Ok(DeserializerOutput {
+                            data: None,
+                            deserializer: None,
+                            event: None,
+                            allow_any: false,
+                        });
+                    };
+
+                    #impl_init
+
+                    Ok(DeserializerOutput {
+                        data: None,
+                        deserializer: None,
+                        event: Some(event),
+                        allow_any: false,
+                    })
+                }
+
+                fn next<R>(
+                    self,
+                    reader: &R,
+                    event: #xsd_parser::quick_xml::Event<'de>
+                ) -> #xsd_parser::quick_xml::DeserializerResult<'de, super::#type_ident, Self>
+                where
+                    R: #xsd_parser::quick_xml::XmlReader
+                {
+                    use #xsd_parser::quick_xml::DeserializerOutput;
+
+                    match self {
+                        #( #impl_next )*
+                    }
+                }
+
+                fn finish<R>(
+                    self,
+                    reader: &R
+                ) -> Result<super::#type_ident, #xsd_parser::quick_xml::Error>
+                where
+                    R: #xsd_parser::quick_xml::XmlReader
+                {
+                    match self {
+                        #( #impl_finish )*
+                    }
+                }
+            }
+        };
+
+        (code, deserializer_code)
     }
 }
 

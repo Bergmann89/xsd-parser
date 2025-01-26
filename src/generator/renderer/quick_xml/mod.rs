@@ -10,10 +10,24 @@ use quote::format_ident;
 use crate::types::{ComplexInfo, Ident, Type, Types};
 use crate::Generator;
 
-use super::super::data::{AttributeData, ComplexTypeData, ElementData, TypeInfoData};
+use super::super::data::{AttributeData, ComplexTypeData, DynamicData, ElementData, TypeInfoData};
 use super::super::misc::{GenerateFlags, TypeRef};
 
 pub(crate) struct QuickXmlRenderer;
+
+/* DynamicTypeImpl */
+
+#[derive(Debug)]
+#[allow(dead_code)]
+struct DynamicTypeImpl<'a, 'b, 'types> {
+    inner: &'a DynamicData<'b, 'types>,
+
+    type_ref: &'a TypeRef,
+    type_ident: &'a Ident2,
+
+    serializer_ident: Ident2,
+    deserializer_ident: Ident2,
+}
 
 /* ComplexTypeImpl */
 
@@ -57,6 +71,38 @@ struct ElementImpl<'a, 'types> {
     b_name: Literal,
     tag_name: String,
 }
+
+/* DynamicTypeImpl */
+
+impl<'a, 'b, 'types> DynamicTypeImpl<'a, 'b, 'types> {
+    fn new(inner: &'a DynamicData<'b, 'types>) -> Self {
+        let type_ref = inner.current_type_ref();
+        let type_ident = &type_ref.type_ident;
+
+        let serializer_ident = format_ident!("{type_ident}Serializer");
+        let deserializer_ident = format_ident!("{type_ident}Deserializer");
+
+        Self {
+            inner,
+
+            type_ref,
+            type_ident,
+
+            serializer_ident,
+            deserializer_ident,
+        }
+    }
+}
+
+impl<'b, 'types> Deref for DynamicTypeImpl<'_, 'b, 'types> {
+    type Target = DynamicData<'b, 'types>;
+
+    fn deref(&self) -> &Self::Target {
+        self.inner
+    }
+}
+
+/* ComplexTypeImpl */
 
 impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
     fn new(inner: &'a ComplexTypeData<'b, 'types>) -> Self {

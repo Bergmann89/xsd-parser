@@ -1,3 +1,4 @@
+#![allow(unused_macros)]
 #![allow(unused_macro_rules)]
 
 macro_rules! unimplemented {
@@ -38,5 +39,4 @@ macro_rules! assert_eq {
 }
 
 pub(crate) use assert_eq;
-pub(crate) use unimplemented;
 pub(crate) use unreachable;

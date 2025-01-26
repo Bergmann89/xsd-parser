@@ -11,6 +11,9 @@ impl Namespace {
     /// The XML schema namespace
     pub const XS: Self = Self(Cow::Borrowed(b"http://www.w3.org/2001/XMLSchema"));
 
+    /// The XML schema instance namespace
+    pub const XSI: Self = Self(Cow::Borrowed(b"http://www.w3.org/2001/XMLSchema-instance"));
+
     /// The XML namespace.
     pub const XML: Self = Self(Cow::Borrowed(b"http://www.w3.org/XML/1998/namespace"));
 }

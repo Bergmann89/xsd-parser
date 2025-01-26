@@ -10,7 +10,7 @@ use super::super::super::data::{
     UnionVariantData,
 };
 use super::super::super::misc::{Occurs, StateFlags, TypedefMode};
-use super::{AttributeImpl, ComplexTypeImpl, ElementImpl, QuickXmlRenderer};
+use super::{AttributeImpl, ComplexTypeImpl, DynamicTypeImpl, ElementImpl, QuickXmlRenderer};
 
 /* Serialize */
 
@@ -55,7 +55,14 @@ impl QuickXmlRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_dynamic_serialize(&mut self, data: &mut DynamicData<'_, '_>) {
-        crate::unimplemented!();
+        let type_ref = data.current_type_ref_mut();
+        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE) {
+            return;
+        }
+
+        let code = DynamicTypeImpl::new(data).render_serializer();
+
+        data.add_code(code);
     }
 
     #[instrument(level = "trace", skip(self))]
@@ -183,6 +190,31 @@ impl QuickXmlRenderer {
 
         data.add_code(code);
         data.add_quick_xml_serialize_code(serializer_code);
+    }
+}
+
+/* DynamicTypeImpl */
+
+impl DynamicTypeImpl<'_, '_, '_> {
+    fn render_serializer(&mut self) -> TokenStream {
+        let type_ident = self.type_ident;
+        let xsd_parser = &self.xsd_parser_crate;
+
+        quote! {
+            impl #xsd_parser::quick_xml::WithSerializer for #type_ident {
+                type Serializer<'x> = #xsd_parser::quick_xml::BoxedSerializer<'x>;
+
+                fn serializer<'ser>(
+                    &'ser self,
+                    name: Option<&'ser str>,
+                    is_root: bool
+                ) -> Result<Self::Serializer<'ser>, #xsd_parser::quick_xml::Error> {
+                    let _name = name;
+
+                    self.0.serializer(None, is_root)
+                }
+            }
+        }
     }
 }
 

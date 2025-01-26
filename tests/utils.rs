@@ -13,10 +13,7 @@ use xsd_parser::{
     config::{Config, Generate, OptimizerFlags, Schema},
     generate,
     generator::GenerateFlags,
-    quick_xml::{
-        DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
-        XmlReader,
-    },
+    quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
     types::IdentType,
 };
 
@@ -46,7 +43,7 @@ where
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
 
     // For debugging purposes enable the following lines
-    // config.parser.debug_output = Some("./schemas.log".into());
+    // config.parser.debug_output = Some("schemas.log".into());
     // config.interpreter.debug_output = Some("interpreter.log".into());
     // config.optimizer.debug_output = Some("optimizer.log".into());
 

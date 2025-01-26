@@ -30,7 +30,7 @@ pub use misc::{AsAny, Error, WithNamespace};
 pub use optimizer::Optimizer;
 pub use parser::Parser;
 
-use macros::{assert_eq, unimplemented, unreachable};
+use macros::{assert_eq, unreachable};
 use proc_macro2::TokenStream;
 use schema::{NamespacePrefix, Schemas};
 use tracing::instrument;

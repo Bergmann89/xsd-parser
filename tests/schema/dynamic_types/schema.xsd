@@ -25,6 +25,17 @@
     -->
     <element name="final" type="tns:final" substitutionGroup="tns:intermediate" />
 
+    <!--
+        Test element to store multiple items of type `base`.
+    -->
+    <element name="list">
+        <complexType>
+            <sequence>
+                <element ref="tns:base" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
+
     <complexType name="base" abstract="true">
         <attribute name="baseValue" type="xs:int" />
     </complexType>

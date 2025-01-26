@@ -1,3 +1,8 @@
+pub type List = ListType;
+#[derive(Debug)]
+pub struct ListType {
+    pub base: Vec<Base>,
+}
 #[derive(Debug)]
 pub struct Base(pub Box<dyn BaseTrait>);
 pub trait BaseTrait: core::fmt::Debug + xsd_parser::AsAny {}
