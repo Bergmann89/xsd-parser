@@ -91,6 +91,8 @@ impl Resolver for FileResolver {
             }};
         }
 
+        tracing::debug!("Received resolve request: {req:#?}");
+
         if req.requested_location.scheme() != "file" {
             return Ok(None);
         }

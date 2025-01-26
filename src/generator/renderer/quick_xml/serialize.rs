@@ -299,7 +299,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 let is_complex = f.target_is_complex;
 
                 let serializer = match f.occurs {
-                    Occurs::None => unreachable!(),
+                    Occurs::None => crate::unreachable!(),
                     Occurs::Single if is_complex => quote!(<#target_type as #xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
                     Occurs::Single => quote!(#xsd_parser::quick_xml::ContentSerializer<'ser, #target_type>),
                     Occurs::Optional => quote!(#xsd_parser::quick_xml::IterSerializer<'ser, Option<#target_type>, #target_type>),
@@ -596,7 +596,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let variant_ident = &element.variant_ident;
 
         match element.occurs {
-            Occurs::None => unreachable!(),
+            Occurs::None => crate::unreachable!(),
             Occurs::Single if is_complex => quote! {
                 match WithSerializer::serializer(#value, Some(#field_name), false) {
                     Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),

@@ -511,6 +511,9 @@ impl<'a, 'types> EnumerationData<'a, 'types> {
 
                             format_ident!("Unknown{unknown}")
                         }
+                        _ if matches!(var.ident.name.as_str(), Some(x) if x.chars().all(char::is_numeric)) => {
+                            format_ident!("Value{}", var.ident.name.to_string())
+                        }
                         _ => format_variant_ident(&var.ident.name),
                     };
 
@@ -855,7 +858,7 @@ fn make_element_data<'types>(
     let occurs = match (min, max) {
         (None, None) => Occurs::None,
         (Some(min), Some(max)) => Occurs::from_occurs(min_occurs * min, max_occurs * max),
-        (_, _) => unreachable!(),
+        (_, _) => crate::unreachable!(),
     };
 
     Ok((occurs, elements))

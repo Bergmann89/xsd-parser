@@ -1002,36 +1002,41 @@ impl ComplexTypeImpl<'_, '_, '_> {
             self.elements.iter().filter_map(|el| el.ident.ns),
         );
 
-        let elements = self.elements.iter().enumerate().filter_map(|(index, element)| {
-            if element.element_mode != ElementMode::Element || element.is_dynamic {
-                return None;
-            }
+        let elements = self
+            .elements
+            .iter()
+            .filter(|el| {
+                el.element_mode == ElementMode::Element
+                    && !el.is_dynamic
+            })
+            .enumerate()
+            .map(|(index, element)| {
+                let b_name = &element.b_name;
+                let setter = self.render_setter(element);
+                let target_type = &element.target_type;
 
-            let b_name = &element.b_name;
-            let setter = self.render_setter(element);
-            let target_type = &element.target_type;
+                let else_ = (index > 0).then(|| quote!(else));
 
-            let else_ = (index > 0).then(|| quote!(else));
+                let expr = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event)?);
+                let handler = render_handler(state_ident, element, &expr, &setter);
 
-            let expr = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event)?);
-            let handler = render_handler(state_ident, element, &expr, &setter);
+                if let Some(module) = element.ident.ns.and_then(|ns| self.types.modules.get(&ns)) {
+                    let ns_name = make_ns_const(module);
 
-            if let Some(module) = element.ident.ns.and_then(|ns| self.types.modules.get(&ns)) {
-                let ns_name = make_ns_const(module);
-
-                Some(quote! {
-                    #else_ if matches!(reader.resolve_local_name(x.name(), #ns_name), Some(#b_name)) {
-                        #handler
+                    quote! {
+                        #else_ if matches!(reader.resolve_local_name(x.name(), #ns_name), Some(#b_name)) {
+                            #handler
+                        }
                     }
-                })
-            } else {
-                Some(quote! {
-                    #else_ if x.name().local_name() == #b_name {
-                        #handler
+                } else {
+                    quote! {
+                        #else_ if x.name().local_name() == #b_name {
+                            #handler
+                        }
                     }
-                })
-            }
-        });
+                }
+            })
+            .collect::<Vec<_>>();
 
         let groups = self
             .elements
@@ -1112,7 +1117,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }}
         };
 
-        let name_fallback = if self.elements.is_empty() {
+        let name_fallback = if elements.is_empty() {
             name_fallback
         } else {
             quote! {
@@ -1376,7 +1381,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             let field_ident = &element.field_ident;
 
             let convert = match element.occurs {
-                Occurs::None => unreachable!(),
+                Occurs::None => crate::unreachable!(),
                 Occurs::Single => {
                     let mut code = quote! {
                         self.#field_ident.ok_or_else(|| ErrorKind::MissingElement(#name.into()))?

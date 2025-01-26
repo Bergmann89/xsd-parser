@@ -88,7 +88,7 @@ impl Schemas {
 
         match self.schemas.entry(schema_id) {
             Entry::Vacant(e) => e.insert(schema),
-            Entry::Occupied(_) => unreachable!(),
+            Entry::Occupied(_) => crate::unreachable!(),
         };
     }
 
@@ -114,7 +114,7 @@ impl Schemas {
 
                 let ns = match self.namespace_infos.entry(id) {
                     Entry::Vacant(e) => e.insert(NamespaceInfo::new(namespace)),
-                    Entry::Occupied(_) => unreachable!(),
+                    Entry::Occupied(_) => crate::unreachable!(),
                 };
 
                 (ns, id)

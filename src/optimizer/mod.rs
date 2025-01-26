@@ -316,7 +316,7 @@ impl Optimizer {
 
             let type_ = self.types.get_mut(&ident).unwrap();
             let Type::Dynamic(x) = type_ else {
-                unreachable!();
+                crate::unreachable!();
             };
 
             let mut si = GroupInfo::default();
@@ -336,7 +336,7 @@ impl Optimizer {
                 Entry::Vacant(e) => {
                     e.insert(Type::Choice(si));
                 }
-                Entry::Occupied(_) => unreachable!(),
+                Entry::Occupied(_) => crate::unreachable!(),
             }
         }
 
@@ -381,7 +381,7 @@ impl Optimizer {
         for ident in idents {
             let type_ = self.types.get(&ident).unwrap();
             let Type::ComplexType(ci) = type_ else {
-                unreachable!();
+                crate::unreachable!();
             };
             let Some(content_ident) = ci.content.clone() else {
                 continue;
@@ -702,7 +702,7 @@ impl Optimizer {
 
                 return;
             }
-            x => unreachable!("{x:#?}"),
+            x => crate::unreachable!("{x:#?}"),
         };
 
         next.count += 1;
@@ -781,11 +781,11 @@ impl Optimizer {
 
                         Some(Type::Enumeration(ei))
                     }
-                    _ => unreachable!(),
+                    _ => crate::unreachable!(),
                 };
 
                 let Some(Type::Enumeration(ei)) = next else {
-                    unreachable!();
+                    crate::unreachable!();
                 };
 
                 for var in &*x.variants {
@@ -811,7 +811,7 @@ impl Optimizer {
                             VariantInfo::new(x).with_type(Some(ident.clone()))
                         });
                     }
-                    _ => unreachable!(),
+                    _ => crate::unreachable!(),
                 }
             }
         }

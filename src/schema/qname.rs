@@ -25,7 +25,7 @@ impl QName {
         R: XmlReader,
     {
         let index = raw.iter().position(|x| *x == b':');
-        let ns = match reader.resolve(QuickXmlQName(raw), true).0 {
+        let ns = match reader.resolve(QuickXmlQName(raw), false).0 {
             ResolveResult::Unbound | ResolveResult::Unknown(_) => None,
             ResolveResult::Bound(ns) => Some(Namespace(Cow::Owned(ns.0.to_owned()))),
         };

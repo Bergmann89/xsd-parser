@@ -97,7 +97,7 @@ impl TypeRenderer {
         } = data;
 
         let code = match mode {
-            TypedefMode::Auto => unreachable!(),
+            TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
                 let target_type = occurs.make_type(target_ident, false);
 

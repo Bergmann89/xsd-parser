@@ -59,7 +59,7 @@ macro_rules! init_any {
         $builder.fixed = $fixed;
 
         let Type::$variant(ret) = $builder.type_.as_mut().unwrap() else {
-            unreachable!();
+            crate::unreachable!();
         };
 
         ret
@@ -119,7 +119,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
     }
 
-    #[instrument(err, level = "trace", skip(self))]
     pub(super) fn finish(self) -> Result<Type, Error> {
         self.type_.ok_or(Error::InternalError)
     }
@@ -317,7 +316,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         match &mut self.type_ {
             Some(Type::Reference(_)) => (),
             Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-            _ => unreachable!("Should have a simple type!"),
+            e => crate::unreachable!("Should have a simple type but is {e:#?}!"),
         }
 
         Ok(())
@@ -807,7 +806,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
         let base = match self.type_mode {
-            TypeMode::Unknown => unreachable!("Should be set somewhere above!"),
+            TypeMode::Unknown => crate::unreachable!("Should be set somewhere above!"),
             TypeMode::Simple => self.owner.get_simple_type(base)?,
             TypeMode::Complex => self.owner.get_complex_type(base)?,
         };
