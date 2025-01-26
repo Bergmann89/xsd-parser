@@ -7,7 +7,7 @@ use std::path::PathBuf;
 use anyhow::Error;
 use proc_macro2::TokenStream;
 use quote::quote;
-use tracing_subscriber::{fmt::layer, layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::config::{
     Config, Generate, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
@@ -17,17 +17,15 @@ use xsd_parser::generator::GenerateFlags;
 use xsd_parser::types::{BuildInInfo, CustomType, IdentType, Type};
 
 fn main() -> Result<(), Error> {
-    let layer = layer()
+    fmt()
         .without_time()
         .with_file(true)
         .with_level(true)
         .with_line_number(true)
         .with_thread_ids(true)
         .with_thread_names(true)
-        .pretty();
-    tracing_subscriber::registry()
-        .with(layer)
-        .with(EnvFilter::from_default_env())
+        .pretty()
+        .with_env_filter(EnvFilter::from_default_env())
         .init();
 
     let cwd = current_dir()?;
