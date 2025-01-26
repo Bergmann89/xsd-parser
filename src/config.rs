@@ -234,10 +234,10 @@ bitflags! {
         /// See [`use_unrestricted_base_type`](crate::Optimizer::use_unrestricted_base_type) for details.
         const USE_UNRESTRICTED_BASE_TYPE = 1 << 4;
 
-        /// Whether to convert abstract types to choices or not.
+        /// Whether to convert dynamic types to choices or not.
         ///
-        /// See [`convert_abstract_to_choice`](crate::Optimizer::convert_abstract_to_choice) for details.
-        const CONVERT_ABSTRACT_TO_CHOICE = 1 << 5;
+        /// See [`convert_dynamic_to_choice`](crate::Optimizer::convert_dynamic_to_choice) for details.
+        const CONVERT_DYNAMIC_TO_CHOICE = 1 << 5;
 
         /// Whether to flatten the content of an element or not.
         ///

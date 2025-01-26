@@ -33,7 +33,7 @@ struct ComplexTypeImpl<'a, 'b, 'types> {
     deserializer_state_ident: Ident2,
 
     flatten_content: bool,
-    is_non_abstract_complex: bool,
+    is_static_complex: bool,
 
     attributes: Vec<AttributeImpl<'a, 'types>>,
     elements: Vec<ElementImpl<'a, 'types>>,
@@ -62,8 +62,7 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
         let type_ref = inner.current_type_ref();
 
         let has_attributes = !inner.attributes.is_empty();
-        let is_non_abstract_complex =
-            matches!(&inner.ty, TypeInfoData::Complex(ci) if !ci.is_abstract);
+        let is_static_complex = matches!(&inner.ty, TypeInfoData::Complex(ci) if !ci.is_dynamic);
         let flatten_content =
             !has_attributes && inner.check_generate_flags(GenerateFlags::FLATTEN_CONTENT);
 
@@ -105,7 +104,7 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
             deserializer_state_ident,
 
             flatten_content,
-            is_non_abstract_complex,
+            is_static_complex,
 
             attributes,
             elements,

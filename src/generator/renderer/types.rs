@@ -9,7 +9,7 @@ use tracing::instrument;
 use crate::schema::xs::Use;
 
 use super::super::data::{
-    AbstractData, AttributeData, ComplexTypeData, ElementData, EnumVariantData, EnumerationData,
+    AttributeData, ComplexTypeData, DynamicData, ElementData, EnumVariantData, EnumerationData,
     ReferenceData, TypeData, UnionData, UnionVariantData,
 };
 use super::super::misc::{BoxFlags, GenerateFlags, Occurs, StateFlags, TypeMode, TypedefMode};
@@ -53,9 +53,7 @@ impl TypeRenderer {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub fn render_abstract(&mut self, data: &mut AbstractData<'_, '_>) {
-        // TODO: generate trait for the abstract type?
-
+    pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
         let type_ref = data.current_type_ref_mut();
         if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
             return;

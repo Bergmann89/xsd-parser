@@ -176,7 +176,7 @@ fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error>
     );
     exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
-    exec!(CONVERT_ABSTRACT_TO_CHOICE, convert_abstract_to_choice);
+    exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
     exec!(FLATTEN_ELEMENT_CONTENT, flatten_element_content);
     exec!(FLATTEN_UNIONS, flatten_unions);
     exec!(MERGE_ENUM_UNIONS, merge_enum_unions);

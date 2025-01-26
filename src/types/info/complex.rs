@@ -25,8 +25,8 @@ pub struct ComplexInfo {
     /// Maximum occurrence of this complex types content type.
     pub max_occurs: MaxOccurs,
 
-    /// Whether the type is abstract or not.
-    pub is_abstract: bool,
+    /// Whether the type is dynamic or not.
+    pub is_dynamic: bool,
 
     /// List of attributes defined for this complex type.
     pub attributes: AttributesInfo,
@@ -98,7 +98,7 @@ impl Default for ComplexInfo {
             content: None,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
-            is_abstract: false,
+            is_dynamic: false,
             attributes: AttributesInfo::default(),
             any_attribute: None,
         }
@@ -112,7 +112,7 @@ impl TypeEq for ComplexInfo {
             content,
             min_occurs,
             max_occurs,
-            is_abstract,
+            is_dynamic,
             attributes,
             any_attribute,
         } = self;
@@ -121,7 +121,7 @@ impl TypeEq for ComplexInfo {
             && content.type_eq(&other.content, types)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
-            && is_abstract.eq(&other.is_abstract)
+            && is_dynamic.eq(&other.is_dynamic)
             && attributes.type_eq(&other.attributes, types)
             && any_attribute.eq(&other.any_attribute)
     }

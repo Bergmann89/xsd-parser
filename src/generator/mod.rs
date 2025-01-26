@@ -370,7 +370,7 @@ impl<'types> Generator<'types> {
         match data.ty {
             Type::BuildIn(_) => Ok(()),
             Type::Union(x) => data.generate_union(x),
-            Type::Abstract(x) => data.generate_abstract(x),
+            Type::Dynamic(x) => data.generate_dynamic(x),
             Type::Reference(x) => data.generate_reference(x),
             Type::Enumeration(x) => data.generate_enumeration(x),
             Type::ComplexType(x) => data.generate_complex_type(x),

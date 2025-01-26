@@ -11,7 +11,7 @@ use crate::schema::NamespaceId;
 use crate::types::{ElementMode, Module, Types};
 
 use super::super::super::data::{
-    AbstractData, ComplexTypeData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
+    ComplexTypeData, DynamicData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
     UnionVariantData,
 };
 use super::super::super::misc::{Occurs, StateFlags, TypeMode, TypedefMode};
@@ -74,7 +74,7 @@ impl QuickXmlRenderer {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub fn render_abstract_deserialize(&mut self, data: &mut AbstractData<'_, '_>) {
+    pub fn render_dynamic_deserialize(&mut self, data: &mut DynamicData<'_, '_>) {
         crate::unimplemented!();
     }
 
@@ -261,7 +261,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let state_type = self.render_deserializer_state_type();
 
         let fn_from_bytes_start = self
-            .is_non_abstract_complex
+            .is_static_complex
             .then(|| self.render_deserializer_fn_from_bytes_start());
 
         let fn_init = self.render_deserializer_fn_init();
@@ -608,7 +608,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = self.type_ident;
         let xsd_parser = &self.xsd_parser_crate;
 
-        let fn_impl = if self.is_non_abstract_complex {
+        let fn_impl = if self.is_static_complex {
             self.render_deserializer_fn_init_complex()
         } else {
             match self.target_mode {
@@ -806,7 +806,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         );
 
         let elements = self.elements.iter().enumerate().filter_map(|(index, element)| {
-            if element.element_mode != ElementMode::Element || element.is_abstract {
+            if element.element_mode != ElementMode::Element || element.is_dynamic {
                 return None;
             }
 
@@ -840,7 +840,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             .elements
             .iter()
             .filter_map(|element| {
-                if element.element_mode != ElementMode::Group && !element.is_abstract {
+                if element.element_mode != ElementMode::Group && !element.is_dynamic {
                     return None;
                 }
 
@@ -925,7 +925,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }
         };
 
-        let next_end_event = if self.is_non_abstract_complex {
+        let next_end_event = if self.is_static_complex {
             quote!(None)
         } else {
             quote!(Some(event))

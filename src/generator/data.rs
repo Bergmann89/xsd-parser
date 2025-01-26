@@ -7,7 +7,7 @@ use tracing::instrument;
 use crate::schema::NamespaceId;
 use crate::schema::{xs::Use, MaxOccurs, MinOccurs};
 use crate::types::{
-    AbstractInfo, AnyAttributeInfo, AnyInfo, AttributeInfo, ComplexInfo, ElementInfo,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, ComplexInfo, DynamicInfo, ElementInfo,
     EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, Types, UnionInfo, UnionTypeInfo,
     VariantInfo,
 };
@@ -64,14 +64,14 @@ impl<'types> TypeData<'_, 'types> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_abstract(self, ty: &'types AbstractInfo) -> Result<(), Error> {
-        let mut data = AbstractData::new(ty, self)?;
+    pub(super) fn generate_dynamic(self, ty: &'types DynamicInfo) -> Result<(), Error> {
+        let mut data = DynamicData::new(ty, self)?;
 
         render!(
             data,
-            render_abstract,
-            render_abstract_serialize,
-            render_abstract_deserialize
+            render_dynamic,
+            render_dynamic_serialize,
+            render_dynamic_deserialize
         );
 
         Ok(())
@@ -289,17 +289,17 @@ impl DerefMut for UnionData<'_, '_> {
     }
 }
 
-/* AbstractData */
+/* DynamicData */
 
 #[derive(Debug)]
 #[allow(dead_code)]
-pub(super) struct AbstractData<'a, 'types> {
-    pub ty: &'types AbstractInfo,
+pub(super) struct DynamicData<'a, 'types> {
+    pub ty: &'types DynamicInfo,
     pub inner: TypeData<'a, 'types>,
 }
 
-impl<'a, 'types> AbstractData<'a, 'types> {
-    fn new(ty: &'types AbstractInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
+impl<'a, 'types> DynamicData<'a, 'types> {
+    fn new(ty: &'types DynamicInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
         for derived_type in &ty.derived_types {
             inner.get_or_create_type_ref(derived_type.clone())?;
         }
@@ -308,7 +308,7 @@ impl<'a, 'types> AbstractData<'a, 'types> {
     }
 }
 
-impl<'a, 'types> Deref for AbstractData<'a, 'types> {
+impl<'a, 'types> Deref for DynamicData<'a, 'types> {
     type Target = TypeData<'a, 'types>;
 
     fn deref(&self) -> &Self::Target {
@@ -316,7 +316,7 @@ impl<'a, 'types> Deref for AbstractData<'a, 'types> {
     }
 }
 
-impl DerefMut for AbstractData<'_, '_> {
+impl DerefMut for DynamicData<'_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.inner
     }
@@ -490,7 +490,7 @@ pub(super) struct ElementData<'types> {
     pub element: &'types ElementInfo,
     pub occurs: Occurs,
     pub need_box: bool,
-    pub is_abstract: bool,
+    pub is_dynamic: bool,
     pub field_ident: Ident2,
     pub variant_ident: Ident2,
     pub target_type: TokenStream,
@@ -737,10 +737,7 @@ fn make_element_data<'types>(
                 .current_type_ref()
                 .boxed_elements
                 .contains(&element.ident);
-            let is_abstract = inner
-                .types
-                .get(&element.type_)
-                .is_some_and(|ty| matches!(ty, Type::ComplexType(ci) if ci.is_abstract));
+            let is_dynamic = is_dynamic(&element.type_, inner.types);
             let field_ident = format_field_ident(&element.ident.name);
             let variant_ident = format_variant_ident(&element.ident.name);
             let target_is_complex =
@@ -750,7 +747,7 @@ fn make_element_data<'types>(
                 element,
                 occurs,
                 need_box,
-                is_abstract,
+                is_dynamic,
                 field_ident,
                 variant_ident,
                 target_type,
@@ -766,6 +763,19 @@ fn make_element_data<'types>(
     };
 
     Ok((occurs, elements))
+}
+
+fn is_dynamic(ident: &Ident, types: &Types) -> bool {
+    let Some(ty) = types.get(ident) else {
+        return false;
+    };
+
+    match ty {
+        Type::Dynamic(_) => true,
+        Type::ComplexType(ci) => ci.is_dynamic,
+        Type::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+        _ => false,
+    }
 }
 
 fn target_is_complex(ident: &Ident, types: &Types, mode: TypedefMode) -> bool {

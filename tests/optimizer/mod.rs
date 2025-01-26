@@ -63,13 +63,13 @@ fn use_unrestricted_base_type() {
 }
 
 #[test]
-fn convert_abstract_to_choice() {
+fn convert_dynamic_to_choice() {
     optimizer_test(
         "tests/optimizer/abstract.xsd",
-        "tests/optimizer/expected0/convert_abstract_to_choice.rs",
-        "tests/optimizer/expected1/convert_abstract_to_choice.rs",
+        "tests/optimizer/expected0/convert_dynamic_to_choice.rs",
+        "tests/optimizer/expected1/convert_dynamic_to_choice.rs",
         [(IdentType::Element, "tns:Abstract")],
-        OptimizerFlags::CONVERT_ABSTRACT_TO_CHOICE,
+        OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE,
     )
 }
 

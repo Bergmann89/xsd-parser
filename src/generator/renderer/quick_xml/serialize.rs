@@ -6,7 +6,7 @@ use crate::generator::misc::TypeMode;
 use crate::schema::Namespace;
 
 use super::super::super::data::{
-    AbstractData, ComplexTypeData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
+    ComplexTypeData, DynamicData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
     UnionVariantData,
 };
 use super::super::super::misc::{Occurs, StateFlags, TypedefMode};
@@ -54,7 +54,7 @@ impl QuickXmlRenderer {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub fn render_abstract_serialize(&mut self, data: &mut AbstractData<'_, '_>) {
+    pub fn render_dynamic_serialize(&mut self, data: &mut DynamicData<'_, '_>) {
         crate::unimplemented!();
     }
 
@@ -269,7 +269,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 }
             });
 
-        let need_end_state = self.is_non_abstract_complex && !self.elements.is_empty();
+        let need_end_state = self.is_static_complex && !self.elements.is_empty();
         let state_end = need_end_state.then(|| quote!(End__,));
 
         quote! {
@@ -292,7 +292,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = &self.type_ident;
         let state_ident = &self.serializer_state_ident;
 
-        let need_end_state = self.is_non_abstract_complex && !self.elements.is_empty();
+        let need_end_state = self.is_static_complex && !self.elements.is_empty();
 
         let end_state = if need_end_state {
             quote!(#state_ident::End__)
@@ -377,7 +377,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             format_ident!("Start")
         };
 
-        let emit_start_event = if !self.is_non_abstract_complex {
+        let emit_start_event = if !self.is_static_complex {
             None
         } else if has_attributes {
             Some(quote! {

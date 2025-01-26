@@ -205,8 +205,8 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            Type::Abstract(x) => {
-                writeln!(f, "{}: Abstract", ident)?;
+            Type::Dynamic(x) => {
+                writeln!(f, "{}: Dynamic", ident)?;
 
                 s.level += 1;
 
@@ -303,7 +303,7 @@ impl<'a> TypesPrinter<'a> {
                 indentln!("base={}", x.base);
                 indentln!("min_occurs={}", x.min_occurs);
                 indentln!("max_occurs={:?}", x.max_occurs);
-                indentln!("is_abstract={}", x.is_abstract);
+                indentln!("is_dynamic={}", x.is_dynamic);
 
                 if let Some(x) = &x.any_attribute {
                     indentln!("any_attribute");

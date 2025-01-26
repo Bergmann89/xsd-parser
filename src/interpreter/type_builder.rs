@@ -11,7 +11,7 @@ use crate::schema::xs::{
 };
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AbstractInfo, AnyAttributeInfo, AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode, Ident,
     IdentType, Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
@@ -175,7 +175,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
-            let ai = init_any!(self, Abstract);
+            let ai = init_any!(self, Dynamic);
             ai.type_ = type_;
         }
 
@@ -185,14 +185,14 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 let base_ty = builder.get_element_mut(base_ident)?;
 
                 if let Type::Reference(ti) = base_ty {
-                    *base_ty = Type::Abstract(AbstractInfo {
+                    *base_ty = Type::Dynamic(DynamicInfo {
                         type_: Some(ti.type_.clone()),
                         derived_types: vec![ti.type_.clone()],
                     });
                 }
 
-                let Type::Abstract(ai) = base_ty else {
-                    return Err(Error::ExpectedAbstractElement(base_ident.clone()));
+                let Type::Dynamic(ai) = base_ty else {
+                    return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
 
                 ai.derived_types.push(ident);
@@ -245,8 +245,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
                 C::ComplexContent(x) => {
                     let ci = get_or_init_any!(self, ComplexType);
-                    ci.is_abstract = ty.abstract_;
-
+                    ci.is_dynamic = ty.abstract_;
                     self.apply_complex_content(x)?;
                 }
                 C::SimpleContent(x) => self.apply_simple_content(x)?,

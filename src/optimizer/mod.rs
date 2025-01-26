@@ -276,8 +276,8 @@ impl Optimizer {
         self
     }
 
-    /// This will use a enum that contains all known variants of the abstract type
-    /// instead of a dynamic box.
+    /// This will use a enum that contains all known variants of the dynamic
+    /// type instead of a dynamic box.
     ///
     /// # Examples
     ///
@@ -288,21 +288,21 @@ impl Optimizer {
     ///
     /// Without this optimization this will result in the following code:
     /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/convert_abstract_to_choice.rs")]
+    #[doc = include_str!("../../tests/optimizer/expected0/convert_dynamic_to_choice.rs")]
     /// ```
     ///
     /// With this optimization the following code is generated:
     /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/convert_abstract_to_choice.rs")]
+    #[doc = include_str!("../../tests/optimizer/expected1/convert_dynamic_to_choice.rs")]
     /// ```
-    pub fn convert_abstract_to_choice(mut self) -> Self {
-        tracing::trace!("convert_abstract_to_choice");
+    pub fn convert_dynamic_to_choice(mut self) -> Self {
+        tracing::trace!("convert_dynamic_to_choice");
 
         let idents = self
             .types
             .iter()
             .filter_map(|(ident, ty)| {
-                if matches!(ty, Type::Abstract(_)) {
+                if matches!(ty, Type::Dynamic(_)) {
                     Some(ident)
                 } else {
                     None
@@ -315,7 +315,7 @@ impl Optimizer {
             let content_ident = Ident::new(self.types.make_unnamed()).with_ns(ident.ns);
 
             let type_ = self.types.get_mut(&ident).unwrap();
-            let Type::Abstract(x) = type_ else {
+            let Type::Dynamic(x) = type_ else {
                 unreachable!();
             };
 
@@ -328,7 +328,7 @@ impl Optimizer {
 
             *type_ = Type::ComplexType(ComplexInfo {
                 content: Some(content_ident.clone()),
-                is_abstract: true,
+                is_dynamic: true,
                 ..Default::default()
             });
 
@@ -556,7 +556,7 @@ impl Optimizer {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                Type::Abstract(x) => {
+                Type::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
                     for x in &mut x.derived_types {

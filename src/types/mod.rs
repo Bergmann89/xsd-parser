@@ -17,7 +17,7 @@ pub use self::custom::CustomType;
 pub use self::helper::{VecHelper, WithIdent};
 pub use self::ident::{Ident, IdentType};
 pub use self::info::{
-    AbstractInfo, AnyAttributeInfo, AnyInfo, AttributeInfo, AttributesInfo, Base, ComplexInfo,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, AttributesInfo, Base, ComplexInfo, DynamicInfo,
     ElementInfo, ElementMode, ElementsInfo, EnumerationInfo, GroupInfo, ReferenceInfo, UnionInfo,
     UnionTypeInfo, UnionTypesInfo, VariantInfo,
 };

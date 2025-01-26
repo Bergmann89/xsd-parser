@@ -1,8 +1,8 @@
 //! Contains different type information types.
 
-pub mod abstract_;
 pub mod attribute;
 pub mod complex;
+pub mod dynamic;
 pub mod element;
 pub mod enumeration;
 pub mod reference;
@@ -10,9 +10,9 @@ pub mod union;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
-pub use abstract_::AbstractInfo;
 pub use attribute::{AttributeInfo, AttributesInfo};
 pub use complex::{AnyAttributeInfo, AnyInfo, ComplexInfo, GroupInfo};
+pub use dynamic::DynamicInfo;
 pub use element::{ElementInfo, ElementMode, ElementsInfo};
 pub use enumeration::{EnumerationInfo, VariantInfo};
 pub use reference::ReferenceInfo;
