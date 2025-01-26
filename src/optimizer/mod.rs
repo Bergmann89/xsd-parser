@@ -544,10 +544,16 @@ impl Optimizer {
             };
         }
 
+        let mut replaced_references = HashMap::new();
+
         for type_ in self.types.values_mut() {
             match type_ {
                 Type::Reference(x) if x.is_single() => {
-                    x.type_ = typedefs.resolve(&x.type_).clone();
+                    let new_type = typedefs.resolve(&x.type_).clone();
+                    replaced_references
+                        .entry(x.type_.clone())
+                        .or_insert_with(|| new_type.clone());
+                    x.type_ = new_type;
                 }
                 Type::Union(x) => {
                     resolve_base!(&mut x.base);
@@ -589,6 +595,18 @@ impl Optimizer {
                     }
                 }
                 _ => (),
+            }
+        }
+
+        for type_ in self.types.values_mut() {
+            let Type::Dynamic(ai) = type_ else {
+                continue;
+            };
+
+            for derived in &mut ai.derived_types {
+                if let Some(new_type) = replaced_references.get(derived) {
+                    *derived = new_type.clone();
+                }
             }
         }
 
