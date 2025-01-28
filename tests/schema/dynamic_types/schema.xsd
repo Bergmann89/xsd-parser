@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <!--
+        Abstract base element.
+        This will result in a dynamic type that can be either
+        the type of `final` or `intermediate`. The type of `base`
+        is not rendered, because it is abstract.
+    -->
+    <element name="base" type="tns:base" abstract="true" />
+
+    <!--
+        Intermediate element that derives from `base`.
+        This will result in a dynamic type that can be either
+        the type of `final` or `intermediate`.
+    -->
+    <element name="intermediate" type="tns:intermediate" substitutionGroup="tns:base" />
+
+    <!--
+        Final element that derives from `intermediate`.
+        This should not result in a dynamic type.
+    -->
+    <element name="final" type="tns:final" substitutionGroup="tns:intermediate" />
+
+    <!--
+        Test element to store multiple items of type `base`.
+    -->
+    <element name="list">
+        <complexType>
+            <sequence>
+                <element ref="tns:base" minOccurs="0" maxOccurs="unbounded" />
+            </sequence>
+        </complexType>
+    </element>
+
+    <complexType name="base" abstract="true">
+        <attribute name="baseValue" type="xs:int" />
+    </complexType>
+
+    <complexType name="intermediate" >
+        <complexContent>
+            <extension base="tns:base">
+                <attribute name="intermediateValue" type="xs:int" />
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="final" >
+        <complexContent>
+            <extension base="tns:intermediate">
+                <attribute name="finalValue" type="xs:int" />
+            </extension>
+        </complexContent>
+    </complexType>
+</schema>

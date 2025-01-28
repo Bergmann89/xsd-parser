@@ -1,4 +1,3 @@
 pub enum MyUnionType {
-    String(StringType),
+    String(String),
 }
-pub type StringType = String;

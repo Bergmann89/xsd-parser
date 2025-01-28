@@ -7,7 +7,7 @@ fn generate_default() {
     generate_test(
         "tests/schema/sequence_with_choice/schema.xsd",
         "tests/schema/sequence_with_choice/expected/default.rs",
-        Config::default().with_generate([(IdentType::Element, "tns:Foo")]),
+        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
 
@@ -16,7 +16,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/sequence_with_choice/schema.xsd",
         "tests/schema/sequence_with_choice/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
@@ -25,7 +25,7 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use quick_xml::{Foo, FooContent2Type, FooContent3Type};
+    use quick_xml::{Foo, FooContent2Type, FooContent5Type};
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>(
         "tests/schema/sequence_with_choice/example/default.xml",
@@ -33,19 +33,19 @@ fn read_quick_xml() {
 
     assert!(matches!(obj.content_2, FooContent2Type::Element1(3)));
     assert!(matches!(
-        obj.content_3,
-        FooContent3Type::Element4(s) if s == "test"
+        obj.content_5,
+        FooContent5Type::Element4(s) if s == "test"
     ));
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::{Foo, FooContent2Type, FooContent3Type};
+    use quick_xml::{Foo, FooContent2Type, FooContent5Type};
 
     let obj = Foo {
         content_2: FooContent2Type::Element1(3),
-        content_3: FooContent3Type::Element4("test".into()),
+        content_5: FooContent5Type::Element4("test".into()),
     };
 
     crate::utils::quick_xml_write_test(

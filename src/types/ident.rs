@@ -31,17 +31,20 @@ pub enum IdentType {
     /// Used for `xs:element`.
     Element = 2,
 
+    /// Used for inline types of `xs:element`.
+    ElementType = 3,
+
     /// Used for `xs:attribute`.
-    Attribute = 3,
+    Attribute = 4,
 
     /// Used for `xs:attributeGroup`.
-    AttributeGroup = 4,
+    AttributeGroup = 5,
 
     /// Used for build-in types.
-    BuildIn = 5,
+    BuildIn = 6,
 
     /// Used for `xs:enumeration`.
-    Enumeration = 6,
+    Enumeration = 7,
 }
 
 #[allow(missing_docs)]
@@ -159,6 +162,7 @@ impl Display for Ident {
             IdentType::Group => write!(f, "Group(")?,
             IdentType::BuildIn => write!(f, "BuildIn(")?,
             IdentType::Element => write!(f, "Element(")?,
+            IdentType::ElementType => write!(f, "ElementType(")?,
             IdentType::Attribute => write!(f, "Attribute(")?,
             IdentType::AttributeGroup => write!(f, "AttributeGroup(")?,
             IdentType::Enumeration => write!(f, "Enumeration(")?,

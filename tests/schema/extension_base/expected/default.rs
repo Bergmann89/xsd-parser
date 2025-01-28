@@ -1,10 +1,7 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub b: IntType,
-    pub c: StringType,
-    pub a: FloatType,
+    pub b: i32,
+    pub c: String,
+    pub a: f32,
 }
-pub type IntType = i32;
-pub type StringType = String;
-pub type FloatType = f32;

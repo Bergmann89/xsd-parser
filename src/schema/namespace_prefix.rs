@@ -11,6 +11,9 @@ impl NamespacePrefix {
     /// Common used XML schema namespace prefix.
     pub const XS: Self = Self(Cow::Borrowed(b"xs"));
 
+    /// Common used XML schema instance namespace prefix.
+    pub const XSI: Self = Self(Cow::Borrowed(b"xsi"));
+
     /// Common used XML namespace prefix.
     pub const XML: Self = Self(Cow::Borrowed(b"xml"));
 }

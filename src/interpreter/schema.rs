@@ -142,7 +142,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type(ident.clone(), |builder| builder.apply_element(&ident, ty))
+        self.create_type(ident, |builder| builder.apply_element(ty))
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -199,7 +199,7 @@ impl SchemaInterpreter<'_, '_> {
         self.create_type(ident, |builder| builder.apply_complex_type(ty))
     }
 
-    fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
+    pub(super) fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
     where
         F: FnMut(&mut TypeBuilder<'_, '_, '_>) -> Result<(), Error>,
     {

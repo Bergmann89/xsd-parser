@@ -1,16 +1,22 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub min: IntType,
-    pub max: IntType,
+    pub min: i32,
+    pub max: i32,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type IntType = i32;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -23,19 +29,19 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Min(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
-        Max(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
+        Min(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
+        Max(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -47,11 +53,17 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.min, Some("tns:Min"), false) {
+                        match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.min,
+                            Some("tns:Min"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = FooTypeSerializerState::Min(serializer),
                             Err(error) => {
                                 self.state = FooTypeSerializerState::Done__;
@@ -70,7 +82,11 @@ pub mod quick_xml_serialize {
                             self.state = FooTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match Serializer::init(&self.value.max, Some("tns:Max"), false) {
+                        None => match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.max,
+                            Some("tns:Max"),
+                            false,
+                        ) {
                             Ok(serializer) => self.state = FooTypeSerializerState::Max(serializer),
                             Err(error) => {
                                 self.state = FooTypeSerializerState::Done__;
@@ -101,14 +117,14 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        min: Option<super::IntType>,
-        max: Option<super::IntType>,
+        min: Option<i32>,
+        max: Option<i32>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
-        Min(Option<<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Max(Option<<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Min(Option<<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Max(Option<<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
     impl FooTypeDeserializer {
@@ -244,7 +260,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.min.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -348,7 +364,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.max.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(

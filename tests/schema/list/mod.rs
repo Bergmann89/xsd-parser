@@ -7,7 +7,7 @@ fn generate_default() {
     generate_test(
         "tests/schema/list/schema.xsd",
         "tests/schema/list/expected/default.rs",
-        Config::default().with_generate([(IdentType::Element, "tns:Foo")]),
+        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
 
@@ -16,7 +16,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/list/schema.xsd",
         "tests/schema/list/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );

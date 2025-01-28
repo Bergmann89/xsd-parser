@@ -1,17 +1,22 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub enum FooType {
-    Bar(BarType),
-    Baz(BazType),
+    Bar(String),
+    Baz(i32),
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type BarType = String;
-pub type BazType = i32;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -24,19 +29,19 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Bar(xsd_parser::quick_xml::ContentSerializer<'ser, BarType>),
-        Baz(xsd_parser::quick_xml::ContentSerializer<'ser, BazType>),
+        Bar(xsd_parser::quick_xml::ContentSerializer<'ser, String>),
+        Baz(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -48,12 +53,18 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
                         match &self.value {
-                            FooType::Bar(x) => match Serializer::init(x, Some("tns:Bar"), false) {
+                            FooType::Bar(x) => match xsd_parser::quick_xml::ContentSerializer::new(
+                                x,
+                                Some("tns:Bar"),
+                                false,
+                            ) {
                                 Ok(serializer) => {
                                     self.state = FooTypeSerializerState::Bar(serializer)
                                 }
@@ -62,7 +73,11 @@ pub mod quick_xml_serialize {
                                     return Some(Err(error));
                                 }
                             },
-                            FooType::Baz(x) => match Serializer::init(x, Some("tns:Baz"), false) {
+                            FooType::Baz(x) => match xsd_parser::quick_xml::ContentSerializer::new(
+                                x,
+                                Some("tns:Baz"),
+                                false,
+                            ) {
                                 Ok(serializer) => {
                                     self.state = FooTypeSerializerState::Baz(serializer)
                                 }
@@ -115,8 +130,8 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum FooTypeDeserializerState {
         Next__,
-        Bar(<BarType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Baz(<BazType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Bar(<String as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Baz(<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl FooTypeDeserializer {
         fn from_bytes_start<R>(
@@ -202,7 +217,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <BarType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <String as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             if self.content.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Bar")))?;
@@ -224,7 +239,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <BazType as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
                             if self.content.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Baz")))?;

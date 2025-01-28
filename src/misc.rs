@@ -18,6 +18,15 @@ pub trait WithNamespace {
     fn namespace() -> Option<&'static str>;
 }
 
+/// Trait that is used to get the [`Any`](core::any::Any) trait for a specific type.
+pub trait AsAny: core::any::Any {
+    /// Get a reference to the current object as [`Any`](core::any::Any).
+    fn as_any(&self) -> &dyn core::any::Any;
+
+    /// Get a mutable reference to the current object as [`Any`](core::any::Any).
+    fn as_any_mut(&mut self) -> &mut dyn core::any::Any;
+}
+
 /// Error emitted by the [`generate`](crate::generate) function.
 #[derive(Debug, Error)]
 pub enum Error {
@@ -205,8 +214,8 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            Type::Abstract(x) => {
-                writeln!(f, "{}: Abstract", ident)?;
+            Type::Dynamic(x) => {
+                writeln!(f, "{}: Dynamic", ident)?;
 
                 s.level += 1;
 
@@ -303,7 +312,7 @@ impl<'a> TypesPrinter<'a> {
                 indentln!("base={}", x.base);
                 indentln!("min_occurs={}", x.min_occurs);
                 indentln!("max_occurs={:?}", x.max_occurs);
-                indentln!("is_abstract={}", x.is_abstract);
+                indentln!("is_dynamic={}", x.is_dynamic);
 
                 if let Some(x) = &x.any_attribute {
                     indentln!("any_attribute");

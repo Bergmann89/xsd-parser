@@ -15,12 +15,12 @@ pub enum Error {
     #[error("Type has already been defined: {0}!")]
     TypeAlreadyDefined(Ident),
 
-    /// Expected abstract element.
+    /// Expected dynamic element.
     ///
-    /// Expected the specified element to be abstract because it is referenced
+    /// Expected the specified element to be dynamic because it is referenced
     /// as substitution group.
-    #[error("Expected abstract element: {0}!")]
-    ExpectedAbstractElement(Ident),
+    #[error("Expected dynamic element: {0}!")]
+    ExpectedDynamicElement(Ident),
 
     /// Unknown type.
     ///

@@ -21,8 +21,8 @@ pub use self::misc::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, Typedef
 use self::data::TypeData;
 use self::helper::Walk;
 use self::misc::{
-    format_module, format_type_ident, make_type_name, Module, Modules, PendingType, StateFlags,
-    TypeRef,
+    format_module, format_type_ident, make_type_name, DynTypeTraits, Module, Modules, PendingType,
+    StateFlags, TraitInfos, TypeRef,
 };
 
 /// Type that is used to generate rust code from a [`Types`] object.
@@ -33,6 +33,7 @@ pub struct Generator<'types> {
 
     /* state */
     cache: BTreeMap<Ident, TypeRef>,
+    traits: Option<TraitInfos>,
     pending: VecDeque<PendingType<'types>>,
 
     /* code */
@@ -40,12 +41,13 @@ pub struct Generator<'types> {
 
     /* config */
     derive: Vec<Ident2>,
-    postfixes: [String; 5],
+    postfixes: [String; 8],
     box_flags: BoxFlags,
     content_mode: ContentMode,
     typedef_mode: TypedefMode,
     serde_support: SerdeSupport,
     generate_flags: GenerateFlags,
+    dyn_type_traits: DynTypeTraits,
     xsd_parser_crate: Ident2,
 }
 
@@ -58,22 +60,27 @@ impl<'types> Generator<'types> {
             types,
 
             cache: BTreeMap::new(),
+            traits: None,
             pending: VecDeque::new(),
             modules: Modules::default(),
 
             derive: vec![format_ident!("Debug"), format_ident!("Clone")],
             postfixes: [
-                String::from("Type"), // Type
-                String::new(),        // Group
-                String::new(),        // Element
-                String::new(),        // Attribute
-                String::new(),        // AttributeGroup
+                String::from("Type"),        // Type = 0
+                String::new(),               // Group = 1
+                String::from("ElementType"), // Element = 2
+                String::new(),               // ElementType = 3
+                String::new(),               // Attribute = 4
+                String::new(),               // AttributeGroup = 5
+                String::new(),               // BuildIn = 6
+                String::new(),               // Enumeration = 7
             ],
             box_flags: BoxFlags::AUTO,
             content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate_flags: GenerateFlags::empty(),
+            dyn_type_traits: DynTypeTraits::Auto,
             xsd_parser_crate: format_ident!("xsd_parser"),
         }
     }
@@ -94,7 +101,7 @@ impl<'types> Generator<'types> {
     ///
     /// ```ignore
     /// let generator = Generator::new(types)
-    ///     .derive(vec!["Debug", "Clone", "Eq", "PartialEq", "Ord", "PartialOrd"]);
+    ///     .derive(["Debug", "Clone", "Eq", "PartialEq", "Ord", "PartialOrd"]);
     /// ```
     pub fn derive<I>(mut self, value: I) -> Self
     where
@@ -102,6 +109,35 @@ impl<'types> Generator<'types> {
         I::Item: Display,
     {
         self.derive = value.into_iter().map(|x| format_ident!("{x}")).collect();
+
+        self
+    }
+
+    /// Set the traits that should be implemented by dynamic types.
+    ///
+    /// The passed values must be valid type paths.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let generator = Generator::new(types)
+    ///     .dyn_type_traits(["core::fmt::Debug", "core::any::Any"]);
+    /// ```
+    pub fn dyn_type_traits<I>(mut self, value: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        fn parse_path(s: &str) -> TokenStream {
+            let parts = s.split("::").map(|x| format_ident!("{x}"));
+
+            quote! {
+                #( #parts )*
+            }
+        }
+
+        self.dyn_type_traits =
+            DynTypeTraits::Custom(value.into_iter().map(|x| parse_path(&x.into())).collect());
 
         self
     }
@@ -299,6 +335,11 @@ impl<'types> Generator<'types> {
         }
     }
 
+    fn get_traits(&mut self) -> &TraitInfos {
+        self.traits
+            .get_or_insert_with(|| TraitInfos::new(self.types))
+    }
+
     #[instrument(level = "trace", skip(self))]
     fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
         let Self {
@@ -367,7 +408,7 @@ impl<'types> Generator<'types> {
         match data.ty {
             Type::BuildIn(_) => Ok(()),
             Type::Union(x) => data.generate_union(x),
-            Type::Abstract(x) => data.generate_abstract(x),
+            Type::Dynamic(x) => data.generate_dynamic(x),
             Type::Reference(x) => data.generate_reference(x),
             Type::Enumeration(x) => data.generate_enumeration(x),
             Type::ComplexType(x) => data.generate_complex_type(x),

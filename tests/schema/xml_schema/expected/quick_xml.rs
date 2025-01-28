@@ -1,5 +1,6 @@
+pub type Schema = SchemaElementType;
 #[derive(Debug, Clone)]
-pub struct Schema {
+pub struct SchemaElementType {
     pub target_namespace: Option<String>,
     pub version: Option<String>,
     pub final_default: FullDerivationSetType,
@@ -10,25 +11,25 @@ pub struct Schema {
     pub xpath_default_namespace: XpathDefaultNamespaceType,
     pub id: Option<String>,
     pub lang: Option<String>,
-    pub content: Vec<SchemaContent>,
+    pub content: Vec<SchemaElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum SchemaContent {
-    Include(Include),
-    Import(Import),
-    Redefine(Redefine),
-    Override(Override),
-    Annotation(Annotation),
-    DefaultOpenContent(DefaultOpenContent),
+pub enum SchemaElementTypeContent {
+    Include(IncludeElementType),
+    Import(ImportElementType),
+    Redefine(RedefineElementType),
+    Override(OverrideElementType),
+    Annotation(AnnotationElementType),
+    DefaultOpenContent(DefaultOpenContentElementType),
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
     Group(GroupType),
     AttributeGroup(AttributeGroupType),
     Element(ElementType),
     Attribute(AttributeType),
-    Notation(Notation),
+    Notation(NotationElementType),
 }
-impl xsd_parser::WithNamespace for Schema {
+impl xsd_parser::WithNamespace for SchemaElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -36,7 +37,7 @@ impl xsd_parser::WithNamespace for Schema {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl Schema {
+impl SchemaElementType {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
         FullDerivationSetType::TypeDerivationControlList(TypeDerivationControlList(Vec::new()))
@@ -58,16 +59,16 @@ impl Schema {
         XpathDefaultNamespaceType::String(String::from("##local"))
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Schema {
-    type Deserializer = quick_xml_deserialize::SchemaDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for SchemaElementType {
+    type Deserializer = quick_xml_deserialize::SchemaElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Include {
+pub struct IncludeElementType {
     pub id: Option<String>,
     pub schema_location: String,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for Include {
+impl xsd_parser::WithNamespace for IncludeElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -75,17 +76,17 @@ impl xsd_parser::WithNamespace for Include {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Include {
-    type Deserializer = quick_xml_deserialize::IncludeDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for IncludeElementType {
+    type Deserializer = quick_xml_deserialize::IncludeElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Import {
+pub struct ImportElementType {
     pub id: Option<String>,
     pub namespace: Option<String>,
     pub schema_location: Option<String>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for Import {
+impl xsd_parser::WithNamespace for ImportElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -93,24 +94,24 @@ impl xsd_parser::WithNamespace for Import {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Import {
-    type Deserializer = quick_xml_deserialize::ImportDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for ImportElementType {
+    type Deserializer = quick_xml_deserialize::ImportElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Redefine {
+pub struct RedefineElementType {
     pub schema_location: String,
     pub id: Option<String>,
-    pub content: Vec<RedefineContent>,
+    pub content: Vec<RedefineElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum RedefineContent {
-    Annotation(Annotation),
+pub enum RedefineElementTypeContent {
+    Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
     Group(GroupType),
     AttributeGroup(AttributeGroupType),
 }
-impl xsd_parser::WithNamespace for Redefine {
+impl xsd_parser::WithNamespace for RedefineElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -118,27 +119,27 @@ impl xsd_parser::WithNamespace for Redefine {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Redefine {
-    type Deserializer = quick_xml_deserialize::RedefineDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for RedefineElementType {
+    type Deserializer = quick_xml_deserialize::RedefineElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Override {
+pub struct OverrideElementType {
     pub schema_location: String,
     pub id: Option<String>,
-    pub content: Vec<OverrideContent>,
+    pub content: Vec<OverrideElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum OverrideContent {
-    Annotation(Annotation),
+pub enum OverrideElementTypeContent {
+    Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
     Group(GroupType),
     AttributeGroup(AttributeGroupType),
     Element(ElementType),
     Attribute(AttributeType),
-    Notation(Notation),
+    Notation(NotationElementType),
 }
-impl xsd_parser::WithNamespace for Override {
+impl xsd_parser::WithNamespace for OverrideElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -146,20 +147,20 @@ impl xsd_parser::WithNamespace for Override {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Override {
-    type Deserializer = quick_xml_deserialize::OverrideDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for OverrideElementType {
+    type Deserializer = quick_xml_deserialize::OverrideElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Annotation {
+pub struct AnnotationElementType {
     pub id: Option<String>,
-    pub content: Vec<AnnotationContent>,
+    pub content: Vec<AnnotationElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum AnnotationContent {
-    Appinfo(Appinfo),
-    Documentation(Documentation),
+pub enum AnnotationElementTypeContent {
+    Appinfo(AppinfoElementType),
+    Documentation(DocumentationElementType),
 }
-impl xsd_parser::WithNamespace for Annotation {
+impl xsd_parser::WithNamespace for AnnotationElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -167,18 +168,18 @@ impl xsd_parser::WithNamespace for Annotation {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Annotation {
-    type Deserializer = quick_xml_deserialize::AnnotationDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for AnnotationElementType {
+    type Deserializer = quick_xml_deserialize::AnnotationElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct DefaultOpenContent {
+pub struct DefaultOpenContentElementType {
     pub id: Option<String>,
     pub applies_to_empty: bool,
     pub mode: DefaultOpenContentModeType,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
     pub any: WildcardType,
 }
-impl xsd_parser::WithNamespace for DefaultOpenContent {
+impl xsd_parser::WithNamespace for DefaultOpenContentElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -186,7 +187,7 @@ impl xsd_parser::WithNamespace for DefaultOpenContent {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl DefaultOpenContent {
+impl DefaultOpenContentElementType {
     #[must_use]
     pub fn default_applies_to_empty() -> bool {
         false
@@ -196,8 +197,8 @@ impl DefaultOpenContent {
         DefaultOpenContentModeType::Interleave
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for DefaultOpenContent {
-    type Deserializer = quick_xml_deserialize::DefaultOpenContentDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for DefaultOpenContentElementType {
+    type Deserializer = quick_xml_deserialize::DefaultOpenContentElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub struct SimpleBaseType {
@@ -208,10 +209,10 @@ pub struct SimpleBaseType {
 }
 #[derive(Debug, Clone)]
 pub enum SimpleBaseTypeContent {
-    Annotation(Annotation),
-    Restriction(Restriction),
-    List(List),
-    Union(Union),
+    Annotation(AnnotationElementType),
+    Restriction(RestrictionElementType),
+    List(ListElementType),
+    Union(UnionElementType),
 }
 impl xsd_parser::WithNamespace for SimpleBaseType {
     fn prefix() -> Option<&'static str> {
@@ -237,17 +238,17 @@ pub struct ComplexBaseType {
 }
 #[derive(Debug, Clone)]
 pub enum ComplexBaseTypeContent {
-    Annotation(Annotation),
-    SimpleContent(SimpleContent),
-    ComplexContent(ComplexContent),
-    OpenContent(OpenContent),
+    Annotation(AnnotationElementType),
+    SimpleContent(SimpleContentElementType),
+    ComplexContent(ComplexContentElementType),
+    OpenContent(OpenContentElementType),
     Group(GroupType),
     All(GroupType),
     Choice(GroupType),
     Sequence(GroupType),
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
-    AnyAttribute(AnyAttribute),
+    AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
 }
 impl xsd_parser::WithNamespace for ComplexBaseType {
@@ -282,13 +283,13 @@ pub struct GroupType {
 }
 #[derive(Debug, Clone)]
 pub enum GroupTypeContent {
-    Annotation(Annotation),
+    Annotation(AnnotationElementType),
     Element(ElementType),
     Group(GroupType),
     All(GroupType),
     Choice(GroupType),
     Sequence(GroupType),
-    Any(Any),
+    Any(AnyElementType),
 }
 impl xsd_parser::WithNamespace for GroupType {
     fn prefix() -> Option<&'static str> {
@@ -320,10 +321,10 @@ pub struct AttributeGroupType {
 }
 #[derive(Debug, Clone)]
 pub enum AttributeGroupTypeContent {
-    Annotation(Annotation),
+    Annotation(AnnotationElementType),
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
-    AnyAttribute(AnyAttribute),
+    AnyAttribute(AnyAttributeElementType),
 }
 impl xsd_parser::WithNamespace for AttributeGroupType {
     fn prefix() -> Option<&'static str> {
@@ -357,13 +358,13 @@ pub struct ElementType {
 }
 #[derive(Debug, Clone)]
 pub enum ElementTypeContent {
-    Annotation(Annotation),
+    Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
     Alternative(AltType),
     Unique(KeybaseType),
     Key(KeybaseType),
-    Keyref(Keyref),
+    Keyref(KeyrefElementType),
 }
 impl xsd_parser::WithNamespace for ElementType {
     fn prefix() -> Option<&'static str> {
@@ -402,7 +403,7 @@ pub struct AttributeType {
     pub form: Option<FormChoiceType>,
     pub target_namespace: Option<String>,
     pub inheritable: Option<bool>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
     pub simple_type: Option<SimpleBaseType>,
 }
 impl xsd_parser::WithNamespace for AttributeType {
@@ -423,14 +424,14 @@ impl xsd_parser::quick_xml::WithDeserializer for AttributeType {
     type Deserializer = quick_xml_deserialize::AttributeTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Notation {
+pub struct NotationElementType {
     pub id: Option<String>,
     pub name: String,
     pub public: Option<String>,
     pub system: Option<String>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for Notation {
+impl xsd_parser::WithNamespace for NotationElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -438,8 +439,8 @@ impl xsd_parser::WithNamespace for Notation {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Notation {
-    type Deserializer = quick_xml_deserialize::NotationDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for NotationElementType {
+    type Deserializer = quick_xml_deserialize::NotationElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub enum FullDerivationSetType {
@@ -596,10 +597,10 @@ impl xsd_parser::quick_xml::DeserializeBytes for XpathDefaultNamespaceType {
     }
 }
 #[derive(Debug, Clone)]
-pub struct Appinfo {
+pub struct AppinfoElementType {
     pub source: Option<String>,
 }
-impl xsd_parser::WithNamespace for Appinfo {
+impl xsd_parser::WithNamespace for AppinfoElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -607,15 +608,15 @@ impl xsd_parser::WithNamespace for Appinfo {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Appinfo {
-    type Deserializer = quick_xml_deserialize::AppinfoDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for AppinfoElementType {
+    type Deserializer = quick_xml_deserialize::AppinfoElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Documentation {
+pub struct DocumentationElementType {
     pub source: Option<String>,
     pub lang: Option<String>,
 }
-impl xsd_parser::WithNamespace for Documentation {
+impl xsd_parser::WithNamespace for DocumentationElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -623,8 +624,8 @@ impl xsd_parser::WithNamespace for Documentation {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Documentation {
-    type Deserializer = quick_xml_deserialize::DocumentationDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for DocumentationElementType {
+    type Deserializer = quick_xml_deserialize::DocumentationElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub struct WildcardType {
@@ -632,7 +633,7 @@ pub struct WildcardType {
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
 impl xsd_parser::WithNamespace for WildcardType {
     fn prefix() -> Option<&'static str> {
@@ -680,18 +681,18 @@ impl xsd_parser::quick_xml::DeserializeBytes for DefaultOpenContentModeType {
     }
 }
 #[derive(Debug, Clone)]
-pub struct Restriction {
+pub struct RestrictionElementType {
     pub id: Option<String>,
     pub base: Option<String>,
-    pub content: Vec<RestrictionContent>,
+    pub content: Vec<RestrictionElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum RestrictionContent {
-    Annotation(Annotation),
+pub enum RestrictionElementTypeContent {
+    Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     Facet(Facet),
 }
-impl xsd_parser::WithNamespace for Restriction {
+impl xsd_parser::WithNamespace for RestrictionElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -699,17 +700,17 @@ impl xsd_parser::WithNamespace for Restriction {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Restriction {
-    type Deserializer = quick_xml_deserialize::RestrictionDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for RestrictionElementType {
+    type Deserializer = quick_xml_deserialize::RestrictionElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct List {
+pub struct ListElementType {
     pub id: Option<String>,
     pub item_type: Option<String>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
     pub simple_type: Option<SimpleBaseType>,
 }
-impl xsd_parser::WithNamespace for List {
+impl xsd_parser::WithNamespace for ListElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -717,17 +718,17 @@ impl xsd_parser::WithNamespace for List {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for List {
-    type Deserializer = quick_xml_deserialize::ListDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for ListElementType {
+    type Deserializer = quick_xml_deserialize::ListElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Union {
+pub struct UnionElementType {
     pub id: Option<String>,
     pub member_types: Option<UnionMemberTypesType>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
     pub simple_type: Vec<SimpleBaseType>,
 }
-impl xsd_parser::WithNamespace for Union {
+impl xsd_parser::WithNamespace for UnionElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -735,8 +736,8 @@ impl xsd_parser::WithNamespace for Union {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Union {
-    type Deserializer = quick_xml_deserialize::UnionDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for UnionElementType {
+    type Deserializer = quick_xml_deserialize::UnionElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub enum SimpleDerivationSetType {
@@ -765,17 +766,17 @@ impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetType {
     }
 }
 #[derive(Debug, Clone)]
-pub struct SimpleContent {
+pub struct SimpleContentElementType {
     pub id: Option<String>,
-    pub content: Vec<SimpleContentContent>,
+    pub content: Vec<SimpleContentElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum SimpleContentContent {
-    Annotation(Annotation),
+pub enum SimpleContentElementTypeContent {
+    Annotation(AnnotationElementType),
     Restriction(RestrictionType),
     Extension(ExtensionType),
 }
-impl xsd_parser::WithNamespace for SimpleContent {
+impl xsd_parser::WithNamespace for SimpleContentElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -783,22 +784,22 @@ impl xsd_parser::WithNamespace for SimpleContent {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for SimpleContent {
-    type Deserializer = quick_xml_deserialize::SimpleContentDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for SimpleContentElementType {
+    type Deserializer = quick_xml_deserialize::SimpleContentElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct ComplexContent {
+pub struct ComplexContentElementType {
     pub id: Option<String>,
     pub mixed: Option<bool>,
-    pub content: Vec<ComplexContentContent>,
+    pub content: Vec<ComplexContentElementTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum ComplexContentContent {
-    Annotation(Annotation),
+pub enum ComplexContentElementTypeContent {
+    Annotation(AnnotationElementType),
     Restriction(RestrictionType),
     Extension(ExtensionType),
 }
-impl xsd_parser::WithNamespace for ComplexContent {
+impl xsd_parser::WithNamespace for ComplexContentElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -806,17 +807,17 @@ impl xsd_parser::WithNamespace for ComplexContent {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for ComplexContent {
-    type Deserializer = quick_xml_deserialize::ComplexContentDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for ComplexContentElementType {
+    type Deserializer = quick_xml_deserialize::ComplexContentElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct OpenContent {
+pub struct OpenContentElementType {
     pub id: Option<String>,
     pub mode: OpenContentModeType,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
     pub any: Option<WildcardType>,
 }
-impl xsd_parser::WithNamespace for OpenContent {
+impl xsd_parser::WithNamespace for OpenContentElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -824,25 +825,25 @@ impl xsd_parser::WithNamespace for OpenContent {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl OpenContent {
+impl OpenContentElementType {
     #[must_use]
     pub fn default_mode() -> OpenContentModeType {
         OpenContentModeType::Interleave
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for OpenContent {
-    type Deserializer = quick_xml_deserialize::OpenContentDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for OpenContentElementType {
+    type Deserializer = quick_xml_deserialize::OpenContentElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct AnyAttribute {
+pub struct AnyAttributeElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListAType>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for AnyAttribute {
+impl xsd_parser::WithNamespace for AnyAttributeElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -850,21 +851,21 @@ impl xsd_parser::WithNamespace for AnyAttribute {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl AnyAttribute {
+impl AnyAttributeElementType {
     #[must_use]
     pub fn default_process_contents() -> ProcessContentsType {
         ProcessContentsType::Strict
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for AnyAttribute {
-    type Deserializer = quick_xml_deserialize::AnyAttributeDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for AnyAttributeElementType {
+    type Deserializer = quick_xml_deserialize::AnyAttributeElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub struct AssertionType {
     pub id: Option<String>,
     pub test: Option<String>,
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
 impl xsd_parser::WithNamespace for AssertionType {
     fn prefix() -> Option<&'static str> {
@@ -904,7 +905,7 @@ impl xsd_parser::quick_xml::DeserializeBytes for DerivationSetType {
     }
 }
 #[derive(Debug, Clone)]
-pub struct Any {
+pub struct AnyElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<NotNamespaceType>,
@@ -912,9 +913,9 @@ pub struct Any {
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: usize,
     pub max_occurs: AllNNIType,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for Any {
+impl xsd_parser::WithNamespace for AnyElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -922,7 +923,7 @@ impl xsd_parser::WithNamespace for Any {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl Any {
+impl AnyElementType {
     #[must_use]
     pub fn default_process_contents() -> ProcessContentsType {
         ProcessContentsType::Strict
@@ -936,8 +937,8 @@ impl Any {
         AllNNIType::Usize(1usize)
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Any {
-    type Deserializer = quick_xml_deserialize::AnyDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for AnyElementType {
+    type Deserializer = quick_xml_deserialize::AnyElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub enum AllNNIType {
@@ -973,7 +974,7 @@ pub struct AltType {
 }
 #[derive(Debug, Clone)]
 pub enum AltTypeContent {
-    Annotation(Annotation),
+    Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
 }
@@ -993,9 +994,9 @@ pub struct KeybaseType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
-    pub annotation: Option<Annotation>,
-    pub selector: Field,
-    pub field: Vec<Field>,
+    pub annotation: Option<AnnotationElementType>,
+    pub selector: FieldElementType,
+    pub field: Vec<FieldElementType>,
 }
 impl xsd_parser::WithNamespace for KeybaseType {
     fn prefix() -> Option<&'static str> {
@@ -1009,16 +1010,16 @@ impl xsd_parser::quick_xml::WithDeserializer for KeybaseType {
     type Deserializer = quick_xml_deserialize::KeybaseTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct Keyref {
+pub struct KeyrefElementType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub refer: Option<String>,
-    pub annotation: Option<Annotation>,
-    pub selector: Field,
-    pub field: Vec<Field>,
+    pub annotation: Option<AnnotationElementType>,
+    pub selector: FieldElementType,
+    pub field: Vec<FieldElementType>,
 }
-impl xsd_parser::WithNamespace for Keyref {
+impl xsd_parser::WithNamespace for KeyrefElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -1026,8 +1027,8 @@ impl xsd_parser::WithNamespace for Keyref {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Keyref {
-    type Deserializer = quick_xml_deserialize::KeyrefDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for KeyrefElementType {
+    type Deserializer = quick_xml_deserialize::KeyrefElementTypeDeserializer;
 }
 #[derive(Debug, Clone, Default)]
 pub struct ElementSubstitutionGroupType(pub Vec<QnameType>);
@@ -1247,8 +1248,8 @@ pub struct RestrictionType {
 }
 #[derive(Debug, Clone)]
 pub enum RestrictionTypeContent {
-    Annotation(Annotation),
-    OpenContent(OpenContent),
+    Annotation(AnnotationElementType),
+    OpenContent(OpenContentElementType),
     Group(GroupType),
     All(GroupType),
     Choice(GroupType),
@@ -1257,7 +1258,7 @@ pub enum RestrictionTypeContent {
     Facet(Facet),
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
-    AnyAttribute(AnyAttribute),
+    AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
 }
 impl xsd_parser::WithNamespace for RestrictionType {
@@ -1279,15 +1280,15 @@ pub struct ExtensionType {
 }
 #[derive(Debug, Clone)]
 pub enum ExtensionTypeContent {
-    Annotation(Annotation),
-    OpenContent(OpenContent),
+    Annotation(AnnotationElementType),
+    OpenContent(OpenContentElementType),
     Group(GroupType),
     All(GroupType),
     Choice(GroupType),
     Sequence(GroupType),
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
-    AnyAttribute(AnyAttribute),
+    AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
 }
 impl xsd_parser::WithNamespace for ExtensionType {
@@ -1401,13 +1402,13 @@ impl xsd_parser::quick_xml::DeserializeBytes for QnameListType {
     }
 }
 #[derive(Debug, Clone)]
-pub struct Field {
+pub struct FieldElementType {
     pub id: Option<String>,
     pub xpath: String,
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for Field {
+impl xsd_parser::WithNamespace for FieldElementType {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -1415,8 +1416,8 @@ impl xsd_parser::WithNamespace for Field {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::WithDeserializer for Field {
-    type Deserializer = quick_xml_deserialize::FieldDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for FieldElementType {
+    type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
 }
 pub type QnameType = String;
 #[derive(Debug, Clone)]
@@ -1507,7 +1508,7 @@ pub struct FacetType {
     pub id: Option<String>,
     pub value: String,
     pub fixed: bool,
-    pub annotation: Option<Annotation>,
+    pub annotation: Option<AnnotationElementType>,
 }
 impl xsd_parser::WithNamespace for FacetType {
     fn prefix() -> Option<&'static str> {
@@ -1581,7 +1582,7 @@ impl xsd_parser::quick_xml::DeserializeBytes for QnameListItemType {
 pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
-    pub struct SchemaDeserializer {
+    pub struct SchemaElementTypeDeserializer {
         target_namespace: Option<String>,
         version: Option<String>,
         final_default: super::FullDerivationSetType,
@@ -1592,31 +1593,13 @@ pub mod quick_xml_deserialize {
         xpath_default_namespace: super::XpathDefaultNamespaceType,
         id: Option<String>,
         lang: Option<String>,
-        content: Vec<super::SchemaContent>,
-        state: Box<SchemaDeserializerState>,
+        content: Vec<super::SchemaElementTypeContent>,
+        state: Box<SchemaElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum SchemaDeserializerState {
-        Next__,
-        Include(<Include as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Import(<Import as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Redefine(<Redefine as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Override(<Override as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        DefaultOpenContent(
-            <DefaultOpenContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
-        ),
-        SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        ComplexType(<ComplexBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        AttributeGroup(
-            <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
-        ),
-        Element(<ElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Attribute(<AttributeType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Notation(<Notation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-    }
-    impl SchemaDeserializer {
+    enum SchemaElementTypeDeserializerState {
+        Next__ , Include (< IncludeElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Import (< ImportElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Redefine (< RedefineElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Override (< OverrideElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Annotation (< AnnotationElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , DefaultOpenContent (< DefaultOpenContentElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , SimpleType (< SimpleBaseType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , ComplexType (< ComplexBaseType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Group (< GroupType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , AttributeGroup (< AttributeGroupType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Element (< ElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Attribute (< AttributeType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , Notation (< NotationElementType as xsd_parser :: quick_xml :: WithDeserializer > :: Deserializer) , }
+    impl SchemaElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -1707,27 +1690,31 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 target_namespace: target_namespace,
                 version: version,
-                final_default: final_default.unwrap_or_else(super::Schema::default_final_default),
-                block_default: block_default.unwrap_or_else(super::Schema::default_block_default),
+                final_default: final_default
+                    .unwrap_or_else(super::SchemaElementType::default_final_default),
+                block_default: block_default
+                    .unwrap_or_else(super::SchemaElementType::default_block_default),
                 attribute_form_default: attribute_form_default
-                    .unwrap_or_else(super::Schema::default_attribute_form_default),
+                    .unwrap_or_else(super::SchemaElementType::default_attribute_form_default),
                 element_form_default: element_form_default
-                    .unwrap_or_else(super::Schema::default_element_form_default),
+                    .unwrap_or_else(super::SchemaElementType::default_element_form_default),
                 default_attributes: default_attributes,
                 xpath_default_namespace: xpath_default_namespace
-                    .unwrap_or_else(super::Schema::default_xpath_default_namespace),
+                    .unwrap_or_else(super::SchemaElementType::default_xpath_default_namespace),
                 id: id,
                 lang: lang,
                 content: Vec::new(),
-                state: Box::new(SchemaDeserializerState::Next__),
+                state: Box::new(SchemaElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Schema> for SchemaDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::SchemaElementType>
+        for SchemaElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Schema, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SchemaElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -1764,7 +1751,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Schema, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SchemaElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -1773,22 +1760,24 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, SchemaDeserializerState::Next__),
+                core::mem::replace(&mut *self.state, SchemaElementTypeDeserializerState::Next__),
                 &event,
             ) {
-                (SchemaDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (SchemaElementTypeDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
                     if matches!(reader.resolve_local_name(x.name(), NS_XS), Some(b"include")) {
                         let DeserializerOutput {
                             data,
                             deserializer,
                             event,
                             allow_any,
-                        } = <Include as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <IncludeElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Include(data));
+                            self.content.push(SchemaElementTypeContent::Include(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Include(deserializer);
+                            *self.state = SchemaElementTypeDeserializerState::Include(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1803,12 +1792,14 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Import as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <ImportElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Import(data));
+                            self.content.push(SchemaElementTypeContent::Import(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Import(deserializer);
+                            *self.state = SchemaElementTypeDeserializerState::Import(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1825,12 +1816,15 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Redefine as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <RedefineElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Redefine(data));
+                            self.content.push(SchemaElementTypeContent::Redefine(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Redefine(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Redefine(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1847,12 +1841,15 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Override as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <OverrideElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Override(data));
+                            self.content.push(SchemaElementTypeContent::Override(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Override(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Override(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1869,12 +1866,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Annotation(data));
+                            self.content
+                                .push(SchemaElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Annotation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1886,19 +1887,15 @@ pub mod quick_xml_deserialize {
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"defaultOpenContent")
                     ) {
-                        let DeserializerOutput {
-                            data,
-                            deserializer,
-                            event,
-                            allow_any,
-                        } = <DefaultOpenContent as WithDeserializer>::Deserializer::init(
-                            reader, event,
-                        )?;
+                        let DeserializerOutput { data , deserializer , event , allow_any } = < DefaultOpenContentElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::DefaultOpenContent(data));
+                            self.content
+                                .push(SchemaElementTypeContent::DefaultOpenContent(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::DefaultOpenContent(deserializer);
+                            *self.state = SchemaElementTypeDeserializerState::DefaultOpenContent(
+                                deserializer,
+                            );
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1919,10 +1916,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::SimpleType(data));
+                            self.content
+                                .push(SchemaElementTypeContent::SimpleType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::SimpleType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1943,10 +1942,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::ComplexType(data));
+                            self.content
+                                .push(SchemaElementTypeContent::ComplexType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::ComplexType(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::ComplexType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1962,10 +1963,10 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <GroupType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Group(data));
+                            self.content.push(SchemaElementTypeContent::Group(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Group(deserializer);
+                            *self.state = SchemaElementTypeDeserializerState::Group(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -1986,10 +1987,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::AttributeGroup(data));
+                            self.content
+                                .push(SchemaElementTypeContent::AttributeGroup(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::AttributeGroup(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::AttributeGroup(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -2006,10 +2009,10 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ElementType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Element(data));
+                            self.content.push(SchemaElementTypeContent::Element(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Element(deserializer);
+                            *self.state = SchemaElementTypeDeserializerState::Element(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -2028,10 +2031,11 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <AttributeType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Attribute(data));
+                            self.content.push(SchemaElementTypeContent::Attribute(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Attribute(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Attribute(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -2048,12 +2052,15 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Notation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <NotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SchemaContent::Notation(data));
+                            self.content.push(SchemaElementTypeContent::Notation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SchemaDeserializerState::Notation(deserializer);
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Notation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -2070,7 +2077,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (SchemaDeserializerState::Next__, Event::End(_)) => {
+                (SchemaElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -2079,13 +2086,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (SchemaDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (SchemaElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (SchemaDeserializerState::Include(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Include(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2093,10 +2100,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Include(data));
+                        self.content.push(SchemaElementTypeContent::Include(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Include(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Include(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2105,7 +2112,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Import(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Import(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2113,10 +2120,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Import(data));
+                        self.content.push(SchemaElementTypeContent::Import(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Import(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Import(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2125,7 +2132,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Redefine(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Redefine(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2133,10 +2140,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Redefine(data));
+                        self.content.push(SchemaElementTypeContent::Redefine(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Redefine(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Redefine(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2145,7 +2152,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Override(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Override(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2153,10 +2160,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Override(data));
+                        self.content.push(SchemaElementTypeContent::Override(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Override(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Override(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2165,7 +2172,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Annotation(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2173,10 +2180,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Annotation(data));
+                        self.content
+                            .push(SchemaElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Annotation(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2185,7 +2193,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::DefaultOpenContent(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::DefaultOpenContent(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2193,10 +2201,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::DefaultOpenContent(data));
+                        self.content
+                            .push(SchemaElementTypeContent::DefaultOpenContent(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::DefaultOpenContent(deserializer);
+                        *self.state =
+                            SchemaElementTypeDeserializerState::DefaultOpenContent(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2205,7 +2215,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::SimpleType(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::SimpleType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2213,10 +2223,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::SimpleType(data));
+                        self.content
+                            .push(SchemaElementTypeContent::SimpleType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::SimpleType(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::SimpleType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2225,7 +2236,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::ComplexType(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::ComplexType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2233,10 +2244,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::ComplexType(data));
+                        self.content
+                            .push(SchemaElementTypeContent::ComplexType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::ComplexType(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::ComplexType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2245,7 +2257,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Group(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Group(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2253,10 +2265,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Group(data));
+                        self.content.push(SchemaElementTypeContent::Group(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Group(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Group(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2265,7 +2277,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::AttributeGroup(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::AttributeGroup(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2273,10 +2285,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::AttributeGroup(data));
+                        self.content
+                            .push(SchemaElementTypeContent::AttributeGroup(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::AttributeGroup(deserializer);
+                        *self.state =
+                            SchemaElementTypeDeserializerState::AttributeGroup(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2285,7 +2299,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Element(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Element(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2293,10 +2307,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Element(data));
+                        self.content.push(SchemaElementTypeContent::Element(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Element(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Element(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2305,7 +2319,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Attribute(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Attribute(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2313,10 +2327,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Attribute(data));
+                        self.content.push(SchemaElementTypeContent::Attribute(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Attribute(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Attribute(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2325,7 +2339,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SchemaDeserializerState::Notation(deserializer), _) => {
+                (SchemaElementTypeDeserializerState::Notation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -2333,10 +2347,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SchemaContent::Notation(data));
+                        self.content.push(SchemaElementTypeContent::Notation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SchemaDeserializerState::Notation(deserializer);
+                        *self.state = SchemaElementTypeDeserializerState::Notation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -2347,12 +2361,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Schema, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::SchemaElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Schema {
+            Ok(super::SchemaElementType {
                 target_namespace: self.target_namespace,
                 version: self.version,
                 final_default: self.final_default,
@@ -2368,18 +2385,22 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct IncludeDeserializer {
+    pub struct IncludeElementTypeDeserializer {
         id: Option<String>,
         schema_location: String,
-        annotation: Option<super::Annotation>,
-        state: Box<IncludeDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<IncludeElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum IncludeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum IncludeElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl IncludeDeserializer {
+    impl IncludeElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -2410,15 +2431,17 @@ pub mod quick_xml_deserialize {
                 schema_location: schema_location
                     .ok_or(ErrorKind::MissingAttribute("schemaLocation".into()))?,
                 annotation: None,
-                state: Box::new(IncludeDeserializerState::Annotation(None)),
+                state: Box::new(IncludeElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Include> for IncludeDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::IncludeElementType>
+        for IncludeElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Include, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::IncludeElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2455,7 +2478,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Include, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::IncludeElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2467,10 +2490,16 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, IncludeDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        IncludeElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (IncludeDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (
+                        IncludeElementTypeDeserializerState::Annotation(Some(deserializer)),
+                        event,
+                    ) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -2490,7 +2519,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = IncludeDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    IncludeElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -2500,8 +2530,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(IncludeDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                IncludeElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -2511,79 +2542,78 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = IncludeDeserializerState::Annotation(None);
+                        *self.state = IncludeElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (IncludeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = IncludeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = IncludeDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            IncludeDeserializerState::Annotation(None),
-                                        );
+                    (IncludeElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    IncludeElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = IncludeElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                IncludeElementTypeDeserializerState::Annotation(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = IncludeElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    IncludeElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = IncludeElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = IncludeDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(IncludeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = IncludeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (IncludeDeserializerState::Done__, event) => {
+                    }
+                    (IncludeElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -2600,12 +2630,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Include, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::IncludeElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Include {
+            Ok(super::IncludeElementType {
                 id: self.id,
                 schema_location: self.schema_location,
                 annotation: self.annotation,
@@ -2613,19 +2646,23 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct ImportDeserializer {
+    pub struct ImportElementTypeDeserializer {
         id: Option<String>,
         namespace: Option<String>,
         schema_location: Option<String>,
-        annotation: Option<super::Annotation>,
-        state: Box<ImportDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<ImportElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum ImportDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum ImportElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl ImportDeserializer {
+    impl ImportElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -2662,15 +2699,17 @@ pub mod quick_xml_deserialize {
                 namespace: namespace,
                 schema_location: schema_location,
                 annotation: None,
-                state: Box::new(ImportDeserializerState::Annotation(None)),
+                state: Box::new(ImportElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Import> for ImportDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::ImportElementType>
+        for ImportElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Import, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ImportElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2707,7 +2746,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Import, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ImportElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2719,10 +2758,13 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, ImportDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        ImportElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (ImportDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (ImportElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -2742,7 +2784,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = ImportDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    ImportElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -2752,8 +2795,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(ImportDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                ImportElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -2763,79 +2807,78 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = ImportDeserializerState::Annotation(None);
+                        *self.state = ImportElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (ImportDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = ImportDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = ImportDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            ImportDeserializerState::Annotation(None),
-                                        );
+                    (ImportElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    ImportElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = ImportElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                ImportElementTypeDeserializerState::Annotation(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = ImportElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    ImportElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = ImportElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = ImportDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(ImportDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = ImportDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (ImportDeserializerState::Done__, event) => {
+                    }
+                    (ImportElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -2852,12 +2895,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Import, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::ImportElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Import {
+            Ok(super::ImportElementType {
                 id: self.id,
                 namespace: self.namespace,
                 schema_location: self.schema_location,
@@ -2866,16 +2912,18 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct RedefineDeserializer {
+    pub struct RedefineElementTypeDeserializer {
         schema_location: String,
         id: Option<String>,
-        content: Vec<super::RedefineContent>,
-        state: Box<RedefineDeserializerState>,
+        content: Vec<super::RedefineElementTypeContent>,
+        state: Box<RedefineElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum RedefineDeserializerState {
+    enum RedefineElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         ComplexType(<ComplexBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
@@ -2883,7 +2931,7 @@ pub mod quick_xml_deserialize {
             <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
         ),
     }
-    impl RedefineDeserializer {
+    impl RedefineElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -2914,15 +2962,17 @@ pub mod quick_xml_deserialize {
                     .ok_or(ErrorKind::MissingAttribute("schemaLocation".into()))?,
                 id: id,
                 content: Vec::new(),
-                state: Box::new(RedefineDeserializerState::Next__),
+                state: Box::new(RedefineElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Redefine> for RedefineDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::RedefineElementType>
+        for RedefineElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Redefine, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::RedefineElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2959,7 +3009,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Redefine, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::RedefineElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -2968,10 +3018,16 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, RedefineDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    RedefineElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (RedefineDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    RedefineElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"annotation")
@@ -2981,12 +3037,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(RedefineContent::Annotation(data));
+                            self.content
+                                .push(RedefineElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RedefineDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                RedefineElementTypeDeserializerState::Annotation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3007,10 +3067,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(RedefineContent::SimpleType(data));
+                            self.content
+                                .push(RedefineElementTypeContent::SimpleType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RedefineDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                RedefineElementTypeDeserializerState::SimpleType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3031,10 +3093,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(RedefineContent::ComplexType(data));
+                            self.content
+                                .push(RedefineElementTypeContent::ComplexType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RedefineDeserializerState::ComplexType(deserializer);
+                            *self.state =
+                                RedefineElementTypeDeserializerState::ComplexType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3050,10 +3114,10 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <GroupType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(RedefineContent::Group(data));
+                            self.content.push(RedefineElementTypeContent::Group(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RedefineDeserializerState::Group(deserializer);
+                            *self.state = RedefineElementTypeDeserializerState::Group(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3074,10 +3138,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(RedefineContent::AttributeGroup(data));
+                            self.content
+                                .push(RedefineElementTypeContent::AttributeGroup(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RedefineDeserializerState::AttributeGroup(deserializer);
+                            *self.state =
+                                RedefineElementTypeDeserializerState::AttributeGroup(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3094,7 +3160,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (RedefineDeserializerState::Next__, Event::End(_)) => {
+                (RedefineElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -3103,13 +3169,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (RedefineDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (RedefineElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (RedefineDeserializerState::Annotation(deserializer), _) => {
+                (RedefineElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3117,10 +3183,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RedefineContent::Annotation(data));
+                        self.content
+                            .push(RedefineElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RedefineDeserializerState::Annotation(deserializer);
+                        *self.state =
+                            RedefineElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3129,7 +3197,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RedefineDeserializerState::SimpleType(deserializer), _) => {
+                (RedefineElementTypeDeserializerState::SimpleType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3137,10 +3205,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RedefineContent::SimpleType(data));
+                        self.content
+                            .push(RedefineElementTypeContent::SimpleType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RedefineDeserializerState::SimpleType(deserializer);
+                        *self.state =
+                            RedefineElementTypeDeserializerState::SimpleType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3149,7 +3219,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RedefineDeserializerState::ComplexType(deserializer), _) => {
+                (RedefineElementTypeDeserializerState::ComplexType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3157,10 +3227,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RedefineContent::ComplexType(data));
+                        self.content
+                            .push(RedefineElementTypeContent::ComplexType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RedefineDeserializerState::ComplexType(deserializer);
+                        *self.state =
+                            RedefineElementTypeDeserializerState::ComplexType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3169,7 +3241,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RedefineDeserializerState::Group(deserializer), _) => {
+                (RedefineElementTypeDeserializerState::Group(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3177,10 +3249,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RedefineContent::Group(data));
+                        self.content.push(RedefineElementTypeContent::Group(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RedefineDeserializerState::Group(deserializer);
+                        *self.state = RedefineElementTypeDeserializerState::Group(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3189,7 +3261,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RedefineDeserializerState::AttributeGroup(deserializer), _) => {
+                (RedefineElementTypeDeserializerState::AttributeGroup(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3197,10 +3269,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RedefineContent::AttributeGroup(data));
+                        self.content
+                            .push(RedefineElementTypeContent::AttributeGroup(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RedefineDeserializerState::AttributeGroup(deserializer);
+                        *self.state =
+                            RedefineElementTypeDeserializerState::AttributeGroup(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3211,12 +3285,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Redefine, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::RedefineElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Redefine {
+            Ok(super::RedefineElementType {
                 schema_location: self.schema_location,
                 id: self.id,
                 content: self.content,
@@ -3224,16 +3301,18 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct OverrideDeserializer {
+    pub struct OverrideElementTypeDeserializer {
         schema_location: String,
         id: Option<String>,
-        content: Vec<super::OverrideContent>,
-        state: Box<OverrideDeserializerState>,
+        content: Vec<super::OverrideElementTypeContent>,
+        state: Box<OverrideElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum OverrideDeserializerState {
+    enum OverrideElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         ComplexType(<ComplexBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
@@ -3242,9 +3321,9 @@ pub mod quick_xml_deserialize {
         ),
         Element(<ElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Attribute(<AttributeType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Notation(<Notation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Notation(<NotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
-    impl OverrideDeserializer {
+    impl OverrideElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -3275,15 +3354,17 @@ pub mod quick_xml_deserialize {
                     .ok_or(ErrorKind::MissingAttribute("schemaLocation".into()))?,
                 id: id,
                 content: Vec::new(),
-                state: Box::new(OverrideDeserializerState::Next__),
+                state: Box::new(OverrideElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Override> for OverrideDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::OverrideElementType>
+        for OverrideElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Override, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OverrideElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -3320,7 +3401,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Override, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OverrideElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -3329,10 +3410,16 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, OverrideDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    OverrideElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (OverrideDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    OverrideElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"annotation")
@@ -3342,12 +3429,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::Annotation(data));
+                            self.content
+                                .push(OverrideElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::Annotation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3368,10 +3459,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::SimpleType(data));
+                            self.content
+                                .push(OverrideElementTypeContent::SimpleType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::SimpleType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3392,10 +3485,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::ComplexType(data));
+                            self.content
+                                .push(OverrideElementTypeContent::ComplexType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::ComplexType(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::ComplexType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3411,10 +3506,10 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <GroupType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::Group(data));
+                            self.content.push(OverrideElementTypeContent::Group(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::Group(deserializer);
+                            *self.state = OverrideElementTypeDeserializerState::Group(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3435,10 +3530,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::AttributeGroup(data));
+                            self.content
+                                .push(OverrideElementTypeContent::AttributeGroup(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::AttributeGroup(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::AttributeGroup(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3455,10 +3552,11 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ElementType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::Element(data));
+                            self.content.push(OverrideElementTypeContent::Element(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::Element(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::Element(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3477,10 +3575,12 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <AttributeType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::Attribute(data));
+                            self.content
+                                .push(OverrideElementTypeContent::Attribute(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::Attribute(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::Attribute(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3497,12 +3597,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Notation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <NotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(OverrideContent::Notation(data));
+                            self.content
+                                .push(OverrideElementTypeContent::Notation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = OverrideDeserializerState::Notation(deserializer);
+                            *self.state =
+                                OverrideElementTypeDeserializerState::Notation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3519,7 +3623,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (OverrideDeserializerState::Next__, Event::End(_)) => {
+                (OverrideElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -3528,13 +3632,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (OverrideDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (OverrideElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (OverrideDeserializerState::Annotation(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3542,10 +3646,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::Annotation(data));
+                        self.content
+                            .push(OverrideElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::Annotation(deserializer);
+                        *self.state =
+                            OverrideElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3554,7 +3660,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::SimpleType(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::SimpleType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3562,10 +3668,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::SimpleType(data));
+                        self.content
+                            .push(OverrideElementTypeContent::SimpleType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::SimpleType(deserializer);
+                        *self.state =
+                            OverrideElementTypeDeserializerState::SimpleType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3574,7 +3682,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::ComplexType(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::ComplexType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3582,10 +3690,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::ComplexType(data));
+                        self.content
+                            .push(OverrideElementTypeContent::ComplexType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::ComplexType(deserializer);
+                        *self.state =
+                            OverrideElementTypeDeserializerState::ComplexType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3594,7 +3704,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::Group(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::Group(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3602,10 +3712,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::Group(data));
+                        self.content.push(OverrideElementTypeContent::Group(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::Group(deserializer);
+                        *self.state = OverrideElementTypeDeserializerState::Group(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3614,7 +3724,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::AttributeGroup(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::AttributeGroup(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3622,10 +3732,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::AttributeGroup(data));
+                        self.content
+                            .push(OverrideElementTypeContent::AttributeGroup(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::AttributeGroup(deserializer);
+                        *self.state =
+                            OverrideElementTypeDeserializerState::AttributeGroup(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3634,7 +3746,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::Element(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::Element(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3642,10 +3754,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::Element(data));
+                        self.content.push(OverrideElementTypeContent::Element(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::Element(deserializer);
+                        *self.state = OverrideElementTypeDeserializerState::Element(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3654,7 +3766,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::Attribute(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::Attribute(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3662,10 +3774,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::Attribute(data));
+                        self.content
+                            .push(OverrideElementTypeContent::Attribute(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::Attribute(deserializer);
+                        *self.state = OverrideElementTypeDeserializerState::Attribute(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3674,7 +3787,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (OverrideDeserializerState::Notation(deserializer), _) => {
+                (OverrideElementTypeDeserializerState::Notation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3682,10 +3795,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(OverrideContent::Notation(data));
+                        self.content
+                            .push(OverrideElementTypeContent::Notation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = OverrideDeserializerState::Notation(deserializer);
+                        *self.state = OverrideElementTypeDeserializerState::Notation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3696,12 +3810,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Override, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::OverrideElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Override {
+            Ok(super::OverrideElementType {
                 schema_location: self.schema_location,
                 id: self.id,
                 content: self.content,
@@ -3709,18 +3826,20 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AnnotationDeserializer {
+    pub struct AnnotationElementTypeDeserializer {
         id: Option<String>,
-        content: Vec<super::AnnotationContent>,
-        state: Box<AnnotationDeserializerState>,
+        content: Vec<super::AnnotationElementTypeContent>,
+        state: Box<AnnotationElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum AnnotationDeserializerState {
+    enum AnnotationElementTypeDeserializerState {
         Next__,
-        Appinfo(<Appinfo as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Documentation(<Documentation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Appinfo(<AppinfoElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Documentation(
+            <DocumentationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
     }
-    impl AnnotationDeserializer {
+    impl AnnotationElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -3743,15 +3862,17 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 id: id,
                 content: Vec::new(),
-                state: Box::new(AnnotationDeserializerState::Next__),
+                state: Box::new(AnnotationElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Annotation> for AnnotationDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AnnotationElementType>
+        for AnnotationElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Annotation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnnotationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -3788,7 +3909,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Annotation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnnotationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -3797,22 +3918,32 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, AnnotationDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    AnnotationElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (AnnotationDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    AnnotationElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(reader.resolve_local_name(x.name(), NS_XS), Some(b"appinfo")) {
                         let DeserializerOutput {
                             data,
                             deserializer,
                             event,
                             allow_any,
-                        } = <Appinfo as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AppinfoElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(AnnotationContent::Appinfo(data));
+                            self.content
+                                .push(AnnotationElementTypeContent::Appinfo(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = AnnotationDeserializerState::Appinfo(deserializer);
+                            *self.state =
+                                AnnotationElementTypeDeserializerState::Appinfo(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3829,12 +3960,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Documentation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <DocumentationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(AnnotationContent::Documentation(data));
+                            self.content
+                                .push(AnnotationElementTypeContent::Documentation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = AnnotationDeserializerState::Documentation(deserializer);
+                            *self.state =
+                                AnnotationElementTypeDeserializerState::Documentation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -3851,7 +3986,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (AnnotationDeserializerState::Next__, Event::End(_)) => {
+                (AnnotationElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -3860,13 +3995,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (AnnotationDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (AnnotationElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (AnnotationDeserializerState::Appinfo(deserializer), _) => {
+                (AnnotationElementTypeDeserializerState::Appinfo(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3874,10 +4009,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(AnnotationContent::Appinfo(data));
+                        self.content
+                            .push(AnnotationElementTypeContent::Appinfo(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = AnnotationDeserializerState::Appinfo(deserializer);
+                        *self.state = AnnotationElementTypeDeserializerState::Appinfo(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3886,7 +4022,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (AnnotationDeserializerState::Documentation(deserializer), _) => {
+                (AnnotationElementTypeDeserializerState::Documentation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -3894,10 +4030,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(AnnotationContent::Documentation(data));
+                        self.content
+                            .push(AnnotationElementTypeContent::Documentation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = AnnotationDeserializerState::Documentation(deserializer);
+                        *self.state =
+                            AnnotationElementTypeDeserializerState::Documentation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -3908,33 +4046,40 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Annotation, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::AnnotationElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Annotation {
+            Ok(super::AnnotationElementType {
                 id: self.id,
                 content: self.content,
             })
         }
     }
     #[derive(Debug)]
-    pub struct DefaultOpenContentDeserializer {
+    pub struct DefaultOpenContentElementTypeDeserializer {
         id: Option<String>,
         applies_to_empty: bool,
         mode: super::DefaultOpenContentModeType,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         any: Option<super::WildcardType>,
-        state: Box<DefaultOpenContentDeserializerState>,
+        state: Box<DefaultOpenContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum DefaultOpenContentDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum DefaultOpenContentElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Any(Option<<WildcardType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
-    impl DefaultOpenContentDeserializer {
+    impl DefaultOpenContentElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -3966,21 +4111,27 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 id: id,
                 applies_to_empty: applies_to_empty
-                    .unwrap_or_else(super::DefaultOpenContent::default_applies_to_empty),
-                mode: mode.unwrap_or_else(super::DefaultOpenContent::default_mode),
+                    .unwrap_or_else(super::DefaultOpenContentElementType::default_applies_to_empty),
+                mode: mode.unwrap_or_else(super::DefaultOpenContentElementType::default_mode),
                 annotation: None,
                 any: None,
-                state: Box::new(DefaultOpenContentDeserializerState::Annotation(None)),
+                state: Box::new(DefaultOpenContentElementTypeDeserializerState::Annotation(
+                    None,
+                )),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::DefaultOpenContent>
-        for DefaultOpenContentDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::DefaultOpenContentElementType>
+        for DefaultOpenContentElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::DefaultOpenContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<
+            'de,
+            super::DefaultOpenContentElementType,
+            Self,
+        >
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -4017,7 +4168,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::DefaultOpenContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<
+            'de,
+            super::DefaultOpenContentElementType,
+            Self,
+        >
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -4031,12 +4186,14 @@ pub mod quick_xml_deserialize {
                 event = match (
                     core::mem::replace(
                         &mut *self.state,
-                        DefaultOpenContentDeserializerState::Done__,
+                        DefaultOpenContentElementTypeDeserializerState::Done__,
                     ),
                     event,
                 ) {
                     (
-                        DefaultOpenContentDeserializerState::Annotation(Some(deserializer)),
+                        DefaultOpenContentElementTypeDeserializerState::Annotation(Some(
+                            deserializer,
+                        )),
                         event,
                     ) => {
                         let DeserializerOutput {
@@ -4059,7 +4216,9 @@ pub mod quick_xml_deserialize {
                             }
                             event => {
                                 *self.state =
-                                    DefaultOpenContentDeserializerState::Annotation(deserializer);
+                                    DefaultOpenContentElementTypeDeserializerState::Annotation(
+                                        deserializer,
+                                    );
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -4070,7 +4229,9 @@ pub mod quick_xml_deserialize {
                         };
                         if allow_any {
                             allow_any_fallback.get_or_insert(
-                                DefaultOpenContentDeserializerState::Annotation(deserializer),
+                                DefaultOpenContentElementTypeDeserializerState::Annotation(
+                                    deserializer,
+                                ),
                             );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
@@ -4081,10 +4242,11 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = DefaultOpenContentDeserializerState::Annotation(None);
+                        *self.state =
+                            DefaultOpenContentElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (DefaultOpenContentDeserializerState::Annotation(None), event) => {
+                    (DefaultOpenContentElementTypeDeserializerState::Annotation(None), event) => {
                         match &event {
                             Event::Start(x) | Event::Empty(x)
                                 if matches!(
@@ -4092,14 +4254,7 @@ pub mod quick_xml_deserialize {
                                     Some(b"annotation")
                                 ) =>
                             {
-                                let DeserializerOutput {
-                                    data,
-                                    deserializer,
-                                    event,
-                                    allow_any,
-                                } = <Annotation as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                                 if let Some(data) = data {
                                     if self.annotation.is_some() {
                                         Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -4109,17 +4264,17 @@ pub mod quick_xml_deserialize {
                                     self.annotation = Some(data);
                                 }
                                 *self.state =
-                                    DefaultOpenContentDeserializerState::Annotation(deserializer);
+                                    DefaultOpenContentElementTypeDeserializerState::Annotation(
+                                        deserializer,
+                                    );
                                 match event {
                                     Some(event @ (Event::Start(_) | Event::End(_))) => {
                                         *self.state =
-                                            DefaultOpenContentDeserializerState::Any(None);
-                                        if allow_any {
-                                            allow_any_fallback.get_or_insert(
-                                                DefaultOpenContentDeserializerState::Annotation(
-                                                    None,
-                                                ),
+                                            DefaultOpenContentElementTypeDeserializerState::Any(
+                                                None,
                                             );
+                                        if allow_any {
+                                            allow_any_fallback . get_or_insert (DefaultOpenContentElementTypeDeserializerState :: Annotation (None)) ;
                                         }
                                         event
                                     }
@@ -4134,9 +4289,12 @@ pub mod quick_xml_deserialize {
                                 }
                             }
                             Event::Start(_) | Event::Empty(_) => {
-                                *self.state = DefaultOpenContentDeserializerState::Any(None);
+                                *self.state =
+                                    DefaultOpenContentElementTypeDeserializerState::Any(None);
                                 allow_any_fallback.get_or_insert(
-                                    DefaultOpenContentDeserializerState::Annotation(None),
+                                    DefaultOpenContentElementTypeDeserializerState::Annotation(
+                                        None,
+                                    ),
                                 );
                                 event
                             }
@@ -4150,7 +4308,10 @@ pub mod quick_xml_deserialize {
                                 });
                             }
                             _ => {
-                                *self.state = DefaultOpenContentDeserializerState::Annotation(None);
+                                *self.state =
+                                    DefaultOpenContentElementTypeDeserializerState::Annotation(
+                                        None,
+                                    );
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -4160,7 +4321,10 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
-                    (DefaultOpenContentDeserializerState::Any(Some(deserializer)), event) => {
+                    (
+                        DefaultOpenContentElementTypeDeserializerState::Any(Some(deserializer)),
+                        event,
+                    ) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -4178,8 +4342,9 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state =
-                                    DefaultOpenContentDeserializerState::Any(deserializer);
+                                *self.state = DefaultOpenContentElementTypeDeserializerState::Any(
+                                    deserializer,
+                                );
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -4190,7 +4355,7 @@ pub mod quick_xml_deserialize {
                         };
                         if allow_any {
                             allow_any_fallback.get_or_insert(
-                                DefaultOpenContentDeserializerState::Any(deserializer),
+                                DefaultOpenContentElementTypeDeserializerState::Any(deserializer),
                             );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
@@ -4199,79 +4364,89 @@ pub mod quick_xml_deserialize {
                             }
                             self.any = Some(data);
                         }
-                        *self.state = DefaultOpenContentDeserializerState::Any(None);
+                        *self.state = DefaultOpenContentElementTypeDeserializerState::Any(None);
                         event
                     }
-                    (DefaultOpenContentDeserializerState::Any(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"any")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <WildcardType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.any.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"any",
-                                    )))?;
-                                }
-                                self.any = Some(data);
-                            }
-                            *self.state = DefaultOpenContentDeserializerState::Any(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = DefaultOpenContentDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            DefaultOpenContentDeserializerState::Any(None),
-                                        );
+                    (DefaultOpenContentElementTypeDeserializerState::Any(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"any")
+                                ) =>
+                            {
+                                let DeserializerOutput {
+                                    data,
+                                    deserializer,
+                                    event,
+                                    allow_any,
+                                } = <WildcardType as WithDeserializer>::Deserializer::init(
+                                    reader, event,
+                                )?;
+                                if let Some(data) = data {
+                                    if self.any.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"any",
+                                        )))?;
                                     }
-                                    event
+                                    self.any = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state = DefaultOpenContentElementTypeDeserializerState::Any(
+                                    deserializer,
+                                );
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            DefaultOpenContentElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                DefaultOpenContentElementTypeDeserializerState::Any(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state =
+                                    DefaultOpenContentElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    DefaultOpenContentElementTypeDeserializerState::Any(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state =
+                                    DefaultOpenContentElementTypeDeserializerState::Any(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = DefaultOpenContentDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(DefaultOpenContentDeserializerState::Any(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = DefaultOpenContentDeserializerState::Any(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (DefaultOpenContentDeserializerState::Done__, event) => {
+                    }
+                    (DefaultOpenContentElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -4291,12 +4466,12 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             self,
             _reader: &R,
-        ) -> Result<super::DefaultOpenContent, xsd_parser::quick_xml::Error>
+        ) -> Result<super::DefaultOpenContentElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::DefaultOpenContent {
+            Ok(super::DefaultOpenContentElementType {
                 id: self.id,
                 applies_to_empty: self.applies_to_empty,
                 mode: self.mode,
@@ -4318,10 +4493,14 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum SimpleBaseTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Restriction(<Restriction as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        List(<List as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Union(<Union as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        Restriction(
+            <RestrictionElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        List(<ListElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Union(<UnionElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl SimpleBaseTypeDeserializer {
         fn from_bytes_start<R>(
@@ -4423,7 +4602,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(SimpleBaseTypeContent::Annotation(data));
                         }
@@ -4445,7 +4626,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Restriction as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <RestrictionElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(SimpleBaseTypeContent::Restriction(data));
                         }
@@ -4465,7 +4648,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <List as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <ListElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(SimpleBaseTypeContent::List(data));
                         }
@@ -4484,7 +4669,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Union as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <UnionElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(SimpleBaseTypeContent::Union(data));
                         }
@@ -4634,10 +4821,18 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum ComplexBaseTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        SimpleContent(<SimpleContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        ComplexContent(<ComplexContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        OpenContent(<OpenContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        SimpleContent(
+            <SimpleContentElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        ComplexContent(
+            <ComplexContentElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        OpenContent(
+            <OpenContentElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         All(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Choice(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
@@ -4646,7 +4841,9 @@ pub mod quick_xml_deserialize {
         AttributeGroup(
             <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
         ),
-        AnyAttribute(<AnyAttribute as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        AnyAttribute(
+            <AnyAttributeElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Assert(<AssertionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl ComplexBaseTypeDeserializer {
@@ -4776,7 +4973,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ComplexBaseTypeContent::Annotation(data));
                         }
@@ -4799,7 +4998,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <SimpleContent as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <SimpleContentElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content
                                 .push(ComplexBaseTypeContent::SimpleContent(data));
@@ -4823,7 +5024,7 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <ComplexContent as WithDeserializer>::Deserializer::init(
+                        } = <ComplexContentElementType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
                         if let Some(data) = data {
@@ -4849,7 +5050,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <OpenContent as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <OpenContentElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ComplexBaseTypeContent::OpenContent(data));
                         }
@@ -5000,7 +5203,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <AnyAttribute as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnyAttributeElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content
                                 .push(ComplexBaseTypeContent::AnyAttribute(data));
@@ -5340,13 +5545,15 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum GroupTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Element(<ElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         All(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Choice(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Sequence(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Any(<Any as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Any(<AnyElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl GroupTypeDeserializer {
         fn from_bytes_start<R>(
@@ -5460,7 +5667,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(GroupTypeContent::Annotation(data));
                         }
@@ -5579,7 +5788,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Any as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnyElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(GroupTypeContent::Any(data));
                         }
@@ -5784,12 +5995,16 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum AttributeGroupTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Attribute(<AttributeType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         AttributeGroup(
             <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
         ),
-        AnyAttribute(<AnyAttribute as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        AnyAttribute(
+            <AnyAttributeElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
     }
     impl AttributeGroupTypeDeserializer {
         fn from_bytes_start<R>(
@@ -5897,7 +6112,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content
                                 .push(AttributeGroupTypeContent::Annotation(data));
@@ -5971,7 +6188,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <AnyAttribute as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnyAttributeElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content
                                 .push(AttributeGroupTypeContent::AnyAttribute(data));
@@ -6137,13 +6356,15 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum ElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         ComplexType(<ComplexBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Alternative(<AltType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Unique(<KeybaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Key(<KeybaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        Keyref(<Keyref as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Keyref(<KeyrefElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl ElementTypeDeserializer {
         fn from_bytes_start<R>(
@@ -6316,7 +6537,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ElementTypeContent::Annotation(data));
                         }
@@ -6445,7 +6668,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Keyref as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <KeyrefElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ElementTypeContent::Keyref(data));
                         }
@@ -6661,13 +6886,17 @@ pub mod quick_xml_deserialize {
         form: Option<super::FormChoiceType>,
         target_namespace: Option<String>,
         inheritable: Option<bool>,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         simple_type: Option<super::SimpleBaseType>,
         state: Box<AttributeTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum AttributeTypeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         SimpleType(
             Option<<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
         ),
@@ -6850,75 +7079,73 @@ pub mod quick_xml_deserialize {
                         *self.state = AttributeTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (AttributeTypeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = AttributeTypeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = AttributeTypeDeserializerState::SimpleType(None);
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            AttributeTypeDeserializerState::Annotation(None),
-                                        );
+                    (AttributeTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    AttributeTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            AttributeTypeDeserializerState::SimpleType(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                AttributeTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = AttributeTypeDeserializerState::SimpleType(None);
+                                allow_any_fallback.get_or_insert(
+                                    AttributeTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = AttributeTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = AttributeTypeDeserializerState::SimpleType(None);
-                            allow_any_fallback
-                                .get_or_insert(AttributeTypeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = AttributeTypeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
+                    }
                     (AttributeTypeDeserializerState::SimpleType(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
@@ -7076,20 +7303,24 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct NotationDeserializer {
+    pub struct NotationElementTypeDeserializer {
         id: Option<String>,
         name: String,
         public: Option<String>,
         system: Option<String>,
-        annotation: Option<super::Annotation>,
-        state: Box<NotationDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<NotationElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum NotationDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum NotationElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl NotationDeserializer {
+    impl NotationElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -7130,15 +7361,17 @@ pub mod quick_xml_deserialize {
                 public: public,
                 system: system,
                 annotation: None,
-                state: Box::new(NotationDeserializerState::Annotation(None)),
+                state: Box::new(NotationElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Notation> for NotationDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::NotationElementType>
+        for NotationElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Notation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::NotationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7175,7 +7408,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Notation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::NotationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7187,10 +7420,16 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, NotationDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        NotationElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (NotationDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (
+                        NotationElementTypeDeserializerState::Annotation(Some(deserializer)),
+                        event,
+                    ) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -7210,7 +7449,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = NotationDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    NotationElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -7220,8 +7460,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(NotationDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                NotationElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -7231,79 +7472,79 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = NotationDeserializerState::Annotation(None);
+                        *self.state = NotationElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (NotationDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = NotationDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = NotationDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            NotationDeserializerState::Annotation(None),
-                                        );
+                    (NotationElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    NotationElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = NotationElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                NotationElementTypeDeserializerState::Annotation(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = NotationElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    NotationElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state =
+                                    NotationElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = NotationDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(NotationDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = NotationDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (NotationDeserializerState::Done__, event) => {
+                    }
+                    (NotationElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -7320,12 +7561,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Notation, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::NotationElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Notation {
+            Ok(super::NotationElementType {
                 id: self.id,
                 name: self.name,
                 public: self.public,
@@ -7335,10 +7579,10 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AppinfoDeserializer {
+    pub struct AppinfoElementTypeDeserializer {
         source: Option<String>,
     }
-    impl AppinfoDeserializer {
+    impl AppinfoElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -7364,11 +7608,13 @@ pub mod quick_xml_deserialize {
             Ok(Self { source: source })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Appinfo> for AppinfoDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AppinfoElementType>
+        for AppinfoElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Appinfo, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AppinfoElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7405,7 +7651,7 @@ pub mod quick_xml_deserialize {
             self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Appinfo, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AppinfoElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7428,22 +7674,25 @@ pub mod quick_xml_deserialize {
                 }),
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Appinfo, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::AppinfoElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Appinfo {
+            Ok(super::AppinfoElementType {
                 source: self.source,
             })
         }
     }
     #[derive(Debug)]
-    pub struct DocumentationDeserializer {
+    pub struct DocumentationElementTypeDeserializer {
         source: Option<String>,
         lang: Option<String>,
     }
-    impl DocumentationDeserializer {
+    impl DocumentationElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -7476,13 +7725,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Documentation>
-        for DocumentationDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::DocumentationElementType>
+        for DocumentationElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Documentation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::DocumentationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7519,7 +7768,7 @@ pub mod quick_xml_deserialize {
             self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Documentation, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::DocumentationElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7545,12 +7794,12 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             self,
             _reader: &R,
-        ) -> Result<super::Documentation, xsd_parser::quick_xml::Error>
+        ) -> Result<super::DocumentationElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Documentation {
+            Ok(super::DocumentationElementType {
                 source: self.source,
                 lang: self.lang,
             })
@@ -7562,12 +7811,16 @@ pub mod quick_xml_deserialize {
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::NotNamespaceType>,
         process_contents: super::ProcessContentsType,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         state: Box<WildcardTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum WildcardTypeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
     impl WildcardTypeDeserializer {
@@ -7723,75 +7976,71 @@ pub mod quick_xml_deserialize {
                         *self.state = WildcardTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (WildcardTypeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = WildcardTypeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = WildcardTypeDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            WildcardTypeDeserializerState::Annotation(None),
-                                        );
+                    (WildcardTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    WildcardTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = WildcardTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                WildcardTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = WildcardTypeDeserializerState::Done__;
+                                allow_any_fallback
+                                    .get_or_insert(WildcardTypeDeserializerState::Annotation(None));
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = WildcardTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = WildcardTypeDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(WildcardTypeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = WildcardTypeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
+                    }
                     (WildcardTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
@@ -7824,20 +8073,22 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct RestrictionDeserializer {
+    pub struct RestrictionElementTypeDeserializer {
         id: Option<String>,
         base: Option<String>,
-        content: Vec<super::RestrictionContent>,
-        state: Box<RestrictionDeserializerState>,
+        content: Vec<super::RestrictionElementTypeContent>,
+        state: Box<RestrictionElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum RestrictionDeserializerState {
+    enum RestrictionElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Facet(<Facet as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
-    impl RestrictionDeserializer {
+    impl RestrictionElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -7864,15 +8115,17 @@ pub mod quick_xml_deserialize {
                 id: id,
                 base: base,
                 content: Vec::new(),
-                state: Box::new(RestrictionDeserializerState::Next__),
+                state: Box::new(RestrictionElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Restriction> for RestrictionDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::RestrictionElementType>
+        for RestrictionElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Restriction, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::RestrictionElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7909,7 +8162,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Restriction, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::RestrictionElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -7918,10 +8171,16 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, RestrictionDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    RestrictionElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (RestrictionDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    RestrictionElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"annotation")
@@ -7931,12 +8190,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(RestrictionContent::Annotation(data));
+                            self.content
+                                .push(RestrictionElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RestrictionDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                RestrictionElementTypeDeserializerState::Annotation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -7957,10 +8220,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(RestrictionContent::SimpleType(data));
+                            self.content
+                                .push(RestrictionElementTypeContent::SimpleType(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = RestrictionDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                RestrictionElementTypeDeserializerState::SimpleType(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -7979,10 +8244,13 @@ pub mod quick_xml_deserialize {
                                     allow_any,
                                 } = <Facet as WithDeserializer>::Deserializer::init(reader, event)?;
                                 if let Some(data) = data {
-                                    self.content.push(RestrictionContent::Facet(data));
+                                    self.content
+                                        .push(RestrictionElementTypeContent::Facet(data));
                                 }
                                 if let Some(deserializer) = deserializer {
-                                    *self.state = RestrictionDeserializerState::Facet(deserializer);
+                                    *self.state = RestrictionElementTypeDeserializerState::Facet(
+                                        deserializer,
+                                    );
                                 }
                                 let Some(event) = event else {
                                     return Ok(DeserializerOutput {
@@ -8006,7 +8274,7 @@ pub mod quick_xml_deserialize {
                         }
                     }
                 }
-                (RestrictionDeserializerState::Next__, Event::End(_)) => {
+                (RestrictionElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -8015,13 +8283,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (RestrictionDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (RestrictionElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (RestrictionDeserializerState::Annotation(deserializer), _) => {
+                (RestrictionElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -8029,10 +8297,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RestrictionContent::Annotation(data));
+                        self.content
+                            .push(RestrictionElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RestrictionDeserializerState::Annotation(deserializer);
+                        *self.state =
+                            RestrictionElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -8041,7 +8311,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RestrictionDeserializerState::SimpleType(deserializer), _) => {
+                (RestrictionElementTypeDeserializerState::SimpleType(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -8049,10 +8319,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RestrictionContent::SimpleType(data));
+                        self.content
+                            .push(RestrictionElementTypeContent::SimpleType(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RestrictionDeserializerState::SimpleType(deserializer);
+                        *self.state =
+                            RestrictionElementTypeDeserializerState::SimpleType(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -8061,7 +8333,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (RestrictionDeserializerState::Facet(deserializer), _) => {
+                (RestrictionElementTypeDeserializerState::Facet(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -8069,10 +8341,11 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(RestrictionContent::Facet(data));
+                        self.content
+                            .push(RestrictionElementTypeContent::Facet(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = RestrictionDeserializerState::Facet(deserializer);
+                        *self.state = RestrictionElementTypeDeserializerState::Facet(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -8083,12 +8356,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Restriction, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::RestrictionElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Restriction {
+            Ok(super::RestrictionElementType {
                 id: self.id,
                 base: self.base,
                 content: self.content,
@@ -8096,22 +8372,26 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct ListDeserializer {
+    pub struct ListElementTypeDeserializer {
         id: Option<String>,
         item_type: Option<String>,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         simple_type: Option<super::SimpleBaseType>,
-        state: Box<ListDeserializerState>,
+        state: Box<ListElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum ListDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum ListElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         SimpleType(
             Option<<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
         ),
         Done__,
     }
-    impl ListDeserializer {
+    impl ListElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -8142,15 +8422,17 @@ pub mod quick_xml_deserialize {
                 item_type: item_type,
                 annotation: None,
                 simple_type: None,
-                state: Box::new(ListDeserializerState::Annotation(None)),
+                state: Box::new(ListElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::List> for ListDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::ListElementType>
+        for ListElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::List, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ListElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8187,7 +8469,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::List, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ListElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8199,10 +8481,10 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, ListDeserializerState::Done__),
+                    core::mem::replace(&mut *self.state, ListElementTypeDeserializerState::Done__),
                     event,
                 ) {
-                    (ListDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (ListElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -8222,7 +8504,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = ListDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    ListElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -8232,8 +8515,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(ListDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                ListElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -8243,78 +8527,77 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = ListDeserializerState::Annotation(None);
+                        *self.state = ListElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (ListDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = ListDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = ListDeserializerState::SimpleType(None);
-                                    if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(ListDeserializerState::Annotation(None));
+                    (ListElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    ListElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            ListElementTypeDeserializerState::SimpleType(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                ListElementTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = ListElementTypeDeserializerState::SimpleType(None);
+                                allow_any_fallback.get_or_insert(
+                                    ListElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = ListElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = ListDeserializerState::SimpleType(None);
-                            allow_any_fallback
-                                .get_or_insert(ListDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = ListDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (ListDeserializerState::SimpleType(Some(deserializer)), event) => {
+                    }
+                    (ListElementTypeDeserializerState::SimpleType(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -8334,7 +8617,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = ListDeserializerState::SimpleType(deserializer);
+                                *self.state =
+                                    ListElementTypeDeserializerState::SimpleType(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -8344,8 +8628,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(ListDeserializerState::SimpleType(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                ListElementTypeDeserializerState::SimpleType(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.simple_type.is_some() {
@@ -8355,10 +8640,10 @@ pub mod quick_xml_deserialize {
                             }
                             self.simple_type = Some(data);
                         }
-                        *self.state = ListDeserializerState::SimpleType(None);
+                        *self.state = ListElementTypeDeserializerState::SimpleType(None);
                         event
                     }
-                    (ListDeserializerState::SimpleType(None), event) => match &event {
+                    (ListElementTypeDeserializerState::SimpleType(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_XS),
@@ -8381,13 +8666,15 @@ pub mod quick_xml_deserialize {
                                 }
                                 self.simple_type = Some(data);
                             }
-                            *self.state = ListDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                ListElementTypeDeserializerState::SimpleType(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = ListDeserializerState::Done__;
+                                    *self.state = ListElementTypeDeserializerState::Done__;
                                     if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(ListDeserializerState::SimpleType(None));
+                                        allow_any_fallback.get_or_insert(
+                                            ListElementTypeDeserializerState::SimpleType(None),
+                                        );
                                     }
                                     event
                                 }
@@ -8402,9 +8689,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = ListDeserializerState::Done__;
+                            *self.state = ListElementTypeDeserializerState::Done__;
                             allow_any_fallback
-                                .get_or_insert(ListDeserializerState::SimpleType(None));
+                                .get_or_insert(ListElementTypeDeserializerState::SimpleType(None));
                             event
                         }
                         Event::End(_) => {
@@ -8417,7 +8704,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = ListDeserializerState::SimpleType(None);
+                            *self.state = ListElementTypeDeserializerState::SimpleType(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -8426,7 +8713,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (ListDeserializerState::Done__, event) => {
+                    (ListElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -8443,12 +8730,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::List, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::ListElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::List {
+            Ok(super::ListElementType {
                 id: self.id,
                 item_type: self.item_type,
                 annotation: self.annotation,
@@ -8457,22 +8747,26 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct UnionDeserializer {
+    pub struct UnionElementTypeDeserializer {
         id: Option<String>,
         member_types: Option<super::UnionMemberTypesType>,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         simple_type: Vec<super::SimpleBaseType>,
-        state: Box<UnionDeserializerState>,
+        state: Box<UnionElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum UnionDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum UnionElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         SimpleType(
             Option<<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
         ),
         Done__,
     }
-    impl UnionDeserializer {
+    impl UnionElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -8503,15 +8797,17 @@ pub mod quick_xml_deserialize {
                 member_types: member_types,
                 annotation: None,
                 simple_type: Vec::new(),
-                state: Box::new(UnionDeserializerState::Annotation(None)),
+                state: Box::new(UnionElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Union> for UnionDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::UnionElementType>
+        for UnionElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Union, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::UnionElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8548,7 +8844,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Union, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::UnionElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8560,10 +8856,10 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, UnionDeserializerState::Done__),
+                    core::mem::replace(&mut *self.state, UnionElementTypeDeserializerState::Done__),
                     event,
                 ) {
-                    (UnionDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (UnionElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -8583,7 +8879,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = UnionDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    UnionElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -8593,8 +8890,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(UnionDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                UnionElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -8604,79 +8902,77 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = UnionDeserializerState::Annotation(None);
+                        *self.state = UnionElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (UnionDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = UnionDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = UnionDeserializerState::SimpleType(None);
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            UnionDeserializerState::Annotation(None),
-                                        );
+                    (UnionElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    UnionElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            UnionElementTypeDeserializerState::SimpleType(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                UnionElementTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = UnionElementTypeDeserializerState::SimpleType(None);
+                                allow_any_fallback.get_or_insert(
+                                    UnionElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = UnionElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = UnionDeserializerState::SimpleType(None);
-                            allow_any_fallback
-                                .get_or_insert(UnionDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = UnionDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (UnionDeserializerState::SimpleType(Some(deserializer)), event) => {
+                    }
+                    (UnionElementTypeDeserializerState::SimpleType(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -8691,7 +8987,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = UnionDeserializerState::SimpleType(deserializer);
+                                *self.state =
+                                    UnionElementTypeDeserializerState::SimpleType(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -8701,16 +8998,17 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(UnionDeserializerState::SimpleType(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                UnionElementTypeDeserializerState::SimpleType(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             self.simple_type.push(data);
                         }
-                        *self.state = UnionDeserializerState::SimpleType(None);
+                        *self.state = UnionElementTypeDeserializerState::SimpleType(None);
                         event
                     }
-                    (UnionDeserializerState::SimpleType(None), event) => match &event {
+                    (UnionElementTypeDeserializerState::SimpleType(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_XS),
@@ -8728,13 +9026,14 @@ pub mod quick_xml_deserialize {
                             if let Some(data) = data {
                                 self.simple_type.push(data);
                             }
-                            *self.state = UnionDeserializerState::SimpleType(deserializer);
+                            *self.state =
+                                UnionElementTypeDeserializerState::SimpleType(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = UnionDeserializerState::Done__;
+                                    *self.state = UnionElementTypeDeserializerState::Done__;
                                     if allow_any {
                                         allow_any_fallback.get_or_insert(
-                                            UnionDeserializerState::SimpleType(None),
+                                            UnionElementTypeDeserializerState::SimpleType(None),
                                         );
                                     }
                                     event
@@ -8750,9 +9049,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = UnionDeserializerState::Done__;
+                            *self.state = UnionElementTypeDeserializerState::Done__;
                             allow_any_fallback
-                                .get_or_insert(UnionDeserializerState::SimpleType(None));
+                                .get_or_insert(UnionElementTypeDeserializerState::SimpleType(None));
                             event
                         }
                         Event::End(_) => {
@@ -8765,7 +9064,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = UnionDeserializerState::SimpleType(None);
+                            *self.state = UnionElementTypeDeserializerState::SimpleType(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -8774,7 +9073,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (UnionDeserializerState::Done__, event) => {
+                    (UnionElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -8791,12 +9090,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Union, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::UnionElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Union {
+            Ok(super::UnionElementType {
                 id: self.id,
                 member_types: self.member_types,
                 annotation: self.annotation,
@@ -8805,19 +9107,21 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct SimpleContentDeserializer {
+    pub struct SimpleContentElementTypeDeserializer {
         id: Option<String>,
-        content: Vec<super::SimpleContentContent>,
-        state: Box<SimpleContentDeserializerState>,
+        content: Vec<super::SimpleContentElementTypeContent>,
+        state: Box<SimpleContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum SimpleContentDeserializerState {
+    enum SimpleContentElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Restriction(<RestrictionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Extension(<ExtensionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
-    impl SimpleContentDeserializer {
+    impl SimpleContentElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -8840,17 +9144,17 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 id: id,
                 content: Vec::new(),
-                state: Box::new(SimpleContentDeserializerState::Next__),
+                state: Box::new(SimpleContentElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::SimpleContent>
-        for SimpleContentDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::SimpleContentElementType>
+        for SimpleContentElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SimpleContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SimpleContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8887,7 +9191,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SimpleContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::SimpleContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -8896,10 +9200,16 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, SimpleContentDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    SimpleContentElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (SimpleContentDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    SimpleContentElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"annotation")
@@ -8909,12 +9219,16 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleContentContent::Annotation(data));
+                            self.content
+                                .push(SimpleContentElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SimpleContentDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                SimpleContentElementTypeDeserializerState::Annotation(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -8935,10 +9249,13 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleContentContent::Restriction(data));
+                            self.content
+                                .push(SimpleContentElementTypeContent::Restriction(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SimpleContentDeserializerState::Restriction(deserializer);
+                            *self.state = SimpleContentElementTypeDeserializerState::Restriction(
+                                deserializer,
+                            );
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -8957,10 +9274,12 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ExtensionType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(SimpleContentContent::Extension(data));
+                            self.content
+                                .push(SimpleContentElementTypeContent::Extension(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = SimpleContentDeserializerState::Extension(deserializer);
+                            *self.state =
+                                SimpleContentElementTypeDeserializerState::Extension(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -8977,7 +9296,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (SimpleContentDeserializerState::Next__, Event::End(_)) => {
+                (SimpleContentElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -8986,13 +9305,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (SimpleContentDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (SimpleContentElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (SimpleContentDeserializerState::Annotation(deserializer), _) => {
+                (SimpleContentElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9000,10 +9319,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleContentContent::Annotation(data));
+                        self.content
+                            .push(SimpleContentElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SimpleContentDeserializerState::Annotation(deserializer);
+                        *self.state =
+                            SimpleContentElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9012,7 +9333,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SimpleContentDeserializerState::Restriction(deserializer), _) => {
+                (SimpleContentElementTypeDeserializerState::Restriction(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9020,10 +9341,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleContentContent::Restriction(data));
+                        self.content
+                            .push(SimpleContentElementTypeContent::Restriction(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SimpleContentDeserializerState::Restriction(deserializer);
+                        *self.state =
+                            SimpleContentElementTypeDeserializerState::Restriction(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9032,7 +9355,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (SimpleContentDeserializerState::Extension(deserializer), _) => {
+                (SimpleContentElementTypeDeserializerState::Extension(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9040,10 +9363,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleContentContent::Extension(data));
+                        self.content
+                            .push(SimpleContentElementTypeContent::Extension(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = SimpleContentDeserializerState::Extension(deserializer);
+                        *self.state =
+                            SimpleContentElementTypeDeserializerState::Extension(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9057,32 +9382,34 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             self,
             _reader: &R,
-        ) -> Result<super::SimpleContent, xsd_parser::quick_xml::Error>
+        ) -> Result<super::SimpleContentElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::SimpleContent {
+            Ok(super::SimpleContentElementType {
                 id: self.id,
                 content: self.content,
             })
         }
     }
     #[derive(Debug)]
-    pub struct ComplexContentDeserializer {
+    pub struct ComplexContentElementTypeDeserializer {
         id: Option<String>,
         mixed: Option<bool>,
-        content: Vec<super::ComplexContentContent>,
-        state: Box<ComplexContentDeserializerState>,
+        content: Vec<super::ComplexContentElementTypeContent>,
+        state: Box<ComplexContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum ComplexContentDeserializerState {
+    enum ComplexContentElementTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Restriction(<RestrictionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Extension(<ExtensionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
-    impl ComplexContentDeserializer {
+    impl ComplexContentElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -9109,17 +9436,17 @@ pub mod quick_xml_deserialize {
                 id: id,
                 mixed: mixed,
                 content: Vec::new(),
-                state: Box::new(ComplexContentDeserializerState::Next__),
+                state: Box::new(ComplexContentElementTypeDeserializerState::Next__),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::ComplexContent>
-        for ComplexContentDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::ComplexContentElementType>
+        for ComplexContentElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ComplexContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ComplexContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9156,7 +9483,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ComplexContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::ComplexContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9165,10 +9492,16 @@ pub mod quick_xml_deserialize {
             };
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             match (
-                core::mem::replace(&mut *self.state, ComplexContentDeserializerState::Next__),
+                core::mem::replace(
+                    &mut *self.state,
+                    ComplexContentElementTypeDeserializerState::Next__,
+                ),
                 &event,
             ) {
-                (ComplexContentDeserializerState::Next__, Event::Start(x) | Event::Empty(x)) => {
+                (
+                    ComplexContentElementTypeDeserializerState::Next__,
+                    Event::Start(x) | Event::Empty(x),
+                ) => {
                     if matches!(
                         reader.resolve_local_name(x.name(), NS_XS),
                         Some(b"annotation")
@@ -9178,12 +9511,17 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
-                            self.content.push(ComplexContentContent::Annotation(data));
+                            self.content
+                                .push(ComplexContentElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = ComplexContentDeserializerState::Annotation(deserializer);
+                            *self.state = ComplexContentElementTypeDeserializerState::Annotation(
+                                deserializer,
+                            );
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -9204,11 +9542,13 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(ComplexContentContent::Restriction(data));
+                            self.content
+                                .push(ComplexContentElementTypeContent::Restriction(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state =
-                                ComplexContentDeserializerState::Restriction(deserializer);
+                            *self.state = ComplexContentElementTypeDeserializerState::Restriction(
+                                deserializer,
+                            );
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -9227,10 +9567,12 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ExtensionType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content.push(ComplexContentContent::Extension(data));
+                            self.content
+                                .push(ComplexContentElementTypeContent::Extension(data));
                         }
                         if let Some(deserializer) = deserializer {
-                            *self.state = ComplexContentDeserializerState::Extension(deserializer);
+                            *self.state =
+                                ComplexContentElementTypeDeserializerState::Extension(deserializer);
                         }
                         Ok(DeserializerOutput {
                             data: None,
@@ -9247,7 +9589,7 @@ pub mod quick_xml_deserialize {
                         })
                     }
                 }
-                (ComplexContentDeserializerState::Next__, Event::End(_)) => {
+                (ComplexContentElementTypeDeserializerState::Next__, Event::End(_)) => {
                     let data = self.finish(reader)?;
                     Ok(DeserializerOutput {
                         data: Some(data),
@@ -9256,13 +9598,13 @@ pub mod quick_xml_deserialize {
                         allow_any: false,
                     })
                 }
-                (ComplexContentDeserializerState::Next__, _) => Ok(DeserializerOutput {
+                (ComplexContentElementTypeDeserializerState::Next__, _) => Ok(DeserializerOutput {
                     data: None,
                     deserializer: Some(self),
                     event: None,
                     allow_any: false,
                 }),
-                (ComplexContentDeserializerState::Annotation(deserializer), _) => {
+                (ComplexContentElementTypeDeserializerState::Annotation(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9270,10 +9612,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(ComplexContentContent::Annotation(data));
+                        self.content
+                            .push(ComplexContentElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = ComplexContentDeserializerState::Annotation(deserializer);
+                        *self.state =
+                            ComplexContentElementTypeDeserializerState::Annotation(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9282,7 +9626,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (ComplexContentDeserializerState::Restriction(deserializer), _) => {
+                (ComplexContentElementTypeDeserializerState::Restriction(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9290,10 +9634,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(ComplexContentContent::Restriction(data));
+                        self.content
+                            .push(ComplexContentElementTypeContent::Restriction(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = ComplexContentDeserializerState::Restriction(deserializer);
+                        *self.state =
+                            ComplexContentElementTypeDeserializerState::Restriction(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9302,7 +9648,7 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     })
                 }
-                (ComplexContentDeserializerState::Extension(deserializer), _) => {
+                (ComplexContentElementTypeDeserializerState::Extension(deserializer), _) => {
                     let DeserializerOutput {
                         data,
                         deserializer,
@@ -9310,10 +9656,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(ComplexContentContent::Extension(data));
+                        self.content
+                            .push(ComplexContentElementTypeContent::Extension(data));
                     }
                     if let Some(deserializer) = deserializer {
-                        *self.state = ComplexContentDeserializerState::Extension(deserializer);
+                        *self.state =
+                            ComplexContentElementTypeDeserializerState::Extension(deserializer);
                     }
                     Ok(DeserializerOutput {
                         data: None,
@@ -9327,12 +9675,12 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             self,
             _reader: &R,
-        ) -> Result<super::ComplexContent, xsd_parser::quick_xml::Error>
+        ) -> Result<super::ComplexContentElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::ComplexContent {
+            Ok(super::ComplexContentElementType {
                 id: self.id,
                 mixed: self.mixed,
                 content: self.content,
@@ -9340,20 +9688,24 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct OpenContentDeserializer {
+    pub struct OpenContentElementTypeDeserializer {
         id: Option<String>,
         mode: super::OpenContentModeType,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         any: Option<super::WildcardType>,
-        state: Box<OpenContentDeserializerState>,
+        state: Box<OpenContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum OpenContentDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum OpenContentElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Any(Option<<WildcardType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
-    impl OpenContentDeserializer {
+    impl OpenContentElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -9378,18 +9730,20 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 id: id,
-                mode: mode.unwrap_or_else(super::OpenContent::default_mode),
+                mode: mode.unwrap_or_else(super::OpenContentElementType::default_mode),
                 annotation: None,
                 any: None,
-                state: Box::new(OpenContentDeserializerState::Annotation(None)),
+                state: Box::new(OpenContentElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::OpenContent> for OpenContentDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::OpenContentElementType>
+        for OpenContentElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OpenContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OpenContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9426,7 +9780,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OpenContent, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::OpenContentElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9438,10 +9792,16 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, OpenContentDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        OpenContentElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (OpenContentDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (
+                        OpenContentElementTypeDeserializerState::Annotation(Some(deserializer)),
+                        event,
+                    ) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -9461,8 +9821,9 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state =
-                                    OpenContentDeserializerState::Annotation(deserializer);
+                                *self.state = OpenContentElementTypeDeserializerState::Annotation(
+                                    deserializer,
+                                );
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -9473,7 +9834,7 @@ pub mod quick_xml_deserialize {
                         };
                         if allow_any {
                             allow_any_fallback.get_or_insert(
-                                OpenContentDeserializerState::Annotation(deserializer),
+                                OpenContentElementTypeDeserializerState::Annotation(deserializer),
                             );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
@@ -9484,79 +9845,81 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = OpenContentDeserializerState::Annotation(None);
+                        *self.state = OpenContentElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (OpenContentDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = OpenContentDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = OpenContentDeserializerState::Any(None);
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            OpenContentDeserializerState::Annotation(None),
-                                        );
+                    (OpenContentElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state = OpenContentElementTypeDeserializerState::Annotation(
+                                    deserializer,
+                                );
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            OpenContentElementTypeDeserializerState::Any(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                OpenContentElementTypeDeserializerState::Annotation(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = OpenContentElementTypeDeserializerState::Any(None);
+                                allow_any_fallback.get_or_insert(
+                                    OpenContentElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state =
+                                    OpenContentElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = OpenContentDeserializerState::Any(None);
-                            allow_any_fallback
-                                .get_or_insert(OpenContentDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = OpenContentDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (OpenContentDeserializerState::Any(Some(deserializer)), event) => {
+                    }
+                    (OpenContentElementTypeDeserializerState::Any(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -9574,7 +9937,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = OpenContentDeserializerState::Any(deserializer);
+                                *self.state =
+                                    OpenContentElementTypeDeserializerState::Any(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -9584,8 +9948,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(OpenContentDeserializerState::Any(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                OpenContentElementTypeDeserializerState::Any(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.any.is_some() {
@@ -9593,10 +9958,10 @@ pub mod quick_xml_deserialize {
                             }
                             self.any = Some(data);
                         }
-                        *self.state = OpenContentDeserializerState::Any(None);
+                        *self.state = OpenContentElementTypeDeserializerState::Any(None);
                         event
                     }
-                    (OpenContentDeserializerState::Any(None), event) => match &event {
+                    (OpenContentElementTypeDeserializerState::Any(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_XS),
@@ -9619,13 +9984,15 @@ pub mod quick_xml_deserialize {
                                 }
                                 self.any = Some(data);
                             }
-                            *self.state = OpenContentDeserializerState::Any(deserializer);
+                            *self.state =
+                                OpenContentElementTypeDeserializerState::Any(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = OpenContentDeserializerState::Done__;
+                                    *self.state = OpenContentElementTypeDeserializerState::Done__;
                                     if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(OpenContentDeserializerState::Any(None));
+                                        allow_any_fallback.get_or_insert(
+                                            OpenContentElementTypeDeserializerState::Any(None),
+                                        );
                                     }
                                     event
                                 }
@@ -9640,9 +10007,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = OpenContentDeserializerState::Done__;
+                            *self.state = OpenContentElementTypeDeserializerState::Done__;
                             allow_any_fallback
-                                .get_or_insert(OpenContentDeserializerState::Any(None));
+                                .get_or_insert(OpenContentElementTypeDeserializerState::Any(None));
                             event
                         }
                         Event::End(_) => {
@@ -9655,7 +10022,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = OpenContentDeserializerState::Any(None);
+                            *self.state = OpenContentElementTypeDeserializerState::Any(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -9664,7 +10031,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (OpenContentDeserializerState::Done__, event) => {
+                    (OpenContentElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -9681,12 +10048,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::OpenContent, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::OpenContentElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::OpenContent {
+            Ok(super::OpenContentElementType {
                 id: self.id,
                 mode: self.mode,
                 annotation: self.annotation,
@@ -9695,21 +10065,25 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AnyAttributeDeserializer {
+    pub struct AnyAttributeElementTypeDeserializer {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::NotNamespaceType>,
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListAType>,
-        annotation: Option<super::Annotation>,
-        state: Box<AnyAttributeDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<AnyAttributeElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum AnyAttributeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum AnyAttributeElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl AnyAttributeDeserializer {
+    impl AnyAttributeElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -9758,20 +10132,20 @@ pub mod quick_xml_deserialize {
                 namespace: namespace,
                 not_namespace: not_namespace,
                 process_contents: process_contents
-                    .unwrap_or_else(super::AnyAttribute::default_process_contents),
+                    .unwrap_or_else(super::AnyAttributeElementType::default_process_contents),
                 not_q_name: not_q_name,
                 annotation: None,
-                state: Box::new(AnyAttributeDeserializerState::Annotation(None)),
+                state: Box::new(AnyAttributeElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AnyAttribute>
-        for AnyAttributeDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AnyAttributeElementType>
+        for AnyAttributeElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyAttribute, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyAttributeElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9808,7 +10182,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyAttribute, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyAttributeElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -9820,10 +10194,16 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, AnyAttributeDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        AnyAttributeElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (AnyAttributeDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (
+                        AnyAttributeElementTypeDeserializerState::Annotation(Some(deserializer)),
+                        event,
+                    ) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -9843,8 +10223,9 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state =
-                                    AnyAttributeDeserializerState::Annotation(deserializer);
+                                *self.state = AnyAttributeElementTypeDeserializerState::Annotation(
+                                    deserializer,
+                                );
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -9855,7 +10236,7 @@ pub mod quick_xml_deserialize {
                         };
                         if allow_any {
                             allow_any_fallback.get_or_insert(
-                                AnyAttributeDeserializerState::Annotation(deserializer),
+                                AnyAttributeElementTypeDeserializerState::Annotation(deserializer),
                             );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
@@ -9866,79 +10247,77 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = AnyAttributeDeserializerState::Annotation(None);
+                        *self.state = AnyAttributeElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (AnyAttributeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = AnyAttributeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = AnyAttributeDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            AnyAttributeDeserializerState::Annotation(None),
-                                        );
+                    (AnyAttributeElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state = AnyAttributeElementTypeDeserializerState::Annotation(
+                                    deserializer,
+                                );
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            AnyAttributeElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback . get_or_insert (AnyAttributeElementTypeDeserializerState :: Annotation (None)) ;
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = AnyAttributeElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    AnyAttributeElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state =
+                                    AnyAttributeElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = AnyAttributeDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(AnyAttributeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = AnyAttributeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (AnyAttributeDeserializerState::Done__, event) => {
+                    }
+                    (AnyAttributeElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -9955,12 +10334,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::AnyAttribute, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::AnyAttributeElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::AnyAttribute {
+            Ok(super::AnyAttributeElementType {
                 id: self.id,
                 namespace: self.namespace,
                 not_namespace: self.not_namespace,
@@ -9975,12 +10357,16 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         test: Option<String>,
         xpath_default_namespace: Option<super::XpathDefaultNamespaceType>,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         state: Box<AssertionTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum AssertionTypeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
     impl AssertionTypeDeserializer {
@@ -10129,75 +10515,72 @@ pub mod quick_xml_deserialize {
                         *self.state = AssertionTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (AssertionTypeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = AssertionTypeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = AssertionTypeDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            AssertionTypeDeserializerState::Annotation(None),
-                                        );
+                    (AssertionTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    AssertionTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = AssertionTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                AssertionTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = AssertionTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    AssertionTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = AssertionTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = AssertionTypeDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(AssertionTypeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = AssertionTypeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
+                    }
                     (AssertionTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
@@ -10232,7 +10615,7 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct AnyDeserializer {
+    pub struct AnyElementTypeDeserializer {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::NotNamespaceType>,
@@ -10240,15 +10623,19 @@ pub mod quick_xml_deserialize {
         not_q_name: Option<super::QnameListType>,
         min_occurs: usize,
         max_occurs: super::AllNNIType,
-        annotation: Option<super::Annotation>,
-        state: Box<AnyDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<AnyElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum AnyDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum AnyElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl AnyDeserializer {
+    impl AnyElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -10309,20 +10696,22 @@ pub mod quick_xml_deserialize {
                 namespace: namespace,
                 not_namespace: not_namespace,
                 process_contents: process_contents
-                    .unwrap_or_else(super::Any::default_process_contents),
+                    .unwrap_or_else(super::AnyElementType::default_process_contents),
                 not_q_name: not_q_name,
-                min_occurs: min_occurs.unwrap_or_else(super::Any::default_min_occurs),
-                max_occurs: max_occurs.unwrap_or_else(super::Any::default_max_occurs),
+                min_occurs: min_occurs.unwrap_or_else(super::AnyElementType::default_min_occurs),
+                max_occurs: max_occurs.unwrap_or_else(super::AnyElementType::default_max_occurs),
                 annotation: None,
-                state: Box::new(AnyDeserializerState::Annotation(None)),
+                state: Box::new(AnyElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Any> for AnyDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AnyElementType>
+        for AnyElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Any, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -10359,7 +10748,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Any, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -10371,10 +10760,10 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, AnyDeserializerState::Done__),
+                    core::mem::replace(&mut *self.state, AnyElementTypeDeserializerState::Done__),
                     event,
                 ) {
-                    (AnyDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (AnyElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -10394,7 +10783,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = AnyDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    AnyElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -10404,8 +10794,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(AnyDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                AnyElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -10415,78 +10806,76 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = AnyDeserializerState::Annotation(None);
+                        *self.state = AnyElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (AnyDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = AnyDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = AnyDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(AnyDeserializerState::Annotation(None));
+                    (AnyElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    AnyElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = AnyElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                AnyElementTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = AnyElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    AnyElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = AnyElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = AnyDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(AnyDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = AnyDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (AnyDeserializerState::Done__, event) => {
+                    }
+                    (AnyElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -10503,12 +10892,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Any, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::AnyElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Any {
+            Ok(super::AnyElementType {
                 id: self.id,
                 namespace: self.namespace,
                 not_namespace: self.not_namespace,
@@ -10532,7 +10924,9 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum AltTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         SimpleType(<SimpleBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         ComplexType(<ComplexBaseType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
@@ -10645,7 +11039,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(AltTypeContent::Annotation(data));
                         }
@@ -10811,16 +11207,22 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
-        annotation: Option<super::Annotation>,
-        selector: Option<super::Field>,
-        field: Vec<super::Field>,
+        annotation: Option<super::AnnotationElementType>,
+        selector: Option<super::FieldElementType>,
+        field: Vec<super::FieldElementType>,
         state: Box<KeybaseTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum KeybaseTypeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Selector(Option<<Field as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Field(Option<<Field as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
+        Selector(
+            Option<<FieldElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
+        ),
+        Field(Option<<FieldElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
     impl KeybaseTypeDeserializer {
@@ -10962,75 +11364,71 @@ pub mod quick_xml_deserialize {
                         *self.state = KeybaseTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (KeybaseTypeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = KeybaseTypeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = KeybaseTypeDeserializerState::Selector(None);
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            KeybaseTypeDeserializerState::Annotation(None),
-                                        );
+                    (KeybaseTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    KeybaseTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = KeybaseTypeDeserializerState::Selector(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                KeybaseTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = KeybaseTypeDeserializerState::Selector(None);
+                                allow_any_fallback
+                                    .get_or_insert(KeybaseTypeDeserializerState::Annotation(None));
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = KeybaseTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = KeybaseTypeDeserializerState::Selector(None);
-                            allow_any_fallback
-                                .get_or_insert(KeybaseTypeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = KeybaseTypeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
+                    }
                     (KeybaseTypeDeserializerState::Selector(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
@@ -11088,7 +11486,9 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <Field as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <FieldElementType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             if let Some(data) = data {
                                 if self.selector.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -11189,7 +11589,9 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <Field as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <FieldElementType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             if let Some(data) = data {
                                 self.field.push(data);
                             }
@@ -11274,24 +11676,30 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct KeyrefDeserializer {
+    pub struct KeyrefElementTypeDeserializer {
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
         refer: Option<String>,
-        annotation: Option<super::Annotation>,
-        selector: Option<super::Field>,
-        field: Vec<super::Field>,
-        state: Box<KeyrefDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        selector: Option<super::FieldElementType>,
+        field: Vec<super::FieldElementType>,
+        state: Box<KeyrefElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum KeyrefDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Selector(Option<<Field as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Field(Option<<Field as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum KeyrefElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
+        Selector(
+            Option<<FieldElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
+        ),
+        Field(Option<<FieldElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
-    impl KeyrefDeserializer {
+    impl KeyrefElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -11328,15 +11736,17 @@ pub mod quick_xml_deserialize {
                 annotation: None,
                 selector: None,
                 field: Vec::new(),
-                state: Box::new(KeyrefDeserializerState::Annotation(None)),
+                state: Box::new(KeyrefElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Keyref> for KeyrefDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::KeyrefElementType>
+        for KeyrefElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Keyref, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::KeyrefElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -11373,7 +11783,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Keyref, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::KeyrefElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -11385,10 +11795,13 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, KeyrefDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        KeyrefElementTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (KeyrefDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (KeyrefElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -11408,7 +11821,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = KeyrefDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    KeyrefElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -11418,8 +11832,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(KeyrefDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                KeyrefElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -11429,14 +11844,129 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = KeyrefDeserializerState::Annotation(None);
+                        *self.state = KeyrefElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (KeyrefDeserializerState::Annotation(None), event) => match &event {
+                    (KeyrefElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
+                                    }
+                                    self.annotation = Some(data);
+                                }
+                                *self.state =
+                                    KeyrefElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state =
+                                            KeyrefElementTypeDeserializerState::Selector(None);
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                KeyrefElementTypeDeserializerState::Annotation(
+                                                    None,
+                                                ),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
+                                }
+                            }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = KeyrefElementTypeDeserializerState::Selector(None);
+                                allow_any_fallback.get_or_insert(
+                                    KeyrefElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = KeyrefElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
+                        }
+                    }
+                    (KeyrefElementTypeDeserializerState::Selector(Some(deserializer)), event) => {
+                        let DeserializerOutput {
+                            data,
+                            deserializer,
+                            event,
+                            allow_any,
+                        } = deserializer.next(reader, event)?;
+                        if let Some(data) = data {
+                            if self.selector.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"selector",
+                                )))?;
+                            }
+                            self.selector = Some(data);
+                        }
+                        let event = match event {
+                            Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) => {
+                                event
+                            }
+                            event => {
+                                *self.state =
+                                    KeyrefElementTypeDeserializerState::Selector(deserializer);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: event,
+                                    allow_any: false,
+                                });
+                            }
+                        };
+                        if allow_any {
+                            allow_any_fallback.get_or_insert(
+                                KeyrefElementTypeDeserializerState::Selector(deserializer),
+                            );
+                        } else if let Some(deserializer) = deserializer {
+                            let data = deserializer.finish(reader)?;
+                            if self.selector.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"selector",
+                                )))?;
+                            }
+                            self.selector = Some(data);
+                        }
+                        *self.state = KeyrefElementTypeDeserializerState::Selector(None);
+                        event
+                    }
+                    (KeyrefElementTypeDeserializerState::Selector(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
+                                Some(b"selector")
                             ) =>
                         {
                             let DeserializerOutput {
@@ -11444,24 +11974,25 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
+                            } = <FieldElementType as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
                             if let Some(data) = data {
-                                if self.annotation.is_some() {
+                                if self.selector.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
+                                        b"selector",
                                     )))?;
                                 }
-                                self.annotation = Some(data);
+                                self.selector = Some(data);
                             }
-                            *self.state = KeyrefDeserializerState::Annotation(deserializer);
+                            *self.state =
+                                KeyrefElementTypeDeserializerState::Selector(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = KeyrefDeserializerState::Selector(None);
+                                    *self.state = KeyrefElementTypeDeserializerState::Field(None);
                                     if allow_any {
                                         allow_any_fallback.get_or_insert(
-                                            KeyrefDeserializerState::Annotation(None),
+                                            KeyrefElementTypeDeserializerState::Selector(None),
                                         );
                                     }
                                     event
@@ -11477,9 +12008,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = KeyrefDeserializerState::Selector(None);
+                            *self.state = KeyrefElementTypeDeserializerState::Field(None);
                             allow_any_fallback
-                                .get_or_insert(KeyrefDeserializerState::Annotation(None));
+                                .get_or_insert(KeyrefElementTypeDeserializerState::Selector(None));
                             event
                         }
                         Event::End(_) => {
@@ -11492,7 +12023,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = KeyrefDeserializerState::Annotation(None);
+                            *self.state = KeyrefElementTypeDeserializerState::Selector(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -11501,117 +12032,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (KeyrefDeserializerState::Selector(Some(deserializer)), event) => {
-                        let DeserializerOutput {
-                            data,
-                            deserializer,
-                            event,
-                            allow_any,
-                        } = deserializer.next(reader, event)?;
-                        if let Some(data) = data {
-                            if self.selector.is_some() {
-                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                    b"selector",
-                                )))?;
-                            }
-                            self.selector = Some(data);
-                        }
-                        let event = match event {
-                            Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) => {
-                                event
-                            }
-                            event => {
-                                *self.state = KeyrefDeserializerState::Selector(deserializer);
-                                return Ok(DeserializerOutput {
-                                    data: None,
-                                    deserializer: Some(self),
-                                    event: event,
-                                    allow_any: false,
-                                });
-                            }
-                        };
-                        if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(KeyrefDeserializerState::Selector(deserializer));
-                        } else if let Some(deserializer) = deserializer {
-                            let data = deserializer.finish(reader)?;
-                            if self.selector.is_some() {
-                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                    b"selector",
-                                )))?;
-                            }
-                            self.selector = Some(data);
-                        }
-                        *self.state = KeyrefDeserializerState::Selector(None);
-                        event
-                    }
-                    (KeyrefDeserializerState::Selector(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"selector")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Field as WithDeserializer>::Deserializer::init(reader, event)?;
-                            if let Some(data) = data {
-                                if self.selector.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"selector",
-                                    )))?;
-                                }
-                                self.selector = Some(data);
-                            }
-                            *self.state = KeyrefDeserializerState::Selector(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = KeyrefDeserializerState::Field(None);
-                                    if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(KeyrefDeserializerState::Selector(None));
-                                    }
-                                    event
-                                }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
-                                }
-                            }
-                        }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = KeyrefDeserializerState::Field(None);
-                            allow_any_fallback
-                                .get_or_insert(KeyrefDeserializerState::Selector(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = KeyrefDeserializerState::Selector(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (KeyrefDeserializerState::Field(Some(deserializer)), event) => {
+                    (KeyrefElementTypeDeserializerState::Field(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -11626,7 +12047,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = KeyrefDeserializerState::Field(deserializer);
+                                *self.state =
+                                    KeyrefElementTypeDeserializerState::Field(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -11636,16 +12058,17 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(KeyrefDeserializerState::Field(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                KeyrefElementTypeDeserializerState::Field(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             self.field.push(data);
                         }
-                        *self.state = KeyrefDeserializerState::Field(None);
+                        *self.state = KeyrefElementTypeDeserializerState::Field(None);
                         event
                     }
-                    (KeyrefDeserializerState::Field(None), event) => match &event {
+                    (KeyrefElementTypeDeserializerState::Field(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_XS),
@@ -11657,17 +12080,20 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <Field as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <FieldElementType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             if let Some(data) = data {
                                 self.field.push(data);
                             }
-                            *self.state = KeyrefDeserializerState::Field(deserializer);
+                            *self.state = KeyrefElementTypeDeserializerState::Field(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = KeyrefDeserializerState::Done__;
+                                    *self.state = KeyrefElementTypeDeserializerState::Done__;
                                     if allow_any {
-                                        allow_any_fallback
-                                            .get_or_insert(KeyrefDeserializerState::Field(None));
+                                        allow_any_fallback.get_or_insert(
+                                            KeyrefElementTypeDeserializerState::Field(None),
+                                        );
                                     }
                                     event
                                 }
@@ -11682,8 +12108,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = KeyrefDeserializerState::Done__;
-                            allow_any_fallback.get_or_insert(KeyrefDeserializerState::Field(None));
+                            *self.state = KeyrefElementTypeDeserializerState::Done__;
+                            allow_any_fallback
+                                .get_or_insert(KeyrefElementTypeDeserializerState::Field(None));
                             event
                         }
                         Event::End(_) => {
@@ -11696,7 +12123,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = KeyrefDeserializerState::Field(None);
+                            *self.state = KeyrefElementTypeDeserializerState::Field(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -11705,7 +12132,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (KeyrefDeserializerState::Done__, event) => {
+                    (KeyrefElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -11722,12 +12149,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Keyref, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::KeyrefElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Keyref {
+            Ok(super::KeyrefElementType {
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -12575,8 +13005,12 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum RestrictionTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        OpenContent(<OpenContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        OpenContent(
+            <OpenContentElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         All(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Choice(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
@@ -12587,7 +13021,9 @@ pub mod quick_xml_deserialize {
         AttributeGroup(
             <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
         ),
-        AnyAttribute(<AnyAttribute as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        AnyAttribute(
+            <AnyAttributeElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Assert(<AssertionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl RestrictionTypeDeserializer {
@@ -12686,7 +13122,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(RestrictionTypeContent::Annotation(data));
                         }
@@ -12709,7 +13147,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <OpenContent as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <OpenContentElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(RestrictionTypeContent::OpenContent(data));
                         }
@@ -12885,7 +13325,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <AnyAttribute as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnyAttributeElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content
                                 .push(RestrictionTypeContent::AnyAttribute(data));
@@ -13244,8 +13686,12 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum ExtensionTypeDeserializerState {
         Next__,
-        Annotation(<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
-        OpenContent(<OpenContent as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        Annotation(
+            <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
+        OpenContent(
+            <OpenContentElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Group(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         All(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
         Choice(<GroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
@@ -13254,7 +13700,9 @@ pub mod quick_xml_deserialize {
         AttributeGroup(
             <AttributeGroupType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
         ),
-        AnyAttribute(<AnyAttribute as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
+        AnyAttribute(
+            <AnyAttributeElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+        ),
         Assert(<AssertionType as xsd_parser::quick_xml::WithDeserializer>::Deserializer),
     }
     impl ExtensionTypeDeserializer {
@@ -13353,7 +13801,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <Annotation as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnnotationElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ExtensionTypeContent::Annotation(data));
                         }
@@ -13375,7 +13825,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <OpenContent as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <OpenContentElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ExtensionTypeContent::OpenContent(data));
                         }
@@ -13525,7 +13977,9 @@ pub mod quick_xml_deserialize {
                             deserializer,
                             event,
                             allow_any,
-                        } = <AnyAttribute as WithDeserializer>::Deserializer::init(reader, event)?;
+                        } = <AnyAttributeElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         if let Some(data) = data {
                             self.content.push(ExtensionTypeContent::AnyAttribute(data));
                         }
@@ -13802,19 +14256,23 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct FieldDeserializer {
+    pub struct FieldElementTypeDeserializer {
         id: Option<String>,
         xpath: String,
         xpath_default_namespace: Option<super::XpathDefaultNamespaceType>,
-        annotation: Option<super::Annotation>,
-        state: Box<FieldDeserializerState>,
+        annotation: Option<super::AnnotationElementType>,
+        state: Box<FieldElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum FieldDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum FieldElementTypeDeserializerState {
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
-    impl FieldDeserializer {
+    impl FieldElementTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -13852,15 +14310,17 @@ pub mod quick_xml_deserialize {
                 xpath: xpath.ok_or(ErrorKind::MissingAttribute("xpath".into()))?,
                 xpath_default_namespace: xpath_default_namespace,
                 annotation: None,
-                state: Box::new(FieldDeserializerState::Annotation(None)),
+                state: Box::new(FieldElementTypeDeserializerState::Annotation(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::Field> for FieldDeserializer {
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::FieldElementType>
+        for FieldElementTypeDeserializer
+    {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Field, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FieldElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -13897,7 +14357,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::Field, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FieldElementType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -13909,10 +14369,10 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, FieldDeserializerState::Done__),
+                    core::mem::replace(&mut *self.state, FieldElementTypeDeserializerState::Done__),
                     event,
                 ) {
-                    (FieldDeserializerState::Annotation(Some(deserializer)), event) => {
+                    (FieldElementTypeDeserializerState::Annotation(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -13932,7 +14392,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = FieldDeserializerState::Annotation(deserializer);
+                                *self.state =
+                                    FieldElementTypeDeserializerState::Annotation(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -13942,8 +14403,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(FieldDeserializerState::Annotation(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                FieldElementTypeDeserializerState::Annotation(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.annotation.is_some() {
@@ -13953,79 +14415,76 @@ pub mod quick_xml_deserialize {
                             }
                             self.annotation = Some(data);
                         }
-                        *self.state = FieldDeserializerState::Annotation(None);
+                        *self.state = FieldElementTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (FieldDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = FieldDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = FieldDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            FieldDeserializerState::Annotation(None),
-                                        );
+                    (FieldElementTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state =
+                                    FieldElementTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = FieldElementTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                FieldElementTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = FieldElementTypeDeserializerState::Done__;
+                                allow_any_fallback.get_or_insert(
+                                    FieldElementTypeDeserializerState::Annotation(None),
+                                );
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = FieldElementTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = FieldDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(FieldDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = FieldDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
-                    (FieldDeserializerState::Done__, event) => {
+                    }
+                    (FieldElementTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -14042,12 +14501,15 @@ pub mod quick_xml_deserialize {
                 }
             }
         }
-        fn finish<R>(self, _reader: &R) -> Result<super::Field, xsd_parser::quick_xml::Error>
+        fn finish<R>(
+            self,
+            _reader: &R,
+        ) -> Result<super::FieldElementType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::Field {
+            Ok(super::FieldElementType {
                 id: self.id,
                 xpath: self.xpath,
                 xpath_default_namespace: self.xpath_default_namespace,
@@ -14060,12 +14522,16 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         value: String,
         fixed: bool,
-        annotation: Option<super::Annotation>,
+        annotation: Option<super::AnnotationElementType>,
         state: Box<FacetTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FacetTypeDeserializerState {
-        Annotation(Option<<Annotation as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Annotation(
+            Option<
+                <AnnotationElementType as xsd_parser::quick_xml::WithDeserializer>::Deserializer,
+            >,
+        ),
         Done__,
     }
     impl FacetTypeDeserializer {
@@ -14204,75 +14670,70 @@ pub mod quick_xml_deserialize {
                         *self.state = FacetTypeDeserializerState::Annotation(None);
                         event
                     }
-                    (FacetTypeDeserializerState::Annotation(None), event) => match &event {
-                        Event::Start(x) | Event::Empty(x)
-                            if matches!(
-                                reader.resolve_local_name(x.name(), NS_XS),
-                                Some(b"annotation")
-                            ) =>
-                        {
-                            let DeserializerOutput {
-                                data,
-                                deserializer,
-                                event,
-                                allow_any,
-                            } = <Annotation as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            if let Some(data) = data {
-                                if self.annotation.is_some() {
-                                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                                        b"annotation",
-                                    )))?;
-                                }
-                                self.annotation = Some(data);
-                            }
-                            *self.state = FacetTypeDeserializerState::Annotation(deserializer);
-                            match event {
-                                Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = FacetTypeDeserializerState::Done__;
-                                    if allow_any {
-                                        allow_any_fallback.get_or_insert(
-                                            FacetTypeDeserializerState::Annotation(None),
-                                        );
+                    (FacetTypeDeserializerState::Annotation(None), event) => {
+                        match &event {
+                            Event::Start(x) | Event::Empty(x)
+                                if matches!(
+                                    reader.resolve_local_name(x.name(), NS_XS),
+                                    Some(b"annotation")
+                                ) =>
+                            {
+                                let DeserializerOutput { data , deserializer , event , allow_any } = < AnnotationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                                if let Some(data) = data {
+                                    if self.annotation.is_some() {
+                                        Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                            b"annotation",
+                                        )))?;
                                     }
-                                    event
+                                    self.annotation = Some(data);
                                 }
-                                event @ (None | Some(_)) => {
-                                    return Ok(DeserializerOutput {
-                                        data: None,
-                                        deserializer: Some(self),
-                                        event,
-                                        allow_any: false,
-                                    })
+                                *self.state = FacetTypeDeserializerState::Annotation(deserializer);
+                                match event {
+                                    Some(event @ (Event::Start(_) | Event::End(_))) => {
+                                        *self.state = FacetTypeDeserializerState::Done__;
+                                        if allow_any {
+                                            allow_any_fallback.get_or_insert(
+                                                FacetTypeDeserializerState::Annotation(None),
+                                            );
+                                        }
+                                        event
+                                    }
+                                    event @ (None | Some(_)) => {
+                                        return Ok(DeserializerOutput {
+                                            data: None,
+                                            deserializer: Some(self),
+                                            event,
+                                            allow_any: false,
+                                        })
+                                    }
                                 }
                             }
+                            Event::Start(_) | Event::Empty(_) => {
+                                *self.state = FacetTypeDeserializerState::Done__;
+                                allow_any_fallback
+                                    .get_or_insert(FacetTypeDeserializerState::Annotation(None));
+                                event
+                            }
+                            Event::End(_) => {
+                                let data = self.finish(reader)?;
+                                return Ok(DeserializerOutput {
+                                    data: Some(data),
+                                    deserializer: None,
+                                    event: None,
+                                    allow_any: false,
+                                });
+                            }
+                            _ => {
+                                *self.state = FacetTypeDeserializerState::Annotation(None);
+                                return Ok(DeserializerOutput {
+                                    data: None,
+                                    deserializer: Some(self),
+                                    event: Some(event),
+                                    allow_any: false,
+                                });
+                            }
                         }
-                        Event::Start(_) | Event::Empty(_) => {
-                            *self.state = FacetTypeDeserializerState::Done__;
-                            allow_any_fallback
-                                .get_or_insert(FacetTypeDeserializerState::Annotation(None));
-                            event
-                        }
-                        Event::End(_) => {
-                            let data = self.finish(reader)?;
-                            return Ok(DeserializerOutput {
-                                data: Some(data),
-                                deserializer: None,
-                                event: None,
-                                allow_any: false,
-                            });
-                        }
-                        _ => {
-                            *self.state = FacetTypeDeserializerState::Annotation(None);
-                            return Ok(DeserializerOutput {
-                                data: None,
-                                deserializer: Some(self),
-                                event: Some(event),
-                                allow_any: false,
-                            });
-                        }
-                    },
+                    }
                     (FacetTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;

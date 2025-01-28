@@ -1,24 +1,31 @@
 pub struct MyComplexType {
-    pub elenent_a: Vec<StringType>,
-    pub element_b: Vec<IntType>,
-    pub content_2: MyComplexContent2Type,
+    pub elenent_a: Vec<MyComplexTypeElenentA>,
+    pub element_b: Vec<MyComplexTypeElementB>,
+    pub content_4: MyComplexContent4Type,
+}
+pub type MyComplexTypeElenentA = StringType;
+pub type MyComplexTypeElementB = IntType;
+pub struct MyComplexContent4Type {
+    pub content: Option<MyComplexContent4TypeContent>,
+}
+pub enum MyComplexContent4TypeContent {
+    ElementC(MyComplexTypeElementC),
+    Content6(MyComplexContent6Type),
+    Content9(MyComplexContent9Type),
 }
 pub type StringType = String;
 pub type IntType = i32;
-pub struct MyComplexContent2Type {
-    pub content: Option<MyComplexContent2TypeContent>,
+pub type MyComplexTypeElementC = BooleanType;
+pub struct MyComplexContent6Type {
+    pub elenent_d: MyComplexTypeElenentD,
+    pub element_e: MyComplexTypeElementE,
 }
-pub enum MyComplexContent2TypeContent {
-    ElementC(BooleanType),
-    Content3(MyComplexContent3Type),
-    Content4(MyComplexContent4Type),
+pub struct MyComplexContent9Type {
+    pub elenent_f: MyComplexTypeElenentF,
+    pub element_g: Vec<MyComplexTypeElementG>,
 }
 pub type BooleanType = bool;
-pub struct MyComplexContent3Type {
-    pub elenent_d: StringType,
-    pub element_e: IntType,
-}
-pub struct MyComplexContent4Type {
-    pub elenent_f: StringType,
-    pub element_g: Vec<IntType>,
-}
+pub type MyComplexTypeElenentD = StringType;
+pub type MyComplexTypeElementE = IntType;
+pub type MyComplexTypeElenentF = StringType;
+pub type MyComplexTypeElementG = IntType;

@@ -3,7 +3,7 @@
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 
 use super::{
-    AbstractInfo, ComplexInfo, CustomType, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
+    ComplexInfo, CustomType, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
     UnionInfo,
 };
 
@@ -22,8 +22,8 @@ pub enum Type {
     /// Represents an enumeration
     Enumeration(EnumerationInfo),
 
-    /// Represents an abstract element
-    Abstract(AbstractInfo),
+    /// Represents an dynamic element
+    Dynamic(DynamicInfo),
 
     /// Represents a specific set of elements
     All(GroupInfo),
@@ -127,7 +127,7 @@ impl TypeEq for Type {
             (BuildIn(x), BuildIn(y)) => x == y,
             (Reference(x), Reference(y)) => x.type_eq(y, types),
             (Enumeration(x), Enumeration(y)) => x.type_eq(y, types),
-            (Abstract(x), Abstract(y)) => x.type_eq(y, types),
+            (Dynamic(x), Dynamic(y)) => x.type_eq(y, types),
             (All(x), All(y)) => x.type_eq(y, types),
             (Choice(x), Choice(y)) => x.type_eq(y, types),
             (Sequence(x), Sequence(y)) => x.type_eq(y, types),

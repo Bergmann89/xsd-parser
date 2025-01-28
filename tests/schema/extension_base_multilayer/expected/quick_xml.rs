@@ -1,28 +1,40 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub messages: FooTypeMessages,
+    pub messages: FooTypeMessagesType,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct FooTypeMessages {
-    pub aa: IntType,
-    pub bb: StringType,
-    pub a: StringType,
+pub struct FooTypeMessagesType {
+    pub aa: i32,
+    pub bb: String,
+    pub a: String,
 }
-impl xsd_parser::quick_xml::WithSerializer for FooTypeMessages {
-    type Serializer<'x> = quick_xml_serialize::FooTypeMessagesSerializer<'x>;
+impl xsd_parser::quick_xml::WithSerializer for FooTypeMessagesType {
+    type Serializer<'x> = quick_xml_serialize::FooTypeMessagesTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeMessagesTypeSerializer::new(self, name, is_root)
+    }
 }
-impl xsd_parser::quick_xml::WithDeserializer for FooTypeMessages {
-    type Deserializer = quick_xml_deserialize::FooTypeMessagesDeserializer;
+impl xsd_parser::quick_xml::WithDeserializer for FooTypeMessagesType {
+    type Deserializer = quick_xml_deserialize::FooTypeMessagesTypeDeserializer;
 }
-pub type IntType = i32;
-pub type StringType = String;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -35,18 +47,18 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     enum FooTypeSerializerState<'ser> {
         Init__,
-        Messages(<FooTypeMessages as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Messages(<FooTypeMessagesType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -58,11 +70,17 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match Serializer::init(&self.value.messages, Some("tns:Messages"), false) {
+                        match WithSerializer::serializer(
+                            &self.value.messages,
+                            Some("tns:Messages"),
+                            false,
+                        ) {
                             Ok(serializer) => {
                                 self.state = FooTypeSerializerState::Messages(serializer)
                             }
@@ -96,52 +114,56 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct FooTypeMessagesSerializer<'ser> {
+    pub struct FooTypeMessagesTypeSerializer<'ser> {
         name: &'ser str,
-        value: &'ser super::FooTypeMessages,
+        value: &'ser super::FooTypeMessagesType,
         is_root: bool,
-        state: FooTypeMessagesSerializerState<'ser>,
+        state: FooTypeMessagesTypeSerializerState<'ser>,
     }
     #[derive(Debug)]
-    enum FooTypeMessagesSerializerState<'ser> {
+    enum FooTypeMessagesTypeSerializerState<'ser> {
         Init__,
-        Aa(xsd_parser::quick_xml::ContentSerializer<'ser, IntType>),
-        Bb(xsd_parser::quick_xml::ContentSerializer<'ser, StringType>),
-        A(xsd_parser::quick_xml::ContentSerializer<'ser, StringType>),
+        Aa(xsd_parser::quick_xml::ContentSerializer<'ser, i32>),
+        Bb(xsd_parser::quick_xml::ContentSerializer<'ser, String>),
+        A(xsd_parser::quick_xml::ContentSerializer<'ser, String>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooTypeMessages>
-        for FooTypeMessagesSerializer<'ser>
-    {
-        fn init(
-            value: &'ser super::FooTypeMessages,
+    impl<'ser> FooTypeMessagesTypeSerializer<'ser> {
+        pub(super) fn new(
+            value: &'ser super::FooTypeMessagesType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooTypeMessages");
+            let name = name.unwrap_or("tns:FooTypeMessages");
             Ok(Self {
                 name,
                 value,
                 is_root,
-                state: FooTypeMessagesSerializerState::Init__,
+                state: FooTypeMessagesTypeSerializerState::Init__,
             })
         }
     }
-    impl<'ser> core::iter::Iterator for FooTypeMessagesSerializer<'ser> {
+    impl<'ser> core::iter::Iterator for FooTypeMessagesTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             loop {
                 match &mut self.state {
-                    FooTypeMessagesSerializerState::Init__ => {
-                        match Serializer::init(&self.value.aa, Some("tns:aa"), false) {
+                    FooTypeMessagesTypeSerializerState::Init__ => {
+                        match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.aa,
+                            Some("tns:aa"),
+                            false,
+                        ) {
                             Ok(serializer) => {
-                                self.state = FooTypeMessagesSerializerState::Aa(serializer)
+                                self.state = FooTypeMessagesTypeSerializerState::Aa(serializer)
                             }
                             Err(error) => {
-                                self.state = FooTypeMessagesSerializerState::Done__;
+                                self.state = FooTypeMessagesTypeSerializerState::Done__;
                                 return Some(Err(error));
                             }
                         }
@@ -151,52 +173,60 @@ pub mod quick_xml_serialize {
                         }
                         return Some(Ok(Event::Start(bytes)));
                     }
-                    FooTypeMessagesSerializerState::Aa(x) => match x.next() {
+                    FooTypeMessagesTypeSerializerState::Aa(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
                         Some(Err(error)) => {
-                            self.state = FooTypeMessagesSerializerState::Done__;
+                            self.state = FooTypeMessagesTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match Serializer::init(&self.value.bb, Some("tns:bb"), false) {
+                        None => match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.bb,
+                            Some("tns:bb"),
+                            false,
+                        ) {
                             Ok(serializer) => {
-                                self.state = FooTypeMessagesSerializerState::Bb(serializer)
+                                self.state = FooTypeMessagesTypeSerializerState::Bb(serializer)
                             }
                             Err(error) => {
-                                self.state = FooTypeMessagesSerializerState::Done__;
+                                self.state = FooTypeMessagesTypeSerializerState::Done__;
                                 return Some(Err(error));
                             }
                         },
                     },
-                    FooTypeMessagesSerializerState::Bb(x) => match x.next() {
+                    FooTypeMessagesTypeSerializerState::Bb(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
                         Some(Err(error)) => {
-                            self.state = FooTypeMessagesSerializerState::Done__;
+                            self.state = FooTypeMessagesTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match Serializer::init(&self.value.a, Some("tns:a"), false) {
+                        None => match xsd_parser::quick_xml::ContentSerializer::new(
+                            &self.value.a,
+                            Some("tns:a"),
+                            false,
+                        ) {
                             Ok(serializer) => {
-                                self.state = FooTypeMessagesSerializerState::A(serializer)
+                                self.state = FooTypeMessagesTypeSerializerState::A(serializer)
                             }
                             Err(error) => {
-                                self.state = FooTypeMessagesSerializerState::Done__;
+                                self.state = FooTypeMessagesTypeSerializerState::Done__;
                                 return Some(Err(error));
                             }
                         },
                     },
-                    FooTypeMessagesSerializerState::A(x) => match x.next() {
+                    FooTypeMessagesTypeSerializerState::A(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
                         Some(Err(error)) => {
-                            self.state = FooTypeMessagesSerializerState::Done__;
+                            self.state = FooTypeMessagesTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => self.state = FooTypeMessagesSerializerState::End__,
+                        None => self.state = FooTypeMessagesTypeSerializerState::End__,
                     },
-                    FooTypeMessagesSerializerState::End__ => {
-                        self.state = FooTypeMessagesSerializerState::Done__;
+                    FooTypeMessagesTypeSerializerState::End__ => {
+                        self.state = FooTypeMessagesTypeSerializerState::Done__;
                         return Some(Ok(Event::End(BytesEnd::new(self.name))));
                     }
-                    FooTypeMessagesSerializerState::Done__ => return None,
-                    FooTypeMessagesSerializerState::Phantom__(_) => unreachable!(),
+                    FooTypeMessagesTypeSerializerState::Done__ => return None,
+                    FooTypeMessagesTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
@@ -206,13 +236,13 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        messages: Option<super::FooTypeMessages>,
+        messages: Option<super::FooTypeMessagesType>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
         Messages(
-            Option<<FooTypeMessages as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
+            Option<<FooTypeMessagesType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>,
         ),
         Done__,
     }
@@ -352,7 +382,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <FooTypeMessages as WithDeserializer>::Deserializer::init(
+                            } = <FooTypeMessagesType as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
                             if let Some(data) = data {
@@ -437,20 +467,20 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct FooTypeMessagesDeserializer {
-        aa: Option<super::IntType>,
-        bb: Option<super::StringType>,
-        a: Option<super::StringType>,
-        state: Box<FooTypeMessagesDeserializerState>,
+    pub struct FooTypeMessagesTypeDeserializer {
+        aa: Option<i32>,
+        bb: Option<String>,
+        a: Option<String>,
+        state: Box<FooTypeMessagesTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum FooTypeMessagesDeserializerState {
-        Aa(Option<<IntType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        Bb(Option<<StringType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
-        A(Option<<StringType as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+    enum FooTypeMessagesTypeDeserializerState {
+        Aa(Option<<i32 as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        Bb(Option<<String as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
+        A(Option<<String as xsd_parser::quick_xml::WithDeserializer>::Deserializer>),
         Done__,
     }
-    impl FooTypeMessagesDeserializer {
+    impl FooTypeMessagesTypeDeserializer {
         fn from_bytes_start<R>(
             reader: &R,
             bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
@@ -472,17 +502,17 @@ pub mod quick_xml_deserialize {
                 aa: None,
                 bb: None,
                 a: None,
-                state: Box::new(FooTypeMessagesDeserializerState::Aa(None)),
+                state: Box::new(FooTypeMessagesTypeDeserializerState::Aa(None)),
             })
         }
     }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::FooTypeMessages>
-        for FooTypeMessagesDeserializer
+    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::FooTypeMessagesType>
+        for FooTypeMessagesTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooTypeMessages, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooTypeMessagesType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -519,7 +549,7 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooTypeMessages, Self>
+        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooTypeMessagesType, Self>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
@@ -531,10 +561,13 @@ pub mod quick_xml_deserialize {
             let mut allow_any_fallback = None;
             loop {
                 event = match (
-                    core::mem::replace(&mut *self.state, FooTypeMessagesDeserializerState::Done__),
+                    core::mem::replace(
+                        &mut *self.state,
+                        FooTypeMessagesTypeDeserializerState::Done__,
+                    ),
                     event,
                 ) {
-                    (FooTypeMessagesDeserializerState::Aa(Some(deserializer)), event) => {
+                    (FooTypeMessagesTypeDeserializerState::Aa(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -552,7 +585,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = FooTypeMessagesDeserializerState::Aa(deserializer);
+                                *self.state =
+                                    FooTypeMessagesTypeDeserializerState::Aa(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -562,8 +596,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(FooTypeMessagesDeserializerState::Aa(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                FooTypeMessagesTypeDeserializerState::Aa(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.aa.is_some() {
@@ -571,10 +606,10 @@ pub mod quick_xml_deserialize {
                             }
                             self.aa = Some(data);
                         }
-                        *self.state = FooTypeMessagesDeserializerState::Aa(None);
+                        *self.state = FooTypeMessagesTypeDeserializerState::Aa(None);
                         event
                     }
-                    (FooTypeMessagesDeserializerState::Aa(None), event) => match &event {
+                    (FooTypeMessagesTypeDeserializerState::Aa(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_TNS),
@@ -586,7 +621,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <IntType as WithDeserializer>::Deserializer::init(reader, event)?;
+                            } = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.aa.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -595,13 +630,13 @@ pub mod quick_xml_deserialize {
                                 }
                                 self.aa = Some(data);
                             }
-                            *self.state = FooTypeMessagesDeserializerState::Aa(deserializer);
+                            *self.state = FooTypeMessagesTypeDeserializerState::Aa(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = FooTypeMessagesDeserializerState::Bb(None);
+                                    *self.state = FooTypeMessagesTypeDeserializerState::Bb(None);
                                     if allow_any {
                                         allow_any_fallback.get_or_insert(
-                                            FooTypeMessagesDeserializerState::Aa(None),
+                                            FooTypeMessagesTypeDeserializerState::Aa(None),
                                         );
                                     }
                                     event
@@ -617,7 +652,7 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = FooTypeMessagesDeserializerState::Bb(None);
+                            *self.state = FooTypeMessagesTypeDeserializerState::Bb(None);
                             event
                         }
                         Event::End(_) => {
@@ -630,7 +665,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = FooTypeMessagesDeserializerState::Aa(None);
+                            *self.state = FooTypeMessagesTypeDeserializerState::Aa(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -639,7 +674,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (FooTypeMessagesDeserializerState::Bb(Some(deserializer)), event) => {
+                    (FooTypeMessagesTypeDeserializerState::Bb(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -657,7 +692,8 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = FooTypeMessagesDeserializerState::Bb(deserializer);
+                                *self.state =
+                                    FooTypeMessagesTypeDeserializerState::Bb(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -667,8 +703,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(FooTypeMessagesDeserializerState::Bb(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                FooTypeMessagesTypeDeserializerState::Bb(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.bb.is_some() {
@@ -676,10 +713,10 @@ pub mod quick_xml_deserialize {
                             }
                             self.bb = Some(data);
                         }
-                        *self.state = FooTypeMessagesDeserializerState::Bb(None);
+                        *self.state = FooTypeMessagesTypeDeserializerState::Bb(None);
                         event
                     }
-                    (FooTypeMessagesDeserializerState::Bb(None), event) => match &event {
+                    (FooTypeMessagesTypeDeserializerState::Bb(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_TNS),
@@ -691,9 +728,7 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <StringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            } = <String as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.bb.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -702,13 +737,13 @@ pub mod quick_xml_deserialize {
                                 }
                                 self.bb = Some(data);
                             }
-                            *self.state = FooTypeMessagesDeserializerState::Bb(deserializer);
+                            *self.state = FooTypeMessagesTypeDeserializerState::Bb(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = FooTypeMessagesDeserializerState::A(None);
+                                    *self.state = FooTypeMessagesTypeDeserializerState::A(None);
                                     if allow_any {
                                         allow_any_fallback.get_or_insert(
-                                            FooTypeMessagesDeserializerState::Bb(None),
+                                            FooTypeMessagesTypeDeserializerState::Bb(None),
                                         );
                                     }
                                     event
@@ -724,7 +759,7 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = FooTypeMessagesDeserializerState::A(None);
+                            *self.state = FooTypeMessagesTypeDeserializerState::A(None);
                             event
                         }
                         Event::End(_) => {
@@ -737,7 +772,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = FooTypeMessagesDeserializerState::Bb(None);
+                            *self.state = FooTypeMessagesTypeDeserializerState::Bb(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -746,7 +781,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (FooTypeMessagesDeserializerState::A(Some(deserializer)), event) => {
+                    (FooTypeMessagesTypeDeserializerState::A(Some(deserializer)), event) => {
                         let DeserializerOutput {
                             data,
                             deserializer,
@@ -764,7 +799,7 @@ pub mod quick_xml_deserialize {
                                 event
                             }
                             event => {
-                                *self.state = FooTypeMessagesDeserializerState::A(deserializer);
+                                *self.state = FooTypeMessagesTypeDeserializerState::A(deserializer);
                                 return Ok(DeserializerOutput {
                                     data: None,
                                     deserializer: Some(self),
@@ -774,8 +809,9 @@ pub mod quick_xml_deserialize {
                             }
                         };
                         if allow_any {
-                            allow_any_fallback
-                                .get_or_insert(FooTypeMessagesDeserializerState::A(deserializer));
+                            allow_any_fallback.get_or_insert(
+                                FooTypeMessagesTypeDeserializerState::A(deserializer),
+                            );
                         } else if let Some(deserializer) = deserializer {
                             let data = deserializer.finish(reader)?;
                             if self.a.is_some() {
@@ -783,10 +819,10 @@ pub mod quick_xml_deserialize {
                             }
                             self.a = Some(data);
                         }
-                        *self.state = FooTypeMessagesDeserializerState::A(None);
+                        *self.state = FooTypeMessagesTypeDeserializerState::A(None);
                         event
                     }
-                    (FooTypeMessagesDeserializerState::A(None), event) => match &event {
+                    (FooTypeMessagesTypeDeserializerState::A(None), event) => match &event {
                         Event::Start(x) | Event::Empty(x)
                             if matches!(
                                 reader.resolve_local_name(x.name(), NS_TNS),
@@ -798,22 +834,20 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                                 event,
                                 allow_any,
-                            } = <StringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            } = <String as WithDeserializer>::Deserializer::init(reader, event)?;
                             if let Some(data) = data {
                                 if self.a.is_some() {
                                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"a")))?;
                                 }
                                 self.a = Some(data);
                             }
-                            *self.state = FooTypeMessagesDeserializerState::A(deserializer);
+                            *self.state = FooTypeMessagesTypeDeserializerState::A(deserializer);
                             match event {
                                 Some(event @ (Event::Start(_) | Event::End(_))) => {
-                                    *self.state = FooTypeMessagesDeserializerState::Done__;
+                                    *self.state = FooTypeMessagesTypeDeserializerState::Done__;
                                     if allow_any {
                                         allow_any_fallback.get_or_insert(
-                                            FooTypeMessagesDeserializerState::A(None),
+                                            FooTypeMessagesTypeDeserializerState::A(None),
                                         );
                                     }
                                     event
@@ -829,7 +863,7 @@ pub mod quick_xml_deserialize {
                             }
                         }
                         Event::Start(_) | Event::Empty(_) => {
-                            *self.state = FooTypeMessagesDeserializerState::Done__;
+                            *self.state = FooTypeMessagesTypeDeserializerState::Done__;
                             event
                         }
                         Event::End(_) => {
@@ -842,7 +876,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                         _ => {
-                            *self.state = FooTypeMessagesDeserializerState::A(None);
+                            *self.state = FooTypeMessagesTypeDeserializerState::A(None);
                             return Ok(DeserializerOutput {
                                 data: None,
                                 deserializer: Some(self),
@@ -851,7 +885,7 @@ pub mod quick_xml_deserialize {
                             });
                         }
                     },
-                    (FooTypeMessagesDeserializerState::Done__, event) => {
+                    (FooTypeMessagesTypeDeserializerState::Done__, event) => {
                         let allow_any = if let Some(fallback) = allow_any_fallback {
                             *self.state = fallback;
                             true
@@ -871,12 +905,12 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             self,
             _reader: &R,
-        ) -> Result<super::FooTypeMessages, xsd_parser::quick_xml::Error>
+        ) -> Result<super::FooTypeMessagesType, xsd_parser::quick_xml::Error>
         where
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::FooTypeMessages {
+            Ok(super::FooTypeMessagesType {
                 aa: self
                     .aa
                     .ok_or_else(|| ErrorKind::MissingElement("aa".into()))?,

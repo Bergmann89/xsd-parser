@@ -12,11 +12,22 @@ use quick_xml::{
 use super::{Error, ErrorKind, RawByteStr};
 
 /// Trait that defines the [`Serializer`] for a type.
-pub trait WithSerializer: Sized {
+pub trait WithSerializer {
     /// The serializer to use for this type.
-    type Serializer<'x>: Serializer<'x, Self>
+    type Serializer<'x>: Serializer<'x>
     where
         Self: 'x;
+
+    /// Initializes a new serializer from the passed `value`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] is the serializer could not be initialized.
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error>;
 }
 
 impl<X> WithSerializer for X
@@ -27,18 +38,56 @@ where
         = ContentSerializer<'x, X>
     where
         Self: 'x;
+
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        ContentSerializer::new(self, name, is_root)
+    }
 }
 
 /// Trait that defines a serializer that can be used to destruct a type to
 /// suitable XML [`Event`]s.
-pub trait Serializer<'ser, T>: Iterator<Item = Result<Event<'ser>, Error>> + Debug + Sized {
+pub trait Serializer<'ser>: Iterator<Item = Result<Event<'ser>, Error>> + Debug {}
+
+impl<'ser, X> Serializer<'ser> for X where
+    X: Iterator<Item = Result<Event<'ser>, Error>> + Debug + Sized
+{
+}
+
+/// Trait that returns a boxed version of a [`Serializer`] for any type that
+/// implements [`WithSerializer`].
+pub trait WithBoxedSerializer {
     /// Initializes a new serializer from the passed `value`.
     ///
     /// # Errors
     ///
     /// Returns a suitable [`Error`] is the serializer could not be initialized.
-    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<BoxedSerializer<'ser>, Error>;
 }
+
+impl<X> WithBoxedSerializer for X
+where
+    X: WithSerializer,
+{
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<BoxedSerializer<'ser>, Error> {
+        Ok(Box::new(WithSerializer::serializer(self, name, is_root)?))
+    }
+}
+
+/// Boxed version of a [`Serializer`].
+pub type BoxedSerializer<'ser> =
+    Box<dyn Serializer<'ser, Item = Result<Event<'ser>, Error>> + 'ser>;
 
 /// Trait that could be implemented by types to support serialization to XML
 /// using the [`quick_xml`] crate.
@@ -154,11 +203,17 @@ pub enum ContentSerializer<'ser, T> {
     Done,
 }
 
-impl<'ser, T> Serializer<'ser, T> for ContentSerializer<'ser, T>
+impl<'ser, T> ContentSerializer<'ser, T>
 where
     T: SerializeBytes + Debug,
 {
-    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
+    /// Create a new [`ContentSerializer`] instance from the passed arguments.
+    ///
+    /// # Errors
+    ///
+    /// Will throw a [`ErrorKind::MissingName`] error, if `None` is passed as
+    /// `name`.
+    pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
         let _is_root = is_root;
 
         Ok(Self::Begin {
@@ -240,7 +295,7 @@ where
                 Self::Pending { name, mut iter } => {
                     let item = iter.next()?;
 
-                    match Serializer::init(item, name, false) {
+                    match item.serializer(name, false) {
                         Ok(serializer) => {
                             *self = Self::Emitting {
                                 name,
@@ -274,20 +329,21 @@ where
     }
 }
 
-impl<'ser, T, TItem> Serializer<'ser, T> for IterSerializer<'ser, T, TItem>
+impl<'ser, T, TItem> IterSerializer<'ser, T, TItem>
 where
     T: Debug + 'ser,
     &'ser T: IntoIterator<Item = &'ser TItem>,
     <&'ser T as IntoIterator>::IntoIter: Debug,
     TItem: WithSerializer + Debug + 'ser,
 {
-    fn init(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
+    /// Create a new [`IterSerializer`] instance from the passed arguments.
+    pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Self {
         let _is_root = is_root;
 
-        Ok(Self::Pending {
+        Self::Pending {
             name,
             iter: value.into_iter(),
-        })
+        }
     }
 }
 
@@ -306,7 +362,7 @@ where
     T: WithSerializer,
 {
     fn new(value: &'a T, name: Option<&'a str>, writer: &'a mut Writer<W>) -> Result<Self, Error> {
-        let serializer = Serializer::init(value, name, true)?;
+        let serializer = value.serializer(name, true)?;
 
         Ok(Self { writer, serializer })
     }

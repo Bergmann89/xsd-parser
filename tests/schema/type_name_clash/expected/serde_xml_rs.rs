@@ -3,13 +3,12 @@ pub type Foo = FooType;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FooType {
     #[serde(rename = "Bar")]
-    pub bar: FooTypeBar,
+    pub bar: FooTypeBarType,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct FooTypeBar {
+pub struct FooTypeBarType {
     #[serde(default, rename = "a")]
-    pub a: Option<StringType>,
+    pub a: Option<String>,
     #[serde(default, rename = "b")]
-    pub b: Option<StringType>,
+    pub b: Option<String>,
 }
-pub type StringType = String;

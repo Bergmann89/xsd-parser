@@ -12,87 +12,23 @@ use serde::Deserialize;
 use xsd_parser::{
     config::{Config, Generate, OptimizerFlags, Schema},
     generate,
-    generator::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, TypedefMode},
-    quick_xml::{
-        DeserializeSync, ErrorReader, Event, IoReader, Serializer, WithSerializer, Writer,
-        XmlReader,
-    },
+    generator::GenerateFlags,
+    quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
     types::IdentType,
 };
 
 pub trait ConfigEx {
-    fn with_quick_xml(self) -> Self;
-
-    fn with_serde(self, serde_support: SerdeSupport) -> Self;
-
-    fn with_generate<I, T>(self, types: I) -> Self
-    where
-        I: IntoIterator<Item = (IdentType, T)>,
-        T: Into<String>;
-
-    fn with_generate_flags(self, flags: GenerateFlags) -> Self;
-
-    fn with_box_flags(self, flags: BoxFlags) -> Self;
-
-    fn with_content_mode(self, mode: ContentMode) -> Self;
-
-    fn with_typedef_mode(self, mode: TypedefMode) -> Self;
-
-    fn with_serde_support(self, mode: SerdeSupport) -> Self;
+    fn test_default() -> Self;
 }
 
 impl ConfigEx for Config {
-    fn with_quick_xml(mut self) -> Self {
-        self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
+    fn test_default() -> Self {
+        let mut config = Config::default();
 
-        self
-    }
+        config.generator.type_postfix.element_type = "Type".into();
+        config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
 
-    fn with_serde(mut self, serde_support: SerdeSupport) -> Self {
-        self.generator.serde_support = serde_support;
-
-        self
-    }
-
-    fn with_generate<I, T>(mut self, types: I) -> Self
-    where
-        I: IntoIterator<Item = (IdentType, T)>,
-        T: Into<String>,
-    {
-        self.generator.generate =
-            Generate::Types(types.into_iter().map(|(a, b)| (a, b.into())).collect());
-
-        self
-    }
-
-    fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
-        self.generator.flags |= flags;
-
-        self
-    }
-
-    fn with_box_flags(mut self, flags: BoxFlags) -> Self {
-        self.generator.box_flags |= flags;
-
-        self
-    }
-
-    fn with_content_mode(mut self, mode: ContentMode) -> Self {
-        self.generator.content_mode = mode;
-
-        self
-    }
-
-    fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
-        self.generator.typedef_mode = mode;
-
-        self
-    }
-
-    fn with_serde_support(mut self, mode: SerdeSupport) -> Self {
-        self.generator.serde_support = mode;
-
-        self
+        config
     }
 }
 
@@ -107,7 +43,7 @@ where
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
 
     // For debugging purposes enable the following lines
-    // config.parser.debug_output = Some("./schemas.log".into());
+    // config.parser.debug_output = Some("schemas.log".into());
     // config.interpreter.debug_output = Some("interpreter.log".into());
     // config.optimizer.debug_output = Some("optimizer.log".into());
 
@@ -156,12 +92,31 @@ pub fn optimizer_test<P1, P2, P3, I, T>(
     T: IntoIterator<Item = (IdentType, I)>,
     I: Into<String>,
 {
-    let mut config = Config::default();
+    let mut config = Config::test_default();
+
+    config.optimizer.flags = OptimizerFlags::RESOLVE_TYPEDEFS;
+
+    optimizer_test_with_config(input_xsd, expected_0, expected_1, types, flags, config);
+}
+
+pub fn optimizer_test_with_config<P1, P2, P3, I, T>(
+    input_xsd: P1,
+    expected_0: P2,
+    expected_1: P3,
+    types: T,
+    flags: OptimizerFlags,
+    mut config: Config,
+) where
+    P1: AsRef<Path>,
+    P2: AsRef<Path>,
+    P3: AsRef<Path>,
+    T: IntoIterator<Item = (IdentType, I)>,
+    I: Into<String>,
+{
     config
         .parser
         .schemas
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
-    config.optimizer.flags = OptimizerFlags::empty();
     config.generator.generate = Generate::Types(
         types
             .into_iter()
@@ -203,8 +158,7 @@ where
     let mut content = Vec::new();
     let mut writer = Writer::new(&mut content);
 
-    let mut actual: <T as WithSerializer>::Serializer<'_> =
-        Serializer::init(value, Some(root), true).unwrap();
+    let mut actual = value.serializer(Some(root), true).unwrap();
     let mut expected = Reader::from_file(path).unwrap();
     let mut buffer = Vec::new();
 

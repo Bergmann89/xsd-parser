@@ -7,7 +7,7 @@ fn generate_default() {
     generate_test(
         "tests/schema/any/schema.xsd",
         "tests/schema/any/expected/default.rs",
-        Config::default().with_generate([(IdentType::Element, "tns:Foo")]),
+        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
 
@@ -16,7 +16,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/any/schema.xsd",
         "tests/schema/any/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
@@ -27,8 +27,8 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/schema/any/schema.xsd",
         "tests/schema/any/expected/serde_xml_rs.rs",
-        Config::default()
-            .with_serde(SerdeSupport::SerdeXmlRs)
+        Config::test_default()
+            .with_serde_support(SerdeSupport::SerdeXmlRs)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
@@ -38,8 +38,8 @@ fn generate_serde_quick_xml() {
     generate_test(
         "tests/schema/any/schema.xsd",
         "tests/schema/any/expected/serde_quick_xml.rs",
-        Config::default()
-            .with_serde(SerdeSupport::QuickXml)
+        Config::test_default()
+            .with_serde_support(SerdeSupport::QuickXml)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }

@@ -2,17 +2,19 @@ use std::fmt::Display;
 use std::ops::Not;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 use tracing::instrument;
 
 use crate::schema::xs::Use;
 
 use super::super::data::{
-    AbstractData, AttributeData, ComplexTypeData, ElementData, EnumVariantData, EnumerationData,
-    ReferenceData, TypeData, UnionData, UnionVariantData,
+    AttributeData, ComplexTypeData, DynamicData, ElementData, EnumVariantData, EnumerationData,
+    ReferenceData, TraitData, TypeData, UnionData, UnionVariantData,
 };
-use super::super::misc::{BoxFlags, GenerateFlags, Occurs, StateFlags, TypeMode, TypedefMode};
+use super::super::misc::{
+    BoxFlags, DynTypeTraits, GenerateFlags, Occurs, StateFlags, TypeMode, TypedefMode,
+};
 use super::super::{Generator, SerdeSupport};
 
 pub(crate) struct TypeRenderer;
@@ -26,8 +28,8 @@ impl TypeRenderer {
         }
 
         let type_ident = type_ref.type_ident.clone();
-        let derive = self.get_derive(data, Option::<String>::None);
-        let extra_traits = Self::get_extra_traits(data);
+        let derive = Self::get_derive(data, Option::<String>::None);
+        let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
         let variants = data.variants.iter().map(|data| {
             let UnionVariantData {
                 variant_ident,
@@ -46,30 +48,38 @@ impl TypeRenderer {
                 #( #variants )*
             }
 
-            #extra_traits
+            #( #trait_impls )*
         };
 
         data.add_code(code);
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub fn render_abstract(&mut self, data: &mut AbstractData<'_, '_>) {
-        // TODO: generate trait for the abstract type?
-
+    pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
         let type_ref = data.current_type_ref_mut();
         if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
             return;
         }
 
         let type_ident = type_ref.type_ident.clone();
-        let derive = self.get_derive(data, Option::<String>::None);
-        let extra_traits = Self::get_extra_traits(data);
+        let xsd_crate = &data.xsd_parser_crate;
+        let trait_ident = &data.trait_ident;
+        let derive = Self::get_derive(data, Option::<String>::None);
+        let trait_impls = Self::render_trait_impls(&data.inner, &[]);
+
+        let dyn_traits = if let Some(traits) = &data.sub_traits {
+            Self::format_traits(traits)
+        } else {
+            Self::get_dyn_type_traits(data, [quote!(#xsd_crate::AsAny)])
+        };
 
         let code = quote! {
             #derive
-            pub struct #type_ident(Box<dyn core::any::Any>);
+            pub struct #type_ident(pub Box<dyn #trait_ident>);
 
-            #extra_traits
+            pub trait #trait_ident: #dyn_traits { }
+
+            #( #trait_impls )*
         };
 
         data.add_code(code);
@@ -87,7 +97,7 @@ impl TypeRenderer {
         } = data;
 
         let code = match mode {
-            TypedefMode::Auto => unreachable!(),
+            TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
                 let target_type = occurs.make_type(target_ident, false);
 
@@ -97,14 +107,14 @@ impl TypeRenderer {
                 let target_type = occurs.make_type(target_ident, false);
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
-                let derive = self.get_derive(inner, extra_derive);
-                let extra_traits = Self::get_extra_traits(inner);
+                let derive = Self::get_derive(inner, extra_derive);
+                let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
 
                 quote! {
                     #derive
                     pub struct #type_ident(pub #target_type);
 
-                    #extra_traits
+                    #( #trait_impls )*
                 }
             }
         };
@@ -126,8 +136,9 @@ impl TypeRenderer {
             return;
         }
 
-        let derive = self.get_derive(inner, Option::<String>::None);
-        let extra_traits = Self::get_extra_traits(inner);
+        let derive = Self::get_derive(inner, Option::<String>::None);
+        let trait_impls = Self::render_trait_impls(inner, &data.trait_impls);
+
         let variants = variants
             .iter()
             .map(|d| {
@@ -164,7 +175,7 @@ impl TypeRenderer {
                 #( #variants )*
             }
 
-            #extra_traits
+            #( #trait_impls )*
         };
 
         data.add_code(code);
@@ -172,9 +183,9 @@ impl TypeRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_complex_type(&mut self, data: &mut ComplexTypeData<'_, '_>) {
-        let derive = self.get_derive(data, Option::<String>::None);
-        let extra_traits = Self::get_extra_traits(data);
+        let derive = Self::get_derive(data, Option::<String>::None);
         let type_ident = data.current_type_ref().type_ident.clone();
+        let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
         let attributes = data
             .attributes
             .iter()
@@ -194,7 +205,7 @@ impl TypeRenderer {
                     #( #elements )*
                 }
 
-                #extra_traits
+                #( #trait_impls )*
             };
 
             return data.add_code(code);
@@ -213,7 +224,7 @@ impl TypeRenderer {
                     #( #elements )*
                 }
 
-                #extra_traits
+                #( #trait_impls )*
             };
 
             return data.add_code(code);
@@ -228,7 +239,7 @@ impl TypeRenderer {
                     #( #attributes )*
                 }
 
-                #extra_traits
+                #( #trait_impls )*
             };
 
             return data.add_code(code);
@@ -255,17 +266,134 @@ impl TypeRenderer {
                 #( #elements )*
             }
 
-            #extra_traits
+            #( #trait_impls )*
         };
 
         data.add_code(code);
     }
 
-    fn get_extra_traits(data: &TypeData<'_, '_>) -> Option<TokenStream> {
-        if !data.check_generate_flags(GenerateFlags::WITH_NAMESPACE_TRAIT) {
-            return None;
-        }
+    fn get_derive<I>(generator: &Generator<'_>, extra: I) -> TokenStream
+    where
+        I: IntoIterator,
+        I::Item: Display,
+    {
+        let serde: SmallVec<[Ident2; 2]> = if generator.serde_support == SerdeSupport::None {
+            smallvec![]
+        } else {
+            smallvec![format_ident!("Serialize"), format_ident!("Deserialize")]
+        };
 
+        let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+        let types = generator
+            .derive
+            .iter()
+            .cloned()
+            .chain(serde)
+            .chain(extra)
+            .collect::<Vec<_>>();
+
+        if types.is_empty() {
+            quote! {}
+        } else {
+            quote! {
+                #[derive( #( #types ),* )]
+            }
+        }
+    }
+
+    fn get_dyn_type_traits<I>(generator: &Generator<'_>, extra: I) -> TokenStream
+    where
+        I: IntoIterator,
+        I::Item: Into<TokenStream>,
+    {
+        let xsd_parser = &generator.xsd_parser_crate;
+
+        let serde: SmallVec<[TokenStream; 2]> = if generator.serde_support == SerdeSupport::None {
+            smallvec![]
+        } else {
+            smallvec![quote!(serde::Serialize), quote!(serde::DeserializeOwned)]
+        };
+
+        let traits = match &generator.dyn_type_traits {
+            DynTypeTraits::Custom(x) => x.clone(),
+            DynTypeTraits::Auto => generator
+                .derive
+                .iter()
+                .map(|x| match x.to_string().as_str() {
+                    "Debug" => quote!(core::fmt::Debug),
+                    "Hash" => quote!(core::has::Hash),
+                    _ => quote!(#x),
+                })
+                .chain(serde)
+                .chain(
+                    generator
+                        .check_generate_flags(GenerateFlags::QUICK_XML_SERIALIZE)
+                        .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
+                )
+                .chain(extra.into_iter().map(Into::into))
+                .collect::<Vec<_>>(),
+        };
+
+        Self::format_traits(traits)
+    }
+
+    fn format_traits<I>(iter: I) -> TokenStream
+    where
+        I: IntoIterator,
+        I::Item: ToTokens,
+    {
+        let parts =
+            iter.into_iter()
+                .enumerate()
+                .map(|(i, x)| if i == 0 { quote!(#x) } else { quote!(+ #x) });
+
+        quote! {
+            #( #parts )*
+        }
+    }
+
+    fn render_trait_impls<'a>(
+        type_data: &'a TypeData<'_, '_>,
+        trait_data: &'a [TraitData],
+    ) -> impl Iterator<Item = TokenStream> + 'a {
+        let trait_as_any = trait_data
+            .is_empty()
+            .not()
+            .then(|| Self::render_trait_as_any(type_data));
+        let trait_with_namespace = type_data
+            .check_generate_flags(GenerateFlags::WITH_NAMESPACE_TRAIT)
+            .then(|| Self::render_trait_with_namespace(type_data))
+            .flatten();
+
+        let type_ident = &type_data.current_type_ref().type_ident;
+        trait_data
+            .iter()
+            .map(move |TraitData { trait_ident, .. }| {
+                quote! {
+                    impl #trait_ident for #type_ident { }
+                }
+            })
+            .chain(trait_as_any)
+            .chain(trait_with_namespace)
+    }
+
+    fn render_trait_as_any(data: &TypeData<'_, '_>) -> TokenStream {
+        let xsd_parser = &data.xsd_parser_crate;
+        let type_ident = &data.current_type_ref().type_ident;
+
+        quote! {
+            impl #xsd_parser::AsAny for #type_ident {
+                fn as_any(&self) -> &dyn core::any::Any {
+                    self
+                }
+                fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
+                    self
+                }
+            }
+        }
+    }
+
+    fn render_trait_with_namespace(data: &TypeData<'_, '_>) -> Option<TokenStream> {
         let ns = data.ident.ns.as_ref()?;
         let module = data.types.modules.get(ns)?;
 
@@ -300,37 +428,6 @@ impl TypeRenderer {
         };
 
         Some(code)
-    }
-
-    fn get_derive<I>(&self, generator: &Generator<'_>, extra: I) -> TokenStream
-    where
-        I: IntoIterator,
-        I::Item: Display,
-    {
-        let _self = self;
-
-        let serde: SmallVec<[Ident2; 2]> = if generator.serde_support == SerdeSupport::None {
-            smallvec![]
-        } else {
-            smallvec![format_ident!("Serialize"), format_ident!("Deserialize")]
-        };
-
-        let extra = extra.into_iter().map(|x| format_ident!("{x}"));
-        let types = generator
-            .derive
-            .iter()
-            .cloned()
-            .chain(serde)
-            .chain(extra)
-            .collect::<Vec<_>>();
-
-        if types.is_empty() {
-            quote! {}
-        } else {
-            quote! {
-                #[derive( #( #types ),* )]
-            }
-        }
     }
 }
 

@@ -1,24 +1,22 @@
+pub type Shiporder = ShiporderType;
 #[derive(Debug, Clone)]
-pub struct Shiporder {
-    pub orderid: StringType,
-    pub orderperson: StringType,
-    pub shipto: ShiporderShipto,
-    pub item: Vec<ShiporderItem>,
-}
-pub type StringType = String;
-#[derive(Debug, Clone)]
-pub struct ShiporderShipto {
-    pub name: StringType,
-    pub address: StringType,
-    pub city: StringType,
-    pub country: StringType,
+pub struct ShiporderType {
+    pub orderid: String,
+    pub orderperson: String,
+    pub shipto: ShiporderShiptoType,
+    pub item: Vec<ShiporderItemType>,
 }
 #[derive(Debug, Clone)]
-pub struct ShiporderItem {
-    pub title: StringType,
-    pub note: Option<StringType>,
-    pub quantity: PositiveIntegerType,
-    pub price: DecimalType,
+pub struct ShiporderShiptoType {
+    pub name: String,
+    pub address: String,
+    pub city: String,
+    pub country: String,
 }
-pub type PositiveIntegerType = usize;
-pub type DecimalType = f64;
+#[derive(Debug, Clone)]
+pub struct ShiporderItemType {
+    pub title: String,
+    pub note: Option<String>,
+    pub quantity: usize,
+    pub price: f64,
+}

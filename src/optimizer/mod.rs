@@ -276,8 +276,8 @@ impl Optimizer {
         self
     }
 
-    /// This will use a enum that contains all known variants of the abstract type
-    /// instead of a dynamic box.
+    /// This will use a enum that contains all known variants of the dynamic
+    /// type instead of a dynamic box.
     ///
     /// # Examples
     ///
@@ -288,21 +288,21 @@ impl Optimizer {
     ///
     /// Without this optimization this will result in the following code:
     /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/convert_abstract_to_choice.rs")]
+    #[doc = include_str!("../../tests/optimizer/expected0/convert_dynamic_to_choice.rs")]
     /// ```
     ///
     /// With this optimization the following code is generated:
     /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/convert_abstract_to_choice.rs")]
+    #[doc = include_str!("../../tests/optimizer/expected1/convert_dynamic_to_choice.rs")]
     /// ```
-    pub fn convert_abstract_to_choice(mut self) -> Self {
-        tracing::trace!("convert_abstract_to_choice");
+    pub fn convert_dynamic_to_choice(mut self) -> Self {
+        tracing::trace!("convert_dynamic_to_choice");
 
         let idents = self
             .types
             .iter()
             .filter_map(|(ident, ty)| {
-                if matches!(ty, Type::Abstract(_)) {
+                if matches!(ty, Type::Dynamic(_)) {
                     Some(ident)
                 } else {
                     None
@@ -315,8 +315,8 @@ impl Optimizer {
             let content_ident = Ident::new(self.types.make_unnamed()).with_ns(ident.ns);
 
             let type_ = self.types.get_mut(&ident).unwrap();
-            let Type::Abstract(x) = type_ else {
-                unreachable!();
+            let Type::Dynamic(x) = type_ else {
+                crate::unreachable!();
             };
 
             let mut si = GroupInfo::default();
@@ -328,7 +328,7 @@ impl Optimizer {
 
             *type_ = Type::ComplexType(ComplexInfo {
                 content: Some(content_ident.clone()),
-                is_abstract: true,
+                is_dynamic: true,
                 ..Default::default()
             });
 
@@ -336,7 +336,7 @@ impl Optimizer {
                 Entry::Vacant(e) => {
                     e.insert(Type::Choice(si));
                 }
-                Entry::Occupied(_) => unreachable!(),
+                Entry::Occupied(_) => crate::unreachable!(),
             }
         }
 
@@ -381,7 +381,7 @@ impl Optimizer {
         for ident in idents {
             let type_ = self.types.get(&ident).unwrap();
             let Type::ComplexType(ci) = type_ else {
-                unreachable!();
+                crate::unreachable!();
             };
             let Some(content_ident) = ci.content.clone() else {
                 continue;
@@ -544,10 +544,16 @@ impl Optimizer {
             };
         }
 
+        let mut replaced_references = HashMap::new();
+
         for type_ in self.types.values_mut() {
             match type_ {
                 Type::Reference(x) if x.is_single() => {
-                    x.type_ = typedefs.resolve(&x.type_).clone();
+                    let new_type = typedefs.resolve(&x.type_).clone();
+                    replaced_references
+                        .entry(x.type_.clone())
+                        .or_insert_with(|| new_type.clone());
+                    x.type_ = new_type;
                 }
                 Type::Union(x) => {
                     resolve_base!(&mut x.base);
@@ -556,7 +562,7 @@ impl Optimizer {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                Type::Abstract(x) => {
+                Type::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
                     for x in &mut x.derived_types {
@@ -589,6 +595,18 @@ impl Optimizer {
                     }
                 }
                 _ => (),
+            }
+        }
+
+        for type_ in self.types.values_mut() {
+            let Type::Dynamic(ai) = type_ else {
+                continue;
+            };
+
+            for derived in &mut ai.derived_types {
+                if let Some(new_type) = replaced_references.get(derived) {
+                    *derived = new_type.clone();
+                }
             }
         }
 
@@ -673,7 +691,7 @@ impl Optimizer {
 
                 si
             }
-            Type::Sequence(si) => si,
+            Type::All(si) | Type::Sequence(si) => si,
             Type::Reference(ti) if ti.is_single() => {
                 self.flatten_complex(
                     &ti.type_,
@@ -684,7 +702,7 @@ impl Optimizer {
 
                 return;
             }
-            _ => unreachable!(),
+            x => crate::unreachable!("{x:#?}"),
         };
 
         next.count += 1;
@@ -763,11 +781,11 @@ impl Optimizer {
 
                         Some(Type::Enumeration(ei))
                     }
-                    _ => unreachable!(),
+                    _ => crate::unreachable!(),
                 };
 
                 let Some(Type::Enumeration(ei)) = next else {
-                    unreachable!();
+                    crate::unreachable!();
                 };
 
                 for var in &*x.variants {
@@ -793,7 +811,7 @@ impl Optimizer {
                             VariantInfo::new(x).with_type(Some(ident.clone()))
                         });
                     }
-                    _ => unreachable!(),
+                    _ => crate::unreachable!(),
                 }
             }
         }

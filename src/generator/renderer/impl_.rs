@@ -3,7 +3,7 @@ use quote::{format_ident, quote};
 use tracing::instrument;
 
 use super::super::data::{
-    AbstractData, AttributeData, ComplexTypeData, EnumerationData, ReferenceData, UnionData,
+    AttributeData, ComplexTypeData, DynamicData, EnumerationData, ReferenceData, UnionData,
 };
 use super::super::misc::StateFlags;
 
@@ -19,7 +19,7 @@ impl ImplRenderer {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub fn render_abstract(&mut self, data: &mut AbstractData<'_, '_>) {
+    pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
         let _self = self;
 
         data.current_type_ref_mut()

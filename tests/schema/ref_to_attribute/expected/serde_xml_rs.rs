@@ -3,6 +3,5 @@ pub type Foo = FooType;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct FooType {
     #[serde(default, rename = "id")]
-    pub id: Option<Id>,
+    pub id: Option<String>,
 }
-pub type Id = String;

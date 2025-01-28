@@ -6,13 +6,13 @@ use tracing::instrument;
 
 use crate::schema::xs::{
     Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementType, ExtensionType, Facet, FacetType, GroupType, List, Restriction, RestrictionType,
-    SimpleBaseType, SimpleContent, Union, Use,
+    ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
+    Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident, IdentType,
-    Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode, Ident,
+    IdentType, Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
 use super::{Error, NameExtend, NameFallback, NameUnwrap, SchemaInterpreter};
@@ -59,7 +59,7 @@ macro_rules! init_any {
         $builder.fixed = $fixed;
 
         let Type::$variant(ret) = $builder.type_.as_mut().unwrap() else {
-            unreachable!();
+            crate::unreachable!();
         };
 
         ret
@@ -119,38 +119,53 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
     }
 
-    #[instrument(err, level = "trace", skip(self))]
     pub(super) fn finish(self) -> Result<Type, Error> {
         self.type_.ok_or(Error::InternalError)
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element(&mut self, ident: &Ident, ty: &ElementType) -> Result<(), Error> {
+    pub(super) fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
         use crate::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
+
             init_any!(self, Reference, ReferenceInfo::new(type_), false);
-        }
+        } else {
+            let ident = self
+                .state
+                .current_ident()
+                .unwrap()
+                .clone()
+                .with_type(IdentType::ElementType);
 
-        if let Some(substitution_group) = &ty.substitution_group {
-            for base in &substitution_group.0 {
-                let base = self.parse_qname(base)?.with_type(IdentType::Element);
-                let base_ty = self.get_element_mut(&base)?;
-                let Type::Abstract(ai) = base_ty else {
-                    return Err(Error::ExpectedAbstractElement(base.clone()));
-                };
-                ai.derived_types.push(ident.clone());
-            }
-        }
+            let mut has_content = false;
+            let type_ = self.create_type(ident, |builder| {
+                for c in &ty.content {
+                    match c {
+                        C::Annotation(_)
+                        | C::Key(_)
+                        | C::Alternative(_)
+                        | C::Unique(_)
+                        | C::Keyref(_) => {}
+                        C::SimpleType(x) => {
+                            has_content = true;
+                            builder.apply_simple_type(x)?;
+                        }
+                        C::ComplexType(x) => {
+                            has_content = true;
+                            builder.apply_complex_type(x)?;
+                        }
+                    }
+                }
 
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) | C::Key(_) | C::Alternative(_) | C::Unique(_) | C::Keyref(_) => {}
-                C::SimpleType(x) => self.apply_simple_type(x)?,
-                C::ComplexType(x) => self.apply_complex_type(x)?,
+                Ok(())
+            });
+
+            if has_content {
+                init_any!(self, Reference, ReferenceInfo::new(type_?), false);
             }
-        }
+        };
 
         if ty.abstract_ {
             let type_ = match self.type_.take() {
@@ -159,8 +174,30 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
-            let ai = init_any!(self, Abstract);
+            let ai = init_any!(self, Dynamic);
             ai.type_ = type_;
+        }
+
+        if let Some(substitution_group) = &ty.substitution_group {
+            self.walk_substitution_groups(substitution_group, |builder, base_ident| {
+                let ident = builder.state.current_ident().unwrap().clone();
+                let base_ty = builder.get_element_mut(base_ident)?;
+
+                if let Type::Reference(ti) = base_ty {
+                    *base_ty = Type::Dynamic(DynamicInfo {
+                        type_: Some(ti.type_.clone()),
+                        derived_types: vec![ti.type_.clone()],
+                    });
+                }
+
+                let Type::Dynamic(ai) = base_ty else {
+                    return Err(Error::ExpectedDynamicElement(base_ident.clone()));
+                };
+
+                ai.derived_types.push(ident);
+
+                Ok(())
+            })?;
         }
 
         Ok(())
@@ -207,8 +244,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
                 C::ComplexContent(x) => {
                     let ci = get_or_init_any!(self, ComplexType);
-                    ci.is_abstract = ty.abstract_;
-
+                    ci.is_dynamic = ty.abstract_;
                     self.apply_complex_content(x)?;
                 }
                 C::SimpleContent(x) => self.apply_simple_content(x)?,
@@ -280,7 +316,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         match &mut self.type_ {
             Some(Type::Reference(_)) => (),
             Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-            _ => unreachable!("Should have a simple type!"),
+            e => crate::unreachable!("Should have a simple type but is {e:#?}!"),
         }
 
         Ok(())
@@ -495,24 +531,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
             }
-            ElementType {
-                type_: Some(type_),
-                name,
-                ..
-            } => {
-                let type_ = self.parse_qname(type_)?;
-                let name = name.clone().or_fallback(type_.name.clone());
-                let ident = Ident::new(name)
-                    .with_ns(self.state.current_ns())
-                    .with_type(IdentType::Element);
-
-                let ci = get_or_init_type!(self, Sequence);
-                let element = ci.elements.find_or_insert(ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
-                });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
-                element.update(ty);
-            }
             ty => {
                 let field_name = ty.name.clone().unwrap_or_unnamed(self.state);
                 let field_ident = Ident::new(field_name)
@@ -524,9 +542,9 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     .extend(true, ty.name.clone())
                     .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
-                    type_name.to_type_named(false, Some(""))
+                    type_name.to_type_name(false, Some(""))
                 } else {
-                    type_name.to_type_named(true, Some("Temp"))
+                    type_name.to_type_name(true, Some("Temp"))
                 };
 
                 let ns = self.state.current_ns();
@@ -788,7 +806,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
         let base = match self.type_mode {
-            TypeMode::Unknown => unreachable!("Should be set somewhere above!"),
+            TypeMode::Unknown => crate::unreachable!("Should be set somewhere above!"),
             TypeMode::Simple => self.owner.get_simple_type(base)?,
             TypeMode::Complex => self.owner.get_complex_type(base)?,
         };
@@ -831,7 +849,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                         .auto_extend(false, true, self.state)
                         .remove_suffix("Type")
                         .remove_suffix("Content")
-                        .to_type_named(true, Some("Content"));
+                        .to_type_name(true, Some("Content"));
                     let content_ident = Ident::new(content_ident).with_ns(self.state.current_ns());
 
                     self.state
@@ -847,6 +865,42 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         self.fixed = self.type_mode == TypeMode::Complex;
 
         Ok(())
+    }
+
+    // #[instrument(err, level = "trace", skip(self, f))]
+    fn walk_substitution_groups<F>(
+        &mut self,
+        groups: &ElementSubstitutionGroupType,
+        mut f: F,
+    ) -> Result<(), Error>
+    where
+        F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
+    {
+        fn inner<'x, 'y, 'z, F>(
+            builder: &mut TypeBuilder<'x, 'y, 'z>,
+            groups: &ElementSubstitutionGroupType,
+            f: &mut F,
+        ) -> Result<(), Error>
+        where
+            F: FnMut(&mut TypeBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
+        {
+            for head in &groups.0 {
+                let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
+
+                f(builder, &ident)?;
+
+                if let Some(groups) = builder
+                    .find_element(ident)
+                    .and_then(|x| x.substitution_group.as_ref())
+                {
+                    inner(builder, groups, f)?;
+                }
+            }
+
+            Ok(())
+        }
+
+        inner(self, groups, &mut f)
     }
 
     #[instrument(err, level = "trace", skip(self, f))]
@@ -981,12 +1035,12 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             .unwrap_or_unnamed(self.state)
             .remove_suffix("Type")
             .remove_suffix("Content");
-        let field_name = name.to_type_named(true, Some("Content"));
+        let field_name = name.to_type_name(true, Some("Content"));
         let type_name = name
             .auto_extend(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
-            .to_type_named(true, Some("Content"));
+            .to_type_name(true, Some("Content"));
         let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
 
         (field_name, type_)

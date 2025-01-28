@@ -7,7 +7,7 @@ fn auto() {
     generate_test(
         "tests/generator/typedef_mode/schema.xsd",
         "tests/generator/typedef_mode/expected/auto.rs",
-        Config::default()
+        Config::test_default()
             .with_typedef_mode(TypedefMode::Auto)
             .with_generate([
                 (IdentType::Type, "tns:MyType"),
@@ -21,7 +21,7 @@ fn typedef() {
     generate_test(
         "tests/generator/typedef_mode/schema.xsd",
         "tests/generator/typedef_mode/expected/typedef.rs",
-        Config::default()
+        Config::test_default()
             .with_typedef_mode(TypedefMode::Typedef)
             .with_generate([
                 (IdentType::Type, "tns:MyType"),
@@ -35,7 +35,7 @@ fn new_type() {
     generate_test(
         "tests/generator/typedef_mode/schema.xsd",
         "tests/generator/typedef_mode/expected/new_type.rs",
-        Config::default()
+        Config::test_default()
             .with_typedef_mode(TypedefMode::NewType)
             .with_generate([
                 (IdentType::Type, "tns:MyType"),

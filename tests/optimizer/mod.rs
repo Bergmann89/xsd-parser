@@ -1,6 +1,6 @@
-use xsd_parser::{config::OptimizerFlags, types::IdentType};
+use xsd_parser::{config::OptimizerFlags, types::IdentType, Config};
 
-use crate::utils::optimizer_test;
+use crate::utils::{optimizer_test, optimizer_test_with_config, ConfigEx};
 
 #[test]
 fn remove_empty_enum_variants() {
@@ -26,12 +26,13 @@ fn remove_empty_enums() {
 
 #[test]
 fn remove_duplicate_union_variants() {
-    optimizer_test(
+    optimizer_test_with_config(
         "tests/optimizer/union_duplicate.xsd",
         "tests/optimizer/expected0/remove_duplicate_union_variants.rs",
         "tests/optimizer/expected1/remove_duplicate_union_variants.rs",
         [(IdentType::Type, "tns:MyUnion")],
         OptimizerFlags::REMOVE_DUPLICATE_UNION_VARIANTS,
+        Config::test_default().without_optimizer_flags(OptimizerFlags::all()),
     )
 }
 
@@ -62,13 +63,13 @@ fn use_unrestricted_base_type() {
 }
 
 #[test]
-fn convert_abstract_to_choice() {
+fn convert_dynamic_to_choice() {
     optimizer_test(
         "tests/optimizer/abstract.xsd",
-        "tests/optimizer/expected0/convert_abstract_to_choice.rs",
-        "tests/optimizer/expected1/convert_abstract_to_choice.rs",
+        "tests/optimizer/expected0/convert_dynamic_to_choice.rs",
+        "tests/optimizer/expected1/convert_dynamic_to_choice.rs",
         [(IdentType::Element, "tns:Abstract")],
-        OptimizerFlags::CONVERT_ABSTRACT_TO_CHOICE,
+        OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE,
     )
 }
 
@@ -107,12 +108,13 @@ fn merge_enum_unions() {
 
 #[test]
 fn resolve_typedefs() {
-    optimizer_test(
+    optimizer_test_with_config(
         "tests/optimizer/complex_flatten.xsd",
         "tests/optimizer/expected0/resolve_typedefs.rs",
         "tests/optimizer/expected1/resolve_typedefs.rs",
         [(IdentType::Type, "tns:MyComplexType")],
         OptimizerFlags::RESOLVE_TYPEDEFS,
+        Config::test_default().without_optimizer_flags(OptimizerFlags::RESOLVE_TYPEDEFS),
     )
 }
 

@@ -26,11 +26,11 @@ use std::fs::write;
 pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
-pub use misc::{Error, WithNamespace};
+pub use misc::{AsAny, Error, WithNamespace};
 pub use optimizer::Optimizer;
 pub use parser::Parser;
 
-use macros::{assert_eq, unimplemented, unreachable};
+use macros::{assert_eq, unreachable};
 use proc_macro2::TokenStream;
 use schema::{NamespacePrefix, Schemas};
 use tracing::instrument;
@@ -176,7 +176,7 @@ fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error>
     );
     exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
-    exec!(CONVERT_ABSTRACT_TO_CHOICE, convert_abstract_to_choice);
+    exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
     exec!(FLATTEN_ELEMENT_CONTENT, flatten_element_content);
     exec!(FLATTEN_UNIONS, flatten_unions);
     exec!(MERGE_ENUM_UNIONS, merge_enum_unions);
@@ -216,8 +216,14 @@ fn exec_generator(
         generator = generator.derive(derive);
     }
 
+    if let Some(traits) = config.dyn_type_traits {
+        generator = generator.dyn_type_traits(traits);
+    }
+
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);
     generator = generator.with_type_postfix(IdentType::Element, config.type_postfix.element);
+    generator =
+        generator.with_type_postfix(IdentType::ElementType, config.type_postfix.element_type);
 
     for (type_, ident) in config.types {
         let ident = resolve_ident(schemas, &ident, type_)?;

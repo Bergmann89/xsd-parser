@@ -34,9 +34,10 @@ smallvec = "1.13"
 thiserror = "2.0.0"
 tokio = { version = "1.41", optional = true }
 tracing = "0.1"
-url = "2.5.3"
+url = "2.5"
 
 [dev-dependencies]
+clap = { version = "4.5", features = ["derive"] }
 serde-xml-rs = "0.6"
 text-diff = "0.4"
 tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }

@@ -7,7 +7,7 @@ fn generate_default() {
     generate_test(
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/default.rs",
-        Config::default().with_generate([(IdentType::Element, "tns:Array")]),
+        Config::test_default().with_generate([(IdentType::Element, "tns:Array")]),
     );
 }
 
@@ -16,7 +16,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
@@ -27,8 +27,8 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/serde_xml_rs.rs",
-        Config::default()
-            .with_serde(SerdeSupport::SerdeXmlRs)
+        Config::test_default()
+            .with_serde_support(SerdeSupport::SerdeXmlRs)
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
 }
@@ -38,8 +38,8 @@ fn generate_serde_quick_xml() {
     generate_test(
         "tests/schema/static_list/schema.xsd",
         "tests/schema/static_list/expected/serde_quick_xml.rs",
-        Config::default()
-            .with_serde(SerdeSupport::QuickXml)
+        Config::test_default()
+            .with_serde_support(SerdeSupport::QuickXml)
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
 }

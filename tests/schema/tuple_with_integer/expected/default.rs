@@ -1,4 +1,2 @@
 #[derive(Debug, Clone)]
-pub struct Foo(pub FooType);
-#[derive(Debug, Clone)]
-pub struct FooType(pub i32);
+pub struct Foo(pub i32);

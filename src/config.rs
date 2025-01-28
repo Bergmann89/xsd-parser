@@ -10,6 +10,7 @@ pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
 /// Configuration structure for the [`generate`](super::generate) method.
+#[must_use]
 #[derive(Default, Debug, Clone)]
 pub struct Config {
     /// Configuration for the schema parser.
@@ -85,6 +86,11 @@ pub struct GeneratorConfig {
     /// See [`derive`](crate::Generator::derive) for more details.
     pub derive: Option<Vec<String>>,
 
+    /// Set the traits that should be implemented by dynamic types.
+    ///
+    /// See [`dyn_type_traits`](crate::Generator::dyn_type_traits) for more details.
+    pub dyn_type_traits: Option<Vec<String>>,
+
     /// Postfixes that should be applied to the name of the different generated
     /// types.
     ///
@@ -121,6 +127,9 @@ pub struct TypePostfix {
 
     /// Postfixes added to elements (like `xs:element`).
     pub element: String,
+
+    /// Postfixes added to inline types if elements (like `xs:element`).
+    pub element_type: String,
 }
 
 /// Configuration for the resolver used in [`ParserConfig`].
@@ -230,10 +239,10 @@ bitflags! {
         /// See [`use_unrestricted_base_type`](crate::Optimizer::use_unrestricted_base_type) for details.
         const USE_UNRESTRICTED_BASE_TYPE = 1 << 4;
 
-        /// Whether to convert abstract types to choices or not.
+        /// Whether to convert dynamic types to choices or not.
         ///
-        /// See [`convert_abstract_to_choice`](crate::Optimizer::convert_abstract_to_choice) for details.
-        const CONVERT_ABSTRACT_TO_CHOICE = 1 << 5;
+        /// See [`convert_dynamic_to_choice`](crate::Optimizer::convert_dynamic_to_choice) for details.
+        const CONVERT_DYNAMIC_TO_CHOICE = 1 << 5;
 
         /// Whether to flatten the content of an element or not.
         ///
@@ -259,6 +268,117 @@ bitflags! {
         ///
         /// See [`remove_duplicates`](crate::Optimizer::remove_duplicates) for details.
         const REMOVE_DUPLICATES = 1 << 10;
+
+        /// Group that contains all necessary optimization that should be applied
+        /// if code with [`serde`] support should be rendered.
+        const SERDE =  Self::FLATTEN_ELEMENT_CONTENT.bits()
+            | Self::FLATTEN_UNIONS.bits()
+            | Self::MERGE_ENUM_UNIONS.bits();
+    }
+}
+
+impl Config {
+    /// Add optimizer flags to the config.
+    pub fn with_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove optimizer flags to the config.
+    pub fn without_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags.remove(flags);
+
+        self
+    }
+
+    /// Add code generator flags to the config.
+    pub fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
+        self.generator.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove code generator flags to the config.
+    pub fn without_generate_flags(mut self, flags: GenerateFlags) -> Self {
+        self.generator.flags.remove(flags);
+
+        self
+    }
+
+    /// Add boxing flags to the code generator config.
+    pub fn with_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags.insert(flags);
+
+        self
+    }
+
+    /// Remove boxing flags to the code generator config.
+    pub fn without_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags.remove(flags);
+
+        self
+    }
+
+    /// Enable code generation for [`quick_xml`] serialization and deserialization.
+    pub fn with_quick_xml(mut self) -> Self {
+        self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
+
+        self
+    }
+
+    /// Set the [`serde`] support.
+    pub fn with_serde_support(mut self, serde_support: SerdeSupport) -> Self {
+        self.generator.serde_support = serde_support;
+
+        if self.generator.serde_support != SerdeSupport::None {
+            self.optimizer.flags |= OptimizerFlags::SERDE;
+        }
+
+        self
+    }
+
+    /// Set the types the code should be generated for.
+    pub fn with_generate<I, T>(mut self, types: I) -> Self
+    where
+        I: IntoIterator<Item = (IdentType, T)>,
+        T: Into<String>,
+    {
+        self.generator.generate =
+            Generate::Types(types.into_iter().map(|(a, b)| (a, b.into())).collect());
+
+        self
+    }
+
+    /// Set the content mode for the generator.
+    pub fn with_content_mode(mut self, mode: ContentMode) -> Self {
+        self.generator.content_mode = mode;
+
+        self
+    }
+
+    /// Set the typedef mode for the generator.
+    pub fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
+        self.generator.typedef_mode = mode;
+
+        self
+    }
+
+    /// Set the traits the generated types should derive from.
+    pub fn with_derive<I>(mut self, derive: I) -> Self
+    where
+        I: IntoIterator,
+        I::Item: Into<String>,
+    {
+        self.generator.derive = Some(
+            derive
+                .into_iter()
+                .map(Into::into)
+                .filter(|s| !s.is_empty())
+                .collect(),
+        );
+
+        self
     }
 }
 
@@ -305,6 +425,7 @@ impl Default for GeneratorConfig {
             types: vec![],
             derive: None,
             type_postfix: TypePostfix::default(),
+            dyn_type_traits: None,
             box_flags: BoxFlags::AUTO,
             content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,
@@ -321,6 +442,7 @@ impl Default for TypePostfix {
         Self {
             type_: String::from("Type"),
             element: String::new(),
+            element_type: String::from("ElementType"),
         }
     }
 }

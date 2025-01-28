@@ -94,25 +94,25 @@ impl Name {
     /// # use xsd_parser::types::Name;
     ///
     /// let name = Name::new("test");
-    /// assert_eq!(Name::new("Test"), name.to_type_named(false, None));
-    /// assert_eq!(Name::new("Test"), name.to_type_named(true, None));
-    /// assert_eq!(Name::new("Test"), name.to_type_named(false, Some("extra")));
-    /// assert_eq!(Name::new("Test"), name.to_type_named(true, Some("extra")));
+    /// assert_eq!(Name::new("Test"), name.to_type_name(false, None));
+    /// assert_eq!(Name::new("Test"), name.to_type_name(true, None));
+    /// assert_eq!(Name::new("Test"), name.to_type_name(false, Some("extra")));
+    /// assert_eq!(Name::new("Test"), name.to_type_name(true, Some("extra")));
     ///
     /// let name = Name::Unnamed { id: 123, ext: None };
-    /// assert_eq!(Name::new("Unnamed123"), name.to_type_named(false, None));
-    /// assert_eq!(Name::new("Extra"), name.to_type_named(false, Some("extra")));
-    /// assert_eq!(Name::new("Unnamed123"), name.to_type_named(true, None));
-    /// assert_eq!(Name::new("Extra123"), name.to_type_named(true, Some("extra")));
+    /// assert_eq!(Name::new("Unnamed123"), name.to_type_name(false, None));
+    /// assert_eq!(Name::new("Extra"), name.to_type_name(false, Some("extra")));
+    /// assert_eq!(Name::new("Unnamed123"), name.to_type_name(true, None));
+    /// assert_eq!(Name::new("Extra123"), name.to_type_name(true, Some("extra")));
     ///
     /// let name = Name::Unnamed { id: 123, ext: Some(Cow::Borrowed("ext")) };
-    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_named(false, None));
-    /// assert_eq!(Name::new("ExtExtra"), name.to_type_named(false, Some("extra")));
-    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_named(true, None));
-    /// assert_eq!(Name::new("ExtExtra123"), name.to_type_named(true, Some("extra")));
+    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_name(false, None));
+    /// assert_eq!(Name::new("ExtExtra"), name.to_type_name(false, Some("extra")));
+    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_name(true, None));
+    /// assert_eq!(Name::new("ExtExtra123"), name.to_type_name(true, Some("extra")));
     /// ```
     #[must_use]
-    pub fn to_type_named(&self, with_id: bool, name: Option<&str>) -> Self {
+    pub fn to_type_name(&self, with_id: bool, name: Option<&str>) -> Self {
         match (self, name) {
             (Self::Named(s), _) => Self::Named(Cow::Owned(s.to_pascal_case())),
             (Self::Unnamed { id, ext: Some(ext) }, Some(name)) if with_id => {

@@ -1,2 +1,1 @@
-pub type MyUnionType = StringType;
-pub type StringType = String;
+pub type MyUnionType = String;

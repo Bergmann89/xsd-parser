@@ -1,17 +1,15 @@
 #[derive(Debug, Clone)]
 pub struct MyAllType {
-    pub a: IntType,
-    pub b: StringType,
+    pub a: i32,
+    pub b: String,
 }
-pub type IntType = i32;
-pub type StringType = String;
 #[derive(Debug, Clone)]
 pub struct MyChoiceType {
-    pub a: Option<IntType>,
-    pub b: Option<StringType>,
+    pub a: Option<i32>,
+    pub b: Option<String>,
 }
 #[derive(Debug, Clone)]
 pub struct MySequenceType {
-    pub a: IntType,
-    pub b: StringType,
+    pub a: i32,
+    pub b: String,
 }

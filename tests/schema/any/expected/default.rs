@@ -1,6 +1,5 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub name: StringType,
+    pub name: String,
 }
-pub type StringType = String;

@@ -7,7 +7,7 @@ fn none() {
     generate_test(
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/none.rs",
-        Config::default()
+        Config::test_default()
             .with_serde_support(SerdeSupport::None)
             .with_generate([
                 (IdentType::Type, "tns:MyAll"),
@@ -22,7 +22,7 @@ fn quick_xml() {
     generate_test(
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/quick_xml.rs",
-        Config::default()
+        Config::test_default()
             .with_serde_support(SerdeSupport::QuickXml)
             .with_generate([
                 (IdentType::Type, "tns:MyAll"),
@@ -37,7 +37,7 @@ fn serde_xml_rs() {
     generate_test(
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/serde_xml_rs.rs",
-        Config::default()
+        Config::test_default()
             .with_serde_support(SerdeSupport::SerdeXmlRs)
             .with_generate([
                 (IdentType::Type, "tns:MyAll"),

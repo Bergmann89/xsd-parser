@@ -1,7 +1,6 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub min: IntType,
-    pub max: IntType,
+    pub min: i32,
+    pub max: i32,
 }
-pub type IntType = i32;

@@ -5,21 +5,28 @@ pub struct FooType {
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+    }
 }
 impl xsd_parser::quick_xml::WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub enum UnionType {
-    Int(IntType),
-    String(StringType),
+    I32(i32),
+    String(String),
 }
 impl xsd_parser::quick_xml::SerializeBytes for UnionType {
     fn serialize_bytes(
         &self,
     ) -> Result<Option<std::borrow::Cow<'_, str>>, xsd_parser::quick_xml::Error> {
         match self {
-            Self::Int(x) => x.serialize_bytes(),
+            Self::I32(x) => x.serialize_bytes(),
             Self::String(x) => x.serialize_bytes(),
         }
     }
@@ -31,19 +38,17 @@ impl xsd_parser::quick_xml::DeserializeBytes for UnionType {
     {
         use xsd_parser::quick_xml::{Error, ErrorKind};
         let mut errors = Vec::new();
-        match IntType::deserialize_bytes(reader, bytes) {
-            Ok(value) => return Ok(Self::Int(value)),
+        match i32::deserialize_bytes(reader, bytes) {
+            Ok(value) => return Ok(Self::I32(value)),
             Err(error) => errors.push(Box::new(error)),
         }
-        match StringType::deserialize_bytes(reader, bytes) {
+        match String::deserialize_bytes(reader, bytes) {
             Ok(value) => return Ok(Self::String(value)),
             Err(error) => errors.push(Box::new(error)),
         }
         Err(Error::from(ErrorKind::InvalidUnion(errors.into())))
     }
 }
-pub type IntType = i32;
-pub type StringType = String;
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
@@ -59,13 +64,13 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> xsd_parser::quick_xml::Serializer<'ser, super::FooType> for FooTypeSerializer<'ser> {
-        fn init(
+    impl<'ser> FooTypeSerializer<'ser> {
+        pub(super) fn new(
             value: &'ser super::FooType,
             name: Option<&'ser str>,
             is_root: bool,
         ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("FooType");
+            let name = name.unwrap_or("tns:FooType");
             Ok(Self {
                 name,
                 value,
@@ -77,7 +82,9 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, Serializer};
+            use xsd_parser::quick_xml::{
+                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
+            };
             fn build_attributes<'a>(
                 mut bytes: BytesStart<'a>,
                 value: &'a super::FooType,
