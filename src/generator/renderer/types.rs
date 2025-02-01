@@ -191,6 +191,31 @@ impl TypeRenderer {
             .iter()
             .map(|attrib| attrib.render_field(&type_ident, data));
 
+        // If the target mode for the content is `Simple` it will generate a simple content sequence.
+        if matches!(data.target_mode, TypeMode::Simple) {
+            let content_type = &data.simple_content.as_ref().map(|x| &x.target_type);
+
+            let serde = match data.serde_support {
+                SerdeSupport::None => None,
+                SerdeSupport::QuickXml => Some(quote!(#[serde(rename = "$text")])),
+                SerdeSupport::SerdeXmlRs => Some(quote!(#[serde(rename = "$value")])),
+            };
+
+            let code = quote! {
+                #derive
+                pub struct #type_ident {
+                    #( #attributes )*
+
+                    #serde
+                    pub content: #content_type,
+                }
+
+                #( #trait_impls )*
+            };
+
+            return data.add_code(code);
+        }
+
         // If the target mode for the content is `Sequence` we will generate a sequence.
         if matches!(data.target_mode, TypeMode::All | TypeMode::Sequence) {
             let elements = data

@@ -57,15 +57,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     ArrayTypeSerializerState::Init__ => {
-                        {
-                            self.state = ArrayTypeSerializerState::Item(
-                                xsd_parser::quick_xml::IterSerializer::new(
-                                    &self.value.item,
-                                    Some("tns:Item"),
-                                    false,
-                                ),
-                            );
-                        }
+                        self.state = ArrayTypeSerializerState::Item(
+                            xsd_parser::quick_xml::IterSerializer::new(
+                                &self.value.item,
+                                Some("tns:Item"),
+                                false,
+                            ),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));

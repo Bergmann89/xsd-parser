@@ -5,7 +5,7 @@ use crate::schema::xs::{
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::{Ident, TypeEq, Types};
+use crate::types::{Ident, Type, TypeEq, Types};
 
 use super::{AttributesInfo, Base, ElementsInfo};
 
@@ -90,6 +90,34 @@ impl TypeEq for GroupInfo {
 }
 
 /* ComplexInfo */
+
+impl ComplexInfo {
+    /// Returns `true` if the content of this complex type information
+    /// is a [`Type::All`], [`Type::Choice`] or [`Type::Sequence`],
+    /// `false` otherwise.
+    #[must_use]
+    pub fn has_complex_content(&self, types: &Types) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved(ident)),
+            Some(Type::All(_) | Type::Choice(_) | Type::Sequence(_))
+        )
+    }
+
+    /// Returns `true` if the content of this complex type information
+    /// is a [`Type::BuildIn`], [`Type::Union`] or [`Type::Enumeration`],
+    /// `false` otherwise.
+    #[must_use]
+    pub fn has_simple_content(&self, types: &Types) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved(ident)),
+            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_))
+        )
+    }
+}
 
 impl Default for ComplexInfo {
     fn default() -> Self {

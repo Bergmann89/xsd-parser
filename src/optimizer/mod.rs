@@ -369,7 +369,7 @@ impl Optimizer {
             .types
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(type_, Type::ComplexType(_)) {
+                if matches!(type_, Type::ComplexType(ci) if ci.has_complex_content(&self.types)) {
                     Some(ident)
                 } else {
                     None

@@ -88,7 +88,7 @@ pub mod quick_xml_serialize {
                                 self.state = FooTypeSerializerState::Done__;
                                 return Some(Err(error));
                             }
-                        }
+                        };
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));
@@ -154,19 +154,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooTypeMessagesTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.aa,
-                            Some("tns:aa"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = FooTypeMessagesTypeSerializerState::Aa(serializer)
-                            }
-                            Err(error) => {
-                                self.state = FooTypeMessagesTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = FooTypeMessagesTypeSerializerState::Aa(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.aa,
+                                Some("tns:aa"),
+                                false,
+                            ),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));
@@ -179,19 +173,15 @@ pub mod quick_xml_serialize {
                             self.state = FooTypeMessagesTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.bb,
-                            Some("tns:bb"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = FooTypeMessagesTypeSerializerState::Bb(serializer)
-                            }
-                            Err(error) => {
-                                self.state = FooTypeMessagesTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = FooTypeMessagesTypeSerializerState::Bb(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.bb,
+                                    Some("tns:bb"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     FooTypeMessagesTypeSerializerState::Bb(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -199,19 +189,15 @@ pub mod quick_xml_serialize {
                             self.state = FooTypeMessagesTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.a,
-                            Some("tns:a"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = FooTypeMessagesTypeSerializerState::A(serializer)
-                            }
-                            Err(error) => {
-                                self.state = FooTypeMessagesTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = FooTypeMessagesTypeSerializerState::A(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.a,
+                                    Some("tns:a"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     FooTypeMessagesTypeSerializerState::A(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),

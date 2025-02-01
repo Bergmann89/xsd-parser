@@ -63,17 +63,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.once,
-                            Some("tns:Once"),
-                            false,
-                        ) {
-                            Ok(serializer) => self.state = FooTypeSerializerState::Once(serializer),
-                            Err(error) => {
-                                self.state = FooTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = FooTypeSerializerState::Once(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.once,
+                                Some("tns:Once"),
+                                false,
+                            ),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));
@@ -93,7 +89,7 @@ pub mod quick_xml_serialize {
                                     Some("tns:Optional"),
                                     false,
                                 ),
-                            );
+                            )
                         }
                     },
                     FooTypeSerializerState::Optional(x) => match x.next() {
@@ -102,19 +98,15 @@ pub mod quick_xml_serialize {
                             self.state = FooTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.once_specify,
-                            Some("tns:OnceSpecify"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = FooTypeSerializerState::OnceSpecify(serializer)
-                            }
-                            Err(error) => {
-                                self.state = FooTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = FooTypeSerializerState::OnceSpecify(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.once_specify,
+                                    Some("tns:OnceSpecify"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     FooTypeSerializerState::OnceSpecify(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -129,7 +121,7 @@ pub mod quick_xml_serialize {
                                     Some("tns:TwiceOrMore"),
                                     false,
                                 ),
-                            );
+                            )
                         }
                     },
                     FooTypeSerializerState::TwiceOrMore(x) => match x.next() {

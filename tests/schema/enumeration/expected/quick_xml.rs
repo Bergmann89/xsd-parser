@@ -90,17 +90,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.enum_,
-                            Some("tns:Enum"),
-                            false,
-                        ) {
-                            Ok(serializer) => self.state = FooTypeSerializerState::Enum(serializer),
-                            Err(error) => {
-                                self.state = FooTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = FooTypeSerializerState::Enum(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.enum_,
+                                Some("tns:Enum"),
+                                false,
+                            ),
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));

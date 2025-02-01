@@ -510,6 +510,7 @@ pub(super) enum TypeMode {
     All,
     Choice,
     Sequence,
+    Simple,
 }
 
 /* DynTypeTraits */

@@ -114,19 +114,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     ShiporderTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.orderperson,
-                            Some("orderperson"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderTypeSerializerState::Orderperson(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = ShiporderTypeSerializerState::Orderperson(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.orderperson,
+                                Some("orderperson"),
+                                false,
+                            ),
+                        );
                         let bytes = BytesStart::new(self.name);
                         match build_attributes(bytes, &self.value) {
                             Ok(bytes) => return Some(Ok(Event::Start(bytes))),
@@ -169,7 +163,7 @@ pub mod quick_xml_serialize {
                                     Some("item"),
                                     false,
                                 ),
-                            );
+                            )
                         }
                     },
                     ShiporderTypeSerializerState::Item(x) => match x.next() {
@@ -232,19 +226,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     ShiporderShiptoTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.name,
-                            Some("name"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Name(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = ShiporderShiptoTypeSerializerState::Name(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.name,
+                                Some("name"),
+                                false,
+                            ),
+                        );
                         let bytes = BytesStart::new(self.name);
                         return Some(Ok(Event::Start(bytes)));
                     }
@@ -254,19 +242,15 @@ pub mod quick_xml_serialize {
                             self.state = ShiporderShiptoTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.address,
-                            Some("address"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Address(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::Address(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.address,
+                                    Some("address"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     ShiporderShiptoTypeSerializerState::Address(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -274,19 +258,15 @@ pub mod quick_xml_serialize {
                             self.state = ShiporderShiptoTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.city,
-                            Some("city"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderShiptoTypeSerializerState::City(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::City(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.city,
+                                    Some("city"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     ShiporderShiptoTypeSerializerState::City(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -294,19 +274,15 @@ pub mod quick_xml_serialize {
                             self.state = ShiporderShiptoTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.country,
-                            Some("country"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Country(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderShiptoTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::Country(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.country,
+                                    Some("country"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     ShiporderShiptoTypeSerializerState::Country(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -368,19 +344,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     ShiporderItemTypeSerializerState::Init__ => {
-                        match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.title,
-                            Some("title"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderItemTypeSerializerState::Title(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderItemTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        self.state = ShiporderItemTypeSerializerState::Title(
+                            xsd_parser::quick_xml::ContentSerializer::new(
+                                &self.value.title,
+                                Some("title"),
+                                false,
+                            ),
+                        );
                         let bytes = BytesStart::new(self.name);
                         return Some(Ok(Event::Start(bytes)));
                     }
@@ -397,7 +367,7 @@ pub mod quick_xml_serialize {
                                     Some("note"),
                                     false,
                                 ),
-                            );
+                            )
                         }
                     },
                     ShiporderItemTypeSerializerState::Note(x) => match x.next() {
@@ -406,19 +376,15 @@ pub mod quick_xml_serialize {
                             self.state = ShiporderItemTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.quantity,
-                            Some("quantity"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderItemTypeSerializerState::Quantity(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderItemTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = ShiporderItemTypeSerializerState::Quantity(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.quantity,
+                                    Some("quantity"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     ShiporderItemTypeSerializerState::Quantity(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),
@@ -426,19 +392,15 @@ pub mod quick_xml_serialize {
                             self.state = ShiporderItemTypeSerializerState::Done__;
                             return Some(Err(error));
                         }
-                        None => match xsd_parser::quick_xml::ContentSerializer::new(
-                            &self.value.price,
-                            Some("price"),
-                            false,
-                        ) {
-                            Ok(serializer) => {
-                                self.state = ShiporderItemTypeSerializerState::Price(serializer)
-                            }
-                            Err(error) => {
-                                self.state = ShiporderItemTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        },
+                        None => {
+                            self.state = ShiporderItemTypeSerializerState::Price(
+                                xsd_parser::quick_xml::ContentSerializer::new(
+                                    &self.value.price,
+                                    Some("price"),
+                                    false,
+                                ),
+                            )
+                        }
                     },
                     ShiporderItemTypeSerializerState::Price(x) => match x.next() {
                         Some(Ok(event)) => return Some(Ok(event)),

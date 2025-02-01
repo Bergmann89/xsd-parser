@@ -310,9 +310,17 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 quote! {
                     #variant_ident(#serializer),
                 }
-            });
+            })
+            .chain(self.simple_content.as_ref().map(|simple| {
+                let target_type = &simple.target_type;
 
-        let need_end_state = self.is_static_complex && !self.elements.is_empty();
+                quote!{
+                    Content(#xsd_parser::quick_xml::ContentSerializer<'ser, #target_type>),
+                }
+            }));
+
+        let has_content = !self.elements.is_empty() || self.simple_content.is_some();
+        let need_end_state = self.is_static_complex && has_content;
         let state_end = need_end_state.then(|| quote!(End__,));
 
         quote! {
@@ -335,7 +343,9 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = &self.type_ident;
         let state_ident = &self.serializer_state_ident;
 
-        let need_end_state = self.is_static_complex && !self.elements.is_empty();
+        let has_content = !self.elements.is_empty() || self.simple_content.is_some();
+        let need_end_state = self.is_static_complex && has_content;
+        let has_attributes = !self.attributes.is_empty();
 
         let end_state = if need_end_state {
             quote!(#state_ident::End__)
@@ -346,6 +356,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let (handle_state_init, handle_state_variants) = match self.target_mode {
             TypeMode::Choice => self.render_serializer_fn_next_enum(&end_state),
             TypeMode::All | TypeMode::Sequence => self.render_serializer_fn_next_struct(&end_state),
+            TypeMode::Simple => self.render_serializer_fn_next_simple(&end_state),
         };
 
         let xmlns = self
@@ -369,7 +380,6 @@ impl ComplexTypeImpl<'_, '_, '_> {
             })
             .collect::<Vec<_>>();
 
-        let has_attributes = !self.attributes.is_empty();
         let attributes = self.attributes.iter().map(|attrib| {
             let attrib_name = &attrib.tag_name;
             let field_ident = &attrib.field_ident;
@@ -419,10 +429,10 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }
         };
 
-        let event = if self.elements.is_empty() {
-            format_ident!("Empty")
-        } else {
+        let event = if has_content {
             format_ident!("Start")
+        } else {
+            format_ident!("Empty")
         };
 
         let emit_start_event = if !self.is_static_complex {
@@ -497,7 +507,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             let init = self.render_serializer_fn_next_init_serializer(element, &quote!(x));
 
             quote! {
-                #content_ident::#variant_ident(x) => #init
+                #content_ident::#variant_ident(x) => #init,
             }
         });
 
@@ -543,11 +553,12 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
             let next = if let Some(next) = self.elements.get(i + 1) {
                 let field_ident = &next.field_ident;
-
-                self.render_serializer_fn_next_init_serializer(
+                let init = self.render_serializer_fn_next_init_serializer(
                     next,
                     &quote!(&self.value.#field_ident),
-                )
+                );
+
+                quote!(#init,)
             } else {
                 quote! {
                     self.state = #state_end,
@@ -568,8 +579,12 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
         let handle_state_init = if let Some(first) = self.elements.first() {
             let field_ident = &first.field_ident;
+            let init = self.render_serializer_fn_next_init_serializer(
+                first,
+                &quote!(&self.value.#field_ident),
+            );
 
-            self.render_serializer_fn_next_init_serializer(first, &quote!(&self.value.#field_ident))
+            quote!(#init;)
         } else {
             quote! {
                 self.state = #state_end;
@@ -578,6 +593,33 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
         let handle_state_variants = quote! {
             #( #variants_state )*
+        };
+
+        (handle_state_init, handle_state_variants)
+    }
+
+    fn render_serializer_fn_next_simple(
+        &self,
+        state_end: &TokenStream,
+    ) -> (TokenStream, TokenStream) {
+        let xsd_parser = &self.xsd_parser_crate;
+        let state_ident = &self.serializer_state_ident;
+
+        let handle_state_init = quote! {
+            self.state = #state_ident::Content(
+                #xsd_parser::quick_xml::ContentSerializer::new(&self.value.content, None, false)
+            );
+        };
+
+        let handle_state_variants = quote! {
+            #state_ident::Content(x) => match x.next() {
+                Some(Ok(event)) => return Some(Ok(event)),
+                Some(Err(error)) => {
+                    self.state = #state_ident::Done__;
+                    return Some(Err(error))
+                }
+                None => self.state = #state_end,
+            }
         };
 
         (handle_state_init, handle_state_variants)
@@ -608,24 +650,19 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 }
             },
             Occurs::Single => quote! {
-                match #xsd_parser::quick_xml::ContentSerializer::new(#value, Some(#field_name), false) {
-                    Ok(serializer) => self.state = #state_ident::#variant_ident(serializer),
-                    Err(error) => {
-                        self.state = #state_ident::Done__;
-
-                        return Some(Err(error));
-                    }
-                }
+                self.state = #state_ident::#variant_ident(
+                    #xsd_parser::quick_xml::ContentSerializer::new(#value, Some(#field_name), false)
+                )
             },
-            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => quote! {{
+            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => quote! {
                 self.state = #state_ident::#variant_ident(
                     #xsd_parser::quick_xml::IterSerializer::new(
                         #value,
                         Some(#field_name),
                         false
                     )
-                );
-            }},
+                )
+            },
         }
     }
 }
