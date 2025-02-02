@@ -27,6 +27,16 @@ pub trait AsAny: core::any::Any {
     fn as_any_mut(&mut self) -> &mut dyn core::any::Any;
 }
 
+impl<X: 'static> AsAny for X {
+    fn as_any(&self) -> &dyn core::any::Any {
+        self
+    }
+
+    fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
+        self
+    }
+}
+
 /// Error emitted by the [`generate`](crate::generate) function.
 #[derive(Debug, Error)]
 pub enum Error {

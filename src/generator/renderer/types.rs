@@ -381,10 +381,6 @@ impl TypeRenderer {
         type_data: &'a TypeData<'_, '_>,
         trait_data: &'a [TraitData],
     ) -> impl Iterator<Item = TokenStream> + 'a {
-        let trait_as_any = trait_data
-            .is_empty()
-            .not()
-            .then(|| Self::render_trait_as_any(type_data));
         let trait_with_namespace = type_data
             .check_generate_flags(GenerateFlags::WITH_NAMESPACE_TRAIT)
             .then(|| Self::render_trait_with_namespace(type_data))
@@ -398,24 +394,7 @@ impl TypeRenderer {
                     impl #trait_ident for #type_ident { }
                 }
             })
-            .chain(trait_as_any)
             .chain(trait_with_namespace)
-    }
-
-    fn render_trait_as_any(data: &TypeData<'_, '_>) -> TokenStream {
-        let xsd_parser = &data.xsd_parser_crate;
-        let type_ident = &data.current_type_ref().type_ident;
-
-        quote! {
-            impl #xsd_parser::AsAny for #type_ident {
-                fn as_any(&self) -> &dyn core::any::Any {
-                    self
-                }
-                fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
-                    self
-                }
-            }
-        }
     }
 
     fn render_trait_with_namespace(data: &TypeData<'_, '_>) -> Option<TokenStream> {
