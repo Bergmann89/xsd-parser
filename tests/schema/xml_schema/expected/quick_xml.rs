@@ -1083,8 +1083,68 @@ impl xsd_parser::quick_xml::DeserializeBytes for AttributeUseType {
         }
     }
 }
-pub type TypeDerivationControlType = DerivationControlType;
-pub type BlockSetItemType = DerivationControlType;
+#[derive(Debug, Clone)]
+pub enum TypeDerivationControlType {
+    Extension,
+    Restriction,
+    List,
+    Union,
+}
+impl xsd_parser::WithNamespace for TypeDerivationControlType {
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
+    }
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
+    }
+}
+impl xsd_parser::quick_xml::DeserializeBytes for TypeDerivationControlType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
+    where
+        R: xsd_parser::quick_xml::XmlReader,
+    {
+        match bytes {
+            b"extension" => Ok(Self::Extension),
+            b"restriction" => Ok(Self::Restriction),
+            b"list" => Ok(Self::List),
+            b"union" => Ok(Self::Union),
+            x => {
+                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
+                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
+            }
+        }
+    }
+}
+#[derive(Debug, Clone)]
+pub enum BlockSetItemType {
+    Extension,
+    Restriction,
+    Substitution,
+}
+impl xsd_parser::WithNamespace for BlockSetItemType {
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
+    }
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
+    }
+}
+impl xsd_parser::quick_xml::DeserializeBytes for BlockSetItemType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
+    where
+        R: xsd_parser::quick_xml::XmlReader,
+    {
+        match bytes {
+            b"extension" => Ok(Self::Extension),
+            b"restriction" => Ok(Self::Restriction),
+            b"substitution" => Ok(Self::Substitution),
+            x => {
+                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
+                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
+            }
+        }
+    }
+}
 #[derive(Debug, Clone)]
 pub enum NamespaceListType {
     Any,
@@ -1420,40 +1480,6 @@ impl xsd_parser::quick_xml::WithDeserializer for FieldElementType {
     type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
 }
 pub type QnameType = String;
-#[derive(Debug, Clone)]
-pub enum DerivationControlType {
-    Substitution,
-    Extension,
-    Restriction,
-    List,
-    Union,
-}
-impl xsd_parser::WithNamespace for DerivationControlType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for DerivationControlType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"substitution" => Ok(Self::Substitution),
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
 impl xsd_parser::WithNamespace for BasicNamespaceListType {
@@ -1527,7 +1553,38 @@ impl FacetType {
 impl xsd_parser::quick_xml::WithDeserializer for FacetType {
     type Deserializer = quick_xml_deserialize::FacetTypeDeserializer;
 }
-pub type SimpleDerivationSetItemType = DerivationControlType;
+#[derive(Debug, Clone)]
+pub enum SimpleDerivationSetItemType {
+    List,
+    Union,
+    Restriction,
+    Extension,
+}
+impl xsd_parser::WithNamespace for SimpleDerivationSetItemType {
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
+    }
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
+    }
+}
+impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetItemType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
+    where
+        R: xsd_parser::quick_xml::XmlReader,
+    {
+        match bytes {
+            b"list" => Ok(Self::List),
+            b"union" => Ok(Self::Union),
+            b"restriction" => Ok(Self::Restriction),
+            b"extension" => Ok(Self::Extension),
+            x => {
+                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
+                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
+            }
+        }
+    }
+}
 #[derive(Debug, Clone)]
 pub enum QnameListAItemType {
     String(String),
@@ -1552,7 +1609,34 @@ impl xsd_parser::quick_xml::DeserializeBytes for QnameListAItemType {
         }
     }
 }
-pub type ReducedDerivationControlType = DerivationControlType;
+#[derive(Debug, Clone)]
+pub enum ReducedDerivationControlType {
+    Extension,
+    Restriction,
+}
+impl xsd_parser::WithNamespace for ReducedDerivationControlType {
+    fn prefix() -> Option<&'static str> {
+        Some("xs")
+    }
+    fn namespace() -> Option<&'static str> {
+        Some("http://www.w3.org/2001/XMLSchema")
+    }
+}
+impl xsd_parser::quick_xml::DeserializeBytes for ReducedDerivationControlType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
+    where
+        R: xsd_parser::quick_xml::XmlReader,
+    {
+        match bytes {
+            b"extension" => Ok(Self::Extension),
+            b"restriction" => Ok(Self::Restriction),
+            x => {
+                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
+                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
+            }
+        }
+    }
+}
 #[derive(Debug, Clone)]
 pub enum QnameListItemType {
     String(String),

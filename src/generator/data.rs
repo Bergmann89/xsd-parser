@@ -566,6 +566,7 @@ pub(super) struct ComplexTypeData<'a, 'types> {
     pub content_ident: Ident2,
 
     pub trait_impls: Vec<TraitData>,
+    pub simple_content: Option<SimpleContentData<'types>>,
 
     pub attributes: Vec<AttributeData<'types>>,
     pub any_attribute: Option<&'types AnyAttributeInfo>,
@@ -579,6 +580,13 @@ pub(super) struct ComplexTypeData<'a, 'types> {
 pub(super) enum TypeInfoData<'types> {
     Group(&'types GroupInfo),
     Complex(&'types ComplexInfo),
+}
+
+#[derive(Debug)]
+#[allow(dead_code)]
+pub(super) struct SimpleContentData<'types> {
+    pub ident: &'types Ident,
+    pub target_type: TokenStream,
 }
 
 #[derive(Debug)]
@@ -686,8 +694,15 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
                 &si.elements[..],
                 si.any.as_ref(),
             ),
+            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_)) => {
+                (TypeMode::Simple, TypeMode::Simple, &[][..], None)
+            }
             x => {
-                tracing::warn!("Complex type does not has `All`, `Choice` or `Sequence` as content: {:#?} => {:#?}!", &ty.content, x);
+                tracing::warn!(
+                    "Complex type has unexpected content: {:#?} => {:#?}!",
+                    &ty.content,
+                    x
+                );
 
                 (TypeMode::Sequence, TypeMode::Sequence, &[][..], None)
             }
@@ -736,6 +751,8 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         let type_ident = &type_ref.type_ident;
         let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")));
 
+        let simple_content = make_simple_content_data(&ty, &mut inner, target_mode)?;
+
         Ok(Self {
             ty,
             inner,
@@ -746,6 +763,7 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
             content_ident,
 
             trait_impls,
+            simple_content,
 
             attributes,
             any_attribute,
@@ -787,6 +805,32 @@ impl Deref for AttributeData<'_> {
 }
 
 #[instrument(err, level = "trace", skip(inner))]
+fn make_simple_content_data<'types>(
+    ty: &TypeInfoData<'types>,
+    inner: &mut TypeData<'_, 'types>,
+    target_mode: TypeMode,
+) -> Result<Option<SimpleContentData<'types>>, Error> {
+    if target_mode != TypeMode::Simple {
+        return Ok(None);
+    }
+
+    let TypeInfoData::Complex(ci) = &ty else {
+        return Ok(None);
+    };
+
+    let Some(ident) = ci.content.as_ref() else {
+        return Ok(None);
+    };
+
+    let current_module = inner.current_module();
+    let content_ref = inner.get_or_create_type_ref(ident.clone())?;
+
+    let target_type = format_type_ref(current_module, content_ref);
+
+    Ok(Some(SimpleContentData { ident, target_type }))
+}
+
+#[instrument(err, level = "trace", skip(inner))]
 fn make_element_data<'types>(
     inner: &mut TypeData<'_, 'types>,
     elements: &'types [ElementInfo],
@@ -824,6 +868,7 @@ fn make_element_data<'types>(
                     *min.get_or_insert(0) += element.min_occurs;
                     *max.get_or_insert(MaxOccurs::Bounded(0)) += element.max_occurs;
                 }
+                TypeMode::Simple => crate::unreachable!(),
             }
 
             let current_module = inner.current_module();

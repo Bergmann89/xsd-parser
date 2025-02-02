@@ -23,6 +23,7 @@ pub(super) struct TypeBuilder<'a, 'schema, 'state> {
 
     fixed: bool,
     type_mode: TypeMode,
+    simple_base: Option<Ident>,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
 }
@@ -115,6 +116,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             type_: None,
             fixed: false,
             type_mode: TypeMode::Unknown,
+            simple_base: None,
             owner,
         }
     }
@@ -130,7 +132,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
 
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
+            init_any!(self, Reference, ReferenceInfo::new(type_), true);
         } else {
             let ident = self
                 .state
@@ -163,7 +165,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             });
 
             if has_content {
-                init_any!(self, Reference, ReferenceInfo::new(type_?), false);
+                init_any!(self, Reference, ReferenceInfo::new(type_?), true);
             }
         };
 
@@ -207,10 +209,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     pub(super) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
-        }
-
-        if let Some(x) = &ty.simple_type {
+            init_any!(self, Reference, ReferenceInfo::new(type_), true);
+        } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
         }
 
@@ -229,6 +229,43 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 C::Restriction(x) => self.apply_simple_type_restriction(x)?,
                 C::Union(x) => self.apply_union(x)?,
                 C::List(x) => self.apply_list(x)?,
+            }
+        }
+
+        Ok(())
+    }
+
+    #[instrument(err, level = "trace", skip(self))]
+    fn apply_simple_type_restriction(&mut self, ty: &Restriction) -> Result<(), Error> {
+        use crate::schema::xs::RestrictionContent as C;
+
+        let base = ty
+            .base
+            .as_ref()
+            .map(|base| {
+                let base = self.parse_qname(base)?;
+
+                self.copy_base_type(&base, UpdateMode::Restriction)?;
+
+                Ok(base)
+            })
+            .transpose()?;
+
+        for c in &ty.content {
+            match c {
+                C::Annotation(_) => (),
+                C::SimpleType(x) => self.apply_simple_type(x)?,
+                C::Facet(x) => self.apply_facet(x)?,
+            }
+        }
+
+        if let Some(base) = base {
+            match &mut self.type_ {
+                Some(Type::Reference(_)) => (),
+                Some(Type::Union(e)) => e.base = Base::Extension(base),
+                Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
+                Some(Type::ComplexType(e)) => e.base = Base::Extension(base),
+                e => unreachable!("Unexpected type: {e:#?}"),
             }
         }
 
@@ -279,7 +316,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         for c in &ty.content {
             match c {
                 C::Annotation(_) => (),
-                C::Extension(x) => self.apply_simple_extension(x)?,
+                C::Extension(x) => self.apply_simple_content_extension(x)?,
                 C::Restriction(x) => self.apply_simple_content_restriction(x)?,
             }
         }
@@ -298,8 +335,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         for c in &ty.content {
             match c {
                 C::Annotation(_) => (),
-                C::Extension(x) => self.apply_complex_extension(x)?,
-                C::Restriction(x) => self.apply_complex_restriction(x)?,
+                C::Extension(x) => self.apply_complex_content_extension(x)?,
+                C::Restriction(x) => self.apply_complex_content_restriction(x)?,
             }
         }
 
@@ -307,7 +344,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
+    fn apply_simple_content_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Extension)?;
@@ -315,45 +352,10 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
         match &mut self.type_ {
             Some(Type::Reference(_)) => (),
+            Some(Type::Union(e)) => e.base = Base::Extension(base),
             Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-            e => crate::unreachable!("Should have a simple type but is {e:#?}!"),
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_type_restriction(&mut self, ty: &Restriction) -> Result<(), Error> {
-        use crate::schema::xs::RestrictionContent as C;
-
-        let base = ty
-            .base
-            .as_ref()
-            .map(|base| {
-                let base = self.parse_qname(base)?;
-
-                self.copy_base_type(&base, UpdateMode::Restriction)?;
-
-                Ok(base)
-            })
-            .transpose()?;
-
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) => (),
-                C::SimpleType(x) => self.apply_simple_type(x)?,
-                C::Facet(x) => self.apply_facet(x)?,
-            }
-        }
-
-        match &mut self.type_ {
-            Some(Type::Reference(_)) => (),
-            Some(Type::Enumeration(e)) => {
-                if let Some(base) = base {
-                    e.base = Base::Restriction(base);
-                }
-            }
-            _ => unreachable!("Should have a simple type!"),
+            Some(Type::ComplexType(e)) => e.base = Base::Extension(base),
+            e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
         Ok(())
@@ -368,15 +370,17 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
         match &mut self.type_ {
             Some(Type::Reference(_)) => (),
-            Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-            _ => unreachable!("Should have a simple type!"),
+            Some(Type::Union(e)) => e.base = Base::Restriction(base),
+            Some(Type::Enumeration(e)) => e.base = Base::Restriction(base),
+            Some(Type::ComplexType(e)) => e.base = Base::Restriction(base),
+            e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
         Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_complex_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
+    fn apply_complex_content_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Extension)?;
@@ -389,7 +393,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_complex_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
+    fn apply_complex_content_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Restriction)?;
@@ -635,6 +639,10 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
+
+                if let Some(content) = self.simple_base.take() {
+                    ci.content = Some(content);
+                }
             }
             AttributeType {
                 ref_: Some(ref_),
@@ -730,6 +738,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);
+
         let ei = get_or_init_any!(self, Enumeration);
         let var = ei.variants.find_or_insert(ident, VariantInfo::new);
         var.use_ = Use::Required;
@@ -807,7 +816,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
         let base = match self.type_mode {
             TypeMode::Unknown => crate::unreachable!("Should be set somewhere above!"),
-            TypeMode::Simple => self.owner.get_simple_type(base)?,
+            TypeMode::Simple => {
+                self.simple_base = Some(base.clone());
+
+                self.owner.get_simple_type(base)?
+            }
             TypeMode::Complex => self.owner.get_complex_type(base)?,
         };
 

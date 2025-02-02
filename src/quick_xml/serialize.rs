@@ -44,7 +44,7 @@ where
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        ContentSerializer::new(self, name, is_root)
+        Ok(ContentSerializer::new(self, name, is_root))
     }
 }
 
@@ -190,11 +190,11 @@ where
 #[allow(missing_docs)]
 pub enum ContentSerializer<'ser, T> {
     Begin {
-        name: &'ser str,
+        name: Option<&'ser str>,
         value: &'ser T,
     },
     Data {
-        name: &'ser str,
+        name: Option<&'ser str>,
         data: Cow<'ser, str>,
     },
     End {
@@ -209,17 +209,18 @@ where
 {
     /// Create a new [`ContentSerializer`] instance from the passed arguments.
     ///
+    /// If a `name` was passed it will emit suitable [`Start`](Event::Start)
+    /// and [`End`](Event::End) events. If no `name` was passed only the content
+    /// is rendered.
+    ///
     /// # Errors
     ///
     /// Will throw a [`ErrorKind::MissingName`] error, if `None` is passed as
     /// `name`.
-    pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Result<Self, Error> {
+    pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Self {
         let _is_root = is_root;
 
-        Ok(Self::Begin {
-            name: name.ok_or(ErrorKind::MissingName)?,
-            value,
-        })
+        Self::Begin { name, value }
     }
 }
 
@@ -230,30 +231,36 @@ where
     type Item = Result<Event<'ser>, Error>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        match replace(self, Self::Done) {
-            Self::Begin { name, value } => match value.serialize_bytes() {
-                Ok(None) => Some(Ok(Event::Empty(BytesStart::new(name)))),
-                Ok(Some(data)) => {
-                    if data.contains("]]>") {
-                        return Some(Err(ErrorKind::InvalidData(RawByteStr::from_slice(
-                            data.as_bytes(),
-                        ))
-                        .into()));
+        loop {
+            match replace(self, Self::Done) {
+                Self::Begin { name, value } => match value.serialize_bytes() {
+                    Ok(None) => return name.map(|name| Ok(Event::Empty(BytesStart::new(name)))),
+                    Ok(Some(data)) => {
+                        if data.contains("]]>") {
+                            return Some(Err(ErrorKind::InvalidData(RawByteStr::from_slice(
+                                data.as_bytes(),
+                            ))
+                            .into()));
+                        }
+
+                        *self = Self::Data { name, data };
+
+                        if let Some(name) = name {
+                            return Some(Ok(Event::Start(BytesStart::new(name))));
+                        }
+                    }
+                    Err(error) => return Some(Err(error)),
+                },
+                Self::Data { name, data } => {
+                    if let Some(name) = name {
+                        *self = Self::End { name };
                     }
 
-                    *self = Self::Data { name, data };
-
-                    Some(Ok(Event::Start(BytesStart::new(name))))
+                    return Some(Ok(Event::Text(BytesText::from_escaped(escape(data)))));
                 }
-                Err(error) => Some(Err(error)),
-            },
-            Self::Data { name, data } => {
-                *self = Self::End { name };
-
-                Some(Ok(Event::Text(BytesText::from_escaped(escape(data)))))
+                Self::End { name } => return Some(Ok(Event::End(BytesEnd::new(name)))),
+                Self::Done => return None,
             }
-            Self::End { name } => Some(Ok(Event::End(BytesEnd::new(name)))),
-            Self::Done => None,
         }
     }
 }
