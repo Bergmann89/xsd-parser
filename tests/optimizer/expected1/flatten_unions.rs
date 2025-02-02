@@ -2,7 +2,7 @@ pub enum MyUnionType {
     String(String),
     MyEnum(MyEnumType),
     I32(i32),
-    Unnamed1(UnsignedIntList),
+    Unnamed2(UnsignedIntList),
 }
 pub enum MyEnumType {
     Var1,

@@ -69,6 +69,8 @@ impl Ident {
     pub const BOOL: Self = Self::build_in("bool");
     pub const STRING: Self = Self::build_in("String");
 
+    pub const ANY_TYPE: Self = Self::type_("anyType");
+
     pub const BUILD_IN: &[Self] = &[
         Self::U8,
         Self::U16,

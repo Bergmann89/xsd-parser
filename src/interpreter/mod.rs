@@ -9,8 +9,12 @@ mod type_builder;
 use std::fmt::Debug;
 
 use crate::config::Namespace;
+use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
-use crate::types::{BuildInInfo, Ident, Module, Name, ReferenceInfo, Type, Types};
+use crate::types::{
+    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, GroupInfo, Ident, Module, Name,
+    ReferenceInfo, Type, Types,
+};
 
 pub use error::Error;
 use tracing::instrument;
@@ -154,6 +158,26 @@ impl<'a> Interpreter<'a> {
         add!(xs, "decimal", F64);
         add!(xs, "float", F32);
         add!(xs, "double", F64);
+
+        /* time related types */
+
+        add!(xs, "duration", STRING);
+        add!(xs, "dateTime", STRING);
+        add!(xs, "time", STRING);
+        add!(xs, "date", STRING);
+        add!(xs, "gYearMonth", STRING);
+        add!(xs, "gYear", STRING);
+        add!(xs, "gMonthDay", STRING);
+        add!(xs, "gMonth", STRING);
+        add!(xs, "gDay", STRING);
+
+        /* Date related types */
+
+        add!(xs, "hexBinary", STRING);
+        add!(xs, "base64Binary", STRING);
+
+        /* URL related types */
+
         add!(xs, "anyURI", STRING);
         add!(xs, "QName", STRING);
         add!(xs, "NOTATION", STRING);
@@ -190,6 +214,48 @@ impl<'a> Interpreter<'a> {
         add_list!(xs, "IDREFS", STRING);
         add_list!(xs, "ENTITY", STRING);
         add_list!(xs, "ENTITIES", STRING);
+
+        Ok(self)
+    }
+
+    /// Adds a default type definition for `xs:anyType`.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the operation was not successful.
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn with_xs_any_type(mut self) -> Result<Self, Error> {
+        let xs = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        // content type
+        let content_name = self.state.make_unnamed();
+        let content_ident = Ident::new(content_name).with_ns(Some(xs));
+        let content_type = Type::Sequence(GroupInfo {
+            any: Some(AnyInfo {
+                process_contents: Some(ProcessContentsType::Lax),
+                ..Default::default()
+            }),
+            ..Default::default()
+        });
+        self.state
+            .add_type(content_ident.clone(), content_type, true)?;
+
+        // xs:anyType
+        let ident = Ident::type_("anyType").with_ns(Some(xs));
+        let type_ = Type::ComplexType(ComplexInfo {
+            content: Some(content_ident),
+            min_occurs: 0,
+            max_occurs: MaxOccurs::Unbounded,
+            any_attribute: Some(AnyAttributeInfo {
+                process_contents: Some(ProcessContentsType::Lax),
+                ..Default::default()
+            }),
+            ..Default::default()
+        });
+        self.state.add_type(ident, type_, true)?;
 
         Ok(self)
     }

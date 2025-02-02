@@ -9,7 +9,7 @@ use crate::schema::xs::{
     ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
     Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
 };
-use crate::schema::{MaxOccurs, MinOccurs};
+use crate::schema::{MaxOccurs, MinOccurs, Namespace};
 use crate::types::{
     AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode, Ident,
     IdentType, Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
@@ -23,6 +23,7 @@ pub(super) struct TypeBuilder<'a, 'schema, 'state> {
 
     fixed: bool,
     type_mode: TypeMode,
+    content_mode: ContentMode,
     simple_base: Option<Ident>,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
@@ -30,6 +31,13 @@ pub(super) struct TypeBuilder<'a, 'schema, 'state> {
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 enum TypeMode {
+    Unknown,
+    Simple,
+    Complex,
+}
+
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+enum ContentMode {
     Unknown,
     Simple,
     Complex,
@@ -116,6 +124,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             type_: None,
             fixed: false,
             type_mode: TypeMode::Unknown,
+            content_mode: ContentMode::Unknown,
             simple_base: None,
             owner,
         }
@@ -133,7 +142,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             let type_ = self.parse_qname(type_)?;
 
             init_any!(self, Reference, ReferenceInfo::new(type_), true);
-        } else {
+        } else if !ty.content.is_empty() {
             let ident = self
                 .state
                 .current_ident()
@@ -167,6 +176,14 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             if has_content {
                 init_any!(self, Reference, ReferenceInfo::new(type_?), true);
             }
+        } else {
+            let xs = self
+                .schemas
+                .resolve_namespace(&Some(Namespace::XS))
+                .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+            let ident = Ident::ANY_TYPE.with_ns(Some(xs));
+
+            init_any!(self, Reference, ReferenceInfo::new(ident), true);
         };
 
         if ty.abstract_ {
@@ -209,7 +226,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     pub(super) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), true);
+            init_any!(self, Reference, ReferenceInfo::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
         }
@@ -222,6 +239,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         use crate::schema::xs::SimpleBaseTypeContent as C;
 
         self.type_mode = TypeMode::Simple;
+        self.content_mode = ContentMode::Simple;
 
         for c in &ty.content {
             match c {
@@ -276,6 +294,9 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     pub(super) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
         use crate::schema::xs::ComplexBaseTypeContent as C;
 
+        self.type_mode = TypeMode::Complex;
+        self.content_mode = ContentMode::Complex;
+
         for c in &ty.content {
             match c {
                 C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
@@ -304,6 +325,10 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             }
         }
 
+        if ty.abstract_ {
+            get_or_init_any!(self, ComplexType);
+        }
+
         Ok(())
     }
 
@@ -311,7 +336,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     fn apply_simple_content(&mut self, ty: &SimpleContent) -> Result<(), Error> {
         use crate::schema::xs::SimpleContentContent as C;
 
-        self.type_mode = TypeMode::Simple;
+        self.content_mode = ContentMode::Simple;
 
         for c in &ty.content {
             match c {
@@ -327,8 +352,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
         use crate::schema::xs::ComplexContentContent as C;
-
-        self.type_mode = TypeMode::Complex;
 
         get_or_init_any!(self, ComplexType);
 
@@ -814,21 +837,32 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
-        let base = match self.type_mode {
-            TypeMode::Unknown => crate::unreachable!("Should be set somewhere above!"),
-            TypeMode::Simple => {
+        let base = match (self.type_mode, self.content_mode) {
+            (TypeMode::Simple, ContentMode::Simple) => {
+                self.fixed = false;
                 self.simple_base = Some(base.clone());
 
                 self.owner.get_simple_type(base)?
             }
-            TypeMode::Complex => self.owner.get_complex_type(base)?,
+            (TypeMode::Complex, ContentMode::Simple) => {
+                self.fixed = false;
+                self.simple_base = Some(base.clone());
+
+                match self.owner.get_simple_type(base) {
+                    Ok(base) => base,
+                    Err(Error::UnknownType(_)) => self.owner.get_complex_type(base)?,
+                    Err(error) => Err(error)?,
+                }
+            }
+            (TypeMode::Complex, ContentMode::Complex) => self.owner.get_complex_type(base)?,
+            (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
 
         let mut base = base.clone();
 
-        match &mut base {
-            Type::Enumeration(ei) => ei.variants.clear(),
-            Type::ComplexType(ci) => {
+        match (self.content_mode, &mut base) {
+            (ContentMode::Simple, Type::Enumeration(ei)) => ei.variants.clear(),
+            (ContentMode::Complex, Type::ComplexType(ci)) => {
                 if let Some(content_ident) = &ci.content {
                     let mut content_type = self
                         .owner
@@ -871,11 +905,10 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     ci.content = Some(content_ident);
                 }
             }
-            _ => (),
+            (_, _) => (),
         }
 
         self.type_ = Some(base);
-        self.fixed = self.type_mode == TypeMode::Complex;
 
         Ok(())
     }

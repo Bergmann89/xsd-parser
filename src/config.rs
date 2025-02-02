@@ -201,6 +201,11 @@ bitflags! {
         ///
         /// See [`with_default_typedefs`](crate::Interpreter::with_default_typedefs) for details.
         const DEFAULT_TYPEDEFS = 1 << 1;
+
+        /// Whether to add a default type definitions for `xs:anyType` or not.
+        ///
+        /// See [`with_xs_any_type`](crate::Interpreter::with_xs_any_type) for details.
+        const WITH_XS_ANY_TYPE = 1 << 2;
     }
 }
 
@@ -393,7 +398,9 @@ impl Default for InterpreterConfig {
         Self {
             types: vec![],
             debug_output: None,
-            flags: InterpreterFlags::BUILDIN_TYPES | InterpreterFlags::DEFAULT_TYPEDEFS,
+            flags: InterpreterFlags::BUILDIN_TYPES
+                | InterpreterFlags::DEFAULT_TYPEDEFS
+                | InterpreterFlags::WITH_XS_ANY_TYPE,
         }
     }
 }

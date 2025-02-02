@@ -210,13 +210,11 @@ impl SchemaInterpreter<'_, '_> {
         self.state.type_stack.push(Some(ident));
 
         let mut builder = TypeBuilder::new(self);
+        let type_ = f(&mut builder).and_then(|()| builder.finish());
 
-        f(&mut builder)?;
-
-        let type_ = builder.finish()?;
         let ident = self.state.type_stack.pop().unwrap().unwrap();
 
-        self.state.add_type(ident.clone(), type_, false)?;
+        self.state.add_type(ident.clone(), type_?, false)?;
 
         Ok(ident)
     }

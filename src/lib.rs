@@ -132,6 +132,10 @@ fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Type
         interpreter = interpreter.with_default_typedefs()?;
     }
 
+    if config.flags.contains(InterpreterFlags::WITH_XS_ANY_TYPE) {
+        interpreter = interpreter.with_xs_any_type()?;
+    }
+
     for (x, ident, type_) in config.types {
         let ident = resolve_ident(schemas, &ident, x)?;
         interpreter = interpreter.with_type(ident, type_)?;
