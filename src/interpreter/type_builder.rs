@@ -1035,6 +1035,15 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 element.min_occurs = element.min_occurs.min(min_occurs);
                 element.max_occurs = element.max_occurs.max(max_occurs);
             }
+            None => {
+                self.owner.state.add_type(type_ident.clone(), ty, false)?;
+
+                let ci = get_or_init_any!(self, ComplexType);
+
+                ci.content = Some(type_ident);
+                ci.min_occurs = ci.min_occurs.min(min_occurs);
+                ci.max_occurs = ci.max_occurs.max(max_occurs);
+            }
             e => crate::unreachable!("{:?}", e),
         }
 

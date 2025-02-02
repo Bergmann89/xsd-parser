@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+    <xs:group name="FooGroup">
+		<xs:choice>
+            <xs:element name="Bar" type="xs:string" />
+            <xs:element name="Baz" type="xs:int" />
+		</xs:choice>
+	</xs:group>
+
+    <xs:element name="Foo">
+        <xs:complexType>
+            <xs:group ref="tns:FooGroup" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

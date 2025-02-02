@@ -3,6 +3,7 @@
 mod all;
 mod any;
 mod choice;
+mod complex_type_with_group;
 mod dynamic_types;
 mod enumeration;
 mod extension_base;
