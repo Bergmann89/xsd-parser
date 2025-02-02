@@ -9,6 +9,7 @@ mod enumeration;
 mod extension_base;
 mod extension_base_multilayer;
 mod extension_base_two_files;
+mod extension_simple_content;
 mod list;
 mod ref_to_attribute;
 mod sequence;

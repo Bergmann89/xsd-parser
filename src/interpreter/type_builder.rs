@@ -844,19 +844,25 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
                 self.owner.get_simple_type(base)?
             }
-            (TypeMode::Complex, ContentMode::Simple) => {
-                self.fixed = false;
-                self.simple_base = Some(base.clone());
+            (TypeMode::Complex, ContentMode::Simple) => match self.owner.get_simple_type(base) {
+                Ok(ty) => {
+                    self.fixed = false;
+                    self.simple_base = Some(base.clone());
 
-                match self.owner.get_simple_type(base) {
-                    Ok(base) => base,
-                    Err(Error::UnknownType(_)) => self.owner.get_complex_type(base)?,
-                    Err(error) => Err(error)?,
+                    ty
                 }
-            }
+                Err(Error::UnknownType(_)) => {
+                    self.fixed = true;
+
+                    self.owner.get_complex_type(base)?
+                }
+                Err(error) => Err(error)?,
+            },
             (TypeMode::Complex, ContentMode::Complex) => self.owner.get_complex_type(base)?,
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
+
+        tracing::debug!("{base:#?}");
 
         let mut base = base.clone();
 

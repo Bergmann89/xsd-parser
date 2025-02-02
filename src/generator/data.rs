@@ -696,11 +696,9 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
                 (TypeMode::Simple, TypeMode::Simple, &[][..], None)
             }
             x => {
-                tracing::warn!(
-                    "Complex type has unexpected content: {:#?} => {:#?}!",
-                    &ty.content,
-                    x
-                );
+                let ident = &inner.current_type_ref().type_ident;
+
+                tracing::warn!("Complex type has unexpected content: ident={ident}, ty={ty:#?}, content={x:#?}!");
 
                 (TypeMode::Sequence, TypeMode::Sequence, &[][..], None)
             }

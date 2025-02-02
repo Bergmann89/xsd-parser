@@ -259,7 +259,7 @@ where
     where
         R: XmlReader,
     {
-        T::deserialize_bytes(reader, &self.data)
+        T::deserialize_bytes(reader, self.data[..].trim_ascii())
     }
 }
 

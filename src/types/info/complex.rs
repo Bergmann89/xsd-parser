@@ -125,7 +125,7 @@ impl ComplexInfo {
             self.content
                 .as_ref()
                 .and_then(|ident| types.get_resolved(ident)),
-            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_))
+            Some(Type::Reference(_) | Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_))
         )
     }
 }
