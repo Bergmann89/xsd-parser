@@ -47,10 +47,7 @@ fn main() -> Result<(), Error> {
     // parser
     config.parser.flags = ParserFlags::all();
     config.parser.schemas = vec![Schema::File(input)];
-    config.parser.resolver = vec![Resolver::File {
-        use_current_path: true,
-        search_paths: vec![],
-    }];
+    config.parser.resolver = vec![Resolver::File];
 
     // interpreter
     config.interpreter.flags = InterpreterFlags::all();

@@ -140,13 +140,7 @@ pub enum Resolver {
     Web,
 
     /// Resolver that is used to resolve local resources from disk (like `./local-schema.xsd` or `file://...`).
-    File {
-        /// Use the directory the current schema is load from as search path for other schemas.
-        use_current_path: bool,
-
-        /// Add additional search paths that should be used to resolve other local stored schemas.
-        search_paths: Vec<PathBuf>,
-    },
+    File,
 }
 
 /// Configuration for the schemas to load used in [`ParserConfig`].
@@ -385,10 +379,7 @@ impl Config {
 impl Default for ParserConfig {
     fn default() -> Self {
         Self {
-            resolver: vec![Resolver::File {
-                use_current_path: true,
-                search_paths: vec![],
-            }],
+            resolver: vec![Resolver::File],
             schemas: vec![],
             namespaces: vec![],
             flags: ParserFlags::RESOLVE_INCLUDES | ParserFlags::DEFAULT_NAMESPACES,

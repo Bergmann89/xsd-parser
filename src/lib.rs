@@ -79,13 +79,8 @@ fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 
                 resolver = resolver.add_resolver(web_resolver);
             }
-            Resolver::File {
-                use_current_path,
-                search_paths,
-            } => {
-                let file_resolver = FileResolver::new()
-                    .use_current_path(use_current_path)
-                    .add_search_paths(search_paths);
+            Resolver::File => {
+                let file_resolver = FileResolver::new();
 
                 resolver = resolver.add_resolver(file_resolver);
             }

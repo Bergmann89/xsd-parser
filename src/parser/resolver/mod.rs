@@ -50,7 +50,7 @@ pub trait Resolver: Debug {
 #[derive(Debug)]
 pub struct ResolveRequest {
     /// Location of the requested schema.
-    pub requested_location: Url,
+    pub requested_location: String,
 
     /// Namespace of the requested schema.
     pub requested_ns: Option<Namespace>,
@@ -64,7 +64,7 @@ pub struct ResolveRequest {
 
 impl ResolveRequest {
     /// Create a new [`ResolveRequest`] instance from the passed `requested_location`.
-    pub fn new<X: Into<Url>>(requested_location: X) -> Self {
+    pub fn new<X: Into<String>>(requested_location: X) -> Self {
         Self {
             requested_location: requested_location.into(),
             requested_ns: None,
@@ -101,7 +101,15 @@ impl Display for ResolveRequest {
         write!(f, "Location={}", self.requested_location)?;
 
         if let Some(ns) = &self.requested_ns {
-            write!(f, ", Namespace={}", ns)?;
+            write!(f, "({})", ns)?;
+        }
+
+        if let Some(current) = &self.current_location {
+            write!(f, "Current={}", current)?;
+        }
+
+        if let Some(current_ns) = &self.current_ns {
+            write!(f, "({})", current_ns)?;
         }
 
         Ok(())
