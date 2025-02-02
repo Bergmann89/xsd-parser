@@ -37,7 +37,7 @@ fn main() -> Result<(), Error> {
     config.parser.flags = ParserFlags::all();
     config.parser.schemas = inputs.into_iter().map(Schema::File).collect();
     config.interpreter.flags = InterpreterFlags::all();
-    config.optimizer.flags = OptimizerFlags::all();
+    config.optimizer.flags = OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES;
     config.generator.flags = GenerateFlags::all();
 
     if let Some(out_dir) = args

@@ -1,6 +1,7 @@
 //! The `optimizer` module contains the type information [`Optimizer`] and all related types.
 
-use std::collections::{btree_map::Entry, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
+use std::hash::{Hash, Hasher};
 
 use crate::{
     schema::{MaxOccurs, MinOccurs},
@@ -96,7 +97,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/remove_empty_enum_variants.rs")]
     /// ```
     pub fn remove_empty_enum_variants(mut self) -> Self {
-        tracing::trace!("remove_empty_enum_variants");
+        tracing::debug!("remove_empty_enum_variants");
 
         for type_ in self.types.types.values_mut() {
             if let Type::Enumeration(x) = type_ {
@@ -132,7 +133,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/remove_empty_enums.rs")]
     /// ```
     pub fn remove_empty_enums(mut self) -> Self {
-        tracing::trace!("remove_empty_enums");
+        tracing::debug!("remove_empty_enums");
 
         for type_ in self.types.types.values_mut() {
             if let Type::Enumeration(x) = type_ {
@@ -170,7 +171,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/remove_duplicate_union_variants.rs")]
     /// ```
     pub fn remove_duplicate_union_variants(mut self) -> Self {
-        tracing::trace!("remove_duplicate_union_variants");
+        tracing::debug!("remove_duplicate_union_variants");
 
         let typedefs = get_typedefs!(self);
 
@@ -213,7 +214,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/remove_empty_unions.rs")]
     /// ```
     pub fn remove_empty_unions(mut self) -> Self {
-        tracing::trace!("remove_empty_unions");
+        tracing::debug!("remove_empty_unions");
 
         for type_ in self.types.types.values_mut() {
             if let Type::Union(x) = type_ {
@@ -256,7 +257,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/use_unrestricted_base_type.rs")]
     /// ```
     pub fn use_unrestricted_base_type(mut self) -> Self {
-        tracing::trace!("use_unrestricted_base_type");
+        tracing::debug!("use_unrestricted_base_type");
 
         let bases = get_bases!(self);
 
@@ -296,7 +297,9 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/convert_dynamic_to_choice.rs")]
     /// ```
     pub fn convert_dynamic_to_choice(mut self) -> Self {
-        tracing::trace!("convert_dynamic_to_choice");
+        use std::collections::btree_map::Entry;
+
+        tracing::debug!("convert_dynamic_to_choice");
 
         let idents = self
             .types
@@ -363,7 +366,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/flatten_element_content.rs")]
     /// ```
     pub fn flatten_element_content(mut self) -> Self {
-        tracing::trace!("flatten_element_content");
+        tracing::debug!("flatten_element_content");
 
         let idents = self
             .types
@@ -428,7 +431,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/flatten_unions.rs")]
     /// ```
     pub fn flatten_unions(mut self) -> Self {
-        tracing::trace!("flatten_unions");
+        tracing::debug!("flatten_unions");
 
         let idents = self
             .types
@@ -481,7 +484,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/merge_enum_unions.rs")]
     /// ```
     pub fn merge_enum_unions(mut self) -> Self {
-        tracing::trace!("merge_enum_unions");
+        tracing::debug!("merge_enum_unions");
 
         let idents = self
             .types
@@ -530,7 +533,7 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/resolve_typedefs.rs")]
     /// ```
     pub fn resolve_typedefs(mut self) -> Self {
-        tracing::trace!("resolve_typedefs");
+        tracing::debug!("resolve_typedefs");
 
         let typedefs = get_typedefs!(self);
 
@@ -616,6 +619,18 @@ impl Optimizer {
     /// If two types are completely equal this optimization will generate the
     /// first type complete and just a type definition for the second one.
     ///
+    /// <div class="warning">
+    /// *Caution*
+    ///
+    /// Be careful with this optimization. This will compare each known
+    /// type with each other type and check if the types are identical or not.
+    /// This would result in a type reference for two types, even if the types
+    /// itself are not logically related to each other.
+    ///
+    /// Furthermore this may result in typedef loops. The code generator should
+    /// be able to deal with them (using a Box), but it is still risky to use it.
+    /// </div>
+    ///
     /// # Examples
     ///
     /// Consider the following XML schema.
@@ -633,39 +648,65 @@ impl Optimizer {
     #[doc = include_str!("../../tests/optimizer/expected1/remove_duplicates.rs")]
     /// ```
     pub fn remove_duplicates(mut self) -> Self {
-        let idents = self.types.keys().cloned().collect::<Vec<_>>();
+        use std::collections::hash_map::Entry;
+
+        struct Value<'a> {
+            type_: &'a Type,
+            types: &'a Types,
+        }
+
+        impl PartialEq for Value<'_> {
+            fn eq(&self, other: &Self) -> bool {
+                self.type_.type_eq(other.type_, self.types)
+            }
+        }
+
+        impl Eq for Value<'_> {}
+
+        impl Hash for Value<'_> {
+            fn hash<H: Hasher>(&self, state: &mut H) {
+                self.type_.type_hash(state, self.types);
+            }
+        }
+
+        tracing::debug!("remove_duplicates");
+
         let mut changed = true;
 
         while changed {
             changed = false;
 
-            for a in &idents {
-                for b in &idents {
-                    if a == b {
-                        continue;
+            tracing::trace!("remove_duplicates new iteration");
+
+            let types = &self.types;
+
+            let mut map = HashMap::new();
+            let mut idents = HashMap::new();
+
+            for (ident, type_) in self.types.iter() {
+                match map.entry(Value { type_, types }) {
+                    Entry::Vacant(e) => {
+                        e.insert(ident.clone());
                     }
-
-                    let Some(type_a) = self.types.get(a) else {
-                        continue;
-                    };
-                    let Some(type_b) = self.types.get(b) else {
-                        continue;
-                    };
-
-                    if matches!(type_a, Type::Reference(_)) || matches!(type_b, Type::Reference(_))
-                    {
-                        continue;
-                    }
-
-                    if type_a.type_eq(type_b, &self.types) {
-                        self.typedefs = None;
-
-                        changed = true;
-
-                        self.types
-                            .insert(b.clone(), Type::Reference(ReferenceInfo::new(a.clone())));
+                    Entry::Occupied(e) => {
+                        let reference_ident = e.get();
+                        if !matches!(type_, Type::Reference(ti) if &ti.type_ == reference_ident) {
+                            idents.insert(ident.clone(), reference_ident.clone());
+                        }
                     }
                 }
+            }
+
+            if !idents.is_empty() {
+                changed = true;
+                self.typedefs = None;
+            }
+
+            for (ident, referenced_type) in idents {
+                println!("Create reference for duplicate type: {ident} => {referenced_type}");
+
+                self.types
+                    .insert(ident, Type::Reference(ReferenceInfo::new(referenced_type)));
             }
         }
 

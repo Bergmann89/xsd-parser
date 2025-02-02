@@ -366,6 +366,8 @@ impl<'types> Generator<'types> {
                 (module_ident, type_ident)
             };
 
+            tracing::trace!("Queue new type generation: {ident}");
+
             let boxed_elements = get_boxed_elements(&ident, ty, types, cache);
             pending.push_back(PendingType {
                 ty,
@@ -398,6 +400,8 @@ impl<'types> Generator<'types> {
     #[instrument(err, level = "trace", skip(self))]
     fn generate_type_intern(&mut self, data: PendingType<'types>) -> Result<(), Error> {
         let PendingType { ty, ident } = data;
+
+        tracing::debug!("Render type: {ident}");
 
         let data = TypeData {
             ty,

@@ -1,5 +1,6 @@
 //! Contains the [`UnionInfo`] type information and all related types.
 
+use std::hash::Hasher;
 use std::ops::{Deref, DerefMut};
 
 use crate::types::{Ident, TypeEq, Types};
@@ -30,6 +31,13 @@ pub struct UnionTypesInfo(Vec<UnionTypeInfo>);
 /* UnionInfo */
 
 impl TypeEq for UnionInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, ctx: &Types) {
+        let Self { base, types } = self;
+
+        base.type_hash(hasher, ctx);
+        types.type_hash(hasher, ctx);
+    }
+
     fn type_eq(&self, other: &Self, ctx: &Types) -> bool {
         let Self { base, types } = self;
 
@@ -48,6 +56,12 @@ impl UnionTypeInfo {
 }
 
 impl TypeEq for UnionTypeInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self { type_ } = self;
+
+        type_.type_hash(hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self { type_ } = self;
 
@@ -72,6 +86,10 @@ impl DerefMut for UnionTypesInfo {
 }
 
 impl TypeEq for UnionTypesInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        TypeEq::type_hash_slice(&self.0, hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }

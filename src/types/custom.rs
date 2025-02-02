@@ -1,6 +1,7 @@
 //! Contains the [`CustomType`] type information and all related types.
 
 use std::fmt::{Debug, Formatter, Result as FmtResult};
+use std::hash::{Hash, Hasher};
 
 use proc_macro2::TokenStream;
 
@@ -70,6 +71,12 @@ impl Eq for CustomType {}
 impl PartialEq for CustomType {
     fn eq(&self, other: &Self) -> bool {
         self.name.eq(other.name)
+    }
+}
+
+impl Hash for CustomType {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.name.hash(state);
     }
 }
 

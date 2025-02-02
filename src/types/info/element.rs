@@ -1,5 +1,6 @@
 //! Contains the [`ElementInfo`] type information and all related types.
 
+use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
 use crate::schema::{MaxOccurs, MinOccurs};
@@ -29,7 +30,7 @@ pub struct ElementInfo {
 pub struct ElementsInfo(pub Vec<ElementInfo>);
 
 /// Defines the type of an [`ElementInfo`]
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub enum ElementMode {
     /// Represents an actual XML element.
     Element,
@@ -56,6 +57,22 @@ impl ElementInfo {
 }
 
 impl TypeEq for ElementInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            ident,
+            type_,
+            element_mode,
+            min_occurs,
+            max_occurs,
+        } = self;
+
+        ident.hash(hasher);
+        type_.type_hash(hasher, types);
+        element_mode.hash(hasher);
+        min_occurs.hash(hasher);
+        max_occurs.hash(hasher);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             ident,
@@ -90,6 +107,10 @@ impl DerefMut for ElementsInfo {
 }
 
 impl TypeEq for ElementsInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        TypeEq::type_hash_slice(&self.0, hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }

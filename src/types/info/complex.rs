@@ -1,5 +1,7 @@
 //! Contains the [`ComplexInfo`] type information and all related types.
 
+use std::hash::{Hash, Hasher};
+
 use crate::schema::xs::{
     Annotation, NamespaceListType, NotNamespaceType, ProcessContentsType, QnameListAType,
     QnameListType,
@@ -82,6 +84,15 @@ pub struct AnyAttributeInfo {
 /* GroupInfo */
 
 impl TypeEq for GroupInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self { any, elements } = self;
+
+        // HACK: We currently only evaluate if any is set or not, so just hashing
+        // the result from `is_some` does work, but this might break in the future!
+        any.is_some().hash(hasher);
+        elements.type_hash(hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self { any, elements } = self;
 
@@ -134,6 +145,29 @@ impl Default for ComplexInfo {
 }
 
 impl TypeEq for ComplexInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            base,
+            content,
+            min_occurs,
+            max_occurs,
+            is_dynamic,
+            attributes,
+            any_attribute,
+        } = self;
+
+        base.type_hash(hasher, types);
+        content.type_hash(hasher, types);
+        min_occurs.hash(hasher);
+        max_occurs.hash(hasher);
+        is_dynamic.hash(hasher);
+        attributes.type_hash(hasher, types);
+
+        // HACK: We currently only evaluate if any is set or not, so just hashing
+        // the result from `is_some` does work, but this might break in the future!
+        any_attribute.is_some().hash(hasher);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             base,

@@ -9,6 +9,7 @@ pub mod reference;
 pub mod union;
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::hash::Hasher;
 
 pub use attribute::{AttributeInfo, AttributesInfo};
 pub use complex::{AnyAttributeInfo, AnyInfo, ComplexInfo, GroupInfo};
@@ -17,6 +18,8 @@ pub use element::{ElementInfo, ElementMode, ElementsInfo};
 pub use enumeration::{EnumerationInfo, VariantInfo};
 pub use reference::ReferenceInfo;
 pub use union::{UnionInfo, UnionTypeInfo, UnionTypesInfo};
+
+use crate::schema::xs::Use;
 
 use super::{Ident, TypeEq, Types};
 
@@ -67,6 +70,20 @@ impl Display for Base {
 }
 
 impl TypeEq for Base {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        match self {
+            Self::None => hasher.write_u8(0),
+            Self::Extension(x) => {
+                hasher.write_u8(1);
+                x.type_hash(hasher, types);
+            }
+            Self::Restriction(x) => {
+                hasher.write_u8(2);
+                x.type_hash(hasher, types);
+            }
+        }
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         #[allow(clippy::enum_glob_use)]
         use Base::*;
@@ -77,5 +94,13 @@ impl TypeEq for Base {
             (Restriction(x), Restriction(y)) => x.type_eq(y, types),
             (_, _) => false,
         }
+    }
+}
+
+fn use_hash<H: Hasher>(use_: &Use, hasher: &mut H) {
+    match use_ {
+        Use::Prohibited => hasher.write_u8(0),
+        Use::Optional => hasher.write_u8(1),
+        Use::Required => hasher.write_u8(2),
     }
 }

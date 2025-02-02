@@ -1,9 +1,12 @@
 //! Contains the [`AttributeInfo`] type information and all related types.
 
+use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
 use crate::schema::xs::Use;
 use crate::types::{Ident, TypeEq, Types};
+
+use super::use_hash;
 
 /// Type information that contains data about attribute definitions.
 #[derive(Debug, Clone)]
@@ -49,6 +52,20 @@ impl AttributeInfo {
 }
 
 impl TypeEq for AttributeInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            ident,
+            type_,
+            use_,
+            default,
+        } = self;
+
+        ident.hash(hasher);
+        type_.type_hash(hasher, types);
+        use_hash(use_, hasher);
+        default.hash(hasher);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             ident,
@@ -81,6 +98,10 @@ impl DerefMut for AttributesInfo {
 }
 
 impl TypeEq for AttributesInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        TypeEq::type_hash_slice(&self.0, hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }

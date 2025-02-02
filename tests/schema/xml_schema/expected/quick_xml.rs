@@ -343,7 +343,7 @@ pub struct ElementType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub type_: Option<String>,
-    pub substitution_group: Option<ElementSubstitutionGroupType>,
+    pub substitution_group: Option<Entitiestype>,
     pub min_occurs: usize,
     pub max_occurs: AllNNIType,
     pub default: Option<String>,
@@ -724,7 +724,7 @@ impl xsd_parser::quick_xml::WithDeserializer for ListElementType {
 #[derive(Debug, Clone)]
 pub struct UnionElementType {
     pub id: Option<String>,
-    pub member_types: Option<UnionMemberTypesType>,
+    pub member_types: Option<Entitiestype>,
     pub annotation: Option<AnnotationElementType>,
     pub simple_type: Vec<SimpleBaseType>,
 }
@@ -1031,8 +1031,8 @@ impl xsd_parser::quick_xml::WithDeserializer for KeyrefElementType {
     type Deserializer = quick_xml_deserialize::KeyrefElementTypeDeserializer;
 }
 #[derive(Debug, Clone, Default)]
-pub struct ElementSubstitutionGroupType(pub Vec<QnameType>);
-impl xsd_parser::WithNamespace for ElementSubstitutionGroupType {
+pub struct Entitiestype(pub Vec<String>);
+impl xsd_parser::WithNamespace for Entitiestype {
     fn prefix() -> Option<&'static str> {
         Some("xs")
     }
@@ -1040,7 +1040,7 @@ impl xsd_parser::WithNamespace for ElementSubstitutionGroupType {
         Some("http://www.w3.org/2001/XMLSchema")
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for ElementSubstitutionGroupType {
+impl xsd_parser::quick_xml::DeserializeBytes for Entitiestype {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
     where
         R: xsd_parser::quick_xml::XmlReader,
@@ -1048,7 +1048,7 @@ impl xsd_parser::quick_xml::DeserializeBytes for ElementSubstitutionGroupType {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameType::deserialize_bytes(reader, bytes))
+                .map(|bytes| String::deserialize_bytes(reader, bytes))
                 .collect::<Result<Vec<_>, _>>()?,
         ))
     }
@@ -1255,29 +1255,6 @@ impl xsd_parser::quick_xml::WithDeserializer for Facet {
     type Deserializer = quick_xml_deserialize::FacetDeserializer;
 }
 #[derive(Debug, Clone, Default)]
-pub struct UnionMemberTypesType(pub Vec<QnameType>);
-impl xsd_parser::WithNamespace for UnionMemberTypesType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for UnionMemberTypesType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
-#[derive(Debug, Clone, Default)]
 pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
 impl xsd_parser::WithNamespace for SimpleDerivationSetItemList {
     fn prefix() -> Option<&'static str> {
@@ -1479,7 +1456,6 @@ impl xsd_parser::WithNamespace for FieldElementType {
 impl xsd_parser::quick_xml::WithDeserializer for FieldElementType {
     type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
 }
-pub type QnameType = String;
 #[derive(Debug, Clone, Default)]
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
 impl xsd_parser::WithNamespace for BasicNamespaceListType {
@@ -6423,7 +6399,7 @@ pub mod quick_xml_deserialize {
         name: Option<String>,
         ref_: Option<String>,
         type_: Option<String>,
-        substitution_group: Option<super::ElementSubstitutionGroupType>,
+        substitution_group: Option<super::Entitiestype>,
         min_occurs: usize,
         max_occurs: super::AllNNIType,
         default: Option<String>,
@@ -6464,7 +6440,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
             let mut type_: Option<String> = None;
-            let mut substitution_group: Option<ElementSubstitutionGroupType> = None;
+            let mut substitution_group: Option<Entitiestype> = None;
             let mut min_occurs: Option<usize> = None;
             let mut max_occurs: Option<AllNNIType> = None;
             let mut default: Option<String> = None;
@@ -8833,7 +8809,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct UnionElementTypeDeserializer {
         id: Option<String>,
-        member_types: Option<super::UnionMemberTypesType>,
+        member_types: Option<super::Entitiestype>,
         annotation: Option<super::AnnotationElementType>,
         simple_type: Vec<super::SimpleBaseType>,
         state: Box<UnionElementTypeDeserializerState>,
@@ -8861,7 +8837,7 @@ pub mod quick_xml_deserialize {
             use xsd_parser::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
             let mut id: Option<String> = None;
-            let mut member_types: Option<UnionMemberTypesType> = None;
+            let mut member_types: Option<Entitiestype> = None;
             for attrib in bytes_start.attributes() {
                 let attrib = attrib?;
                 if matches ! (attrib . key . prefix () , Some (x) if x . as_ref () == b"xmlns") {

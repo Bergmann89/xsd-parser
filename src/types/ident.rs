@@ -1,10 +1,11 @@
 //! Contains the [`Ident`] helper type and all related types.
 
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::hash::{Hash, Hasher};
 
 use crate::schema::NamespaceId;
 
-use super::{Name, Type, TypeEq, Types};
+use super::{get_resolved, Name, TypeEq, Types};
 
 /// Represents a type identifier.
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -183,14 +184,27 @@ impl Display for Ident {
 }
 
 impl TypeEq for Ident {
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
-        resolve(types, self) == resolve(types, other)
-    }
-}
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let mut visit = Vec::new();
 
-fn resolve<'a>(types: &'a Types, ident: &'a Ident) -> &'a Ident {
-    match types.get(ident) {
-        Some(Type::Reference(x)) if x.is_single() => resolve(types, &x.type_),
-        None | Some(_) => ident,
+        get_resolved(types, self, &mut visit)
+            .map_or(self, |(ident, _ty)| ident)
+            .hash(hasher);
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        let a = {
+            let mut visit = Vec::new();
+
+            get_resolved(types, self, &mut visit).map(|(ident, _ty)| ident)
+        };
+
+        let b = {
+            let mut visit = Vec::new();
+
+            get_resolved(types, other, &mut visit).map(|(ident, _ty)| ident)
+        };
+
+        a == b
     }
 }
