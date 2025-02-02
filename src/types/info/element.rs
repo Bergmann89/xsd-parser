@@ -23,6 +23,9 @@ pub struct ElementInfo {
 
     /// Mode of the element.
     pub element_mode: ElementMode,
+
+    /// Name of the element to use inside the generated code.
+    pub display_name: Option<String>,
 }
 
 /// Type information that represents a list of [`ElementInfo`] instances.
@@ -52,6 +55,7 @@ impl ElementInfo {
             element_mode,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
+            display_name: None,
         }
     }
 }
@@ -64,6 +68,7 @@ impl TypeEq for ElementInfo {
             element_mode,
             min_occurs,
             max_occurs,
+            display_name,
         } = self;
 
         ident.hash(hasher);
@@ -71,6 +76,7 @@ impl TypeEq for ElementInfo {
         element_mode.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
+        display_name.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
@@ -80,6 +86,7 @@ impl TypeEq for ElementInfo {
             element_mode,
             min_occurs,
             max_occurs,
+            display_name,
         } = self;
 
         ident.eq(&other.ident)
@@ -87,6 +94,7 @@ impl TypeEq for ElementInfo {
             && element_mode.eq(&other.element_mode)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
+            && display_name.eq(&other.display_name)
     }
 }
 

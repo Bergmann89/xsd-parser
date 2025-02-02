@@ -265,7 +265,8 @@ impl<'a, 'types> UnionData<'a, 'types> {
             .iter()
             .map(|var| {
                 let type_ref = inner.get_or_create_type_ref(var.type_.clone())?;
-                let variant_ident = format_variant_ident(&var.type_.name);
+                let variant_ident =
+                    format_variant_ident(&var.type_.name, var.display_name.as_deref());
                 let target_type = format_type_ref(current_module, type_ref);
 
                 Ok(UnionVariantData {
@@ -347,7 +348,7 @@ impl<'a, 'types> DynamicData<'a, 'types> {
         let derived_types = ty
             .derived_types
             .iter()
-            .map(|ident| make_derived_type_dat(&mut inner, ident))
+            .map(|ident| make_derived_type_data(&mut inner, ident))
             .collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self {
@@ -374,7 +375,7 @@ impl DerefMut for DynamicData<'_, '_> {
     }
 }
 
-fn make_derived_type_dat<'types>(
+fn make_derived_type_data<'types>(
     inner: &mut TypeData<'_, 'types>,
     ident: &'types Ident,
 ) -> Result<DerivedTypeData, Error> {
@@ -395,7 +396,7 @@ fn make_derived_type_dat<'types>(
     let current_module = inner.current_module();
     let target_ref = inner.get_or_create_type_ref(ident.clone())?;
     let target_ident = format_type_ref(current_module, target_ref);
-    let variant_ident = format_variant_ident(&ident.name);
+    let variant_ident = format_variant_ident(&ident.name, None);
 
     Ok(DerivedTypeData {
         ident,
@@ -502,19 +503,16 @@ impl<'a, 'types> EnumerationData<'a, 'types> {
                         None
                     };
 
-                    let variant_ident = match type_ref {
-                        Some(type_ref) if var.ident.name.is_unnamed() => {
-                            type_ref.type_ident.clone()
-                        }
-                        _ if matches!(var.ident.name.as_str(), Some("")) => {
-                            unknown += 1;
+                    let variant_ident = if let Some(display_name) = var.display_name.as_deref() {
+                        format_ident!("{display_name}")
+                    } else if let (Some(type_ref), true) = (type_ref, var.ident.name.is_unnamed()) {
+                        type_ref.type_ident.clone()
+                    } else if matches!(var.ident.name.as_str(), Some("")) {
+                        unknown += 1;
 
-                            format_ident!("Unknown{unknown}")
-                        }
-                        _ if matches!(var.ident.name.as_str(), Some(x) if x.chars().all(char::is_numeric)) => {
-                            format_ident!("Value{}", var.ident.name.to_string())
-                        }
-                        _ => format_variant_ident(&var.ident.name),
+                        format_ident!("Unknown{unknown}")
+                    } else {
+                        format_variant_ident(&var.ident.name, var.display_name.as_deref())
                     };
 
                     let target_type = type_ref.map(|x| format_type_ref(current_module, x));
@@ -694,7 +692,7 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
                 &si.elements[..],
                 si.any.as_ref(),
             ),
-            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_)) => {
+            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_)) => {
                 (TypeMode::Simple, TypeMode::Simple, &[][..], None)
             }
             x => {
@@ -749,7 +747,7 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         let trait_impls = make_trait_impls(&mut inner)?;
         let type_ref = inner.current_type_ref();
         let type_ident = &type_ref.type_ident;
-        let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")));
+        let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")), None);
 
         let simple_content = make_simple_content_data(&ty, &mut inner, target_mode)?;
 
@@ -882,8 +880,10 @@ fn make_element_data<'types>(
                 .boxed_elements
                 .contains(&element.ident);
             let is_dynamic = is_dynamic(&element.type_, inner.types);
-            let field_ident = format_field_ident(&element.ident.name);
-            let variant_ident = format_variant_ident(&element.ident.name);
+            let field_ident =
+                format_field_ident(&element.ident.name, element.display_name.as_deref());
+            let variant_ident =
+                format_variant_ident(&element.ident.name, element.display_name.as_deref());
             let target_is_complex =
                 target_is_complex(&element.type_, inner.types, inner.typedef_mode);
 
@@ -953,7 +953,8 @@ fn make_attribute_data<'types>(
                 Ok(target_ref) => target_ref,
                 Err(error) => return Some(Err(error)),
             };
-            let field_ident = format_field_ident(&attrib.ident.name);
+            let field_ident =
+                format_field_ident(&attrib.ident.name, attrib.display_name.as_deref());
             let target_type = format_type_ref(current_module, target_ref);
 
             let default_value = attrib

@@ -757,7 +757,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
-        let name = Name::from(ty.value.clone());
+        let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);

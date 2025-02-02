@@ -85,7 +85,8 @@ impl Generator<'_> {
                     if var.type_.is_none()
                         && matches!(var.ident.name.as_str(), Some(x) if x == default)
                     {
-                        let variant_ident = format_variant_ident(&var.ident.name);
+                        let variant_ident =
+                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
 
                         return Ok(quote!(#target_type :: #variant_ident));
                     }
@@ -96,7 +97,10 @@ impl Generator<'_> {
                                 Some(type_ref) if var.ident.name.is_unnamed() => {
                                     type_ref.type_ident.clone()
                                 }
-                                _ => format_variant_ident(&var.ident.name),
+                                _ => format_variant_ident(
+                                    &var.ident.name,
+                                    var.display_name.as_deref(),
+                                ),
                             };
 
                             return Ok(quote!(#target_type :: #variant_ident(#default)));
@@ -110,7 +114,8 @@ impl Generator<'_> {
 
                 for ty in &*ui.types {
                     if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
-                        let variant_ident = format_variant_ident(&ty.type_.name);
+                        let variant_ident =
+                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
 
                         return Ok(quote! {
                             #target_type :: #variant_ident ( #code )

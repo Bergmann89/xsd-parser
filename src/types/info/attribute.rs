@@ -22,6 +22,9 @@ pub struct AttributeInfo {
 
     /// Default value of the attribute.
     pub default: Option<String>,
+
+    /// Name of the attribute to use inside the generated code.
+    pub display_name: Option<String>,
 }
 
 /// Type information that represents a list of [`AttributeInfo`] instances.
@@ -39,6 +42,7 @@ impl AttributeInfo {
             type_,
             use_: Use::Optional,
             default: None,
+            display_name: None,
         }
     }
 
@@ -58,12 +62,14 @@ impl TypeEq for AttributeInfo {
             type_,
             use_,
             default,
+            display_name,
         } = self;
 
         ident.hash(hasher);
         type_.type_hash(hasher, types);
         use_hash(use_, hasher);
         default.hash(hasher);
+        display_name.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
@@ -72,12 +78,14 @@ impl TypeEq for AttributeInfo {
             type_,
             use_,
             default,
+            display_name,
         } = self;
 
         ident.eq(&other.ident)
             && type_.type_eq(&other.type_, types)
             && use_.eq(&other.use_)
             && default.eq(&other.default)
+            && display_name.eq(&other.display_name)
     }
 }
 

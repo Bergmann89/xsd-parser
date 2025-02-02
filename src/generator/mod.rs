@@ -361,12 +361,12 @@ impl<'types> Generator<'types> {
             } else {
                 let use_modules = generate_flags.intersects(GenerateFlags::USE_MODULES);
                 let module_ident = format_module(types, use_modules.then_some(ident.ns).flatten())?;
-                let type_ident = format_type_ident(&name);
+                let type_ident = format_type_ident(&name, None);
 
                 (module_ident, type_ident)
             };
 
-            tracing::trace!("Queue new type generation: {ident}");
+            tracing::debug!("Queue new type generation: {ident}");
 
             let boxed_elements = get_boxed_elements(&ident, ty, types, cache);
             pending.push_back(PendingType {

@@ -152,7 +152,7 @@ impl QuickXmlRenderer {
 
                     if index < #size {
                         return Err(reader.map_error(ErrorKind::InsufficientSize {
-                            min: #size.
+                            min: #size,
                             max: #size,
                             actual: index,
                         }));

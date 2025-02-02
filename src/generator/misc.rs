@@ -524,7 +524,11 @@ pub(super) enum DynTypeTraits {
 
 /* Helper */
 
-pub(super) fn format_field_name(name: &Name) -> Cow<'static, str> {
+pub(super) fn format_field_name(name: &Name, display_name: Option<&str>) -> Cow<'static, str> {
+    if let Some(display_name) = display_name {
+        return Cow::Owned(display_name.to_snake_case());
+    }
+
     let ident = name
         .to_type_name(false, None)
         .as_str()
@@ -537,31 +541,35 @@ pub(super) fn format_field_name(name: &Name) -> Cow<'static, str> {
     }
 }
 
-pub(super) fn format_field_ident(name: &Name) -> Ident2 {
-    let ident = format_field_name(name);
+pub(super) fn format_field_ident(name: &Name, display_name: Option<&str>) -> Ident2 {
+    let ident = format_field_name(name, display_name);
 
     format_ident!("{ident}")
 }
 
 pub(super) fn format_module_ident(name: &Name) -> Ident2 {
-    format_field_ident(name)
+    format_field_ident(name, None)
 }
 
-pub(super) fn format_type_name(name: &Name) -> String {
+pub(super) fn format_type_name(name: &Name, display_name: Option<&str>) -> String {
+    if let Some(display_name) = display_name {
+        return display_name.to_pascal_case();
+    }
+
     name.to_type_name(false, None)
         .as_str()
         .unwrap()
         .to_pascal_case()
 }
 
-pub(super) fn format_type_ident(name: &Name) -> Ident2 {
-    let ident = format_type_name(name);
+pub(super) fn format_type_ident(name: &Name, display_name: Option<&str>) -> Ident2 {
+    let ident = format_type_name(name, display_name);
 
     format_ident!("{ident}")
 }
 
-pub(super) fn format_variant_ident(name: &Name) -> Ident2 {
-    format_type_ident(name)
+pub(super) fn format_variant_ident(name: &Name, display_name: Option<&str>) -> Ident2 {
+    format_type_ident(name, display_name)
 }
 
 pub(super) fn format_module(

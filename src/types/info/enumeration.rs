@@ -29,11 +29,14 @@ pub struct VariantInfo {
 
     /// Type of the variant.
     pub type_: Option<Ident>,
+
+    /// Name of the variant to use inside the generated code.
+    pub display_name: Option<String>,
 }
 
 /// Type information that represents a list of [`VariantInfo`] instances.
 #[derive(Default, Debug, Clone)]
-pub struct VariantsInfo(Vec<VariantInfo>);
+pub struct VariantsInfo(pub Vec<VariantInfo>);
 
 /* EnumerationInfo */
 
@@ -62,6 +65,7 @@ impl VariantInfo {
             ident,
             use_: Use::Optional,
             type_: None,
+            display_name: None,
         }
     }
 
@@ -76,17 +80,31 @@ impl VariantInfo {
 
 impl TypeEq for VariantInfo {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
-        let Self { ident, use_, type_ } = self;
+        let Self {
+            ident,
+            use_,
+            type_,
+            display_name,
+        } = self;
 
         ident.hash(hasher);
         use_hash(use_, hasher);
         type_.type_hash(hasher, types);
+        display_name.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
-        let Self { ident, use_, type_ } = self;
+        let Self {
+            ident,
+            use_,
+            type_,
+            display_name,
+        } = self;
 
-        ident.eq(&other.ident) && use_.eq(&other.use_) && type_.type_eq(&other.type_, types)
+        ident.eq(&other.ident)
+            && use_.eq(&other.use_)
+            && type_.type_eq(&other.type_, types)
+            && display_name.eq(&other.display_name)
     }
 }
 

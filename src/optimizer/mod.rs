@@ -454,7 +454,7 @@ impl Optimizer {
                 count: 0,
                 info: UnionInfo::default(),
             };
-            self.flatten_union(&ident, &mut info);
+            self.flatten_union(&ident, None, &mut info);
             if info.count > 1 {
                 info.info.base = x.base.clone();
 
@@ -504,7 +504,7 @@ impl Optimizer {
                 continue;
             };
             let mut next = None;
-            self.flatten_enum_union(&ident, &mut next);
+            self.flatten_enum_union(&ident, None, &mut next);
             if let Some(next) = next {
                 self.types.insert(ident, next);
             }
@@ -775,7 +775,12 @@ impl Optimizer {
         }
     }
 
-    fn flatten_union(&self, ident: &Ident, next: &mut FlattenUnionInfo) {
+    fn flatten_union(
+        &self,
+        ident: &Ident,
+        display_name: Option<&str>,
+        next: &mut FlattenUnionInfo,
+    ) {
         let Some(type_) = self.types.get(ident) else {
             return;
         };
@@ -783,20 +788,28 @@ impl Optimizer {
         match type_ {
             Type::Union(x) => {
                 next.count += 1;
-                for variant in &*x.types {
-                    self.flatten_union(&variant.type_, next);
+                for t in &*x.types {
+                    self.flatten_union(&t.type_, t.display_name.as_deref(), next);
                 }
             }
             Type::Reference(x) if x.is_single() => {
-                self.flatten_union(&x.type_, next);
+                self.flatten_union(&x.type_, display_name, next);
             }
             _ => {
-                next.info.types.push(UnionTypeInfo::new(ident.clone()));
+                let mut ui = UnionTypeInfo::new(ident.clone());
+                ui.display_name = display_name.map(ToOwned::to_owned);
+
+                next.info.types.push(ui);
             }
         }
     }
 
-    fn flatten_enum_union(&self, ident: &Ident, next: &mut Option<Type>) {
+    fn flatten_enum_union(
+        &self,
+        ident: &Ident,
+        display_name: Option<&str>,
+        next: &mut Option<Type>,
+    ) {
         let Some(type_) = self.types.get(ident) else {
             return;
         };
@@ -804,7 +817,7 @@ impl Optimizer {
         match type_ {
             Type::Union(x) => {
                 for t in &*x.types {
-                    self.flatten_enum_union(&t.type_, next);
+                    self.flatten_enum_union(&t.type_, t.display_name.as_deref(), next);
                 }
             }
             Type::Enumeration(x) => {
@@ -814,10 +827,11 @@ impl Optimizer {
                     Some(Type::Union(ui)) => {
                         let mut ei = EnumerationInfo::default();
 
-                        for t in &*ui.types {
-                            ei.variants.find_or_insert(t.type_.clone(), |ident| {
+                        for t in ui.types.0 {
+                            let var = ei.variants.find_or_insert(t.type_.clone(), |ident| {
                                 VariantInfo::new(ident).with_type(Some(t.type_.clone()))
                             });
+                            var.display_name = t.display_name;
                         }
 
                         Some(Type::Enumeration(ei))
@@ -830,13 +844,14 @@ impl Optimizer {
                 };
 
                 for var in &*x.variants {
-                    ei.variants.find_or_insert(var.ident.clone(), |ident| {
+                    let new_var = ei.variants.find_or_insert(var.ident.clone(), |ident| {
                         VariantInfo::new(ident).with_type(var.type_.clone())
                     });
+                    new_var.display_name.clone_from(&var.display_name);
                 }
             }
             Type::Reference(x) if x.is_single() => {
-                self.flatten_enum_union(&x.type_, next);
+                self.flatten_enum_union(&x.type_, display_name, next);
             }
             _ => {
                 if next.is_none() {
@@ -845,12 +860,16 @@ impl Optimizer {
 
                 match next {
                     Some(Type::Union(ui)) => {
-                        ui.types.push(UnionTypeInfo::new(ident.clone()));
+                        let mut ti = UnionTypeInfo::new(ident.clone());
+                        ti.display_name = display_name.map(ToOwned::to_owned);
+
+                        ui.types.push(ti);
                     }
                     Some(Type::Enumeration(ei)) => {
-                        ei.variants.find_or_insert(ident.clone(), |x| {
+                        let var = ei.variants.find_or_insert(ident.clone(), |x| {
                             VariantInfo::new(x).with_type(Some(ident.clone()))
                         });
+                        var.display_name = display_name.map(ToOwned::to_owned);
                     }
                     _ => crate::unreachable!(),
                 }
