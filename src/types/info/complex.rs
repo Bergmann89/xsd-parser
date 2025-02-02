@@ -1,11 +1,13 @@
 //! Contains the [`ComplexInfo`] type information and all related types.
 
+use std::hash::{Hash, Hasher};
+
 use crate::schema::xs::{
     Annotation, NamespaceListType, NotNamespaceType, ProcessContentsType, QnameListAType,
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::{Ident, TypeEq, Types};
+use crate::types::{Ident, Type, TypeEq, Types};
 
 use super::{AttributesInfo, Base, ElementsInfo};
 
@@ -82,6 +84,15 @@ pub struct AnyAttributeInfo {
 /* GroupInfo */
 
 impl TypeEq for GroupInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self { any, elements } = self;
+
+        // HACK: We currently only evaluate if any is set or not, so just hashing
+        // the result from `is_some` does work, but this might break in the future!
+        any.is_some().hash(hasher);
+        elements.type_hash(hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self { any, elements } = self;
 
@@ -90,6 +101,34 @@ impl TypeEq for GroupInfo {
 }
 
 /* ComplexInfo */
+
+impl ComplexInfo {
+    /// Returns `true` if the content of this complex type information
+    /// is a [`Type::All`], [`Type::Choice`] or [`Type::Sequence`],
+    /// `false` otherwise.
+    #[must_use]
+    pub fn has_complex_content(&self, types: &Types) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved(ident)),
+            Some(Type::All(_) | Type::Choice(_) | Type::Sequence(_))
+        )
+    }
+
+    /// Returns `true` if the content of this complex type information
+    /// is a [`Type::BuildIn`], [`Type::Union`] or [`Type::Enumeration`],
+    /// `false` otherwise.
+    #[must_use]
+    pub fn has_simple_content(&self, types: &Types) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved(ident)),
+            Some(Type::Reference(_) | Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_))
+        )
+    }
+}
 
 impl Default for ComplexInfo {
     fn default() -> Self {
@@ -106,6 +145,29 @@ impl Default for ComplexInfo {
 }
 
 impl TypeEq for ComplexInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            base,
+            content,
+            min_occurs,
+            max_occurs,
+            is_dynamic,
+            attributes,
+            any_attribute,
+        } = self;
+
+        base.type_hash(hasher, types);
+        content.type_hash(hasher, types);
+        min_occurs.hash(hasher);
+        max_occurs.hash(hasher);
+        is_dynamic.hash(hasher);
+        attributes.type_hash(hasher, types);
+
+        // HACK: We currently only evaluate if any is set or not, so just hashing
+        // the result from `is_some` does work, but this might break in the future!
+        any_attribute.is_some().hash(hasher);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             base,

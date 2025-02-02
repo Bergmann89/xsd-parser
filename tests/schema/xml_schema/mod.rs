@@ -11,10 +11,7 @@ fn generate_quick_xml() {
     let mut config = Config::default();
 
     config.parser.flags = ParserFlags::all();
-    config.parser.resolver = vec![Resolver::File {
-        use_current_path: true,
-        search_paths: vec![],
-    }];
+    config.parser.resolver = vec![Resolver::File];
 
     config.interpreter.flags = InterpreterFlags::all();
 

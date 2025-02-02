@@ -9,7 +9,6 @@ pub mod type_;
 mod helper;
 
 use std::collections::BTreeMap;
-use std::collections::HashSet;
 use std::ops::Deref;
 use std::ops::DerefMut;
 
@@ -69,10 +68,10 @@ impl Types {
     /// type definitions to the very base type. If the type could not be found `None`
     /// is returned.
     #[must_use]
-    pub fn get_resolved(&self, ident: &Ident) -> Option<&Type> {
-        let mut visit = HashSet::new();
+    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<&'a Type> {
+        let mut visit = Vec::new();
 
-        get_resolved(self, &mut visit, ident)
+        get_resolved(self, ident, &mut visit).map(|(_ident, ty)| ty)
     }
 }
 
@@ -90,22 +89,39 @@ impl DerefMut for Types {
     }
 }
 
-fn get_resolved<'a>(
+pub(crate) fn get_resolved<'a>(
     types: &'a Types,
-    visited: &mut HashSet<Ident>,
-    ident: &Ident,
-) -> Option<&'a Type> {
-    if !visited.insert(ident.clone()) {
+    ident: &'a Ident,
+    visited: &mut Vec<&'a Ident>,
+) -> Option<(&'a Ident, &'a Type)> {
+    if visited.contains(&ident) {
+        let chain = visited
+            .iter()
+            .map(ToString::to_string)
+            .chain(Some(ident.to_string()))
+            .collect::<Vec<_>>()
+            .join(" >> ");
+
+        tracing::debug!("Detected type reference loop: {chain}");
+
         return None;
     }
 
     let ty = types.get(ident)?;
 
     match ty {
-        Type::Reference(x) if x.is_single() => match get_resolved(types, visited, &x.type_) {
-            None => Some(ty),
-            Some(ty) => Some(ty),
-        },
-        _ => Some(ty),
+        Type::Reference(x) if x.is_single() => {
+            visited.push(ident);
+
+            let ret = match get_resolved(types, &x.type_, visited) {
+                None => Some((ident, ty)),
+                Some((ident, ty)) => Some((ident, ty)),
+            };
+
+            visited.pop();
+
+            ret
+        }
+        _ => Some((ident, ty)),
     }
 }

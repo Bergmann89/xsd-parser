@@ -60,32 +60,24 @@ pub mod quick_xml_serialize {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
                         match &self.value {
-                            FooType::Bar(x) => match xsd_parser::quick_xml::ContentSerializer::new(
-                                x,
-                                Some("tns:Bar"),
-                                false,
-                            ) {
-                                Ok(serializer) => {
-                                    self.state = FooTypeSerializerState::Bar(serializer)
-                                }
-                                Err(error) => {
-                                    self.state = FooTypeSerializerState::Done__;
-                                    return Some(Err(error));
-                                }
-                            },
-                            FooType::Baz(x) => match xsd_parser::quick_xml::ContentSerializer::new(
-                                x,
-                                Some("tns:Baz"),
-                                false,
-                            ) {
-                                Ok(serializer) => {
-                                    self.state = FooTypeSerializerState::Baz(serializer)
-                                }
-                                Err(error) => {
-                                    self.state = FooTypeSerializerState::Done__;
-                                    return Some(Err(error));
-                                }
-                            },
+                            FooType::Bar(x) => {
+                                self.state = FooTypeSerializerState::Bar(
+                                    xsd_parser::quick_xml::ContentSerializer::new(
+                                        x,
+                                        Some("tns:Bar"),
+                                        false,
+                                    ),
+                                )
+                            }
+                            FooType::Baz(x) => {
+                                self.state = FooTypeSerializerState::Baz(
+                                    xsd_parser::quick_xml::ContentSerializer::new(
+                                        x,
+                                        Some("tns:Baz"),
+                                        false,
+                                    ),
+                                )
+                            }
                         }
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {

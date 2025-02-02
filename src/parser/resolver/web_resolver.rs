@@ -30,18 +30,25 @@ impl Resolver for WebResolver {
         &mut self,
         req: &ResolveRequest,
     ) -> Result<Option<(Url, Self::Buffer)>, Self::Error> {
-        if !matches!(req.requested_location.scheme(), "http" | "https") {
+        let url = if let Some(current) = &req.current_location {
+            current.join(&req.requested_location)
+        } else {
+            Url::parse(&req.requested_location)
+        };
+
+        let Ok(url) = url else {
+            return Ok(None);
+        };
+
+        if !matches!(url.scheme(), "http" | "https") {
             return Ok(None);
         }
 
-        tracing::trace!("Try to resolve \"{}\"", req.requested_location);
-
         let client = self.client.get_or_insert_with(Client::new);
 
-        let res = client.get(req.requested_location.clone()).send()?;
+        let res = client.get(url.clone()).send()?;
         let buffer = BufReader::new(res);
-        let location = req.requested_location.clone();
 
-        Ok(Some((location, buffer)))
+        Ok(Some((url, buffer)))
     }
 }

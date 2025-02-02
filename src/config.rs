@@ -140,13 +140,7 @@ pub enum Resolver {
     Web,
 
     /// Resolver that is used to resolve local resources from disk (like `./local-schema.xsd` or `file://...`).
-    File {
-        /// Use the directory the current schema is load from as search path for other schemas.
-        use_current_path: bool,
-
-        /// Add additional search paths that should be used to resolve other local stored schemas.
-        search_paths: Vec<PathBuf>,
-    },
+    File,
 }
 
 /// Configuration for the schemas to load used in [`ParserConfig`].
@@ -207,6 +201,11 @@ bitflags! {
         ///
         /// See [`with_default_typedefs`](crate::Interpreter::with_default_typedefs) for details.
         const DEFAULT_TYPEDEFS = 1 << 1;
+
+        /// Whether to add a default type definitions for `xs:anyType` or not.
+        ///
+        /// See [`with_xs_any_type`](crate::Interpreter::with_xs_any_type) for details.
+        const WITH_XS_ANY_TYPE = 1 << 2;
     }
 }
 
@@ -385,10 +384,7 @@ impl Config {
 impl Default for ParserConfig {
     fn default() -> Self {
         Self {
-            resolver: vec![Resolver::File {
-                use_current_path: true,
-                search_paths: vec![],
-            }],
+            resolver: vec![Resolver::File],
             schemas: vec![],
             namespaces: vec![],
             flags: ParserFlags::RESOLVE_INCLUDES | ParserFlags::DEFAULT_NAMESPACES,
@@ -402,7 +398,9 @@ impl Default for InterpreterConfig {
         Self {
             types: vec![],
             debug_output: None,
-            flags: InterpreterFlags::BUILDIN_TYPES | InterpreterFlags::DEFAULT_TYPEDEFS,
+            flags: InterpreterFlags::BUILDIN_TYPES
+                | InterpreterFlags::DEFAULT_TYPEDEFS
+                | InterpreterFlags::WITH_XS_ANY_TYPE,
         }
     }
 }

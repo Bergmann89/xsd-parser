@@ -81,7 +81,7 @@ pub mod quick_xml_serialize {
                                 self.state = FooTypeSerializerState::Done__;
                                 return Some(Err(error));
                             }
-                        }
+                        };
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));

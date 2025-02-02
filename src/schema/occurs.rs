@@ -9,7 +9,7 @@ use serde::{de::Error as DeError, Deserialize, Serialize};
 pub type MinOccurs = usize;
 
 /// Represents the maximum occurrence of types or elements
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub enum MaxOccurs {
     /// The occurrence is unbounded.
     Unbounded,

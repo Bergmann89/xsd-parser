@@ -106,7 +106,20 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        Ok(self.state.types.get(ident).unwrap())
+        match self.state.types.get(ident) {
+            None
+            | Some(
+                Type::ComplexType(_)
+                | Type::All(_)
+                | Type::Choice(_)
+                | Type::Sequence(_)
+                | Type::Dynamic(_),
+            ) => Err(Error::UnknownType(ident.clone())),
+            Some(
+                ty
+                @ (Type::Enumeration(_) | Type::BuildIn(_) | Type::Union(_) | Type::Reference(_)),
+            ) => Ok(ty),
+        }
     }
 
     #[instrument(level = "trace", skip(self))]
@@ -120,7 +133,19 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        Ok(self.state.types.get(ident).unwrap())
+        match self.state.types.get(ident) {
+            None
+            | Some(Type::Enumeration(_) | Type::BuildIn(_) | Type::Union(_) | Type::Reference(_)) => {
+                Err(Error::UnknownType(ident.clone()))
+            }
+            Some(
+                ty @ (Type::ComplexType(_)
+                | Type::All(_)
+                | Type::Choice(_)
+                | Type::Sequence(_)
+                | Type::Dynamic(_)),
+            ) => Ok(ty),
+        }
     }
 }
 
@@ -210,13 +235,11 @@ impl SchemaInterpreter<'_, '_> {
         self.state.type_stack.push(Some(ident));
 
         let mut builder = TypeBuilder::new(self);
+        let type_ = f(&mut builder).and_then(|()| builder.finish());
 
-        f(&mut builder)?;
-
-        let type_ = builder.finish()?;
         let ident = self.state.type_stack.pop().unwrap().unwrap();
 
-        self.state.add_type(ident.clone(), type_, false)?;
+        self.state.add_type(ident.clone(), type_?, false)?;
 
         Ok(ident)
     }

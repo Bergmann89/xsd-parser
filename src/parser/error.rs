@@ -2,9 +2,11 @@ use std::io::Error as IoError;
 use std::path::PathBuf;
 
 use thiserror::Error;
-use url::{ParseError as UrlParseError, Url};
+use url::ParseError as UrlParseError;
 
 use crate::quick_xml::Error as XmlError;
+
+use super::resolver::ResolveRequest;
 
 /// Represents the errors that are raised by the [`Parser`](super::Parser).
 #[derive(Debug, Error)]
@@ -23,7 +25,7 @@ pub enum Error<E> {
 
     /// Unable to resolve the requested resource.
     #[error("Unable to resolve requested resource: {0}")]
-    UnableToResolve(Url),
+    UnableToResolve(Box<ResolveRequest>),
 
     /// Error while resolving the requested resource.
     #[error("Resolver Error: {0}")]

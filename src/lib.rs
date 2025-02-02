@@ -66,8 +66,13 @@ pub fn generate(config: Config) -> Result<TokenStream, Error> {
     Ok(code)
 }
 
+/// Executes the [`Parser`] with the passed `config`.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace")]
-fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
+pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
     tracing::info!("Parse Schemas");
 
     let mut resolver = ManyResolver::new();
@@ -79,13 +84,8 @@ fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 
                 resolver = resolver.add_resolver(web_resolver);
             }
-            Resolver::File {
-                use_current_path,
-                search_paths,
-            } => {
-                let file_resolver = FileResolver::new()
-                    .use_current_path(use_current_path)
-                    .add_search_paths(search_paths);
+            Resolver::File => {
+                let file_resolver = FileResolver::new();
 
                 resolver = resolver.add_resolver(file_resolver);
             }
@@ -123,8 +123,13 @@ fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
     Ok(schemas)
 }
 
+/// Executes the [`Interpreter`] with the passed `config` and `schema`.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas))]
-fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Types, Error> {
+pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Types, Error> {
     tracing::info!("Interpret Schema");
 
     let mut interpreter = Interpreter::new(schemas);
@@ -135,6 +140,10 @@ fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Type
 
     if config.flags.contains(InterpreterFlags::DEFAULT_TYPEDEFS) {
         interpreter = interpreter.with_default_typedefs()?;
+    }
+
+    if config.flags.contains(InterpreterFlags::WITH_XS_ANY_TYPE) {
+        interpreter = interpreter.with_xs_any_type()?;
     }
 
     for (x, ident, type_) in config.types {
@@ -154,8 +163,13 @@ fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Type
     Ok(types)
 }
 
+/// Executes the [`Optimizer`] with the passed `config` and `types`.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(types))]
-fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
+pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
     tracing::info!("Optimize Types");
 
     let mut optimizer = Optimizer::new(types);
@@ -196,8 +210,13 @@ fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error>
     Ok(types)
 }
 
+/// Executes the [`Generator`] with the passed `config`, `schema` and `types`.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas, types))]
-fn exec_generator(
+pub fn exec_generator(
     config: GeneratorConfig,
     schemas: &Schemas,
     types: &Types,

@@ -49,6 +49,7 @@ struct ComplexTypeImpl<'a, 'b, 'types> {
 
     flatten_content: bool,
     is_static_complex: bool,
+    has_simple_content: bool,
 
     attributes: Vec<AttributeImpl<'a, 'types>>,
     elements: Vec<ElementImpl<'a, 'types>>,
@@ -111,6 +112,8 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
 
         let has_attributes = !inner.attributes.is_empty();
         let is_static_complex = matches!(&inner.ty, TypeInfoData::Complex(ci) if !ci.is_dynamic);
+        let has_simple_content =
+            matches!(&inner.ty, TypeInfoData::Complex(ci) if ci.has_simple_content(inner.types));
         let flatten_content =
             !has_attributes && inner.check_generate_flags(GenerateFlags::FLATTEN_CONTENT);
 
@@ -154,6 +157,7 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
 
             flatten_content,
             is_static_complex,
+            has_simple_content,
 
             attributes,
             elements,

@@ -1,5 +1,7 @@
 //! Contains the [`DynamicInfo`] type information and all related types.
 
+use std::hash::Hasher;
+
 use crate::types::{Ident, TypeEq, Types};
 
 /// Type information that contains data about dynamic types.
@@ -13,6 +15,16 @@ pub struct DynamicInfo {
 }
 
 impl TypeEq for DynamicInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            type_,
+            derived_types,
+        } = self;
+
+        type_.type_hash(hasher, types);
+        TypeEq::type_hash_slice(derived_types, hasher, types);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             type_,

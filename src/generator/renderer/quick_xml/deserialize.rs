@@ -11,8 +11,8 @@ use crate::schema::NamespaceId;
 use crate::types::{ElementMode, Module, Types};
 
 use super::super::super::data::{
-    ComplexTypeData, DynamicData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
-    UnionVariantData,
+    ComplexTypeData, DynamicData, EnumVariantData, EnumerationData, ReferenceData,
+    SimpleContentData, UnionData, UnionVariantData,
 };
 use super::super::super::misc::{Occurs, StateFlags, TypeMode, TypedefMode};
 use super::{AttributeImpl, ComplexTypeImpl, DynamicTypeImpl, ElementImpl, QuickXmlRenderer};
@@ -152,7 +152,7 @@ impl QuickXmlRenderer {
 
                     if index < #size {
                         return Err(reader.map_error(ErrorKind::InsufficientSize {
-                            min: #size.
+                            min: #size,
                             max: #size,
                             actual: index,
                         }));
@@ -494,7 +494,9 @@ impl ComplexTypeImpl<'_, '_, '_> {
     fn render_deserializer_type(&self) -> TokenStream {
         match self.target_mode {
             TypeMode::Choice => self.render_deserializer_type_enum(),
-            TypeMode::All | TypeMode::Sequence => self.render_deserializer_type_struct(),
+            TypeMode::Simple | TypeMode::All | TypeMode::Sequence => {
+                self.render_deserializer_type_struct()
+            }
         }
     }
 
@@ -541,18 +543,32 @@ impl ComplexTypeImpl<'_, '_, '_> {
             .iter()
             .map(AttributeImpl::deserializer_field);
         let elements = self.elements.iter().map(ElementImpl::deserializer_field);
+        let simple_content = self
+            .simple_content
+            .as_ref()
+            .map(SimpleContentData::deserializer_field);
+        let fields = elements.chain(simple_content);
 
-        let state = self.elements.is_empty().not().then(|| {
-            quote! {
+        let state = if let Some(simple) = &self.simple_content {
+            let xsd_crate = &self.xsd_parser_crate;
+            let target_type = &simple.target_type;
+
+            Some(quote! {
+                state: Option<#xsd_crate::quick_xml::ContentDeserializer<#target_type>>,
+            })
+        } else if !self.elements.is_empty() {
+            Some(quote! {
                 state: Box<#state_ident>,
-            }
-        });
+            })
+        } else {
+            None
+        };
 
         quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
                 #( #attributes )*
-                #( #elements )*
+                #( #fields )*
                 #state
             }
         }
@@ -568,6 +584,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         match self.target_mode {
             TypeMode::All | TypeMode::Choice => self.render_deserializer_state_type_choice(),
             TypeMode::Sequence => self.render_deserializer_state_type_sequence(),
+            TypeMode::Simple => crate::unreachable!(),
         }
     }
 
@@ -729,6 +746,12 @@ impl ComplexTypeImpl<'_, '_, '_> {
         };
 
         let content_finish = match self.target_mode {
+            TypeMode::Simple => {
+                quote! {
+                    content: None,
+                    state: None,
+                }
+            }
             TypeMode::All | TypeMode::Sequence => {
                 let elements_finish = self.elements.iter().map(render_init);
 
@@ -747,21 +770,23 @@ impl ComplexTypeImpl<'_, '_, '_> {
             },
         };
 
-        let state_finish = match self.target_mode {
-            TypeMode::All | TypeMode::Choice => quote!(#state_ident::Next__),
-            TypeMode::Sequence => {
-                if let Some(f) = self.elements.first() {
-                    let variant_ident = &f.variant_ident;
-
-                    quote!(#state_ident::#variant_ident(None))
-                } else {
-                    quote!(#state_ident::Done__)
-                }
-            }
-        };
         let state_finish = self.elements.is_empty().not().then(|| {
+            let state = match self.target_mode {
+                TypeMode::Simple => crate::unreachable!(),
+                TypeMode::All | TypeMode::Choice => quote!(#state_ident::Next__),
+                TypeMode::Sequence => {
+                    if let Some(f) = self.elements.first() {
+                        let variant_ident = &f.variant_ident;
+
+                        quote!(#state_ident::#variant_ident(None))
+                    } else {
+                        quote!(#state_ident::Done__)
+                    }
+                }
+            };
+
             quote! {
-                state: Box::new(#state_finish),
+                state: Box::new(#state),
             }
         });
 
@@ -805,12 +830,15 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = self.type_ident;
         let xsd_parser = &self.xsd_parser_crate;
 
-        let fn_impl = if self.is_static_complex {
+        let fn_impl = if self.target_mode == TypeMode::Simple {
+            self.render_deserializer_fn_init_simple()
+        } else if self.is_static_complex {
             self.render_deserializer_fn_init_complex()
         } else {
             match self.target_mode {
                 TypeMode::All | TypeMode::Choice => self.render_deserializer_fn_init_enum(),
                 TypeMode::Sequence => self.render_deserializer_fn_init_struct(),
+                TypeMode::Simple => crate::unreachable!(),
             }
         };
 
@@ -824,6 +852,29 @@ impl ComplexTypeImpl<'_, '_, '_> {
             {
                 #fn_impl
             }
+        }
+    }
+
+    fn render_deserializer_fn_init_simple(&self) -> TokenStream {
+        let xsd_parser = &self.xsd_parser_crate;
+        let expr = quote!(ContentDeserializer::init(reader, event)?);
+        let handler = make_simple_content_deserializer_output_handler(&expr);
+
+        quote! {
+            use #xsd_parser::quick_xml::{Event, ContentDeserializer, DeserializerOutput};
+
+            let (Event::Start(start) | Event::Empty(start)) = &event else {
+                return Ok(DeserializerOutput {
+                    data: None,
+                    deserializer: None,
+                    event: Some(event),
+                    allow_any: false,
+                });
+            };
+
+            let mut this = Self::from_bytes_start(reader, &start)?;
+
+            #handler
         }
     }
 
@@ -942,6 +993,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let fn_impl = match self.target_mode {
             TypeMode::All | TypeMode::Choice => self.render_deserializer_fn_next_enum(),
             TypeMode::Sequence => self.render_deserializer_fn_next_struct(),
+            TypeMode::Simple => self.render_deserializer_fn_next_simple(),
         };
 
         let this = if self.elements.is_empty() {
@@ -1364,6 +1416,20 @@ impl ComplexTypeImpl<'_, '_, '_> {
         }
     }
 
+    fn render_deserializer_fn_next_simple(&self) -> TokenStream {
+        let xsd_parser = &self.xsd_parser_crate;
+        let expr = quote!(this.state.take().unwrap().next(reader, event)?);
+        let handler = make_simple_content_deserializer_output_handler(&expr);
+
+        quote! {
+            use #xsd_parser::quick_xml::DeserializerOutput;
+
+            let mut this = self;
+
+            #handler
+        }
+    }
+
     /* fn finish */
 
     #[allow(clippy::too_many_lines)]
@@ -1451,15 +1517,21 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 }
             }
             TypeMode::All | TypeMode::Sequence => {
-                let elementss_finish = self.elements.iter().map(render_element);
+                let elements_finish = self.elements.iter().map(render_element);
 
                 quote! {
                     Ok(super::#type_ident {
                         #( #attributes_finish )*
-                        #( #elementss_finish )*
+                        #( #elements_finish )*
                     })
                 }
             }
+            TypeMode::Simple => quote! {
+                Ok(super::#type_ident {
+                    #( #attributes_finish )*
+                    content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+                })
+            },
         };
 
         quote! {
@@ -1519,6 +1591,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
                     e => crate::unreachable!("{:?}", e),
                 }
             }
+            TypeMode::Simple => crate::unreachable!(),
         }
     }
 }
@@ -1587,6 +1660,22 @@ impl ElementImpl<'_, '_> {
     }
 }
 
+impl SimpleContentData<'_> {
+    fn deserializer_field(&self) -> TokenStream {
+        let target_type = &self.target_type;
+
+        let target_type = if self.ident.is_build_in() {
+            quote!(#target_type)
+        } else {
+            quote!(super::#target_type)
+        };
+
+        quote! {
+            content: Option<#target_type>,
+        }
+    }
+}
+
 fn unique_namespaces<I>(types: &Types, iter: I) -> impl Iterator<Item = TokenStream> + '_
 where
     I: IntoIterator<Item = NamespaceId>,
@@ -1615,4 +1704,43 @@ fn make_ns_const(module: &Module) -> Ident2 {
             .map_or_else(|| String::from("DEFAULT"), ToString::to_string)
             .to_screaming_snake_case()
     )
+}
+
+fn make_simple_content_deserializer_output_handler(expr: &TokenStream) -> TokenStream {
+    quote! {
+        let DeserializerOutput {
+            data,
+            deserializer,
+            event,
+            allow_any,
+        } = #expr;
+
+        if let Some(data) = data {
+            this.content = Some(data);
+            let data = this.finish(reader)?;
+
+            Ok(DeserializerOutput {
+                data: Some(data),
+                deserializer: None,
+                event,
+                allow_any,
+            })
+        } else if let Some(state) = deserializer {
+            this.state = Some(state);
+
+            Ok(DeserializerOutput {
+                data: None,
+                deserializer: Some(this),
+                event,
+                allow_any,
+            })
+        } else {
+            Ok(DeserializerOutput {
+                data: None,
+                deserializer: None,
+                event,
+                allow_any,
+            })
+        }
+    }
 }

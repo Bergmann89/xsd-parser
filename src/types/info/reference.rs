@@ -1,5 +1,7 @@
 //! Contains the [`ReferenceInfo`] type information and all related types.
 
+use std::hash::{Hash, Hasher};
+
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{Ident, TypeEq, Types};
 
@@ -57,6 +59,18 @@ impl ReferenceInfo {
 }
 
 impl TypeEq for ReferenceInfo {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        let Self {
+            type_,
+            min_occurs,
+            max_occurs,
+        } = self;
+
+        type_.type_hash(hasher, types);
+        min_occurs.hash(hasher);
+        max_occurs.hash(hasher);
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         let Self {
             type_,

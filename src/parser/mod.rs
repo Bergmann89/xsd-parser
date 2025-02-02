@@ -15,7 +15,7 @@ use quick_xml::{
 };
 use resolver::{FileResolver, NoOpResolver, ResolveRequest, Resolver};
 use tracing::instrument;
-use url::{ParseError as UrlParseError, Url};
+use url::Url;
 
 use crate::quick_xml::{
     DeserializeSync, Error as QuickXmlError, IoReader, SliceReader, XmlReader, XmlReaderSync,
@@ -58,7 +58,7 @@ impl<TResolver> Parser<TResolver> {
     ///
     /// The default resolver is just a simple [`FileResolver`].
     pub fn with_default_resolver(self) -> Parser<FileResolver> {
-        self.with_resolver(FileResolver::default())
+        self.with_resolver(FileResolver)
     }
 
     /// Set a custom defined resolver for this parser.
@@ -154,7 +154,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(schema, &reader.namespaces, None)?;
+        self.add_schema(schema, &reader.namespaces, None);
         self.resolve_pending()?;
 
         Ok(self)
@@ -179,7 +179,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(schema, &reader.namespaces, None)?;
+        self.add_schema(schema, &reader.namespaces, None);
         self.resolve_pending()?;
 
         Ok(self)
@@ -225,6 +225,12 @@ where
         Ok(self)
     }
 
+    fn add_pending(&mut self, req: ResolveRequest) {
+        tracing::debug!("Add pending resolve request: {req:#?}");
+
+        self.pending.push_back(req);
+    }
+
     fn resolve_pending(&mut self) -> Result<(), Error<TResolver::Error>> {
         while let Some(req) = self.pending.pop_front() {
             self.resolve_location(req)?;
@@ -235,8 +241,10 @@ where
 
     #[instrument(err, level = "trace", skip(self))]
     fn resolve_location(&mut self, req: ResolveRequest) -> Result<(), Error<TResolver::Error>> {
+        tracing::debug!("Process resolve request: {req:#?}");
+
         let Some((location, buffer)) = self.resolver.resolve(&req).map_err(Error::resolver)? else {
-            return Err(Error::UnableToResolve(req.requested_location));
+            return Err(Error::UnableToResolve(Box::new(req)));
         };
         if self.cache.contains(&location) {
             return Ok(());
@@ -247,7 +255,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(schema, &reader.namespaces, Some(&location))?;
+        self.add_schema(schema, &reader.namespaces, Some(&location));
         self.cache.insert(location);
 
         Ok(())
@@ -258,7 +266,13 @@ where
         schema: Schema,
         namespaces: &Namespaces,
         current_location: Option<&Url>,
-    ) -> Result<(), Error<TResolver::Error>> {
+    ) {
+        tracing::debug!(
+            "Process schema (location={:?}, target_namespace={:?}",
+            current_location.as_ref().map(|url| url.as_str()),
+            &schema.target_namespace
+        );
+
         let target_ns = schema
             .target_namespace
             .as_deref()
@@ -269,16 +283,12 @@ where
             for content in &schema.content {
                 match content {
                     SchemaContent::Import(x) => {
-                        if let Some(req) = import_req(x, target_ns.clone(), current_location)? {
-                            self.pending.push_back(req);
+                        if let Some(req) = import_req(x, target_ns.clone(), current_location) {
+                            self.add_pending(req);
                         }
                     }
                     SchemaContent::Include(x) => {
-                        self.pending.push_back(include_req(
-                            x,
-                            target_ns.clone(),
-                            current_location,
-                        )?);
+                        self.add_pending(include_req(x, target_ns.clone(), current_location));
                     }
                     _ => (),
                 }
@@ -286,8 +296,6 @@ where
         }
 
         self.schemas.add_schema(prefix, target_ns, schema);
-
-        Ok(())
     }
 }
 
@@ -357,16 +365,8 @@ fn import_req(
     import: &Import,
     current_ns: Option<Namespace>,
     current_location: Option<&Url>,
-) -> Result<Option<ResolveRequest>, UrlParseError> {
-    let Some(location) = import.schema_location.as_ref() else {
-        return Ok(None);
-    };
-
-    let location = if location.starts_with("http") {
-        Url::parse(location)?
-    } else {
-        Url::parse(&format!("file://./{location}"))?
-    };
+) -> Option<ResolveRequest> {
+    let location = import.schema_location.as_ref()?;
 
     let mut req = ResolveRequest::new(location);
 
@@ -382,21 +382,15 @@ fn import_req(
         req = req.current_location(current_location.clone());
     }
 
-    Ok(Some(req))
+    Some(req)
 }
 
 fn include_req(
     include: &Include,
     current_ns: Option<Namespace>,
     current_location: Option<&Url>,
-) -> Result<ResolveRequest, UrlParseError> {
-    let location = if include.schema_location.starts_with("http") {
-        Url::parse(&include.schema_location)?
-    } else {
-        Url::parse(&format!("file://./{}", include.schema_location))?
-    };
-
-    let mut req = ResolveRequest::new(location);
+) -> ResolveRequest {
+    let mut req = ResolveRequest::new(&include.schema_location);
 
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);
@@ -406,5 +400,5 @@ fn include_req(
         req = req.current_location(current_location.clone());
     }
 
-    Ok(req)
+    req
 }

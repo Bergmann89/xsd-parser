@@ -1,6 +1,7 @@
 //! Contains the [`Type`] type information and all related types.
 
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+use std::hash::{Hash, Hasher};
 
 use super::{
     ComplexInfo, CustomType, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
@@ -44,7 +45,18 @@ pub enum Type {
 /// type before it compares the two instances. This means a type is considered
 /// as equal, if all type identifiers point to the same type and all normal
 /// values are equal.
-pub trait TypeEq {
+pub trait TypeEq: Sized {
+    /// Feeds this value into the given [`Hasher`].
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types);
+
+    /// Feeds a slice of this value into the given [`Hasher`].
+    fn type_hash_slice<H: Hasher>(slice: &[Self], hasher: &mut H, types: &Types) {
+        hasher.write_usize(slice.len());
+        for item in slice {
+            item.type_hash(hasher, types);
+        }
+    }
+
     /// Check if this instance is equal to the `other` instance using the passed
     /// `types` to resolve identifiers.
     fn type_eq(&self, other: &Self, types: &Types) -> bool;
@@ -76,7 +88,7 @@ pub trait TypeEq {
 /// Union that defined the build in types of the rust language or
 /// custom defined types.
 #[allow(missing_docs)]
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum BuildInInfo {
     U8,
     U16,
@@ -118,6 +130,23 @@ impl_from!(BuildIn, BuildInInfo);
 impl_from!(Enumeration, EnumerationInfo);
 
 impl TypeEq for Type {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        #[allow(clippy::enum_glob_use)]
+        use Type::*;
+
+        match self {
+            Union(x) => x.type_hash(hasher, types),
+            BuildIn(x) => x.hash(hasher),
+            Reference(x) => x.type_hash(hasher, types),
+            Enumeration(x) => x.type_hash(hasher, types),
+            Dynamic(x) => x.type_hash(hasher, types),
+            All(x) => x.type_hash(hasher, types),
+            Choice(x) => x.type_hash(hasher, types),
+            Sequence(x) => x.type_hash(hasher, types),
+            ComplexType(x) => x.type_hash(hasher, types),
+        }
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         #[allow(clippy::enum_glob_use)]
         use Type::*;
@@ -181,6 +210,15 @@ impl<T> TypeEq for Option<T>
 where
     T: TypeEq,
 {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        if let Some(inner) = self {
+            hasher.write_u8(1);
+            inner.type_hash(hasher, types);
+        } else {
+            hasher.write_u8(0);
+        }
+    }
+
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         match (self, other) {
             (Some(x), Some(y)) => x.type_eq(y, types),
