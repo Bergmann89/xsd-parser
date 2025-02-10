@@ -43,14 +43,6 @@ pub struct IntermediateType {
 }
 impl BaseTrait for IntermediateType {}
 impl IntermediateTrait for IntermediateType {}
-impl xsd_parser::AsAny for IntermediateType {
-    fn as_any(&self) -> &dyn core::any::Any {
-        self
-    }
-    fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
-        self
-    }
-}
 impl xsd_parser::quick_xml::WithSerializer for IntermediateType {
     type Serializer<'x> = quick_xml_serialize::IntermediateTypeSerializer<'x>;
     fn serializer<'ser>(
@@ -72,14 +64,6 @@ pub struct FinalType {
 }
 impl BaseTrait for FinalType {}
 impl IntermediateTrait for FinalType {}
-impl xsd_parser::AsAny for FinalType {
-    fn as_any(&self) -> &dyn core::any::Any {
-        self
-    }
-    fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
-        self
-    }
-}
 impl xsd_parser::quick_xml::WithSerializer for FinalType {
     type Serializer<'x> = quick_xml_serialize::FinalTypeSerializer<'x>;
     fn serializer<'ser>(
