@@ -537,7 +537,13 @@ pub(super) fn format_field_name(name: &Name, display_name: Option<&str>) -> Cow<
 
     match KEYWORDS.binary_search_by(|(key, _)| key.cmp(&ident.as_str())) {
         Ok(idx) => Cow::Borrowed(KEYWORDS[idx].1),
-        Err(_) => Cow::Owned(ident),
+        Err(_) => {
+            if ident.starts_with(char::is_numeric) {
+                Cow::Owned(format!("_{ident}"))
+            } else {
+                Cow::Owned(ident)
+            }
+        }
     }
 }
 
@@ -556,10 +562,17 @@ pub(super) fn format_type_name(name: &Name, display_name: Option<&str>) -> Strin
         return display_name.to_pascal_case();
     }
 
-    name.to_type_name(false, None)
+    let name = name
+        .to_type_name(false, None)
         .as_str()
         .unwrap()
-        .to_pascal_case()
+        .to_pascal_case();
+
+    if name.starts_with(char::is_numeric) {
+        format!("_{name}")
+    } else {
+        name
+    }
 }
 
 pub(super) fn format_type_ident(name: &Name, display_name: Option<&str>) -> Ident2 {
