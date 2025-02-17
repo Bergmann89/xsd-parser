@@ -1901,7 +1901,7 @@ checksum = "c5b940ebc25896e71dd073bad2dbaa2abfe97b0a391415e22ad1326d9c54e3c4"
 
 [[package]]
 name = "xsd-parser"
-version = "0.1.3"
+version = "0.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
