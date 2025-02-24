@@ -252,12 +252,6 @@ pub mod quick_xml_deserialize {
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            for attrib in bytes_start.attributes() {
-                let attrib = attrib?;
-                if matches ! (attrib . key . prefix () , Some (x) if x . as_ref () == b"xmlns") {
-                    continue;
-                }
-            }
             Ok(Self {})
         }
     }
