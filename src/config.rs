@@ -9,6 +9,10 @@ pub use crate::generator::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, T
 pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
+use crate::schema::Schemas;
+use crate::types::{Ident, Name};
+use crate::InterpreterError;
+
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
 #[derive(Default, Debug, Clone)]
@@ -54,7 +58,7 @@ pub struct InterpreterConfig {
     /// are actually interpreted.
     ///
     /// See [`with_type`](crate::Interpreter::with_type) for more details.
-    pub types: Vec<(IdentType, String, Type)>,
+    pub types: Vec<(IdentTriple, Type)>,
 
     /// Additional flags to control the interpreter.
     pub flags: InterpreterFlags,
@@ -79,7 +83,7 @@ pub struct GeneratorConfig {
     /// Types to add to the generator before the actual code is generated.
     ///
     /// See [`with_type`](crate::Generator::with_type) for more details.
-    pub types: Vec<(IdentType, String)>,
+    pub types: Vec<IdentTriple>,
 
     /// Sets the traits the generated types should derive from.
     ///
@@ -164,11 +168,30 @@ pub enum Generate {
     All,
 
     /// List of identifiers the generator will generate code for.
-    ///
-    /// A type is a combination of a identifier type and a string like so:
-    /// - `(IdentType::Type, "xs:int")`
-    /// - `(IdentType::Element, "example:rootElement")`
-    Types(Vec<(IdentType, String)>),
+    Types(Vec<IdentTriple>),
+}
+
+/// Identifier that is used inside the config.
+#[derive(Debug, Clone)]
+pub struct IdentTriple {
+    /// Namespace the type is defined in.
+    pub ns: Option<NamespaceIdent>,
+
+    /// Name of the type.
+    pub name: String,
+
+    /// Type of the identifier (because pure names are not unique in XSD).
+    pub type_: IdentType,
+}
+
+/// Identifies a namespace by either it's known prefix or by the namespace directly.
+#[derive(Debug, Clone)]
+pub enum NamespaceIdent {
+    /// Uses a namespace prefix to refer to a specific namespace in the schema.
+    Prefix(NamespacePrefix),
+
+    /// Uses the full namespace to refer to a specific namespace in the schema.
+    Namespace(Namespace),
 }
 
 bitflags! {
@@ -338,13 +361,12 @@ impl Config {
     }
 
     /// Set the types the code should be generated for.
-    pub fn with_generate<I, T>(mut self, types: I) -> Self
+    pub fn with_generate<I>(mut self, types: I) -> Self
     where
-        I: IntoIterator<Item = (IdentType, T)>,
-        T: Into<String>,
+        I: IntoIterator,
+        I::Item: Into<IdentTriple>,
     {
-        self.generator.generate =
-            Generate::Types(types.into_iter().map(|(a, b)| (a, b.into())).collect());
+        self.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
 
         self
     }
@@ -442,5 +464,90 @@ impl Default for TypePostfix {
             element: String::new(),
             element_type: String::from("ElementType"),
         }
+    }
+}
+
+/* IdentTriple */
+
+impl IdentTriple {
+    /// Resolve the triple to an actual type that is available in the schema.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the namespace or the namespace prefix could not be
+    /// resolved.
+    pub fn resolve(self, schemas: &Schemas) -> Result<Ident, InterpreterError> {
+        let ns = match self.ns {
+            None => None,
+            Some(NamespaceIdent::Prefix(prefix)) => Some(
+                schemas
+                    .resolve_prefix(&prefix)
+                    .ok_or(InterpreterError::UnknownNamespacePrefix(prefix))?,
+            ),
+            #[allow(clippy::unnecessary_literal_unwrap)]
+            Some(NamespaceIdent::Namespace(ns)) => {
+                let ns = Some(ns);
+                Some(
+                    schemas
+                        .resolve_namespace(&ns)
+                        .ok_or_else(|| InterpreterError::UnknownNamespace(ns.unwrap()))?,
+                )
+            }
+        };
+
+        Ok(Ident {
+            ns,
+            name: Name::new(self.name),
+            type_: self.type_,
+        })
+    }
+}
+
+impl<X> From<(IdentType, X)> for IdentTriple
+where
+    X: AsRef<str>,
+{
+    fn from((type_, ident): (IdentType, X)) -> Self {
+        let ident = ident.as_ref();
+        let (prefix, name) = ident
+            .split_once(':')
+            .map_or((None, ident), |(a, b)| (Some(a), b));
+        let ns = prefix.map(|x| NamespaceIdent::prefix(x.as_bytes().to_owned()));
+        let name = name.to_owned();
+
+        Self { ns, name, type_ }
+    }
+}
+
+impl<N, X> From<(IdentType, N, X)> for IdentTriple
+where
+    N: Into<Option<NamespaceIdent>>,
+    X: Into<String>,
+{
+    fn from((type_, ns, name): (IdentType, N, X)) -> Self {
+        let ns = ns.into();
+        let name = name.into();
+
+        Self { ns, name, type_ }
+    }
+}
+
+/* NamespaceIdent */
+
+impl NamespaceIdent {
+    /// Creates a new [`NamespaceIdent::Prefix`] instance from the passed `value`.
+    pub fn prefix<X>(value: X) -> Self
+    where
+        NamespacePrefix: From<X>,
+    {
+        Self::Prefix(NamespacePrefix::from(value))
+    }
+
+    /// Creates a new [`NamespaceIdent::Namespace`] instance from the passed `value`.
+    pub fn namespace<X>(value: X) -> Self
+    where
+        Namespace: From<X>,
+    {
+        Self::Namespace(Namespace::from(value))
     }
 }

@@ -313,9 +313,7 @@ impl<'types> Generator<'types> {
                 #quick_xml_deserialize
             };
 
-            if let Some(ns) = ns {
-                let name = format_module(types, Some(ns)).unwrap();
-
+            if let Some(name) = ns.and_then(|ns| format_module(types, Some(ns)).unwrap()) {
                 quote! {
                     pub mod #name {
                         use super::*;
