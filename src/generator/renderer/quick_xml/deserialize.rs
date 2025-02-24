@@ -745,6 +745,23 @@ impl ComplexTypeImpl<'_, '_, '_> {
             })
         };
 
+        let need_attributes_loop = !self.attributes.is_empty() || attrib_default.is_some();
+        let attributes_loop = need_attributes_loop.then(|| {
+            quote! {
+                for attrib in bytes_start.attributes() {
+                    let attrib = attrib?;
+
+                    if matches!(attrib.key.prefix(), Some(x) if x.as_ref() == b"xmlns") {
+                        continue;
+                    }
+
+                    #( #attributes_match )*
+
+                    #attrib_default
+                }
+            }
+        });
+
         let content_finish = match self.target_mode {
             TypeMode::Simple => {
                 quote! {
@@ -801,19 +818,9 @@ impl ComplexTypeImpl<'_, '_, '_> {
                 use #xsd_parser::quick_xml::ErrorKind;
 
                 #( #attribute_namespaces )*
-
                 #( #attributes_var )*
 
-                for attrib in bytes_start.attributes() {
-                    let attrib = attrib?;
-
-                    if matches!(attrib.key.prefix(), Some(x) if x.as_ref() == b"xmlns") {
-                        continue;
-                    }
-
-                    #( #attributes_match )*
-                    #attrib_default
-                }
+                #attributes_loop
 
                 Ok(Self {
                     #( #attributes_finish )*
