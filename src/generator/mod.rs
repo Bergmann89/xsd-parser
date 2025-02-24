@@ -245,10 +245,11 @@ impl<'types> Generator<'types> {
         Ok(self)
     }
 
-    /// Generate the code for all types.
+    /// Generate the code for all named types.
     ///
-    /// This will generate the code for all types and all dependencies of this
-    /// type that are specified in the [`Types`] object passed to the generator.
+    /// This will generate the code for all types with an explicit name and all
+    /// dependencies of these types that are specified in the [`Types`] object
+    /// passed to the generator.
     ///
     /// # Examples
     ///
@@ -259,7 +260,9 @@ impl<'types> Generator<'types> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
         for ident in self.types.keys() {
-            self.get_or_create_type_ref(ident.clone())?;
+            if ident.name.is_named() {
+                self.get_or_create_type_ref(ident.clone())?;
+            }
         }
         self.generate_pending()?;
 
