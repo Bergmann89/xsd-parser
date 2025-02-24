@@ -9,12 +9,12 @@ use std::process::{Command, Stdio};
 use quick_xml::Reader;
 use serde::Deserialize;
 
+use xsd_parser::config::IdentTriple;
 use xsd_parser::{
     config::{Config, Generate, OptimizerFlags, Schema},
     generate,
     generator::GenerateFlags,
     quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
-    types::IdentType,
 };
 
 pub trait ConfigEx {
@@ -79,7 +79,7 @@ where
     }
 }
 
-pub fn optimizer_test<P1, P2, P3, I, T>(
+pub fn optimizer_test<P1, P2, P3, T>(
     input_xsd: P1,
     expected_0: P2,
     expected_1: P3,
@@ -89,8 +89,8 @@ pub fn optimizer_test<P1, P2, P3, I, T>(
     P1: AsRef<Path>,
     P2: AsRef<Path>,
     P3: AsRef<Path>,
-    T: IntoIterator<Item = (IdentType, I)>,
-    I: Into<String>,
+    T: IntoIterator,
+    T::Item: Into<IdentTriple>,
 {
     let mut config = Config::test_default();
 
@@ -99,7 +99,7 @@ pub fn optimizer_test<P1, P2, P3, I, T>(
     optimizer_test_with_config(input_xsd, expected_0, expected_1, types, flags, config);
 }
 
-pub fn optimizer_test_with_config<P1, P2, P3, I, T>(
+pub fn optimizer_test_with_config<P1, P2, P3, T>(
     input_xsd: P1,
     expected_0: P2,
     expected_1: P3,
@@ -110,19 +110,14 @@ pub fn optimizer_test_with_config<P1, P2, P3, I, T>(
     P1: AsRef<Path>,
     P2: AsRef<Path>,
     P3: AsRef<Path>,
-    T: IntoIterator<Item = (IdentType, I)>,
-    I: Into<String>,
+    T: IntoIterator,
+    T::Item: Into<IdentTriple>,
 {
     config
         .parser
         .schemas
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
-    config.generator.generate = Generate::Types(
-        types
-            .into_iter()
-            .map(|(type_, name)| (type_, name.into()))
-            .collect(),
-    );
+    config.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
     config.generator.derive = Some(Vec::new());
     config.generator.flags -= GenerateFlags::USE_MODULES;
 
@@ -234,12 +229,18 @@ fn fmt_code(s: &str) -> String {
         .wait_with_output()
         .expect("Unable to get formatted output");
 
+    #[cfg(not(feature = "update-expectations"))]
     if !output.status.success() {
         panic!(
             "rustfmt failed with status {}: {}",
             output.status,
             String::from_utf8_lossy(&output.stderr)
         )
+    }
+
+    #[cfg(feature = "update-expectations")]
+    if !output.status.success() {
+        return s.into();
     }
 
     String::from_utf8(output.stdout).expect("Invalid output")

@@ -10,7 +10,7 @@ use quote::quote;
 use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::config::{
-    Config, Generate, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
+    Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
 };
 use xsd_parser::generate;
 use xsd_parser::generator::GenerateFlags;
@@ -53,15 +53,13 @@ fn main() -> Result<(), Error> {
     config.interpreter.flags = InterpreterFlags::all();
     config.interpreter.types = vec![
         (
-            IdentType::Type,
-            String::from("xs:allNNI"),
+            IdentTriple::from((IdentType::Type, "xs:allNNI")),
             Type::BuildIn(BuildInInfo::Custom(
                 CustomType::new("MaxOccurs").with_default(max_occurs_default),
             )),
         ),
         (
-            IdentType::Type,
-            String::from("xs:QName"),
+            IdentTriple::from((IdentType::Type, "xs:QName")),
             Type::BuildIn(BuildInInfo::Custom(CustomType::new("QName"))),
         ),
     ];
@@ -74,7 +72,7 @@ fn main() -> Result<(), Error> {
         GenerateFlags::all() - GenerateFlags::QUICK_XML_SERIALIZE - GenerateFlags::USE_MODULES;
     config.generator.xsd_parser = "crate".into();
     config.generator.generate =
-        Generate::Types(vec![(IdentType::Element, String::from("xs:schema"))]);
+        Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
     config.generator.derive = Some(
         ["Debug", "Clone", "Eq", "PartialEq"]
             .into_iter()

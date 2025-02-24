@@ -32,7 +32,6 @@ pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
 use proc_macro2::TokenStream;
-use schema::{NamespacePrefix, Schemas};
 use tracing::instrument;
 
 use self::config::{
@@ -41,7 +40,8 @@ use self::config::{
 };
 use self::misc::TypesPrinter;
 use self::parser::resolver::{FileResolver, ManyResolver};
-use self::types::{Ident, IdentType, Name, Types};
+use self::schema::Schemas;
+use self::types::{IdentType, Types};
 
 /// Generates rust code from a XML schema using the passed `config`.
 ///
@@ -146,9 +146,9 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
         interpreter = interpreter.with_xs_any_type()?;
     }
 
-    for (x, ident, type_) in config.types {
-        let ident = resolve_ident(schemas, &ident, x)?;
-        interpreter = interpreter.with_type(ident, type_)?;
+    for (ident, ty) in config.types {
+        let ident = ident.resolve(schemas)?;
+        interpreter = interpreter.with_type(ident, ty)?;
     }
 
     let types = interpreter.finish()?;
@@ -244,8 +244,8 @@ pub fn exec_generator(
     generator =
         generator.with_type_postfix(IdentType::ElementType, config.type_postfix.element_type);
 
-    for (type_, ident) in config.types {
-        let ident = resolve_ident(schemas, &ident, type_)?;
+    for triple in config.types {
+        let ident = triple.resolve(schemas)?;
 
         generator = generator.with_type(ident)?;
     }
@@ -253,8 +253,8 @@ pub fn exec_generator(
     match config.generate {
         Generate::All => generator = generator.generate_all_types()?,
         Generate::Types(idents) => {
-            for (type_, ident) in idents {
-                let ident = resolve_ident(schemas, &ident, type_)?;
+            for triple in idents {
+                let ident = triple.resolve(schemas)?;
 
                 generator = generator.generate_type(ident)?;
             }
@@ -264,24 +264,4 @@ pub fn exec_generator(
     let code = generator.finish();
 
     Ok(code)
-}
-
-fn resolve_ident(schemas: &Schemas, ident: &str, type_: IdentType) -> Result<Ident, Error> {
-    let (prefix, name) = ident
-        .split_once(':')
-        .map_or((None, ident), |(a, b)| (Some(a), b));
-    let ns = prefix
-        .map(|s| NamespacePrefix::new(s.as_bytes().to_owned()))
-        .map(|prefix| {
-            schemas
-                .resolve_prefix(&prefix)
-                .ok_or_else(|| InterpreterError::UnknownNamespacePrefix(prefix.clone()))
-        })
-        .transpose()?;
-
-    Ok(Ident {
-        name: Name::new(name),
-        ns,
-        type_,
-    })
 }

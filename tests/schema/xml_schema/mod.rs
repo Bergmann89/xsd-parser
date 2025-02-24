@@ -1,5 +1,8 @@
 use xsd_parser::{
-    config::{Generate, GenerateFlags, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver},
+    config::{
+        Generate, GenerateFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
+        Resolver,
+    },
     types::IdentType,
     Config,
 };
@@ -20,7 +23,7 @@ fn generate_quick_xml() {
     config.generator.flags =
         GenerateFlags::all() - GenerateFlags::QUICK_XML_SERIALIZE - GenerateFlags::USE_MODULES;
     config.generator.generate =
-        Generate::Types(vec![(IdentType::Element, String::from("xs:schema"))]);
+        Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
 
     generate_test(
         "schema/XMLSchema.xsd",
