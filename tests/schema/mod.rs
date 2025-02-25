@@ -7,6 +7,7 @@ mod choice;
 mod complex_type_with_group;
 mod dynamic_types;
 mod enumeration;
+mod enumeration_with_annotation;
 mod extension_base;
 mod extension_base_multilayer;
 mod extension_base_two_files;

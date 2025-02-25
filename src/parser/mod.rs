@@ -251,9 +251,12 @@ where
         }
 
         let reader = IoReader::new(buffer);
-        let mut reader = SchemaReader::new(reader);
+        let reader = SchemaReader::new(reader);
+        let mut reader = reader.with_error_info();
 
         let schema = Schema::deserialize(&mut reader)?;
+
+        let reader = reader.into_inner();
 
         self.add_schema(schema, &reader.namespaces, Some(&location));
         self.cache.insert(location);
