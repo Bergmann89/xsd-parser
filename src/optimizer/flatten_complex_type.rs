@@ -58,7 +58,7 @@ impl Optimizer {
             is_choice: false,
         };
 
-        self.flatten_complex_type_impl(&content_ident, ci.min_occurs, ci.max_occurs, &mut info);
+        self.flatten_complex_type_impl(&content_ident, 1, MaxOccurs::Bounded(1), &mut info);
 
         if info.count > 1 {
             let type_ = if info.is_choice {
@@ -136,15 +136,6 @@ impl Optimizer {
 
         for x in &*si.elements {
             match x.element_mode {
-                ElementMode::Group => {
-                    let (min, max) = if is_choice {
-                        (min.min(x.min_occurs), max.max(x.max_occurs))
-                    } else {
-                        (min + x.min_occurs, max + x.max_occurs)
-                    };
-
-                    self.flatten_complex_type_impl(&x.type_, min, max, next);
-                }
                 ElementMode::Element => {
                     let element = next
                         .info
@@ -152,6 +143,15 @@ impl Optimizer {
                         .find_or_insert(x.ident.clone(), |_| x.clone());
                     element.min_occurs = min.min(x.min_occurs);
                     element.max_occurs = max.max(x.max_occurs);
+                }
+                ElementMode::Group => {
+                    let (min, max) = if is_choice {
+                        (min.min(x.min_occurs), max.max(x.max_occurs))
+                    } else {
+                        (min * x.min_occurs, max * x.max_occurs)
+                    };
+
+                    self.flatten_complex_type_impl(&x.type_, min, max, next);
                 }
             }
         }

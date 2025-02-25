@@ -10,7 +10,7 @@ fn remove_empty_enum_variants() {
         "tests/optimizer/expected1/remove_empty_enum_variants.rs",
         [(IdentType::Type, "tns:MyEnum")],
         OptimizerFlags::REMOVE_EMPTY_ENUM_VARIANTS,
-    )
+    );
 }
 
 #[test]
@@ -21,7 +21,7 @@ fn remove_empty_enums() {
         "tests/optimizer/expected1/remove_empty_enums.rs",
         [(IdentType::Type, "tns:MyEnum")],
         OptimizerFlags::REMOVE_EMPTY_ENUM_VARIANTS | OptimizerFlags::REMOVE_EMPTY_ENUMS,
-    )
+    );
 }
 
 #[test]
@@ -33,7 +33,7 @@ fn remove_duplicate_union_variants() {
         [(IdentType::Type, "tns:MyUnion")],
         OptimizerFlags::REMOVE_DUPLICATE_UNION_VARIANTS,
         Config::test_default().without_optimizer_flags(OptimizerFlags::all()),
-    )
+    );
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn remove_empty_unions() {
         "tests/optimizer/expected1/remove_empty_unions.rs",
         [(IdentType::Type, "tns:MyUnion")],
         OptimizerFlags::REMOVE_EMPTY_UNIONS,
-    )
+    );
 }
 
 #[test]
@@ -59,7 +59,7 @@ fn use_unrestricted_base_type() {
             (IdentType::Type, "tns:ThirdRestrictedType"),
         ],
         OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE,
-    )
+    );
 }
 
 #[test]
@@ -70,7 +70,7 @@ fn convert_dynamic_to_choice() {
         "tests/optimizer/expected1/convert_dynamic_to_choice.rs",
         [(IdentType::Element, "tns:Abstract")],
         OptimizerFlags::CONVERT_DYNAMIC_TO_CHOICE,
-    )
+    );
 }
 
 #[test]
@@ -81,7 +81,7 @@ fn flatten_complex_types() {
         "tests/optimizer/expected1/flatten_complex_types.rs",
         [(IdentType::Type, "tns:MyComplexType")],
         OptimizerFlags::FLATTEN_COMPLEX_TYPES,
-    )
+    );
 }
 
 #[test]
@@ -92,7 +92,7 @@ fn flatten_unions() {
         "tests/optimizer/expected1/flatten_unions.rs",
         [(IdentType::Type, "tns:MyUnion")],
         OptimizerFlags::FLATTEN_UNIONS,
-    )
+    );
 }
 
 #[test]
@@ -103,7 +103,7 @@ fn merge_enum_unions() {
         "tests/optimizer/expected1/merge_enum_unions.rs",
         [(IdentType::Type, "tns:MyUnion")],
         OptimizerFlags::MERGE_ENUM_UNIONS,
-    )
+    );
 }
 
 #[test]
@@ -115,7 +115,7 @@ fn resolve_typedefs() {
         [(IdentType::Type, "tns:MyComplexType")],
         OptimizerFlags::RESOLVE_TYPEDEFS,
         Config::test_default().without_optimizer_flags(OptimizerFlags::RESOLVE_TYPEDEFS),
-    )
+    );
 }
 
 #[test]

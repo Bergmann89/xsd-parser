@@ -5,16 +5,16 @@
 
     <xs:complexType name="MyComplexType">
         <xs:sequence>
-            <xs:element name="ElenentA" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="ElementA" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="ElementB" type="xs:int" minOccurs="0" maxOccurs="unbounded" />
             <xs:choice>
                 <xs:element name="ElementC" type="xs:boolean" />
                 <xs:sequence minOccurs="0">
-                    <xs:element name="ElenentD" type="xs:string" />
+                    <xs:element name="ElementD" type="xs:string" />
                     <xs:element name="ElementE" type="xs:int" />
                 </xs:sequence>
                 <xs:sequence>
-                    <xs:element name="ElenentF" type="xs:string" />
+                    <xs:element name="ElementF" type="xs:string" />
                     <xs:element name="ElementG" type="xs:int" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:choice>
