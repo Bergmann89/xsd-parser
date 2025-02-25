@@ -4,11 +4,11 @@ pub struct MyComplexType {
     pub content_5: MyComplexContent5Type,
 }
 pub struct MyComplexContent5Type {
-    pub content: Option<MyComplexContent5TypeContent>,
+    pub content: MyComplexContent5TypeContent,
 }
 pub enum MyComplexContent5TypeContent {
     ElementC(bool),
-    Content7(MyComplexContent7Type),
+    Content7(Option<MyComplexContent7Type>),
     Content10(MyComplexContent10Type),
 }
 pub struct MyComplexContent7Type {

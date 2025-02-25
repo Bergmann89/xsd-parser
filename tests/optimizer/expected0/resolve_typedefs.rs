@@ -6,11 +6,11 @@ pub struct MyComplexType {
 pub type MyComplexTypeElenentA = StringType;
 pub type MyComplexTypeElementB = IntType;
 pub struct MyComplexContent5Type {
-    pub content: Option<MyComplexContent5TypeContent>,
+    pub content: MyComplexContent5TypeContent,
 }
 pub enum MyComplexContent5TypeContent {
     ElementC(MyComplexTypeElementC),
-    Content7(MyComplexContent7Type),
+    Content7(Option<MyComplexContent7Type>),
     Content10(MyComplexContent10Type),
 }
 pub type StringType = String;
