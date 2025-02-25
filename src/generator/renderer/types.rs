@@ -216,7 +216,7 @@ impl TypeRenderer {
             return data.add_code(code);
         }
 
-        // If the target mode for the content is `Sequence` we will generate a sequence.
+        // If the target mode for the content is `All` or `Sequence` we will generate a sequence.
         if matches!(data.target_mode, TypeMode::All | TypeMode::Sequence) {
             let elements = data
                 .elements
@@ -242,7 +242,10 @@ impl TypeRenderer {
             .elements
             .iter()
             .map(|element| element.render_choice_variant(data.occurs.is_direct(), data));
-        if data.attributes.is_empty() && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT) {
+        if data.attributes.is_empty()
+            && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT)
+            && data.occurs == Occurs::Single
+        {
             let code = quote! {
                 #derive
                 pub enum #type_ident {

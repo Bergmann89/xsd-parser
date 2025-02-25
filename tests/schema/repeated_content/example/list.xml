@@ -1,0 +1,7 @@
+<tns:FooOption xmlns:tns="http://example.com">
+    <tns:Baz>3</tns:Baz>
+    <tns:Bar>test</tns:Bar>
+    <tns:Baz>5</tns:Baz>
+    <tns:Bar>hello</tns:Bar>
+    <tns:Bar>world</tns:Bar>
+</tns:FooOption>

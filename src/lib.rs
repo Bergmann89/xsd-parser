@@ -1,5 +1,7 @@
 #![doc = include_str!(concat!(env!("OUT_DIR"), "/README.md"))]
 
+// mod generated;
+
 pub mod config;
 pub mod generator;
 pub mod interpreter;

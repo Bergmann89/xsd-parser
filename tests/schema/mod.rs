@@ -15,6 +15,7 @@ mod list;
 mod no_prefix;
 mod numeric_fields;
 mod ref_to_attribute;
+mod repeated_content;
 mod sequence;
 mod sequence_with_choice;
 mod shiporder;

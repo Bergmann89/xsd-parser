@@ -1,0 +1,294 @@
+BuildIn(ns=default, name=String): BuildIn
+    type=String
+BuildIn(ns=default, name=bool): BuildIn
+    type=Bool
+BuildIn(ns=default, name=f32): BuildIn
+    type=F32
+BuildIn(ns=default, name=f64): BuildIn
+    type=F64
+BuildIn(ns=default, name=i128): BuildIn
+    type=I128
+BuildIn(ns=default, name=i16): BuildIn
+    type=I16
+BuildIn(ns=default, name=i32): BuildIn
+    type=I32
+BuildIn(ns=default, name=i64): BuildIn
+    type=I64
+BuildIn(ns=default, name=i8): BuildIn
+    type=I8
+BuildIn(ns=default, name=isize): BuildIn
+    type=Isize
+BuildIn(ns=default, name=u128): BuildIn
+    type=U128
+BuildIn(ns=default, name=u16): BuildIn
+    type=U16
+BuildIn(ns=default, name=u32): BuildIn
+    type=U32
+BuildIn(ns=default, name=u64): BuildIn
+    type=U64
+BuildIn(ns=default, name=u8): BuildIn
+    type=U8
+BuildIn(ns=default, name=usize): BuildIn
+    type=Usize
+Type(ns=0, name=ENTITIES): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=ENTITY): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=ID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=IDREF): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=IDREFS): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NCName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NMTOKEN): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NMTOKENS): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NOTATION): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=Name): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=QName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=anyType): ComplexType
+    base=None
+    min_occurs=0
+    max_occurs=Unbounded
+    is_dynamic=false
+    any_attribute
+        process_contents=Lax
+    content
+        type=Type(ns=0, name=Unnamed1): Sequence
+            any
+                process_contents=Lax
+Type(ns=0, name=anyURI): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=base64Binary): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=boolean): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=bool)
+Type(ns=0, name=byte): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i8)
+Type(ns=0, name=date): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=dateTime): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=decimal): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=0, name=double): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=0, name=duration): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=float): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f32)
+Type(ns=0, name=gDay): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gMonth): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gMonthDay): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gYear): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gYearMonth): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=hexBinary): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=int): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Type(ns=0, name=integer): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Type(ns=0, name=language): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=long): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i64)
+Type(ns=0, name=negativeInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=isize)
+Type(ns=0, name=nonNegativeInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Type(ns=0, name=nonPositiveInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=isize)
+Type(ns=0, name=normalizedString): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=positiveInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Type(ns=0, name=short): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i16)
+Type(ns=0, name=string): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=time): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=token): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=unsignedByte): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u8)
+Type(ns=0, name=unsignedInt): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u32)
+Type(ns=0, name=unsignedLong): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u64)
+Type(ns=0, name=unsignedShort): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u16)
+Type(ns=0, name=Unnamed1): Sequence
+    any
+        process_contents=Lax
+Type(ns=2, name=MyChoice): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=MyChoiceContent2): Choice
+            element
+                name=Once
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+            element
+                name=Optional
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+            element
+                name=OnceSpecify
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+            element
+                name=TwiceOrMore
+                min_occurs=2
+                max_occurs=Unbounded
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+Type(ns=2, name=MyChoiceContent2): Choice
+    element
+        name=Once
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+    element
+        name=Optional
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+    element
+        name=OnceSpecify
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+    element
+        name=TwiceOrMore
+        min_occurs=2
+        max_occurs=Unbounded
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+Element(ns=2, name=MyChoiceOnce): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Element(ns=2, name=MyChoiceOnceSpecify): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Element(ns=2, name=MyChoiceOptional): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Element(ns=2, name=MyChoiceTwiceOrMore): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)

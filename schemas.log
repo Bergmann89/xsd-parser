@@ -1,0 +1,251 @@
+Schemas {
+    schemas: {
+        SchemaId(
+            0,
+        ): Schema {
+            target_namespace: Some(
+                "http://example.com",
+            ),
+            version: None,
+            final_default: TypeDerivationControlList(
+                TypeDerivationControlList(
+                    [],
+                ),
+            ),
+            block_default: BlockSetItemList(
+                BlockSetItemList(
+                    [],
+                ),
+            ),
+            attribute_form_default: Unqualified,
+            element_form_default: Unqualified,
+            default_attributes: None,
+            xpath_default_namespace: String(
+                "##local",
+            ),
+            id: None,
+            lang: None,
+            content: [
+                ComplexType(
+                    ComplexBaseType {
+                        id: None,
+                        name: Some(
+                            "MyChoice",
+                        ),
+                        mixed: None,
+                        abstract_: false,
+                        final_: None,
+                        block: None,
+                        default_attributes_apply: true,
+                        content: [
+                            Choice(
+                                GroupType {
+                                    id: None,
+                                    name: None,
+                                    ref_: None,
+                                    min_occurs: 1,
+                                    max_occurs: Bounded(
+                                        1,
+                                    ),
+                                    content: [
+                                        Element(
+                                            ElementType {
+                                                id: None,
+                                                name: Some(
+                                                    "Once",
+                                                ),
+                                                ref_: None,
+                                                type_: Some(
+                                                    QName {
+                                                        raw: b"xs:int",
+                                                        ns: Some(
+                                                            Namespace(b"http://www.w3.org/2001/XMLSchema"),
+                                                        ),
+                                                    },
+                                                ),
+                                                substitution_group: None,
+                                                min_occurs: 1,
+                                                max_occurs: Bounded(
+                                                    1,
+                                                ),
+                                                default: None,
+                                                fixed: None,
+                                                nillable: None,
+                                                abstract_: false,
+                                                final_: None,
+                                                block: None,
+                                                form: None,
+                                                target_namespace: None,
+                                                content: [],
+                                            },
+                                        ),
+                                        Element(
+                                            ElementType {
+                                                id: None,
+                                                name: Some(
+                                                    "Optional",
+                                                ),
+                                                ref_: None,
+                                                type_: Some(
+                                                    QName {
+                                                        raw: b"xs:int",
+                                                        ns: Some(
+                                                            Namespace(b"http://www.w3.org/2001/XMLSchema"),
+                                                        ),
+                                                    },
+                                                ),
+                                                substitution_group: None,
+                                                min_occurs: 0,
+                                                max_occurs: Bounded(
+                                                    1,
+                                                ),
+                                                default: None,
+                                                fixed: None,
+                                                nillable: None,
+                                                abstract_: false,
+                                                final_: None,
+                                                block: None,
+                                                form: None,
+                                                target_namespace: None,
+                                                content: [],
+                                            },
+                                        ),
+                                        Element(
+                                            ElementType {
+                                                id: None,
+                                                name: Some(
+                                                    "OnceSpecify",
+                                                ),
+                                                ref_: None,
+                                                type_: Some(
+                                                    QName {
+                                                        raw: b"xs:int",
+                                                        ns: Some(
+                                                            Namespace(b"http://www.w3.org/2001/XMLSchema"),
+                                                        ),
+                                                    },
+                                                ),
+                                                substitution_group: None,
+                                                min_occurs: 1,
+                                                max_occurs: Bounded(
+                                                    1,
+                                                ),
+                                                default: None,
+                                                fixed: None,
+                                                nillable: None,
+                                                abstract_: false,
+                                                final_: None,
+                                                block: None,
+                                                form: None,
+                                                target_namespace: None,
+                                                content: [],
+                                            },
+                                        ),
+                                        Element(
+                                            ElementType {
+                                                id: None,
+                                                name: Some(
+                                                    "TwiceOrMore",
+                                                ),
+                                                ref_: None,
+                                                type_: Some(
+                                                    QName {
+                                                        raw: b"xs:int",
+                                                        ns: Some(
+                                                            Namespace(b"http://www.w3.org/2001/XMLSchema"),
+                                                        ),
+                                                    },
+                                                ),
+                                                substitution_group: None,
+                                                min_occurs: 2,
+                                                max_occurs: Unbounded,
+                                                default: None,
+                                                fixed: None,
+                                                nillable: None,
+                                                abstract_: false,
+                                                final_: None,
+                                                block: None,
+                                                form: None,
+                                                target_namespace: None,
+                                                content: [],
+                                            },
+                                        ),
+                                    ],
+                                },
+                            ),
+                        ],
+                    },
+                ),
+            ],
+        },
+    },
+    namespace_infos: {
+        NamespaceId(
+            0,
+        ): NamespaceInfo {
+            prefix: Some(
+                NamespacePrefix(b"xs"),
+            ),
+            namespace: Some(
+                Namespace(b"http://www.w3.org/2001/XMLSchema"),
+            ),
+            schemas: [],
+        },
+        NamespaceId(
+            1,
+        ): NamespaceInfo {
+            prefix: Some(
+                NamespacePrefix(b"xml"),
+            ),
+            namespace: Some(
+                Namespace(b"http://www.w3.org/XML/1998/namespace"),
+            ),
+            schemas: [],
+        },
+        NamespaceId(
+            2,
+        ): NamespaceInfo {
+            prefix: Some(
+                NamespacePrefix(b"tns"),
+            ),
+            namespace: Some(
+                Namespace(b"http://example.com"),
+            ),
+            schemas: [
+                SchemaId(
+                    0,
+                ),
+            ],
+        },
+    },
+    known_prefixes: {
+        NamespacePrefix(b"tns"): NamespaceId(
+            2,
+        ),
+        NamespacePrefix(b"xml"): NamespaceId(
+            1,
+        ),
+        NamespacePrefix(b"xs"): NamespaceId(
+            0,
+        ),
+    },
+    known_namespaces: {
+        Some(
+            Namespace(b"http://example.com"),
+        ): NamespaceId(
+            2,
+        ),
+        Some(
+            Namespace(b"http://www.w3.org/2001/XMLSchema"),
+        ): NamespaceId(
+            0,
+        ),
+        Some(
+            Namespace(b"http://www.w3.org/XML/1998/namespace"),
+        ): NamespaceId(
+            1,
+        ),
+    },
+    next_schema_id: 1,
+    next_namespace_id: 3,
+}

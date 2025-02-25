@@ -1,0 +1,2914 @@
+BuildIn(ns=default, name=String): BuildIn
+    type=String
+BuildIn(ns=default, name=bool): BuildIn
+    type=Bool
+BuildIn(ns=default, name=f32): BuildIn
+    type=F32
+BuildIn(ns=default, name=f64): BuildIn
+    type=F64
+BuildIn(ns=default, name=i128): BuildIn
+    type=I128
+BuildIn(ns=default, name=i16): BuildIn
+    type=I16
+BuildIn(ns=default, name=i32): BuildIn
+    type=I32
+BuildIn(ns=default, name=i64): BuildIn
+    type=I64
+BuildIn(ns=default, name=i8): BuildIn
+    type=I8
+BuildIn(ns=default, name=isize): BuildIn
+    type=Isize
+BuildIn(ns=default, name=u128): BuildIn
+    type=U128
+BuildIn(ns=default, name=u16): BuildIn
+    type=U16
+BuildIn(ns=default, name=u32): BuildIn
+    type=U32
+BuildIn(ns=default, name=u64): BuildIn
+    type=U64
+BuildIn(ns=default, name=u8): BuildIn
+    type=U8
+BuildIn(ns=default, name=usize): BuildIn
+    type=Usize
+Type(ns=0, name=ENTITIES): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=ENTITY): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=ID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=IDREF): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=IDREFS): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NCName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NMTOKEN): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NMTOKENS): Reference
+    min=0
+    max=Unbounded
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=NOTATION): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=Name): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=QName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=anyType): ComplexType
+    base=None
+    min_occurs=0
+    max_occurs=Unbounded
+    is_dynamic=false
+    any_attribute
+        process_contents=Lax
+    content
+        type=Type(ns=0, name=Unnamed1): Sequence
+            any
+                process_contents=Lax
+Type(ns=0, name=anyURI): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=base64Binary): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=boolean): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=bool)
+Type(ns=0, name=byte): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i8)
+Type(ns=0, name=date): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=dateTime): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=decimal): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=0, name=double): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=0, name=duration): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=float): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f32)
+Type(ns=0, name=gDay): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gMonth): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gMonthDay): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gYear): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=gYearMonth): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=hexBinary): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=int): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Type(ns=0, name=integer): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Type(ns=0, name=language): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=long): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i64)
+Type(ns=0, name=negativeInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=isize)
+Type(ns=0, name=nonNegativeInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Type(ns=0, name=nonPositiveInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=isize)
+Type(ns=0, name=normalizedString): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=positiveInteger): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Type(ns=0, name=short): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i16)
+Type(ns=0, name=string): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=time): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=token): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=0, name=unsignedByte): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u8)
+Type(ns=0, name=unsignedInt): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u32)
+Type(ns=0, name=unsignedLong): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u64)
+Type(ns=0, name=unsignedShort): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=u16)
+Type(ns=0, name=Unnamed1): Sequence
+    any
+        process_contents=Lax
+Type(ns=2, name=Acquirer.acquirerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerErrorRes): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerErrorRes)
+ElementType(ns=2, name=AcquirerErrorRes): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=AcquirerErrorResContent80): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Error
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerErrorResError)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Type(ns=2, name=AcquirerErrorResContent80): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Error
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerErrorResError)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerErrorResCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerErrorResError): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerErrorResError)
+ElementType(ns=2, name=AcquirerErrorResError): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerErrorResErrorContent83): Sequence
+            element
+                name=errorCode
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=errorMessage
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Error.errorMessage)
+            element
+                name=errorDetail
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Error.errorDetail)
+            element
+                name=suggestedAction
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Error.suggestedAction)
+            element
+                name=consumerMessage
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Error.consumerMessage)
+Element(ns=2, name=AcquirerErrorResErrorConsumerMessage): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Error.consumerMessage)
+Type(ns=2, name=AcquirerErrorResErrorContent83): Sequence
+    element
+        name=errorCode
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=errorMessage
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Error.errorMessage)
+    element
+        name=errorDetail
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Error.errorDetail)
+    element
+        name=suggestedAction
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Error.suggestedAction)
+    element
+        name=consumerMessage
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Error.consumerMessage)
+Element(ns=2, name=AcquirerErrorResErrorErrorCode): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerErrorResErrorErrorDetail): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Error.errorDetail)
+Element(ns=2, name=AcquirerErrorResErrorErrorMessage): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Error.errorMessage)
+Element(ns=2, name=AcquirerErrorResErrorSuggestedAction): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Error.suggestedAction)
+Element(ns=2, name=AcquirerStatusReq): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusReq)
+ElementType(ns=2, name=AcquirerStatusReq): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=AcquirerStatusReqContent55): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Merchant
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerStatusReqMerchant)
+            element
+                name=Transaction
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerStatusReqTransaction)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Type(ns=2, name=AcquirerStatusReqContent55): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Merchant
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerStatusReqMerchant)
+    element
+        name=Transaction
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerStatusReqTransaction)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerStatusReqCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusReqMerchant): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusReqMerchant)
+ElementType(ns=2, name=AcquirerStatusReqMerchant): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerStatusReqMerchantContent58): Sequence
+            element
+                name=merchantID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=subID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=usize)
+Type(ns=2, name=AcquirerStatusReqMerchantContent58): Sequence
+    element
+        name=merchantID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=subID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=usize)
+Element(ns=2, name=AcquirerStatusReqMerchantMerchantID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusReqMerchantSubID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Element(ns=2, name=AcquirerStatusReqTransaction): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusReqTransaction)
+ElementType(ns=2, name=AcquirerStatusReqTransaction): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerStatusReqTransactionContent62): Sequence
+            element
+                name=transactionID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerStatusReqTransactionContent62): Sequence
+    element
+        name=transactionID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusReqTransactionTransactionID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusRes): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusRes)
+ElementType(ns=2, name=AcquirerStatusRes): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=AcquirerStatusResContent64): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Acquirer
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerStatusResAcquirer)
+            element
+                name=Transaction
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerStatusResTransaction)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerStatusResAcquirer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusResAcquirer)
+ElementType(ns=2, name=AcquirerStatusResAcquirer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerStatusResAcquirerContent67): Sequence
+            element
+                name=acquirerID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResAcquirerAcquirerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerStatusResAcquirerContent67): Sequence
+    element
+        name=acquirerID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerStatusResContent64): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Acquirer
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerStatusResAcquirer)
+    element
+        name=Transaction
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerStatusResTransaction)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerStatusResCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransaction): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerStatusResTransaction)
+ElementType(ns=2, name=AcquirerStatusResTransaction): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerStatusResTransactionContent70): Sequence
+            element
+                name=transactionID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=status
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=statusDateTimestamp
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=consumerName
+                min_occurs=0
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=Type(ns=2, name=Transaction.consumerName)
+            element
+                name=consumerIBAN
+                min_occurs=0
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=consumerBIC
+                min_occurs=0
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=amount
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=f64)
+            element
+                name=currency
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionAmount): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Element(ns=2, name=AcquirerStatusResTransactionConsumerBIC): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionConsumerIBAN): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionConsumerName): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Transaction.consumerName)
+Type(ns=2, name=AcquirerStatusResTransactionContent70): Sequence
+    element
+        name=transactionID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=status
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=statusDateTimestamp
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=consumerName
+        min_occurs=0
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.consumerName)
+    element
+        name=consumerIBAN
+        min_occurs=0
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=consumerBIC
+        min_occurs=0
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=amount
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=f64)
+    element
+        name=currency
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerStatusResTransactionContent74): Sequence
+    element
+        name=consumerName
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.consumerName)
+    element
+        name=consumerIBAN
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=consumerBIC
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=amount
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=f64)
+    element
+        name=currency
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionCurrency): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionStatus): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionStatusDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerStatusResTransactionTransactionID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReq): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxReq)
+ElementType(ns=2, name=AcquirerTrxReq): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=AcquirerTrxReqContent23): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Issuer
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxReqIssuer)
+            element
+                name=Merchant
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxReqMerchant)
+            element
+                name=Transaction
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxReqTransaction)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Type(ns=2, name=AcquirerTrxReqContent23): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Issuer
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxReqIssuer)
+    element
+        name=Merchant
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxReqMerchant)
+    element
+        name=Transaction
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxReqTransaction)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerTrxReqCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqIssuer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxReqIssuer)
+ElementType(ns=2, name=AcquirerTrxReqIssuer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxReqIssuerContent26): Sequence
+            element
+                name=issuerID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerTrxReqIssuerContent26): Sequence
+    element
+        name=issuerID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqIssuerIssuerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqMerchant): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxReqMerchant)
+ElementType(ns=2, name=AcquirerTrxReqMerchant): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxReqMerchantContent29): Sequence
+            element
+                name=merchantID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=subID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=usize)
+            element
+                name=merchantReturnURL
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=iDEAL.url)
+Type(ns=2, name=AcquirerTrxReqMerchantContent29): Sequence
+    element
+        name=merchantID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=subID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=usize)
+    element
+        name=merchantReturnURL
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=iDEAL.url)
+Element(ns=2, name=AcquirerTrxReqMerchantMerchantID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqMerchantMerchantReturnURL): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=iDEAL.url)
+Element(ns=2, name=AcquirerTrxReqMerchantSubID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Element(ns=2, name=AcquirerTrxReqTransaction): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxReqTransaction)
+ElementType(ns=2, name=AcquirerTrxReqTransaction): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxReqTransactionContent34): Sequence
+            element
+                name=purchaseID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Transaction.purchaseID)
+            element
+                name=amount
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=f64)
+            element
+                name=currency
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=expirationPeriod
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=language
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=description
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Transaction.description)
+            element
+                name=entranceCode
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Transaction.entranceCode)
+Element(ns=2, name=AcquirerTrxReqTransactionAmount): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=2, name=AcquirerTrxReqTransactionContent34): Sequence
+    element
+        name=purchaseID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.purchaseID)
+    element
+        name=amount
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=f64)
+    element
+        name=currency
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=expirationPeriod
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=language
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=description
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.description)
+    element
+        name=entranceCode
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.entranceCode)
+Element(ns=2, name=AcquirerTrxReqTransactionCurrency): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqTransactionDescription): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Transaction.description)
+Element(ns=2, name=AcquirerTrxReqTransactionEntranceCode): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Transaction.entranceCode)
+Element(ns=2, name=AcquirerTrxReqTransactionExpirationPeriod): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqTransactionLanguage): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxReqTransactionPurchaseID): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Transaction.purchaseID)
+Element(ns=2, name=AcquirerTrxRes): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxRes)
+ElementType(ns=2, name=AcquirerTrxRes): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=AcquirerTrxResContent42): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Acquirer
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxResAcquirer)
+            element
+                name=Issuer
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxResIssuer)
+            element
+                name=Transaction
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=AcquirerTrxResTransaction)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerTrxResAcquirer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxResAcquirer)
+ElementType(ns=2, name=AcquirerTrxResAcquirer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxResAcquirerContent45): Sequence
+            element
+                name=acquirerID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxResAcquirerAcquirerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerTrxResAcquirerContent45): Sequence
+    element
+        name=acquirerID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=2, name=AcquirerTrxResContent42): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Acquirer
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxResAcquirer)
+    element
+        name=Issuer
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxResIssuer)
+    element
+        name=Transaction
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=AcquirerTrxResTransaction)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=AcquirerTrxResCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxResIssuer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxResIssuer)
+ElementType(ns=2, name=AcquirerTrxResIssuer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxResIssuerContent48): Sequence
+            element
+                name=issuerAuthenticationURL
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Issuer.issuerAuthenticationURL)
+Type(ns=2, name=AcquirerTrxResIssuerContent48): Sequence
+    element
+        name=issuerAuthenticationURL
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Issuer.issuerAuthenticationURL)
+Element(ns=2, name=AcquirerTrxResIssuerIssuerAuthenticationURL): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Issuer.issuerAuthenticationURL)
+Element(ns=2, name=AcquirerTrxResTransaction): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=AcquirerTrxResTransaction)
+ElementType(ns=2, name=AcquirerTrxResTransaction): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=AcquirerTrxResTransactionContent51): Sequence
+            element
+                name=transactionID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=transactionCreateDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=purchaseID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Transaction.purchaseID)
+Type(ns=2, name=AcquirerTrxResTransactionContent51): Sequence
+    element
+        name=transactionID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=transactionCreateDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=purchaseID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Transaction.purchaseID)
+Element(ns=2, name=AcquirerTrxResTransactionPurchaseID): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Transaction.purchaseID)
+Element(ns=2, name=AcquirerTrxResTransactionTransactionCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=AcquirerTrxResTransactionTransactionID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Country.countryNames): Reference
+    min=1
+    max=Bounded(128)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryReq): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryReq)
+ElementType(ns=2, name=DirectoryReq): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=DirectoryReqContent2): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Merchant
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=DirectoryReqMerchant)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Type(ns=2, name=DirectoryReqContent2): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Merchant
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=DirectoryReqMerchant)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=DirectoryReqCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryReqMerchant): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryReqMerchant)
+ElementType(ns=2, name=DirectoryReqMerchant): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=DirectoryReqMerchantContent5): Sequence
+            element
+                name=merchantID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=subID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=usize)
+Type(ns=2, name=DirectoryReqMerchantContent5): Sequence
+    element
+        name=merchantID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=subID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=usize)
+Element(ns=2, name=DirectoryReqMerchantMerchantID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryReqMerchantSubID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Element(ns=2, name=DirectoryRes): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryRes)
+ElementType(ns=2, name=DirectoryRes): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=version
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=2, name=DirectoryResContent8): Sequence
+            element
+                name=createDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Acquirer
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=DirectoryResAcquirer)
+            element
+                name=Directory
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=ElementType(ns=2, name=DirectoryResDirectory)
+            element
+                name=Signature
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=DirectoryResAcquirer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryResAcquirer)
+ElementType(ns=2, name=DirectoryResAcquirer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=DirectoryResAcquirerContent11): Sequence
+            element
+                name=acquirerID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryResAcquirerAcquirerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=DirectoryResAcquirerContent11): Sequence
+    element
+        name=acquirerID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=2, name=DirectoryResContent8): Sequence
+    element
+        name=createDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Acquirer
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=DirectoryResAcquirer)
+    element
+        name=Directory
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=ElementType(ns=2, name=DirectoryResDirectory)
+    element
+        name=Signature
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureType)
+Element(ns=2, name=DirectoryResCreateDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryResDirectory): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryResDirectory)
+ElementType(ns=2, name=DirectoryResDirectory): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=DirectoryResDirectoryContent14): Sequence
+            element
+                name=directoryDateTimestamp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Country
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=ElementType(ns=2, name=DirectoryResDirectoryCountry)
+Type(ns=2, name=DirectoryResDirectoryContent14): Sequence
+    element
+        name=directoryDateTimestamp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Country
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=ElementType(ns=2, name=DirectoryResDirectoryCountry)
+Element(ns=2, name=DirectoryResDirectoryCountry): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryResDirectoryCountry)
+ElementType(ns=2, name=DirectoryResDirectoryCountry): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=DirectoryResDirectoryCountryContent17): Sequence
+            element
+                name=countryNames
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Country.countryNames)
+            element
+                name=Issuer
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=ElementType(ns=2, name=DirectoryResDirectoryCountryIssuer)
+Type(ns=2, name=DirectoryResDirectoryCountryContent17): Sequence
+    element
+        name=countryNames
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Country.countryNames)
+    element
+        name=Issuer
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=ElementType(ns=2, name=DirectoryResDirectoryCountryIssuer)
+Element(ns=2, name=DirectoryResDirectoryCountryCountryNames): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Country.countryNames)
+Element(ns=2, name=DirectoryResDirectoryCountryIssuer): Reference
+    min=1
+    max=Bounded(1)
+    type=ElementType(ns=2, name=DirectoryResDirectoryCountryIssuer)
+ElementType(ns=2, name=DirectoryResDirectoryCountryIssuer): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=2, name=DirectoryResDirectoryCountryIssuerContent20): Sequence
+            element
+                name=issuerID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=issuerName
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=2, name=Issuer.issuerName)
+Type(ns=2, name=DirectoryResDirectoryCountryIssuerContent20): Sequence
+    element
+        name=issuerID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=issuerName
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=2, name=Issuer.issuerName)
+Element(ns=2, name=DirectoryResDirectoryCountryIssuerIssuerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=2, name=DirectoryResDirectoryCountryIssuerIssuerName): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=2, name=Issuer.issuerName)
+Element(ns=2, name=DirectoryResDirectoryDirectoryDateTimestamp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Error.consumerMessage): Reference
+    min=1
+    max=Bounded(512)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Error.errorCode): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Error.errorDetail): Reference
+    min=1
+    max=Bounded(256)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Error.errorMessage): Reference
+    min=1
+    max=Bounded(128)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Error.suggestedAction): Reference
+    min=1
+    max=Bounded(512)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Issuer.issuerAuthenticationURL): Reference
+    min=1
+    max=Bounded(512)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Issuer.issuerID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Issuer.issuerName): Reference
+    min=1
+    max=Bounded(35)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Merchant.merchantID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Merchant.merchantReturnURL): Reference
+    min=1
+    max=Bounded(512)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Merchant.subID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=usize)
+Type(ns=2, name=Transaction.amount): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=f64)
+Type(ns=2, name=Transaction.consumerBIC): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.consumerIBAN): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.consumerName): Reference
+    min=1
+    max=Bounded(70)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.currency): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.description): Reference
+    min=1
+    max=Bounded(35)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.entranceCode): Reference
+    min=1
+    max=Bounded(40)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.expirationPeriod): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.language): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.purchaseID): Reference
+    min=1
+    max=Bounded(35)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.status): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=Transaction.transactionID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.BIC): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.IBAN): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.dateTime): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.language): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.url): Reference
+    min=1
+    max=Bounded(512)
+    type=BuildIn(ns=default, name=String)
+Type(ns=2, name=iDEAL.version): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=CanonicalizationMethod): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=CanonicalizationMethodType)
+Type(ns=3, name=CanonicalizationMethodContent91): Sequence
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Any
+        process_contents=Strict
+Type(ns=3, name=CanonicalizationMethodType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Algorithm
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=3, name=CanonicalizationMethodContent91): Sequence
+            any
+                min_occurs=0
+                max_occurs=Unbounded
+                namespace=Any
+                process_contents=Strict
+Type(ns=3, name=CryptoBinary): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DSAKeyValue): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=DSAKeyValueType)
+Type(ns=3, name=DSAKeyValueType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=DsakeyValueContent124): Sequence
+            element
+                name=P
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Q
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=G
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Y
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=J
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Seed
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=PgenCounter
+                min_occurs=1
+                max_occurs=Bounded(2)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DigestMethod): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=DigestMethodType)
+Type(ns=3, name=DigestMethodContent98): Sequence
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Other
+        process_contents=Lax
+Type(ns=3, name=DigestMethodType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Algorithm
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=3, name=DigestMethodContent98): Sequence
+            any
+                min_occurs=0
+                max_occurs=Unbounded
+                namespace=Other
+                process_contents=Lax
+Element(ns=3, name=DigestValue): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=3, name=DigestValueType): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=3, name=DsakeyValueContent124): Sequence
+    element
+        name=P
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Q
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=G
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Y
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=J
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Seed
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=PgenCounter
+        min_occurs=1
+        max_occurs=Bounded(2)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=DsakeyValueContent125): Sequence
+    element
+        name=P
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Q
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=DsakeyValueContent131): Sequence
+    element
+        name=Seed
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=PgenCounter
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeG): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeJ): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeP): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypePgenCounter): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeQ): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeSeed): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=DsakeyValueTypeY): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=3, name=HMACOutputLengthType): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Element(ns=3, name=KeyInfo): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=KeyInfoType)
+Type(ns=3, name=KeyInfoContent99): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=KeyName
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=KeyValue
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=KeyValueType)
+    element
+        name=RetrievalMethod
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=RetrievalMethodType)
+    element
+        name=X509Data
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=X509DataType)
+    element
+        name=PGPData
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=PGPDataType)
+    element
+        name=SPKIData
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SPKIDataType)
+    element
+        name=MgmtData
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=KeyInfoType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Unbounded
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=KeyInfoContent99): Choice
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+            element
+                name=KeyName
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=KeyValue
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=KeyValueType)
+            element
+                name=RetrievalMethod
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=RetrievalMethodType)
+            element
+                name=X509Data
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=X509DataType)
+            element
+                name=PGPData
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=PGPDataType)
+            element
+                name=SPKIData
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SPKIDataType)
+            element
+                name=MgmtData
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=KeyName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=KeyValue): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=KeyValueType)
+Type(ns=3, name=KeyValueContent100): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=DSAKeyValue
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=DSAKeyValueType)
+    element
+        name=RSAKeyValue
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=RSAKeyValueType)
+Type(ns=3, name=KeyValueType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=KeyValueContent100): Choice
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+            element
+                name=DSAKeyValue
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=DSAKeyValueType)
+            element
+                name=RSAKeyValue
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=RSAKeyValueType)
+Element(ns=3, name=Manifest): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=ManifestType)
+Type(ns=3, name=ManifestContent121): Sequence
+    element
+        name=Reference
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=ReferenceType)
+Type(ns=3, name=ManifestType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=ManifestContent121): Sequence
+            element
+                name=Reference
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=ReferenceType)
+Element(ns=3, name=MgmtData): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=Object): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=ObjectType)
+Type(ns=3, name=ObjectContent120): Sequence
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Any
+        process_contents=Lax
+Type(ns=3, name=ObjectType): ComplexType
+    base=None
+    min_occurs=0
+    max_occurs=Unbounded
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    attribute
+        name=MimeType
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    attribute
+        name=Encoding
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=ObjectContent120): Sequence
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Any
+                process_contents=Lax
+Element(ns=3, name=PGPData): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=PGPDataType)
+Type(ns=3, name=PGPDataType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=PgpdataContent112): Choice
+            any
+                min_occurs=0
+                max_occurs=Unbounded
+                namespace=Other
+                process_contents=Lax
+            element
+                name=PGPKeyID
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=PGPKeyPacket
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Type(ns=3, name=PgpdataContent112): Choice
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Other
+        process_contents=Lax
+    element
+        name=PGPKeyID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=PGPKeyPacket
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=PgpdataContent113): Sequence
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Other
+        process_contents=Lax
+    element
+        name=PGPKeyID
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=PGPKeyPacket
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=PgpdataContent116): Sequence
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Other
+        process_contents=Lax
+    element
+        name=PGPKeyPacket
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=3, name=PgpdataTypePgpkeyID): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=PgpdataTypePgpkeyPacket): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=RSAKeyValue): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=RSAKeyValueType)
+Type(ns=3, name=RSAKeyValueType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=RsakeyValueContent134): Sequence
+            element
+                name=Modulus
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=Exponent
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=Reference): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=ReferenceType)
+Type(ns=3, name=ReferenceContent94): Sequence
+    element
+        name=Transforms
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=TransformsType)
+    element
+        name=DigestMethod
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=DigestMethodType)
+    element
+        name=DigestValue
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=ReferenceType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    attribute
+        name=URI
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    attribute
+        name=Type
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=ReferenceContent94): Sequence
+            element
+                name=Transforms
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=TransformsType)
+            element
+                name=DigestMethod
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=DigestMethodType)
+            element
+                name=DigestValue
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=RetrievalMethod): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=RetrievalMethodType)
+Type(ns=3, name=RetrievalMethodContent101): Sequence
+    element
+        name=Transforms
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=TransformsType)
+Type(ns=3, name=RetrievalMethodType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=URI
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    attribute
+        name=Type
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=RetrievalMethodContent101): Sequence
+            element
+                name=Transforms
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=TransformsType)
+Type(ns=3, name=RsakeyValueContent134): Sequence
+    element
+        name=Modulus
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=Exponent
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=3, name=RsakeyValueTypeExponent): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=RsakeyValueTypeModulus): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=SPKIData): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SPKIDataType)
+Type(ns=3, name=SPKIDataType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Unbounded
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=SpkidataContent118): Sequence
+            any
+                min_occurs=0
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+            element
+                name=SPKISexp
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=Signature): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignatureType)
+Type(ns=3, name=SignatureContent89): Sequence
+    element
+        name=SignedInfo
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignedInfoType)
+    element
+        name=SignatureValue
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureValueType)
+    element
+        name=KeyInfo
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=KeyInfoType)
+    element
+        name=Object
+        min_occurs=0
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=ObjectType)
+Element(ns=3, name=SignatureMethod): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignatureMethodType)
+Type(ns=3, name=SignatureMethodContent92): Sequence
+    any
+        min_occurs=0
+        max_occurs=Unbounded
+        namespace=Other
+        process_contents=Strict
+    element
+        name=HMACOutputLength
+        min_occurs=0
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+Type(ns=3, name=SignatureMethodType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Algorithm
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=3, name=SignatureMethodContent92): Sequence
+            any
+                min_occurs=0
+                max_occurs=Unbounded
+                namespace=Other
+                process_contents=Strict
+            element
+                name=HMACOutputLength
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+Element(ns=3, name=SignatureMethodTypeHmacoutputLength): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)
+Element(ns=3, name=SignatureProperties): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignaturePropertiesType)
+Type(ns=3, name=SignaturePropertiesContent122): Sequence
+    element
+        name=SignatureProperty
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=SignaturePropertyType)
+Type(ns=3, name=SignaturePropertiesType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=SignaturePropertiesContent122): Sequence
+            element
+                name=SignatureProperty
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=SignaturePropertyType)
+Element(ns=3, name=SignatureProperty): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignaturePropertyType)
+Type(ns=3, name=SignaturePropertyContent123): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+Type(ns=3, name=SignaturePropertyType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Unbounded
+    is_dynamic=false
+    attribute
+        name=Target
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=SignaturePropertyContent123): Choice
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+Type(ns=3, name=SignatureType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=SignatureContent89): Sequence
+            element
+                name=SignedInfo
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignedInfoType)
+            element
+                name=SignatureValue
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureValueType)
+            element
+                name=KeyInfo
+                min_occurs=0
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=KeyInfoType)
+            element
+                name=Object
+                min_occurs=0
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=ObjectType)
+Element(ns=3, name=SignatureValue): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignatureValueType)
+Type(ns=3, name=SignatureValueType): ComplexType
+    base=Extension(BuildIn(ns=default, name=String))
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=BuildIn(ns=default, name=String): BuildIn
+            type=String
+Element(ns=3, name=SignedInfo): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=SignedInfoType)
+Type(ns=3, name=SignedInfoContent90): Sequence
+    element
+        name=CanonicalizationMethod
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=CanonicalizationMethodType)
+    element
+        name=SignatureMethod
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=SignatureMethodType)
+    element
+        name=Reference
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=ReferenceType)
+Type(ns=3, name=SignedInfoType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    attribute
+        name=Id
+        type=BuildIn(ns=default, name=String)
+        use=Optional
+        default=None
+    content
+        type=Type(ns=3, name=SignedInfoContent90): Sequence
+            element
+                name=CanonicalizationMethod
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=CanonicalizationMethodType)
+            element
+                name=SignatureMethod
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=Type(ns=3, name=SignatureMethodType)
+            element
+                name=Reference
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=ReferenceType)
+Type(ns=3, name=SpkidataContent118): Sequence
+    any
+        min_occurs=0
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=SPKISexp
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Element(ns=3, name=SpkidataTypeSpkisexp): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=Transform): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=TransformType)
+Type(ns=3, name=TransformContent96): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=XPath
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=TransformType): ComplexType
+    base=None
+    min_occurs=0
+    max_occurs=Unbounded
+    is_dynamic=false
+    attribute
+        name=Algorithm
+        type=BuildIn(ns=default, name=String)
+        use=Required
+        default=None
+    content
+        type=Type(ns=3, name=TransformContent96): Choice
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+            element
+                name=XPath
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=TransformTypeXpath): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=Transforms): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=TransformsType)
+Type(ns=3, name=TransformsContent95): Sequence
+    element
+        name=Transform
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=TransformType)
+Type(ns=3, name=TransformsType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=TransformsContent95): Sequence
+            element
+                name=Transform
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=TransformType)
+Element(ns=3, name=X509Data): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=X509DataType)
+Type(ns=3, name=X509DataContent102): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=X509IssuerSerial
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=Type(ns=3, name=X509IssuerSerialType)
+    element
+        name=X509SKI
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509SubjectName
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509Certificate
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509CRL
+        min_occurs=1
+        max_occurs=Unbounded
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=X509DataContent103): Choice
+    any
+        min_occurs=1
+        max_occurs=Bounded(1)
+        namespace=Other
+        process_contents=Lax
+    element
+        name=X509IssuerSerial
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=Type(ns=3, name=X509IssuerSerialType)
+    element
+        name=X509SKI
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509SubjectName
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509Certificate
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509CRL
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+Type(ns=3, name=X509DataType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Unbounded
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=X509DataContent102): Choice
+            any
+                min_occurs=1
+                max_occurs=Bounded(1)
+                namespace=Other
+                process_contents=Lax
+            element
+                name=X509IssuerSerial
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=Type(ns=3, name=X509IssuerSerialType)
+            element
+                name=X509SKI
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=X509SubjectName
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=X509Certificate
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=X509CRL
+                min_occurs=1
+                max_occurs=Unbounded
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+Element(ns=3, name=X509DataTypeX509Certificate): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=X509DataTypeX509Crl): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=X509DataTypeX509IssuerSerial): Reference
+    min=1
+    max=Bounded(1)
+    type=Type(ns=3, name=X509IssuerSerialType)
+Element(ns=3, name=X509DataTypeX509Ski): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=X509DataTypeX509SubjectName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Type(ns=3, name=X509IssuerSerialContent109): Sequence
+    element
+        name=X509IssuerName
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=String)
+    element
+        name=X509SerialNumber
+        min_occurs=1
+        max_occurs=Bounded(1)
+        element_type=Element
+        type=BuildIn(ns=default, name=i32)
+Type(ns=3, name=X509IssuerSerialType): ComplexType
+    base=None
+    min_occurs=1
+    max_occurs=Bounded(1)
+    is_dynamic=false
+    content
+        type=Type(ns=3, name=X509IssuerSerialContent109): Sequence
+            element
+                name=X509IssuerName
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=String)
+            element
+                name=X509SerialNumber
+                min_occurs=1
+                max_occurs=Bounded(1)
+                element_type=Element
+                type=BuildIn(ns=default, name=i32)
+Element(ns=3, name=X509IssuerSerialTypeX509IssuerName): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=String)
+Element(ns=3, name=X509IssuerSerialTypeX509SerialNumber): Reference
+    min=1
+    max=Bounded(1)
+    type=BuildIn(ns=default, name=i32)

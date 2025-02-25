@@ -43,9 +43,9 @@ where
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
 
     // For debugging purposes enable the following lines
-    // config.parser.debug_output = Some("schemas.log".into());
-    // config.interpreter.debug_output = Some("interpreter.log".into());
-    // config.optimizer.debug_output = Some("optimizer.log".into());
+    config.parser.debug_output = Some("schemas.log".into());
+    config.interpreter.debug_output = Some("interpreter.log".into());
+    config.optimizer.debug_output = Some("optimizer.log".into());
 
     let actual = generate(config).unwrap();
     let actual_str = fmt_code(&actual.to_string());
