@@ -16,7 +16,7 @@ use tracing::instrument;
 use crate::types::{Ident, IdentType, Type, Types};
 
 pub use self::error::Error;
-pub use self::misc::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, TypedefMode};
+pub use self::misc::{BoxFlags, GenerateFlags, SerdeSupport, TypedefMode};
 
 use self::data::TypeData;
 use self::helper::Walk;
@@ -43,7 +43,6 @@ pub struct Generator<'types> {
     derive: Vec<Ident2>,
     postfixes: [String; 8],
     box_flags: BoxFlags,
-    content_mode: ContentMode,
     typedef_mode: TypedefMode,
     serde_support: SerdeSupport,
     generate_flags: GenerateFlags,
@@ -76,7 +75,6 @@ impl<'types> Generator<'types> {
                 String::new(),               // Enumeration = 7
             ],
             box_flags: BoxFlags::AUTO,
-            content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate_flags: GenerateFlags::empty(),
@@ -145,13 +143,6 @@ impl<'types> Generator<'types> {
     /// Set the [`BoxFlags`] flags the generator should use for generating the code.
     pub fn box_flags(mut self, value: BoxFlags) -> Self {
         self.box_flags = value;
-
-        self
-    }
-
-    /// Set the [`ContentMode`] value the generator should use for generating the code.
-    pub fn content_mode(mut self, value: ContentMode) -> Self {
-        self.content_mode = value;
 
         self
     }

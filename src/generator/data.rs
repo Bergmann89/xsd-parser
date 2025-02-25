@@ -559,8 +559,7 @@ pub(super) struct ComplexTypeData<'a, 'types> {
     pub inner: TypeData<'a, 'types>,
 
     pub occurs: Occurs,
-    pub source_mode: TypeMode,
-    pub target_mode: TypeMode,
+    pub type_mode: TypeMode,
     pub content_ident: Ident2,
 
     pub trait_impls: Vec<TraitData>,
@@ -611,13 +610,10 @@ pub(super) struct AttributeData<'types> {
 impl<'a, 'types> ComplexTypeData<'a, 'types> {
     #[instrument(err, level = "trace", skip(inner))]
     fn new_all(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let target_mode = inner.target_mode(TypeMode::All);
-
         Self::new(
             TypeInfoData::Group(ty),
             inner,
             TypeMode::All,
-            target_mode,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -629,13 +625,10 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
 
     #[instrument(err, level = "trace", skip(inner))]
     fn new_choice(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let target_mode = inner.target_mode(TypeMode::Choice);
-
         Self::new(
             TypeInfoData::Group(ty),
             inner,
             TypeMode::Choice,
-            target_mode,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -647,13 +640,10 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
 
     #[instrument(err, level = "trace", skip(inner))]
     fn new_sequence(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let target_mode = inner.target_mode(TypeMode::Sequence);
-
         Self::new(
             TypeInfoData::Group(ty),
             inner,
             TypeMode::Sequence,
-            target_mode,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -668,47 +658,31 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         ty: &'types ComplexInfo,
         inner: TypeData<'a, 'types>,
     ) -> Result<Self, Error> {
-        let (source_mode, target_mode, elements, any_element) = match ty
+        let (type_mode, elements, any_element) = match ty
             .content
             .as_ref()
             .and_then(|ident| inner.types.get_resolved(ident))
         {
-            None => (TypeMode::Sequence, TypeMode::Sequence, &[][..], None),
-            Some(Type::All(si)) => (
-                TypeMode::All,
-                inner.target_mode(TypeMode::All),
-                &si.elements[..],
-                si.any.as_ref(),
-            ),
-            Some(Type::Choice(si)) => (
-                TypeMode::Choice,
-                inner.target_mode(TypeMode::Choice),
-                &si.elements[..],
-                si.any.as_ref(),
-            ),
-            Some(Type::Sequence(si)) => (
-                TypeMode::Sequence,
-                inner.target_mode(TypeMode::Sequence),
-                &si.elements[..],
-                si.any.as_ref(),
-            ),
+            None => (TypeMode::Sequence, &[][..], None),
+            Some(Type::All(si)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
+            Some(Type::Choice(si)) => (TypeMode::Choice, &si.elements[..], si.any.as_ref()),
+            Some(Type::Sequence(si)) => (TypeMode::Sequence, &si.elements[..], si.any.as_ref()),
             Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_)) => {
-                (TypeMode::Simple, TypeMode::Simple, &[][..], None)
+                (TypeMode::Simple, &[][..], None)
             }
             x => {
                 let ident = &inner.current_type_ref().type_ident;
 
                 tracing::warn!("Complex type has unexpected content: ident={ident}, ty={ty:#?}, content={x:#?}!");
 
-                (TypeMode::Sequence, TypeMode::Sequence, &[][..], None)
+                (TypeMode::Sequence, &[][..], None)
             }
         };
 
         Self::new(
             TypeInfoData::Complex(ty),
             inner,
-            source_mode,
-            target_mode,
+            type_mode,
             ty.min_occurs,
             ty.max_occurs,
             &ty.attributes,
@@ -723,8 +697,7 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
     fn new(
         ty: TypeInfoData<'types>,
         mut inner: TypeData<'a, 'types>,
-        source_mode: TypeMode,
-        target_mode: TypeMode,
+        type_mode: TypeMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
@@ -732,14 +705,8 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         elements: &'types [ElementInfo],
         any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
-        let (occurs, elements) = make_element_data(
-            &mut inner,
-            elements,
-            min_occurs,
-            max_occurs,
-            source_mode,
-            target_mode,
-        )?;
+        let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let elements = make_element_data(&mut inner, elements)?;
         let attributes = make_attribute_data(&mut inner, attributes)?;
 
         let trait_impls = make_trait_impls(&mut inner)?;
@@ -747,15 +714,14 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         let type_ident = &type_ref.type_ident;
         let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")), None);
 
-        let simple_content = make_simple_content_data(&ty, &mut inner, target_mode)?;
+        let simple_content = make_simple_content_data(&ty, &mut inner, type_mode)?;
 
         Ok(Self {
             ty,
             inner,
 
             occurs,
-            source_mode,
-            target_mode,
+            type_mode,
             content_ident,
 
             trait_impls,
@@ -804,9 +770,9 @@ impl Deref for AttributeData<'_> {
 fn make_simple_content_data<'types>(
     ty: &TypeInfoData<'types>,
     inner: &mut TypeData<'_, 'types>,
-    target_mode: TypeMode,
+    type_mode: TypeMode,
 ) -> Result<Option<SimpleContentData<'types>>, Error> {
-    if target_mode != TypeMode::Simple {
+    if type_mode != TypeMode::Simple {
         return Ok(None);
     }
 
@@ -830,41 +796,13 @@ fn make_simple_content_data<'types>(
 fn make_element_data<'types>(
     inner: &mut TypeData<'_, 'types>,
     elements: &'types [ElementInfo],
-    min_occurs: MinOccurs,
-    max_occurs: MaxOccurs,
-    source_mode: TypeMode,
-    target_mode: TypeMode,
-) -> Result<(Occurs, Vec<ElementData<'types>>), Error> {
-    let mut min = None;
-    let mut max = None;
-
-    let elements = elements
+) -> Result<Vec<ElementData<'types>>, Error> {
+    elements
         .iter()
         .filter_map(|element| {
-            let mut occurs = Occurs::from_occurs(element.min_occurs, element.max_occurs);
+            let occurs = Occurs::from_occurs(element.min_occurs, element.max_occurs);
             if occurs == Occurs::None {
                 return None;
-            }
-
-            match source_mode {
-                TypeMode::Choice => {
-                    let min = min.get_or_insert(element.min_occurs);
-                    let max = max.get_or_insert(element.max_occurs);
-
-                    *min = (*min).min(element.min_occurs);
-                    *max = (*max).max(element.max_occurs);
-
-                    if matches!(target_mode, TypeMode::All | TypeMode::Sequence)
-                        && occurs == Occurs::Single
-                    {
-                        occurs = Occurs::Optional;
-                    }
-                }
-                TypeMode::All | TypeMode::Sequence => {
-                    *min.get_or_insert(0) += element.min_occurs;
-                    *max.get_or_insert(MaxOccurs::Bounded(0)) += element.max_occurs;
-                }
-                TypeMode::Simple => crate::unreachable!(),
             }
 
             let current_module = inner.current_module();
@@ -896,15 +834,7 @@ fn make_element_data<'types>(
                 target_is_complex,
             }))
         })
-        .collect::<Result<_, _>>()?;
-
-    let occurs = match (min, max) {
-        (None, None) => Occurs::None,
-        (Some(min), Some(max)) => Occurs::from_occurs(min_occurs * min, max_occurs * max),
-        (_, _) => crate::unreachable!(),
-    };
-
-    Ok((occurs, elements))
+        .collect::<Result<_, _>>()
 }
 
 fn is_dynamic(ident: &Ident, types: &Types) -> bool {

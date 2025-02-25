@@ -131,59 +131,6 @@ bitflags! {
     }
 }
 
-/// Tells the [`Generator`](super::Generator) what type should be generated for
-/// the content of an XML element.
-#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
-pub enum ContentMode {
-    /// The mode is selected depending on the type definition of the element.
-    /// `xs:choice` types will be rendered as enum, `xs:all` and `xs:sequence`
-    /// types will be rendered as struct.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/content_mode/schema.xsd")]
-    /// ```
-    ///
-    /// If the content mode is set to [`ContentMode::Auto`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/content_mode/expected/auto.rs")]
-    /// ```
-    #[default]
-    Auto,
-
-    /// The content of a XML element is always rendered as enum.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/content_mode/schema.xsd")]
-    /// ```
-    ///
-    /// If the content mode is set to [`ContentMode::Enum`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/content_mode/expected/enum.rs")]
-    /// ```
-    Enum,
-
-    /// The content of a XML element is always rendered as struct.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/content_mode/schema.xsd")]
-    /// ```
-    ///
-    /// If the content mode is set to [`ContentMode::Struct`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/content_mode/expected/struct.rs")]
-    /// ```
-    Struct,
-}
-
 /// Tells the [`Generator`](super::Generator) how to deal with type definitions.
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
 pub enum TypedefMode {

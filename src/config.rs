@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use bitflags::bitflags;
 use url::Url;
 
-pub use crate::generator::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, TypedefMode};
+pub use crate::generator::{BoxFlags, GenerateFlags, SerdeSupport, TypedefMode};
 pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
@@ -103,9 +103,6 @@ pub struct GeneratorConfig {
 
     /// Tell the generator how to deal with boxing.
     pub box_flags: BoxFlags,
-
-    /// Tell the generator what type should be generated for the content of an XML element.
-    pub content_mode: ContentMode,
 
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
@@ -371,13 +368,6 @@ impl Config {
         self
     }
 
-    /// Set the content mode for the generator.
-    pub fn with_content_mode(mut self, mode: ContentMode) -> Self {
-        self.generator.content_mode = mode;
-
-        self
-    }
-
     /// Set the typedef mode for the generator.
     pub fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
         self.generator.typedef_mode = mode;
@@ -447,7 +437,6 @@ impl Default for GeneratorConfig {
             type_postfix: TypePostfix::default(),
             dyn_type_traits: None,
             box_flags: BoxFlags::AUTO,
-            content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate: Generate::All,

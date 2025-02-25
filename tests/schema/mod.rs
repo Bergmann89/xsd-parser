@@ -1,4 +1,4 @@
-#![allow(missing_docs, unreachable_pub)]
+#![allow(missing_docs, unused_variables, unreachable_pub)]
 
 mod all;
 mod any;

@@ -492,7 +492,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
     /* Deserializer Type */
 
     fn render_deserializer_type(&self) -> TokenStream {
-        match self.target_mode {
+        match self.type_mode {
             TypeMode::Choice => self.render_deserializer_type_enum(),
             TypeMode::Simple | TypeMode::All | TypeMode::Sequence => {
                 self.render_deserializer_type_struct()
@@ -581,10 +581,10 @@ impl ComplexTypeImpl<'_, '_, '_> {
             return TokenStream::new();
         }
 
-        match self.target_mode {
+        match self.type_mode {
             TypeMode::All | TypeMode::Choice => self.render_deserializer_state_type_choice(),
             TypeMode::Sequence => self.render_deserializer_state_type_sequence(),
-            TypeMode::Simple => crate::unreachable!(),
+            TypeMode::Simple => TokenStream::new(),
         }
     }
 
@@ -762,7 +762,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             }
         });
 
-        let content_finish = match self.target_mode {
+        let content_finish = match self.type_mode {
             TypeMode::Simple => {
                 quote! {
                     content: None,
@@ -788,7 +788,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         };
 
         let state_finish = self.elements.is_empty().not().then(|| {
-            let state = match self.target_mode {
+            let state = match self.type_mode {
                 TypeMode::Simple => crate::unreachable!(),
                 TypeMode::All | TypeMode::Choice => quote!(#state_ident::Next__),
                 TypeMode::Sequence => {
@@ -837,12 +837,12 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = self.type_ident;
         let xsd_parser = &self.xsd_parser_crate;
 
-        let fn_impl = if self.target_mode == TypeMode::Simple {
+        let fn_impl = if self.type_mode == TypeMode::Simple {
             self.render_deserializer_fn_init_simple()
         } else if self.is_static_complex {
             self.render_deserializer_fn_init_complex()
         } else {
-            match self.target_mode {
+            match self.type_mode {
                 TypeMode::All | TypeMode::Choice => self.render_deserializer_fn_init_enum(),
                 TypeMode::Sequence => self.render_deserializer_fn_init_struct(),
                 TypeMode::Simple => crate::unreachable!(),
@@ -997,7 +997,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
         let type_ident = self.type_ident;
         let xsd_parser = &self.xsd_parser_crate;
 
-        let fn_impl = match self.target_mode {
+        let fn_impl = match self.type_mode {
             TypeMode::All | TypeMode::Choice => self.render_deserializer_fn_next_enum(),
             TypeMode::Sequence => self.render_deserializer_fn_next_struct(),
             TypeMode::Simple => self.render_deserializer_fn_next_simple(),
@@ -1493,7 +1493,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
 
         let attributes_finish = self.attributes.iter().map(render_attrib);
 
-        let finish_impl = match self.target_mode {
+        let finish_impl = match self.type_mode {
             TypeMode::Choice => {
                 let content_finish = match self.occurs {
                     Occurs::None => None,
@@ -1556,7 +1556,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
     fn render_setter(&self, element: &ElementImpl<'_, '_>) -> TokenStream {
         let name = &element.b_name;
 
-        match self.target_mode {
+        match self.type_mode {
             TypeMode::Choice => {
                 let content_ident = &self.content_ident;
                 let variant_ident = &element.variant_ident;

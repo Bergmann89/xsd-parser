@@ -225,7 +225,6 @@ pub fn exec_generator(
 
     let mut generator = Generator::new(types)
         .box_flags(config.box_flags)
-        .content_mode(config.content_mode)
         .typedef_mode(config.typedef_mode)
         .serde_support(config.serde_support)
         .xsd_parser_crate(config.xsd_parser)
