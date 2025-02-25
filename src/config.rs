@@ -263,10 +263,10 @@ bitflags! {
         /// See [`convert_dynamic_to_choice`](crate::Optimizer::convert_dynamic_to_choice) for details.
         const CONVERT_DYNAMIC_TO_CHOICE = 1 << 5;
 
-        /// Whether to flatten the content of an element or not.
+        /// Whether to flatten the content of complex types or not.
         ///
-        /// See [`flatten_element_content`](crate::Optimizer::flatten_element_content) for details.
-        const FLATTEN_ELEMENT_CONTENT = 1 << 6;
+        /// See [`flatten_complex_types`](crate::Optimizer::flatten_complex_types) for details.
+        const FLATTEN_COMPLEX_TYPES = 1 << 6;
 
         /// Whether to flatten unions or not.
         ///
@@ -290,7 +290,7 @@ bitflags! {
 
         /// Group that contains all necessary optimization that should be applied
         /// if code with [`serde`] support should be rendered.
-        const SERDE =  Self::FLATTEN_ELEMENT_CONTENT.bits()
+        const SERDE =  Self::FLATTEN_COMPLEX_TYPES.bits()
             | Self::FLATTEN_UNIONS.bits()
             | Self::MERGE_ENUM_UNIONS.bits();
     }

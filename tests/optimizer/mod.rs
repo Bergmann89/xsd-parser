@@ -74,13 +74,13 @@ fn convert_dynamic_to_choice() {
 }
 
 #[test]
-fn flatten_element_content() {
+fn flatten_complex_types() {
     optimizer_test(
         "tests/optimizer/complex_flatten.xsd",
-        "tests/optimizer/expected0/flatten_element_content.rs",
-        "tests/optimizer/expected1/flatten_element_content.rs",
+        "tests/optimizer/expected0/flatten_complex_types.rs",
+        "tests/optimizer/expected1/flatten_complex_types.rs",
         [(IdentType::Type, "tns:MyComplexType")],
-        OptimizerFlags::FLATTEN_ELEMENT_CONTENT,
+        OptimizerFlags::FLATTEN_COMPLEX_TYPES,
     )
 }
 
