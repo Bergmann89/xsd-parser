@@ -131,3 +131,14 @@ fn remove_duplicates() {
         OptimizerFlags::REMOVE_DUPLICATES,
     );
 }
+
+#[test]
+fn merge_choice_cardinalities() {
+    optimizer_test(
+        "tests/optimizer/complex_choice.xsd",
+        "tests/optimizer/expected0/merge_choice_cardinalities.rs",
+        "tests/optimizer/expected1/merge_choice_cardinalities.rs",
+        [(IdentType::Type, "tns:MyComplexType")],
+        OptimizerFlags::MERGE_CHOICE_CARDINALITIES,
+    );
+}

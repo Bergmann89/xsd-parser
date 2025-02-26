@@ -5,6 +5,7 @@ mod empty_enums;
 mod empty_unions;
 mod flatten_complex_type;
 mod flatten_unions;
+mod merge_choice_cardinality;
 mod merge_enum_unions;
 mod misc;
 mod remove_duplicates;
@@ -46,6 +47,12 @@ pub enum Error {
     /// Is raised if a type is expected to be a union, but it is not.
     #[error("The type is not a union type: {0}!")]
     ExpectedUnion(Ident),
+
+    /// The type is not a complex choice type.
+    ///
+    /// Is raised if a type is expected to be a complex choice, but it is not.
+    #[error("The type is not a complex choice type: {0}!")]
+    ExpectedComplexChoice(Ident),
 
     /// The type is not a complex type.
     ///

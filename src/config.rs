@@ -293,6 +293,11 @@ bitflags! {
         const SERDE =  Self::FLATTEN_COMPLEX_TYPES.bits()
             | Self::FLATTEN_UNIONS.bits()
             | Self::MERGE_ENUM_UNIONS.bits();
+
+        /// Wether to merge the cardinality of a complex choice type or not.
+        ///
+        /// See [`merge_choice_cardinalities`](crate::Optimizer::merge_choice_cardinalities) for details.
+        const MERGE_CHOICE_CARDINALITIES = 1 << 11;
     }
 }
 

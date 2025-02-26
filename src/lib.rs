@@ -197,6 +197,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
     exec!(REMOVE_DUPLICATES, remove_duplicates);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
+    exec!(MERGE_CHOICE_CARDINALITIES, merge_choice_cardinalities);
 
     let types = optimizer.finish();
 

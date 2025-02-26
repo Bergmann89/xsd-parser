@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+
+    <xs:complexType name="MyComplexType">
+        <xs:choice>
+            <xs:element name="ElementA" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="ElementB" type="xs:int" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="ElementC" type="xs:boolean" />
+            <xs:element name="ElementD" type="xs:string" minOccurs="0" />
+            <xs:element name="ElementE" type="xs:int" minOccurs="0" />
+            <xs:element name="ElementF" type="xs:string" />
+            <xs:element name="ElementG" type="xs:int" maxOccurs="unbounded" />
+        </xs:choice>
+    </xs:complexType>
+</xs:schema>
