@@ -242,7 +242,10 @@ impl TypeRenderer {
             .elements
             .iter()
             .map(|element| element.render_choice_variant(data.occurs.is_direct(), data));
-        if data.attributes.is_empty() && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT) {
+        if data.attributes.is_empty()
+            && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT)
+            && data.occurs == Occurs::Single
+        {
             let code = quote! {
                 #derive
                 pub enum #type_ident {
@@ -272,11 +275,11 @@ impl TypeRenderer {
 
         // If we have attributes and content, we render a struct containing the
         // attributes and a enum containing the content.
-        let serde = data
-            .serde_support
-            .is_none()
-            .not()
-            .then(|| quote!(#[serde(rename = "$value")]));
+        let serde = data.serde_support.is_none().not().then(|| {
+            let default = (data.min_occurs == 0).then(|| quote!(default,));
+
+            quote!(#[serde(#default rename = "$value")])
+        });
         let code = quote! {
             #derive
             pub struct #type_ident {
