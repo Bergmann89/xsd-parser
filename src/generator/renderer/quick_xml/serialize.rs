@@ -109,7 +109,7 @@ impl QuickXmlRenderer {
                     for item in &self.0 {
                         if let Some(bytes) = item.serialize_bytes()? {
                             if !data.is_empty() {
-                                data.push_str(" ");
+                                data.push(' ');
                             }
 
                             data.push_str(&bytes);
