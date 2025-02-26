@@ -294,6 +294,7 @@ where
             None => T::Deserializer::init(self.reader, event),
             Some(b) => b.next(self.reader, event),
         };
+        let ret = self.reader.map_result(ret);
 
         let DeserializerOutput {
             data,

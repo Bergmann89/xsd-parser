@@ -191,12 +191,13 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
     exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
     exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
     exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
-    exec!(FLATTEN_ELEMENT_CONTENT, flatten_element_content);
+    exec!(FLATTEN_COMPLEX_TYPES, flatten_complex_types);
     exec!(FLATTEN_UNIONS, flatten_unions);
     exec!(MERGE_ENUM_UNIONS, merge_enum_unions);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
     exec!(REMOVE_DUPLICATES, remove_duplicates);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
+    exec!(MERGE_CHOICE_CARDINALITIES, merge_choice_cardinalities);
 
     let types = optimizer.finish();
 
@@ -225,7 +226,6 @@ pub fn exec_generator(
 
     let mut generator = Generator::new(types)
         .box_flags(config.box_flags)
-        .content_mode(config.content_mode)
         .typedef_mode(config.typedef_mode)
         .serde_support(config.serde_support)
         .xsd_parser_crate(config.xsd_parser)

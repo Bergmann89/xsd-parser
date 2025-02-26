@@ -192,7 +192,7 @@ impl TypeRenderer {
             .map(|attrib| attrib.render_field(&type_ident, data));
 
         // If the target mode for the content is `Simple` it will generate a simple content sequence.
-        if matches!(data.target_mode, TypeMode::Simple) {
+        if matches!(data.type_mode, TypeMode::Simple) {
             let content_type = &data.simple_content.as_ref().map(|x| &x.target_type);
 
             let serde = match data.serde_support {
@@ -216,8 +216,8 @@ impl TypeRenderer {
             return data.add_code(code);
         }
 
-        // If the target mode for the content is `Sequence` we will generate a sequence.
-        if matches!(data.target_mode, TypeMode::All | TypeMode::Sequence) {
+        // If the target mode for the content is `All` or `Sequence` we will generate a sequence.
+        if matches!(data.type_mode, TypeMode::All | TypeMode::Sequence) {
             let elements = data
                 .elements
                 .iter()
@@ -480,8 +480,8 @@ impl AttributeData<'_> {
 impl ElementData<'_> {
     fn render_sequence_field(&self, generator: &Generator<'_>) -> TokenStream {
         let field_ident = &self.field_ident;
-        let need_indirection =
-            self.need_box || generator.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
+        let force_box = generator.box_flags.contains(BoxFlags::STRUCT_ELEMENTS);
+        let need_indirection = self.need_box || force_box;
         let target_type = self
             .occurs
             .make_type(&self.target_type, need_indirection)
@@ -508,18 +508,9 @@ impl ElementData<'_> {
 
     fn render_choice_variant(&self, is_direct: bool, data: &TypeData<'_, '_>) -> TokenStream {
         let force_box = data.box_flags.contains(BoxFlags::ENUM_ELEMENTS);
-        let need_box = is_direct
-            && (force_box
-                || data
-                    .current_type_ref()
-                    .boxed_elements
-                    .contains(&self.element.ident));
+        let need_indirection = (is_direct && self.need_box) || force_box;
         let variant_ident = &self.variant_ident;
-        let mut target_type = self.target_type.clone();
-
-        if need_box {
-            target_type = quote!(Box<#target_type>);
-        }
+        let target_type = self.occurs.make_type(&self.target_type, need_indirection);
 
         let serde = match data.serde_support {
             SerdeSupport::None => None,

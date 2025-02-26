@@ -109,7 +109,7 @@ impl QuickXmlRenderer {
                     for item in &self.0 {
                         if let Some(bytes) = item.serialize_bytes()? {
                             if !data.is_empty() {
-                                data.push_str(" ");
+                                data.push(' ');
                             }
 
                             data.push_str(&bytes);
@@ -353,7 +353,7 @@ impl ComplexTypeImpl<'_, '_, '_> {
             quote!(#state_ident::Done__)
         };
 
-        let (handle_state_init, handle_state_variants) = match self.target_mode {
+        let (handle_state_init, handle_state_variants) = match self.type_mode {
             TypeMode::Choice => self.render_serializer_fn_next_enum(&end_state),
             TypeMode::All | TypeMode::Sequence => self.render_serializer_fn_next_struct(&end_state),
             TypeMode::Simple => self.render_serializer_fn_next_simple(&end_state),

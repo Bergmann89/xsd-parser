@@ -104,6 +104,18 @@ impl TypeEq for GroupInfo {
 
 impl ComplexInfo {
     /// Returns `true` if the content of this complex type information
+    /// is a [`Type::Choice`], `false` otherwise.
+    #[must_use]
+    pub fn has_complex_choice_content(&self, types: &Types) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved(ident)),
+            Some(Type::Choice(_))
+        )
+    }
+
+    /// Returns `true` if the content of this complex type information
     /// is a [`Type::All`], [`Type::Choice`] or [`Type::Sequence`],
     /// `false` otherwise.
     #[must_use]

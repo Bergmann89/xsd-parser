@@ -7,7 +7,7 @@ use tracing::instrument;
 use crate::schema::{xs::Use, NamespaceId};
 use crate::types::{BuildInInfo, ComplexInfo, Ident, Type, Types};
 
-use super::misc::{format_type_ref, format_variant_ident, ContentMode, Occurs, TypeMode, TypeRef};
+use super::misc::{format_type_ref, format_variant_ident, Occurs, TypeRef};
 use super::{Error, GenerateFlags, Generator};
 
 /* Helpers */
@@ -15,14 +15,6 @@ use super::{Error, GenerateFlags, Generator};
 impl Generator<'_> {
     pub(super) fn check_generate_flags(&self, mode: GenerateFlags) -> bool {
         self.generate_flags.intersects(mode)
-    }
-
-    pub(super) fn target_mode(&self, mode: TypeMode) -> TypeMode {
-        match self.content_mode {
-            ContentMode::Auto => mode,
-            ContentMode::Enum => TypeMode::Choice,
-            ContentMode::Struct => TypeMode::All,
-        }
     }
 
     #[instrument(err, level = "trace", skip(self))]

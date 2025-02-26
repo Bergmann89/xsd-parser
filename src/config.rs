@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use bitflags::bitflags;
 use url::Url;
 
-pub use crate::generator::{BoxFlags, ContentMode, GenerateFlags, SerdeSupport, TypedefMode};
+pub use crate::generator::{BoxFlags, GenerateFlags, SerdeSupport, TypedefMode};
 pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
@@ -103,9 +103,6 @@ pub struct GeneratorConfig {
 
     /// Tell the generator how to deal with boxing.
     pub box_flags: BoxFlags,
-
-    /// Tell the generator what type should be generated for the content of an XML element.
-    pub content_mode: ContentMode,
 
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
@@ -266,10 +263,10 @@ bitflags! {
         /// See [`convert_dynamic_to_choice`](crate::Optimizer::convert_dynamic_to_choice) for details.
         const CONVERT_DYNAMIC_TO_CHOICE = 1 << 5;
 
-        /// Whether to flatten the content of an element or not.
+        /// Whether to flatten the content of complex types or not.
         ///
-        /// See [`flatten_element_content`](crate::Optimizer::flatten_element_content) for details.
-        const FLATTEN_ELEMENT_CONTENT = 1 << 6;
+        /// See [`flatten_complex_types`](crate::Optimizer::flatten_complex_types) for details.
+        const FLATTEN_COMPLEX_TYPES = 1 << 6;
 
         /// Whether to flatten unions or not.
         ///
@@ -293,9 +290,14 @@ bitflags! {
 
         /// Group that contains all necessary optimization that should be applied
         /// if code with [`serde`] support should be rendered.
-        const SERDE =  Self::FLATTEN_ELEMENT_CONTENT.bits()
+        const SERDE =  Self::FLATTEN_COMPLEX_TYPES.bits()
             | Self::FLATTEN_UNIONS.bits()
             | Self::MERGE_ENUM_UNIONS.bits();
+
+        /// Wether to merge the cardinality of a complex choice type or not.
+        ///
+        /// See [`merge_choice_cardinalities`](crate::Optimizer::merge_choice_cardinalities) for details.
+        const MERGE_CHOICE_CARDINALITIES = 1 << 11;
     }
 }
 
@@ -371,13 +373,6 @@ impl Config {
         self
     }
 
-    /// Set the content mode for the generator.
-    pub fn with_content_mode(mut self, mode: ContentMode) -> Self {
-        self.generator.content_mode = mode;
-
-        self
-    }
-
     /// Set the typedef mode for the generator.
     pub fn with_typedef_mode(mut self, mode: TypedefMode) -> Self {
         self.generator.typedef_mode = mode;
@@ -447,7 +442,6 @@ impl Default for GeneratorConfig {
             type_postfix: TypePostfix::default(),
             dyn_type_traits: None,
             box_flags: BoxFlags::AUTO,
-            content_mode: ContentMode::Auto,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate: Generate::All,
