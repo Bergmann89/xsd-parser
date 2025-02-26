@@ -545,3 +545,15 @@ impl NamespaceIdent {
         Self::Namespace(Namespace::from(value))
     }
 }
+
+impl From<Namespace> for NamespaceIdent {
+    fn from(value: Namespace) -> Self {
+        Self::Namespace(value)
+    }
+}
+
+impl From<NamespacePrefix> for NamespaceIdent {
+    fn from(value: NamespacePrefix) -> Self {
+        Self::Prefix(value)
+    }
+}

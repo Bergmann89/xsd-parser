@@ -1,0 +1,29 @@
+#![allow(missing_docs, unused_variables, unreachable_pub)]
+
+mod all;
+mod any;
+mod build_in;
+mod choice;
+mod complex_type_with_group;
+mod dynamic_types;
+mod enumeration;
+mod extension_base;
+mod extension_base_multilayer;
+mod extension_base_two_files;
+mod extension_simple_content;
+mod list;
+mod no_prefix;
+mod numeric_fields;
+mod ref_to_attribute;
+mod sequence;
+mod sequence_with_choice;
+mod shiporder;
+mod simple_content;
+mod simple_type;
+mod static_list;
+mod tuple_with_integer;
+mod tuple_with_string;
+mod tuple_with_vec;
+mod type_name_clash;
+mod union;
+mod xsd_string;

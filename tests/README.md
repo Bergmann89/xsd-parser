@@ -3,7 +3,8 @@
 This module contains mutliple test cases. The test cases are ordered in the following groups:
 - `generator` contains all code generator related tests
 - `optimizer` contains all optimizer related tests
-- `schema` contains general tests for different schemas and XSD structures
+- `feature` contains general tests for different features of the crate
+- `schema` contains test for whole real life example schemas
 
 Within the group directory, each case is a separate module and is located in its own directory. Each test case directory normally contains the following:
 - `mod.rs` test case module with the different tests

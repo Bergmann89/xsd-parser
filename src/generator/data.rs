@@ -559,6 +559,9 @@ pub(super) struct ComplexTypeData<'a, 'types> {
     pub inner: TypeData<'a, 'types>,
 
     pub occurs: Occurs,
+    pub min_occurs: MinOccurs,
+    pub max_occurs: MaxOccurs,
+
     pub type_mode: TypeMode,
     pub content_ident: Ident2,
 
@@ -721,6 +724,9 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
             inner,
 
             occurs,
+            min_occurs,
+            max_occurs,
+
             type_mode,
             content_ident,
 
