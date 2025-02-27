@@ -17,7 +17,7 @@ use super::misc::{
     format_variant_ident, Occurs, TypeMode, TypeRef,
 };
 use super::renderer::{ImplRenderer, QuickXmlRenderer, TypeRenderer};
-use super::{Error, GenerateFlags, Generator, TypedefMode};
+use super::{Error, Generator, GeneratorFlags, TypedefMode};
 
 /* TypeData */
 
@@ -38,11 +38,11 @@ macro_rules! render {
         TypeRenderer.$render(&mut $data);
         ImplRenderer.$render(&mut $data);
 
-        if $data.check_generate_flags(GenerateFlags::QUICK_XML_SERIALIZE) {
+        if $data.check_generator_flags(GeneratorFlags::QUICK_XML_SERIALIZE) {
             QuickXmlRenderer.$render_quick_xml_serialize(&mut $data);
         }
 
-        if $data.check_generate_flags(GenerateFlags::QUICK_XML_DESERIALIZE) {
+        if $data.check_generator_flags(GeneratorFlags::QUICK_XML_DESERIALIZE) {
             QuickXmlRenderer.$render_quick_xml_deserialize(&mut $data);
         }
     };
@@ -163,8 +163,8 @@ impl<'types> TypeData<'_, 'types> {
 
     pub(super) fn add_code(&mut self, code: TokenStream) {
         let ns = self
-            .generate_flags
-            .intersects(GenerateFlags::USE_MODULES)
+            .flags
+            .intersects(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
             .flatten();
         self.modules.add_code(ns, code);
@@ -172,8 +172,8 @@ impl<'types> TypeData<'_, 'types> {
 
     pub(super) fn add_quick_xml_serialize_code(&mut self, code: TokenStream) {
         let ns = self
-            .generate_flags
-            .intersects(GenerateFlags::USE_MODULES)
+            .flags
+            .intersects(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
             .flatten();
         self.modules
@@ -185,8 +185,8 @@ impl<'types> TypeData<'_, 'types> {
 
     pub(super) fn add_quick_xml_deserialize_code(&mut self, code: TokenStream) {
         let ns = self
-            .generate_flags
-            .intersects(GenerateFlags::USE_MODULES)
+            .flags
+            .intersects(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
             .flatten();
         self.modules
@@ -197,8 +197,8 @@ impl<'types> TypeData<'_, 'types> {
     }
 
     pub(super) fn current_module(&self) -> Option<NamespaceId> {
-        self.generate_flags
-            .intersects(GenerateFlags::USE_MODULES)
+        self.flags
+            .intersects(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
             .flatten()
     }

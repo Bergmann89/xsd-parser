@@ -16,19 +16,19 @@ bitflags! {
     /// Different flags that control what code the [`Generator`](super::Generator)
     /// is generating.
     #[derive(Debug, Clone, Copy)]
-    pub struct GenerateFlags: u32 {
+    pub struct GeneratorFlags: u32 {
         /// None of the features are enabled.
         ///
         /// # Examples
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Setting none of the flags will result in the following code:
         /// ```rust
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/empty.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/empty.rs")]
         /// ```
         const NONE = 0;
 
@@ -38,12 +38,12 @@ bitflags! {
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Enable the `USE_MODULES` feature only will result in the following code:
         /// ```rust,ignore
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/use_modules.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/use_modules.rs")]
         /// ```
         const USE_MODULES = 1 << 0;
 
@@ -54,12 +54,12 @@ bitflags! {
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Enable the `FLATTEN_CONTENT` feature only will result in the following code:
         /// ```rust
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/flatten_content.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/flatten_content.rs")]
         /// ```
         const FLATTEN_CONTENT = 1 << 1;
 

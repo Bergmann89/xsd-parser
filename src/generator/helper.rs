@@ -8,13 +8,13 @@ use crate::schema::{xs::Use, NamespaceId};
 use crate::types::{BuildInInfo, ComplexInfo, Ident, Type, Types};
 
 use super::misc::{format_type_ref, format_variant_ident, Occurs, TypeRef};
-use super::{Error, GenerateFlags, Generator};
+use super::{Error, Generator, GeneratorFlags};
 
 /* Helpers */
 
 impl Generator<'_> {
-    pub(super) fn check_generate_flags(&self, mode: GenerateFlags) -> bool {
-        self.generate_flags.intersects(mode)
+    pub(super) fn check_generator_flags(&self, mode: GeneratorFlags) -> bool {
+        self.flags.intersects(mode)
     }
 
     #[instrument(err, level = "trace", skip(self))]

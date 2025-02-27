@@ -13,7 +13,7 @@ use xsd_parser::config::{
     Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
 };
 use xsd_parser::generate;
-use xsd_parser::generator::GenerateFlags;
+use xsd_parser::generator::GeneratorFlags;
 use xsd_parser::types::{BuildInInfo, CustomType, IdentType, Type};
 
 fn main() -> Result<(), Error> {
@@ -69,7 +69,7 @@ fn main() -> Result<(), Error> {
 
     // generator
     config.generator.flags =
-        GenerateFlags::all() - GenerateFlags::QUICK_XML_SERIALIZE - GenerateFlags::USE_MODULES;
+        GeneratorFlags::all() - GeneratorFlags::QUICK_XML_SERIALIZE - GeneratorFlags::USE_MODULES;
     config.generator.xsd_parser = "crate".into();
     config.generator.generate =
         Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);

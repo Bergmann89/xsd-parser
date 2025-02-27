@@ -11,7 +11,7 @@ use crate::types::{ComplexInfo, Ident, Type, Types};
 use crate::Generator;
 
 use super::super::data::{AttributeData, ComplexTypeData, DynamicData, ElementData, TypeInfoData};
-use super::super::misc::{GenerateFlags, Occurs, TypeRef};
+use super::super::misc::{GeneratorFlags, Occurs, TypeRef};
 
 pub(crate) struct QuickXmlRenderer;
 
@@ -115,7 +115,7 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
         let has_simple_content =
             matches!(&inner.ty, TypeInfoData::Complex(ci) if ci.has_simple_content(inner.types));
         let flatten_content = !has_attributes
-            && inner.check_generate_flags(GenerateFlags::FLATTEN_CONTENT)
+            && inner.check_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
             && inner.occurs == Occurs::Single;
 
         let type_ident = &type_ref.type_ident;

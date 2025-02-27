@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GenerateFlags, NamespaceIdent},
+    config::{GeneratorFlags, NamespaceIdent},
     generator::SerdeSupport,
     types::IdentType,
     Config,
@@ -13,7 +13,7 @@ fn generate_default() {
         "tests/feature/no_prefix/schema.xsd",
         "tests/feature/no_prefix/expected/default.rs",
         Config::test_default()
-            .with_generate_flags(GenerateFlags::USE_MODULES)
+            .with_generator_flags(GeneratorFlags::USE_MODULES)
             .with_generate([(
                 IdentType::Element,
                 Some(NamespaceIdent::namespace(b"http://example.com")),

@@ -225,11 +225,11 @@ pub fn exec_generator(
     tracing::info!("Generate Code");
 
     let mut generator = Generator::new(types)
+        .flags(config.flags)
         .box_flags(config.box_flags)
         .typedef_mode(config.typedef_mode)
         .serde_support(config.serde_support)
-        .xsd_parser_crate(config.xsd_parser)
-        .generate_flags(config.flags);
+        .xsd_parser_crate(config.xsd_parser);
 
     if let Some(derive) = config.derive {
         generator = generator.derive(derive);

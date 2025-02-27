@@ -16,7 +16,7 @@ use tracing::instrument;
 use crate::types::{Ident, IdentType, Type, Types};
 
 pub use self::error::Error;
-pub use self::misc::{BoxFlags, GenerateFlags, SerdeSupport, TypedefMode};
+pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
 use self::data::TypeData;
 use self::helper::Walk;
@@ -40,12 +40,12 @@ pub struct Generator<'types> {
     modules: Modules,
 
     /* config */
+    flags: GeneratorFlags,
     derive: Vec<Ident2>,
     postfixes: [String; 8],
     box_flags: BoxFlags,
     typedef_mode: TypedefMode,
     serde_support: SerdeSupport,
-    generate_flags: GenerateFlags,
     dyn_type_traits: DynTypeTraits,
     xsd_parser_crate: Ident2,
 }
@@ -63,6 +63,7 @@ impl<'types> Generator<'types> {
             pending: VecDeque::new(),
             modules: Modules::default(),
 
+            flags: GeneratorFlags::empty(),
             derive: vec![format_ident!("Debug"), format_ident!("Clone")],
             postfixes: [
                 String::from("Type"),        // Type = 0
@@ -77,7 +78,6 @@ impl<'types> Generator<'types> {
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
-            generate_flags: GenerateFlags::empty(),
             dyn_type_traits: DynTypeTraits::Auto,
             xsd_parser_crate: format_ident!("xsd_parser"),
         }
@@ -161,16 +161,16 @@ impl<'types> Generator<'types> {
         self
     }
 
-    /// Set the [`GenerateFlags`] flags the generator should use for generating the code.
-    pub fn generate_flags(mut self, value: GenerateFlags) -> Self {
-        self.generate_flags = value;
+    /// Set the [`GeneratorFlags`] flags the generator should use for generating the code.
+    pub fn flags(mut self, value: GeneratorFlags) -> Self {
+        self.flags = value;
 
         self
     }
 
-    /// Add the passed [`GenerateFlags`] flags the generator should use for generating the code.
-    pub fn with_generate_flags(mut self, value: GenerateFlags) -> Self {
-        self.generate_flags |= value;
+    /// Add the passed [`GeneratorFlags`] flags the generator should use for generating the code.
+    pub fn with_flags(mut self, value: GeneratorFlags) -> Self {
+        self.flags |= value;
 
         self
     }
@@ -335,11 +335,11 @@ impl<'types> Generator<'types> {
     #[instrument(level = "trace", skip(self))]
     fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
         let Self {
+            flags,
             types,
             cache,
             pending,
             postfixes,
-            generate_flags,
             ..
         } = self;
 
@@ -351,7 +351,7 @@ impl<'types> Generator<'types> {
             let (module_ident, type_ident) = if let Type::BuildIn(x) = ty {
                 (None, format_ident!("{x}"))
             } else {
-                let use_modules = generate_flags.intersects(GenerateFlags::USE_MODULES);
+                let use_modules = flags.intersects(GeneratorFlags::USE_MODULES);
                 let module_ident = format_module(types, use_modules.then_some(ident.ns).flatten())?;
                 let type_ident = format_type_ident(&name, None);
 

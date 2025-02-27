@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GenerateFlags, SerdeSupport},
+    config::{GeneratorFlags, SerdeSupport},
     types::IdentType,
     Config,
 };
@@ -12,7 +12,7 @@ fn generate_default() {
         "tests/feature/extension_base_two_files/schema.xsd",
         "tests/feature/extension_base_two_files/expected/default.rs",
         Config::test_default()
-            .with_generate_flags(GenerateFlags::USE_MODULES)
+            .with_generator_flags(GeneratorFlags::USE_MODULES)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }

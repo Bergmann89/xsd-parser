@@ -13,7 +13,7 @@ use xsd_parser::config::IdentTriple;
 use xsd_parser::{
     config::{Config, Generate, OptimizerFlags, Schema},
     generate,
-    generator::GenerateFlags,
+    generator::GeneratorFlags,
     quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
 };
 
@@ -119,7 +119,7 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
     config.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
     config.generator.derive = Some(Vec::new());
-    config.generator.flags -= GenerateFlags::USE_MODULES;
+    config.generator.flags -= GeneratorFlags::USE_MODULES;
 
     let input_xsd = input_xsd.as_ref();
 

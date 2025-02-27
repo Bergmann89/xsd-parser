@@ -13,7 +13,7 @@ use super::super::data::{
     ReferenceData, TraitData, TypeData, UnionData, UnionVariantData,
 };
 use super::super::misc::{
-    BoxFlags, DynTypeTraits, GenerateFlags, Occurs, StateFlags, TypeMode, TypedefMode,
+    BoxFlags, DynTypeTraits, GeneratorFlags, Occurs, StateFlags, TypeMode, TypedefMode,
 };
 use super::super::{Generator, SerdeSupport};
 
@@ -243,7 +243,7 @@ impl TypeRenderer {
             .iter()
             .map(|element| element.render_choice_variant(data.occurs.is_direct(), data));
         if data.attributes.is_empty()
-            && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT)
+            && data.check_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
             && data.occurs == Occurs::Single
         {
             let code = quote! {
@@ -355,7 +355,7 @@ impl TypeRenderer {
                 .chain(serde)
                 .chain(
                     generator
-                        .check_generate_flags(GenerateFlags::QUICK_XML_SERIALIZE)
+                        .check_generator_flags(GeneratorFlags::QUICK_XML_SERIALIZE)
                         .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
                 )
                 .chain(extra.into_iter().map(Into::into))
@@ -385,7 +385,7 @@ impl TypeRenderer {
         trait_data: &'a [TraitData],
     ) -> impl Iterator<Item = TokenStream> + 'a {
         let trait_with_namespace = type_data
-            .check_generate_flags(GenerateFlags::WITH_NAMESPACE_TRAIT)
+            .check_generator_flags(GeneratorFlags::WITH_NAMESPACE_TRAIT)
             .then(|| Self::render_trait_with_namespace(type_data))
             .flatten();
 

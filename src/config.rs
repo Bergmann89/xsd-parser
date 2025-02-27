@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use bitflags::bitflags;
 use url::Url;
 
-pub use crate::generator::{BoxFlags, GenerateFlags, SerdeSupport, TypedefMode};
+pub use crate::generator::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 pub use crate::schema::{Namespace, NamespacePrefix};
 pub use crate::types::{IdentType, Type};
 
@@ -114,7 +114,7 @@ pub struct GeneratorConfig {
     pub generate: Generate,
 
     /// Additional flags to control the generator.
-    pub flags: GenerateFlags,
+    pub flags: GeneratorFlags,
 
     /// Name of the `xsd-parser` crate that is used for the generated code.
     pub xsd_parser: String,
@@ -317,14 +317,14 @@ impl Config {
     }
 
     /// Add code generator flags to the config.
-    pub fn with_generate_flags(mut self, flags: GenerateFlags) -> Self {
+    pub fn with_generator_flags(mut self, flags: GeneratorFlags) -> Self {
         self.generator.flags.insert(flags);
 
         self
     }
 
     /// Remove code generator flags to the config.
-    pub fn without_generate_flags(mut self, flags: GenerateFlags) -> Self {
+    pub fn without_generator_flags(mut self, flags: GeneratorFlags) -> Self {
         self.generator.flags.remove(flags);
 
         self
@@ -346,7 +346,7 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] serialization and deserialization.
     pub fn with_quick_xml(mut self) -> Self {
-        self.generator.flags |= GenerateFlags::QUICK_XML | GenerateFlags::FLATTEN_CONTENT;
+        self.generator.flags |= GeneratorFlags::QUICK_XML | GeneratorFlags::FLATTEN_CONTENT;
 
         self
     }
@@ -445,7 +445,7 @@ impl Default for GeneratorConfig {
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate: Generate::All,
-            flags: GenerateFlags::empty(),
+            flags: GeneratorFlags::empty(),
             xsd_parser: "xsd_parser".into(),
         }
     }
