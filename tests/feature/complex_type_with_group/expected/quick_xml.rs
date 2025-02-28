@@ -1,6 +1,10 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
-pub enum FooType {
+pub struct FooType {
+    pub content: FooTypeContent,
+}
+#[derive(Debug, Clone)]
+pub enum FooTypeContent {
     Bar(String),
     Baz(i32),
 }
@@ -59,8 +63,8 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        match &self.value {
-                            FooType::Bar(x) => {
+                        match &self.value.content {
+                            FooTypeContent::Bar(x) => {
                                 self.state = FooTypeSerializerState::Bar(
                                     xsd_parser::quick_xml::ContentSerializer::new(
                                         x,
@@ -69,7 +73,7 @@ pub mod quick_xml_serialize {
                                     ),
                                 )
                             }
-                            FooType::Baz(x) => {
+                            FooTypeContent::Baz(x) => {
                                 self.state = FooTypeSerializerState::Baz(
                                     xsd_parser::quick_xml::ContentSerializer::new(
                                         x,
@@ -116,7 +120,7 @@ pub mod quick_xml_deserialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        content: Option<super::FooType>,
+        content: Option<super::FooTypeContent>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -214,7 +218,7 @@ pub mod quick_xml_deserialize {
                             if self.content.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Bar")))?;
                             }
-                            self.content = Some(FooType::Bar(data));
+                            self.content = Some(FooTypeContent::Bar(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = FooTypeDeserializerState::Bar(deserializer);
@@ -236,7 +240,7 @@ pub mod quick_xml_deserialize {
                             if self.content.is_some() {
                                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Baz")))?;
                             }
-                            self.content = Some(FooType::Baz(data));
+                            self.content = Some(FooTypeContent::Baz(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = FooTypeDeserializerState::Baz(deserializer);
@@ -282,7 +286,7 @@ pub mod quick_xml_deserialize {
                         if self.content.is_some() {
                             Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Bar")))?;
                         }
-                        self.content = Some(FooType::Bar(data));
+                        self.content = Some(FooTypeContent::Bar(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = FooTypeDeserializerState::Bar(deserializer);
@@ -305,7 +309,7 @@ pub mod quick_xml_deserialize {
                         if self.content.is_some() {
                             Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Baz")))?;
                         }
-                        self.content = Some(FooType::Baz(data));
+                        self.content = Some(FooTypeContent::Baz(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = FooTypeDeserializerState::Baz(deserializer);
@@ -324,9 +328,11 @@ pub mod quick_xml_deserialize {
             R: xsd_parser::quick_xml::XmlReader,
         {
             use xsd_parser::quick_xml::ErrorKind;
-            Ok(self
-                .content
-                .ok_or(xsd_parser::quick_xml::ErrorKind::MissingContent)?)
+            Ok(super::FooType {
+                content: self
+                    .content
+                    .ok_or(xsd_parser::quick_xml::ErrorKind::MissingContent)?,
+            })
         }
     }
 }

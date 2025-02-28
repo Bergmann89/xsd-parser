@@ -205,13 +205,13 @@ pub struct SimpleBaseType {
     pub id: Option<String>,
     pub final_: Option<SimpleDerivationSetType>,
     pub name: Option<String>,
-    pub content: Vec<SimpleBaseTypeContent>,
+    pub content: Option<SimpleBaseTypeContent>,
 }
 #[derive(Debug, Clone)]
 pub enum SimpleBaseTypeContent {
     Annotation(AnnotationElementType),
     Restriction(RestrictionElementType),
-    List(ListElementType),
+    List(Box<ListElementType>),
     Union(UnionElementType),
 }
 impl xsd_parser::WithNamespace for SimpleBaseType {
@@ -708,7 +708,7 @@ pub struct ListElementType {
     pub id: Option<String>,
     pub item_type: Option<String>,
     pub annotation: Option<AnnotationElementType>,
-    pub simple_type: Option<SimpleBaseType>,
+    pub simple_type: Option<Box<SimpleBaseType>>,
 }
 impl xsd_parser::WithNamespace for ListElementType {
     fn prefix() -> Option<&'static str> {
@@ -768,7 +768,7 @@ impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetType {
 #[derive(Debug, Clone)]
 pub struct SimpleContentElementType {
     pub id: Option<String>,
-    pub content: Vec<SimpleContentElementTypeContent>,
+    pub content: SimpleContentElementTypeContent,
 }
 #[derive(Debug, Clone)]
 pub enum SimpleContentElementTypeContent {
@@ -791,7 +791,7 @@ impl xsd_parser::quick_xml::WithDeserializer for SimpleContentElementType {
 pub struct ComplexContentElementType {
     pub id: Option<String>,
     pub mixed: Option<bool>,
-    pub content: Vec<ComplexContentElementTypeContent>,
+    pub content: Option<ComplexContentElementTypeContent>,
 }
 #[derive(Debug, Clone)]
 pub enum ComplexContentElementTypeContent {
@@ -970,7 +970,7 @@ pub struct AltType {
     pub test: Option<String>,
     pub type_: Option<String>,
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
-    pub content: Vec<AltTypeContent>,
+    pub content: Option<AltTypeContent>,
 }
 #[derive(Debug, Clone)]
 pub enum AltTypeContent {
@@ -994,6 +994,10 @@ pub struct KeybaseType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
+    pub content: Option<KeybaseTypeContent>,
+}
+#[derive(Debug, Clone)]
+pub struct KeybaseTypeContent {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
     pub field: Vec<FieldElementType>,
@@ -1015,6 +1019,10 @@ pub struct KeyrefElementType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub refer: Option<String>,
+    pub content: Option<KeyrefElementTypeContent>,
+}
+#[derive(Debug, Clone)]
+pub struct KeyrefElementTypeContent {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
     pub field: Vec<FieldElementType>,
@@ -4547,7 +4555,7 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         final_: Option<super::SimpleDerivationSetType>,
         name: Option<String>,
-        content: Vec<super::SimpleBaseTypeContent>,
+        content: Option<super::SimpleBaseTypeContent>,
         state: Box<SimpleBaseTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -4592,7 +4600,7 @@ pub mod quick_xml_deserialize {
                 id: id,
                 final_: final_,
                 name: name,
-                content: Vec::new(),
+                content: None,
                 state: Box::new(SimpleBaseTypeDeserializerState::Next__),
             })
         }
@@ -4666,7 +4674,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleBaseTypeContent::Annotation(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"annotation",
+                                )))?;
+                            }
+                            self.content = Some(SimpleBaseTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = SimpleBaseTypeDeserializerState::Annotation(deserializer);
@@ -4690,7 +4703,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleBaseTypeContent::Restriction(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"restriction",
+                                )))?;
+                            }
+                            self.content = Some(SimpleBaseTypeContent::Restriction(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state =
@@ -4712,7 +4730,10 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleBaseTypeContent::List(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"list")))?;
+                            }
+                            self.content = Some(SimpleBaseTypeContent::List(Box::new(data)));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = SimpleBaseTypeDeserializerState::List(deserializer);
@@ -4733,7 +4754,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(SimpleBaseTypeContent::Union(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"union",
+                                )))?;
+                            }
+                            self.content = Some(SimpleBaseTypeContent::Union(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = SimpleBaseTypeDeserializerState::Union(deserializer);
@@ -4776,7 +4802,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleBaseTypeContent::Annotation(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"annotation",
+                            )))?;
+                        }
+                        self.content = Some(SimpleBaseTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = SimpleBaseTypeDeserializerState::Annotation(deserializer);
@@ -4796,7 +4827,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleBaseTypeContent::Restriction(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"restriction",
+                            )))?;
+                        }
+                        self.content = Some(SimpleBaseTypeContent::Restriction(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = SimpleBaseTypeDeserializerState::Restriction(deserializer);
@@ -4816,7 +4852,10 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleBaseTypeContent::List(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"list")))?;
+                        }
+                        self.content = Some(SimpleBaseTypeContent::List(Box::new(data)));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = SimpleBaseTypeDeserializerState::List(deserializer);
@@ -4836,7 +4875,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(SimpleBaseTypeContent::Union(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"union",
+                            )))?;
+                        }
+                        self.content = Some(SimpleBaseTypeContent::Union(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = SimpleBaseTypeDeserializerState::Union(deserializer);
@@ -8802,7 +8846,7 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 item_type: self.item_type,
                 annotation: self.annotation,
-                simple_type: self.simple_type,
+                simple_type: self.simple_type.map(Box::new),
             })
         }
     }
@@ -9169,7 +9213,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct SimpleContentElementTypeDeserializer {
         id: Option<String>,
-        content: Vec<super::SimpleContentElementTypeContent>,
+        content: Option<super::SimpleContentElementTypeContent>,
         state: Box<SimpleContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -9203,7 +9247,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 id: id,
-                content: Vec::new(),
+                content: None,
                 state: Box::new(SimpleContentElementTypeDeserializerState::Next__),
             })
         }
@@ -9283,8 +9327,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content
-                                .push(SimpleContentElementTypeContent::Annotation(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"annotation",
+                                )))?;
+                            }
+                            self.content = Some(SimpleContentElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state =
@@ -9309,8 +9357,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content
-                                .push(SimpleContentElementTypeContent::Restriction(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"restriction",
+                                )))?;
+                            }
+                            self.content = Some(SimpleContentElementTypeContent::Restriction(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = SimpleContentElementTypeDeserializerState::Restriction(
@@ -9334,8 +9386,12 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ExtensionType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content
-                                .push(SimpleContentElementTypeContent::Extension(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"extension",
+                                )))?;
+                            }
+                            self.content = Some(SimpleContentElementTypeContent::Extension(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state =
@@ -9379,8 +9435,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(SimpleContentElementTypeContent::Annotation(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"annotation",
+                            )))?;
+                        }
+                        self.content = Some(SimpleContentElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -9401,8 +9461,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(SimpleContentElementTypeContent::Restriction(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"restriction",
+                            )))?;
+                        }
+                        self.content = Some(SimpleContentElementTypeContent::Restriction(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -9423,8 +9487,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(SimpleContentElementTypeContent::Extension(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"extension",
+                            )))?;
+                        }
+                        self.content = Some(SimpleContentElementTypeContent::Extension(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -9449,7 +9517,9 @@ pub mod quick_xml_deserialize {
             use xsd_parser::quick_xml::ErrorKind;
             Ok(super::SimpleContentElementType {
                 id: self.id,
-                content: self.content,
+                content: self
+                    .content
+                    .ok_or(xsd_parser::quick_xml::ErrorKind::MissingContent)?,
             })
         }
     }
@@ -9457,7 +9527,7 @@ pub mod quick_xml_deserialize {
     pub struct ComplexContentElementTypeDeserializer {
         id: Option<String>,
         mixed: Option<bool>,
-        content: Vec<super::ComplexContentElementTypeContent>,
+        content: Option<super::ComplexContentElementTypeContent>,
         state: Box<ComplexContentElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -9495,7 +9565,7 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 id: id,
                 mixed: mixed,
-                content: Vec::new(),
+                content: None,
                 state: Box::new(ComplexContentElementTypeDeserializerState::Next__),
             })
         }
@@ -9575,8 +9645,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content
-                                .push(ComplexContentElementTypeContent::Annotation(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"annotation",
+                                )))?;
+                            }
+                            self.content = Some(ComplexContentElementTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = ComplexContentElementTypeDeserializerState::Annotation(
@@ -9602,8 +9676,13 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content
-                                .push(ComplexContentElementTypeContent::Restriction(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"restriction",
+                                )))?;
+                            }
+                            self.content =
+                                Some(ComplexContentElementTypeContent::Restriction(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = ComplexContentElementTypeDeserializerState::Restriction(
@@ -9627,8 +9706,12 @@ pub mod quick_xml_deserialize {
                             allow_any,
                         } = <ExtensionType as WithDeserializer>::Deserializer::init(reader, event)?;
                         if let Some(data) = data {
-                            self.content
-                                .push(ComplexContentElementTypeContent::Extension(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"extension",
+                                )))?;
+                            }
+                            self.content = Some(ComplexContentElementTypeContent::Extension(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state =
@@ -9672,8 +9755,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(ComplexContentElementTypeContent::Annotation(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"annotation",
+                            )))?;
+                        }
+                        self.content = Some(ComplexContentElementTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -9694,8 +9781,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(ComplexContentElementTypeContent::Restriction(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"restriction",
+                            )))?;
+                        }
+                        self.content = Some(ComplexContentElementTypeContent::Restriction(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -9716,8 +9807,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content
-                            .push(ComplexContentElementTypeContent::Extension(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"extension",
+                            )))?;
+                        }
+                        self.content = Some(ComplexContentElementTypeContent::Extension(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state =
@@ -10978,7 +11073,7 @@ pub mod quick_xml_deserialize {
         test: Option<String>,
         type_: Option<String>,
         xpath_default_namespace: Option<super::XpathDefaultNamespaceType>,
-        content: Vec<super::AltTypeContent>,
+        content: Option<super::AltTypeContent>,
         state: Box<AltTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -11031,7 +11126,7 @@ pub mod quick_xml_deserialize {
                 test: test,
                 type_: type_,
                 xpath_default_namespace: xpath_default_namespace,
-                content: Vec::new(),
+                content: None,
                 state: Box::new(AltTypeDeserializerState::Next__),
             })
         }
@@ -11103,7 +11198,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(AltTypeContent::Annotation(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"annotation",
+                                )))?;
+                            }
+                            self.content = Some(AltTypeContent::Annotation(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = AltTypeDeserializerState::Annotation(deserializer);
@@ -11127,7 +11227,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(AltTypeContent::SimpleType(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"simpleType",
+                                )))?;
+                            }
+                            self.content = Some(AltTypeContent::SimpleType(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = AltTypeDeserializerState::SimpleType(deserializer);
@@ -11151,7 +11256,12 @@ pub mod quick_xml_deserialize {
                             reader, event,
                         )?;
                         if let Some(data) = data {
-                            self.content.push(AltTypeContent::ComplexType(data));
+                            if self.content.is_some() {
+                                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                    b"complexType",
+                                )))?;
+                            }
+                            self.content = Some(AltTypeContent::ComplexType(data));
                         }
                         if let Some(deserializer) = deserializer {
                             *self.state = AltTypeDeserializerState::ComplexType(deserializer);
@@ -11194,7 +11304,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(AltTypeContent::Annotation(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"annotation",
+                            )))?;
+                        }
+                        self.content = Some(AltTypeContent::Annotation(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = AltTypeDeserializerState::Annotation(deserializer);
@@ -11214,7 +11329,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(AltTypeContent::SimpleType(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"simpleType",
+                            )))?;
+                        }
+                        self.content = Some(AltTypeContent::SimpleType(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = AltTypeDeserializerState::SimpleType(deserializer);
@@ -11234,7 +11354,12 @@ pub mod quick_xml_deserialize {
                         allow_any,
                     } = deserializer.next(reader, event)?;
                     if let Some(data) = data {
-                        self.content.push(AltTypeContent::ComplexType(data));
+                        if self.content.is_some() {
+                            Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                                b"complexType",
+                            )))?;
+                        }
+                        self.content = Some(AltTypeContent::ComplexType(data));
                     }
                     if let Some(deserializer) = deserializer {
                         *self.state = AltTypeDeserializerState::ComplexType(deserializer);
