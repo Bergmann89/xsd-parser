@@ -11,7 +11,7 @@ use crate::types::{ComplexInfo, Ident, Type, Types};
 use crate::Generator;
 
 use super::super::data::{AttributeData, ComplexTypeData, DynamicData, ElementData, TypeInfoData};
-use super::super::misc::{GeneratorFlags, Occurs, TypeRef};
+use super::super::misc::TypeRef;
 
 pub(crate) struct QuickXmlRenderer;
 
@@ -47,7 +47,6 @@ struct ComplexTypeImpl<'a, 'b, 'types> {
     deserializer_ident: Ident2,
     deserializer_state_ident: Ident2,
 
-    flatten_content: bool,
     is_static_complex: bool,
     has_simple_content: bool,
 
@@ -110,16 +109,12 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
         let type_ref = inner.current_type_ref();
         let tag_name = make_tag_name(inner.types, &inner.ident);
 
-        let has_attributes = !inner.attributes.is_empty();
         let is_static_complex = matches!(&inner.ty, TypeInfoData::Complex(ci) if !ci.is_dynamic);
         let has_simple_content =
             matches!(&inner.ty, TypeInfoData::Complex(ci) if ci.has_simple_content(inner.types));
-        let flatten_content = !has_attributes
-            && inner.check_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
-            && inner.occurs == Occurs::Single;
 
         let type_ident = &type_ref.type_ident;
-        let content_ident = if flatten_content {
+        let content_ident = if inner.flatten_content {
             type_ident.clone()
         } else {
             format_ident!("{type_ident}Content")
@@ -156,7 +151,6 @@ impl<'a, 'b, 'types> ComplexTypeImpl<'a, 'b, 'types> {
             deserializer_ident,
             deserializer_state_ident,
 
-            flatten_content,
             is_static_complex,
             has_simple_content,
 

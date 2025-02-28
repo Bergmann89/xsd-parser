@@ -9,3 +9,14 @@ pub enum MyChoiceTypeContent {
     OnceSpecify(i32),
     TwiceOrMore(Vec<i32>),
 }
+#[derive(Debug, Clone)]
+pub struct MySequenceType {
+    pub content: MySequenceTypeContent,
+}
+#[derive(Debug, Clone)]
+pub struct MySequenceTypeContent {
+    pub once: i32,
+    pub optional: Option<i32>,
+    pub once_specify: i32,
+    pub twice_or_more: Vec<i32>,
+}

@@ -87,6 +87,10 @@ pub struct RetrievalMethodType {
 }
 #[derive(Debug, Clone)]
 pub struct X509DataType {
+    pub content: Vec<X509DataTypeContent>,
+}
+#[derive(Debug, Clone)]
+pub struct X509DataTypeContent {
     pub content_103: X509DataContent103Type,
 }
 #[derive(Debug, Clone)]
@@ -100,6 +104,10 @@ pub enum PgpdataTypeContent {
 }
 #[derive(Debug, Clone)]
 pub struct SpkidataType {
+    pub content: Vec<SpkidataTypeContent>,
+}
+#[derive(Debug, Clone)]
+pub struct SpkidataTypeContent {
     pub spkisexp: String,
 }
 #[derive(Debug, Clone)]

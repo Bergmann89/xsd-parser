@@ -235,6 +235,8 @@ impl<'a> Interpreter<'a> {
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
         let content_type = Type::Sequence(GroupInfo {
             any: Some(AnyInfo {
+                min_occurs: Some(0),
+                max_occurs: Some(MaxOccurs::Unbounded),
                 process_contents: Some(ProcessContentsType::Lax),
                 ..Default::default()
             }),
@@ -247,8 +249,8 @@ impl<'a> Interpreter<'a> {
         let ident = Ident::type_("anyType").with_ns(Some(xs));
         let type_ = Type::ComplexType(ComplexInfo {
             content: Some(content_ident),
-            min_occurs: 0,
-            max_occurs: MaxOccurs::Unbounded,
+            min_occurs: 1,
+            max_occurs: MaxOccurs::Bounded(1),
             any_attribute: Some(AnyAttributeInfo {
                 process_contents: Some(ProcessContentsType::Lax),
                 ..Default::default()

@@ -302,6 +302,13 @@ bitflags! {
 }
 
 impl Config {
+    /// Set optimizer flags to the config.
+    pub fn set_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
+        self.optimizer.flags = flags;
+
+        self
+    }
+
     /// Add optimizer flags to the config.
     pub fn with_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
         self.optimizer.flags.insert(flags);
@@ -316,6 +323,13 @@ impl Config {
         self
     }
 
+    /// Set generator flags to the config.
+    pub fn set_generator_flags(mut self, flags: GeneratorFlags) -> Self {
+        self.generator.flags = flags;
+
+        self
+    }
+
     /// Add code generator flags to the config.
     pub fn with_generator_flags(mut self, flags: GeneratorFlags) -> Self {
         self.generator.flags.insert(flags);
@@ -326,6 +340,13 @@ impl Config {
     /// Remove code generator flags to the config.
     pub fn without_generator_flags(mut self, flags: GeneratorFlags) -> Self {
         self.generator.flags.remove(flags);
+
+        self
+    }
+
+    /// Set boxing flags to the code generator config.
+    pub fn set_box_flags(mut self, flags: BoxFlags) -> Self {
+        self.generator.box_flags = flags;
 
         self
     }
@@ -346,7 +367,7 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] serialization and deserialization.
     pub fn with_quick_xml(mut self) -> Self {
-        self.generator.flags |= GeneratorFlags::QUICK_XML | GeneratorFlags::FLATTEN_CONTENT;
+        self.generator.flags |= GeneratorFlags::QUICK_XML;
 
         self
     }

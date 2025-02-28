@@ -61,21 +61,34 @@ bitflags! {
         /// ```rust
         #[doc = include_str!("../../tests/generator/generator_flags/expected/flatten_content.rs")]
         /// ```
-        const FLATTEN_CONTENT = 1 << 1;
+        const FLATTEN_CONTENT = Self::FLATTEN_ENUM_CONTENT.bits()
+            | Self::FLATTEN_STRUCT_CONTENT.bits();
+
+        /// The generator flattens the content of enum types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_ENUM_CONTENT = 1 << 1;
+
+        /// The generator flattens the content of struct types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_STRUCT_CONTENT = 1 << 2;
 
         /// The generator will generate code to serialize the generated types using
         /// the `quick_xml` crate.
-        const QUICK_XML_SERIALIZE = 1 << 2;
+        const QUICK_XML_SERIALIZE = 1 << 3;
 
         /// The generator will generate code to deserialize the generated types using
         /// the `quick_xml` crate.
-        const QUICK_XML_DESERIALIZE = 1 << 3;
+        const QUICK_XML_DESERIALIZE = 1 << 4;
 
-        /// Combination of `QUICK_XML_SERIALIZE` and [`QUICK_XML_DESERIALIZE`].
-        const QUICK_XML = Self::QUICK_XML_SERIALIZE.bits() | Self::QUICK_XML_DESERIALIZE.bits();
+        /// Combination of [`QUICK_XML_SERIALIZE`](Self::QUICK_XML_SERIALIZE)
+        /// and [`QUICK_XML_DESERIALIZE`](Self::QUICK_XML_DESERIALIZE).
+        const QUICK_XML = Self::QUICK_XML_SERIALIZE.bits()
+            | Self::QUICK_XML_DESERIALIZE.bits();
 
         /// Implement the [`WithNamespace`](crate::WithNamespace) trait for the generated types.
-        const WITH_NAMESPACE_TRAIT = 1 << 4;
+        const WITH_NAMESPACE_TRAIT = 1 << 5;
     }
 }
 

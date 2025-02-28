@@ -25,8 +25,10 @@ impl ConfigEx for Config {
     fn test_default() -> Self {
         let mut config = Config::default();
 
-        config.generator.type_postfix.element_type = "Type".into();
         config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
+
+        config.generator.type_postfix.element_type = "Type".into();
+        config.generator.flags |= GeneratorFlags::FLATTEN_STRUCT_CONTENT;
 
         config
     }

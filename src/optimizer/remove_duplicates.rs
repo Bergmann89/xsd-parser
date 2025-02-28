@@ -93,7 +93,9 @@ impl Optimizer {
             }
 
             for (ident, referenced_type) in idents {
-                println!("Create reference for duplicate type: {ident} => {referenced_type}");
+                tracing::trace!(
+                    "Create reference for duplicate type: {ident} => {referenced_type}"
+                );
 
                 self.types
                     .insert(ident, Type::Reference(ReferenceInfo::new(referenced_type)));

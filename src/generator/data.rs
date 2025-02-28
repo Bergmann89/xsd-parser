@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
-use quote::format_ident;
+use quote::{format_ident, quote};
 use tracing::instrument;
 
 use crate::schema::NamespaceId;
@@ -563,7 +563,10 @@ pub(super) struct ComplexTypeData<'a, 'types> {
     pub max_occurs: MaxOccurs,
 
     pub type_mode: TypeMode,
+    pub content_type: TokenStream,
     pub content_ident: Ident2,
+    pub flatten_content: bool,
+    pub has_content_type: bool,
 
     pub trait_impls: Vec<TraitData>,
     pub simple_content: Option<SimpleContentData<'types>>,
@@ -611,6 +614,16 @@ pub(super) struct AttributeData<'types> {
 }
 
 impl<'a, 'types> ComplexTypeData<'a, 'types> {
+    #[allow(dead_code)]
+    pub(super) fn has_attributes(&self) -> bool {
+        !self.attributes.is_empty()
+    }
+
+    #[allow(dead_code)]
+    pub(super) fn has_elements(&self) -> bool {
+        !self.elements.is_empty()
+    }
+
     #[instrument(err, level = "trace", skip(inner))]
     fn new_all(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
         Self::new(
@@ -716,8 +729,24 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
         let type_ref = inner.current_type_ref();
         let type_ident = &type_ref.type_ident;
         let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")), None);
+        let flatten_content = occurs == Occurs::Single
+            && match type_mode {
+                TypeMode::Simple => false,
+                TypeMode::All | TypeMode::Sequence => {
+                    inner.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT)
+                }
+                TypeMode::Choice => {
+                    inner.check_generator_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT)
+                        && attributes.is_empty()
+                }
+            };
+        let has_content_type =
+            !(elements.is_empty() || flatten_content) || type_mode == TypeMode::Simple;
 
         let simple_content = make_simple_content_data(&ty, &mut inner, type_mode)?;
+        let content_type = simple_content
+            .as_ref()
+            .map_or_else(|| quote!(#content_ident), |x| x.target_type.clone());
 
         Ok(Self {
             ty,
@@ -728,7 +757,10 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
             max_occurs,
 
             type_mode,
+            content_type,
             content_ident,
+            flatten_content,
+            has_content_type,
 
             trait_impls,
             simple_content,

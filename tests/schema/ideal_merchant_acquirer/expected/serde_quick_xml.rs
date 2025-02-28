@@ -162,6 +162,11 @@ pub enum PgpdataTypeContent {
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SpkidataType {
+    #[serde(rename = "$value")]
+    pub content: Vec<SpkidataTypeContent>,
+}
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SpkidataTypeContent {
     #[serde(rename = "SPKISexp")]
     pub spkisexp: String,
 }

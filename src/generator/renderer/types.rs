@@ -1,5 +1,4 @@
 use std::fmt::Display;
-use std::ops::Not;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote, ToTokens};
@@ -30,17 +29,7 @@ impl TypeRenderer {
         let type_ident = type_ref.type_ident.clone();
         let derive = Self::get_derive(data, Option::<String>::None);
         let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
-        let variants = data.variants.iter().map(|data| {
-            let UnionVariantData {
-                variant_ident,
-                target_type,
-                ..
-            } = data;
-
-            quote! {
-                #variant_ident ( #target_type ),
-            }
-        });
+        let variants = data.variants.iter().map(UnionVariantData::render_variant);
 
         let code = quote! {
             #derive
@@ -96,6 +85,11 @@ impl TypeRenderer {
             ..
         } = data;
 
+        let type_ref = inner.current_type_ref_mut();
+        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
+            return;
+        }
+
         let code = match mode {
             TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
@@ -141,32 +135,7 @@ impl TypeRenderer {
 
         let variants = variants
             .iter()
-            .map(|d| {
-                let EnumVariantData {
-                    var,
-                    variant_ident,
-                    target_type,
-                } = d;
-
-                let serde = if inner.serde_support == SerdeSupport::None {
-                    None
-                } else if var.type_.is_some() {
-                    Some(quote!(#[serde(other)]))
-                } else {
-                    let name = format!("{}", d.var.ident.name);
-
-                    Some(quote!(#[serde(rename = #name)]))
-                };
-
-                let target_type = target_type
-                    .as_ref()
-                    .map(|target_type| quote!((#target_type)));
-
-                quote! {
-                    #serde
-                    #variant_ident #target_type,
-                }
-            })
+            .map(|d| d.render_variant(inner))
             .collect::<Vec<_>>();
 
         let code = quote! {
@@ -183,84 +152,22 @@ impl TypeRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_complex_type(&mut self, data: &mut ComplexTypeData<'_, '_>) {
+        let type_ref = data.current_type_ref_mut();
+        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
+            return;
+        }
+
         let derive = Self::get_derive(data, Option::<String>::None);
         let type_ident = data.current_type_ref().type_ident.clone();
         let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
+        let content_ident = &data.content_ident;
         let attributes = data
             .attributes
             .iter()
             .map(|attrib| attrib.render_field(&type_ident, data));
 
-        // If the target mode for the content is `Simple` it will generate a simple content sequence.
-        if matches!(data.type_mode, TypeMode::Simple) {
-            let content_type = &data.simple_content.as_ref().map(|x| &x.target_type);
-
-            let serde = match data.serde_support {
-                SerdeSupport::None => None,
-                SerdeSupport::QuickXml => Some(quote!(#[serde(rename = "$text")])),
-                SerdeSupport::SerdeXmlRs => Some(quote!(#[serde(rename = "$value")])),
-            };
-
-            let code = quote! {
-                #derive
-                pub struct #type_ident {
-                    #( #attributes )*
-
-                    #serde
-                    pub content: #content_type,
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // If the target mode for the content is `All` or `Sequence` we will generate a sequence.
-        if matches!(data.type_mode, TypeMode::All | TypeMode::Sequence) {
-            let elements = data
-                .elements
-                .iter()
-                .map(|element| element.render_sequence_field(data));
-
-            let code = quote! {
-                #derive
-                pub struct #type_ident {
-                    #( #attributes )*
-                    #( #elements )*
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // Otherwise the content should be rendered as enum. If the attributes are empty
-        // we will render the enum directly.
-        let elements = data
-            .elements
-            .iter()
-            .map(|element| element.render_choice_variant(data.occurs.is_direct(), data));
-        if data.attributes.is_empty()
-            && data.check_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
-            && data.occurs == Occurs::Single
-        {
-            let code = quote! {
-                #derive
-                pub enum #type_ident {
-                    #( #elements )*
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // If we do not have a content at all, we render a struct with the attributes only.
-        let content_ident = &data.content_ident;
-        let Some(content_type) = data.occurs.make_type(&quote!(#content_ident), false) else {
+        // If we do not have content at all, we render a struct with the attributes only.
+        let Some(content_type) = data.occurs.make_type(&data.content_type, false) else {
             let code = quote! {
                 #derive
                 pub struct #type_ident {
@@ -273,28 +180,99 @@ impl TypeRenderer {
             return data.add_code(code);
         };
 
-        // If we have attributes and content, we render a struct containing the
-        // attributes and a enum containing the content.
-        let serde = data.serde_support.is_none().not().then(|| {
-            let default = (data.min_occurs == 0).then(|| quote!(default,));
-
-            quote!(#[serde(#default rename = "$value")])
-        });
-        let code = quote! {
-            #derive
-            pub struct #type_ident {
-                #( #attributes )*
-
-                #serde
-                pub content: #content_type,
+        let is_direct = data.occurs.is_direct();
+        let serde_default = (data.min_occurs == 0).then(|| quote!(default,));
+        let serde = match (data.serde_support, data.type_mode) {
+            (SerdeSupport::None, _) => None,
+            (SerdeSupport::QuickXml, TypeMode::Simple) => {
+                Some(quote!(#[serde(#serde_default rename = "$text")]))
             }
+            (_, _) => Some(quote!(#[serde(#serde_default rename = "$value")])),
+        };
 
-            #derive
-            pub enum #content_ident {
-                #( #elements )*
+        let code = match data.type_mode {
+            TypeMode::Simple => {
+                quote! {
+                    #derive
+                    pub struct #type_ident {
+                        #( #attributes )*
+
+                        #serde
+                        pub content: #content_type,
+                    }
+
+                    #( #trait_impls )*
+                }
             }
+            TypeMode::All | TypeMode::Sequence => {
+                let elements = data
+                    .elements
+                    .iter()
+                    .map(|element| element.render_field(is_direct, data));
 
-            #( #trait_impls )*
+                if data.has_content_type {
+                    quote! {
+                        #derive
+                        pub struct #type_ident {
+                            #( #attributes )*
+
+                            #serde
+                            pub content: #content_type,
+                        }
+
+                        #derive
+                        pub struct #content_ident {
+                            #( #elements )*
+                        }
+
+                        #( #trait_impls )*
+                    }
+                } else {
+                    quote! {
+                        #derive
+                        pub struct #type_ident {
+                            #( #attributes )*
+                            #( #elements )*
+                        }
+
+                        #( #trait_impls )*
+                    }
+                }
+            }
+            TypeMode::Choice => {
+                let elements = data
+                    .elements
+                    .iter()
+                    .map(|element| element.render_variant(is_direct, data));
+
+                if data.has_content_type {
+                    quote! {
+                        #derive
+                        pub struct #type_ident {
+                            #( #attributes )*
+
+                            #serde
+                            pub content: #content_type,
+                        }
+
+                        #derive
+                        pub enum #content_ident {
+                            #( #elements )*
+                        }
+
+                        #( #trait_impls )*
+                    }
+                } else {
+                    quote! {
+                        #derive
+                        pub enum #type_ident {
+                            #( #elements )*
+                        }
+
+                        #( #trait_impls )*
+                    }
+                }
+            }
         };
 
         data.add_code(code);
@@ -438,6 +416,49 @@ impl TypeRenderer {
     }
 }
 
+impl UnionVariantData<'_> {
+    fn render_variant(&self) -> TokenStream {
+        let UnionVariantData {
+            variant_ident,
+            target_type,
+            ..
+        } = self;
+
+        quote! {
+            #variant_ident ( #target_type ),
+        }
+    }
+}
+
+impl EnumVariantData<'_> {
+    fn render_variant(&self, generator: &Generator<'_>) -> TokenStream {
+        let EnumVariantData {
+            var,
+            variant_ident,
+            target_type,
+        } = self;
+
+        let serde = if generator.serde_support == SerdeSupport::None {
+            None
+        } else if var.type_.is_some() {
+            Some(quote!(#[serde(other)]))
+        } else {
+            let name = format!("{}", var.ident.name);
+
+            Some(quote!(#[serde(rename = #name)]))
+        };
+
+        let target_type = target_type
+            .as_ref()
+            .map(|target_type| quote!((#target_type)));
+
+        quote! {
+            #serde
+            #variant_ident #target_type,
+        }
+    }
+}
+
 impl AttributeData<'_> {
     fn render_field(&self, type_ident: &Ident2, generator: &Generator<'_>) -> TokenStream {
         let field_ident = &self.field_ident;
@@ -481,10 +502,10 @@ impl AttributeData<'_> {
 }
 
 impl ElementData<'_> {
-    fn render_sequence_field(&self, generator: &Generator<'_>) -> TokenStream {
+    fn render_field(&self, is_direct: bool, generator: &Generator<'_>) -> TokenStream {
         let field_ident = &self.field_ident;
         let force_box = generator.box_flags.contains(BoxFlags::STRUCT_ELEMENTS);
-        let need_indirection = self.need_box || force_box;
+        let need_indirection = (is_direct && self.need_box) || force_box;
         let target_type = self
             .occurs
             .make_type(&self.target_type, need_indirection)
@@ -509,7 +530,7 @@ impl ElementData<'_> {
         }
     }
 
-    fn render_choice_variant(&self, is_direct: bool, data: &TypeData<'_, '_>) -> TokenStream {
+    fn render_variant(&self, is_direct: bool, data: &TypeData<'_, '_>) -> TokenStream {
         let force_box = data.box_flags.contains(BoxFlags::ENUM_ELEMENTS);
         let need_indirection = (is_direct && self.need_box) || force_box;
         let variant_ident = &self.variant_ident;
