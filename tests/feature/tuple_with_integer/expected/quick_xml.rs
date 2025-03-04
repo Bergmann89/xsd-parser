@@ -7,11 +7,3 @@ impl xsd_parser::quick_xml::SerializeBytes for Foo {
         self.0.serialize_bytes()
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for Foo {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(i32::deserialize_bytes(reader, bytes)?))
-    }
-}

@@ -19,19 +19,6 @@ impl xsd_parser::quick_xml::SerializeBytes for Entitiestype {
         Ok(Some(std::borrow::Cow::Owned(data)))
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for Entitiestype {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct Entitytype(pub Vec<String>);
 impl xsd_parser::quick_xml::SerializeBytes for Entitytype {
@@ -51,19 +38,6 @@ impl xsd_parser::quick_xml::SerializeBytes for Entitytype {
             }
         }
         Ok(Some(std::borrow::Cow::Owned(data)))
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for Entitytype {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
     }
 }
 pub type Idtype = String;
@@ -89,19 +63,6 @@ impl xsd_parser::quick_xml::SerializeBytes for Idrefstype {
         Ok(Some(std::borrow::Cow::Owned(data)))
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for Idrefstype {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 pub type NcnameType = String;
 pub type Nmtokentype = String;
 #[derive(Debug, Clone, Default)]
@@ -125,19 +86,6 @@ impl xsd_parser::quick_xml::SerializeBytes for Nmtokenstype {
         Ok(Some(std::borrow::Cow::Owned(data)))
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for Nmtokenstype {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 pub type Notationtype = String;
 pub type NameType = String;
 pub type QnameType = String;
@@ -150,11 +98,13 @@ impl xsd_parser::quick_xml::WithSerializer for AnyType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
-        quick_xml_serialize::AnyTypeSerializer::new(self, name, is_root)
+        Ok(quick_xml_serialize::AnyTypeSerializer {
+            name: name.unwrap_or("xs:anyType"),
+            value: self,
+            is_root,
+            state: quick_xml_serialize::AnyTypeSerializerState::Init__,
+        })
     }
-}
-impl xsd_parser::quick_xml::WithDeserializer for AnyType {
-    type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
 }
 pub type AnyURIType = String;
 pub type Base64BinaryType = String;
@@ -193,138 +143,46 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
-        name: &'ser str,
-        value: &'ser super::AnyType,
-        is_root: bool,
-        state: AnyTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) value: &'ser super::AnyType,
+        pub(super) is_root: bool,
+        pub(super) state: AnyTypeSerializerState<'ser>,
     }
     #[derive(Debug)]
-    enum AnyTypeSerializerState<'ser> {
+    pub(super) enum AnyTypeSerializerState<'ser> {
         Init__,
         Done__,
         Phantom__(&'ser ()),
     }
     impl<'ser> AnyTypeSerializer<'ser> {
-        pub(super) fn new(
-            value: &'ser super::AnyType,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("xs:anyType");
-            Ok(Self {
-                name,
-                value,
-                is_root,
-                state: AnyTypeSerializerState::Init__,
-            })
-        }
-    }
-    impl<'ser> core::iter::Iterator for AnyTypeSerializer<'ser> {
-        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{
-                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
-            };
+        fn next_event(
+            &mut self,
+        ) -> Result<Option<xsd_parser::quick_xml::Event<'ser>>, xsd_parser::quick_xml::Error>
+        {
             loop {
                 match &mut self.state {
                     AnyTypeSerializerState::Init__ => {
                         self.state = AnyTypeSerializerState::Done__;
-                        let bytes = BytesStart::new(self.name);
-                        return Some(Ok(Event::Empty(bytes)));
+                        let bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
+                        return Ok(Some(xsd_parser::quick_xml::Event::Empty(bytes)));
                     }
-                    AnyTypeSerializerState::Done__ => return None,
+                    AnyTypeSerializerState::Done__ => return Ok(None),
                     AnyTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-}
-pub mod quick_xml_deserialize {
-    use super::*;
-    #[derive(Debug)]
-    pub struct AnyTypeDeserializer {}
-    impl AnyTypeDeserializer {
-        fn from_bytes_start<R>(
-            reader: &R,
-            bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
-        ) -> Result<Self, xsd_parser::quick_xml::Error>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::ErrorKind;
-            Ok(Self {})
-        }
-    }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
-        fn init<R>(
-            reader: &R,
-            event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyType, Self>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::{DeserializerOutput, Event};
-            match event {
-                Event::Start(start) => {
-                    let deserializer = Self::from_bytes_start(reader, &start)?;
-                    Ok(DeserializerOutput {
-                        data: None,
-                        deserializer: Some(deserializer),
-                        event: None,
-                        allow_any: false,
-                    })
+    impl<'ser> core::iter::Iterator for AnyTypeSerializer<'ser> {
+        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = AnyTypeSerializerState::Done__;
+                    Some(Err(error))
                 }
-                Event::Empty(start) => {
-                    let deserializer = Self::from_bytes_start(reader, &start)?;
-                    let data = deserializer.finish(reader)?;
-                    Ok(DeserializerOutput {
-                        data: Some(data),
-                        deserializer: None,
-                        event: None,
-                        allow_any: false,
-                    })
-                }
-                event => Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: None,
-                    event: Some(event),
-                    allow_any: false,
-                }),
             }
-        }
-        fn next<R>(
-            self,
-            reader: &R,
-            event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::AnyType, Self>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::{DeserializerOutput, Event};
-            match event {
-                Event::End(_) => {
-                    let data = self.finish(reader)?;
-                    Ok(DeserializerOutput {
-                        data: Some(data),
-                        deserializer: None,
-                        event: None,
-                        allow_any: false,
-                    })
-                }
-                _ => Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: Some(self),
-                    event: Some(event),
-                    allow_any: true,
-                }),
-            }
-        }
-        fn finish<R>(self, _reader: &R) -> Result<super::AnyType, xsd_parser::quick_xml::Error>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::AnyType {})
         }
     }
 }

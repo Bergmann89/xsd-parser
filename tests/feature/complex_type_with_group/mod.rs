@@ -47,21 +47,23 @@ fn generate_serde_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use quick_xml::{Foo, FooType};
+    use quick_xml::{Foo, FooTypeContent};
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>(
         "tests/feature/complex_type_with_group/example/default.xml",
     );
 
-    assert!(matches!(obj, FooType::Baz(3)));
+    assert!(matches!(obj.content, FooTypeContent::Baz(3)));
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::Foo;
+    use quick_xml::{Foo, FooTypeContent};
 
-    let obj = Foo::Baz(3);
+    let obj = Foo {
+        content: FooTypeContent::Baz(3),
+    };
 
     crate::utils::quick_xml_write_test(
         &obj,

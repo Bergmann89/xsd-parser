@@ -3,6 +3,7 @@
 
 pub mod reader;
 
+mod attributes;
 mod deserialize;
 mod error;
 mod serialize;
@@ -17,6 +18,7 @@ pub use quick_xml::{
 
 pub use crate::misc::RawByteStr;
 
+pub use self::attributes::{write_attrib, write_attrib_opt};
 pub use self::deserialize::{
     ContentDeserializer, DeserializeBytes, DeserializeSync, Deserializer, DeserializerOutput,
     DeserializerResult, WithDeserializer,

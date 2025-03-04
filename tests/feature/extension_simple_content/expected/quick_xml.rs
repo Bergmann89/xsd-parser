@@ -12,11 +12,13 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
-        quick_xml_serialize::FooTypeSerializer::new(self, name, is_root)
+        Ok(quick_xml_serialize::FooTypeSerializer {
+            name: name.unwrap_or("tns:FooType"),
+            value: self,
+            is_root,
+            state: quick_xml_serialize::FooTypeSerializerState::Init__,
+        })
     }
-}
-impl xsd_parser::quick_xml::WithDeserializer for FooType {
-    type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
 #[derive(Debug, Clone)]
 pub enum EnumType {
@@ -35,278 +37,81 @@ impl xsd_parser::quick_xml::SerializeBytes for EnumType {
         }
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for EnumType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"OFF" => Ok(Self::Off),
-            b"ON" => Ok(Self::On),
-            b"AUTO" => Ok(Self::Auto),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
 pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
-        name: &'ser str,
-        value: &'ser super::FooType,
-        is_root: bool,
-        state: FooTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) value: &'ser super::FooType,
+        pub(super) is_root: bool,
+        pub(super) state: FooTypeSerializerState<'ser>,
     }
     #[derive(Debug)]
-    enum FooTypeSerializerState<'ser> {
+    pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
-        Content(xsd_parser::quick_xml::ContentSerializer<'ser, EnumType>),
+        Content__(<EnumType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
     impl<'ser> FooTypeSerializer<'ser> {
-        pub(super) fn new(
-            value: &'ser super::FooType,
-            name: Option<&'ser str>,
-            is_root: bool,
-        ) -> Result<Self, xsd_parser::quick_xml::Error> {
-            let name = name.unwrap_or("tns:FooType");
-            Ok(Self {
-                name,
-                value,
-                is_root,
-                state: FooTypeSerializerState::Init__,
-            })
-        }
-    }
-    impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
-        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            use xsd_parser::quick_xml::{
-                BytesEnd, BytesStart, Error, Event, Serializer, WithSerializer,
-            };
-            fn build_attributes<'a>(
-                mut bytes: BytesStart<'a>,
-                value: &'a super::FooType,
-            ) -> Result<BytesStart<'a>, Error> {
-                use xsd_parser::quick_xml::SerializeBytes;
-                if let Some(val) = value
-                    .value
-                    .as_ref()
-                    .map(SerializeBytes::serialize_bytes)
-                    .transpose()?
-                    .flatten()
-                {
-                    bytes.push_attribute(("tns:value", val));
-                }
-                if let Some(val) = value
-                    .another_value
-                    .as_ref()
-                    .map(SerializeBytes::serialize_bytes)
-                    .transpose()?
-                    .flatten()
-                {
-                    bytes.push_attribute(("tns:anotherValue", val));
-                }
-                Ok(bytes)
-            }
+        fn next_event(
+            &mut self,
+        ) -> Result<Option<xsd_parser::quick_xml::Event<'ser>>, xsd_parser::quick_xml::Error>
+        {
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::Content(
+                        self.state = FooTypeSerializerState::Content__(
                             xsd_parser::quick_xml::ContentSerializer::new(
                                 &self.value.content,
                                 None,
                                 false,
                             ),
                         );
-                        let mut bytes = BytesStart::new(self.name);
+                        let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute(("xmlns:tns", "http://example.com"));
                         }
-                        match build_attributes(bytes, &self.value) {
-                            Ok(bytes) => return Some(Ok(Event::Start(bytes))),
-                            Err(error) => {
-                                self.state = FooTypeSerializerState::Done__;
-                                return Some(Err(error));
-                            }
-                        }
+                        xsd_parser::quick_xml::write_attrib_opt(
+                            &mut bytes,
+                            "tns:value",
+                            &self.value.value,
+                        )?;
+                        xsd_parser::quick_xml::write_attrib_opt(
+                            &mut bytes,
+                            "tns:anotherValue",
+                            &self.value.another_value,
+                        )?;
+                        return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
                     }
-                    FooTypeSerializerState::Content(x) => match x.next() {
-                        Some(Ok(event)) => return Some(Ok(event)),
-                        Some(Err(error)) => {
-                            self.state = FooTypeSerializerState::Done__;
-                            return Some(Err(error));
-                        }
+                    FooTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
                         None => self.state = FooTypeSerializerState::End__,
                     },
                     FooTypeSerializerState::End__ => {
                         self.state = FooTypeSerializerState::Done__;
-                        return Some(Ok(Event::End(BytesEnd::new(self.name))));
+                        return Ok(Some(xsd_parser::quick_xml::Event::End(
+                            xsd_parser::quick_xml::BytesEnd::new(self.name),
+                        )));
                     }
-                    FooTypeSerializerState::Done__ => return None,
+                    FooTypeSerializerState::Done__ => return Ok(None),
                     FooTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-}
-pub mod quick_xml_deserialize {
-    use super::*;
-    #[derive(Debug)]
-    pub struct FooTypeDeserializer {
-        value: Option<String>,
-        another_value: Option<String>,
-        content: Option<super::EnumType>,
-        state: Option<xsd_parser::quick_xml::ContentDeserializer<EnumType>>,
-    }
-    impl FooTypeDeserializer {
-        fn from_bytes_start<R>(
-            reader: &R,
-            bytes_start: &xsd_parser::quick_xml::BytesStart<'_>,
-        ) -> Result<Self, xsd_parser::quick_xml::Error>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::ErrorKind;
-            const NS_TNS: &[u8] = b"http://example.com";
-            let mut value: Option<String> = None;
-            let mut another_value: Option<String> = None;
-            for attrib in bytes_start.attributes() {
-                let attrib = attrib?;
-                if matches ! (attrib . key . prefix () , Some (x) if x . as_ref () == b"xmlns") {
-                    continue;
-                }
-                if matches!(
-                    reader.resolve_local_name(attrib.key, NS_TNS),
-                    Some(b"value")
-                ) {
-                    reader.read_attrib(&mut value, b"value", &attrib.value)?;
-                } else if matches!(
-                    reader.resolve_local_name(attrib.key, NS_TNS),
-                    Some(b"anotherValue")
-                ) {
-                    reader.read_attrib(&mut another_value, b"anotherValue", &attrib.value)?;
-                } else {
-                    reader.err(ErrorKind::UnexpectedAttribute(
-                        xsd_parser::quick_xml::RawByteStr::from_slice(attrib.key.into_inner()),
-                    ))?;
+    impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
+        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = FooTypeSerializerState::Done__;
+                    Some(Err(error))
                 }
             }
-            Ok(Self {
-                value: value,
-                another_value: another_value,
-                content: None,
-                state: None,
-            })
-        }
-    }
-    impl<'de> xsd_parser::quick_xml::Deserializer<'de, super::FooType> for FooTypeDeserializer {
-        fn init<R>(
-            reader: &R,
-            event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooType, Self>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::{ContentDeserializer, DeserializerOutput, Event};
-            let (Event::Start(start) | Event::Empty(start)) = &event else {
-                return Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: None,
-                    event: Some(event),
-                    allow_any: false,
-                });
-            };
-            let mut this = Self::from_bytes_start(reader, &start)?;
-            let DeserializerOutput {
-                data,
-                deserializer,
-                event,
-                allow_any,
-            } = ContentDeserializer::init(reader, event)?;
-            if let Some(data) = data {
-                this.content = Some(data);
-                let data = this.finish(reader)?;
-                Ok(DeserializerOutput {
-                    data: Some(data),
-                    deserializer: None,
-                    event,
-                    allow_any,
-                })
-            } else if let Some(state) = deserializer {
-                this.state = Some(state);
-                Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: Some(this),
-                    event,
-                    allow_any,
-                })
-            } else {
-                Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: None,
-                    event,
-                    allow_any,
-                })
-            }
-        }
-        fn next<R>(
-            self,
-            reader: &R,
-            event: xsd_parser::quick_xml::Event<'de>,
-        ) -> xsd_parser::quick_xml::DeserializerResult<'de, super::FooType, Self>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::DeserializerOutput;
-            let mut this = self;
-            let DeserializerOutput {
-                data,
-                deserializer,
-                event,
-                allow_any,
-            } = this.state.take().unwrap().next(reader, event)?;
-            if let Some(data) = data {
-                this.content = Some(data);
-                let data = this.finish(reader)?;
-                Ok(DeserializerOutput {
-                    data: Some(data),
-                    deserializer: None,
-                    event,
-                    allow_any,
-                })
-            } else if let Some(state) = deserializer {
-                this.state = Some(state);
-                Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: Some(this),
-                    event,
-                    allow_any,
-                })
-            } else {
-                Ok(DeserializerOutput {
-                    data: None,
-                    deserializer: None,
-                    event,
-                    allow_any,
-                })
-            }
-        }
-        fn finish<R>(self, _reader: &R) -> Result<super::FooType, xsd_parser::quick_xml::Error>
-        where
-            R: xsd_parser::quick_xml::XmlReader,
-        {
-            use xsd_parser::quick_xml::ErrorKind;
-            Ok(super::FooType {
-                value: self.value,
-                another_value: self.another_value,
-                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
-            })
         }
     }
 }

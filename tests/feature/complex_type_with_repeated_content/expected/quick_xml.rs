@@ -1,12 +1,13 @@
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
-    pub content: FooTypeContent,
+    pub content: Vec<FooTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub enum FooTypeContent {
-    Bar(String),
-    Baz(i32),
+pub struct FooTypeContent {
+    pub a: i32,
+    pub b: String,
+    pub c: Option<String>,
 }
 impl xsd_parser::quick_xml::WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -16,7 +17,7 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
-            name: name.unwrap_or("tns:FooType"),
+            name: name.unwrap_or("tns:Foo"),
             value: self,
             is_root,
             state: quick_xml_serialize::FooTypeSerializerState::Init__,
@@ -50,7 +51,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
-        Content__(<FooTypeContent as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Content__(xsd_parser::quick_xml::IterSerializer<'ser, Vec<FooTypeContent>, FooTypeContent>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -63,8 +64,9 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeContentSerializerState<'ser> {
         Init__,
-        Bar(<String as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
-        Baz(<i32 as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        A(<i32 as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        B(<String as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        C(xsd_parser::quick_xml::IterSerializer<'ser, Option<String>, String>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -77,11 +79,11 @@ pub mod quick_xml_serialize {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
                         self.state = FooTypeSerializerState::Content__(
-                            xsd_parser::quick_xml::WithSerializer::serializer(
+                            xsd_parser::quick_xml::IterSerializer::new(
                                 &self.value.content,
                                 None,
                                 false,
-                            )?,
+                            ),
                         );
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
@@ -125,31 +127,40 @@ pub mod quick_xml_serialize {
         {
             loop {
                 match &mut self.state {
-                    FooTypeContentSerializerState::Init__ => match self.value {
-                        FooTypeContent::Bar(x) => {
-                            self.state = FooTypeContentSerializerState::Bar(
-                                xsd_parser::quick_xml::WithSerializer::serializer(
-                                    x,
-                                    Some("tns:Bar"),
-                                    false,
-                                )?,
-                            )
-                        }
-                        FooTypeContent::Baz(x) => {
-                            self.state = FooTypeContentSerializerState::Baz(
-                                xsd_parser::quick_xml::WithSerializer::serializer(
-                                    x,
-                                    Some("tns:Baz"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    FooTypeContentSerializerState::Bar(x) => match x.next().transpose()? {
+                    FooTypeContentSerializerState::Init__ => {
+                        self.state = FooTypeContentSerializerState::A(
+                            xsd_parser::quick_xml::WithSerializer::serializer(
+                                &self.value.a,
+                                Some("tns:a"),
+                                false,
+                            )?,
+                        );
+                    }
+                    FooTypeContentSerializerState::A(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = FooTypeContentSerializerState::Done__,
+                        None => {
+                            self.state = FooTypeContentSerializerState::B(
+                                xsd_parser::quick_xml::WithSerializer::serializer(
+                                    &self.value.b,
+                                    Some("tns:b"),
+                                    false,
+                                )?,
+                            )
+                        }
                     },
-                    FooTypeContentSerializerState::Baz(x) => match x.next().transpose()? {
+                    FooTypeContentSerializerState::B(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = FooTypeContentSerializerState::C(
+                                xsd_parser::quick_xml::IterSerializer::new(
+                                    &self.value.c,
+                                    Some("tns:c"),
+                                    false,
+                                ),
+                            )
+                        }
+                    },
+                    FooTypeContentSerializerState::C(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => self.state = FooTypeContentSerializerState::Done__,
                     },

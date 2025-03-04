@@ -20,17 +20,4 @@ impl xsd_parser::quick_xml::SerializeBytes for FooType {
         Ok(Some(std::borrow::Cow::Owned(data)))
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for FooType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| StringType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 pub type StringType = String;

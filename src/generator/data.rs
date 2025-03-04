@@ -8,7 +8,7 @@ use crate::schema::NamespaceId;
 use crate::schema::{xs::Use, MaxOccurs, MinOccurs};
 use crate::types::{
     AnyAttributeInfo, AnyInfo, AttributeInfo, ComplexInfo, DynamicInfo, ElementInfo,
-    EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, Types, UnionInfo, UnionTypeInfo,
+    EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, UnionInfo, UnionTypeInfo,
     VariantInfo,
 };
 
@@ -597,11 +597,9 @@ pub(super) struct ElementData<'types> {
     pub element: &'types ElementInfo,
     pub occurs: Occurs,
     pub need_box: bool,
-    pub is_dynamic: bool,
     pub field_ident: Ident2,
     pub variant_ident: Ident2,
     pub target_type: TokenStream,
-    pub target_is_complex: bool,
 }
 
 #[derive(Debug)]
@@ -740,8 +738,7 @@ impl<'a, 'types> ComplexTypeData<'a, 'types> {
                         && attributes.is_empty()
                 }
             };
-        let has_content_type =
-            !(elements.is_empty() || flatten_content) || type_mode == TypeMode::Simple;
+        let has_content_type = !(elements.is_empty() || flatten_content);
 
         let simple_content = make_simple_content_data(&ty, &mut inner, type_mode)?;
         let content_type = simple_content
@@ -853,53 +850,21 @@ fn make_element_data<'types>(
                 .current_type_ref()
                 .boxed_elements
                 .contains(&element.ident);
-            let is_dynamic = is_dynamic(&element.type_, inner.types);
             let field_ident =
                 format_field_ident(&element.ident.name, element.display_name.as_deref());
             let variant_ident =
                 format_variant_ident(&element.ident.name, element.display_name.as_deref());
-            let target_is_complex =
-                target_is_complex(&element.type_, inner.types, inner.typedef_mode);
 
             Some(Ok(ElementData {
                 element,
                 occurs,
                 need_box,
-                is_dynamic,
                 field_ident,
                 variant_ident,
                 target_type,
-                target_is_complex,
             }))
         })
         .collect::<Result<_, _>>()
-}
-
-fn is_dynamic(ident: &Ident, types: &Types) -> bool {
-    let Some(ty) = types.get(ident) else {
-        return false;
-    };
-
-    match ty {
-        Type::Dynamic(_) => true,
-        Type::ComplexType(ci) => ci.is_dynamic,
-        Type::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
-        _ => false,
-    }
-}
-
-fn target_is_complex(ident: &Ident, types: &Types, mode: TypedefMode) -> bool {
-    let Some(ty) = types.get(ident) else {
-        return false;
-    };
-
-    match ty {
-        Type::All(_) | Type::Choice(_) | Type::Sequence(_) | Type::ComplexType(_) => true,
-        Type::Reference(x) if x.is_single() && mode != TypedefMode::NewType => {
-            target_is_complex(&x.type_, types, mode)
-        }
-        _ => false,
-    }
 }
 
 #[instrument(err, level = "trace", skip(inner))]
