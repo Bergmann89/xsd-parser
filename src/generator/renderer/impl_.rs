@@ -5,7 +5,6 @@ use tracing::instrument;
 use super::super::data::{
     AttributeData, ComplexTypeData, DynamicData, EnumerationData, ReferenceData, UnionData,
 };
-use super::super::misc::StateFlags;
 
 pub(crate) struct ImplRenderer;
 
@@ -13,33 +12,21 @@ impl ImplRenderer {
     #[instrument(level = "trace", skip(self))]
     pub fn render_union(&mut self, data: &mut UnionData<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
     }
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
     }
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_reference(&mut self, data: &mut ReferenceData<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
     }
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_enumeration(&mut self, data: &mut EnumerationData<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
     }
 
     #[instrument(level = "trace", skip(self))]

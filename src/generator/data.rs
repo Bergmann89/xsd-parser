@@ -206,14 +206,6 @@ impl<'types> TypeData<'_, 'types> {
     pub(super) fn current_type_ref(&self) -> &TypeRef {
         self.cache.get(&self.ident).unwrap()
     }
-
-    pub(super) fn current_type_ref_mut(&mut self) -> &mut TypeRef {
-        let TypeData {
-            ident, generator, ..
-        } = self;
-
-        generator.cache.get_mut(ident).unwrap()
-    }
 }
 
 impl<'types> Deref for TypeData<'_, 'types> {

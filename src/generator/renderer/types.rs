@@ -11,9 +11,7 @@ use super::super::data::{
     AttributeData, ComplexTypeData, DynamicData, ElementData, EnumVariantData, EnumerationData,
     ReferenceData, TraitData, TypeData, UnionData, UnionVariantData,
 };
-use super::super::misc::{
-    BoxFlags, DynTypeTraits, GeneratorFlags, Occurs, StateFlags, TypeMode, TypedefMode,
-};
+use super::super::misc::{BoxFlags, DynTypeTraits, GeneratorFlags, Occurs, TypeMode, TypedefMode};
 use super::super::{Generator, SerdeSupport};
 
 pub(crate) struct TypeRenderer;
@@ -21,11 +19,7 @@ pub(crate) struct TypeRenderer;
 impl TypeRenderer {
     #[instrument(level = "trace", skip(self))]
     pub fn render_union(&mut self, data: &mut UnionData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
+        let type_ref = data.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
         let derive = Self::get_derive(data, Option::<String>::None);
         let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
@@ -45,11 +39,7 @@ impl TypeRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
+        let type_ref = data.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
         let xsd_crate = &data.xsd_parser_crate;
         let trait_ident = &data.trait_ident;
@@ -84,11 +74,6 @@ impl TypeRenderer {
             target_ident,
             ..
         } = data;
-
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
 
         let code = match mode {
             TypedefMode::Auto => crate::unreachable!(),
@@ -125,11 +110,6 @@ impl TypeRenderer {
             ..
         } = data;
 
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
         let derive = Self::get_derive(inner, Option::<String>::None);
         let trait_impls = Self::render_trait_impls(inner, &data.trait_impls);
 
@@ -152,11 +132,6 @@ impl TypeRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_complex_type(&mut self, data: &mut ComplexTypeData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
         let derive = Self::get_derive(data, Option::<String>::None);
         let type_ident = data.current_type_ref().type_ident.clone();
         let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);

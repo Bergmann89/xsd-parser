@@ -22,7 +22,7 @@ use self::data::TypeData;
 use self::helper::Walk;
 use self::misc::{
     format_module, format_type_ident, make_type_name, DynTypeTraits, Module, Modules, PendingType,
-    StateFlags, TraitInfos, TypeRef,
+    TraitInfos, TypeRef,
 };
 
 /// Type that is used to generate rust code from a [`Types`] object.
@@ -209,7 +209,6 @@ impl<'types> Generator<'types> {
             ns: ident.ns,
             module_ident,
             type_ident,
-            flags: StateFlags::empty(),
             boxed_elements: HashSet::new(),
         };
         self.cache.insert(ident, type_ref);
@@ -370,7 +369,6 @@ impl<'types> Generator<'types> {
                 module_ident,
                 ns: ident.ns,
                 type_ident,
-                flags: StateFlags::empty(),
                 boxed_elements,
             };
 
@@ -412,18 +410,6 @@ impl<'types> Generator<'types> {
             Type::Choice(x) => data.generate_choice(x),
             Type::Sequence(x) => data.generate_sequence(x),
         }
-    }
-}
-
-/* TypeRef */
-
-impl TypeRef {
-    fn add_flag_checked(&mut self, flag: StateFlags) -> bool {
-        let ret = self.flags.intersects(flag);
-
-        self.flags |= flag;
-
-        ret
     }
 }
 

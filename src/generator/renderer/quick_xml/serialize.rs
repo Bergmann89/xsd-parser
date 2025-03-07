@@ -8,7 +8,7 @@ use super::super::super::data::{
     ComplexTypeData, DynamicData, EnumVariantData, EnumerationData, ReferenceData, UnionData,
     UnionVariantData,
 };
-use super::super::super::misc::{Occurs, StateFlags, TypeMode, TypedefMode};
+use super::super::super::misc::{Occurs, TypeMode, TypedefMode};
 use super::super::super::Generator;
 use super::{
     ComplexTypeImpl, ComplexTypeImplBase, ComplexTypeImplComplex, ComplexTypeImplSimple,
@@ -25,11 +25,7 @@ impl QuickXmlRenderer {
         } = data;
 
         let xsd_parser = inner.xsd_parser_crate.clone();
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE) {
-            return;
-        }
-
+        let type_ref = inner.current_type_ref();
         let type_ident = &type_ref.type_ident;
 
         let variants = variants
@@ -52,11 +48,6 @@ impl QuickXmlRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_dynamic_serialize(&mut self, data: &mut DynamicData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE) {
-            return;
-        }
-
         let code = DynamicTypeImpl::new(data).render_serializer();
 
         data.add_code(code);
@@ -73,10 +64,7 @@ impl QuickXmlRenderer {
         } = data;
 
         let xsd_parser = inner.xsd_parser_crate.clone();
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE)
-            || matches!(mode, TypedefMode::Auto | TypedefMode::Typedef)
-        {
+        if matches!(mode, TypedefMode::Auto | TypedefMode::Typedef) {
             return;
         }
 
@@ -136,11 +124,7 @@ impl QuickXmlRenderer {
         } = data;
 
         let xsd_parser = inner.xsd_parser_crate.clone();
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE) {
-            return;
-        }
-
+        let type_ref = inner.current_type_ref();
         let type_ident = &type_ref.type_ident;
         let variants = variants
             .iter()
@@ -161,11 +145,6 @@ impl QuickXmlRenderer {
 
     #[instrument(level = "trace", skip(self))]
     pub fn render_complex_type_serialize(&mut self, data: &mut ComplexTypeData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_QUICK_XML_SERIALIZE) {
-            return;
-        }
-
         let (code, serializer_code) = ComplexTypeImpl::new(data).render_serializer();
 
         data.add_code(code);

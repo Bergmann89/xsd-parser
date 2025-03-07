@@ -304,7 +304,6 @@ pub(super) struct TypeRef {
     pub ns: Option<NamespaceId>,
     pub module_ident: Option<Ident2>,
     pub type_ident: Ident2,
-    pub flags: StateFlags,
     pub boxed_elements: HashSet<Ident>,
 }
 
@@ -401,21 +400,6 @@ impl Deref for TraitInfos {
 pub(super) struct TraitInfo {
     pub traits_all: BTreeSet<Ident>,
     pub traits_direct: BTreeSet<Ident>,
-}
-
-/* StateFlags */
-
-bitflags! {
-    #[derive(Debug, Clone, Copy)]
-    pub(super) struct StateFlags: u32 {
-        const HAS_TYPE = 1 << 0;
-        const HAS_IMPL = 1 << 1;
-
-        const HAS_QUICK_XML_SERIALIZE = 1 << 2;
-        const HAS_QUICK_XML_DESERIALIZE = 1 << 3;
-
-        const HAS_QUICK_XML = Self::HAS_QUICK_XML_SERIALIZE.bits() | Self::HAS_QUICK_XML_DESERIALIZE.bits();
-    }
 }
 
 /* Occurs */
