@@ -18,7 +18,7 @@ use crate::types::{Ident, IdentType, Type, Types};
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
-use self::data::TypeData;
+use self::data::{Code, Request};
 use self::helper::Walk;
 use self::misc::{
     format_module, format_type_ident, make_type_name, DynTypeTraits, Module, Modules, PendingType,
@@ -29,17 +29,27 @@ use self::misc::{
 #[must_use]
 #[derive(Debug)]
 pub struct Generator<'types> {
+    config: Config<'types>,
+    state: State<'types>,
+}
+
+/// Type that is used to generate rust code from a [`Types`] object.
+///
+/// In contrast to [`Generator`] this type does not allow changes to the
+/// configuration of the generator, because at least one type was already
+/// generated.
+#[must_use]
+#[derive(Debug)]
+pub struct GeneratorFixed<'types> {
+    config: Config<'types>,
+    state: State<'types>,
+    modules: Modules,
+}
+
+#[derive(Debug)]
+struct Config<'types> {
     types: &'types Types,
 
-    /* state */
-    cache: BTreeMap<Ident, TypeRef>,
-    traits: Option<TraitInfos>,
-    pending: VecDeque<PendingType<'types>>,
-
-    /* code */
-    modules: Modules,
-
-    /* config */
     flags: GeneratorFlags,
     derive: Vec<Ident2>,
     postfixes: [String; 8],
@@ -50,19 +60,20 @@ pub struct Generator<'types> {
     xsd_parser_crate: Ident2,
 }
 
+#[derive(Debug)]
+struct State<'types> {
+    cache: BTreeMap<Ident, TypeRef>,
+    trait_infos: Option<TraitInfos>,
+    pending: VecDeque<PendingType<'types>>,
+}
+
 /* Generator */
 
 impl<'types> Generator<'types> {
     /// Create a new code generator from the passed `types`.
     pub fn new(types: &'types Types) -> Self {
-        Self {
+        let config = Config {
             types,
-
-            cache: BTreeMap::new(),
-            traits: None,
-            pending: VecDeque::new(),
-            modules: Modules::default(),
-
             flags: GeneratorFlags::empty(),
             derive: vec![format_ident!("Debug"), format_ident!("Clone")],
             postfixes: [
@@ -80,13 +91,20 @@ impl<'types> Generator<'types> {
             serde_support: SerdeSupport::None,
             dyn_type_traits: DynTypeTraits::Auto,
             xsd_parser_crate: format_ident!("xsd_parser"),
-        }
+        };
+        let state = State {
+            cache: BTreeMap::new(),
+            trait_infos: None,
+            pending: VecDeque::new(),
+        };
+
+        Self { config, state }
     }
 
     /// Set the name of the `xsd-parser` create that the generator should use for
     /// generating the code.
     pub fn xsd_parser_crate<S: Display>(mut self, value: S) -> Self {
-        self.xsd_parser_crate = format_ident!("{value}");
+        self.config.xsd_parser_crate = format_ident!("{value}");
 
         self
     }
@@ -106,7 +124,7 @@ impl<'types> Generator<'types> {
         I: IntoIterator,
         I::Item: Display,
     {
-        self.derive = value.into_iter().map(|x| format_ident!("{x}")).collect();
+        self.config.derive = value.into_iter().map(|x| format_ident!("{x}")).collect();
 
         self
     }
@@ -134,7 +152,7 @@ impl<'types> Generator<'types> {
             }
         }
 
-        self.dyn_type_traits =
+        self.config.dyn_type_traits =
             DynTypeTraits::Custom(value.into_iter().map(|x| parse_path(&x.into())).collect());
 
         self
@@ -142,35 +160,35 @@ impl<'types> Generator<'types> {
 
     /// Set the [`BoxFlags`] flags the generator should use for generating the code.
     pub fn box_flags(mut self, value: BoxFlags) -> Self {
-        self.box_flags = value;
+        self.config.box_flags = value;
 
         self
     }
 
     /// Set the [`TypedefMode`] value the generator should use for generating the code.
     pub fn typedef_mode(mut self, value: TypedefMode) -> Self {
-        self.typedef_mode = value;
+        self.config.typedef_mode = value;
 
         self
     }
 
     /// Set the [`SerdeSupport`] value the generator should use for generating the code.
     pub fn serde_support(mut self, value: SerdeSupport) -> Self {
-        self.serde_support = value;
+        self.config.serde_support = value;
 
         self
     }
 
     /// Set the [`GeneratorFlags`] flags the generator should use for generating the code.
     pub fn flags(mut self, value: GeneratorFlags) -> Self {
-        self.flags = value;
+        self.config.flags = value;
 
         self
     }
 
     /// Add the passed [`GeneratorFlags`] flags the generator should use for generating the code.
     pub fn with_flags(mut self, value: GeneratorFlags) -> Self {
-        self.flags |= value;
+        self.config.flags |= value;
 
         self
     }
@@ -179,7 +197,7 @@ impl<'types> Generator<'types> {
     ///
     /// Default is `"Type"` for the [`IdentType::Type`] type and `""` for the other types.
     pub fn with_type_postfix<S: Into<String>>(mut self, type_: IdentType, postfix: S) -> Self {
-        self.postfixes[type_ as usize] = postfix.into();
+        self.config.postfixes[type_ as usize] = postfix.into();
 
         self
     }
@@ -202,7 +220,7 @@ impl<'types> Generator<'types> {
     ///     .with_type(Ident::type_("UserDefinedType"));
     /// ```
     pub fn with_type(mut self, ident: Ident) -> Result<Self, Error> {
-        let module_ident = format_module(self.types, ident.ns)?;
+        let module_ident = format_module(self.config.types, ident.ns)?;
         let type_ident = format_ident!("{}", ident.name.to_string());
 
         let type_ref = TypeRef {
@@ -211,11 +229,42 @@ impl<'types> Generator<'types> {
             type_ident,
             boxed_elements: HashSet::new(),
         };
-        self.cache.insert(ident, type_ref);
+        self.state.cache.insert(ident, type_ref);
 
         Ok(self)
     }
 
+    /// Will fix the generator by call [`into_fixed`](Self::into_fixed) and then
+    /// [`generate_type`](GeneratorFixed::generate_type).
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn generate_type(self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
+        self.into_fixed().generate_type(ident)
+    }
+
+    /// Will fix the generator by call [`into_fixed`](Self::into_fixed) and then
+    /// [`generate_all_types`](GeneratorFixed::generate_all_types).
+    ///
+    /// # Errors
+    ///
+    /// Will just forward the errors from [`generate_all_types`](GeneratorFixed::generate_all_types).
+    pub fn generate_all_types(self) -> Result<GeneratorFixed<'types>, Error> {
+        self.into_fixed().generate_all_types()
+    }
+
+    /// Will convert the generator into a [`GeneratorFixed`].
+    pub fn into_fixed(self) -> GeneratorFixed<'types> {
+        let Self { config, state } = self;
+        let modules = Modules::default();
+
+        GeneratorFixed {
+            config,
+            state,
+            modules,
+        }
+    }
+}
+
+impl<'types> GeneratorFixed<'types> {
     /// Generate the code for the given type.
     ///
     /// This will generate the code for the passed type identifier and all
@@ -228,8 +277,8 @@ impl<'types> Generator<'types> {
     ///     .generate_type(Ident::type_("Root"));
     /// ```
     #[instrument(err, level = "trace", skip(self))]
-    pub fn generate_type(mut self, ident: Ident) -> Result<Self, Error> {
-        self.get_or_create_type_ref(ident)?;
+    pub fn generate_type(mut self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
+        self.state.get_or_create_type_ref(&self.config, ident)?;
         self.generate_pending()?;
 
         Ok(self)
@@ -249,9 +298,10 @@ impl<'types> Generator<'types> {
     /// ```
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
-        for ident in self.types.keys() {
+        for ident in self.config.types.keys() {
             if ident.name.is_named() {
-                self.get_or_create_type_ref(ident.clone())?;
+                self.state
+                    .get_or_create_type_ref(&self.config, ident.clone())?;
             }
         }
         self.generate_pending()?;
@@ -261,19 +311,12 @@ impl<'types> Generator<'types> {
 
     /// Finish the code generation.
     ///
-    /// THis will return the generated code as [`TokenStream`].
+    /// This will return the generated code as [`TokenStream`].
     #[instrument(level = "trace", skip(self))]
     pub fn finish(self) -> TokenStream {
-        let Self {
-            modules,
-            types,
-            serde_support,
-            ..
-        } = self;
+        let serde = serde_includes(self.config.serde_support);
 
-        let serde = serde_includes(serde_support);
-
-        let modules = modules.0.into_iter().map(|(ns, module)| {
+        let modules = self.modules.0.into_iter().map(|(ns, module)| {
             let Module {
                 code,
                 quick_xml_serialize,
@@ -306,7 +349,9 @@ impl<'types> Generator<'types> {
                 #quick_xml_deserialize
             };
 
-            if let Some(name) = ns.and_then(|ns| format_module(types, Some(ns)).unwrap()) {
+            if let Some(name) =
+                ns.and_then(|ns| format_module(self.config.types, Some(ns)).unwrap())
+            {
                 quote! {
                     pub mod #name {
                         use super::*;
@@ -326,32 +371,69 @@ impl<'types> Generator<'types> {
         }
     }
 
-    fn get_traits(&mut self) -> &TraitInfos {
-        self.traits
-            .get_or_insert_with(|| TraitInfos::new(self.types))
+    #[instrument(err, level = "trace", skip(self))]
+    fn generate_pending(&mut self) -> Result<(), Error> {
+        while let Some(args) = self.state.pending.pop_front() {
+            self.generate_type_intern(args)?;
+        }
+
+        Ok(())
     }
 
-    #[instrument(level = "trace", skip(self))]
-    fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
+    #[instrument(err, level = "trace", skip(self))]
+    fn generate_type_intern(&mut self, data: PendingType<'types>) -> Result<(), Error> {
+        let PendingType { ty, ident } = data;
         let Self {
-            flags,
-            types,
-            cache,
-            pending,
-            postfixes,
-            ..
+            config,
+            state,
+            modules,
         } = self;
+        let req = Request::new(&ident, config, state);
+        let mut code = Code::new(&ident, config, modules);
 
-        if !cache.contains_key(&ident) {
-            let ty = types
+        tracing::debug!("Render type: {ident}");
+
+        match ty {
+            Type::BuildIn(_) => (),
+            Type::Union(x) => req.into_union_type(x)?.render(config, &mut code),
+            Type::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut code),
+            Type::Reference(x) => req.into_reference_type(x)?.render(config, &mut code),
+            Type::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut code),
+            Type::All(x) => req.into_all_type(x)?.render(config, &mut code),
+            Type::Choice(x) => req.into_choice_type(x)?.render(config, &mut code),
+            Type::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut code),
+            Type::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut code),
+        }
+
+        Ok(())
+    }
+}
+
+impl Config<'_> {
+    fn check_flags(&self, flags: GeneratorFlags) -> bool {
+        self.flags.intersects(flags)
+    }
+}
+
+impl<'types> State<'types> {
+    #[instrument(level = "trace", skip(self))]
+    fn get_or_create_type_ref(
+        &mut self,
+        config: &Config<'types>,
+        ident: Ident,
+    ) -> Result<&TypeRef, Error> {
+        if !self.cache.contains_key(&ident) {
+            let ty = config
+                .types
                 .get(&ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let name = make_type_name(postfixes, ty, &ident);
+            let name = make_type_name(&config.postfixes, ty, &ident);
             let (module_ident, type_ident) = if let Type::BuildIn(x) = ty {
                 (None, format_ident!("{x}"))
             } else {
-                let use_modules = flags.intersects(GeneratorFlags::USE_MODULES);
-                let module_ident = format_module(types, use_modules.then_some(ident.ns).flatten())?;
+                let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
+                let module_ident =
+                    format_module(config.types, use_modules.then_some(ident.ns).flatten())?;
                 let type_ident = format_type_ident(&name, None);
 
                 (module_ident, type_ident)
@@ -359,8 +441,8 @@ impl<'types> Generator<'types> {
 
             tracing::debug!("Queue new type generation: {ident}");
 
-            let boxed_elements = get_boxed_elements(&ident, ty, types, cache);
-            pending.push_back(PendingType {
+            let boxed_elements = get_boxed_elements(&ident, ty, config.types, &self.cache);
+            self.pending.push_back(PendingType {
                 ty,
                 ident: ident.clone(),
             });
@@ -372,44 +454,10 @@ impl<'types> Generator<'types> {
                 boxed_elements,
             };
 
-            assert!(cache.insert(ident.clone(), type_ref).is_none());
+            assert!(self.cache.insert(ident.clone(), type_ref).is_none());
         }
 
-        Ok(cache.get_mut(&ident).unwrap())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn generate_pending(&mut self) -> Result<(), Error> {
-        while let Some(args) = self.pending.pop_front() {
-            self.generate_type_intern(args)?;
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn generate_type_intern(&mut self, data: PendingType<'types>) -> Result<(), Error> {
-        let PendingType { ty, ident } = data;
-
-        tracing::debug!("Render type: {ident}");
-
-        let data = TypeData {
-            ty,
-            ident,
-            generator: self,
-        };
-
-        match data.ty {
-            Type::BuildIn(_) => Ok(()),
-            Type::Union(x) => data.generate_union(x),
-            Type::Dynamic(x) => data.generate_dynamic(x),
-            Type::Reference(x) => data.generate_reference(x),
-            Type::Enumeration(x) => data.generate_enumeration(x),
-            Type::ComplexType(x) => data.generate_complex_type(x),
-            Type::All(x) => data.generate_all(x),
-            Type::Choice(x) => data.generate_choice(x),
-            Type::Sequence(x) => data.generate_sequence(x),
-        }
+        Ok(self.cache.get_mut(&ident).unwrap())
     }
 }
 

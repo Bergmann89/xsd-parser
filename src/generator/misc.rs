@@ -274,9 +274,13 @@ impl Modules {
     pub(super) fn get_mut(&mut self, ns: Option<NamespaceId>) -> &mut Module {
         self.0.entry(ns).or_default()
     }
+}
 
-    pub(super) fn add_code(&mut self, ns: Option<NamespaceId>, code: TokenStream) {
-        self.get_mut(ns).code.extend(code);
+impl Deref for Modules {
+    type Target = BTreeMap<Option<NamespaceId>, Module>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
@@ -442,19 +446,13 @@ impl Occurs {
         }
     }
 
+    pub(super) fn is_some(&self) -> bool {
+        *self != Self::None
+    }
+
     pub(super) fn is_direct(&self) -> bool {
         matches!(self, Self::Single | Self::Optional | Self::StaticList(_))
     }
-}
-
-/* TypeMode */
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub(super) enum TypeMode {
-    All,
-    Choice,
-    Sequence,
-    Simple,
 }
 
 /* DynTypeTraits */

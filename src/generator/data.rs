@@ -1,181 +1,304 @@
-use std::ops::{Deref, DerefMut};
+use std::{mem::take, ops::Deref};
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
-use tracing::instrument;
 
-use crate::schema::NamespaceId;
-use crate::schema::{xs::Use, MaxOccurs, MinOccurs};
-use crate::types::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, ComplexInfo, DynamicInfo, ElementInfo,
-    EnumerationInfo, GroupInfo, Ident, Name, ReferenceInfo, Type, UnionInfo, UnionTypeInfo,
-    VariantInfo,
+use crate::{
+    schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
+    types::{
+        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
+        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, UnionInfo,
+        UnionTypeInfo, VariantInfo,
+    },
 };
 
-use super::misc::{
-    format_field_ident, format_type_ident, format_type_ref, format_type_ref_ex,
-    format_variant_ident, Occurs, TypeMode, TypeRef,
+use super::{
+    misc::{format_field_ident, format_type_ref, format_type_ref_ex, format_variant_ident, Occurs},
+    BoxFlags, Config, Error, GeneratorFlags, Modules, State, TraitInfos, TypeRef, TypedefMode,
 };
-use super::renderer::{ImplRenderer, QuickXmlRenderer, TypeRenderer};
-use super::{Error, Generator, GeneratorFlags, TypedefMode};
 
-/* TypeData */
+/* Request */
 
-#[derive(Debug)]
-pub(super) struct TypeData<'a, 'types> {
-    pub ty: &'types Type,
-    pub ident: Ident,
-    pub generator: &'a mut Generator<'types>,
+/// Helper type that is used to request the code generation for a specific type.
+pub(super) struct Request<'a, 'types> {
+    pub ident: &'a Ident,
+    pub config: &'a Config<'types>,
+
+    state: &'a mut State<'types>,
 }
 
-macro_rules! render {
-    (
-        $data:expr,
-        $render:ident,
-        $render_quick_xml_serialize:ident,
-        $render_quick_xml_deserialize:ident
-    ) => {
-        TypeRenderer.$render(&mut $data);
-        ImplRenderer.$render(&mut $data);
+impl<'a, 'types> Request<'a, 'types> {
+    pub(super) fn new(
+        ident: &'a Ident,
+        config: &'a Config<'types>,
+        state: &'a mut State<'types>,
+    ) -> Self {
+        Self {
+            ident,
+            config,
+            state,
+        }
+    }
 
-        if $data.check_generator_flags(GeneratorFlags::QUICK_XML_SERIALIZE) {
-            QuickXmlRenderer.$render_quick_xml_serialize(&mut $data);
+    pub(super) fn into_union_type(
+        self,
+        info: &'types UnionInfo,
+    ) -> Result<UnionType<'types>, Error> {
+        UnionType::new(info, self)
+    }
+
+    pub(super) fn into_dynamic_type(
+        self,
+        info: &'types DynamicInfo,
+    ) -> Result<DynamicType<'types>, Error> {
+        DynamicType::new(info, self)
+    }
+
+    pub(super) fn into_reference_type(
+        self,
+        info: &'types ReferenceInfo,
+    ) -> Result<ReferenceType<'types>, Error> {
+        ReferenceType::new(info, self)
+    }
+
+    pub(super) fn into_enumeration_type(
+        self,
+        info: &'types EnumerationInfo,
+    ) -> Result<EnumerationType<'types>, Error> {
+        EnumerationType::new(info, self)
+    }
+
+    pub(super) fn into_all_type(
+        self,
+        info: &'types GroupInfo,
+    ) -> Result<ComplexType<'types>, Error> {
+        ComplexType::new_all(info, self)
+    }
+
+    pub(super) fn into_choice_type(
+        self,
+        info: &'types GroupInfo,
+    ) -> Result<ComplexType<'types>, Error> {
+        ComplexType::new_choice(info, self)
+    }
+
+    pub(super) fn into_sequence_type(
+        self,
+        info: &'types GroupInfo,
+    ) -> Result<ComplexType<'types>, Error> {
+        ComplexType::new_sequence(info, self)
+    }
+
+    pub(super) fn into_complex_type(
+        self,
+        info: &'types ComplexInfo,
+    ) -> Result<ComplexType<'types>, Error> {
+        ComplexType::new_complex(info, self)
+    }
+
+    fn current_module(&self) -> Option<NamespaceId> {
+        self.check_flags(GeneratorFlags::USE_MODULES)
+            .then_some(self.ident.ns)
+            .flatten()
+    }
+
+    fn current_type_ref(&self) -> &TypeRef {
+        self.state.cache.get(self.ident).unwrap()
+    }
+
+    fn get_trait_infos(&mut self) -> &TraitInfos {
+        self.state
+            .trait_infos
+            .get_or_insert_with(|| TraitInfos::new(self.config.types))
+    }
+
+    fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
+        self.state.get_or_create_type_ref(self.config, ident)
+    }
+
+    fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
+        let ident = self.ident.clone();
+        let current_module = self.current_module();
+
+        self.get_trait_infos()
+            .get(&ident)
+            .into_iter()
+            .flat_map(|info| &info.traits_all)
+            .cloned()
+            .collect::<Vec<_>>()
+            .into_iter()
+            .map(|ident| {
+                let type_ref = self.get_or_create_type_ref(ident.clone())?;
+                let ident = format_ident!("{}Trait", type_ref.type_ident);
+                let trait_ident = format_type_ref_ex(current_module, None, &ident, type_ref);
+
+                Ok(trait_ident)
+            })
+            .collect::<Result<Vec<_>, _>>()
+    }
+
+    fn get_default(
+        &mut self,
+        current_ns: Option<NamespaceId>,
+        default: &str,
+        ident: &Ident,
+    ) -> Result<TokenStream, Error> {
+        let ty = self
+            .types
+            .get(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+        let type_ref = self.get_or_create_type_ref(ident.clone())?;
+
+        macro_rules! build_in {
+            ($ty:ty) => {
+                if let Ok(val) = default.parse::<$ty>() {
+                    return Ok(quote!(#val));
+                }
+            };
         }
 
-        if $data.check_generator_flags(GeneratorFlags::QUICK_XML_DESERIALIZE) {
-            QuickXmlRenderer.$render_quick_xml_deserialize(&mut $data);
+        match ty {
+            Type::BuildIn(BuildInInfo::U8) => build_in!(u8),
+            Type::BuildIn(BuildInInfo::U16) => build_in!(u16),
+            Type::BuildIn(BuildInInfo::U32) => build_in!(u32),
+            Type::BuildIn(BuildInInfo::U64) => build_in!(u64),
+            Type::BuildIn(BuildInInfo::U128) => build_in!(u128),
+            Type::BuildIn(BuildInInfo::Usize) => build_in!(usize),
+
+            Type::BuildIn(BuildInInfo::I8) => build_in!(i8),
+            Type::BuildIn(BuildInInfo::I16) => build_in!(i16),
+            Type::BuildIn(BuildInInfo::I32) => build_in!(i32),
+            Type::BuildIn(BuildInInfo::I64) => build_in!(i64),
+            Type::BuildIn(BuildInInfo::I128) => build_in!(i128),
+            Type::BuildIn(BuildInInfo::Isize) => build_in!(isize),
+
+            Type::BuildIn(BuildInInfo::F32) => build_in!(f32),
+            Type::BuildIn(BuildInInfo::F64) => build_in!(f64),
+
+            Type::BuildIn(BuildInInfo::Bool) => match default.to_ascii_lowercase().as_str() {
+                "true" | "yes" | "1" => return Ok(quote!(true)),
+                "false" | "no" | "0" => return Ok(quote!(false)),
+                _ => (),
+            },
+            Type::BuildIn(BuildInInfo::String) => {
+                return Ok(quote!(String::from(#default)));
+            }
+            Type::BuildIn(BuildInInfo::Custom(x)) => {
+                if let Some(x) = x.default(default) {
+                    return Ok(x);
+                }
+            }
+
+            Type::Enumeration(ei) => {
+                let target_type = format_type_ref(current_ns, type_ref);
+
+                for var in &*ei.variants {
+                    if var.type_.is_none()
+                        && matches!(var.ident.name.as_str(), Some(x) if x == default)
+                    {
+                        let variant_ident =
+                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
+
+                        return Ok(quote!(#target_type :: #variant_ident));
+                    }
+
+                    if let Some(target_ident) = &var.type_ {
+                        if let Ok(default) = self.get_default(current_ns, default, target_ident) {
+                            let variant_ident = match self.state.cache.get(target_ident) {
+                                Some(type_ref) if var.ident.name.is_unnamed() => {
+                                    type_ref.type_ident.clone()
+                                }
+                                _ => format_variant_ident(
+                                    &var.ident.name,
+                                    var.display_name.as_deref(),
+                                ),
+                            };
+
+                            return Ok(quote!(#target_type :: #variant_ident(#default)));
+                        }
+                    }
+                }
+            }
+
+            Type::Union(ui) => {
+                let target_type = format_type_ref(current_ns, type_ref);
+
+                for ty in &*ui.types {
+                    if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
+                        let variant_ident =
+                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
+
+                        return Ok(quote! {
+                            #target_type :: #variant_ident ( #code )
+                        });
+                    }
+                }
+            }
+
+            Type::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
+                Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
+                Occurs::DynamicList if default.is_empty() => {
+                    let type_ident = format_type_ref(current_ns, type_ref);
+
+                    return Ok(quote! { #type_ident(Vec::new()) });
+                }
+                _ => (),
+            },
+
+            _ => (),
         }
-    };
+
+        Err(Error::InvalidDefaultValue(
+            ident.clone(),
+            default.to_owned(),
+        ))
+    }
 }
 
-impl<'types> TypeData<'_, 'types> {
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_union(self, ty: &'types UnionInfo) -> Result<(), Error> {
-        let mut data = UnionData::new(ty, self)?;
+impl<'types> Deref for Request<'_, 'types> {
+    type Target = Config<'types>;
 
-        render!(
-            data,
-            render_union,
-            render_union_serialize,
-            render_union_deserialize
-        );
+    fn deref(&self) -> &Self::Target {
+        self.config
+    }
+}
 
-        Ok(())
+/* Code */
+
+/// Helper type that is used to collect the generated code.
+pub(super) struct Code<'a, 'types> {
+    ident: &'a Ident,
+    config: &'a Config<'types>,
+    modules: &'a mut Modules,
+}
+
+#[allow(dead_code)] // TODO
+impl<'a, 'types> Code<'a, 'types> {
+    pub(super) fn new(
+        ident: &'a Ident,
+        config: &'a Config<'types>,
+        modules: &'a mut Modules,
+    ) -> Self {
+        Self {
+            ident,
+            config,
+            modules,
+        }
     }
 
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_dynamic(self, ty: &'types DynamicInfo) -> Result<(), Error> {
-        let mut data = DynamicData::new(ty, self)?;
-
-        render!(
-            data,
-            render_dynamic,
-            render_dynamic_serialize,
-            render_dynamic_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_reference(self, ty: &'types ReferenceInfo) -> Result<(), Error> {
-        let mut data = ReferenceData::new(ty, self)?;
-
-        render!(
-            data,
-            render_reference,
-            render_reference_serialize,
-            render_reference_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_enumeration(self, ty: &'types EnumerationInfo) -> Result<(), Error> {
-        let mut data = EnumerationData::new(ty, self)?;
-
-        render!(
-            data,
-            render_enumeration,
-            render_enumeration_serialize,
-            render_enumeration_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_complex_type(self, ty: &'types ComplexInfo) -> Result<(), Error> {
-        let mut data = ComplexTypeData::new_complex_type(ty, self)?;
-
-        render!(
-            data,
-            render_complex_type,
-            render_complex_type_serialize,
-            render_complex_type_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_all(self, ty: &'types GroupInfo) -> Result<(), Error> {
-        let mut data = ComplexTypeData::new_all(ty, self)?;
-
-        render!(
-            data,
-            render_complex_type,
-            render_complex_type_serialize,
-            render_complex_type_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_choice(self, ty: &'types GroupInfo) -> Result<(), Error> {
-        let mut data = ComplexTypeData::new_choice(ty, self)?;
-
-        render!(
-            data,
-            render_complex_type,
-            render_complex_type_serialize,
-            render_complex_type_deserialize
-        );
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn generate_sequence(self, ty: &'types GroupInfo) -> Result<(), Error> {
-        let mut data = ComplexTypeData::new_sequence(ty, self)?;
-
-        render!(
-            data,
-            render_complex_type,
-            render_complex_type_serialize,
-            render_complex_type_deserialize
-        );
-
-        Ok(())
-    }
-
-    pub(super) fn add_code(&mut self, code: TokenStream) {
-        let ns = self
-            .flags
-            .intersects(GeneratorFlags::USE_MODULES)
+    pub(super) fn current_ns(&self) -> Option<NamespaceId> {
+        self.check_flags(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
-            .flatten();
-        self.modules.add_code(ns, code);
+            .flatten()
     }
 
-    pub(super) fn add_quick_xml_serialize_code(&mut self, code: TokenStream) {
-        let ns = self
-            .flags
-            .intersects(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten();
+    pub(super) fn push(&mut self, code: TokenStream) {
+        let ns = self.current_ns();
+        self.modules.get_mut(ns).code.extend(code);
+    }
+
+    pub(super) fn push_quick_xml_serialize(&mut self, code: TokenStream) {
+        let ns = self.current_ns();
         self.modules
             .get_mut(ns)
             .quick_xml_serialize
@@ -183,130 +306,96 @@ impl<'types> TypeData<'_, 'types> {
             .extend(code);
     }
 
-    pub(super) fn add_quick_xml_deserialize_code(&mut self, code: TokenStream) {
-        let ns = self
-            .flags
-            .intersects(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten();
+    pub(super) fn push_quick_xml_deserialize(&mut self, code: TokenStream) {
+        let ns = self.current_ns();
         self.modules
             .get_mut(ns)
             .quick_xml_deserialize
             .get_or_insert_default()
             .extend(code);
     }
-
-    pub(super) fn current_module(&self) -> Option<NamespaceId> {
-        self.flags
-            .intersects(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten()
-    }
-
-    pub(super) fn current_type_ref(&self) -> &TypeRef {
-        self.cache.get(&self.ident).unwrap()
-    }
 }
 
-impl<'types> Deref for TypeData<'_, 'types> {
-    type Target = Generator<'types>;
+impl<'types> Deref for Code<'_, 'types> {
+    type Target = Config<'types>;
 
     fn deref(&self) -> &Self::Target {
-        self.generator
+        self.config
     }
 }
 
-impl DerefMut for TypeData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        self.generator
-    }
-}
-
-/* TraitData */
+/* UnionType */
 
 #[derive(Debug)]
-pub(super) struct TraitData {
-    pub trait_ident: TokenStream,
-}
-
-/* UnionData */
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct UnionData<'a, 'types> {
-    pub ty: &'types UnionInfo,
-    pub inner: TypeData<'a, 'types>,
-    pub variants: Vec<UnionVariantData<'types>>,
-    pub trait_impls: Vec<TraitData>,
+#[allow(dead_code)] // TODO
+pub(super) struct UnionType<'types> {
+    pub info: &'types UnionInfo,
+    pub type_ident: Ident2,
+    pub variants: Vec<UnionTypeVariant<'types>>,
+    pub trait_impls: Vec<TokenStream>,
 }
 
 #[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct UnionVariantData<'types> {
-    pub var: &'types UnionTypeInfo,
+#[allow(dead_code)] // TODO
+pub(super) struct UnionTypeVariant<'types> {
+    pub info: &'types UnionTypeInfo,
     pub variant_ident: Ident2,
     pub target_type: TokenStream,
 }
 
-impl<'a, 'types> UnionData<'a, 'types> {
-    fn new(ty: &'types UnionInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let current_module = inner.current_module();
-        let trait_impls = make_trait_impls(&mut inner)?;
-        let variants = ty
+impl<'types> UnionType<'types> {
+    fn new(info: &'types UnionInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+        let type_ident = req.current_type_ref().type_ident.clone();
+        let current_module = req.current_module();
+        let trait_impls = req.make_trait_impls()?;
+        let variants = info
             .types
             .iter()
-            .map(|var| {
-                let type_ref = inner.get_or_create_type_ref(var.type_.clone())?;
-                let variant_ident =
-                    format_variant_ident(&var.type_.name, var.display_name.as_deref());
-                let target_type = format_type_ref(current_module, type_ref);
-
-                Ok(UnionVariantData {
-                    var,
-                    variant_ident,
-                    target_type,
-                })
-            })
+            .map(|info| info.make_variant(current_module, &mut req))
             .collect::<Result<_, _>>()?;
 
         Ok(Self {
-            ty,
-            inner,
+            info,
+            type_ident,
             variants,
             trait_impls,
         })
     }
 }
 
-impl<'a, 'types> Deref for UnionData<'a, 'types> {
-    type Target = TypeData<'a, 'types>;
+impl UnionTypeInfo {
+    fn make_variant<'types>(
+        &'types self,
+        current_module: Option<NamespaceId>,
+        req: &mut Request<'_, 'types>,
+    ) -> Result<UnionTypeVariant<'types>, Error> {
+        let type_ref = req.get_or_create_type_ref(self.type_.clone())?;
+        let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
+        let target_type = format_type_ref(current_module, type_ref);
 
-    fn deref(&self) -> &Self::Target {
-        &self.inner
+        Ok(UnionTypeVariant {
+            info: self,
+            variant_ident,
+            target_type,
+        })
     }
 }
 
-impl DerefMut for UnionData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
-/* DynamicData */
+/* DynamicType */
 
 #[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct DynamicData<'a, 'types> {
-    pub ty: &'types DynamicInfo,
-    pub inner: TypeData<'a, 'types>,
-    pub sub_traits: Option<Vec<TokenStream>>,
+#[allow(dead_code)] // TODO
+pub(super) struct DynamicType<'types> {
+    pub info: &'types DynamicInfo,
+    pub type_ident: Ident2,
     pub trait_ident: Ident2,
-    pub derived_types: Vec<DerivedTypeData>,
+    pub sub_traits: Option<Vec<TokenStream>>,
+    pub derived_types: Vec<DerivedType>,
 }
 
 #[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct DerivedTypeData {
+#[allow(dead_code)] // TODO
+pub(super) struct DerivedType {
     pub ident: Ident,
     pub s_name: String,
     pub b_name: Literal,
@@ -314,21 +403,21 @@ pub(super) struct DerivedTypeData {
     pub variant_ident: Ident2,
 }
 
-impl<'a, 'types> DynamicData<'a, 'types> {
-    fn new(ty: &'types DynamicInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let type_ident = &inner.current_type_ref().type_ident;
+impl<'types> DynamicType<'types> {
+    fn new(info: &'types DynamicInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+        let type_ident = req.current_type_ref().type_ident.clone();
         let trait_ident = format_ident!("{type_ident}Trait");
-        let ident = inner.ident.clone();
-        let current_module = inner.current_module();
-        let sub_traits = inner
-            .get_traits()
+        let ident = req.ident.clone();
+        let current_module = req.current_module();
+        let sub_traits = req
+            .get_trait_infos()
             .get(&ident)
             .map(|info| info.traits_direct.clone())
             .map(|traits_direct| {
                 traits_direct
                     .iter()
                     .map(|ident| {
-                        inner.get_or_create_type_ref(ident.clone()).map(|x| {
+                        req.get_or_create_type_ref(ident.clone()).map(|x| {
                             let ident = format_ident!("{}Trait", x.type_ident);
 
                             format_type_ref_ex(current_module, None, &ident, x)
@@ -337,44 +426,726 @@ impl<'a, 'types> DynamicData<'a, 'types> {
                     .collect::<Result<Vec<_>, _>>()
             })
             .transpose()?;
-        let derived_types = ty
+        let derived_types = info
             .derived_types
             .iter()
-            .map(|ident| make_derived_type_data(&mut inner, ident))
+            .map(|ident| make_derived_type_data(&mut req, ident))
             .collect::<Result<Vec<_>, _>>()?;
 
         Ok(Self {
-            ty,
-            inner,
-            sub_traits,
+            info,
+            type_ident,
             trait_ident,
+            sub_traits,
             derived_types,
         })
     }
 }
 
-impl<'a, 'types> Deref for DynamicData<'a, 'types> {
-    type Target = TypeData<'a, 'types>;
+/* ReferenceType */
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) struct ReferenceType<'types> {
+    pub info: &'types ReferenceInfo,
+    pub mode: TypedefMode,
+    pub occurs: Occurs,
+    pub type_ident: Ident2,
+    pub target_ident: TokenStream,
+    pub trait_impls: Vec<TokenStream>,
+}
+
+impl<'types> ReferenceType<'types> {
+    fn new(info: &'types ReferenceInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+        let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
+        let current_module = req.current_module();
+        let type_ident = req.current_type_ref().type_ident.clone();
+        let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
+        let target_ident = format_type_ref(current_module, target_ref);
+        let trait_impls = req.make_trait_impls()?;
+
+        let mode = match (req.typedef_mode, occurs) {
+            (TypedefMode::Auto, Occurs::None | Occurs::Single) => TypedefMode::Typedef,
+            (TypedefMode::Auto, _) => TypedefMode::NewType,
+            (mode, _) => mode,
+        };
+
+        Ok(Self {
+            info,
+            mode,
+            occurs,
+            type_ident,
+            target_ident,
+            trait_impls,
+        })
+    }
+}
+
+/* EnumerationType */
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) struct EnumerationType<'types> {
+    pub info: &'types EnumerationInfo,
+    pub type_ident: Ident2,
+    pub variants: Vec<EnumerationTypeVariant<'types>>,
+    pub trait_impls: Vec<TokenStream>,
+}
+
+#[derive(Debug)]
+pub(super) struct EnumerationTypeVariant<'types> {
+    pub info: &'types VariantInfo,
+    pub variant_ident: Ident2,
+    pub target_type: Option<TokenStream>,
+}
+
+impl<'types> EnumerationType<'types> {
+    fn new(info: &'types EnumerationInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+        let mut unknown = 0usize;
+        let current_module = req.current_module();
+        let type_ident = req.current_type_ref().type_ident.clone();
+        let trait_impls = req.make_trait_impls()?;
+
+        let variants = info
+            .variants
+            .iter()
+            .filter_map(|var| var.make_variant(&mut unknown, current_module, &mut req))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(EnumerationType {
+            info,
+            type_ident,
+            variants,
+            trait_impls,
+        })
+    }
+}
+
+impl VariantInfo {
+    fn make_variant<'types>(
+        &'types self,
+        unknown: &mut usize,
+        current_module: Option<NamespaceId>,
+        req: &mut Request<'_, 'types>,
+    ) -> Option<Result<EnumerationTypeVariant<'types>, Error>> {
+        match self.use_ {
+            Use::Prohibited => None,
+            Use::Required | Use::Optional => {
+                let type_ref = if let Some(t) = &self.type_ {
+                    match req.get_or_create_type_ref(t.clone()) {
+                        Ok(target_ref) => Some(target_ref),
+                        Err(error) => return Some(Err(error)),
+                    }
+                } else {
+                    None
+                };
+
+                let variant_ident = if let Some(display_name) = self.display_name.as_deref() {
+                    format_ident!("{display_name}")
+                } else if let (Some(type_ref), true) = (type_ref, self.ident.name.is_unnamed()) {
+                    type_ref.type_ident.clone()
+                } else if matches!(self.ident.name.as_str(), Some("")) {
+                    *unknown += 1;
+
+                    format_ident!("Unknown{unknown}")
+                } else {
+                    format_variant_ident(&self.ident.name, self.display_name.as_deref())
+                };
+
+                let target_type = type_ref.map(|x| format_type_ref(current_module, x));
+
+                Some(Ok(EnumerationTypeVariant {
+                    info: self,
+                    variant_ident,
+                    target_type,
+                }))
+            }
+        }
+    }
+}
+
+/* ComplexType */
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) enum ComplexType<'types> {
+    Enum {
+        type_: ComplexTypeEnum<'types>,
+        content_type: Option<Box<ComplexType<'types>>>,
+    },
+    Struct {
+        type_: ComplexTypeStruct<'types>,
+        content_type: Option<Box<ComplexType<'types>>>,
+    },
+}
+
+#[derive(Debug)]
+pub(super) struct ComplexTypeBase {
+    pub type_ident: Ident2,
+    pub trait_impls: Vec<TokenStream>,
+}
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) struct ComplexTypeEnum<'types> {
+    pub base: ComplexTypeBase,
+
+    pub elements: Vec<ComplexTypeElement<'types>>,
+    pub any_element: Option<&'types AnyInfo>,
+    pub any_attribute: Option<&'types AnyAttributeInfo>,
+}
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) struct ComplexTypeStruct<'types> {
+    pub base: ComplexTypeBase,
+
+    pub content: Option<ComplexTypeContent>,
+
+    pub attributes: Vec<ComplexTypeAttribute<'types>>,
+    pub any_attribute: Option<&'types AnyAttributeInfo>,
+
+    pub elements: Vec<ComplexTypeElement<'types>>,
+    pub any_element: Option<&'types AnyInfo>,
+}
+
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) struct ComplexTypeContent {
+    pub occurs: Occurs,
+    pub is_simple: bool,
+    pub min_occurs: MinOccurs,
+    pub max_occurs: MaxOccurs,
+    pub target_type: TokenStream,
+}
+
+#[derive(Debug)]
+pub(super) struct ComplexTypeElement<'types> {
+    pub info: &'types ElementInfo,
+    pub ident: Ident2,
+    pub occurs: Occurs,
+    pub target_type: TokenStream,
+    pub need_indirection: bool,
+}
+
+#[derive(Debug)]
+pub(super) struct ComplexTypeAttribute<'types> {
+    pub info: &'types AttributeInfo,
+    pub ident: Ident2,
+    pub is_option: bool,
+    pub target_type: TokenStream,
+    pub default_value: Option<TokenStream>,
+}
+
+#[derive(Debug, Clone)]
+enum TypeMode {
+    All,
+    Choice,
+    Sequence,
+    Simple { target_type: TokenStream },
+}
+
+impl<'types> ComplexType<'types> {
+    fn new_all(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+        Self::new(
+            req,
+            TypeMode::All,
+            1,
+            MaxOccurs::Bounded(1),
+            &[],
+            None,
+            &info.elements,
+            info.any.as_ref(),
+        )
+    }
+
+    fn new_choice(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+        Self::new(
+            req,
+            TypeMode::Choice,
+            1,
+            MaxOccurs::Bounded(1),
+            &[],
+            None,
+            &info.elements,
+            info.any.as_ref(),
+        )
+    }
+
+    fn new_sequence(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+        Self::new(
+            req,
+            TypeMode::Sequence,
+            1,
+            MaxOccurs::Bounded(1),
+            &[],
+            None,
+            &info.elements,
+            info.any.as_ref(),
+        )
+    }
+
+    fn new_complex(info: &'types ComplexInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+        let (type_mode, elements, any_element) = match info
+            .content
+            .as_ref()
+            .and_then(|ident| req.types.get_resolved(ident).map(|ty| (ty, ident)))
+        {
+            None => (TypeMode::Sequence, &[][..], None),
+            Some((Type::All(si), _)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
+            Some((Type::Choice(si), _)) => (TypeMode::Choice, &si.elements[..], si.any.as_ref()),
+            Some((Type::Sequence(si), _)) => {
+                (TypeMode::Sequence, &si.elements[..], si.any.as_ref())
+            }
+            Some((
+                Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_),
+                ident,
+            )) => {
+                let current_module = req.current_module();
+                let content_ref = req.get_or_create_type_ref(ident.clone())?;
+                let target_type = format_type_ref(current_module, content_ref);
+
+                (TypeMode::Simple { target_type }, &[][..], None)
+            }
+            Some((x, _)) => {
+                let ident = &req.current_type_ref().type_ident;
+
+                tracing::warn!("Complex type has unexpected content: ident={ident}, info={info:#?}, content={x:#?}!");
+
+                (TypeMode::Sequence, &[][..], None)
+            }
+        };
+
+        Self::new(
+            req,
+            type_mode,
+            info.min_occurs,
+            info.max_occurs,
+            &info.attributes,
+            info.any_attribute.as_ref(),
+            elements,
+            any_element,
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn new(
+        req: Request<'_, 'types>,
+        type_mode: TypeMode,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+        attributes: &'types [AttributeInfo],
+        any_attribute: Option<&'types AnyAttributeInfo>,
+        elements: &'types [ElementInfo],
+        any_element: Option<&'types AnyInfo>,
+    ) -> Result<Self, Error> {
+        match type_mode {
+            TypeMode::Simple { target_type } => Self::new_simple(
+                req,
+                target_type,
+                min_occurs,
+                max_occurs,
+                attributes,
+                any_attribute,
+            ),
+            TypeMode::Choice => Self::new_enum(
+                req,
+                min_occurs,
+                max_occurs,
+                attributes,
+                any_attribute,
+                elements,
+                any_element,
+            ),
+            TypeMode::All | TypeMode::Sequence => Self::new_struct(
+                req,
+                min_occurs,
+                max_occurs,
+                attributes,
+                any_attribute,
+                elements,
+                any_element,
+            ),
+        }
+    }
+
+    fn new_simple(
+        mut req: Request<'_, 'types>,
+        target_type: TokenStream,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+        attributes: &'types [AttributeInfo],
+        any_attribute: Option<&'types AnyAttributeInfo>,
+    ) -> Result<Self, Error> {
+        let base = ComplexTypeBase::new(&mut req)?;
+        let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let attributes = attributes
+            .iter()
+            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let content = Some(ComplexTypeContent {
+            occurs,
+            is_simple: true,
+            min_occurs,
+            max_occurs,
+            target_type,
+        });
+        let type_ = ComplexTypeStruct {
+            base,
+            content,
+
+            attributes,
+            any_attribute,
+
+            elements: Vec::new(),
+            any_element: None,
+        };
+
+        Ok(Self::Struct {
+            type_,
+            content_type: None,
+        })
+    }
+
+    fn new_enum(
+        mut req: Request<'_, 'types>,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+        attributes: &'types [AttributeInfo],
+        any_attribute: Option<&'types AnyAttributeInfo>,
+        elements: &'types [ElementInfo],
+        any_element: Option<&'types AnyInfo>,
+    ) -> Result<Self, Error> {
+        let base = ComplexTypeBase::new(&mut req)?;
+        let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let flatten = occurs == Occurs::Single
+            && attributes.is_empty()
+            && req.check_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
+
+        let attributes = attributes
+            .iter()
+            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let mut any_element = any_element;
+        let mut elements = elements
+            .iter()
+            .filter_map(|info| {
+                ComplexTypeElement::new_variant(info, &mut req, occurs.is_direct()).transpose()
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        if flatten {
+            let type_ = ComplexTypeEnum {
+                base,
+                elements,
+                any_element,
+                any_attribute,
+            };
+
+            Ok(ComplexType::Enum {
+                type_,
+                content_type: None,
+            })
+        } else {
+            let type_ident = &base.type_ident;
+            let content_ident = format_ident!("{type_ident}Content");
+            let has_content = occurs.is_some() && !elements.is_empty();
+
+            let content_type = has_content.then(|| {
+                let base = ComplexTypeBase {
+                    type_ident: content_ident.clone(),
+                    trait_impls: Vec::new(),
+                };
+                let type_ = ComplexTypeEnum {
+                    base,
+                    elements: take(&mut elements),
+                    any_element: any_element.take(),
+                    any_attribute: None,
+                };
+
+                Box::new(ComplexType::Enum {
+                    type_,
+                    content_type: None,
+                })
+            });
+
+            let content = has_content.then(|| ComplexTypeContent {
+                occurs,
+                is_simple: false,
+                min_occurs,
+                max_occurs,
+                target_type: quote!(#content_ident),
+            });
+
+            let type_ = ComplexTypeStruct {
+                base,
+                content,
+
+                attributes,
+                any_attribute,
+
+                elements,
+                any_element,
+            };
+
+            Ok(ComplexType::Struct {
+                type_,
+                content_type,
+            })
+        }
+    }
+
+    fn new_struct(
+        mut req: Request<'_, 'types>,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+        attributes: &'types [AttributeInfo],
+        any_attribute: Option<&'types AnyAttributeInfo>,
+        elements: &'types [ElementInfo],
+        any_element: Option<&'types AnyInfo>,
+    ) -> Result<Self, Error> {
+        let base = ComplexTypeBase::new(&mut req)?;
+        let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let flatten =
+            occurs == Occurs::Single && req.check_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
+
+        let attributes = attributes
+            .iter()
+            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .collect::<Result<Vec<_>, _>>()?;
+
+        let mut any_element = any_element;
+        let mut elements = elements
+            .iter()
+            .filter_map(|info| {
+                ComplexTypeElement::new_field(info, &mut req, occurs.is_direct()).transpose()
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
+        if flatten {
+            let type_ = ComplexTypeStruct {
+                base,
+                content: None,
+
+                elements,
+                any_element,
+
+                attributes,
+                any_attribute,
+            };
+
+            Ok(ComplexType::Struct {
+                type_,
+                content_type: None,
+            })
+        } else {
+            let type_ident = &base.type_ident;
+            let content_ident = format_ident!("{type_ident}Content");
+            let has_content = occurs.is_some() && !elements.is_empty();
+
+            let content_type = has_content.then(|| {
+                let base = ComplexTypeBase {
+                    type_ident: content_ident.clone(),
+                    trait_impls: Vec::new(),
+                };
+                let type_ = ComplexTypeStruct {
+                    base,
+                    content: None,
+
+                    elements: take(&mut elements),
+                    any_element: any_element.take(),
+
+                    attributes: Vec::new(),
+                    any_attribute: None,
+                };
+
+                Box::new(ComplexType::Struct {
+                    type_,
+                    content_type: None,
+                })
+            });
+
+            let content = has_content.then(|| ComplexTypeContent {
+                occurs,
+                is_simple: false,
+                min_occurs,
+                max_occurs,
+                target_type: quote!(#content_ident),
+            });
+
+            let type_ = ComplexTypeStruct {
+                base,
+                content,
+
+                attributes,
+                any_attribute,
+
+                elements,
+                any_element,
+            };
+
+            Ok(ComplexType::Struct {
+                type_,
+                content_type,
+            })
+        }
+    }
+}
+
+impl ComplexTypeBase {
+    fn new(req: &mut Request<'_, '_>) -> Result<Self, Error> {
+        let trait_impls = req.make_trait_impls()?;
+        let type_ref = req.current_type_ref();
+        let type_ident = type_ref.type_ident.clone();
+
+        Ok(Self {
+            type_ident,
+            trait_impls,
+        })
+    }
+}
+
+impl Deref for ComplexTypeEnum<'_> {
+    type Target = ComplexTypeBase;
 
     fn deref(&self) -> &Self::Target {
-        &self.inner
+        &self.base
     }
 }
 
-impl DerefMut for DynamicData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
+impl Deref for ComplexTypeStruct<'_> {
+    type Target = ComplexTypeBase;
+
+    fn deref(&self) -> &Self::Target {
+        &self.base
     }
 }
+
+impl<'types> ComplexTypeElement<'types> {
+    fn new_variant(
+        info: &'types ElementInfo,
+        req: &mut Request<'_, 'types>,
+        direct_usage: bool,
+    ) -> Result<Option<Self>, Error> {
+        let ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
+
+        let force_box = req.box_flags.intersects(BoxFlags::ENUM_ELEMENTS);
+        let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
+        let need_indirection = (direct_usage && need_box) || force_box;
+
+        Self::new(info, req, ident, need_indirection)
+    }
+
+    fn new_field(
+        info: &'types ElementInfo,
+        req: &mut Request<'_, 'types>,
+        direct_usage: bool,
+    ) -> Result<Option<Self>, Error> {
+        let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
+
+        let force_box = req.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
+        let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
+        let need_indirection = (direct_usage && need_box) || force_box;
+
+        Self::new(info, req, ident, need_indirection)
+    }
+
+    fn new(
+        info: &'types ElementInfo,
+        req: &mut Request<'_, 'types>,
+        ident: Ident2,
+        need_indirection: bool,
+    ) -> Result<Option<Self>, Error> {
+        let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
+        if occurs == Occurs::None {
+            return Ok(None);
+        }
+
+        let current_module = req.current_module();
+        let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
+        let target_type = format_type_ref(current_module, target_ref);
+
+        Ok(Some(Self {
+            info,
+            ident,
+            occurs,
+            target_type,
+            need_indirection,
+        }))
+    }
+}
+
+impl<'types> ComplexTypeAttribute<'types> {
+    fn new_field(
+        info: &'types AttributeInfo,
+        req: &mut Request<'_, 'types>,
+    ) -> Result<Option<Self>, Error> {
+        if info.use_ == Use::Prohibited {
+            return Ok(None);
+        }
+
+        let current_module = req.current_module();
+        let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
+        let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
+        let target_type = format_type_ref(current_module, target_ref);
+
+        let default_value = info
+            .default
+            .as_ref()
+            .map(|default| req.get_default(current_module, default, &info.type_))
+            .transpose()?;
+        let is_option = matches!((&info.use_, &default_value), (Use::Optional, None));
+
+        Ok(Some(Self {
+            info,
+            ident,
+            is_option,
+            target_type,
+            default_value,
+        }))
+    }
+}
+
+/* Helper */
+
+macro_rules! impl_render {
+    ($ty:ident) => {
+        impl<'types> $ty<'types> {
+            pub(super) fn render(&self, config: &Config<'types>, code: &mut Code<'_, 'types>) {
+                self.render_types(code);
+                self.render_impl(code);
+
+                if config.flags.intersects(GeneratorFlags::QUICK_XML_SERIALIZE) {
+                    self.render_serializer(code);
+                }
+
+                if config
+                    .flags
+                    .intersects(GeneratorFlags::QUICK_XML_DESERIALIZE)
+                {
+                    self.render_deserializer(code);
+                }
+            }
+        }
+    };
+}
+
+impl_render!(UnionType);
+impl_render!(DynamicType);
+impl_render!(ReferenceType);
+impl_render!(EnumerationType);
+impl_render!(ComplexType);
 
 fn make_derived_type_data<'types>(
-    inner: &mut TypeData<'_, 'types>,
+    req: &mut Request<'_, 'types>,
     ident: &'types Ident,
-) -> Result<DerivedTypeData, Error> {
+) -> Result<DerivedType, Error> {
     let s_name = ident.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
 
-    let ty = inner
+    let ty = req
         .types
         .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -385,541 +1156,16 @@ fn make_derived_type_data<'types>(
     })
     .unwrap_or(ident.clone());
 
-    let current_module = inner.current_module();
-    let target_ref = inner.get_or_create_type_ref(ident.clone())?;
+    let current_module = req.current_module();
+    let target_ref = req.get_or_create_type_ref(ident.clone())?;
     let target_ident = format_type_ref(current_module, target_ref);
     let variant_ident = format_variant_ident(&ident.name, None);
 
-    Ok(DerivedTypeData {
+    Ok(DerivedType {
         ident,
         s_name,
         b_name,
         target_ident,
         variant_ident,
     })
-}
-
-/* ReferenceData */
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct ReferenceData<'a, 'types> {
-    pub ty: &'types ReferenceInfo,
-    pub mode: TypedefMode,
-    pub inner: TypeData<'a, 'types>,
-    pub occurs: Occurs,
-    pub type_ident: Ident2,
-    pub trait_impls: Vec<TraitData>,
-    pub target_ident: TokenStream,
-}
-
-impl<'a, 'types> ReferenceData<'a, 'types> {
-    fn new(ty: &'types ReferenceInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let occurs = Occurs::from_occurs(ty.min_occurs, ty.max_occurs);
-        let current_module = inner.current_module();
-        let type_ident = inner.current_type_ref().type_ident.clone();
-        let target_ref = inner.get_or_create_type_ref(ty.type_.clone())?;
-        let target_ident = format_type_ref(current_module, target_ref);
-        let trait_impls = make_trait_impls(&mut inner)?;
-
-        let mode = match (inner.typedef_mode, occurs) {
-            (TypedefMode::Auto, Occurs::None | Occurs::Single) => TypedefMode::Typedef,
-            (TypedefMode::Auto, _) => TypedefMode::NewType,
-            (mode, _) => mode,
-        };
-
-        Ok(Self {
-            ty,
-            mode,
-            inner,
-            occurs,
-            type_ident,
-            trait_impls,
-            target_ident,
-        })
-    }
-}
-
-impl<'a, 'types> Deref for ReferenceData<'a, 'types> {
-    type Target = TypeData<'a, 'types>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl DerefMut for ReferenceData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
-/* EnumerationData */
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct EnumerationData<'a, 'types> {
-    pub ty: &'types EnumerationInfo,
-    pub inner: TypeData<'a, 'types>,
-    pub type_ident: Ident2,
-    pub variants: Vec<EnumVariantData<'types>>,
-    pub trait_impls: Vec<TraitData>,
-}
-
-#[derive(Debug)]
-pub(super) struct EnumVariantData<'types> {
-    pub var: &'types VariantInfo,
-    pub variant_ident: Ident2,
-    pub target_type: Option<TokenStream>,
-}
-
-impl<'a, 'types> EnumerationData<'a, 'types> {
-    fn new(ty: &'types EnumerationInfo, mut inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        let mut unknown = 0usize;
-        let current_module = inner.current_module();
-        let type_ident = inner.current_type_ref().type_ident.clone();
-        let trait_impls = make_trait_impls(&mut inner)?;
-
-        let variants = ty
-            .variants
-            .iter()
-            .filter_map(|var| match var.use_ {
-                Use::Prohibited => None,
-                Use::Required | Use::Optional => {
-                    let type_ref = if let Some(t) = &var.type_ {
-                        match inner.get_or_create_type_ref(t.clone()) {
-                            Ok(target_ref) => Some(target_ref),
-                            Err(error) => return Some(Err(error)),
-                        }
-                    } else {
-                        None
-                    };
-
-                    let variant_ident = if let Some(display_name) = var.display_name.as_deref() {
-                        format_ident!("{display_name}")
-                    } else if let (Some(type_ref), true) = (type_ref, var.ident.name.is_unnamed()) {
-                        type_ref.type_ident.clone()
-                    } else if matches!(var.ident.name.as_str(), Some("")) {
-                        unknown += 1;
-
-                        format_ident!("Unknown{unknown}")
-                    } else {
-                        format_variant_ident(&var.ident.name, var.display_name.as_deref())
-                    };
-
-                    let target_type = type_ref.map(|x| format_type_ref(current_module, x));
-
-                    Some(Ok(EnumVariantData {
-                        var,
-                        variant_ident,
-                        target_type,
-                    }))
-                }
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-
-        Ok(EnumerationData {
-            ty,
-            inner,
-            type_ident,
-            variants,
-            trait_impls,
-        })
-    }
-}
-
-impl<'a, 'types> Deref for EnumerationData<'a, 'types> {
-    type Target = TypeData<'a, 'types>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl DerefMut for EnumerationData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
-/* ComplexTypeData */
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct ComplexTypeData<'a, 'types> {
-    pub ty: TypeInfoData<'types>,
-    pub inner: TypeData<'a, 'types>,
-
-    pub occurs: Occurs,
-    pub min_occurs: MinOccurs,
-    pub max_occurs: MaxOccurs,
-
-    pub type_mode: TypeMode,
-    pub content_type: TokenStream,
-    pub content_ident: Ident2,
-    pub flatten_content: bool,
-    pub has_content_type: bool,
-
-    pub trait_impls: Vec<TraitData>,
-    pub simple_content: Option<SimpleContentData<'types>>,
-
-    pub attributes: Vec<AttributeData<'types>>,
-    pub any_attribute: Option<&'types AnyAttributeInfo>,
-
-    pub elements: Vec<ElementData<'types>>,
-    pub any_element: Option<&'types AnyInfo>,
-}
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) enum TypeInfoData<'types> {
-    Group(&'types GroupInfo),
-    Complex(&'types ComplexInfo),
-}
-
-#[derive(Debug)]
-#[allow(dead_code)]
-pub(super) struct SimpleContentData<'types> {
-    pub ident: &'types Ident,
-    pub target_type: TokenStream,
-}
-
-#[derive(Debug)]
-pub(super) struct ElementData<'types> {
-    pub element: &'types ElementInfo,
-    pub occurs: Occurs,
-    pub need_box: bool,
-    pub field_ident: Ident2,
-    pub variant_ident: Ident2,
-    pub target_type: TokenStream,
-}
-
-#[derive(Debug)]
-pub(super) struct AttributeData<'types> {
-    pub attrib: &'types AttributeInfo,
-    pub is_option: bool,
-    pub field_ident: Ident2,
-    pub target_type: TokenStream,
-    pub default_value: Option<TokenStream>,
-}
-
-impl<'a, 'types> ComplexTypeData<'a, 'types> {
-    #[allow(dead_code)]
-    pub(super) fn has_attributes(&self) -> bool {
-        !self.attributes.is_empty()
-    }
-
-    #[allow(dead_code)]
-    pub(super) fn has_elements(&self) -> bool {
-        !self.elements.is_empty()
-    }
-
-    #[instrument(err, level = "trace", skip(inner))]
-    fn new_all(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        Self::new(
-            TypeInfoData::Group(ty),
-            inner,
-            TypeMode::All,
-            1,
-            MaxOccurs::Bounded(1),
-            &[],
-            None,
-            &ty.elements,
-            ty.any.as_ref(),
-        )
-    }
-
-    #[instrument(err, level = "trace", skip(inner))]
-    fn new_choice(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        Self::new(
-            TypeInfoData::Group(ty),
-            inner,
-            TypeMode::Choice,
-            1,
-            MaxOccurs::Bounded(1),
-            &[],
-            None,
-            &ty.elements,
-            ty.any.as_ref(),
-        )
-    }
-
-    #[instrument(err, level = "trace", skip(inner))]
-    fn new_sequence(ty: &'types GroupInfo, inner: TypeData<'a, 'types>) -> Result<Self, Error> {
-        Self::new(
-            TypeInfoData::Group(ty),
-            inner,
-            TypeMode::Sequence,
-            1,
-            MaxOccurs::Bounded(1),
-            &[],
-            None,
-            &ty.elements,
-            ty.any.as_ref(),
-        )
-    }
-
-    #[instrument(err, level = "trace", skip(inner))]
-    fn new_complex_type(
-        ty: &'types ComplexInfo,
-        inner: TypeData<'a, 'types>,
-    ) -> Result<Self, Error> {
-        let (type_mode, elements, any_element) = match ty
-            .content
-            .as_ref()
-            .and_then(|ident| inner.types.get_resolved(ident))
-        {
-            None => (TypeMode::Sequence, &[][..], None),
-            Some(Type::All(si)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
-            Some(Type::Choice(si)) => (TypeMode::Choice, &si.elements[..], si.any.as_ref()),
-            Some(Type::Sequence(si)) => (TypeMode::Sequence, &si.elements[..], si.any.as_ref()),
-            Some(Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_)) => {
-                (TypeMode::Simple, &[][..], None)
-            }
-            x => {
-                let ident = &inner.current_type_ref().type_ident;
-
-                tracing::warn!("Complex type has unexpected content: ident={ident}, ty={ty:#?}, content={x:#?}!");
-
-                (TypeMode::Sequence, &[][..], None)
-            }
-        };
-
-        Self::new(
-            TypeInfoData::Complex(ty),
-            inner,
-            type_mode,
-            ty.min_occurs,
-            ty.max_occurs,
-            &ty.attributes,
-            ty.any_attribute.as_ref(),
-            elements,
-            any_element,
-        )
-    }
-
-    #[instrument(err, level = "trace", skip(inner))]
-    #[allow(clippy::too_many_arguments)]
-    fn new(
-        ty: TypeInfoData<'types>,
-        mut inner: TypeData<'a, 'types>,
-        type_mode: TypeMode,
-        min_occurs: MinOccurs,
-        max_occurs: MaxOccurs,
-        attributes: &'types [AttributeInfo],
-        any_attribute: Option<&'types AnyAttributeInfo>,
-        elements: &'types [ElementInfo],
-        any_element: Option<&'types AnyInfo>,
-    ) -> Result<Self, Error> {
-        let occurs = Occurs::from_occurs(min_occurs, max_occurs);
-        let elements = make_element_data(&mut inner, elements)?;
-        let attributes = make_attribute_data(&mut inner, attributes)?;
-
-        let trait_impls = make_trait_impls(&mut inner)?;
-        let type_ref = inner.current_type_ref();
-        let type_ident = &type_ref.type_ident;
-        let content_ident = format_type_ident(&Name::new(format!("{type_ident}Content")), None);
-        let flatten_content = occurs == Occurs::Single
-            && match type_mode {
-                TypeMode::Simple => false,
-                TypeMode::All | TypeMode::Sequence => {
-                    inner.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT)
-                }
-                TypeMode::Choice => {
-                    inner.check_generator_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT)
-                        && attributes.is_empty()
-                }
-            };
-        let has_content_type = !(elements.is_empty() || flatten_content);
-
-        let simple_content = make_simple_content_data(&ty, &mut inner, type_mode)?;
-        let content_type = simple_content
-            .as_ref()
-            .map_or_else(|| quote!(#content_ident), |x| x.target_type.clone());
-
-        Ok(Self {
-            ty,
-            inner,
-
-            occurs,
-            min_occurs,
-            max_occurs,
-
-            type_mode,
-            content_type,
-            content_ident,
-            flatten_content,
-            has_content_type,
-
-            trait_impls,
-            simple_content,
-
-            attributes,
-            any_attribute,
-
-            elements,
-            any_element,
-        })
-    }
-}
-
-impl<'a, 'types> Deref for ComplexTypeData<'a, 'types> {
-    type Target = TypeData<'a, 'types>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.inner
-    }
-}
-
-impl DerefMut for ComplexTypeData<'_, '_> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.inner
-    }
-}
-
-impl Deref for ElementData<'_> {
-    type Target = ElementInfo;
-
-    fn deref(&self) -> &Self::Target {
-        self.element
-    }
-}
-
-impl Deref for AttributeData<'_> {
-    type Target = AttributeInfo;
-
-    fn deref(&self) -> &Self::Target {
-        self.attrib
-    }
-}
-
-#[instrument(err, level = "trace", skip(inner))]
-fn make_simple_content_data<'types>(
-    ty: &TypeInfoData<'types>,
-    inner: &mut TypeData<'_, 'types>,
-    type_mode: TypeMode,
-) -> Result<Option<SimpleContentData<'types>>, Error> {
-    if type_mode != TypeMode::Simple {
-        return Ok(None);
-    }
-
-    let TypeInfoData::Complex(ci) = &ty else {
-        return Ok(None);
-    };
-
-    let Some(ident) = ci.content.as_ref() else {
-        return Ok(None);
-    };
-
-    let current_module = inner.current_module();
-    let content_ref = inner.get_or_create_type_ref(ident.clone())?;
-
-    let target_type = format_type_ref(current_module, content_ref);
-
-    Ok(Some(SimpleContentData { ident, target_type }))
-}
-
-#[instrument(err, level = "trace", skip(inner))]
-fn make_element_data<'types>(
-    inner: &mut TypeData<'_, 'types>,
-    elements: &'types [ElementInfo],
-) -> Result<Vec<ElementData<'types>>, Error> {
-    elements
-        .iter()
-        .filter_map(|element| {
-            let occurs = Occurs::from_occurs(element.min_occurs, element.max_occurs);
-            if occurs == Occurs::None {
-                return None;
-            }
-
-            let current_module = inner.current_module();
-            let target_ref = match inner.get_or_create_type_ref(element.type_.clone()) {
-                Ok(target_ref) => target_ref,
-                Err(error) => return Some(Err(error)),
-            };
-            let target_type = format_type_ref(current_module, target_ref);
-            let need_box = inner
-                .current_type_ref()
-                .boxed_elements
-                .contains(&element.ident);
-            let field_ident =
-                format_field_ident(&element.ident.name, element.display_name.as_deref());
-            let variant_ident =
-                format_variant_ident(&element.ident.name, element.display_name.as_deref());
-
-            Some(Ok(ElementData {
-                element,
-                occurs,
-                need_box,
-                field_ident,
-                variant_ident,
-                target_type,
-            }))
-        })
-        .collect::<Result<_, _>>()
-}
-
-#[instrument(err, level = "trace", skip(inner))]
-fn make_attribute_data<'types>(
-    inner: &mut TypeData<'_, 'types>,
-    attributes: &'types [AttributeInfo],
-) -> Result<Vec<AttributeData<'types>>, Error> {
-    attributes
-        .iter()
-        .filter_map(move |attrib| {
-            if attrib.use_ == Use::Prohibited {
-                return None;
-            }
-
-            let current_module = inner.current_module();
-            let target_ref = match inner.get_or_create_type_ref(attrib.type_.clone()) {
-                Ok(target_ref) => target_ref,
-                Err(error) => return Some(Err(error)),
-            };
-            let field_ident =
-                format_field_ident(&attrib.ident.name, attrib.display_name.as_deref());
-            let target_type = format_type_ref(current_module, target_ref);
-
-            let default_value = attrib
-                .default
-                .as_ref()
-                .map(|default| inner.get_default(current_module, default, &attrib.type_));
-            let default_value = match default_value {
-                None => None,
-                Some(Ok(default)) => Some(default),
-                Some(Err(error)) => return Some(Err(error)),
-            };
-            let is_option = matches!((&attrib.use_, &default_value), (Use::Optional, None));
-
-            Some(Ok(AttributeData {
-                attrib,
-                is_option,
-                field_ident,
-                target_type,
-                default_value,
-            }))
-        })
-        .collect()
-}
-
-fn make_trait_impls(inner: &mut TypeData<'_, '_>) -> Result<Vec<TraitData>, Error> {
-    let ident = inner.ident.clone();
-    let current_module = inner.current_module();
-
-    inner
-        .get_traits()
-        .get(&ident)
-        .into_iter()
-        .flat_map(|info| &info.traits_all)
-        .cloned()
-        .collect::<Vec<_>>()
-        .into_iter()
-        .map(|ident| {
-            let type_ref = inner.get_or_create_type_ref(ident.clone())?;
-            let ident = format_ident!("{}Trait", type_ref.type_ident);
-            let trait_ident = format_type_ref_ex(current_module, None, &ident, type_ref);
-
-            Ok(TraitData { trait_ident })
-        })
-        .collect::<Result<Vec<_>, _>>()
 }

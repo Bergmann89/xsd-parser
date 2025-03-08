@@ -250,6 +250,7 @@ pub fn exec_generator(
         generator = generator.with_type(ident)?;
     }
 
+    let mut generator = generator.into_fixed();
     match config.generate {
         Generate::All => generator = generator.generate_all_types()?,
         Generate::Types(idents) => {
