@@ -7,7 +7,7 @@ use crate::{
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
         AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
-        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, UnionInfo,
+        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, Types, UnionInfo,
         UnionTypeInfo, VariantInfo,
     },
 };
@@ -583,6 +583,11 @@ pub(super) enum ComplexType<'types> {
 pub(super) struct ComplexTypeBase {
     pub type_ident: Ident2,
     pub trait_impls: Vec<TokenStream>,
+
+    pub tag_name: Option<String>,
+
+    pub serializer_ident: Ident2,
+    pub serializer_state_ident: Ident2,
 }
 
 #[derive(Debug)]
@@ -622,8 +627,10 @@ pub(super) struct ComplexTypeContent {
 #[derive(Debug)]
 pub(super) struct ComplexTypeElement<'types> {
     pub info: &'types ElementInfo,
-    pub ident: Ident2,
     pub occurs: Occurs,
+    pub tag_name: String,
+    pub field_ident: Ident2,
+    pub variant_ident: Ident2,
     pub target_type: TokenStream,
     pub need_indirection: bool,
 }
@@ -632,6 +639,7 @@ pub(super) struct ComplexTypeElement<'types> {
 pub(super) struct ComplexTypeAttribute<'types> {
     pub info: &'types AttributeInfo,
     pub ident: Ident2,
+    pub tag_name: String,
     pub is_option: bool,
     pub target_type: TokenStream,
     pub default_value: Option<TokenStream>,
@@ -854,12 +862,8 @@ impl<'types> ComplexType<'types> {
             let has_content = occurs.is_some() && !elements.is_empty();
 
             let content_type = has_content.then(|| {
-                let base = ComplexTypeBase {
-                    type_ident: content_ident.clone(),
-                    trait_impls: Vec::new(),
-                };
                 let type_ = ComplexTypeEnum {
-                    base,
+                    base: ComplexTypeBase::new_empty(content_ident.clone()),
                     elements: take(&mut elements),
                     any_element: any_element.take(),
                     any_attribute: None,
@@ -946,12 +950,8 @@ impl<'types> ComplexType<'types> {
             let has_content = occurs.is_some() && !elements.is_empty();
 
             let content_type = has_content.then(|| {
-                let base = ComplexTypeBase {
-                    type_ident: content_ident.clone(),
-                    trait_impls: Vec::new(),
-                };
                 let type_ = ComplexTypeStruct {
-                    base,
+                    base: ComplexTypeBase::new_empty(content_ident.clone()),
                     content: None,
 
                     elements: take(&mut elements),
@@ -995,15 +995,34 @@ impl<'types> ComplexType<'types> {
 }
 
 impl ComplexTypeBase {
+    pub(crate) fn represents_element(&self) -> bool {
+        self.tag_name.is_some()
+    }
+
     fn new(req: &mut Request<'_, '_>) -> Result<Self, Error> {
-        let trait_impls = req.make_trait_impls()?;
         let type_ref = req.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
 
-        Ok(Self {
+        let mut ret = Self::new_empty(type_ident);
+        ret.tag_name = Some(make_tag_name(req.types, req.ident));
+        ret.trait_impls = req.make_trait_impls()?;
+
+        Ok(ret)
+    }
+
+    fn new_empty(type_ident: Ident2) -> Self {
+        let serializer_ident = format_ident!("{type_ident}Serializer");
+        let serializer_state_ident = format_ident!("{type_ident}SerializerState");
+
+        Self {
             type_ident,
-            trait_impls,
-        })
+            trait_impls: Vec::new(),
+
+            tag_name: None,
+
+            serializer_ident,
+            serializer_state_ident,
+        }
     }
 }
 
@@ -1012,6 +1031,20 @@ impl Deref for ComplexTypeEnum<'_> {
 
     fn deref(&self) -> &Self::Target {
         &self.base
+    }
+}
+
+impl ComplexTypeStruct<'_> {
+    pub(super) fn has_attributes(&self) -> bool {
+        !self.attributes.is_empty()
+    }
+
+    pub(super) fn has_content(&self) -> bool {
+        !self.elements.is_empty()
+            || self
+                .content
+                .as_ref()
+                .is_some_and(|x| x.occurs != Occurs::None)
     }
 }
 
@@ -1029,13 +1062,9 @@ impl<'types> ComplexTypeElement<'types> {
         req: &mut Request<'_, 'types>,
         direct_usage: bool,
     ) -> Result<Option<Self>, Error> {
-        let ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
-
         let force_box = req.box_flags.intersects(BoxFlags::ENUM_ELEMENTS);
-        let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
-        let need_indirection = (direct_usage && need_box) || force_box;
 
-        Self::new(info, req, ident, need_indirection)
+        Self::new(info, req, direct_usage, force_box)
     }
 
     fn new_field(
@@ -1043,34 +1072,39 @@ impl<'types> ComplexTypeElement<'types> {
         req: &mut Request<'_, 'types>,
         direct_usage: bool,
     ) -> Result<Option<Self>, Error> {
-        let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
-
         let force_box = req.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
-        let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
-        let need_indirection = (direct_usage && need_box) || force_box;
 
-        Self::new(info, req, ident, need_indirection)
+        Self::new(info, req, direct_usage, force_box)
     }
 
     fn new(
         info: &'types ElementInfo,
         req: &mut Request<'_, 'types>,
-        ident: Ident2,
-        need_indirection: bool,
+        direct_usage: bool,
+        force_box: bool,
     ) -> Result<Option<Self>, Error> {
         let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
         if occurs == Occurs::None {
             return Ok(None);
         }
 
+        let tag_name = make_tag_name(req.types, &info.ident);
+        let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
+        let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
+
         let current_module = req.current_module();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let target_type = format_type_ref(current_module, target_ref);
 
+        let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
+        let need_indirection = (direct_usage && need_box) || force_box;
+
         Ok(Some(Self {
             info,
-            ident,
             occurs,
+            tag_name,
+            field_ident,
+            variant_ident,
             target_type,
             need_indirection,
         }))
@@ -1090,6 +1124,7 @@ impl<'types> ComplexTypeAttribute<'types> {
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let target_type = format_type_ref(current_module, target_ref);
+        let tag_name = make_tag_name(req.types, &info.ident);
 
         let default_value = info
             .default
@@ -1101,6 +1136,7 @@ impl<'types> ComplexTypeAttribute<'types> {
         Ok(Some(Self {
             info,
             ident,
+            tag_name,
             is_option,
             target_type,
             default_value,
@@ -1137,6 +1173,21 @@ impl_render!(DynamicType);
 impl_render!(ReferenceType);
 impl_render!(EnumerationType);
 impl_render!(ComplexType);
+
+fn make_tag_name(types: &Types, ident: &Ident) -> String {
+    let name = ident.name.to_string();
+
+    if let Some(module) = ident
+        .ns
+        .as_ref()
+        .and_then(|ns| types.modules.get(ns))
+        .and_then(|module| module.name.as_ref())
+    {
+        format!("{module}:{name}")
+    } else {
+        name
+    }
+}
 
 fn make_derived_type_data<'types>(
     req: &mut Request<'_, 'types>,

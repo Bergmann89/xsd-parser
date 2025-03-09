@@ -12,10 +12,10 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
-            name: name.unwrap_or("tns:FooType"),
             value: self,
-            is_root,
             state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:FooType"),
+            is_root,
         })
     }
 }
@@ -31,11 +31,11 @@ impl xsd_parser::quick_xml::WithSerializer for FooContent3Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
-        let _name = name;
-        let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent3TypeSerializer {
             value: self,
             state: quick_xml_serialize::FooContent3TypeSerializerState::Init__,
+            name: name.unwrap_or("tns:FooContent3"),
+            is_root,
         })
     }
 }
@@ -51,11 +51,11 @@ impl xsd_parser::quick_xml::WithSerializer for FooContent6Type {
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
-        let _name = name;
-        let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent6TypeSerializer {
             value: self,
             state: quick_xml_serialize::FooContent6TypeSerializerState::Init__,
+            name: name.unwrap_or("tns:FooContent6"),
+            is_root,
         })
     }
 }
@@ -63,10 +63,10 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::FooType,
-        pub(super) is_root: bool,
         pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
@@ -143,6 +143,8 @@ pub mod quick_xml_serialize {
     pub struct FooContent3TypeSerializer<'ser> {
         pub(super) value: &'ser super::FooContent3Type,
         pub(super) state: FooContent3TypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooContent3TypeSerializerState<'ser> {
@@ -196,13 +198,22 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooContent3TypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            self.next_event().transpose()
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = FooContent3TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
     #[derive(Debug)]
     pub struct FooContent6TypeSerializer<'ser> {
         pub(super) value: &'ser super::FooContent6Type,
         pub(super) state: FooContent6TypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooContent6TypeSerializerState<'ser> {
@@ -256,7 +267,14 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooContent6TypeSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            self.next_event().transpose()
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = FooContent6TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

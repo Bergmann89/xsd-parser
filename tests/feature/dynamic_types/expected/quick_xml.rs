@@ -11,10 +11,10 @@ impl xsd_parser::quick_xml::WithSerializer for ListType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::ListTypeSerializer {
-            name: name.unwrap_or("tns:list"),
             value: self,
-            is_root,
             state: quick_xml_serialize::ListTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:list"),
+            is_root,
         })
     }
 }
@@ -50,10 +50,10 @@ impl xsd_parser::quick_xml::WithSerializer for IntermediateType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::IntermediateTypeSerializer {
-            name: name.unwrap_or("tns:intermediate"),
             value: self,
-            is_root,
             state: quick_xml_serialize::IntermediateTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:intermediate"),
+            is_root,
         })
     }
 }
@@ -73,10 +73,10 @@ impl xsd_parser::quick_xml::WithSerializer for FinalType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::FinalTypeSerializer {
-            name: name.unwrap_or("tns:final"),
             value: self,
-            is_root,
             state: quick_xml_serialize::FinalTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:final"),
+            is_root,
         })
     }
 }
@@ -98,10 +98,10 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct ListTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::ListType,
-        pub(super) is_root: bool,
         pub(super) state: ListTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ListTypeSerializerState<'ser> {
@@ -163,10 +163,10 @@ pub mod quick_xml_serialize {
     }
     #[derive(Debug)]
     pub struct IntermediateTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::IntermediateType,
-        pub(super) is_root: bool,
         pub(super) state: IntermediateTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum IntermediateTypeSerializerState<'ser> {
@@ -220,10 +220,10 @@ pub mod quick_xml_serialize {
     }
     #[derive(Debug)]
     pub struct FinalTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::FinalType,
-        pub(super) is_root: bool,
         pub(super) state: FinalTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FinalTypeSerializerState<'ser> {

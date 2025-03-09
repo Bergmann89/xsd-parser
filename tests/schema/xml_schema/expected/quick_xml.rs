@@ -29,14 +29,6 @@ pub enum SchemaElementTypeContent {
     Attribute(AttributeType),
     Notation(NotationElementType),
 }
-impl xsd_parser::WithNamespace for SchemaElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl SchemaElementType {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
@@ -60,18 +52,36 @@ impl SchemaElementType {
     }
 }
 #[derive(Debug, Clone)]
+pub enum FullDerivationSetType {
+    All,
+    TypeDerivationControlList(TypeDerivationControlList),
+}
+#[derive(Debug, Clone, Default)]
+pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
+#[derive(Debug, Clone)]
+pub enum BlockSetType {
+    All,
+    BlockSetItemList(BlockSetItemList),
+}
+#[derive(Debug, Clone, Default)]
+pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
+#[derive(Debug, Clone)]
+pub enum FormChoiceType {
+    Qualified,
+    Unqualified,
+}
+#[derive(Debug, Clone)]
+pub enum XpathDefaultNamespaceType {
+    String(String),
+    DefaultNamespace,
+    TargetNamespace,
+    Local,
+}
+#[derive(Debug, Clone)]
 pub struct IncludeElementType {
     pub id: Option<String>,
     pub schema_location: String,
     pub annotation: Option<AnnotationElementType>,
-}
-impl xsd_parser::WithNamespace for IncludeElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct ImportElementType {
@@ -79,14 +89,6 @@ pub struct ImportElementType {
     pub namespace: Option<String>,
     pub schema_location: Option<String>,
     pub annotation: Option<AnnotationElementType>,
-}
-impl xsd_parser::WithNamespace for ImportElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct RedefineElementType {
@@ -101,14 +103,6 @@ pub enum RedefineElementTypeContent {
     ComplexType(ComplexBaseType),
     Group(GroupType),
     AttributeGroup(AttributeGroupType),
-}
-impl xsd_parser::WithNamespace for RedefineElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct OverrideElementType {
@@ -127,14 +121,6 @@ pub enum OverrideElementTypeContent {
     Attribute(AttributeType),
     Notation(NotationElementType),
 }
-impl xsd_parser::WithNamespace for OverrideElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct AnnotationElementType {
     pub id: Option<String>,
@@ -145,14 +131,6 @@ pub enum AnnotationElementTypeContent {
     Appinfo(AppinfoElementType),
     Documentation(DocumentationElementType),
 }
-impl xsd_parser::WithNamespace for AnnotationElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct DefaultOpenContentElementType {
     pub id: Option<String>,
@@ -160,14 +138,6 @@ pub struct DefaultOpenContentElementType {
     pub mode: DefaultOpenContentModeType,
     pub annotation: Option<AnnotationElementType>,
     pub any: WildcardType,
-}
-impl xsd_parser::WithNamespace for DefaultOpenContentElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 impl DefaultOpenContentElementType {
     #[must_use]
@@ -192,14 +162,6 @@ pub enum SimpleBaseTypeContent {
     Restriction(RestrictionElementType),
     List(Box<ListElementType>),
     Union(UnionElementType),
-}
-impl xsd_parser::WithNamespace for SimpleBaseType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct ComplexBaseType {
@@ -226,14 +188,6 @@ pub enum ComplexBaseTypeContent {
     AttributeGroup(AttributeGroupType),
     AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
-}
-impl xsd_parser::WithNamespace for ComplexBaseType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 impl ComplexBaseType {
     #[must_use]
@@ -264,14 +218,6 @@ pub enum GroupTypeContent {
     Sequence(GroupType),
     Any(AnyElementType),
 }
-impl xsd_parser::WithNamespace for GroupType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl GroupType {
     #[must_use]
     pub fn default_min_occurs() -> usize {
@@ -295,14 +241,6 @@ pub enum AttributeGroupTypeContent {
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
     AnyAttribute(AnyAttributeElementType),
-}
-impl xsd_parser::WithNamespace for AttributeGroupType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct ElementType {
@@ -333,14 +271,6 @@ pub enum ElementTypeContent {
     Key(KeybaseType),
     Keyref(KeyrefElementType),
 }
-impl xsd_parser::WithNamespace for ElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl ElementType {
     #[must_use]
     pub fn default_min_occurs() -> usize {
@@ -370,14 +300,6 @@ pub struct AttributeType {
     pub annotation: Option<AnnotationElementType>,
     pub simple_type: Option<SimpleBaseType>,
 }
-impl xsd_parser::WithNamespace for AttributeType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl AttributeType {
     #[must_use]
     pub fn default_use_() -> AttributeUseType {
@@ -392,192 +314,32 @@ pub struct NotationElementType {
     pub system: Option<String>,
     pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for NotationElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
+#[derive(Debug, Clone)]
+pub enum TypeDerivationControlType {
+    Extension,
+    Restriction,
+    List,
+    Union,
 }
 #[derive(Debug, Clone)]
-pub enum FullDerivationSetType {
-    All,
-    TypeDerivationControlList(TypeDerivationControlList),
-}
-impl xsd_parser::WithNamespace for FullDerivationSetType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for FullDerivationSetType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"#all" => Ok(Self::All),
-            x => Ok(Self::TypeDerivationControlList(
-                TypeDerivationControlList::deserialize_bytes(reader, x)?,
-            )),
-        }
-    }
-}
-#[derive(Debug, Clone, Default)]
-pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
-impl xsd_parser::WithNamespace for TypeDerivationControlList {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for TypeDerivationControlList {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| TypeDerivationControlType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
-#[derive(Debug, Clone)]
-pub enum BlockSetType {
-    All,
-    BlockSetItemList(BlockSetItemList),
-}
-impl xsd_parser::WithNamespace for BlockSetType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for BlockSetType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"#all" => Ok(Self::All),
-            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
-                reader, x,
-            )?)),
-        }
-    }
-}
-#[derive(Debug, Clone, Default)]
-pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
-impl xsd_parser::WithNamespace for BlockSetItemList {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for BlockSetItemList {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BlockSetItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
-#[derive(Debug, Clone)]
-pub enum FormChoiceType {
-    Qualified,
-    Unqualified,
-}
-impl xsd_parser::WithNamespace for FormChoiceType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for FormChoiceType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"qualified" => Ok(Self::Qualified),
-            b"unqualified" => Ok(Self::Unqualified),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub enum XpathDefaultNamespaceType {
-    String(String),
-    DefaultNamespace,
-    TargetNamespace,
-    Local,
-}
-impl xsd_parser::WithNamespace for XpathDefaultNamespaceType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for XpathDefaultNamespaceType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"##defaultNamespace" => Ok(Self::DefaultNamespace),
-            b"##targetNamespace" => Ok(Self::TargetNamespace),
-            b"##local" => Ok(Self::Local),
-            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
-        }
-    }
+pub enum BlockSetItemType {
+    Extension,
+    Restriction,
+    Substitution,
 }
 #[derive(Debug, Clone)]
 pub struct AppinfoElementType {
     pub source: Option<String>,
-}
-impl xsd_parser::WithNamespace for AppinfoElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct DocumentationElementType {
     pub source: Option<String>,
     pub lang: Option<String>,
 }
-impl xsd_parser::WithNamespace for DocumentationElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
+#[derive(Debug, Clone)]
+pub enum DefaultOpenContentModeType {
+    Interleave,
+    Suffix,
 }
 #[derive(Debug, Clone)]
 pub struct WildcardType {
@@ -587,14 +349,6 @@ pub struct WildcardType {
     pub process_contents: ProcessContentsType,
     pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for WildcardType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl WildcardType {
     #[must_use]
     pub fn default_process_contents() -> ProcessContentsType {
@@ -602,32 +356,9 @@ impl WildcardType {
     }
 }
 #[derive(Debug, Clone)]
-pub enum DefaultOpenContentModeType {
-    Interleave,
-    Suffix,
-}
-impl xsd_parser::WithNamespace for DefaultOpenContentModeType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for DefaultOpenContentModeType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"interleave" => Ok(Self::Interleave),
-            b"suffix" => Ok(Self::Suffix),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
+pub enum SimpleDerivationSetType {
+    All,
+    SimpleDerivationSetItemList(SimpleDerivationSetItemList),
 }
 #[derive(Debug, Clone)]
 pub struct RestrictionElementType {
@@ -641,28 +372,12 @@ pub enum RestrictionElementTypeContent {
     SimpleType(SimpleBaseType),
     Facet(Facet),
 }
-impl xsd_parser::WithNamespace for RestrictionElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct ListElementType {
     pub id: Option<String>,
     pub item_type: Option<String>,
     pub annotation: Option<AnnotationElementType>,
     pub simple_type: Option<Box<SimpleBaseType>>,
-}
-impl xsd_parser::WithNamespace for ListElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct UnionElementType {
@@ -671,39 +386,10 @@ pub struct UnionElementType {
     pub annotation: Option<AnnotationElementType>,
     pub simple_type: Vec<SimpleBaseType>,
 }
-impl xsd_parser::WithNamespace for UnionElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
-pub enum SimpleDerivationSetType {
+pub enum DerivationSetType {
     All,
-    SimpleDerivationSetItemList(SimpleDerivationSetItemList),
-}
-impl xsd_parser::WithNamespace for SimpleDerivationSetType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSetItemList(
-                SimpleDerivationSetItemList::deserialize_bytes(reader, x)?,
-            )),
-        }
-    }
+    ReducedDerivationControlList(ReducedDerivationControlList),
 }
 #[derive(Debug, Clone)]
 pub struct SimpleContentElementType {
@@ -715,14 +401,6 @@ pub enum SimpleContentElementTypeContent {
     Annotation(AnnotationElementType),
     Restriction(RestrictionType),
     Extension(ExtensionType),
-}
-impl xsd_parser::WithNamespace for SimpleContentElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct ComplexContentElementType {
@@ -736,28 +414,12 @@ pub enum ComplexContentElementTypeContent {
     Restriction(RestrictionType),
     Extension(ExtensionType),
 }
-impl xsd_parser::WithNamespace for ComplexContentElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct OpenContentElementType {
     pub id: Option<String>,
     pub mode: OpenContentModeType,
     pub annotation: Option<AnnotationElementType>,
     pub any: Option<WildcardType>,
-}
-impl xsd_parser::WithNamespace for OpenContentElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 impl OpenContentElementType {
     #[must_use]
@@ -774,14 +436,6 @@ pub struct AnyAttributeElementType {
     pub not_q_name: Option<QnameListAType>,
     pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for AnyAttributeElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 impl AnyAttributeElementType {
     #[must_use]
     pub fn default_process_contents() -> ProcessContentsType {
@@ -795,39 +449,10 @@ pub struct AssertionType {
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
     pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for AssertionType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
-pub enum DerivationSetType {
-    All,
-    ReducedDerivationControlList(ReducedDerivationControlList),
-}
-impl xsd_parser::WithNamespace for DerivationSetType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for DerivationSetType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"#all" => Ok(Self::All),
-            x => Ok(Self::ReducedDerivationControlList(
-                ReducedDerivationControlList::deserialize_bytes(reader, x)?,
-            )),
-        }
-    }
+pub enum AllNNIType {
+    Usize(usize),
+    Unbounded,
 }
 #[derive(Debug, Clone)]
 pub struct AnyElementType {
@@ -839,14 +464,6 @@ pub struct AnyElementType {
     pub min_occurs: usize,
     pub max_occurs: AllNNIType,
     pub annotation: Option<AnnotationElementType>,
-}
-impl xsd_parser::WithNamespace for AnyElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 impl AnyElementType {
     #[must_use]
@@ -862,30 +479,8 @@ impl AnyElementType {
         AllNNIType::Usize(1usize)
     }
 }
-#[derive(Debug, Clone)]
-pub enum AllNNIType {
-    Usize(usize),
-    Unbounded,
-}
-impl xsd_parser::WithNamespace for AllNNIType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for AllNNIType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"unbounded" => Ok(Self::Unbounded),
-            x => Ok(Self::Usize(usize::deserialize_bytes(reader, x)?)),
-        }
-    }
-}
+#[derive(Debug, Clone, Default)]
+pub struct Entitiestype(pub Vec<String>);
 #[derive(Debug, Clone)]
 pub struct AltType {
     pub id: Option<String>,
@@ -900,14 +495,6 @@ pub enum AltTypeContent {
     SimpleType(SimpleBaseType),
     ComplexType(ComplexBaseType),
 }
-impl xsd_parser::WithNamespace for AltType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct KeybaseType {
     pub id: Option<String>,
@@ -920,14 +507,6 @@ pub struct KeybaseTypeContent {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
     pub field: Vec<FieldElementType>,
-}
-impl xsd_parser::WithNamespace for KeybaseType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
 }
 #[derive(Debug, Clone)]
 pub struct KeyrefElementType {
@@ -943,128 +522,11 @@ pub struct KeyrefElementTypeContent {
     pub selector: FieldElementType,
     pub field: Vec<FieldElementType>,
 }
-impl xsd_parser::WithNamespace for KeyrefElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-#[derive(Debug, Clone, Default)]
-pub struct Entitiestype(pub Vec<String>);
-impl xsd_parser::WithNamespace for Entitiestype {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for Entitiestype {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| String::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone)]
 pub enum AttributeUseType {
     Prohibited,
     Optional,
     Required,
-}
-impl xsd_parser::WithNamespace for AttributeUseType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for AttributeUseType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"prohibited" => Ok(Self::Prohibited),
-            b"optional" => Ok(Self::Optional),
-            b"required" => Ok(Self::Required),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub enum TypeDerivationControlType {
-    Extension,
-    Restriction,
-    List,
-    Union,
-}
-impl xsd_parser::WithNamespace for TypeDerivationControlType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for TypeDerivationControlType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub enum BlockSetItemType {
-    Extension,
-    Restriction,
-    Substitution,
-}
-impl xsd_parser::WithNamespace for BlockSetItemType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for BlockSetItemType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            b"substitution" => Ok(Self::Substitution),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
 }
 #[derive(Debug, Clone)]
 pub enum NamespaceListType {
@@ -1072,81 +534,16 @@ pub enum NamespaceListType {
     Other,
     BasicNamespaceList(BasicNamespaceListType),
 }
-impl xsd_parser::WithNamespace for NamespaceListType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for NamespaceListType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"##any" => Ok(Self::Any),
-            b"##other" => Ok(Self::Other),
-            x => Ok(Self::BasicNamespaceList(
-                BasicNamespaceListType::deserialize_bytes(reader, x)?,
-            )),
-        }
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
-impl xsd_parser::WithNamespace for NotNamespaceType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for NotNamespaceType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone)]
 pub enum ProcessContentsType {
     Skip,
     Lax,
     Strict,
 }
-impl xsd_parser::WithNamespace for ProcessContentsType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for ProcessContentsType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"skip" => Ok(Self::Skip),
-            b"lax" => Ok(Self::Lax),
-            b"strict" => Ok(Self::Strict),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
+#[derive(Debug, Clone, Default)]
+pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
 #[derive(Debug, Clone)]
 pub enum Facet {
     MinExclusive(FacetType),
@@ -1164,37 +561,8 @@ pub enum Facet {
     Assertion(AssertionType),
     ExplicitTimezone(FacetType),
 }
-impl xsd_parser::WithNamespace for Facet {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone, Default)]
-pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
-impl xsd_parser::WithNamespace for SimpleDerivationSetItemList {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetItemList {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| SimpleDerivationSetItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
+pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
 #[derive(Debug, Clone)]
 pub struct RestrictionType {
     pub id: Option<String>,
@@ -1216,14 +584,6 @@ pub enum RestrictionTypeContent {
     AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
 }
-impl xsd_parser::WithNamespace for RestrictionType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub struct ExtensionType {
     pub id: Option<String>,
@@ -1243,113 +603,16 @@ pub enum ExtensionTypeContent {
     AnyAttribute(AnyAttributeElementType),
     Assert(AssertionType),
 }
-impl xsd_parser::WithNamespace for ExtensionType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone)]
 pub enum OpenContentModeType {
     None,
     Interleave,
     Suffix,
 }
-impl xsd_parser::WithNamespace for OpenContentModeType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for OpenContentModeType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"none" => Ok(Self::None),
-            b"interleave" => Ok(Self::Interleave),
-            b"suffix" => Ok(Self::Suffix),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
-impl xsd_parser::WithNamespace for QnameListAType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for QnameListAType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameListAItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
-#[derive(Debug, Clone, Default)]
-pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
-impl xsd_parser::WithNamespace for ReducedDerivationControlList {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for ReducedDerivationControlList {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| ReducedDerivationControlType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct QnameListType(pub Vec<QnameListItemType>);
-impl xsd_parser::WithNamespace for QnameListType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for QnameListType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| QnameListItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone)]
 pub struct FieldElementType {
     pub id: Option<String>,
@@ -1357,83 +620,13 @@ pub struct FieldElementType {
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
     pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for FieldElementType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
 #[derive(Debug, Clone, Default)]
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
-impl xsd_parser::WithNamespace for BasicNamespaceListType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for BasicNamespaceListType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
-}
 #[derive(Debug, Clone)]
 pub enum BasicNamespaceListItemType {
     String(String),
     TargetNamespace,
     Local,
-}
-impl xsd_parser::WithNamespace for BasicNamespaceListItemType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for BasicNamespaceListItemType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"##targetNamespace" => Ok(Self::TargetNamespace),
-            b"##local" => Ok(Self::Local),
-            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct FacetType {
-    pub id: Option<String>,
-    pub value: String,
-    pub fixed: bool,
-    pub annotation: Option<AnnotationElementType>,
-}
-impl xsd_parser::WithNamespace for FacetType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl FacetType {
-    #[must_use]
-    pub fn default_fixed() -> bool {
-        false
-    }
 }
 #[derive(Debug, Clone)]
 pub enum SimpleDerivationSetItemType {
@@ -1442,53 +635,17 @@ pub enum SimpleDerivationSetItemType {
     Restriction,
     Extension,
 }
-impl xsd_parser::WithNamespace for SimpleDerivationSetItemType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for SimpleDerivationSetItemType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"list" => Ok(Self::List),
-            b"union" => Ok(Self::Union),
-            b"restriction" => Ok(Self::Restriction),
-            b"extension" => Ok(Self::Extension),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
-}
 #[derive(Debug, Clone)]
-pub enum QnameListAItemType {
-    String(String),
-    Defined,
+pub struct FacetType {
+    pub id: Option<String>,
+    pub value: String,
+    pub fixed: bool,
+    pub annotation: Option<AnnotationElementType>,
 }
-impl xsd_parser::WithNamespace for QnameListAItemType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for QnameListAItemType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"##defined" => Ok(Self::Defined),
-            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
-        }
+impl FacetType {
+    #[must_use]
+    pub fn default_fixed() -> bool {
+        false
     }
 }
 #[derive(Debug, Clone)]
@@ -1496,55 +653,14 @@ pub enum ReducedDerivationControlType {
     Extension,
     Restriction,
 }
-impl xsd_parser::WithNamespace for ReducedDerivationControlType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for ReducedDerivationControlType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"extension" => Ok(Self::Extension),
-            b"restriction" => Ok(Self::Restriction),
-            x => {
-                use xsd_parser::quick_xml::{ErrorKind, RawByteStr};
-                Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x))))
-            }
-        }
-    }
+#[derive(Debug, Clone)]
+pub enum QnameListAItemType {
+    String(String),
+    Defined,
 }
 #[derive(Debug, Clone)]
 pub enum QnameListItemType {
     String(String),
     Defined,
     DefinedSibling,
-}
-impl xsd_parser::WithNamespace for QnameListItemType {
-    fn prefix() -> Option<&'static str> {
-        Some("xs")
-    }
-    fn namespace() -> Option<&'static str> {
-        Some("http://www.w3.org/2001/XMLSchema")
-    }
-}
-impl xsd_parser::quick_xml::DeserializeBytes for QnameListItemType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
-    where
-        R: xsd_parser::quick_xml::XmlReader,
-    {
-        match bytes {
-            b"##defined" => Ok(Self::Defined),
-            b"##definedSibling" => Ok(Self::DefinedSibling),
-            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
-        }
-    }
-}
-pub mod quick_xml_deserialize {
-    use super::*;
 }

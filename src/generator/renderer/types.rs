@@ -324,7 +324,7 @@ impl ComplexTypeAttribute<'_> {
 
 impl ComplexTypeElement<'_> {
     fn render_field(&self, config: &Config<'_>) -> TokenStream {
-        let field_ident = &self.ident;
+        let field_ident = &self.field_ident;
         let target_type = self
             .occurs
             .make_type(&self.target_type, self.need_indirection)
@@ -350,7 +350,7 @@ impl ComplexTypeElement<'_> {
     }
 
     fn render_variant(&self, config: &Config<'_>) -> TokenStream {
-        let variant_ident = &self.ident;
+        let variant_ident = &self.variant_ident;
         let target_type = self
             .occurs
             .make_type(&self.target_type, self.need_indirection);

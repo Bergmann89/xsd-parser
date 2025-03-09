@@ -16,10 +16,10 @@ impl xsd_parser::quick_xml::WithSerializer for FooType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
-            name: name.unwrap_or("tns:FooType"),
             value: self,
-            is_root,
             state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:FooType"),
+            is_root,
         })
     }
 }
@@ -42,29 +42,16 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::FooType,
-        pub(super) is_root: bool,
         pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
         Content__(<FooTypeContent as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
         End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    #[derive(Debug)]
-    pub struct FooTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::FooTypeContent,
-        pub(super) state: FooTypeContentSerializerState<'ser>,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooTypeContentSerializerState<'ser> {
-        Init__,
-        Bar(<String as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
-        Baz(<i32 as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -118,6 +105,19 @@ pub mod quick_xml_serialize {
             }
         }
     }
+    #[derive(Debug)]
+    pub struct FooTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::FooTypeContent,
+        pub(super) state: FooTypeContentSerializerState<'ser>,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooTypeContentSerializerState<'ser> {
+        Init__,
+        Bar(<String as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Baz(<i32 as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
     impl<'ser> FooTypeContentSerializer<'ser> {
         fn next_event(
             &mut self,
@@ -162,7 +162,14 @@ pub mod quick_xml_serialize {
     impl<'ser> core::iter::Iterator for FooTypeContentSerializer<'ser> {
         type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
         fn next(&mut self) -> Option<Self::Item> {
-            self.next_event().transpose()
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = FooTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

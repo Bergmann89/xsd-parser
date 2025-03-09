@@ -11,10 +11,10 @@ impl xsd_parser::quick_xml::WithSerializer for ArrayType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::ArrayTypeSerializer {
-            name: name.unwrap_or("tns:ArrayType"),
             value: self,
-            is_root,
             state: quick_xml_serialize::ArrayTypeSerializerState::Init__,
+            name: name.unwrap_or("tns:ArrayType"),
+            is_root,
         })
     }
 }
@@ -22,10 +22,10 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct ArrayTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::ArrayType,
-        pub(super) is_root: bool,
         pub(super) state: ArrayTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ArrayTypeSerializerState<'ser> {

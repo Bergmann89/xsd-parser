@@ -99,10 +99,10 @@ impl xsd_parser::quick_xml::WithSerializer for AnyType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::AnyTypeSerializer {
-            name: name.unwrap_or("xs:anyType"),
             value: self,
-            is_root,
             state: quick_xml_serialize::AnyTypeSerializerState::Init__,
+            name: name.unwrap_or("xs:anyType"),
+            is_root,
         })
     }
 }
@@ -143,10 +143,10 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::AnyType,
-        pub(super) is_root: bool,
         pub(super) state: AnyTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum AnyTypeSerializerState<'ser> {

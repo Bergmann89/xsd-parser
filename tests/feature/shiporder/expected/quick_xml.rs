@@ -14,10 +14,10 @@ impl xsd_parser::quick_xml::WithSerializer for ShiporderType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::ShiporderTypeSerializer {
-            name: name.unwrap_or("shiporder"),
             value: self,
-            is_root,
             state: quick_xml_serialize::ShiporderTypeSerializerState::Init__,
+            name: name.unwrap_or("shiporder"),
+            is_root,
         })
     }
 }
@@ -36,10 +36,10 @@ impl xsd_parser::quick_xml::WithSerializer for ShiporderShiptoType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::ShiporderShiptoTypeSerializer {
-            name: name.unwrap_or("ShiporderShipto"),
             value: self,
-            is_root,
             state: quick_xml_serialize::ShiporderShiptoTypeSerializerState::Init__,
+            name: name.unwrap_or("ShiporderShipto"),
+            is_root,
         })
     }
 }
@@ -58,10 +58,10 @@ impl xsd_parser::quick_xml::WithSerializer for ShiporderItemType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
         Ok(quick_xml_serialize::ShiporderItemTypeSerializer {
-            name: name.unwrap_or("ShiporderItem"),
             value: self,
-            is_root,
             state: quick_xml_serialize::ShiporderItemTypeSerializerState::Init__,
+            name: name.unwrap_or("ShiporderItem"),
+            is_root,
         })
     }
 }
@@ -69,10 +69,10 @@ pub mod quick_xml_serialize {
     use super::*;
     #[derive(Debug)]
     pub struct ShiporderTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::ShiporderType,
-        pub(super) is_root: bool,
         pub(super) state: ShiporderTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ShiporderTypeSerializerState<'ser> {
@@ -164,10 +164,10 @@ pub mod quick_xml_serialize {
     }
     #[derive(Debug)]
     pub struct ShiporderShiptoTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::ShiporderShiptoType,
-        pub(super) is_root: bool,
         pub(super) state: ShiporderShiptoTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ShiporderShiptoTypeSerializerState<'ser> {
@@ -265,10 +265,10 @@ pub mod quick_xml_serialize {
     }
     #[derive(Debug)]
     pub struct ShiporderItemTypeSerializer<'ser> {
-        pub(super) name: &'ser str,
         pub(super) value: &'ser super::ShiporderItemType,
-        pub(super) is_root: bool,
         pub(super) state: ShiporderItemTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ShiporderItemTypeSerializerState<'ser> {
