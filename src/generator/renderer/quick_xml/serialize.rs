@@ -427,12 +427,11 @@ impl ComplexTypeStruct<'_> {
         let state_ident = &self.serializer_state_ident;
 
         let state_variants = self
-            .elements
+            .elements()
             .iter()
             .map(|x| x.render_serializer_state_variant(code));
         let state_content = self
-            .content
-            .as_ref()
+            .content()
             .map(|x| x.render_serializer_state_variant(code));
         let state_end = self.serializer_need_end_state().then(|| {
             quote! {
@@ -469,7 +468,8 @@ impl ComplexTypeStruct<'_> {
             quote!(#serializer_state_ident::Done__)
         };
 
-        let handle_state_init = if let Some(first) = self.elements.first() {
+        let elements = self.elements();
+        let handle_state_init = if let Some(first) = elements.first() {
             let field_ident = &first.field_ident;
             let init = first.render_serializer_state_init(
                 code,
@@ -478,7 +478,7 @@ impl ComplexTypeStruct<'_> {
             );
 
             quote!(#init;)
-        } else if let Some(content) = &self.content {
+        } else if let Some(content) = &self.content() {
             let init = content.render_serializer_state_init(code, serializer_state_ident);
 
             quote!(#init;)
@@ -486,11 +486,11 @@ impl ComplexTypeStruct<'_> {
             quote!(self.state = #final_state;)
         };
 
-        let handle_state_variants = (0..).take(self.elements.len()).map(|i| {
-            let element = &self.elements[i];
+        let handle_state_variants = (0..).take(elements.len()).map(|i| {
+            let element = &elements[i];
             let variant_ident = &element.variant_ident;
 
-            let next = if let Some(next) = self.elements.get(i + 1) {
+            let next = if let Some(next) = elements.get(i + 1) {
                 let field_ident = &next.field_ident;
                 let init = next.render_serializer_state_init(
                     code,
@@ -499,12 +499,6 @@ impl ComplexTypeStruct<'_> {
                 );
 
                 quote!(#init,)
-            } else if let Some(content) = &self.content {
-                let init = content.render_serializer_state_init(code, serializer_state_ident);
-
-                quote! {
-                    self.state = #init,
-                }
             } else {
                 quote! {
                     self.state = #final_state,
@@ -519,7 +513,7 @@ impl ComplexTypeStruct<'_> {
             }
         });
 
-        let handle_state_content = self.content.as_ref().map(|_| {
+        let handle_state_content = self.content().map(|_| {
             quote! {
                 #serializer_state_ident::Content__(x) => match x.next().transpose()? {
                     Some(event) => return Ok(Some(event)),

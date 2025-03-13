@@ -245,8 +245,8 @@ impl ComplexTypeStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.render_field(code, type_ident));
-        let fields = self.elements.iter().map(|x| x.render_field(code));
-        let content = self.content.as_ref().and_then(|x| x.render_field(code));
+        let fields = self.elements().iter().map(|x| x.render_field(code));
+        let content = self.content().as_ref().and_then(|x| x.render_field(code));
 
         code.push(quote! {
             #derive
@@ -265,7 +265,7 @@ impl ComplexTypeContent {
     fn render_field(&self, config: &Config<'_>) -> Option<TokenStream> {
         let content_type = self.occurs.make_type(&self.target_type, false)?;
         let serde_default = (self.min_occurs == 0).then(|| quote!(default,));
-        let serde = match (config.serde_support, self.is_simple) {
+        let serde = match (config.serde_support, self.is_simple()) {
             (SerdeSupport::None, _) => None,
             (SerdeSupport::QuickXml, true) => {
                 Some(quote!(#[serde(#serde_default rename = "$text")]))

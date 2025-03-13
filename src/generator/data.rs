@@ -389,6 +389,7 @@ pub(super) struct DynamicType<'types> {
     pub info: &'types DynamicInfo,
     pub type_ident: Ident2,
     pub trait_ident: Ident2,
+    pub deserializer_ident: Ident2,
     pub sub_traits: Option<Vec<TokenStream>>,
     pub derived_types: Vec<DerivedType>,
 }
@@ -432,10 +433,13 @@ impl<'types> DynamicType<'types> {
             .map(|ident| make_derived_type_data(&mut req, ident))
             .collect::<Result<Vec<_>, _>>()?;
 
+        let deserializer_ident = format_ident!("{type_ident}Deserializer");
+
         Ok(Self {
             info,
             type_ident,
             trait_ident,
+            deserializer_ident,
             sub_traits,
             derived_types,
         })
@@ -567,7 +571,7 @@ impl VariantInfo {
 /* ComplexType */
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
+#[allow(dead_code, clippy::large_enum_variant)] // TODO
 pub(super) enum ComplexType<'types> {
     Enum {
         type_: ComplexTypeEnum<'types>,
@@ -604,24 +608,39 @@ pub(super) struct ComplexTypeEnum<'types> {
 #[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeStruct<'types> {
     pub base: ComplexTypeBase,
-
-    pub content: Option<ComplexTypeContent>,
+    pub mode: StructMode<'types>,
 
     pub attributes: Vec<ComplexTypeAttribute<'types>>,
     pub any_attribute: Option<&'types AnyAttributeInfo>,
+}
 
-    pub elements: Vec<ComplexTypeElement<'types>>,
-    pub any_element: Option<&'types AnyInfo>,
+#[derive(Debug)]
+#[allow(dead_code)] // TODO
+pub(super) enum StructMode<'types> {
+    Empty {
+        any_element: Option<&'types AnyInfo>,
+    },
+    Content {
+        content: ComplexTypeContent,
+    },
+    All {
+        elements: Vec<ComplexTypeElement<'types>>,
+        any_element: Option<&'types AnyInfo>,
+    },
+    Sequence {
+        elements: Vec<ComplexTypeElement<'types>>,
+        any_element: Option<&'types AnyInfo>,
+    },
 }
 
 #[derive(Debug)]
 #[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeContent {
     pub occurs: Occurs,
-    pub is_simple: bool,
     pub min_occurs: MinOccurs,
     pub max_occurs: MaxOccurs,
     pub target_type: TokenStream,
+    pub target_ident: Option<Ident>,
 }
 
 #[derive(Debug)]
@@ -650,7 +669,10 @@ enum TypeMode {
     All,
     Choice,
     Sequence,
-    Simple { target_type: TokenStream },
+    Simple {
+        target_ident: Ident,
+        target_type: TokenStream,
+    },
 }
 
 impl<'types> ComplexType<'types> {
@@ -709,11 +731,19 @@ impl<'types> ComplexType<'types> {
                 Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_),
                 ident,
             )) => {
+                let target_ident = ident.clone();
                 let current_module = req.current_module();
-                let content_ref = req.get_or_create_type_ref(ident.clone())?;
+                let content_ref = req.get_or_create_type_ref(target_ident.clone())?;
                 let target_type = format_type_ref(current_module, content_ref);
 
-                (TypeMode::Simple { target_type }, &[][..], None)
+                (
+                    TypeMode::Simple {
+                        target_ident,
+                        target_type,
+                    },
+                    &[][..],
+                    None,
+                )
             }
             Some((x, _)) => {
                 let ident = &req.current_type_ref().type_ident;
@@ -748,8 +778,12 @@ impl<'types> ComplexType<'types> {
         any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
         match type_mode {
-            TypeMode::Simple { target_type } => Self::new_simple(
+            TypeMode::Simple {
+                target_ident,
+                target_type,
+            } => Self::new_simple(
                 req,
+                target_ident,
                 target_type,
                 min_occurs,
                 max_occurs,
@@ -767,6 +801,7 @@ impl<'types> ComplexType<'types> {
             ),
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
                 req,
+                &type_mode,
                 min_occurs,
                 max_occurs,
                 attributes,
@@ -779,6 +814,7 @@ impl<'types> ComplexType<'types> {
 
     fn new_simple(
         mut req: Request<'_, 'types>,
+        target_ident: Ident,
         target_type: TokenStream,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
@@ -787,27 +823,26 @@ impl<'types> ComplexType<'types> {
     ) -> Result<Self, Error> {
         let base = ComplexTypeBase::new(&mut req)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let target_ident = Some(target_ident);
         let attributes = attributes
             .iter()
             .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
             .collect::<Result<Vec<_>, _>>()?;
 
-        let content = Some(ComplexTypeContent {
+        let content = ComplexTypeContent {
             occurs,
-            is_simple: true,
             min_occurs,
             max_occurs,
             target_type,
-        });
+            target_ident,
+        };
         let type_ = ComplexTypeStruct {
             base,
-            content,
+
+            mode: StructMode::Content { content },
 
             attributes,
             any_attribute,
-
-            elements: Vec::new(),
-            any_element: None,
         };
 
         Ok(Self::Struct {
@@ -852,57 +887,62 @@ impl<'types> ComplexType<'types> {
                 any_attribute,
             };
 
-            Ok(ComplexType::Enum {
+            return Ok(ComplexType::Enum {
+                type_,
+                content_type: None,
+            });
+        }
+
+        let type_ident = &base.type_ident;
+        let content_ident = format_ident!("{type_ident}Content");
+        let has_content = occurs.is_some() && !elements.is_empty();
+
+        let content_type = has_content.then(|| {
+            let type_ = ComplexTypeEnum {
+                base: ComplexTypeBase::new_empty(content_ident.clone()),
+                elements: take(&mut elements),
+                any_element: any_element.take(),
+                any_attribute: None,
+            };
+
+            Box::new(ComplexType::Enum {
                 type_,
                 content_type: None,
             })
-        } else {
-            let type_ident = &base.type_ident;
-            let content_ident = format_ident!("{type_ident}Content");
-            let has_content = occurs.is_some() && !elements.is_empty();
+        });
 
-            let content_type = has_content.then(|| {
-                let type_ = ComplexTypeEnum {
-                    base: ComplexTypeBase::new_empty(content_ident.clone()),
-                    elements: take(&mut elements),
-                    any_element: any_element.take(),
-                    any_attribute: None,
-                };
-
-                Box::new(ComplexType::Enum {
-                    type_,
-                    content_type: None,
-                })
-            });
-
-            let content = has_content.then(|| ComplexTypeContent {
+        let mode = if has_content {
+            let content = ComplexTypeContent {
                 occurs,
-                is_simple: false,
                 min_occurs,
                 max_occurs,
                 target_type: quote!(#content_ident),
-            });
-
-            let type_ = ComplexTypeStruct {
-                base,
-                content,
-
-                attributes,
-                any_attribute,
-
-                elements,
-                any_element,
+                target_ident: None,
             };
 
-            Ok(ComplexType::Struct {
-                type_,
-                content_type,
-            })
-        }
+            StructMode::Content { content }
+        } else {
+            StructMode::Empty { any_element }
+        };
+
+        let type_ = ComplexTypeStruct {
+            base,
+            mode,
+
+            attributes,
+            any_attribute,
+        };
+
+        Ok(ComplexType::Struct {
+            type_,
+            content_type,
+        })
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn new_struct(
         mut req: Request<'_, 'types>,
+        type_mode: &TypeMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
@@ -920,8 +960,7 @@ impl<'types> ComplexType<'types> {
             .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
             .collect::<Result<Vec<_>, _>>()?;
 
-        let mut any_element = any_element;
-        let mut elements = elements
+        let elements = elements
             .iter()
             .filter_map(|info| {
                 ComplexTypeElement::new_field(info, &mut req, occurs.is_direct()).transpose()
@@ -929,68 +968,89 @@ impl<'types> ComplexType<'types> {
             .collect::<Result<Vec<_>, _>>()?;
 
         if flatten {
+            let mode = match type_mode {
+                TypeMode::All => StructMode::All {
+                    elements,
+                    any_element,
+                },
+                TypeMode::Sequence => StructMode::Sequence {
+                    elements,
+                    any_element,
+                },
+                _ => crate::unreachable!(),
+            };
+
             let type_ = ComplexTypeStruct {
                 base,
-                content: None,
-
-                elements,
-                any_element,
+                mode,
 
                 attributes,
                 any_attribute,
             };
 
-            Ok(ComplexType::Struct {
+            return Ok(ComplexType::Struct {
+                type_,
+                content_type: None,
+            });
+        }
+
+        let type_ident = &base.type_ident;
+        let content_ident = format_ident!("{type_ident}Content");
+        let has_content = occurs.is_some() && !elements.is_empty();
+
+        let content_type = has_content.then(|| {
+            let mode = match type_mode {
+                TypeMode::All => StructMode::All {
+                    elements,
+                    any_element,
+                },
+                TypeMode::Sequence => StructMode::Sequence {
+                    elements,
+                    any_element,
+                },
+                _ => crate::unreachable!(),
+            };
+
+            let type_ = ComplexTypeStruct {
+                base: ComplexTypeBase::new_empty(content_ident.clone()),
+                mode,
+
+                attributes: Vec::new(),
+                any_attribute: None,
+            };
+
+            Box::new(ComplexType::Struct {
                 type_,
                 content_type: None,
             })
-        } else {
-            let type_ident = &base.type_ident;
-            let content_ident = format_ident!("{type_ident}Content");
-            let has_content = occurs.is_some() && !elements.is_empty();
+        });
 
-            let content_type = has_content.then(|| {
-                let type_ = ComplexTypeStruct {
-                    base: ComplexTypeBase::new_empty(content_ident.clone()),
-                    content: None,
-
-                    elements: take(&mut elements),
-                    any_element: any_element.take(),
-
-                    attributes: Vec::new(),
-                    any_attribute: None,
-                };
-
-                Box::new(ComplexType::Struct {
-                    type_,
-                    content_type: None,
-                })
-            });
-
-            let content = has_content.then(|| ComplexTypeContent {
+        let mode = if has_content {
+            let content = ComplexTypeContent {
                 occurs,
-                is_simple: false,
                 min_occurs,
                 max_occurs,
                 target_type: quote!(#content_ident),
-            });
-
-            let type_ = ComplexTypeStruct {
-                base,
-                content,
-
-                attributes,
-                any_attribute,
-
-                elements,
-                any_element,
+                target_ident: None,
             };
 
-            Ok(ComplexType::Struct {
-                type_,
-                content_type,
-            })
-        }
+            StructMode::Content { content }
+        } else {
+            StructMode::Empty { any_element }
+        };
+
+        let type_ = ComplexTypeStruct {
+            base,
+            mode,
+
+            attributes,
+            any_attribute,
+        };
+
+        Ok(ComplexType::Struct {
+            type_,
+            content_type,
+        })
     }
 }
 
@@ -1040,11 +1100,30 @@ impl ComplexTypeStruct<'_> {
     }
 
     pub(super) fn has_content(&self) -> bool {
-        !self.elements.is_empty()
-            || self
-                .content
-                .as_ref()
-                .is_some_and(|x| x.occurs != Occurs::None)
+        match &self.mode {
+            StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } => {
+                !elements.is_empty()
+            }
+            StructMode::Content { .. } => true,
+            StructMode::Empty { .. } => false,
+        }
+    }
+
+    pub(super) fn elements(&self) -> &[ComplexTypeElement<'_>] {
+        if let StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } = &self.mode
+        {
+            elements
+        } else {
+            &[]
+        }
+    }
+
+    pub(super) fn content(&self) -> Option<&ComplexTypeContent> {
+        if let StructMode::Content { content, .. } = &self.mode {
+            Some(content)
+        } else {
+            None
+        }
     }
 }
 
@@ -1053,6 +1132,12 @@ impl Deref for ComplexTypeStruct<'_> {
 
     fn deref(&self) -> &Self::Target {
         &self.base
+    }
+}
+
+impl ComplexTypeContent {
+    pub(super) fn is_simple(&self) -> bool {
+        self.target_ident.is_some()
     }
 }
 
