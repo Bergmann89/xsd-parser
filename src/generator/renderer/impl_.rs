@@ -97,7 +97,7 @@ impl ComplexTypeStruct<'_> {
 impl ComplexTypeAttribute<'_> {
     fn render_default_fn(&self) -> Option<TokenStream> {
         let default = self.default_value.as_ref()?;
-        let target_type = &self.target_type;
+        let target_type = self.target_type.ident();
         let default_fn_ident = format_ident!("default_{}", self.ident);
 
         Some(quote! {

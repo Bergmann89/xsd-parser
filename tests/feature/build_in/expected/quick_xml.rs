@@ -1,3 +1,6 @@
+use xsd_parser::schema::Namespace;
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 #[derive(Debug, Clone, Default)]
 pub struct Entitiestype(pub Vec<String>);
 impl xsd_parser::quick_xml::SerializeBytes for Entitiestype {
@@ -140,7 +143,6 @@ pub type UnsignedIntType = u32;
 pub type UnsignedLongType = u64;
 pub type UnsignedShortType = u16;
 pub mod quick_xml_serialize {
-    use super::*;
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,

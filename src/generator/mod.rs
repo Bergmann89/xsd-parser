@@ -9,7 +9,7 @@ mod renderer;
 use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::fmt::Display;
 
-use proc_macro2::{Ident as Ident2, TokenStream};
+use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 use tracing::instrument;
 
@@ -224,7 +224,7 @@ impl<'types> Generator<'types> {
         let type_ident = format_ident!("{}", ident.name.to_string());
 
         let type_ref = TypeRef {
-            ns: ident.ns,
+            ident: ident.clone(),
             module_ident,
             type_ident,
             boxed_elements: HashSet::new(),
@@ -253,8 +253,12 @@ impl<'types> Generator<'types> {
 
     /// Will convert the generator into a [`GeneratorFixed`].
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
-        let Self { config, state } = self;
+        let Self { mut config, state } = self;
         let modules = Modules::default();
+
+        if config.flags.intersects(GeneratorFlags::QUICK_XML) {
+            config.flags |= GeneratorFlags::WITH_NAMESPACE_CONSTANTS;
+        }
 
         GeneratorFixed {
             config,
@@ -314,7 +318,33 @@ impl<'types> GeneratorFixed<'types> {
     /// This will return the generated code as [`TokenStream`].
     #[instrument(level = "trace", skip(self))]
     pub fn finish(self) -> TokenStream {
-        let serde = serde_includes(self.config.serde_support);
+        let serde = serde_usings(self.config.serde_support);
+
+        let xsd_parser = &self.config.xsd_parser_crate;
+        let with_namespace_constants = self
+            .config
+            .check_flags(GeneratorFlags::WITH_NAMESPACE_CONSTANTS);
+        let namespace_usings = with_namespace_constants.then(|| {
+            quote! {
+                use #xsd_parser::schema::Namespace;
+            }
+        });
+
+        let namespace_constants = with_namespace_constants
+            .then(|| {
+                self.config.types.modules.values().filter_map(|module| {
+                    let ns = module.namespace.as_ref()?;
+                    let const_name = module.make_ns_const();
+                    let const_name = const_name.ident();
+                    let namespace = Literal::byte_string(&ns.0);
+
+                    Some(quote! {
+                        pub const #const_name: Namespace = Namespace::new_const(#namespace);
+                    })
+                })
+            })
+            .into_iter()
+            .flatten();
 
         let modules = self.modules.0.into_iter().map(|(ns, module)| {
             let Module {
@@ -326,8 +356,6 @@ impl<'types> GeneratorFixed<'types> {
             let quick_xml_serialize = quick_xml_serialize.map(|code| {
                 quote! {
                     pub mod quick_xml_serialize {
-                        use super::*;
-
                         #code
                     }
                 }
@@ -336,8 +364,6 @@ impl<'types> GeneratorFixed<'types> {
             let quick_xml_deserialize = quick_xml_deserialize.map(|code| {
                 quote! {
                     pub mod quick_xml_deserialize {
-                        use super::*;
-
                         #code
                     }
                 }
@@ -354,8 +380,6 @@ impl<'types> GeneratorFixed<'types> {
             {
                 quote! {
                     pub mod #name {
-                        use super::*;
-
                         #code
                     }
                 }
@@ -366,6 +390,9 @@ impl<'types> GeneratorFixed<'types> {
 
         quote! {
             #serde
+
+            #namespace_usings
+            #( #namespace_constants )*
 
             #( #modules )*
         }
@@ -448,9 +475,9 @@ impl<'types> State<'types> {
             });
 
             let type_ref = TypeRef {
-                module_ident,
-                ns: ident.ns,
+                ident: ident.clone(),
                 type_ident,
+                module_ident,
                 boxed_elements,
             };
 
@@ -463,7 +490,7 @@ impl<'types> State<'types> {
 
 /* Helper */
 
-fn serde_includes(serde_support: SerdeSupport) -> Option<TokenStream> {
+fn serde_usings(serde_support: SerdeSupport) -> Option<TokenStream> {
     let serde = matches!(
         serde_support,
         SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs

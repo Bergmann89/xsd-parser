@@ -13,7 +13,9 @@ use crate::{
 };
 
 use super::{
-    misc::{format_field_ident, format_type_ref, format_type_ref_ex, format_variant_ident, Occurs},
+    misc::{
+        format_field_ident, format_variant_ident, IdentPath, IdentPathPart, ModulePath, Occurs,
+    },
     BoxFlags, Config, Error, GeneratorFlags, Modules, State, TraitInfos, TypeRef, TypedefMode,
 };
 
@@ -116,9 +118,8 @@ impl<'a, 'types> Request<'a, 'types> {
         self.state.get_or_create_type_ref(self.config, ident)
     }
 
-    fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
+    fn make_trait_impls(&mut self) -> Result<Vec<IdentPath>, Error> {
         let ident = self.ident.clone();
-        let current_module = self.current_module();
 
         self.get_trait_infos()
             .get(&ident)
@@ -130,9 +131,9 @@ impl<'a, 'types> Request<'a, 'types> {
             .map(|ident| {
                 let type_ref = self.get_or_create_type_ref(ident.clone())?;
                 let ident = format_ident!("{}Trait", type_ref.type_ident);
-                let trait_ident = format_type_ref_ex(current_module, None, &ident, type_ref);
+                let trait_type = IdentPath::from_type_ref(type_ref).with_ident(ident);
 
-                Ok(trait_ident)
+                Ok(trait_type)
             })
             .collect::<Result<Vec<_>, _>>()
     }
@@ -143,8 +144,8 @@ impl<'a, 'types> Request<'a, 'types> {
         default: &str,
         ident: &Ident,
     ) -> Result<TokenStream, Error> {
-        let ty = self
-            .types
+        let types = self.types;
+        let ty = types
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
         let type_ref = self.get_or_create_type_ref(ident.clone())?;
@@ -190,7 +191,8 @@ impl<'a, 'types> Request<'a, 'types> {
             }
 
             Type::Enumeration(ei) => {
-                let target_type = format_type_ref(current_ns, type_ref);
+                let module_path = ModulePath::from_namespace(current_ns, types);
+                let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
 
                 for var in &*ei.variants {
                     if var.type_.is_none()
@@ -221,7 +223,8 @@ impl<'a, 'types> Request<'a, 'types> {
             }
 
             Type::Union(ui) => {
-                let target_type = format_type_ref(current_ns, type_ref);
+                let module_path = ModulePath::from_namespace(current_ns, types);
+                let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
 
                 for ty in &*ui.types {
                     if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
@@ -238,9 +241,10 @@ impl<'a, 'types> Request<'a, 'types> {
             Type::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
                 Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
                 Occurs::DynamicList if default.is_empty() => {
-                    let type_ident = format_type_ref(current_ns, type_ref);
+                    let module_path = ModulePath::from_namespace(current_ns, types);
+                    let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
 
-                    return Ok(quote! { #type_ident(Vec::new()) });
+                    return Ok(quote! { #target_type(Vec::new()) });
                 }
                 _ => (),
             },
@@ -270,19 +274,35 @@ pub(super) struct Code<'a, 'types> {
     ident: &'a Ident,
     config: &'a Config<'types>,
     modules: &'a mut Modules,
+
+    module_path: ModulePath,
+    serialize_module_path: ModulePath,
+    deserialize_module_path: ModulePath,
 }
 
-#[allow(dead_code)] // TODO
+#[allow(dead_code)] // >
 impl<'a, 'types> Code<'a, 'types> {
     pub(super) fn new(
         ident: &'a Ident,
         config: &'a Config<'types>,
         modules: &'a mut Modules,
     ) -> Self {
+        let ns = config
+            .check_flags(GeneratorFlags::USE_MODULES)
+            .then_some(ident.ns)
+            .flatten();
+        let module_path = ModulePath::from_namespace(ns, config.types);
+        let serialize_module_path = module_path.clone().join(IdentPathPart::QuickXmlSerialize);
+        let deserialize_module_path = module_path.clone().join(IdentPathPart::QuickXmlDeserialize);
+
         Self {
             ident,
             config,
             modules,
+
+            module_path,
+            serialize_module_path,
+            deserialize_module_path,
         }
     }
 
@@ -290,6 +310,18 @@ impl<'a, 'types> Code<'a, 'types> {
         self.check_flags(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
             .flatten()
+    }
+
+    pub(super) fn resolve_type_for_module(&self, ident: &IdentPath) -> TokenStream {
+        ident.relative_to(&self.module_path)
+    }
+
+    pub(super) fn resolve_type_for_serialize_module(&self, ident: &IdentPath) -> TokenStream {
+        ident.relative_to(&self.serialize_module_path)
+    }
+
+    pub(super) fn resolve_type_for_deserialize_module(&self, ident: &IdentPath) -> TokenStream {
+        ident.relative_to(&self.deserialize_module_path)
     }
 
     pub(super) fn push(&mut self, code: TokenStream) {
@@ -332,26 +364,25 @@ pub(super) struct UnionType<'types> {
     pub info: &'types UnionInfo,
     pub type_ident: Ident2,
     pub variants: Vec<UnionTypeVariant<'types>>,
-    pub trait_impls: Vec<TokenStream>,
+    pub trait_impls: Vec<IdentPath>,
 }
 
 #[derive(Debug)]
 #[allow(dead_code)] // TODO
 pub(super) struct UnionTypeVariant<'types> {
     pub info: &'types UnionTypeInfo,
+    pub target_type: IdentPath,
     pub variant_ident: Ident2,
-    pub target_type: TokenStream,
 }
 
 impl<'types> UnionType<'types> {
     fn new(info: &'types UnionInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let type_ident = req.current_type_ref().type_ident.clone();
-        let current_module = req.current_module();
         let trait_impls = req.make_trait_impls()?;
         let variants = info
             .types
             .iter()
-            .map(|info| info.make_variant(current_module, &mut req))
+            .map(|info| info.make_variant(&mut req))
             .collect::<Result<_, _>>()?;
 
         Ok(Self {
@@ -366,17 +397,16 @@ impl<'types> UnionType<'types> {
 impl UnionTypeInfo {
     fn make_variant<'types>(
         &'types self,
-        current_module: Option<NamespaceId>,
         req: &mut Request<'_, 'types>,
     ) -> Result<UnionTypeVariant<'types>, Error> {
         let type_ref = req.get_or_create_type_ref(self.type_.clone())?;
+        let target_type = IdentPath::from_type_ref(type_ref);
         let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
-        let target_type = format_type_ref(current_module, type_ref);
 
         Ok(UnionTypeVariant {
             info: self,
-            variant_ident,
             target_type,
+            variant_ident,
         })
     }
 }
@@ -390,7 +420,7 @@ pub(super) struct DynamicType<'types> {
     pub type_ident: Ident2,
     pub trait_ident: Ident2,
     pub deserializer_ident: Ident2,
-    pub sub_traits: Option<Vec<TokenStream>>,
+    pub sub_traits: Option<Vec<IdentPath>>,
     pub derived_types: Vec<DerivedType>,
 }
 
@@ -400,7 +430,7 @@ pub(super) struct DerivedType {
     pub ident: Ident,
     pub s_name: String,
     pub b_name: Literal,
-    pub target_ident: TokenStream,
+    pub target_type: IdentPath,
     pub variant_ident: Ident2,
 }
 
@@ -409,7 +439,6 @@ impl<'types> DynamicType<'types> {
         let type_ident = req.current_type_ref().type_ident.clone();
         let trait_ident = format_ident!("{type_ident}Trait");
         let ident = req.ident.clone();
-        let current_module = req.current_module();
         let sub_traits = req
             .get_trait_infos()
             .get(&ident)
@@ -421,7 +450,7 @@ impl<'types> DynamicType<'types> {
                         req.get_or_create_type_ref(ident.clone()).map(|x| {
                             let ident = format_ident!("{}Trait", x.type_ident);
 
-                            format_type_ref_ex(current_module, None, &ident, x)
+                            IdentPath::from_type_ref(x).with_ident(ident)
                         })
                     })
                     .collect::<Result<Vec<_>, _>>()
@@ -455,17 +484,16 @@ pub(super) struct ReferenceType<'types> {
     pub mode: TypedefMode,
     pub occurs: Occurs,
     pub type_ident: Ident2,
-    pub target_ident: TokenStream,
-    pub trait_impls: Vec<TokenStream>,
+    pub target_type: IdentPath,
+    pub trait_impls: Vec<IdentPath>,
 }
 
 impl<'types> ReferenceType<'types> {
     fn new(info: &'types ReferenceInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
-        let current_module = req.current_module();
         let type_ident = req.current_type_ref().type_ident.clone();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
-        let target_ident = format_type_ref(current_module, target_ref);
+        let target_type = IdentPath::from_type_ref(target_ref);
         let trait_impls = req.make_trait_impls()?;
 
         let mode = match (req.typedef_mode, occurs) {
@@ -479,7 +507,7 @@ impl<'types> ReferenceType<'types> {
             mode,
             occurs,
             type_ident,
-            target_ident,
+            target_type,
             trait_impls,
         })
     }
@@ -493,27 +521,26 @@ pub(super) struct EnumerationType<'types> {
     pub info: &'types EnumerationInfo,
     pub type_ident: Ident2,
     pub variants: Vec<EnumerationTypeVariant<'types>>,
-    pub trait_impls: Vec<TokenStream>,
+    pub trait_impls: Vec<IdentPath>,
 }
 
 #[derive(Debug)]
 pub(super) struct EnumerationTypeVariant<'types> {
     pub info: &'types VariantInfo,
     pub variant_ident: Ident2,
-    pub target_type: Option<TokenStream>,
+    pub target_type: Option<IdentPath>,
 }
 
 impl<'types> EnumerationType<'types> {
     fn new(info: &'types EnumerationInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let mut unknown = 0usize;
-        let current_module = req.current_module();
         let type_ident = req.current_type_ref().type_ident.clone();
         let trait_impls = req.make_trait_impls()?;
 
         let variants = info
             .variants
             .iter()
-            .filter_map(|var| var.make_variant(&mut unknown, current_module, &mut req))
+            .filter_map(|var| var.make_variant(&mut unknown, &mut req))
             .collect::<Result<Vec<_>, _>>()?;
 
         Ok(EnumerationType {
@@ -529,7 +556,6 @@ impl VariantInfo {
     fn make_variant<'types>(
         &'types self,
         unknown: &mut usize,
-        current_module: Option<NamespaceId>,
         req: &mut Request<'_, 'types>,
     ) -> Option<Result<EnumerationTypeVariant<'types>, Error>> {
         match self.use_ {
@@ -556,7 +582,7 @@ impl VariantInfo {
                     format_variant_ident(&self.ident.name, self.display_name.as_deref())
                 };
 
-                let target_type = type_ref.map(|x| format_type_ref(current_module, x));
+                let target_type = type_ref.map(IdentPath::from_type_ref);
 
                 Some(Ok(EnumerationTypeVariant {
                     info: self,
@@ -586,7 +612,7 @@ pub(super) enum ComplexType<'types> {
 #[derive(Debug)]
 pub(super) struct ComplexTypeBase {
     pub type_ident: Ident2,
-    pub trait_impls: Vec<TokenStream>,
+    pub trait_impls: Vec<IdentPath>,
 
     pub tag_name: Option<String>,
 
@@ -637,10 +663,10 @@ pub(super) enum StructMode<'types> {
 #[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeContent {
     pub occurs: Occurs,
+    pub is_simple: bool,
     pub min_occurs: MinOccurs,
     pub max_occurs: MaxOccurs,
-    pub target_type: TokenStream,
-    pub target_ident: Option<Ident>,
+    pub target_type: IdentPath,
 }
 
 #[derive(Debug)]
@@ -650,7 +676,7 @@ pub(super) struct ComplexTypeElement<'types> {
     pub tag_name: String,
     pub field_ident: Ident2,
     pub variant_ident: Ident2,
-    pub target_type: TokenStream,
+    pub target_type: IdentPath,
     pub need_indirection: bool,
 }
 
@@ -660,7 +686,7 @@ pub(super) struct ComplexTypeAttribute<'types> {
     pub ident: Ident2,
     pub tag_name: String,
     pub is_option: bool,
-    pub target_type: TokenStream,
+    pub target_type: IdentPath,
     pub default_value: Option<TokenStream>,
 }
 
@@ -669,10 +695,7 @@ enum TypeMode {
     All,
     Choice,
     Sequence,
-    Simple {
-        target_ident: Ident,
-        target_type: TokenStream,
-    },
+    Simple { target_type: IdentPath },
 }
 
 impl<'types> ComplexType<'types> {
@@ -731,19 +754,10 @@ impl<'types> ComplexType<'types> {
                 Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_),
                 ident,
             )) => {
-                let target_ident = ident.clone();
-                let current_module = req.current_module();
-                let content_ref = req.get_or_create_type_ref(target_ident.clone())?;
-                let target_type = format_type_ref(current_module, content_ref);
+                let content_ref = req.get_or_create_type_ref(ident.clone())?;
+                let target_type = IdentPath::from_type_ref(content_ref);
 
-                (
-                    TypeMode::Simple {
-                        target_ident,
-                        target_type,
-                    },
-                    &[][..],
-                    None,
-                )
+                (TypeMode::Simple { target_type }, &[][..], None)
             }
             Some((x, _)) => {
                 let ident = &req.current_type_ref().type_ident;
@@ -778,12 +792,8 @@ impl<'types> ComplexType<'types> {
         any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
         match type_mode {
-            TypeMode::Simple {
-                target_ident,
-                target_type,
-            } => Self::new_simple(
+            TypeMode::Simple { target_type } => Self::new_simple(
                 req,
-                target_ident,
                 target_type,
                 min_occurs,
                 max_occurs,
@@ -814,8 +824,7 @@ impl<'types> ComplexType<'types> {
 
     fn new_simple(
         mut req: Request<'_, 'types>,
-        target_ident: Ident,
-        target_type: TokenStream,
+        target_type: IdentPath,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
@@ -823,7 +832,6 @@ impl<'types> ComplexType<'types> {
     ) -> Result<Self, Error> {
         let base = ComplexTypeBase::new(&mut req)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
-        let target_ident = Some(target_ident);
         let attributes = attributes
             .iter()
             .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
@@ -831,10 +839,10 @@ impl<'types> ComplexType<'types> {
 
         let content = ComplexTypeContent {
             occurs,
+            is_simple: true,
             min_occurs,
             max_occurs,
             target_type,
-            target_ident,
         };
         let type_ = ComplexTypeStruct {
             base,
@@ -912,12 +920,14 @@ impl<'types> ComplexType<'types> {
         });
 
         let mode = if has_content {
+            let type_ref = req.current_type_ref();
+            let target_type = IdentPath::from_type_ref(type_ref).with_ident(content_ident.clone());
             let content = ComplexTypeContent {
                 occurs,
+                is_simple: false,
                 min_occurs,
                 max_occurs,
-                target_type: quote!(#content_ident),
-                target_ident: None,
+                target_type,
             };
 
             StructMode::Content { content }
@@ -969,6 +979,7 @@ impl<'types> ComplexType<'types> {
 
         if flatten {
             let mode = match type_mode {
+                _ if elements.is_empty() => StructMode::Empty { any_element },
                 TypeMode::All => StructMode::All {
                     elements,
                     any_element,
@@ -1026,12 +1037,14 @@ impl<'types> ComplexType<'types> {
         });
 
         let mode = if has_content {
+            let type_ref = req.current_type_ref();
+            let target_type = IdentPath::from_type_ref(type_ref).with_ident(content_ident.clone());
             let content = ComplexTypeContent {
                 occurs,
+                is_simple: false,
                 min_occurs,
                 max_occurs,
-                target_type: quote!(#content_ident),
-                target_ident: None,
+                target_type,
             };
 
             StructMode::Content { content }
@@ -1135,12 +1148,6 @@ impl Deref for ComplexTypeStruct<'_> {
     }
 }
 
-impl ComplexTypeContent {
-    pub(super) fn is_simple(&self) -> bool {
-        self.target_ident.is_some()
-    }
-}
-
 impl<'types> ComplexTypeElement<'types> {
     fn new_variant(
         info: &'types ElementInfo,
@@ -1177,9 +1184,8 @@ impl<'types> ComplexTypeElement<'types> {
         let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
-        let current_module = req.current_module();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
-        let target_type = format_type_ref(current_module, target_ref);
+        let target_type = IdentPath::from_type_ref(target_ref);
 
         let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
@@ -1208,7 +1214,7 @@ impl<'types> ComplexTypeAttribute<'types> {
         let current_module = req.current_module();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
-        let target_type = format_type_ref(current_module, target_ref);
+        let target_type = IdentPath::from_type_ref(target_ref);
         let tag_name = make_tag_name(req.types, &info.ident);
 
         let default_value = info
@@ -1292,16 +1298,15 @@ fn make_derived_type_data<'types>(
     })
     .unwrap_or(ident.clone());
 
-    let current_module = req.current_module();
     let target_ref = req.get_or_create_type_ref(ident.clone())?;
-    let target_ident = format_type_ref(current_module, target_ref);
+    let target_type = IdentPath::from_type_ref(target_ref);
     let variant_ident = format_variant_ident(&ident.name, None);
 
     Ok(DerivedType {
         ident,
         s_name,
         b_name,
-        target_ident,
+        target_type,
         variant_ident,
     })
 }

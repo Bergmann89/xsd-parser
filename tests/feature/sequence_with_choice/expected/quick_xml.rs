@@ -1,3 +1,7 @@
+use xsd_parser::schema::Namespace;
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
@@ -60,7 +64,6 @@ impl xsd_parser::quick_xml::WithSerializer for FooContent6Type {
     }
 }
 pub mod quick_xml_serialize {
-    use super::*;
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
@@ -71,8 +74,12 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
-        Content3(<FooContent3Type as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
-        Content6(<FooContent6Type as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Content3(
+            <super::FooContent3Type as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>,
+        ),
+        Content6(
+            <super::FooContent6Type as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>,
+        ),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -94,7 +101,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute(("xmlns:tns", "http://example.com"));
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
                         return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
                     }
@@ -162,7 +169,7 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooContent3TypeSerializerState::Init__ => match self.value {
-                        FooContent3Type::Element1(x) => {
+                        super::FooContent3Type::Element1(x) => {
                             self.state = FooContent3TypeSerializerState::Element1(
                                 xsd_parser::quick_xml::WithSerializer::serializer(
                                     x,
@@ -171,7 +178,7 @@ pub mod quick_xml_serialize {
                                 )?,
                             )
                         }
-                        FooContent3Type::Element2(x) => {
+                        super::FooContent3Type::Element2(x) => {
                             self.state = FooContent3TypeSerializerState::Element2(
                                 xsd_parser::quick_xml::WithSerializer::serializer(
                                     x,
@@ -231,7 +238,7 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut self.state {
                     FooContent6TypeSerializerState::Init__ => match self.value {
-                        FooContent6Type::Element3(x) => {
+                        super::FooContent6Type::Element3(x) => {
                             self.state = FooContent6TypeSerializerState::Element3(
                                 xsd_parser::quick_xml::WithSerializer::serializer(
                                     x,
@@ -240,7 +247,7 @@ pub mod quick_xml_serialize {
                                 )?,
                             )
                         }
-                        FooContent6Type::Element4(x) => {
+                        super::FooContent6Type::Element4(x) => {
                             self.state = FooContent6TypeSerializerState::Element4(
                                 xsd_parser::quick_xml::WithSerializer::serializer(
                                     x,

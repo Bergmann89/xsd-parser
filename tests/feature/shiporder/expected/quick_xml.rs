@@ -1,3 +1,6 @@
+use xsd_parser::schema::Namespace;
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Shiporder = ShiporderType;
 #[derive(Debug, Clone)]
 pub struct ShiporderType {
@@ -66,7 +69,6 @@ impl xsd_parser::quick_xml::WithSerializer for ShiporderItemType {
     }
 }
 pub mod quick_xml_serialize {
-    use super::*;
     #[derive(Debug)]
     pub struct ShiporderTypeSerializer<'ser> {
         pub(super) value: &'ser super::ShiporderType,
@@ -78,9 +80,15 @@ pub mod quick_xml_serialize {
     pub(super) enum ShiporderTypeSerializerState<'ser> {
         Init__,
         Orderperson(<String as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
-        Shipto(<ShiporderShiptoType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        Shipto(
+            <super::ShiporderShiptoType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>,
+        ),
         Item(
-            xsd_parser::quick_xml::IterSerializer<'ser, Vec<ShiporderItemType>, ShiporderItemType>,
+            xsd_parser::quick_xml::IterSerializer<
+                'ser,
+                Vec<super::ShiporderItemType>,
+                super::ShiporderItemType,
+            >,
         ),
         End__,
         Done__,

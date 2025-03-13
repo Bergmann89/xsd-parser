@@ -1,11 +1,12 @@
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
 
 use bitflags::bitflags;
 use inflector::Inflector;
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
+use smallvec::SmallVec;
 
 use crate::schema::{MaxOccurs, MinOccurs, NamespaceId};
 use crate::types::{DynamicInfo, Ident, Name, Type, Types};
@@ -82,13 +83,18 @@ bitflags! {
         /// the `quick_xml` crate.
         const QUICK_XML_DESERIALIZE = 1 << 4;
 
-        /// Combination of [`QUICK_XML_SERIALIZE`](Self::QUICK_XML_SERIALIZE)
+        /// Combination of [`WITH_NAMESPACE_CONSTANTS`](Self::WITH_NAMESPACE_CONSTANTS),
+        /// [`QUICK_XML_SERIALIZE`](Self::QUICK_XML_SERIALIZE)
         /// and [`QUICK_XML_DESERIALIZE`](Self::QUICK_XML_DESERIALIZE).
-        const QUICK_XML = Self::QUICK_XML_SERIALIZE.bits()
+        const QUICK_XML = Self::WITH_NAMESPACE_CONSTANTS.bits()
+            | Self::QUICK_XML_SERIALIZE.bits()
             | Self::QUICK_XML_DESERIALIZE.bits();
 
         /// Implement the [`WithNamespace`](crate::WithNamespace) trait for the generated types.
         const WITH_NAMESPACE_TRAIT = 1 << 5;
+
+        /// Will generate constants for the different namespace used by the schema.
+        const WITH_NAMESPACE_CONSTANTS = 1 << 6;
     }
 }
 
@@ -305,9 +311,9 @@ pub(super) struct PendingType<'types> {
 
 #[derive(Debug)]
 pub(super) struct TypeRef {
-    pub ns: Option<NamespaceId>,
-    pub module_ident: Option<Ident2>,
+    pub ident: Ident,
     pub type_ident: Ident2,
+    pub module_ident: Option<Ident2>,
     pub boxed_elements: HashSet<Ident>,
 }
 
@@ -464,6 +470,164 @@ pub(super) enum DynTypeTraits {
     Custom(Vec<TokenStream>),
 }
 
+/* TypePath */
+
+#[derive(Debug, Clone)]
+pub(super) struct IdentPath {
+    path: ModulePath,
+    ident: Ident2,
+}
+
+#[derive(Default, Debug, Clone)]
+pub(super) struct ModulePath(SmallVec<[IdentPathPart; 2]>);
+
+#[derive(Debug, Clone)]
+pub(super) enum IdentPathPart {
+    BuildIn,
+    Module(NamespaceId, Ident2),
+    QuickXmlSerialize,
+    QuickXmlDeserialize,
+}
+
+impl IdentPath {
+    pub(super) fn from_type_ref(type_ref: &TypeRef) -> Self {
+        if type_ref.ident.is_build_in() {
+            Self::from_parts(Some(IdentPathPart::BuildIn), type_ref.type_ident.clone())
+        } else {
+            Self::from_parts(
+                type_ref
+                    .ident
+                    .ns
+                    .zip(type_ref.module_ident.clone())
+                    .map(|(ns, ident)| IdentPathPart::Module(ns, ident)),
+                type_ref.type_ident.clone(),
+            )
+        }
+    }
+
+    pub(super) fn from_parts<I>(path: I, ident: Ident2) -> Self
+    where
+        I: IntoIterator<Item = IdentPathPart>,
+    {
+        let path = ModulePath(path.into_iter().collect());
+
+        Self { path, ident }
+    }
+
+    pub(super) fn with_ident(mut self, ident: Ident2) -> Self {
+        self.ident = ident;
+
+        self
+    }
+
+    pub(super) fn ident(&self) -> &Ident2 {
+        &self.ident
+    }
+
+    pub(super) fn relative_to(&self, path: &ModulePath) -> TokenStream {
+        let ident = &self.ident;
+
+        let mut ret = TokenStream::new();
+        let mut src = self.path.iter().fuse();
+        let mut dst = path.iter().fuse();
+
+        macro_rules! push {
+            ($x:expr) => {{
+                let x = $x;
+                if ret.is_empty() {
+                    ret.extend(x)
+                } else {
+                    ret.extend(quote!(::#x))
+                }
+            }};
+        }
+
+        loop {
+            match (src.next(), dst.next()) {
+                (Some(IdentPathPart::BuildIn), _) => return quote!(#ident),
+                (Some(IdentPathPart::Module(a, _)), Some(IdentPathPart::Module(b, _)))
+                    if a == b => {}
+                (
+                    Some(IdentPathPart::QuickXmlSerialize),
+                    Some(IdentPathPart::QuickXmlSerialize),
+                ) => {}
+                (
+                    Some(IdentPathPart::QuickXmlDeserialize),
+                    Some(IdentPathPart::QuickXmlDeserialize),
+                ) => {}
+                (Some(a), Some(_)) => {
+                    push!(quote!(super));
+                    while dst.next().is_some() {
+                        push!(quote!(super));
+                    }
+
+                    push!(quote!(#a));
+                    for a in src {
+                        push!(quote!(#a));
+                    }
+
+                    push!(quote!(#ident));
+
+                    return ret;
+                }
+                (Some(a), None) => push!(quote!(#a)),
+                (None, Some(_)) => push!(quote!(super)),
+                (None, None) => {
+                    push!(quote!(#ident));
+                    return ret;
+                }
+            }
+        }
+    }
+}
+
+impl ToTokens for IdentPathPart {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        match self {
+            Self::BuildIn => (),
+            Self::Module(_, ident) => ident.to_tokens(tokens),
+            Self::QuickXmlSerialize => tokens.extend(quote!(quick_xml_serialize)),
+            Self::QuickXmlDeserialize => tokens.extend(quote!(quick_xml_deserialize)),
+        }
+    }
+}
+
+impl ModulePath {
+    pub(super) fn from_namespace(ns: Option<NamespaceId>, types: &Types) -> Self {
+        let ident = ns
+            .and_then(|id| types.modules.get(&id))
+            .and_then(|module| module.name.as_ref())
+            .map(format_module_ident);
+
+        Self(
+            ns.zip(ident)
+                .map(|(ns, ident)| IdentPathPart::Module(ns, ident))
+                .into_iter()
+                .collect(),
+        )
+    }
+
+    pub(super) fn join(mut self, other: IdentPathPart) -> Self {
+        self.0.push(other);
+
+        self
+    }
+}
+
+impl Deref for ModulePath {
+    type Target = SmallVec<[IdentPathPart; 2]>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for ModulePath {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+
 /* Helper */
 
 pub(super) fn format_field_name(name: &Name, display_name: Option<&str>) -> Cow<'static, str> {
@@ -543,32 +707,6 @@ pub(super) fn format_module(
     Ok(Some(format_module_ident(name)))
 }
 
-pub(super) fn format_type_ref(current_ns: Option<NamespaceId>, type_: &TypeRef) -> TokenStream {
-    format_type_ref_ex(current_ns, None, &type_.type_ident, type_)
-}
-
-pub(super) fn format_type_ref_ex(
-    current_ns: Option<NamespaceId>,
-    extra: Option<&TokenStream>,
-    type_ident: &Ident2,
-    type_: &TypeRef,
-) -> TokenStream {
-    let module_ident = match (current_ns, type_.ns) {
-        (Some(a), Some(b)) if a != b => Some(&type_.module_ident),
-        (_, _) => None,
-    };
-
-    if let Some(module_ident) = module_ident {
-        quote! {
-            #module_ident #extra :: #type_ident
-        }
-    } else {
-        quote! {
-            #type_ident
-        }
-    }
-}
-
 pub(super) fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
     match (ty, &ident.name) {
         (Type::Reference(ti), Name::Unnamed { .. }) if ti.type_.name.is_named() => {
@@ -643,3 +781,82 @@ const KEYWORDS: &[(&str, &str)] = &[
     ("while", "while_"),
     ("yield", "yield_"),
 ];
+
+#[cfg(test)]
+mod tests {
+    use quote::{format_ident, quote};
+
+    use crate::{generator::misc::ModulePath, schema::NamespaceId};
+
+    use super::{IdentPath, IdentPathPart};
+
+    #[test]
+    #[rustfmt::skip]
+    fn type_path() {
+        let string = IdentPath::from_parts([IdentPathPart::BuildIn], format_ident!("String"));
+        let my_type = IdentPath::from_parts(
+            [IdentPathPart::Module(
+                NamespaceId(0),
+                format_ident!("my_module"),
+            )],
+            format_ident!("MyType"),
+        );
+        let serializer = IdentPath::from_parts(
+            [
+                IdentPathPart::Module(NamespaceId(0), format_ident!("my_module")),
+                IdentPathPart::QuickXmlSerialize,
+            ],
+            format_ident!("MyTypeSerializer"),
+        );
+        let deserializer = IdentPath::from_parts(
+            [
+                IdentPathPart::Module(NamespaceId(0), format_ident!("my_module")),
+                IdentPathPart::QuickXmlDeserialize,
+            ],
+            format_ident!("MyTypeDeserializer"),
+        );
+
+        let ns = NamespaceId(0);
+        let other_ns = NamespaceId(1);
+        let empty_path = ModulePath::default();
+        let module_path = ModulePath::default().join(IdentPathPart::Module(ns, format_ident!("my_module")));
+        let other_module_path = ModulePath::default().join(IdentPathPart::Module(other_ns, format_ident!("other_module")));
+        let serializer_path = module_path.clone().join(IdentPathPart::QuickXmlSerialize);
+        let deserializer_path = module_path.clone().join(IdentPathPart::QuickXmlDeserialize);
+
+        macro_rules! test {
+            ($actual:expr, $( $expected:tt )*) => {{
+                let a = $actual.to_string();
+                let b = quote!($( $expected )*).to_string();
+
+                assert_eq!(a, b);
+            }};
+        }
+
+        /* With modules */
+
+        test!(string.relative_to(&empty_path), String);
+        test!(string.relative_to(&module_path), String);
+        test!(string.relative_to(&other_module_path), String);
+        test!(string.relative_to(&serializer_path), String);
+        test!(string.relative_to(&deserializer_path), String);
+
+        test!(my_type.relative_to(&empty_path), my_module::MyType);
+        test!(my_type.relative_to(&module_path), MyType);
+        test!(my_type.relative_to(&other_module_path), super::my_module::MyType);
+        test!(my_type.relative_to(&serializer_path), super::MyType);
+        test!(my_type.relative_to(&deserializer_path), super::MyType);
+
+        test!(serializer.relative_to(&empty_path), my_module::quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&module_path), quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&other_module_path), super::my_module::quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&serializer_path), MyTypeSerializer);
+        test!(serializer.relative_to(&deserializer_path), super::quick_xml_serialize::MyTypeSerializer);
+
+        test!(deserializer.relative_to(&empty_path), my_module::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&module_path), quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&other_module_path), super::my_module::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&serializer_path), super::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&deserializer_path), MyTypeDeserializer);
+    }
+}

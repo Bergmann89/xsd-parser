@@ -1,5 +1,4 @@
 pub mod tns {
-    use super::*;
     #[derive(Debug, Clone)]
     pub struct MyChoiceType {
         pub content: MyChoiceTypeContent,

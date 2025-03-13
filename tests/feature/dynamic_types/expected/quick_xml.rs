@@ -1,3 +1,7 @@
+use xsd_parser::schema::Namespace;
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type List = ListType;
 #[derive(Debug)]
 pub struct ListType {
@@ -95,7 +99,6 @@ impl xsd_parser::quick_xml::WithSerializer for Intermediate {
     }
 }
 pub mod quick_xml_serialize {
-    use super::*;
     #[derive(Debug)]
     pub struct ListTypeSerializer<'ser> {
         pub(super) value: &'ser super::ListType,
@@ -106,7 +109,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ListTypeSerializerState<'ser> {
         Init__,
-        Base(xsd_parser::quick_xml::IterSerializer<'ser, Vec<Base>, Base>),
+        Base(xsd_parser::quick_xml::IterSerializer<'ser, Vec<super::Base>, super::Base>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -128,7 +131,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute(("xmlns:tns", "http://example.com"));
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
                         return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
                     }
@@ -185,7 +188,7 @@ pub mod quick_xml_serialize {
                         self.state = IntermediateTypeSerializerState::Done__;
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute(("xmlns:tns", "http://example.com"));
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
                         xsd_parser::quick_xml::write_attrib_opt(
                             &mut bytes,
@@ -242,7 +245,7 @@ pub mod quick_xml_serialize {
                         self.state = FinalTypeSerializerState::Done__;
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute(("xmlns:tns", "http://example.com"));
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
                         xsd_parser::quick_xml::write_attrib_opt(
                             &mut bytes,

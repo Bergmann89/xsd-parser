@@ -354,7 +354,7 @@ impl ComplexTypeEnum<'_> {
             );
 
             quote! {
-                #type_ident::#variant_ident(x) => #init,
+                super::#type_ident::#variant_ident(x) => #init,
             }
         });
 
@@ -574,10 +574,10 @@ impl ComplexTypeStruct<'_> {
         });
     }
 
-    fn render_serializer_impl_start_event(&self, config: &Config<'_>) -> TokenStream {
-        let xsd_parser = &config.xsd_parser_crate;
+    fn render_serializer_impl_start_event(&self, code: &Code<'_, '_>) -> TokenStream {
+        let xsd_parser = &code.xsd_parser_crate;
 
-        let xmlns = config
+        let xmlns = code
             .types
             .modules
             .values()
@@ -588,12 +588,12 @@ impl ComplexTypeStruct<'_> {
                 }
 
                 let name = module.name.as_ref()?;
+                let ns_const = code.resolve_type_for_serialize_module(&module.make_ns_const());
 
-                let ns = ns.to_string();
-                let xmlns = format!("xmlns:{name}");
+                let xmlns = Literal::byte_string(format!("xmlns:{name}").as_bytes());
 
                 Some(quote! {
-                    bytes.push_attribute((#xmlns, #ns));
+                    bytes.push_attribute((&#xmlns[..], &#ns_const[..]));
                 })
             })
             .collect::<Vec<_>>();
@@ -642,10 +642,11 @@ impl ComplexTypeStruct<'_> {
 }
 
 impl ComplexTypeContent {
-    fn render_serializer_state_variant(&self, config: &Config<'_>) -> Option<TokenStream> {
-        let serializer = self
-            .occurs
-            .make_serializer_type(&config.xsd_parser_crate, &self.target_type)?;
+    fn render_serializer_state_variant(&self, code: &Code<'_, '_>) -> Option<TokenStream> {
+        let serializer = self.occurs.make_serializer_type(
+            &code.xsd_parser_crate,
+            &code.resolve_type_for_serialize_module(&self.target_type),
+        )?;
 
         Some(quote! {
             Content__(#serializer),
@@ -680,12 +681,12 @@ impl ComplexTypeContent {
 }
 
 impl ComplexTypeElement<'_> {
-    fn render_serializer_state_variant(&self, config: &Config<'_>) -> TokenStream {
-        let target_type = &self.target_type;
+    fn render_serializer_state_variant(&self, code: &Code<'_, '_>) -> TokenStream {
+        let target_type = code.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
-        let xsd_parser = &config.xsd_parser_crate;
+        let xsd_parser = &code.xsd_parser_crate;
 
-        let serializer = self.occurs.make_serializer_type(xsd_parser, target_type);
+        let serializer = self.occurs.make_serializer_type(xsd_parser, &target_type);
 
         quote! {
             #variant_ident(#serializer),

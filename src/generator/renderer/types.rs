@@ -12,7 +12,7 @@ use crate::{
             ComplexTypeEnum, ComplexTypeStruct, DynamicType, EnumerationType,
             EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
         },
-        misc::Occurs,
+        misc::{IdentPath, Occurs},
         Code, Config, DynTypeTraits,
     },
     schema::xs::Use,
@@ -30,7 +30,7 @@ impl UnionType<'_> {
         } = self;
         let derive = get_derive(code, Option::<String>::None);
         let trait_impls = render_trait_impls(code, type_ident, trait_impls);
-        let variants = variants.iter().map(UnionTypeVariant::render_variant);
+        let variants = variants.iter().map(|x| x.render_variant(code));
 
         code.push(quote! {
             #derive
@@ -46,12 +46,14 @@ impl UnionType<'_> {
 /* UnionTypeVariant */
 
 impl UnionTypeVariant<'_> {
-    fn render_variant(&self) -> TokenStream {
+    fn render_variant(&self, code: &Code<'_, '_>) -> TokenStream {
         let Self {
             variant_ident,
             target_type,
             ..
         } = self;
+
+        let target_type = code.resolve_type_for_module(target_type);
 
         quote! {
             #variant_ident ( #target_type ),
@@ -76,7 +78,7 @@ impl DynamicType<'_> {
         let trait_impls = render_trait_impls(code, type_ident, &[]);
         let dyn_traits = sub_traits.as_ref().map_or_else(
             || get_dyn_type_traits(code, [quote!(#xsd_crate::AsAny)]),
-            format_traits,
+            |traits| format_traits(traits.iter().map(|x| code.resolve_type_for_module(x))),
         );
 
         code.push(quote! {
@@ -98,20 +100,22 @@ impl ReferenceType<'_> {
             mode,
             occurs,
             type_ident,
-            target_ident,
+            target_type,
             trait_impls,
             ..
         } = self;
 
+        let target_type = code.resolve_type_for_module(target_type);
+
         code.push(match mode {
             TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
-                let target_type = occurs.make_type(target_ident, false);
+                let target_type = occurs.make_type(&target_type, false);
 
                 quote! { pub type #type_ident = #target_type; }
             }
             TypedefMode::NewType => {
-                let target_type = occurs.make_type(target_ident, false);
+                let target_type = occurs.make_type(&target_type, false);
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
                 let derive = get_derive(code, extra_derive);
@@ -159,14 +163,14 @@ impl EnumerationType<'_> {
 }
 
 impl EnumerationTypeVariant<'_> {
-    fn render_variant(&self, config: &Config<'_>) -> TokenStream {
+    fn render_variant(&self, code: &Code<'_, '_>) -> TokenStream {
         let Self {
             info,
             variant_ident,
             target_type,
         } = self;
 
-        let serde = if config.serde_support == SerdeSupport::None {
+        let serde = if code.serde_support == SerdeSupport::None {
             None
         } else if info.type_.is_some() {
             Some(quote!(#[serde(other)]))
@@ -176,9 +180,11 @@ impl EnumerationTypeVariant<'_> {
             Some(quote!(#[serde(rename = #name)]))
         };
 
-        let target_type = target_type
-            .as_ref()
-            .map(|target_type| quote!((#target_type)));
+        let target_type = target_type.as_ref().map(|target_type| {
+            let target_type = code.resolve_type_for_module(target_type);
+
+            quote!((#target_type))
+        });
 
         quote! {
             #serde
@@ -262,10 +268,11 @@ impl ComplexTypeStruct<'_> {
 }
 
 impl ComplexTypeContent {
-    fn render_field(&self, config: &Config<'_>) -> Option<TokenStream> {
-        let content_type = self.occurs.make_type(&self.target_type, false)?;
+    fn render_field(&self, code: &Code<'_, '_>) -> Option<TokenStream> {
+        let target_type = code.resolve_type_for_module(&self.target_type);
+        let target_type = self.occurs.make_type(&target_type, false)?;
         let serde_default = (self.min_occurs == 0).then(|| quote!(default,));
-        let serde = match (config.serde_support, self.is_simple()) {
+        let serde = match (code.serde_support, self.is_simple) {
             (SerdeSupport::None, _) => None,
             (SerdeSupport::QuickXml, true) => {
                 Some(quote!(#[serde(#serde_default rename = "$text")]))
@@ -275,15 +282,15 @@ impl ComplexTypeContent {
 
         Some(quote! {
             #serde
-            pub content: #content_type,
+            pub content: #target_type,
         })
     }
 }
 
 impl ComplexTypeAttribute<'_> {
-    fn render_field(&self, config: &Config<'_>, type_ident: &Ident2) -> TokenStream {
+    fn render_field(&self, code: &Code<'_, '_>, type_ident: &Ident2) -> TokenStream {
         let field_ident = &self.ident;
-        let target_type = &self.target_type;
+        let target_type = code.resolve_type_for_module(&self.target_type);
         let default = if self.default_value.is_some() {
             let default_path = format!("{type_ident}::default_{field_ident}");
 
@@ -294,7 +301,7 @@ impl ComplexTypeAttribute<'_> {
             quote!()
         };
 
-        let serde = match config.serde_support {
+        let serde = match code.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml => {
                 let name = format!("@{}", self.info.ident.name);
@@ -323,14 +330,15 @@ impl ComplexTypeAttribute<'_> {
 }
 
 impl ComplexTypeElement<'_> {
-    fn render_field(&self, config: &Config<'_>) -> TokenStream {
+    fn render_field(&self, code: &Code<'_, '_>) -> TokenStream {
         let field_ident = &self.field_ident;
+        let target_type = code.resolve_type_for_module(&self.target_type);
         let target_type = self
             .occurs
-            .make_type(&self.target_type, self.need_indirection)
+            .make_type(&target_type, self.need_indirection)
             .unwrap();
 
-        let serde = match config.serde_support {
+        let serde = match code.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
                 let name = self.info.ident.name.to_string();
@@ -349,13 +357,12 @@ impl ComplexTypeElement<'_> {
         }
     }
 
-    fn render_variant(&self, config: &Config<'_>) -> TokenStream {
+    fn render_variant(&self, code: &Code<'_, '_>) -> TokenStream {
         let variant_ident = &self.variant_ident;
-        let target_type = self
-            .occurs
-            .make_type(&self.target_type, self.need_indirection);
+        let target_type = code.resolve_type_for_module(&self.target_type);
+        let target_type = self.occurs.make_type(&target_type, self.need_indirection);
 
-        let serde = match config.serde_support {
+        let serde = match code.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
                 let name = self.info.ident.name.to_string();
@@ -454,7 +461,7 @@ where
 fn render_trait_impls<'a>(
     code: &Code<'_, '_>,
     type_ident: &'a Ident2,
-    trait_data: &'a [TokenStream],
+    trait_data: &'a [IdentPath],
 ) -> impl Iterator<Item = TokenStream> + 'a {
     let trait_with_namespace = code
         .check_flags(GeneratorFlags::WITH_NAMESPACE_TRAIT)
@@ -464,6 +471,8 @@ fn render_trait_impls<'a>(
     trait_data
         .iter()
         .map(move |trait_ident| {
+            let trait_ident = trait_ident.ident();
+
             quote! {
                 impl #trait_ident for #type_ident { }
             }

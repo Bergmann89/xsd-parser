@@ -1,3 +1,7 @@
+use xsd_parser::schema::Namespace;
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
@@ -36,7 +40,6 @@ impl xsd_parser::quick_xml::SerializeBytes for EnumType {
     }
 }
 pub mod quick_xml_serialize {
-    use super::*;
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
@@ -47,7 +50,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
-        _4(<EnumType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        _4(<super::EnumType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -69,7 +72,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute(("xmlns:tns", "http://example.com"));
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
                         return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
                     }
