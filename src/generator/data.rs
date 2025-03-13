@@ -615,6 +615,7 @@ pub(super) struct ComplexTypeBase {
     pub trait_impls: Vec<IdentPath>,
 
     pub tag_name: Option<String>,
+    pub is_complex: bool,
 
     pub serializer_ident: Ident2,
     pub serializer_state_ident: Ident2,
@@ -1068,6 +1069,10 @@ impl<'types> ComplexType<'types> {
 }
 
 impl ComplexTypeBase {
+    pub(super) fn element_tag(&self) -> Option<&String> {
+        self.is_complex.then_some(self.tag_name.as_ref()).flatten()
+    }
+
     pub(crate) fn represents_element(&self) -> bool {
         self.tag_name.is_some()
     }
@@ -1078,6 +1083,7 @@ impl ComplexTypeBase {
 
         let mut ret = Self::new_empty(type_ident);
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
+        ret.is_complex = matches!(req.types.get(req.ident), Some(Type::ComplexType(_)));
         ret.trait_impls = req.make_trait_impls()?;
 
         Ok(ret)
@@ -1092,6 +1098,7 @@ impl ComplexTypeBase {
             trait_impls: Vec::new(),
 
             tag_name: None,
+            is_complex: false,
 
             serializer_ident,
             serializer_state_ident,

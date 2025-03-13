@@ -231,7 +231,7 @@ impl ComplexTypeBase {
         } = self;
         let xsd_parser = &code.xsd_parser_crate;
 
-        let body = if let Some(tag_name) = &self.tag_name {
+        let body = if let Some(tag_name) = &self.element_tag() {
             self.render_with_serializer_for_element(tag_name)
         } else {
             self.render_with_serializer_for_content()
@@ -310,9 +310,54 @@ impl ComplexTypeBase {
             }
         });
     }
+
+    fn render_serializer_handle_state_end(&self, config: &Config<'_>) -> TokenStream {
+        let xsd_parser = &config.xsd_parser_crate;
+        let serializer_state_ident = &self.serializer_state_ident;
+
+        quote! {
+            #serializer_state_ident::End__ => {
+                self.state = #serializer_state_ident::Done__;
+
+                return Ok(Some(
+                    #xsd_parser::quick_xml::Event::End(
+                        #xsd_parser::quick_xml::BytesEnd::new(self.name))
+                    )
+                );
+            }
+        }
+    }
+
+    fn render_serializer_xmlns(&self, code: &Code<'_, '_>) -> Vec<TokenStream> {
+        let _self = self;
+
+        code.types
+            .modules
+            .values()
+            .filter_map(|module| {
+                let ns = module.namespace.as_ref()?;
+                if *ns == Namespace::XS || *ns == Namespace::XML {
+                    return None;
+                }
+
+                let name = module.name.as_ref()?;
+                let ns_const = code.resolve_type_for_serialize_module(&module.make_ns_const());
+
+                let xmlns = Literal::byte_string(format!("xmlns:{name}").as_bytes());
+
+                Some(quote! {
+                    bytes.push_attribute((&#xmlns[..], &#ns_const[..]));
+                })
+            })
+            .collect::<Vec<_>>()
+    }
 }
 
 impl ComplexTypeEnum<'_> {
+    fn serializer_need_end_state(&self) -> bool {
+        self.represents_element()
+    }
+
     fn render_serializer(&self, code: &mut Code<'_, '_>) {
         self.render_with_serializer(code);
         self.render_serializer_type(code);
@@ -321,18 +366,24 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_serializer_state_type(&self, code: &mut Code<'_, '_>) {
-        let state_ident = &self.serializer_state_ident;
+        let serializer_state_ident = &self.serializer_state_ident;
 
         let state_variants = self
             .elements
             .iter()
             .map(|x| x.render_serializer_state_variant(code));
+        let state_end = self.represents_element().then(|| {
+            quote! {
+                End__,
+            }
+        });
 
         code.push_quick_xml_serialize(quote! {
             #[derive(Debug)]
-            pub(super) enum #state_ident<'ser> {
+            pub(super) enum #serializer_state_ident<'ser> {
                 Init__,
                 #( #state_variants )*
+                #state_end
                 Done__,
                 Phantom__(&'ser ()),
             }
@@ -343,6 +394,16 @@ impl ComplexTypeEnum<'_> {
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
         let xsd_parser = &code.xsd_parser_crate;
+
+        let emit_start_event = self
+            .serializer_need_end_state()
+            .then(|| self.render_serializer_impl_start_event(code));
+
+        let final_state = if self.serializer_need_end_state() {
+            quote!(#serializer_state_ident::End__)
+        } else {
+            quote!(#serializer_state_ident::Done__)
+        };
 
         let variants_init = self.elements.iter().map(|element| {
             let type_ident = &self.type_ident;
@@ -358,24 +419,28 @@ impl ComplexTypeEnum<'_> {
             }
         });
 
-        let variants_state = self.elements.iter().map(|element| {
+        let handle_state_init = quote! {
+            match self.value {
+                #( #variants_init )*
+            }
+        };
+
+        let handle_state_variants = self.elements.iter().map(|element| {
             let variant_ident = &element.variant_ident;
 
             quote! {
                 #serializer_state_ident::#variant_ident(x) => {
                     match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = #serializer_state_ident::Done__,
+                        None => self.state = #final_state,
                     }
                 }
             }
         });
 
-        let state_init = quote! {
-            match self.value {
-                #( #variants_init )*
-            }
-        };
+        let handle_state_end = self
+            .serializer_need_end_state()
+            .then(|| self.render_serializer_handle_state_end(code));
 
         code.push_quick_xml_serialize(quote! {
             impl<'ser> #serializer_ident<'ser> {
@@ -383,8 +448,12 @@ impl ComplexTypeEnum<'_> {
                 {
                     loop {
                         match &mut self.state {
-                            #serializer_state_ident::Init__ => #state_init,
-                            #( #variants_state )*
+                            #serializer_state_ident::Init__ => {
+                                #handle_state_init
+                                #emit_start_event
+                            }
+                            #( #handle_state_variants )*
+                            #handle_state_end
                             #serializer_state_ident::Done__ => return Ok(None),
                             #serializer_state_ident::Phantom__(_) => unreachable!(),
                         }
@@ -408,6 +477,29 @@ impl ComplexTypeEnum<'_> {
                 }
             }
         });
+    }
+
+    fn render_serializer_impl_start_event(&self, code: &Code<'_, '_>) -> TokenStream {
+        let xsd_parser = &code.xsd_parser_crate;
+
+        let xmlns = self.render_serializer_xmlns(code);
+        let bytes_ctor = if xmlns.is_empty() {
+            quote! {
+                let bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+            }
+        } else {
+            quote! {
+                let mut bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+                if self.is_root {
+                    #( #xmlns )*
+                }
+            }
+        };
+
+        quote! {
+            #bytes_ctor
+            return Ok(Some(#xsd_parser::quick_xml::Event::Start(bytes)))
+        }
     }
 }
 
@@ -522,19 +614,9 @@ impl ComplexTypeStruct<'_> {
             }
         });
 
-        let handle_state_end = self.serializer_need_end_state().then(|| {
-            quote! {
-                #serializer_state_ident::End__ => {
-                    self.state = #serializer_state_ident::Done__;
-
-                    return Ok(Some(
-                        #xsd_parser::quick_xml::Event::End(
-                            #xsd_parser::quick_xml::BytesEnd::new(self.name))
-                        )
-                    );
-                }
-            }
-        });
+        let handle_state_end = self
+            .serializer_need_end_state()
+            .then(|| self.render_serializer_handle_state_end(code));
 
         code.push_quick_xml_serialize(quote! {
             impl<'ser> #serializer_ident<'ser> {
@@ -577,27 +659,7 @@ impl ComplexTypeStruct<'_> {
     fn render_serializer_impl_start_event(&self, code: &Code<'_, '_>) -> TokenStream {
         let xsd_parser = &code.xsd_parser_crate;
 
-        let xmlns = code
-            .types
-            .modules
-            .values()
-            .filter_map(|module| {
-                let ns = module.namespace.as_ref()?;
-                if *ns == Namespace::XS || *ns == Namespace::XML {
-                    return None;
-                }
-
-                let name = module.name.as_ref()?;
-                let ns_const = code.resolve_type_for_serialize_module(&module.make_ns_const());
-
-                let xmlns = Literal::byte_string(format!("xmlns:{name}").as_bytes());
-
-                Some(quote! {
-                    bytes.push_attribute((&#xmlns[..], &#ns_const[..]));
-                })
-            })
-            .collect::<Vec<_>>();
-
+        let xmlns = self.render_serializer_xmlns(code);
         let attributes = self.attributes.iter().map(|attrib| {
             let attrib_name = &attrib.tag_name;
             let field_ident = &attrib.ident;
