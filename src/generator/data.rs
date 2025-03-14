@@ -1,5 +1,7 @@
-use std::{mem::take, ops::Deref};
+use std::mem::take;
+use std::ops::Deref;
 
+use parking_lot::Mutex;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
@@ -13,9 +15,7 @@ use crate::{
 };
 
 use super::{
-    misc::{
-        format_field_ident, format_variant_ident, IdentPath, IdentPathPart, ModulePath, Occurs,
-    },
+    misc::{format_field_ident, format_variant_ident, IdentPath, ModuleCode, ModulePath, Occurs},
     BoxFlags, Config, Error, GeneratorFlags, Modules, State, TraitInfos, TypeRef, TypedefMode,
 };
 
@@ -270,18 +270,18 @@ impl<'types> Deref for Request<'_, 'types> {
 /* Code */
 
 /// Helper type that is used to collect the generated code.
-pub(super) struct Code<'a, 'types> {
+pub(super) struct Context<'a, 'types> {
     ident: &'a Ident,
     config: &'a Config<'types>,
-    modules: &'a mut Modules,
+    modules: Mutex<&'a mut Modules>,
 
     module_path: ModulePath,
     serialize_module_path: ModulePath,
     deserialize_module_path: ModulePath,
 }
 
-#[allow(dead_code)] // >
-impl<'a, 'types> Code<'a, 'types> {
+#[allow(dead_code)] // TODO
+impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn new(
         ident: &'a Ident,
         config: &'a Config<'types>,
@@ -292,13 +292,17 @@ impl<'a, 'types> Code<'a, 'types> {
             .then_some(ident.ns)
             .flatten();
         let module_path = ModulePath::from_namespace(ns, config.types);
-        let serialize_module_path = module_path.clone().join(IdentPathPart::QuickXmlSerialize);
-        let deserialize_module_path = module_path.clone().join(IdentPathPart::QuickXmlDeserialize);
+        let serialize_module_path = module_path
+            .clone()
+            .join(format_ident!("quick_xml_serialize"));
+        let deserialize_module_path = module_path
+            .clone()
+            .join(format_ident!("quick_xml_deserialize"));
 
         Self {
             ident,
             config,
-            modules,
+            modules: Mutex::new(modules),
 
             module_path,
             serialize_module_path,
@@ -324,31 +328,74 @@ impl<'a, 'types> Code<'a, 'types> {
         ident.relative_to(&self.deserialize_module_path)
     }
 
-    pub(super) fn push(&mut self, code: TokenStream) {
+    pub(super) fn main(&mut self) -> &mut ModuleCode {
         let ns = self.current_ns();
-        self.modules.get_mut(ns).code.extend(code);
+
+        &mut self.modules.get_mut().get_mut(ns).main
     }
 
-    pub(super) fn push_quick_xml_serialize(&mut self, code: TokenStream) {
+    pub(super) fn quick_xml_serialize(&mut self) -> &mut ModuleCode {
         let ns = self.current_ns();
+
         self.modules
+            .get_mut()
             .get_mut(ns)
             .quick_xml_serialize
             .get_or_insert_default()
-            .extend(code);
     }
 
-    pub(super) fn push_quick_xml_deserialize(&mut self, code: TokenStream) {
+    pub(super) fn quick_xml_deserialize(&mut self) -> &mut ModuleCode {
         let ns = self.current_ns();
+
         self.modules
+            .get_mut()
             .get_mut(ns)
             .quick_xml_deserialize
             .get_or_insert_default()
-            .extend(code);
+    }
+
+    pub(super) fn add_usings<I>(&self, usings: I)
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let ns = self.current_ns();
+
+        self.modules.lock().get_mut(ns).main.usings(usings);
+    }
+
+    pub(super) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let ns = self.current_ns();
+
+        self.modules
+            .lock()
+            .get_mut(ns)
+            .quick_xml_serialize
+            .get_or_insert_default()
+            .usings(usings);
+    }
+
+    pub(super) fn add_quick_xml_deserialize_usings<I>(&self, usings: I)
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let ns = self.current_ns();
+
+        self.modules
+            .lock()
+            .get_mut(ns)
+            .quick_xml_deserialize
+            .get_or_insert_default()
+            .usings(usings);
     }
 }
 
-impl<'types> Deref for Code<'_, 'types> {
+impl<'types> Deref for Context<'_, 'types> {
     type Target = Config<'types>;
 
     fn deref(&self) -> &Self::Target {
@@ -1074,7 +1121,7 @@ impl ComplexTypeBase {
     }
 
     pub(crate) fn represents_element(&self) -> bool {
-        self.tag_name.is_some()
+        self.is_complex && self.tag_name.is_some()
     }
 
     fn new(req: &mut Request<'_, '_>) -> Result<Self, Error> {
@@ -1247,19 +1294,19 @@ impl<'types> ComplexTypeAttribute<'types> {
 macro_rules! impl_render {
     ($ty:ident) => {
         impl<'types> $ty<'types> {
-            pub(super) fn render(&self, config: &Config<'types>, code: &mut Code<'_, 'types>) {
-                self.render_types(code);
-                self.render_impl(code);
+            pub(super) fn render(&self, config: &Config<'types>, ctx: &mut Context<'_, 'types>) {
+                self.render_types(ctx);
+                self.render_impl(ctx);
 
                 if config.flags.intersects(GeneratorFlags::QUICK_XML_SERIALIZE) {
-                    self.render_serializer(code);
+                    self.render_serializer(ctx);
                 }
 
                 if config
                     .flags
                     .intersects(GeneratorFlags::QUICK_XML_DESERIALIZE)
                 {
-                    self.render_deserializer(code);
+                    self.render_deserializer(ctx);
                 }
             }
         }

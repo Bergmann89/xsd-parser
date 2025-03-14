@@ -18,7 +18,7 @@ use crate::types::{Ident, IdentType, Type, Types};
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
-use self::data::{Code, Request};
+use self::data::{Context, Request};
 use self::helper::Walk;
 use self::misc::{
     format_module, format_type_ident, make_type_name, DynTypeTraits, Module, Modules, PendingType,
@@ -317,18 +317,20 @@ impl<'types> GeneratorFixed<'types> {
     ///
     /// This will return the generated code as [`TokenStream`].
     #[instrument(level = "trace", skip(self))]
-    pub fn finish(self) -> TokenStream {
-        let serde = serde_usings(self.config.serde_support);
-
+    pub fn finish(mut self) -> TokenStream {
         let xsd_parser = &self.config.xsd_parser_crate;
         let with_namespace_constants = self
             .config
             .check_flags(GeneratorFlags::WITH_NAMESPACE_CONSTANTS);
-        let namespace_usings = with_namespace_constants.then(|| {
-            quote! {
-                use #xsd_parser::schema::Namespace;
-            }
-        });
+
+        if with_namespace_constants {
+            self.modules
+                .0
+                .entry(None)
+                .or_default()
+                .main
+                .usings([quote!(#xsd_parser::schema::Namespace)]);
+        }
 
         let namespace_constants = with_namespace_constants
             .then(|| {
@@ -348,7 +350,7 @@ impl<'types> GeneratorFixed<'types> {
 
         let modules = self.modules.0.into_iter().map(|(ns, module)| {
             let Module {
-                code,
+                main,
                 quick_xml_serialize,
                 quick_xml_deserialize,
             } = module;
@@ -370,7 +372,7 @@ impl<'types> GeneratorFixed<'types> {
             });
 
             let code = quote! {
-                #code
+                #main
                 #quick_xml_serialize
                 #quick_xml_deserialize
             };
@@ -389,9 +391,6 @@ impl<'types> GeneratorFixed<'types> {
         });
 
         quote! {
-            #serde
-
-            #namespace_usings
             #( #namespace_constants )*
 
             #( #modules )*
@@ -416,20 +415,20 @@ impl<'types> GeneratorFixed<'types> {
             modules,
         } = self;
         let req = Request::new(&ident, config, state);
-        let mut code = Code::new(&ident, config, modules);
+        let mut ctx = Context::new(&ident, config, modules);
 
         tracing::debug!("Render type: {ident}");
 
         match ty {
             Type::BuildIn(_) => (),
-            Type::Union(x) => req.into_union_type(x)?.render(config, &mut code),
-            Type::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut code),
-            Type::Reference(x) => req.into_reference_type(x)?.render(config, &mut code),
-            Type::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut code),
-            Type::All(x) => req.into_all_type(x)?.render(config, &mut code),
-            Type::Choice(x) => req.into_choice_type(x)?.render(config, &mut code),
-            Type::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut code),
-            Type::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut code),
+            Type::Union(x) => req.into_union_type(x)?.render(config, &mut ctx),
+            Type::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut ctx),
+            Type::Reference(x) => req.into_reference_type(x)?.render(config, &mut ctx),
+            Type::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut ctx),
+            Type::All(x) => req.into_all_type(x)?.render(config, &mut ctx),
+            Type::Choice(x) => req.into_choice_type(x)?.render(config, &mut ctx),
+            Type::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut ctx),
+            Type::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut ctx),
         }
 
         Ok(())
@@ -489,19 +488,6 @@ impl<'types> State<'types> {
 }
 
 /* Helper */
-
-fn serde_usings(serde_support: SerdeSupport) -> Option<TokenStream> {
-    let serde = matches!(
-        serde_support,
-        SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs
-    );
-
-    serde.then(|| {
-        quote!(
-            use serde::{Serialize, Deserialize};
-        )
-    })
-}
 
 fn get_boxed_elements<'a>(
     ident: &Ident,

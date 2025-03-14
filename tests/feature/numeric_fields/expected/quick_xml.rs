@@ -1,19 +1,23 @@
-use xsd_parser::schema::Namespace;
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+use std::borrow::Cow;
+use xsd_parser::{
+    quick_xml::{Error, SerializeBytes, WithSerializer},
+    schema::Namespace,
+};
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
     pub _4: EnumType,
 }
-impl xsd_parser::quick_xml::WithSerializer for FooType {
+impl WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
-    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
             state: quick_xml_serialize::FooTypeSerializerState::Init__,
@@ -28,18 +32,18 @@ pub enum EnumType {
     _2,
     _3,
 }
-impl xsd_parser::quick_xml::SerializeBytes for EnumType {
-    fn serialize_bytes(
-        &self,
-    ) -> Result<Option<std::borrow::Cow<'_, str>>, xsd_parser::quick_xml::Error> {
+impl SerializeBytes for EnumType {
+    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
-            Self::_1 => Ok(Some(std::borrow::Cow::Borrowed("1"))),
-            Self::_2 => Ok(Some(std::borrow::Cow::Borrowed("2"))),
-            Self::_3 => Ok(Some(std::borrow::Cow::Borrowed("3"))),
+            Self::_1 => Ok(Some(Cow::Borrowed("1"))),
+            Self::_2 => Ok(Some(Cow::Borrowed("2"))),
+            Self::_3 => Ok(Some(Cow::Borrowed("3"))),
         }
     }
 }
 pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
@@ -50,31 +54,26 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
-        _4(<super::EnumType as xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
+        _4(<super::EnumType as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
     impl<'ser> FooTypeSerializer<'ser> {
-        fn next_event(
-            &mut self,
-        ) -> Result<Option<xsd_parser::quick_xml::Event<'ser>>, xsd_parser::quick_xml::Error>
-        {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::_4(
-                            xsd_parser::quick_xml::WithSerializer::serializer(
-                                &self.value._4,
-                                Some("tns:4"),
-                                false,
-                            )?,
-                        );
-                        let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
+                        self.state = FooTypeSerializerState::_4(WithSerializer::serializer(
+                            &self.value._4,
+                            Some("tns:4"),
+                            false,
+                        )?);
+                        let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
+                        return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::_4(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
@@ -82,9 +81,7 @@ pub mod quick_xml_serialize {
                     },
                     FooTypeSerializerState::End__ => {
                         self.state = FooTypeSerializerState::Done__;
-                        return Ok(Some(xsd_parser::quick_xml::Event::End(
-                            xsd_parser::quick_xml::BytesEnd::new(self.name),
-                        )));
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
                     FooTypeSerializerState::Phantom__(_) => unreachable!(),
@@ -92,8 +89,8 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> core::iter::Iterator for FooTypeSerializer<'ser> {
-        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
+    impl<'ser> Iterator for FooTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),

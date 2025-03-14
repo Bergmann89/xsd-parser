@@ -1,19 +1,22 @@
-use xsd_parser::schema::Namespace;
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+use xsd_parser::{
+    quick_xml::{Error, WithSerializer},
+    schema::Namespace,
+};
 pub type Array = ArrayType;
 #[derive(Debug, Clone)]
 pub struct ArrayType {
     pub item: [i32; 5usize],
 }
-impl xsd_parser::quick_xml::WithSerializer for ArrayType {
+impl WithSerializer for ArrayType {
     type Serializer<'x> = quick_xml_serialize::ArrayTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
-    ) -> Result<Self::Serializer<'ser>, xsd_parser::quick_xml::Error> {
+    ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ArrayTypeSerializer {
             value: self,
             state: quick_xml_serialize::ArrayTypeSerializerState::Init__,
@@ -23,6 +26,8 @@ impl xsd_parser::quick_xml::WithSerializer for ArrayType {
     }
 }
 pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer};
     #[derive(Debug)]
     pub struct ArrayTypeSerializer<'ser> {
         pub(super) value: &'ser super::ArrayType,
@@ -33,31 +38,26 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ArrayTypeSerializerState<'ser> {
         Init__,
-        Item(xsd_parser::quick_xml::IterSerializer<'ser, [i32; 5usize], i32>),
+        Item(IterSerializer<'ser, [i32; 5usize], i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
     impl<'ser> ArrayTypeSerializer<'ser> {
-        fn next_event(
-            &mut self,
-        ) -> Result<Option<xsd_parser::quick_xml::Event<'ser>>, xsd_parser::quick_xml::Error>
-        {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut self.state {
                     ArrayTypeSerializerState::Init__ => {
-                        self.state = ArrayTypeSerializerState::Item(
-                            xsd_parser::quick_xml::IterSerializer::new(
-                                &self.value.item,
-                                Some("tns:Item"),
-                                false,
-                            ),
-                        );
-                        let mut bytes = xsd_parser::quick_xml::BytesStart::new(self.name);
+                        self.state = ArrayTypeSerializerState::Item(IterSerializer::new(
+                            &self.value.item,
+                            Some("tns:Item"),
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        return Ok(Some(xsd_parser::quick_xml::Event::Start(bytes)));
+                        return Ok(Some(Event::Start(bytes)));
                     }
                     ArrayTypeSerializerState::Item(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
@@ -65,9 +65,7 @@ pub mod quick_xml_serialize {
                     },
                     ArrayTypeSerializerState::End__ => {
                         self.state = ArrayTypeSerializerState::Done__;
-                        return Ok(Some(xsd_parser::quick_xml::Event::End(
-                            xsd_parser::quick_xml::BytesEnd::new(self.name),
-                        )));
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ArrayTypeSerializerState::Done__ => return Ok(None),
                     ArrayTypeSerializerState::Phantom__(_) => unreachable!(),
@@ -75,8 +73,8 @@ pub mod quick_xml_serialize {
             }
         }
     }
-    impl<'ser> core::iter::Iterator for ArrayTypeSerializer<'ser> {
-        type Item = Result<xsd_parser::quick_xml::Event<'ser>, xsd_parser::quick_xml::Error>;
+    impl<'ser> Iterator for ArrayTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),

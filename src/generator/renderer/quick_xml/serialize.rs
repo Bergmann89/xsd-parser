@@ -10,7 +10,7 @@ use crate::{
             UnionType, UnionTypeVariant,
         },
         misc::Occurs,
-        Code, Config,
+        Context,
     },
     schema::Namespace,
 };
@@ -18,28 +18,35 @@ use crate::{
 /* UnionType */
 
 impl UnionType<'_> {
-    pub(crate) fn render_serializer(&self, code: &mut Code<'_, '_>) {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
             variants,
             ..
         } = self;
 
-        let xsd_parser = &code.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
         let variants = variants
             .iter()
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
-        code.push(quote! {
-            impl #xsd_parser::quick_xml::SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<std::borrow::Cow<'_, str>>, #xsd_parser::quick_xml::Error> {
+        let usings = [
+            quote!(std::borrow::Cow),
+            quote!(#xsd_parser::quick_xml::Error),
+            quote!(#xsd_parser::quick_xml::SerializeBytes),
+        ];
+        let code = quote! {
+            impl SerializeBytes for #type_ident {
+                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
                     match self {
                         #( #variants )*
                     }
                 }
             }
-        });
+        };
+
+        ctx.main().usings(usings).code(code);
     }
 }
 
@@ -56,33 +63,40 @@ impl UnionTypeVariant<'_> {
 /* DynamicType */
 
 impl DynamicType<'_> {
-    pub(crate) fn render_serializer(&self, code: &mut Code<'_, '_>) {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
-        let xsd_parser = &code.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
 
-        code.push(quote! {
-            impl #xsd_parser::quick_xml::WithSerializer for #type_ident {
-                type Serializer<'x> = #xsd_parser::quick_xml::BoxedSerializer<'x>;
+        let usings = [
+            quote!(#xsd_parser::quick_xml::Error),
+            quote!(#xsd_parser::quick_xml::WithSerializer),
+            quote!(#xsd_parser::quick_xml::BoxedSerializer),
+        ];
+        let code = quote! {
+            impl WithSerializer for #type_ident {
+                type Serializer<'x> = BoxedSerializer<'x>;
 
                 fn serializer<'ser>(
                     &'ser self,
                     name: Option<&'ser str>,
                     is_root: bool
-                ) -> Result<Self::Serializer<'ser>, #xsd_parser::quick_xml::Error> {
+                ) -> Result<Self::Serializer<'ser>, Error> {
                     let _name = name;
 
                     self.0.serializer(None, is_root)
                 }
             }
-        });
+        };
+
+        ctx.main().usings(usings).code(code);
     }
 }
 
 /* ReferenceType */
 
 impl ReferenceType<'_> {
-    pub(crate) fn render_serializer(&self, code: &mut Code<'_, '_>) {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             mode,
             occurs,
@@ -94,7 +108,7 @@ impl ReferenceType<'_> {
             return;
         }
 
-        let xsd_parser = code.xsd_parser_crate.clone();
+        let xsd_parser = ctx.xsd_parser_crate.clone();
         let body = match occurs {
             Occurs::None => return,
             Occurs::Single => {
@@ -128,45 +142,59 @@ impl ReferenceType<'_> {
                         }
                     }
 
-                    Ok(Some(std::borrow::Cow::Owned(data)))
+                    Ok(Some(Cow::Owned(data)))
                 }
             }
         };
 
-        code.push(quote! {
-            impl #xsd_parser::quick_xml::SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<std::borrow::Cow<'_, str>>, #xsd_parser::quick_xml::Error> {
+        let usings = [
+            quote!(std::borrow::Cow),
+            quote!(#xsd_parser::quick_xml::Error),
+            quote!(#xsd_parser::quick_xml::SerializeBytes),
+        ];
+        let code = quote! {
+            impl SerializeBytes for #type_ident {
+                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
                     #body
                 }
             }
-        });
+        };
+
+        ctx.main().usings(usings).code(code);
     }
 }
 
 /* EnumerationType */
 
 impl EnumerationType<'_> {
-    pub(crate) fn render_serializer(&self, code: &mut Code<'_, '_>) {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
             variants,
             ..
         } = self;
 
-        let xsd_parser = &code.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
         let variants = variants
             .iter()
             .map(EnumerationTypeVariant::render_serializer_variant);
 
-        code.push(quote! {
-            impl #xsd_parser::quick_xml::SerializeBytes for #type_ident {
-                fn serialize_bytes(&self) -> Result<Option<std::borrow::Cow<'_, str>>, #xsd_parser::quick_xml::Error> {
+        let usings = [
+            quote!(std::borrow::Cow),
+            quote!(#xsd_parser::quick_xml::Error),
+            quote!(#xsd_parser::quick_xml::SerializeBytes),
+        ];
+        let code = quote! {
+            impl SerializeBytes for #type_ident {
+                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
                     match self {
                         #( #variants )*
                     }
                 }
             }
-        });
+        };
+
+        ctx.main().usings(usings).code(code);
     }
 }
 
@@ -187,7 +215,7 @@ impl EnumerationTypeVariant<'_> {
             let name = Literal::string(&name);
 
             quote! {
-                Self::#variant_ident => Ok(Some(std::borrow::Cow::Borrowed(#name))),
+                Self::#variant_ident => Ok(Some(Cow::Borrowed(#name))),
             }
         }
     }
@@ -196,26 +224,26 @@ impl EnumerationTypeVariant<'_> {
 /* ComplexType */
 
 impl ComplexType<'_> {
-    pub(crate) fn render_serializer(&self, code: &mut Code<'_, '_>) {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         match self {
             Self::Enum {
                 type_,
                 content_type,
             } => {
-                type_.render_serializer(code);
+                type_.render_serializer(ctx);
 
                 if let Some(content_type) = content_type {
-                    content_type.render_serializer(code);
+                    content_type.render_serializer(ctx);
                 }
             }
             Self::Struct {
                 type_,
                 content_type,
             } => {
-                type_.render_serializer(code);
+                type_.render_serializer(ctx);
 
                 if let Some(content_type) = content_type {
-                    content_type.render_serializer(code);
+                    content_type.render_serializer(ctx);
                 }
             }
         }
@@ -223,13 +251,13 @@ impl ComplexType<'_> {
 }
 
 impl ComplexTypeBase {
-    fn render_with_serializer(&self, code: &mut Code<'_, '_>) {
+    fn render_with_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
             serializer_ident,
             ..
         } = self;
-        let xsd_parser = &code.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
 
         let body = if let Some(tag_name) = &self.element_tag() {
             self.render_with_serializer_for_element(tag_name)
@@ -237,19 +265,25 @@ impl ComplexTypeBase {
             self.render_with_serializer_for_content()
         };
 
-        code.push(quote! {
-            impl #xsd_parser::quick_xml::WithSerializer for #type_ident {
+        let usings = [
+            quote!(#xsd_parser::quick_xml::Error),
+            quote!(#xsd_parser::quick_xml::WithSerializer),
+        ];
+        let code = quote! {
+            impl WithSerializer for #type_ident {
                 type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
 
                 fn serializer<'ser>(
                     &'ser self,
                     name: Option<&'ser str>,
                     is_root: bool
-                ) -> Result<Self::Serializer<'ser>, #xsd_parser::quick_xml::Error> {
+                ) -> Result<Self::Serializer<'ser>, Error> {
                     #body
                 }
             }
-        });
+        };
+
+        ctx.main().usings(usings).code(code);
     }
 
     fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {
@@ -287,7 +321,7 @@ impl ComplexTypeBase {
         }
     }
 
-    fn render_serializer_type(&self, code: &mut Code<'_, '_>) {
+    fn render_serializer_type(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
             serializer_ident,
@@ -301,37 +335,41 @@ impl ComplexTypeBase {
             }
         });
 
-        code.push_quick_xml_serialize(quote! {
+        let code = quote! {
             #[derive(Debug)]
             pub struct #serializer_ident<'ser> {
                 pub(super) value: &'ser super::#type_ident,
                 pub(super) state: #serializer_state_ident<'ser>,
                 #extra
             }
-        });
+        };
+
+        ctx.quick_xml_serialize().code(code);
     }
 
-    fn render_serializer_handle_state_end(&self, config: &Config<'_>) -> TokenStream {
-        let xsd_parser = &config.xsd_parser_crate;
+    fn render_serializer_handle_state_end(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let xsd_parser = &ctx.xsd_parser_crate;
         let serializer_state_ident = &self.serializer_state_ident;
+
+        ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::BytesEnd)]);
 
         quote! {
             #serializer_state_ident::End__ => {
                 self.state = #serializer_state_ident::Done__;
 
                 return Ok(Some(
-                    #xsd_parser::quick_xml::Event::End(
-                        #xsd_parser::quick_xml::BytesEnd::new(self.name))
+                    Event::End(
+                        BytesEnd::new(self.name))
                     )
                 );
             }
         }
     }
 
-    fn render_serializer_xmlns(&self, code: &Code<'_, '_>) -> Vec<TokenStream> {
+    fn render_serializer_xmlns(&self, ctx: &Context<'_, '_>) -> Vec<TokenStream> {
         let _self = self;
 
-        code.types
+        ctx.types
             .modules
             .values()
             .filter_map(|module| {
@@ -341,7 +379,7 @@ impl ComplexTypeBase {
                 }
 
                 let name = module.name.as_ref()?;
-                let ns_const = code.resolve_type_for_serialize_module(&module.make_ns_const());
+                let ns_const = ctx.resolve_type_for_serialize_module(&module.make_ns_const());
 
                 let xmlns = Literal::byte_string(format!("xmlns:{name}").as_bytes());
 
@@ -358,27 +396,27 @@ impl ComplexTypeEnum<'_> {
         self.represents_element()
     }
 
-    fn render_serializer(&self, code: &mut Code<'_, '_>) {
-        self.render_with_serializer(code);
-        self.render_serializer_type(code);
-        self.render_serializer_state_type(code);
-        self.render_serializer_impl(code);
+    fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
+        self.render_with_serializer(ctx);
+        self.render_serializer_type(ctx);
+        self.render_serializer_state_type(ctx);
+        self.render_serializer_impl(ctx);
     }
 
-    fn render_serializer_state_type(&self, code: &mut Code<'_, '_>) {
+    fn render_serializer_state_type(&self, ctx: &mut Context<'_, '_>) {
         let serializer_state_ident = &self.serializer_state_ident;
 
         let state_variants = self
             .elements
             .iter()
-            .map(|x| x.render_serializer_state_variant(code));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.represents_element().then(|| {
             quote! {
                 End__,
             }
         });
 
-        code.push_quick_xml_serialize(quote! {
+        let code = quote! {
             #[derive(Debug)]
             pub(super) enum #serializer_state_ident<'ser> {
                 Init__,
@@ -387,17 +425,19 @@ impl ComplexTypeEnum<'_> {
                 Done__,
                 Phantom__(&'ser ()),
             }
-        });
+        };
+
+        ctx.quick_xml_serialize().code(code);
     }
 
-    fn render_serializer_impl(&self, code: &mut Code<'_, '_>) {
+    fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
-        let xsd_parser = &code.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
 
         let emit_start_event = self
             .serializer_need_end_state()
-            .then(|| self.render_serializer_impl_start_event(code));
+            .then(|| self.render_serializer_impl_start_event(ctx));
 
         let final_state = if self.serializer_need_end_state() {
             quote!(#serializer_state_ident::End__)
@@ -408,11 +448,8 @@ impl ComplexTypeEnum<'_> {
         let variants_init = self.elements.iter().map(|element| {
             let type_ident = &self.type_ident;
             let variant_ident = &element.variant_ident;
-            let init = element.render_serializer_state_init(
-                code,
-                &self.serializer_state_ident,
-                &quote!(x),
-            );
+            let init =
+                element.render_serializer_state_init(ctx, &self.serializer_state_ident, &quote!(x));
 
             quote! {
                 super::#type_ident::#variant_ident(x) => #init,
@@ -440,12 +477,16 @@ impl ComplexTypeEnum<'_> {
 
         let handle_state_end = self
             .serializer_need_end_state()
-            .then(|| self.render_serializer_handle_state_end(code));
+            .then(|| self.render_serializer_handle_state_end(ctx));
 
-        code.push_quick_xml_serialize(quote! {
+        let usings = [
+            quote!(core::iter::Iterator),
+            quote!(#xsd_parser::quick_xml::Event),
+            quote!(#xsd_parser::quick_xml::Error),
+        ];
+        let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> Result<Option<#xsd_parser::quick_xml::Event<'ser>>, #xsd_parser::quick_xml::Error>
-                {
+                fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                     loop {
                         match &mut self.state {
                             #serializer_state_ident::Init__ => {
@@ -461,8 +502,8 @@ impl ComplexTypeEnum<'_> {
                 }
             }
 
-            impl<'ser> core::iter::Iterator for #serializer_ident<'ser> {
-                type Item = Result<#xsd_parser::quick_xml::Event<'ser>, #xsd_parser::quick_xml::Error>;
+            impl<'ser> Iterator for #serializer_ident<'ser> {
+                type Item = Result<Event<'ser>, Error>;
 
                 fn next(&mut self) -> Option<Self::Item> {
                     match self.next_event() {
@@ -476,20 +517,20 @@ impl ComplexTypeEnum<'_> {
                     }
                 }
             }
-        });
+        };
+
+        ctx.quick_xml_serialize().usings(usings).code(code);
     }
 
-    fn render_serializer_impl_start_event(&self, code: &Code<'_, '_>) -> TokenStream {
-        let xsd_parser = &code.xsd_parser_crate;
-
-        let xmlns = self.render_serializer_xmlns(code);
+    fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let xmlns = self.render_serializer_xmlns(ctx);
         let bytes_ctor = if xmlns.is_empty() {
             quote! {
-                let bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+                let bytes = BytesStart::new(self.name);
             }
         } else {
             quote! {
-                let mut bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+                let mut bytes = BytesStart::new(self.name);
                 if self.is_root {
                     #( #xmlns )*
                 }
@@ -498,7 +539,7 @@ impl ComplexTypeEnum<'_> {
 
         quote! {
             #bytes_ctor
-            return Ok(Some(#xsd_parser::quick_xml::Event::Start(bytes)))
+            return Ok(Some(Event::Start(bytes)))
         }
     }
 }
@@ -508,30 +549,30 @@ impl ComplexTypeStruct<'_> {
         self.represents_element() && self.has_content()
     }
 
-    fn render_serializer(&self, code: &mut Code<'_, '_>) {
-        self.render_with_serializer(code);
-        self.render_serializer_type(code);
-        self.render_serializer_state_type(code);
-        self.render_serializer_impl(code);
+    fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
+        self.render_with_serializer(ctx);
+        self.render_serializer_type(ctx);
+        self.render_serializer_state_type(ctx);
+        self.render_serializer_impl(ctx);
     }
 
-    fn render_serializer_state_type(&self, code: &mut Code<'_, '_>) {
+    fn render_serializer_state_type(&self, ctx: &mut Context<'_, '_>) {
         let state_ident = &self.serializer_state_ident;
 
         let state_variants = self
             .elements()
             .iter()
-            .map(|x| x.render_serializer_state_variant(code));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_content = self
             .content()
-            .map(|x| x.render_serializer_state_variant(code));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.serializer_need_end_state().then(|| {
             quote! {
                 End__,
             }
         });
 
-        code.push_quick_xml_serialize(quote! {
+        let code = quote! {
             #[derive(Debug)]
             pub(super) enum #state_ident<'ser> {
                 Init__,
@@ -541,18 +582,20 @@ impl ComplexTypeStruct<'_> {
                 Done__,
                 Phantom__(&'ser ()),
             }
-        });
+        };
+
+        ctx.quick_xml_serialize().code(code);
     }
 
     #[allow(clippy::too_many_lines)]
-    fn render_serializer_impl(&self, code: &mut Code<'_, '_>) {
-        let xsd_parser = &code.xsd_parser_crate;
+    fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
+        let xsd_parser = &ctx.xsd_parser_crate;
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
         let emit_start_event = self
             .represents_element()
-            .then(|| self.render_serializer_impl_start_event(code));
+            .then(|| self.render_serializer_impl_start_event(ctx));
 
         let final_state = if self.serializer_need_end_state() {
             quote!(#serializer_state_ident::End__)
@@ -564,14 +607,14 @@ impl ComplexTypeStruct<'_> {
         let handle_state_init = if let Some(first) = elements.first() {
             let field_ident = &first.field_ident;
             let init = first.render_serializer_state_init(
-                code,
+                ctx,
                 serializer_state_ident,
                 &quote!(&self.value.#field_ident),
             );
 
             quote!(#init;)
         } else if let Some(content) = &self.content() {
-            let init = content.render_serializer_state_init(code, serializer_state_ident);
+            let init = content.render_serializer_state_init(ctx, serializer_state_ident);
 
             quote!(#init;)
         } else {
@@ -585,7 +628,7 @@ impl ComplexTypeStruct<'_> {
             let next = if let Some(next) = elements.get(i + 1) {
                 let field_ident = &next.field_ident;
                 let init = next.render_serializer_state_init(
-                    code,
+                    ctx,
                     serializer_state_ident,
                     &quote!(&self.value.#field_ident),
                 );
@@ -616,11 +659,16 @@ impl ComplexTypeStruct<'_> {
 
         let handle_state_end = self
             .serializer_need_end_state()
-            .then(|| self.render_serializer_handle_state_end(code));
+            .then(|| self.render_serializer_handle_state_end(ctx));
 
-        code.push_quick_xml_serialize(quote! {
+        let usings = [
+            quote!(core::iter::Iterator),
+            quote!(#xsd_parser::quick_xml::Event),
+            quote!(#xsd_parser::quick_xml::Error),
+        ];
+        let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
-                fn next_event(&mut self) -> Result<Option<#xsd_parser::quick_xml::Event<'ser>>, #xsd_parser::quick_xml::Error>
+                fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error>
                 {
                     loop {
                         match &mut self.state {
@@ -638,8 +686,8 @@ impl ComplexTypeStruct<'_> {
                 }
             }
 
-            impl<'ser> core::iter::Iterator for #serializer_ident<'ser> {
-                type Item = Result<#xsd_parser::quick_xml::Event<'ser>, #xsd_parser::quick_xml::Error>;
+            impl<'ser> Iterator for #serializer_ident<'ser> {
+                type Item = Result<Event<'ser>, Error>;
 
                 fn next(&mut self) -> Option<Self::Item> {
                     match self.next_event() {
@@ -653,36 +701,49 @@ impl ComplexTypeStruct<'_> {
                     }
                 }
             }
-        });
+        };
+
+        ctx.quick_xml_serialize().usings(usings).code(code);
     }
 
-    fn render_serializer_impl_start_event(&self, code: &Code<'_, '_>) -> TokenStream {
-        let xsd_parser = &code.xsd_parser_crate;
+    fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let xsd_parser = &ctx.xsd_parser_crate;
 
-        let xmlns = self.render_serializer_xmlns(code);
+        let xmlns = self.render_serializer_xmlns(ctx);
         let attributes = self.attributes.iter().map(|attrib| {
             let attrib_name = &attrib.tag_name;
             let field_ident = &attrib.ident;
 
             if attrib.is_option {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::write_attrib_opt),
+                ]);
+
                 quote! {
-                    #xsd_parser::quick_xml::write_attrib_opt(&mut bytes, #attrib_name, &self.value.#field_ident)?;
+                    write_attrib_opt(&mut bytes, #attrib_name, &self.value.#field_ident)?;
                 }
             } else {
+                ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::write_attrib)]);
+
                 quote! {
-                    #xsd_parser::quick_xml::write_attrib(&mut bytes, #attrib_name, &self.value.#field_ident)?;
+                    write_attrib(&mut bytes, #attrib_name, &self.value.#field_ident)?;
                 }
             }
         });
 
+        ctx.add_quick_xml_serialize_usings([
+            quote!(#xsd_parser::quick_xml::Event),
+            quote!(#xsd_parser::quick_xml::BytesStart),
+        ]);
+
         let bytes_mut = self.has_attributes().then(|| quote!(mut));
         let bytes_ctor = if xmlns.is_empty() {
             quote! {
-                let #bytes_mut bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+                let #bytes_mut bytes = BytesStart::new(self.name);
             }
         } else {
             quote! {
-                let mut bytes = #xsd_parser::quick_xml::BytesStart::new(self.name);
+                let mut bytes = BytesStart::new(self.name);
                 if self.is_root {
                     #( #xmlns )*
                 }
@@ -698,17 +759,16 @@ impl ComplexTypeStruct<'_> {
         quote! {
             #bytes_ctor
             #( #attributes )*
-            return Ok(Some(#xsd_parser::quick_xml::Event::#event(bytes)))
+            return Ok(Some(Event::#event(bytes)))
         }
     }
 }
 
 impl ComplexTypeContent {
-    fn render_serializer_state_variant(&self, code: &Code<'_, '_>) -> Option<TokenStream> {
-        let serializer = self.occurs.make_serializer_type(
-            &code.xsd_parser_crate,
-            &code.resolve_type_for_serialize_module(&self.target_type),
-        )?;
+    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let serializer = self
+            .occurs
+            .make_serializer_type(&ctx.resolve_type_for_serialize_module(&self.target_type))?;
 
         Some(quote! {
             Content__(#serializer),
@@ -717,38 +777,49 @@ impl ComplexTypeContent {
 
     fn render_serializer_state_init(
         &self,
-        config: &Config<'_>,
+        ctx: &Context<'_, '_>,
         state_ident: &Ident2,
     ) -> TokenStream {
-        let xsd_parser = &config.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
 
         match self.occurs {
             Occurs::None => crate::unreachable!(),
-            Occurs::Single => quote! {
-                self.state = #state_ident::Content__(
-                    #xsd_parser::quick_xml::WithSerializer::serializer(&self.value.content, None, false)?
-                )
-            },
-            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                self.state = #state_ident::Content__(
-                    #xsd_parser::quick_xml::IterSerializer::new(
-                        &self.value.content,
-                        None,
-                        false
+            Occurs::Single => {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::WithSerializer),
+                ]);
+
+                quote! {
+                    self.state = #state_ident::Content__(
+                        WithSerializer::serializer(&self.value.content, None, false)?
                     )
-                )
-            },
+                }
+            }
+            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::IterSerializer),
+                ]);
+
+                quote! {
+                    self.state = #state_ident::Content__(
+                        IterSerializer::new(
+                            &self.value.content,
+                            None,
+                            false
+                        )
+                    )
+                }
+            }
         }
     }
 }
 
 impl ComplexTypeElement<'_> {
-    fn render_serializer_state_variant(&self, code: &Code<'_, '_>) -> TokenStream {
-        let target_type = code.resolve_type_for_serialize_module(&self.target_type);
+    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
-        let xsd_parser = &code.xsd_parser_crate;
 
-        let serializer = self.occurs.make_serializer_type(xsd_parser, &target_type);
+        let serializer = self.occurs.make_serializer_type(&target_type);
 
         quote! {
             #variant_ident(#serializer),
@@ -757,55 +828,61 @@ impl ComplexTypeElement<'_> {
 
     fn render_serializer_state_init(
         &self,
-        config: &Config<'_>,
+        ctx: &Context<'_, '_>,
         state_ident: &Ident2,
         value: &TokenStream,
     ) -> TokenStream {
-        let xsd_parser = &config.xsd_parser_crate;
+        let xsd_parser = &ctx.xsd_parser_crate;
 
         let field_name = &self.tag_name;
         let variant_ident = &self.variant_ident;
 
         match self.occurs {
             Occurs::None => crate::unreachable!(),
-            Occurs::Single => quote! {
-                self.state = #state_ident::#variant_ident(
-                    #xsd_parser::quick_xml::WithSerializer::serializer(#value, Some(#field_name), false)?
-                )
-            },
-            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => quote! {
-                self.state = #state_ident::#variant_ident(
-                    #xsd_parser::quick_xml::IterSerializer::new(
-                        #value,
-                        Some(#field_name),
-                        false
+            Occurs::Single => {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::WithSerializer),
+                ]);
+
+                quote! {
+                    self.state = #state_ident::#variant_ident(
+                        WithSerializer::serializer(#value, Some(#field_name), false)?
                     )
-                )
-            },
+                }
+            }
+            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::IterSerializer),
+                ]);
+
+                quote! {
+                    self.state = #state_ident::#variant_ident(
+                        IterSerializer::new(
+                            #value,
+                            Some(#field_name),
+                            false
+                        )
+                    )
+                }
+            }
         }
     }
 }
 
 impl Occurs {
-    fn make_serializer_type(
-        &self,
-        xsd_parser: &Ident2,
-        target_type: &TokenStream,
-    ) -> Option<TokenStream> {
+    fn make_serializer_type(&self, target_type: &TokenStream) -> Option<TokenStream> {
         match self {
             Occurs::None => None,
-            Occurs::Single => Some(
-                quote!(<#target_type as #xsd_parser::quick_xml::WithSerializer>::Serializer<'ser>),
-            ),
-            Occurs::Optional => Some(
-                quote!(#xsd_parser::quick_xml::IterSerializer<'ser, Option<#target_type>, #target_type>),
-            ),
-            Occurs::DynamicList => Some(
-                quote!(#xsd_parser::quick_xml::IterSerializer<'ser, Vec<#target_type>, #target_type>),
-            ),
-            Occurs::StaticList(sz) => Some(
-                quote!(#xsd_parser::quick_xml::IterSerializer<'ser, [#target_type; #sz], #target_type>),
-            ),
+            Occurs::Single => Some(quote!(<#target_type as WithSerializer>::Serializer<'ser>)),
+            Occurs::Optional => {
+                Some(quote!(IterSerializer<'ser, Option<#target_type>, #target_type>))
+            }
+            Occurs::DynamicList => {
+                Some(quote!(IterSerializer<'ser, Vec<#target_type>, #target_type>))
+            }
+            Occurs::StaticList(sz) => {
+                Some(quote!(IterSerializer<'ser, [#target_type; #sz], #target_type>))
+            }
         }
     }
 }
