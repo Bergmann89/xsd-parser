@@ -5,8 +5,8 @@ use crate::utils::{generate_test, ConfigEx};
 #[test]
 fn generate_default() {
     generate_test(
-        "tests/feature/shiporder/schema.xsd",
-        "tests/feature/shiporder/expected/default.rs",
+        "tests/schema/shiporder/schema.xsd",
+        "tests/schema/shiporder/expected/default.rs",
         Config::test_default().with_generate([(IdentType::Element, "shiporder")]),
     );
 }
@@ -14,8 +14,8 @@ fn generate_default() {
 #[test]
 fn generate_quick_xml() {
     generate_test(
-        "tests/feature/shiporder/schema.xsd",
-        "tests/feature/shiporder/expected/quick_xml.rs",
+        "tests/schema/shiporder/schema.xsd",
+        "tests/schema/shiporder/expected/quick_xml.rs",
         Config::test_default()
             .with_quick_xml()
             .with_generate([(IdentType::Element, "shiporder")]),
@@ -25,8 +25,8 @@ fn generate_quick_xml() {
 #[test]
 fn generate_serde_xml_rs() {
     generate_test(
-        "tests/feature/shiporder/schema.xsd",
-        "tests/feature/shiporder/expected/serde_xml_rs.rs",
+        "tests/schema/shiporder/schema.xsd",
+        "tests/schema/shiporder/expected/serde_xml_rs.rs",
         Config::test_default()
             .with_serde_support(SerdeSupport::SerdeXmlRs)
             .with_generate([(IdentType::Element, "shiporder")]),
@@ -36,8 +36,8 @@ fn generate_serde_xml_rs() {
 #[test]
 fn generate_serde_quick_xml() {
     generate_test(
-        "tests/feature/shiporder/schema.xsd",
-        "tests/feature/shiporder/expected/serde_quick_xml.rs",
+        "tests/schema/shiporder/schema.xsd",
+        "tests/schema/shiporder/expected/serde_quick_xml.rs",
         Config::test_default()
             .with_serde_support(SerdeSupport::QuickXml)
             .with_generate([(IdentType::Element, "shiporder")]),
@@ -78,7 +78,7 @@ fn read_quick_xml() {
     use quick_xml::Shiporder;
 
     let obj = crate::utils::quick_xml_read_test::<Shiporder, _>(
-        "tests/feature/shiporder/example/default.xml",
+        "tests/schema/shiporder/example/default.xml",
     );
 
     verify_obj!(obj);
@@ -90,7 +90,7 @@ fn read_serde_xml_rs() {
     use serde_xml_rs::Shiporder;
 
     let obj = crate::utils::serde_xml_rs_read_test::<Shiporder, _>(
-        "tests/feature/shiporder/example/default.xml",
+        "tests/schema/shiporder/example/default.xml",
     );
 
     verify_obj!(obj);
@@ -102,7 +102,7 @@ fn read_serde_quick_xml() {
     use serde_quick_xml::Shiporder;
 
     let obj = crate::utils::serde_quick_xml_read_test::<Shiporder, _>(
-        "tests/feature/shiporder/example/default.xml",
+        "tests/schema/shiporder/example/default.xml",
     );
 
     verify_obj!(obj);

@@ -367,7 +367,7 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] serialization and deserialization.
     pub fn with_quick_xml(mut self) -> Self {
-        self.generator.flags |= GeneratorFlags::QUICK_XML_SERIALIZE; // TODO
+        self.generator.flags |= GeneratorFlags::QUICK_XML;
 
         self
     }

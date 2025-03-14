@@ -2,7 +2,10 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 use std::borrow::Cow;
 use xsd_parser::{
-    quick_xml::{Error, SerializeBytes, WithSerializer},
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
+        Error, SerializeBytes, WithSerializer,
+    },
     schema::Namespace,
 };
 #[derive(Debug, Clone, Default)]
@@ -24,6 +27,19 @@ impl SerializeBytes for Entitiestype {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl DeserializeBytes for Entitiestype {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| String::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
+    }
+}
 #[derive(Debug, Clone, Default)]
 pub struct Entitytype(pub Vec<String>);
 impl SerializeBytes for Entitytype {
@@ -41,6 +57,19 @@ impl SerializeBytes for Entitytype {
             }
         }
         Ok(Some(Cow::Owned(data)))
+    }
+}
+impl DeserializeBytes for Entitytype {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| String::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
     }
 }
 pub type Idtype = String;
@@ -64,6 +93,19 @@ impl SerializeBytes for Idrefstype {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl DeserializeBytes for Idrefstype {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| String::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
+    }
+}
 pub type NcnameType = String;
 pub type Nmtokentype = String;
 #[derive(Debug, Clone, Default)]
@@ -85,6 +127,19 @@ impl SerializeBytes for Nmtokenstype {
         Ok(Some(Cow::Owned(data)))
     }
 }
+impl DeserializeBytes for Nmtokenstype {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| String::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
+    }
+}
 pub type Notationtype = String;
 pub type NameType = String;
 pub type QnameType = String;
@@ -104,6 +159,9 @@ impl WithSerializer for AnyType {
             is_root,
         })
     }
+}
+impl WithDeserializer for AnyType {
+    type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
 }
 pub type AnyURIType = String;
 pub type Base64BinaryType = String;
@@ -180,6 +238,86 @@ pub mod quick_xml_serialize {
                     Some(Err(error))
                 }
             }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult,
+        },
+        BytesStart, Error, Event,
+    };
+    #[derive(Debug)]
+    pub struct AnyTypeDeserializer {
+        state: Box<AnyTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum AnyTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl AnyTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(Self {
+                state: Box::new(AnyTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: AnyTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::AnyType> for AnyTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::AnyType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AnyType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    event: None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: Some(event),
+                    allow_any: true,
+                })
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::AnyType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, AnyTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::AnyType {})
         }
     }
 }

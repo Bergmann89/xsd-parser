@@ -1,0 +1,1680 @@
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+use xsd_parser::{
+    quick_xml::{deserialize_new::WithDeserializer, Error, WithSerializer},
+    schema::Namespace,
+};
+pub type Shiporder = ShiporderType;
+#[derive(Debug, Clone)]
+pub struct ShiporderType {
+    pub orderid: String,
+    pub orderperson: String,
+    pub shipto: ShiporderShiptoType,
+    pub item: Vec<ShiporderItemType>,
+}
+impl WithSerializer for ShiporderType {
+    type Serializer<'x> = quick_xml_serialize::ShiporderTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::ShiporderTypeSerializer {
+            value: self,
+            state: quick_xml_serialize::ShiporderTypeSerializerState::Init__,
+            name: name.unwrap_or("shiporder"),
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for ShiporderType {
+    type Deserializer = quick_xml_deserialize::ShiporderTypeDeserializer;
+}
+#[derive(Debug, Clone)]
+pub struct ShiporderShiptoType {
+    pub name: String,
+    pub address: String,
+    pub city: String,
+    pub country: String,
+}
+impl WithSerializer for ShiporderShiptoType {
+    type Serializer<'x> = quick_xml_serialize::ShiporderShiptoTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::ShiporderShiptoTypeSerializer {
+            value: self,
+            state: quick_xml_serialize::ShiporderShiptoTypeSerializerState::Init__,
+            name: name.unwrap_or("ShiporderShipto"),
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for ShiporderShiptoType {
+    type Deserializer = quick_xml_deserialize::ShiporderShiptoTypeDeserializer;
+}
+#[derive(Debug, Clone)]
+pub struct ShiporderItemType {
+    pub title: String,
+    pub note: Option<String>,
+    pub quantity: usize,
+    pub price: f64,
+}
+impl WithSerializer for ShiporderItemType {
+    type Serializer<'x> = quick_xml_serialize::ShiporderItemTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::ShiporderItemTypeSerializer {
+            value: self,
+            state: quick_xml_serialize::ShiporderItemTypeSerializerState::Init__,
+            name: name.unwrap_or("ShiporderItem"),
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for ShiporderItemType {
+    type Deserializer = quick_xml_deserialize::ShiporderItemTypeDeserializer;
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{
+        write_attrib, BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+    };
+    #[derive(Debug)]
+    pub struct ShiporderTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ShiporderType,
+        pub(super) state: ShiporderTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ShiporderTypeSerializerState<'ser> {
+        Init__,
+        Orderperson(<String as WithSerializer>::Serializer<'ser>),
+        Shipto(<super::ShiporderShiptoType as WithSerializer>::Serializer<'ser>),
+        Item(IterSerializer<'ser, Vec<super::ShiporderItemType>, super::ShiporderItemType>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ShiporderTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut self.state {
+                    ShiporderTypeSerializerState::Init__ => {
+                        self.state =
+                            ShiporderTypeSerializerState::Orderperson(WithSerializer::serializer(
+                                &self.value.orderperson,
+                                Some("orderperson"),
+                                false,
+                            )?);
+                        let mut bytes = BytesStart::new(self.name);
+                        write_attrib(&mut bytes, "orderid", &self.value.orderid)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ShiporderTypeSerializerState::Orderperson(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state =
+                                ShiporderTypeSerializerState::Shipto(WithSerializer::serializer(
+                                    &self.value.shipto,
+                                    Some("shipto"),
+                                    false,
+                                )?)
+                        }
+                    },
+                    ShiporderTypeSerializerState::Shipto(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                self.state = ShiporderTypeSerializerState::Item(
+                                    IterSerializer::new(&self.value.item, Some("item"), false),
+                                )
+                            }
+                        }
+                    }
+                    ShiporderTypeSerializerState::Item(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => self.state = ShiporderTypeSerializerState::End__,
+                    },
+                    ShiporderTypeSerializerState::End__ => {
+                        self.state = ShiporderTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ShiporderTypeSerializerState::Done__ => return Ok(None),
+                    ShiporderTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ShiporderTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = ShiporderTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct ShiporderShiptoTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ShiporderShiptoType,
+        pub(super) state: ShiporderShiptoTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ShiporderShiptoTypeSerializerState<'ser> {
+        Init__,
+        Name(<String as WithSerializer>::Serializer<'ser>),
+        Address(<String as WithSerializer>::Serializer<'ser>),
+        City(<String as WithSerializer>::Serializer<'ser>),
+        Country(<String as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ShiporderShiptoTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut self.state {
+                    ShiporderShiptoTypeSerializerState::Init__ => {
+                        self.state = ShiporderShiptoTypeSerializerState::Name(
+                            WithSerializer::serializer(&self.value.name, Some("name"), false)?,
+                        );
+                        let bytes = BytesStart::new(self.name);
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ShiporderShiptoTypeSerializerState::Name(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::Address(
+                                WithSerializer::serializer(
+                                    &self.value.address,
+                                    Some("address"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    ShiporderShiptoTypeSerializerState::Address(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::City(
+                                WithSerializer::serializer(&self.value.city, Some("city"), false)?,
+                            )
+                        }
+                    },
+                    ShiporderShiptoTypeSerializerState::City(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = ShiporderShiptoTypeSerializerState::Country(
+                                WithSerializer::serializer(
+                                    &self.value.country,
+                                    Some("country"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    ShiporderShiptoTypeSerializerState::Country(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => self.state = ShiporderShiptoTypeSerializerState::End__,
+                    },
+                    ShiporderShiptoTypeSerializerState::End__ => {
+                        self.state = ShiporderShiptoTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ShiporderShiptoTypeSerializerState::Done__ => return Ok(None),
+                    ShiporderShiptoTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ShiporderShiptoTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = ShiporderShiptoTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct ShiporderItemTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ShiporderItemType,
+        pub(super) state: ShiporderItemTypeSerializerState<'ser>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ShiporderItemTypeSerializerState<'ser> {
+        Init__,
+        Title(<String as WithSerializer>::Serializer<'ser>),
+        Note(IterSerializer<'ser, Option<String>, String>),
+        Quantity(<usize as WithSerializer>::Serializer<'ser>),
+        Price(<f64 as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ShiporderItemTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut self.state {
+                    ShiporderItemTypeSerializerState::Init__ => {
+                        self.state = ShiporderItemTypeSerializerState::Title(
+                            WithSerializer::serializer(&self.value.title, Some("title"), false)?,
+                        );
+                        let bytes = BytesStart::new(self.name);
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ShiporderItemTypeSerializerState::Title(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = ShiporderItemTypeSerializerState::Note(
+                                IterSerializer::new(&self.value.note, Some("note"), false),
+                            )
+                        }
+                    },
+                    ShiporderItemTypeSerializerState::Note(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state = ShiporderItemTypeSerializerState::Quantity(
+                                WithSerializer::serializer(
+                                    &self.value.quantity,
+                                    Some("quantity"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    ShiporderItemTypeSerializerState::Quantity(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            self.state =
+                                ShiporderItemTypeSerializerState::Price(WithSerializer::serializer(
+                                    &self.value.price,
+                                    Some("price"),
+                                    false,
+                                )?)
+                        }
+                    },
+                    ShiporderItemTypeSerializerState::Price(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => self.state = ShiporderItemTypeSerializerState::End__,
+                    },
+                    ShiporderItemTypeSerializerState::End__ => {
+                        self.state = ShiporderItemTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ShiporderItemTypeSerializerState::Done__ => return Ok(None),
+                    ShiporderItemTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ShiporderItemTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    self.state = ShiporderItemTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+        },
+        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event, RawByteStr,
+    };
+    #[derive(Debug)]
+    pub struct ShiporderTypeDeserializer {
+        orderid: String,
+        orderperson: Option<String>,
+        shipto: Option<super::ShiporderShiptoType>,
+        item: Vec<super::ShiporderItemType>,
+        state: Box<ShiporderTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ShiporderTypeDeserializerState {
+        Init__,
+        Orderperson(Option<<String as WithDeserializer>::Deserializer>),
+        Shipto(Option<<super::ShiporderShiptoType as WithDeserializer>::Deserializer>),
+        Item(Option<<super::ShiporderItemType as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl ShiporderTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut orderid: Option<String> = None;
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                if attrib.key.local_name().as_ref() == b"orderid" {
+                    reader.read_attrib(&mut orderid, b"orderid", &attrib.value)?;
+                } else {
+                    reader.raise_unexpected_attrib(attrib)?;
+                }
+            }
+            Ok(Self {
+                orderid: orderid.ok_or_else(|| {
+                    reader.map_error(ErrorKind::MissingAttribute("orderid".into()))
+                })?,
+                orderperson: None,
+                shipto: None,
+                item: Vec::new(),
+                state: Box::new(ShiporderTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ShiporderTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use ShiporderTypeDeserializerState as S;
+            match state {
+                S::Orderperson(Some(deserializer)) => {
+                    self.store_orderperson(deserializer.finish(reader)?)?
+                }
+                S::Shipto(Some(deserializer)) => self.store_shipto(deserializer.finish(reader)?)?,
+                S::Item(Some(deserializer)) => self.store_item(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_orderperson(&mut self, value: String) -> Result<(), Error> {
+            if self.orderperson.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"orderperson",
+                )))?;
+            }
+            self.orderperson = Some(value);
+            Ok(())
+        }
+        fn store_shipto(&mut self, value: super::ShiporderShiptoType) -> Result<(), Error> {
+            if self.shipto.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"shipto",
+                )))?;
+            }
+            self.shipto = Some(value);
+            Ok(())
+        }
+        fn store_item(&mut self, value: super::ShiporderItemType) -> Result<(), Error> {
+            self.item.push(value);
+            Ok(())
+        }
+        fn handle_orderperson<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(None));
+                *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_orderperson(data)?;
+                    *self.state = ShiporderTypeDeserializerState::Orderperson(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderTypeDeserializerState::Orderperson(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_shipto<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::ShiporderShiptoType>,
+            fallback: &mut Option<ShiporderTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(None));
+                *self.state = ShiporderTypeDeserializerState::Item(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_shipto(data)?;
+                    *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderTypeDeserializerState::Item(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ShiporderTypeDeserializerState::Shipto(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_item<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::ShiporderItemType>,
+            fallback: &mut Option<ShiporderTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderTypeDeserializerState::Item(None));
+                *self.state = ShiporderTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_item(data)?;
+                    *self.state = ShiporderTypeDeserializerState::Item(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderTypeDeserializerState::Item(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ShiporderTypeDeserializerState::Item(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::ShiporderType> for ShiporderTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::ShiporderType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ShiporderType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use ShiporderTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Orderperson(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_orderperson(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Shipto(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_shipto(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Item(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_item(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = ShiporderTypeDeserializerState::Orderperson(None);
+                        event
+                    }
+                    (S::Orderperson(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"orderperson") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_orderperson(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Shipto(None);
+                            event
+                        }
+                    }
+                    (S::Shipto(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"shipto") {
+                            let output = < super :: ShiporderShiptoType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            match self.handle_shipto(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Item(None);
+                            event
+                        }
+                    }
+                    (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"item") {
+                            let output =
+                                <super::ShiporderItemType as WithDeserializer>::Deserializer::init(
+                                    reader, event,
+                                )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ShiporderType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, ShiporderTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::ShiporderType {
+                orderid: self.orderid,
+                orderperson: self
+                    .orderperson
+                    .ok_or_else(|| ErrorKind::MissingElement("orderperson".into()))?,
+                shipto: self
+                    .shipto
+                    .ok_or_else(|| ErrorKind::MissingElement("shipto".into()))?,
+                item: self.item,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct ShiporderShiptoTypeDeserializer {
+        name: Option<String>,
+        address: Option<String>,
+        city: Option<String>,
+        country: Option<String>,
+        state: Box<ShiporderShiptoTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ShiporderShiptoTypeDeserializerState {
+        Init__,
+        Name(Option<<String as WithDeserializer>::Deserializer>),
+        Address(Option<<String as WithDeserializer>::Deserializer>),
+        City(Option<<String as WithDeserializer>::Deserializer>),
+        Country(Option<<String as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl ShiporderShiptoTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                name: None,
+                address: None,
+                city: None,
+                country: None,
+                state: Box::new(ShiporderShiptoTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ShiporderShiptoTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use ShiporderShiptoTypeDeserializerState as S;
+            match state {
+                S::Name(Some(deserializer)) => self.store_name(deserializer.finish(reader)?)?,
+                S::Address(Some(deserializer)) => {
+                    self.store_address(deserializer.finish(reader)?)?
+                }
+                S::City(Some(deserializer)) => self.store_city(deserializer.finish(reader)?)?,
+                S::Country(Some(deserializer)) => {
+                    self.store_country(deserializer.finish(reader)?)?
+                }
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_name(&mut self, value: String) -> Result<(), Error> {
+            if self.name.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"name")))?;
+            }
+            self.name = Some(value);
+            Ok(())
+        }
+        fn store_address(&mut self, value: String) -> Result<(), Error> {
+            if self.address.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"address",
+                )))?;
+            }
+            self.address = Some(value);
+            Ok(())
+        }
+        fn store_city(&mut self, value: String) -> Result<(), Error> {
+            if self.city.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"city")))?;
+            }
+            self.city = Some(value);
+            Ok(())
+        }
+        fn store_country(&mut self, value: String) -> Result<(), Error> {
+            if self.country.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"country",
+                )))?;
+            }
+            self.country = Some(value);
+            Ok(())
+        }
+        fn handle_name<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(None));
+                *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_name(data)?;
+                    *self.state = ShiporderShiptoTypeDeserializerState::Name(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Name(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_address<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(None));
+                *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_address(data)?;
+                    *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(
+                            Some(deserializer),
+                        ));
+                        *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Address(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_city<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(None));
+                *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_city(data)?;
+                    *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::City(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_country<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderShiptoTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(None));
+                *self.state = ShiporderShiptoTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_country(data)?;
+                    *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(
+                            Some(deserializer),
+                        ));
+                        *self.state = ShiporderShiptoTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Country(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::ShiporderShiptoType> for ShiporderShiptoTypeDeserializer {
+        fn init<R>(
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ShiporderShiptoType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ShiporderShiptoType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use ShiporderShiptoTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Name(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Address(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_address(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::City(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_city(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Country(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_country(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = ShiporderShiptoTypeDeserializerState::Name(None);
+                        event
+                    }
+                    (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"name") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_name(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Address(None);
+                            event
+                        }
+                    }
+                    (S::Address(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"address") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_address(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::City(None);
+                            event
+                        }
+                    }
+                    (S::City(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"city") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_city(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Country(None);
+                            event
+                        }
+                    }
+                    (S::Country(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"country") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_country(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ShiporderShiptoType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(
+                &mut *self.state,
+                ShiporderShiptoTypeDeserializerState::Unknown__,
+            );
+            self.finish_state(reader, state)?;
+            Ok(super::ShiporderShiptoType {
+                name: self
+                    .name
+                    .ok_or_else(|| ErrorKind::MissingElement("name".into()))?,
+                address: self
+                    .address
+                    .ok_or_else(|| ErrorKind::MissingElement("address".into()))?,
+                city: self
+                    .city
+                    .ok_or_else(|| ErrorKind::MissingElement("city".into()))?,
+                country: self
+                    .country
+                    .ok_or_else(|| ErrorKind::MissingElement("country".into()))?,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct ShiporderItemTypeDeserializer {
+        title: Option<String>,
+        note: Option<String>,
+        quantity: Option<usize>,
+        price: Option<f64>,
+        state: Box<ShiporderItemTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ShiporderItemTypeDeserializerState {
+        Init__,
+        Title(Option<<String as WithDeserializer>::Deserializer>),
+        Note(Option<<String as WithDeserializer>::Deserializer>),
+        Quantity(Option<<usize as WithDeserializer>::Deserializer>),
+        Price(Option<<f64 as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl ShiporderItemTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                title: None,
+                note: None,
+                quantity: None,
+                price: None,
+                state: Box::new(ShiporderItemTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ShiporderItemTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use ShiporderItemTypeDeserializerState as S;
+            match state {
+                S::Title(Some(deserializer)) => self.store_title(deserializer.finish(reader)?)?,
+                S::Note(Some(deserializer)) => self.store_note(deserializer.finish(reader)?)?,
+                S::Quantity(Some(deserializer)) => {
+                    self.store_quantity(deserializer.finish(reader)?)?
+                }
+                S::Price(Some(deserializer)) => self.store_price(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_title(&mut self, value: String) -> Result<(), Error> {
+            if self.title.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"title",
+                )))?;
+            }
+            self.title = Some(value);
+            Ok(())
+        }
+        fn store_note(&mut self, value: String) -> Result<(), Error> {
+            if self.note.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"note")))?;
+            }
+            self.note = Some(value);
+            Ok(())
+        }
+        fn store_quantity(&mut self, value: usize) -> Result<(), Error> {
+            if self.quantity.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"quantity",
+                )))?;
+            }
+            self.quantity = Some(value);
+            Ok(())
+        }
+        fn store_price(&mut self, value: f64) -> Result<(), Error> {
+            if self.price.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"price",
+                )))?;
+            }
+            self.price = Some(value);
+            Ok(())
+        }
+        fn handle_title<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderItemTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(None));
+                *self.state = ShiporderItemTypeDeserializerState::Note(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_title(data)?;
+                    *self.state = ShiporderItemTypeDeserializerState::Title(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderItemTypeDeserializerState::Note(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ShiporderItemTypeDeserializerState::Title(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_note<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<ShiporderItemTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Note(None));
+                *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_note(data)?;
+                    *self.state = ShiporderItemTypeDeserializerState::Note(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderItemTypeDeserializerState::Note(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ShiporderItemTypeDeserializerState::Note(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_quantity<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, usize>,
+            fallback: &mut Option<ShiporderItemTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(None));
+                *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_quantity(data)?;
+                    *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state =
+                            ShiporderItemTypeDeserializerState::Quantity(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+        fn handle_price<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, f64>,
+            fallback: &mut Option<ShiporderItemTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(None));
+                *self.state = ShiporderItemTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_price(data)?;
+                    *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(Some(
+                            deserializer,
+                        )));
+                        *self.state = ShiporderItemTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ShiporderItemTypeDeserializerState::Price(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::ShiporderItemType> for ShiporderItemTypeDeserializer {
+        fn init<R>(
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ShiporderItemType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ShiporderItemType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use ShiporderItemTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Title(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_title(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Note(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_note(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Quantity(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_quantity(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Price(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_price(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = ShiporderItemTypeDeserializerState::Title(None);
+                        event
+                    }
+                    (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"title") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_title(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Note(None);
+                            event
+                        }
+                    }
+                    (S::Note(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"note") {
+                            let output =
+                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_note(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Quantity(None);
+                            event
+                        }
+                    }
+                    (S::Quantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"quantity") {
+                            let output =
+                                <usize as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_quantity(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Price(None);
+                            event
+                        }
+                    }
+                    (S::Price(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, None, b"price") {
+                            let output =
+                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_price(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ShiporderItemType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(
+                &mut *self.state,
+                ShiporderItemTypeDeserializerState::Unknown__,
+            );
+            self.finish_state(reader, state)?;
+            Ok(super::ShiporderItemType {
+                title: self
+                    .title
+                    .ok_or_else(|| ErrorKind::MissingElement("title".into()))?,
+                note: self.note,
+                quantity: self
+                    .quantity
+                    .ok_or_else(|| ErrorKind::MissingElement("quantity".into()))?,
+                price: self
+                    .price
+                    .ok_or_else(|| ErrorKind::MissingElement("price".into()))?,
+            })
+        }
+    }
+}

@@ -3,7 +3,10 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
-    quick_xml::{Error, SerializeBytes, WithSerializer},
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
+        Error, ErrorKind, RawByteStr, SerializeBytes, WithSerializer,
+    },
     schema::Namespace,
 };
 pub type Foo = FooType;
@@ -26,6 +29,9 @@ impl WithSerializer for FooType {
         })
     }
 }
+impl WithDeserializer for FooType {
+    type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
+}
 #[derive(Debug, Clone)]
 pub enum EnumType {
     _1,
@@ -38,6 +44,19 @@ impl SerializeBytes for EnumType {
             Self::_1 => Ok(Some(Cow::Borrowed("1"))),
             Self::_2 => Ok(Some(Cow::Borrowed("2"))),
             Self::_3 => Ok(Some(Cow::Borrowed("3"))),
+        }
+    }
+}
+impl DeserializeBytes for EnumType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        match bytes {
+            b"1" => Ok(Self::_1),
+            b"2" => Ok(Self::_2),
+            b"3" => Ok(Self::_3),
+            x => Err(reader.map_error(ErrorKind::UnknownOrInvalidValue(RawByteStr::from_slice(x)))),
         }
     }
 }
@@ -100,6 +119,208 @@ pub mod quick_xml_serialize {
                     Some(Err(error))
                 }
             }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+        },
+        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event, RawByteStr,
+    };
+    #[derive(Debug)]
+    pub struct FooTypeDeserializer {
+        _4: Option<super::EnumType>,
+        state: Box<FooTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum FooTypeDeserializerState {
+        Init__,
+        _4(Option<<super::EnumType as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl FooTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                _4: None,
+                state: Box::new(FooTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: FooTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use FooTypeDeserializerState as S;
+            match state {
+                S::_4(Some(deserializer)) => self.store_4(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_4(&mut self, value: super::EnumType) -> Result<(), Error> {
+            if self._4.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"4")))?;
+            }
+            self._4 = Some(value);
+            Ok(())
+        }
+        fn handle_4<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::EnumType>,
+            fallback: &mut Option<FooTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(FooTypeDeserializerState::_4(None));
+                *self.state = FooTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_4(data)?;
+                    *self.state = FooTypeDeserializerState::_4(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(FooTypeDeserializerState::_4(Some(deserializer)));
+                        *self.state = FooTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = FooTypeDeserializerState::_4(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use FooTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::_4(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_4(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = FooTypeDeserializerState::_4(None);
+                        event
+                    }
+                    (S::_4(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"4") {
+                            let output = <super::EnumType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                            match self.handle_4(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::FooType {
+                _4: self
+                    ._4
+                    .ok_or_else(|| ErrorKind::MissingElement("4".into()))?,
+            })
         }
     }
 }

@@ -3,7 +3,10 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
-    quick_xml::{Error, SerializeBytes},
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader},
+        Error, SerializeBytes,
+    },
     schema::Namespace,
 };
 pub type Foo = FooType;
@@ -24,6 +27,19 @@ impl SerializeBytes for FooType {
             }
         }
         Ok(Some(Cow::Owned(data)))
+    }
+}
+impl DeserializeBytes for FooType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| StringType::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
     }
 }
 pub type StringType = String;

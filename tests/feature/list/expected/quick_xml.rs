@@ -3,7 +3,10 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
-    quick_xml::{Error, SerializeBytes, WithSerializer},
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
+        Error, SerializeBytes, WithSerializer,
+    },
     schema::Namespace,
 };
 pub type Foo = FooType;
@@ -32,6 +35,9 @@ impl WithSerializer for FooType {
         })
     }
 }
+impl WithDeserializer for FooType {
+    type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
+}
 #[derive(Debug, Clone, Default)]
 pub struct ListType(pub Vec<StringType>);
 impl SerializeBytes for ListType {
@@ -49,6 +55,19 @@ impl SerializeBytes for ListType {
             }
         }
         Ok(Some(Cow::Owned(data)))
+    }
+}
+impl DeserializeBytes for ListType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(
+            bytes
+                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                .map(|bytes| StringType::deserialize_bytes(reader, bytes))
+                .collect::<Result<Vec<_>, _>>()?,
+        ))
     }
 }
 pub type StringType = String;
@@ -98,6 +117,102 @@ pub mod quick_xml_serialize {
                     Some(Err(error))
                 }
             }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult,
+        },
+        filter_xmlns_attributes, BytesStart, Error, Event,
+    };
+    #[derive(Debug)]
+    pub struct FooTypeDeserializer {
+        a_list: super::ListType,
+        state: Box<FooTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum FooTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl FooTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut a_list: Option<super::ListType> = None;
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"a-list")
+                ) {
+                    reader.read_attrib(&mut a_list, b"a-list", &attrib.value)?;
+                } else {
+                    reader.raise_unexpected_attrib(attrib)?;
+                }
+            }
+            Ok(Self {
+                a_list: a_list.unwrap_or_else(super::FooType::default_a_list),
+                state: Box::new(FooTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: FooTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    event: None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: Some(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::FooType {
+                a_list: self.a_list,
+            })
         }
     }
 }

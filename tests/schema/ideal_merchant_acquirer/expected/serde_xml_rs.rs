@@ -151,7 +151,7 @@ pub enum X509DataTypeContent {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PgpdataType {
     #[serde(rename = "$value")]
-    pub content: PgpdataTypeContent,
+    pub content: [PgpdataTypeContent; 2usize],
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PgpdataTypeContent {

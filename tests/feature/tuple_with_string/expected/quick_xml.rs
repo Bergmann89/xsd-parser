@@ -3,7 +3,10 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
-    quick_xml::{Error, SerializeBytes},
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader},
+        Error, SerializeBytes,
+    },
     schema::Namespace,
 };
 #[derive(Debug, Clone)]
@@ -11,5 +14,13 @@ pub struct Foo(pub String);
 impl SerializeBytes for Foo {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         self.0.serialize_bytes()
+    }
+}
+impl DeserializeBytes for Foo {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        Ok(Self(String::deserialize_bytes(reader, bytes)?))
     }
 }

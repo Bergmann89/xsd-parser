@@ -1,5 +1,6 @@
 #![allow(dead_code, missing_docs, unreachable_pub)]
 
+use std::fmt::Debug;
 use std::fs::File;
 use std::io::{BufReader, Write};
 use std::path::Path;
@@ -8,12 +9,14 @@ use std::process::{Command, Stdio};
 use quick_xml::Reader;
 use serde::Deserialize;
 
-use xsd_parser::config::IdentTriple;
 use xsd_parser::{
-    config::{Config, Generate, OptimizerFlags, Schema},
+    config::{Config, Generate, IdentTriple, OptimizerFlags, Schema},
     generate,
     generator::GeneratorFlags,
-    quick_xml::{Event, WithSerializer, Writer},
+    quick_xml::{
+        deserialize_new::DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
+        XmlReader,
+    },
 };
 
 pub trait ConfigEx {
@@ -131,10 +134,19 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
     generate_test(&input_xsd, expected_1, config.clone());
 }
 
-pub fn quick_xml_read_test<T, P>(path: P) -> T {
-    let _path = path;
+pub fn quick_xml_read_test<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: DeserializeSync<'static, ErrorReader<IoReader<BufReader<File>>>>,
+    T::Error: Debug,
+{
+    let reader = File::open(path).unwrap();
+    let reader = BufReader::new(reader);
+    let mut reader = IoReader::new(reader).with_error_info();
 
-    unimplemented!()
+    let ret = T::deserialize(&mut reader).unwrap();
+
+    ret
 }
 
 pub fn quick_xml_write_test<T, P>(value: &T, root: &str, path: P)

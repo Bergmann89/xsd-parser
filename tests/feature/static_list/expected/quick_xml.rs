@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{Error, WithSerializer},
+    quick_xml::{deserialize_new::WithDeserializer, Error, WithSerializer},
     schema::Namespace,
 };
 pub type Array = ArrayType;
@@ -24,6 +24,9 @@ impl WithSerializer for ArrayType {
             is_root,
         })
     }
+}
+impl WithDeserializer for ArrayType {
+    type Deserializer = quick_xml_deserialize::ArrayTypeDeserializer;
 }
 pub mod quick_xml_serialize {
     use core::iter::Iterator;
@@ -84,6 +87,210 @@ pub mod quick_xml_serialize {
                     Some(Err(error))
                 }
             }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+        },
+        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event,
+    };
+    #[derive(Debug)]
+    pub struct ArrayTypeDeserializer {
+        item: Vec<i32>,
+        state: Box<ArrayTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ArrayTypeDeserializerState {
+        Init__,
+        Next__,
+        Item(<i32 as WithDeserializer>::Deserializer),
+        Unknown__,
+    }
+    impl ArrayTypeDeserializer {
+        fn find_suitable<'de, R>(
+            &mut self,
+            reader: &R,
+            event: Event<'de>,
+            fallback: &mut Option<ArrayTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let (Event::Start(x) | Event::Empty(x)) = &event else {
+                return Ok(ElementHandlerOutput::break_(Some(event), false));
+            };
+            if matches!(
+                reader.resolve_local_name(x.name(), &super::NS_TNS),
+                Some(b"Item")
+            ) {
+                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                return self.handle_item(reader, output, &mut *fallback);
+            }
+            Ok(ElementHandlerOutput::break_(Some(event), false))
+        }
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                item: Vec::new(),
+                state: Box::new(ArrayTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ArrayTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use ArrayTypeDeserializerState as S;
+            match state {
+                S::Item(deserializer) => self.store_item(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_item(&mut self, value: i32) -> Result<(), Error> {
+            self.item.push(value);
+            Ok(())
+        }
+        fn handle_item<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, i32>,
+            fallback: &mut Option<ArrayTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                let ret = ElementHandlerOutput::from_event(event, allow_any);
+                *self.state = match ret {
+                    ElementHandlerOutput::Continue { .. } => ArrayTypeDeserializerState::Next__,
+                    ElementHandlerOutput::Break { .. } => fallback
+                        .take()
+                        .unwrap_or(ArrayTypeDeserializerState::Next__),
+                };
+                return Ok(ret);
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_item(data)?;
+                    *self.state = ArrayTypeDeserializerState::Next__;
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ArrayTypeDeserializerState::Item(deserializer));
+                        *self.state = ArrayTypeDeserializerState::Next__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ArrayTypeDeserializerState::Item(deserializer);
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::ArrayType> for ArrayTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::ArrayType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ArrayType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use ArrayTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Item(deserializer), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_item(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (old_state @ (S::Init__ | S::Next__), event) => {
+                        match self.find_suitable(reader, event, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => {
+                                if matches!(&*self.state, S::Unknown__) {
+                                    *self.state = old_state;
+                                }
+                                break (event, allow_any);
+                            }
+                        }
+                    }
+                    (S::Unknown__, _) => unreachable!(),
+                }
+            };
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ArrayType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, ArrayTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::ArrayType {
+                item: self
+                    .item
+                    .try_into()
+                    .map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
+                        min: 5usize,
+                        max: 5usize,
+                        actual: vec.len(),
+                    })?,
+            })
         }
     }
 }

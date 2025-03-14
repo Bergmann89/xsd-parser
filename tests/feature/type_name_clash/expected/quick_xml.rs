@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{Error, WithSerializer},
+    quick_xml::{deserialize_new::WithDeserializer, Error, WithSerializer},
     schema::Namespace,
 };
 pub type Foo = FooType;
@@ -25,6 +25,9 @@ impl WithSerializer for FooType {
         })
     }
 }
+impl WithDeserializer for FooType {
+    type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
+}
 #[derive(Debug, Clone)]
 pub struct FooTypeBarType {
     pub a: Option<String>,
@@ -44,6 +47,9 @@ impl WithSerializer for FooTypeBarType {
             is_root,
         })
     }
+}
+impl WithDeserializer for FooTypeBarType {
+    type Deserializer = quick_xml_deserialize::FooTypeBarTypeDeserializer;
 }
 pub mod quick_xml_serialize {
     use core::iter::Iterator;
@@ -152,6 +158,305 @@ pub mod quick_xml_serialize {
                     Some(Err(error))
                 }
             }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+        },
+        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event, RawByteStr,
+    };
+    #[derive(Debug)]
+    pub struct FooTypeDeserializer {
+        bar: Option<super::FooTypeBarType>,
+        state: Box<FooTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum FooTypeDeserializerState {
+        Init__,
+        Bar(Option<<super::FooTypeBarType as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl FooTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                bar: None,
+                state: Box::new(FooTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: FooTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use FooTypeDeserializerState as S;
+            match state {
+                S::Bar(Some(deserializer)) => self.store_bar(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_bar(&mut self, value: super::FooTypeBarType) -> Result<(), Error> {
+            if self.bar.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"Bar")))?;
+            }
+            self.bar = Some(value);
+            Ok(())
+        }
+        fn handle_bar<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::FooTypeBarType>,
+            fallback: &mut Option<FooTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(FooTypeDeserializerState::Bar(None));
+                *self.state = FooTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_bar(data)?;
+                    *self.state = FooTypeDeserializerState::Bar(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(FooTypeDeserializerState::Bar(Some(deserializer)));
+                        *self.state = FooTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = FooTypeDeserializerState::Bar(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use FooTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Bar(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_bar(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        allow_any_element = true;
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = FooTypeDeserializerState::Bar(None);
+                        event
+                    }
+                    (S::Bar(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Bar") {
+                            let output =
+                                <super::FooTypeBarType as WithDeserializer>::Deserializer::init(
+                                    reader, event,
+                                )?;
+                            match self.handle_bar(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break {
+                                    event, allow_any, ..
+                                } => break (event, allow_any),
+                            }
+                        } else {
+                            *self.state = S::Done__;
+                            allow_any_element = true;
+                            fallback.get_or_insert(S::Bar(None));
+                            event
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::FooType {
+                bar: self
+                    .bar
+                    .ok_or_else(|| ErrorKind::MissingElement("Bar".into()))?,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct FooTypeBarTypeDeserializer {
+        a: Option<String>,
+        b: Option<String>,
+        state: Box<FooTypeBarTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum FooTypeBarTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl FooTypeBarTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut a: Option<String> = None;
+            let mut b: Option<String> = None;
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"a")
+                ) {
+                    reader.read_attrib(&mut a, b"a", &attrib.value)?;
+                } else if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"b")
+                ) {
+                    reader.read_attrib(&mut b, b"b", &attrib.value)?;
+                }
+            }
+            Ok(Self {
+                a: a,
+                b: b,
+                state: Box::new(FooTypeBarTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: FooTypeBarTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::FooTypeBarType> for FooTypeBarTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooTypeBarType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FooTypeBarType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    event: None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: Some(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooTypeBarType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, FooTypeBarTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::FooTypeBarType {
+                a: self.a,
+                b: self.b,
+            })
         }
     }
 }

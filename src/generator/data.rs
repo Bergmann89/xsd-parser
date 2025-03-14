@@ -663,9 +663,13 @@ pub(super) struct ComplexTypeBase {
 
     pub tag_name: Option<String>,
     pub is_complex: bool,
+    pub is_dynamic: bool,
 
     pub serializer_ident: Ident2,
     pub serializer_state_ident: Ident2,
+
+    pub deserializer_ident: Ident2,
+    pub deserializer_state_ident: Ident2,
 }
 
 #[derive(Debug)]
@@ -721,17 +725,22 @@ pub(super) struct ComplexTypeContent {
 pub(super) struct ComplexTypeElement<'types> {
     pub info: &'types ElementInfo,
     pub occurs: Occurs,
+    pub s_name: String,
+    pub b_name: Literal,
     pub tag_name: String,
     pub field_ident: Ident2,
     pub variant_ident: Ident2,
     pub target_type: IdentPath,
     pub need_indirection: bool,
+    pub target_is_dynamic: bool,
 }
 
 #[derive(Debug)]
 pub(super) struct ComplexTypeAttribute<'types> {
     pub info: &'types AttributeInfo,
     pub ident: Ident2,
+    pub s_name: String,
+    pub b_name: Literal,
     pub tag_name: String,
     pub is_option: bool,
     pub target_type: IdentPath,
@@ -1121,7 +1130,7 @@ impl ComplexTypeBase {
     }
 
     pub(crate) fn represents_element(&self) -> bool {
-        self.is_complex && self.tag_name.is_some()
+        self.is_complex && self.tag_name.is_some() && !self.is_dynamic
     }
 
     fn new(req: &mut Request<'_, '_>) -> Result<Self, Error> {
@@ -1130,8 +1139,12 @@ impl ComplexTypeBase {
 
         let mut ret = Self::new_empty(type_ident);
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
-        ret.is_complex = matches!(req.types.get(req.ident), Some(Type::ComplexType(_)));
         ret.trait_impls = req.make_trait_impls()?;
+
+        if let Some(Type::ComplexType(ci)) = req.types.get(req.ident) {
+            ret.is_complex = true;
+            ret.is_dynamic = ci.is_dynamic;
+        }
 
         Ok(ret)
     }
@@ -1140,15 +1153,22 @@ impl ComplexTypeBase {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
+        let deserializer_ident = format_ident!("{type_ident}Deserializer");
+        let deserializer_state_ident = format_ident!("{type_ident}DeserializerState");
+
         Self {
             type_ident,
             trait_impls: Vec::new(),
 
             tag_name: None,
             is_complex: false,
+            is_dynamic: false,
 
             serializer_ident,
             serializer_state_ident,
+
+            deserializer_ident,
+            deserializer_state_ident,
         }
     }
 }
@@ -1182,6 +1202,16 @@ impl ComplexTypeStruct<'_> {
             elements
         } else {
             &[]
+        }
+    }
+
+    pub(super) fn any_element(&self) -> Option<&AnyInfo> {
+        if let StructMode::All { any_element, .. } | StructMode::Sequence { any_element, .. } =
+            &self.mode
+        {
+            *any_element
+        } else {
+            None
         }
     }
 
@@ -1235,6 +1265,8 @@ impl<'types> ComplexTypeElement<'types> {
         }
 
         let tag_name = make_tag_name(req.types, &info.ident);
+        let s_name = info.ident.name.to_string();
+        let b_name = Literal::byte_string(s_name.as_bytes());
         let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
@@ -1243,15 +1275,19 @@ impl<'types> ComplexTypeElement<'types> {
 
         let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
+        let target_is_dynamic = is_dynamic(&info.type_, req.types);
 
         Ok(Some(Self {
             info,
             occurs,
+            s_name,
+            b_name,
             tag_name,
             field_ident,
             variant_ident,
             target_type,
             need_indirection,
+            target_is_dynamic,
         }))
     }
 }
@@ -1269,6 +1305,8 @@ impl<'types> ComplexTypeAttribute<'types> {
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let target_type = IdentPath::from_type_ref(target_ref);
+        let s_name = info.ident.name.to_string();
+        let b_name = Literal::byte_string(s_name.as_bytes());
         let tag_name = make_tag_name(req.types, &info.ident);
 
         let default_value = info
@@ -1281,6 +1319,8 @@ impl<'types> ComplexTypeAttribute<'types> {
         Ok(Some(Self {
             info,
             ident,
+            s_name,
+            b_name,
             tag_name,
             is_option,
             target_type,
@@ -1318,6 +1358,19 @@ impl_render!(DynamicType);
 impl_render!(ReferenceType);
 impl_render!(EnumerationType);
 impl_render!(ComplexType);
+
+fn is_dynamic(ident: &Ident, types: &Types) -> bool {
+    let Some(ty) = types.get(ident) else {
+        return false;
+    };
+
+    match ty {
+        Type::Dynamic(_) => true,
+        Type::ComplexType(ci) => ci.is_dynamic,
+        Type::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+        _ => false,
+    }
+}
 
 fn make_tag_name(types: &Types, ident: &Ident) -> String {
     let name = ident.name.to_string();

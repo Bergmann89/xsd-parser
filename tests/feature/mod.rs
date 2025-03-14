@@ -1,9 +1,10 @@
-#![allow(missing_docs, unused_variables, unreachable_pub)]
+#![allow(unused_mut, missing_docs, unused_variables, unreachable_pub)]
 
 mod all;
 mod any;
 mod build_in;
 mod choice;
+mod choice_with_sequence;
 mod complex_type_with_group;
 mod complex_type_with_repeated_content;
 mod dynamic_types;
@@ -18,7 +19,6 @@ mod numeric_fields;
 mod ref_to_attribute;
 mod sequence;
 mod sequence_with_choice;
-mod shiporder;
 mod simple_content;
 mod simple_type;
 mod static_list;

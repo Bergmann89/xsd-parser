@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{BoxedSerializer, Error, WithSerializer},
+    quick_xml::{deserialize_new::WithDeserializer, BoxedSerializer, Error, WithSerializer},
     schema::Namespace,
 };
 pub type List = ListType;
@@ -25,6 +25,9 @@ impl WithSerializer for ListType {
         })
     }
 }
+impl WithDeserializer for ListType {
+    type Deserializer = quick_xml_deserialize::ListTypeDeserializer;
+}
 #[derive(Debug)]
 pub struct Base(pub Box<dyn BaseTrait>);
 pub trait BaseTrait:
@@ -41,6 +44,9 @@ impl WithSerializer for Base {
         let _name = name;
         self.0.serializer(None, is_root)
     }
+}
+impl WithDeserializer for Base {
+    type Deserializer = quick_xml_deserialize::BaseDeserializer;
 }
 #[derive(Debug)]
 pub struct IntermediateType {
@@ -63,6 +69,9 @@ impl WithSerializer for IntermediateType {
             is_root,
         })
     }
+}
+impl WithDeserializer for IntermediateType {
+    type Deserializer = quick_xml_deserialize::IntermediateTypeDeserializer;
 }
 #[derive(Debug)]
 pub struct FinalType {
@@ -87,6 +96,9 @@ impl WithSerializer for FinalType {
         })
     }
 }
+impl WithDeserializer for FinalType {
+    type Deserializer = quick_xml_deserialize::FinalTypeDeserializer;
+}
 #[derive(Debug)]
 pub struct Intermediate(pub Box<dyn IntermediateTrait>);
 pub trait IntermediateTrait: BaseTrait {}
@@ -100,6 +112,9 @@ impl WithSerializer for Intermediate {
         let _name = name;
         self.0.serializer(None, is_root)
     }
+}
+impl WithDeserializer for Intermediate {
+    type Deserializer = quick_xml_deserialize::IntermediateDeserializer;
 }
 pub mod quick_xml_serialize {
     use core::iter::Iterator;
@@ -262,6 +277,615 @@ pub mod quick_xml_serialize {
                     self.state = FinalTypeSerializerState::Done__;
                     Some(Err(error))
                 }
+            }
+        }
+    }
+}
+pub mod quick_xml_deserialize {
+    use core::mem::replace;
+    use xsd_parser::quick_xml::{
+        deserialize_new::{
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
+            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+        },
+        filter_xmlns_attributes, BytesStart, Error, Event, QName,
+    };
+    #[derive(Debug)]
+    pub struct ListTypeDeserializer {
+        base: Vec<super::Base>,
+        state: Box<ListTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ListTypeDeserializerState {
+        Init__,
+        Base(Option<<super::Base as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl ListTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                reader.raise_unexpected_attrib(attrib)?;
+            }
+            Ok(Self {
+                base: Vec::new(),
+                state: Box::new(ListTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ListTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use ListTypeDeserializerState as S;
+            match state {
+                S::Base(Some(deserializer)) => self.store_base(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_base(&mut self, value: super::Base) -> Result<(), Error> {
+            self.base.push(value);
+            Ok(())
+        }
+        fn handle_base<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::Base>,
+            fallback: &mut Option<ListTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(ListTypeDeserializerState::Base(None));
+                *self.state = ListTypeDeserializerState::Done__;
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_base(data)?;
+                    *self.state = ListTypeDeserializerState::Base(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
+                    {
+                        fallback.get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
+                        *self.state = ListTypeDeserializerState::Done__;
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    } else {
+                        *self.state = ListTypeDeserializerState::Base(Some(deserializer));
+                        ElementHandlerOutput::break_(event, allow_any)
+                    }
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::ListType> for ListTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::ListType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ListType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            use ListTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Base(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_base(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: None,
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = ListTypeDeserializerState::Base(None);
+                        event
+                    }
+                    (S::Base(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output =
+                            <super::Base as WithDeserializer>::Deserializer::init(reader, event)?;
+                        match self.handle_base(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break {
+                                event, allow_any, ..
+                            } => break (event, allow_any),
+                        }
+                    }
+                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (Some(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ListType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, ListTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::ListType { base: self.base })
+        }
+    }
+    #[derive(Debug)]
+    pub enum BaseDeserializer {
+        Intermediate(<super::IntermediateType as WithDeserializer>::Deserializer),
+        Final(<super::FinalType as WithDeserializer>::Deserializer),
+    }
+    impl<'de> Deserializer<'de, super::Base> for BaseDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::Base>
+        where
+            R: DeserializeReader,
+        {
+            let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
+                return Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::None,
+                    event: None,
+                    allow_any: false,
+                });
+            };
+            let type_name = type_name.into_owned();
+            if matches!(
+                reader.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                Some(b"intermediate")
+            ) {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = <super::IntermediateType as WithDeserializer>::Deserializer::init(
+                    reader, event,
+                )?;
+                return Ok(DeserializerOutput {
+                    artifact: artifact.map(|x| super::Base(Box::new(x)), |x| Self::Intermediate(x)),
+                    event,
+                    allow_any,
+                });
+            }
+            if matches!(
+                reader.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                Some(b"final")
+            ) {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = <super::FinalType as WithDeserializer>::Deserializer::init(reader, event)?;
+                return Ok(DeserializerOutput {
+                    artifact: artifact.map(|x| super::Base(Box::new(x)), |x| Self::Final(x)),
+                    event,
+                    allow_any,
+                });
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::None,
+                event: Some(event),
+                allow_any: false,
+            })
+        }
+        fn next<R>(self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::Base>
+        where
+            R: DeserializeReader,
+        {
+            match self {
+                Self::Intermediate(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(reader, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::Base(Box::new(x)), |x| Self::Intermediate(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+                Self::Final(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(reader, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact.map(|x| super::Base(Box::new(x)), |x| Self::Final(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+            }
+        }
+        fn finish<R>(self, reader: &R) -> Result<super::Base, Error>
+        where
+            R: DeserializeReader,
+        {
+            match self {
+                Self::Intermediate(x) => Ok(super::Base(Box::new(x.finish(reader)?))),
+                Self::Final(x) => Ok(super::Base(Box::new(x.finish(reader)?))),
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct IntermediateTypeDeserializer {
+        base_value: Option<i32>,
+        intermediate_value: Option<i32>,
+        state: Box<IntermediateTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum IntermediateTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl IntermediateTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut base_value: Option<i32> = None;
+            let mut intermediate_value: Option<i32> = None;
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"baseValue")
+                ) {
+                    reader.read_attrib(&mut base_value, b"baseValue", &attrib.value)?;
+                } else if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"intermediateValue")
+                ) {
+                    reader.read_attrib(
+                        &mut intermediate_value,
+                        b"intermediateValue",
+                        &attrib.value,
+                    )?;
+                } else {
+                    reader.raise_unexpected_attrib(attrib)?;
+                }
+            }
+            Ok(Self {
+                base_value: base_value,
+                intermediate_value: intermediate_value,
+                state: Box::new(IntermediateTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: IntermediateTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::IntermediateType> for IntermediateTypeDeserializer {
+        fn init<R>(
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::IntermediateType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::IntermediateType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    event: None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: Some(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::IntermediateType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(
+                &mut *self.state,
+                IntermediateTypeDeserializerState::Unknown__,
+            );
+            self.finish_state(reader, state)?;
+            Ok(super::IntermediateType {
+                base_value: self.base_value,
+                intermediate_value: self.intermediate_value,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct FinalTypeDeserializer {
+        base_value: Option<i32>,
+        intermediate_value: Option<i32>,
+        final_value: Option<i32>,
+        state: Box<FinalTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum FinalTypeDeserializerState {
+        Init__,
+        Unknown__,
+    }
+    impl FinalTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut base_value: Option<i32> = None;
+            let mut intermediate_value: Option<i32> = None;
+            let mut final_value: Option<i32> = None;
+            for attrib in filter_xmlns_attributes(&bytes_start) {
+                let attrib = attrib?;
+                if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"baseValue")
+                ) {
+                    reader.read_attrib(&mut base_value, b"baseValue", &attrib.value)?;
+                } else if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"intermediateValue")
+                ) {
+                    reader.read_attrib(
+                        &mut intermediate_value,
+                        b"intermediateValue",
+                        &attrib.value,
+                    )?;
+                } else if matches!(
+                    reader.resolve_local_name(attrib.key, &super::NS_TNS),
+                    Some(b"finalValue")
+                ) {
+                    reader.read_attrib(&mut final_value, b"finalValue", &attrib.value)?;
+                } else {
+                    reader.raise_unexpected_attrib(attrib)?;
+                }
+            }
+            Ok(Self {
+                base_value: base_value,
+                intermediate_value: intermediate_value,
+                final_value: final_value,
+                state: Box::new(FinalTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: FinalTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            Ok(())
+        }
+    }
+    impl<'de> Deserializer<'de, super::FinalType> for FinalTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FinalType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("INIT", &event);
+            reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::FinalType>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("NEXT", &event, &self);
+            if let Event::End(_) = &event {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                    event: None,
+                    allow_any: false,
+                })
+            } else {
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: Some(event),
+                    allow_any: false,
+                })
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::FinalType, Error>
+        where
+            R: DeserializeReader,
+        {
+            dbg!("FINISH", &self);
+            let state = replace(&mut *self.state, FinalTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::FinalType {
+                base_value: self.base_value,
+                intermediate_value: self.intermediate_value,
+                final_value: self.final_value,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub enum IntermediateDeserializer {
+        Intermediate(<super::IntermediateType as WithDeserializer>::Deserializer),
+        Final(<super::FinalType as WithDeserializer>::Deserializer),
+    }
+    impl<'de> Deserializer<'de, super::Intermediate> for IntermediateDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::Intermediate>
+        where
+            R: DeserializeReader,
+        {
+            let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
+                return Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::None,
+                    event: None,
+                    allow_any: false,
+                });
+            };
+            let type_name = type_name.into_owned();
+            if matches!(
+                reader.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                Some(b"intermediate")
+            ) {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = <super::IntermediateType as WithDeserializer>::Deserializer::init(
+                    reader, event,
+                )?;
+                return Ok(DeserializerOutput {
+                    artifact: artifact.map(
+                        |x| super::Intermediate(Box::new(x)),
+                        |x| Self::Intermediate(x),
+                    ),
+                    event,
+                    allow_any,
+                });
+            }
+            if matches!(
+                reader.resolve_local_name(QName(&type_name), &super::NS_TNS),
+                Some(b"final")
+            ) {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = <super::FinalType as WithDeserializer>::Deserializer::init(reader, event)?;
+                return Ok(DeserializerOutput {
+                    artifact: artifact
+                        .map(|x| super::Intermediate(Box::new(x)), |x| Self::Final(x)),
+                    event,
+                    allow_any,
+                });
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::None,
+                event: Some(event),
+                allow_any: false,
+            })
+        }
+        fn next<R>(
+            self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::Intermediate>
+        where
+            R: DeserializeReader,
+        {
+            match self {
+                Self::Intermediate(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(reader, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact.map(
+                            |x| super::Intermediate(Box::new(x)),
+                            |x| Self::Intermediate(x),
+                        ),
+                        event,
+                        allow_any,
+                    })
+                }
+                Self::Final(x) => {
+                    let DeserializerOutput {
+                        artifact,
+                        event,
+                        allow_any,
+                    } = x.next(reader, event)?;
+                    Ok(DeserializerOutput {
+                        artifact: artifact
+                            .map(|x| super::Intermediate(Box::new(x)), |x| Self::Final(x)),
+                        event,
+                        allow_any,
+                    })
+                }
+            }
+        }
+        fn finish<R>(self, reader: &R) -> Result<super::Intermediate, Error>
+        where
+            R: DeserializeReader,
+        {
+            match self {
+                Self::Intermediate(x) => Ok(super::Intermediate(Box::new(x.finish(reader)?))),
+                Self::Final(x) => Ok(super::Intermediate(Box::new(x.finish(reader)?))),
             }
         }
     }

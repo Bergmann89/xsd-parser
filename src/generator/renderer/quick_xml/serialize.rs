@@ -523,6 +523,9 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let xsd_parser = &ctx.xsd_parser_crate;
+        ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::BytesStart)]);
+
         let xmlns = self.render_serializer_xmlns(ctx);
         let bytes_ctor = if xmlns.is_empty() {
             quote! {
