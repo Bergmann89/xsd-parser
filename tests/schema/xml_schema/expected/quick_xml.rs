@@ -1376,7 +1376,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -1387,7 +1386,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use SchemaElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1437,7 +1435,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 SchemaElementTypeDeserializerState::Unknown__,
@@ -2644,7 +2641,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -2661,7 +2657,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -3032,7 +3027,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Include(mut values, deserializer) => {
@@ -3282,7 +3276,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -3293,7 +3286,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use IncludeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3368,7 +3360,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 IncludeElementTypeDeserializerState::Unknown__,
@@ -3511,7 +3502,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -3522,7 +3512,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ImportElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3597,7 +3586,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ImportElementTypeDeserializerState::Unknown__,
@@ -3726,7 +3714,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -3737,7 +3724,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use RedefineElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -3787,7 +3773,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 RedefineElementTypeDeserializerState::Unknown__,
@@ -4284,7 +4269,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -4301,7 +4285,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -4466,7 +4449,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -4633,7 +4615,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -4644,7 +4625,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use OverrideElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -4694,7 +4674,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 OverrideElementTypeDeserializerState::Unknown__,
@@ -5450,7 +5429,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -5467,7 +5445,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -5706,7 +5683,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -5894,7 +5870,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -5905,7 +5880,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AnnotationElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -5955,7 +5929,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 AnnotationElementTypeDeserializerState::Unknown__,
@@ -6182,7 +6155,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -6199,7 +6171,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -6287,7 +6258,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Appinfo(mut values, deserializer) => {
@@ -6506,7 +6476,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -6517,7 +6486,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use DefaultOpenContentElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6627,7 +6595,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 DefaultOpenContentElementTypeDeserializerState::Unknown__,
@@ -6762,7 +6729,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -6773,7 +6739,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use SimpleBaseTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -6826,7 +6791,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, SimpleBaseTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::SimpleBaseType {
@@ -7218,7 +7182,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -7235,7 +7198,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -7373,7 +7335,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -7571,7 +7532,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -7582,7 +7542,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ComplexBaseTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -7632,7 +7591,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ComplexBaseTypeDeserializerState::Unknown__,
@@ -8755,7 +8713,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -8772,7 +8729,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -9097,7 +9053,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -9344,7 +9299,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -9355,7 +9309,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use GroupTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -9408,7 +9361,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, GroupTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::GroupType {
@@ -10047,7 +9999,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -10064,7 +10015,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -10275,7 +10225,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -10466,7 +10415,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -10477,7 +10425,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AttributeGroupTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -10527,7 +10474,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 AttributeGroupTypeDeserializerState::Unknown__,
@@ -10939,7 +10885,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -10956,7 +10901,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -11094,7 +11038,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -11354,7 +11297,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -11365,7 +11307,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -11418,7 +11359,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, ElementTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ElementType {
@@ -12086,7 +12026,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -12103,7 +12042,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -12316,7 +12254,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -12629,7 +12566,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -12640,7 +12576,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AttributeTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -12749,7 +12684,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, AttributeTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AttributeType {
@@ -12907,7 +12841,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -12918,7 +12851,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use NotationElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -12993,7 +12925,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 NotationElementTypeDeserializerState::Unknown__,
@@ -13057,7 +12988,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -13068,7 +12998,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
@@ -13087,7 +13016,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 AppinfoElementTypeDeserializerState::Unknown__,
@@ -13157,7 +13085,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -13168,7 +13095,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
@@ -13187,7 +13113,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 DocumentationElementTypeDeserializerState::Unknown__,
@@ -13334,7 +13259,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -13345,7 +13269,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use WildcardTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -13420,7 +13343,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, WildcardTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::WildcardType {
@@ -13549,7 +13471,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -13560,7 +13481,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use RestrictionElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -13610,7 +13530,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 RestrictionElementTypeDeserializerState::Unknown__,
@@ -13920,7 +13839,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -13937,7 +13855,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -14051,7 +13968,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -14264,7 +14180,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -14275,7 +14190,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ListElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -14384,7 +14298,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ListElementTypeDeserializerState::Unknown__,
@@ -14575,7 +14488,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -14586,7 +14498,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use UnionElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -14695,7 +14606,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 UnionElementTypeDeserializerState::Unknown__,
@@ -14820,7 +14730,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -14831,7 +14740,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use SimpleContentElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -14881,7 +14789,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 SimpleContentElementTypeDeserializerState::Unknown__,
@@ -15191,7 +15098,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -15208,7 +15114,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -15324,7 +15229,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -15477,7 +15381,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -15488,7 +15391,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ComplexContentElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -15538,7 +15440,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ComplexContentElementTypeDeserializerState::Unknown__,
@@ -15849,7 +15750,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -15866,7 +15766,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -15982,7 +15881,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -16194,7 +16092,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -16205,7 +16102,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use OpenContentElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -16314,7 +16210,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 OpenContentElementTypeDeserializerState::Unknown__,
@@ -16480,7 +16375,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -16491,7 +16385,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AnyAttributeElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -16566,7 +16459,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 AnyAttributeElementTypeDeserializerState::Unknown__,
@@ -16713,7 +16605,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -16724,7 +16615,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AssertionTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -16799,7 +16689,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, AssertionTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AssertionType {
@@ -16970,7 +16859,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -16981,7 +16869,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AnyElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -17056,7 +16943,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, AnyElementTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AnyElementType {
@@ -17197,7 +17083,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -17208,7 +17093,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use AltTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -17261,7 +17145,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, AltTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AltType {
@@ -17573,7 +17456,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -17590,7 +17472,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -17706,7 +17587,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -17860,7 +17740,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -17871,7 +17750,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use KeybaseTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -17924,7 +17802,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, KeybaseTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::KeybaseType {
@@ -18139,7 +18016,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self {
                 annotation: None,
                 selector: None,
@@ -18165,7 +18041,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use KeybaseTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -18308,7 +18183,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 KeybaseTypeContentDeserializerState::Unknown__,
@@ -18455,7 +18329,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -18466,7 +18339,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use KeyrefElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -18516,7 +18388,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 KeyrefElementTypeDeserializerState::Unknown__,
@@ -18740,7 +18611,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self {
                 annotation: None,
                 selector: None,
@@ -18766,7 +18636,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use KeyrefElementTypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -18909,7 +18778,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 KeyrefElementTypeContentDeserializerState::Unknown__,
@@ -20209,7 +20077,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -20222,7 +20089,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -20610,7 +20476,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::MinExclusive(mut values, deserializer) => {
@@ -20854,7 +20719,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -20865,7 +20729,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use RestrictionTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -20915,7 +20778,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 RestrictionTypeDeserializerState::Unknown__,
@@ -22017,7 +21879,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -22034,7 +21895,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -22363,7 +22223,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -22588,7 +22447,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -22599,7 +22457,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ExtensionTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -22652,7 +22509,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, ExtensionTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ExtensionType {
@@ -23577,7 +23433,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let deserializer = Self::Init__;
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
@@ -23594,7 +23449,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any, finish) = loop {
@@ -23875,7 +23729,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 Self::Annotation(mut values, deserializer) => {
@@ -24107,7 +23960,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -24118,7 +23970,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use FieldElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -24193,7 +24044,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 FieldElementTypeDeserializerState::Unknown__,
@@ -24334,7 +24184,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -24345,7 +24194,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use FacetTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -24420,7 +24268,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, FacetTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FacetType {

@@ -280,7 +280,6 @@ pub(super) struct Context<'a, 'types> {
     deserialize_module_path: ModulePath,
 }
 
-#[allow(dead_code)] // TODO
 impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn new(
         ident: &'a Ident,
@@ -406,8 +405,8 @@ impl<'types> Deref for Context<'_, 'types> {
 /* UnionType */
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct UnionType<'types> {
+    #[allow(dead_code)]
     pub info: &'types UnionInfo,
     pub type_ident: Ident2,
     pub variants: Vec<UnionTypeVariant<'types>>,
@@ -415,8 +414,8 @@ pub(super) struct UnionType<'types> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct UnionTypeVariant<'types> {
+    #[allow(dead_code)]
     pub info: &'types UnionTypeInfo,
     pub target_type: IdentPath,
     pub variant_ident: Ident2,
@@ -461,8 +460,8 @@ impl UnionTypeInfo {
 /* DynamicType */
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct DynamicType<'types> {
+    #[allow(dead_code)]
     pub info: &'types DynamicInfo,
     pub type_ident: Ident2,
     pub trait_ident: Ident2,
@@ -472,10 +471,8 @@ pub(super) struct DynamicType<'types> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct DerivedType {
     pub ident: Ident,
-    pub s_name: String,
     pub b_name: Literal,
     pub target_type: IdentPath,
     pub variant_ident: Ident2,
@@ -525,8 +522,8 @@ impl<'types> DynamicType<'types> {
 /* ReferenceType */
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct ReferenceType<'types> {
+    #[allow(dead_code)]
     pub info: &'types ReferenceInfo,
     pub mode: TypedefMode,
     pub occurs: Occurs,
@@ -563,8 +560,8 @@ impl<'types> ReferenceType<'types> {
 /* EnumerationType */
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct EnumerationType<'types> {
+    #[allow(dead_code)]
     pub info: &'types EnumerationInfo,
     pub type_ident: Ident2,
     pub variants: Vec<EnumerationTypeVariant<'types>>,
@@ -644,7 +641,6 @@ impl VariantInfo {
 /* ComplexType */
 
 #[derive(Debug)]
-#[allow(dead_code, clippy::large_enum_variant)] // TODO
 pub(super) enum ComplexType<'types> {
     Enum {
         type_: ComplexTypeEnum<'types>,
@@ -673,7 +669,6 @@ pub(super) struct ComplexTypeBase {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeEnum<'types> {
     pub base: ComplexTypeBase,
 
@@ -683,7 +678,6 @@ pub(super) struct ComplexTypeEnum<'types> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeStruct<'types> {
     pub base: ComplexTypeBase,
     pub mode: StructMode<'types>,
@@ -693,7 +687,6 @@ pub(super) struct ComplexTypeStruct<'types> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) enum StructMode<'types> {
     Empty {
         any_element: Option<&'types AnyInfo>,
@@ -712,12 +705,10 @@ pub(super) enum StructMode<'types> {
 }
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO
 pub(super) struct ComplexTypeContent {
     pub occurs: Occurs,
     pub is_simple: bool,
     pub min_occurs: MinOccurs,
-    pub max_occurs: MaxOccurs,
     pub target_type: IdentPath,
 }
 
@@ -898,7 +889,6 @@ impl<'types> ComplexType<'types> {
             occurs,
             is_simple: true,
             min_occurs,
-            max_occurs,
             target_type,
         };
         let type_ = ComplexTypeStruct {
@@ -983,7 +973,6 @@ impl<'types> ComplexType<'types> {
                 occurs,
                 is_simple: false,
                 min_occurs,
-                max_occurs,
                 target_type,
             };
 
@@ -1100,7 +1089,6 @@ impl<'types> ComplexType<'types> {
                 occurs,
                 is_simple: false,
                 min_occurs,
-                max_occurs,
                 target_type,
             };
 
@@ -1411,7 +1399,6 @@ fn make_derived_type_data<'types>(
 
     Ok(DerivedType {
         ident,
-        s_name,
         b_name,
         target_type,
         variant_ident,

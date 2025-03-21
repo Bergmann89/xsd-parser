@@ -587,8 +587,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("INIT", &event);
-
                     #fn_init
                 }
 
@@ -600,8 +598,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("NEXT", &event, &self);
-
                     #fn_next
                 }
 
@@ -609,8 +605,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("FINISH", &self);
-
                     #fn_finish
                 }
             }
