@@ -21,6 +21,7 @@ mod sequence;
 mod sequence_with_choice;
 mod simple_content;
 mod simple_type;
+mod simple_type_max_length;
 mod static_list;
 mod tuple_with_integer;
 mod tuple_with_string;

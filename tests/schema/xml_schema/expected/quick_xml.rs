@@ -545,7 +545,7 @@ impl DeserializeBytes for DefaultOpenContentModeType {
 pub struct WildcardType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<NotNamespaceType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
     pub process_contents: ProcessContentsType,
     pub annotation: Option<AnnotationElementType>,
 }
@@ -687,7 +687,7 @@ impl WithDeserializer for OpenContentElementType {
 pub struct AnyAttributeElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<NotNamespaceType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListAType>,
     pub annotation: Option<AnnotationElementType>,
@@ -731,7 +731,7 @@ impl DeserializeBytes for AllNNIType {
 pub struct AnyElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<NotNamespaceType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: usize,
@@ -869,8 +869,8 @@ impl DeserializeBytes for NamespaceListType {
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
-impl DeserializeBytes for NotNamespaceType {
+pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
+impl DeserializeBytes for BasicNamespaceListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1062,21 +1062,6 @@ pub struct FieldElementType {
 }
 impl WithDeserializer for FieldElementType {
     type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
-}
-#[derive(Debug, Clone, Default)]
-pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
-impl DeserializeBytes for BasicNamespaceListType {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
-    where
-        R: DeserializeReader,
-    {
-        Ok(Self(
-            bytes
-                .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(reader, bytes))
-                .collect::<Result<Vec<_>, _>>()?,
-        ))
-    }
 }
 #[derive(Debug, Clone)]
 pub enum BasicNamespaceListItemType {
@@ -13218,7 +13203,7 @@ pub mod quick_xml_deserialize {
     pub struct WildcardTypeDeserializer {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::NotNamespaceType>,
+        not_namespace: Option<super::BasicNamespaceListType>,
         process_contents: super::ProcessContentsType,
         annotation: Option<super::AnnotationElementType>,
         state: Box<WildcardTypeDeserializerState>,
@@ -13237,7 +13222,7 @@ pub mod quick_xml_deserialize {
         {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::NotNamespaceType> = None;
+            let mut not_namespace: Option<super::BasicNamespaceListType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             for attrib in filter_xmlns_attributes(&bytes_start) {
                 let attrib = attrib?;
@@ -16347,7 +16332,7 @@ pub mod quick_xml_deserialize {
     pub struct AnyAttributeElementTypeDeserializer {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::NotNamespaceType>,
+        not_namespace: Option<super::BasicNamespaceListType>,
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListAType>,
         annotation: Option<super::AnnotationElementType>,
@@ -16367,7 +16352,7 @@ pub mod quick_xml_deserialize {
         {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::NotNamespaceType> = None;
+            let mut not_namespace: Option<super::BasicNamespaceListType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListAType> = None;
             for attrib in filter_xmlns_attributes(&bytes_start) {
@@ -16829,7 +16814,7 @@ pub mod quick_xml_deserialize {
     pub struct AnyElementTypeDeserializer {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::NotNamespaceType>,
+        not_namespace: Option<super::BasicNamespaceListType>,
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListType>,
         min_occurs: usize,
@@ -16851,7 +16836,7 @@ pub mod quick_xml_deserialize {
         {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::NotNamespaceType> = None;
+            let mut not_namespace: Option<super::BasicNamespaceListType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListType> = None;
             let mut min_occurs: Option<usize> = None;
