@@ -133,6 +133,13 @@ impl Ident {
         }
     }
 
+    /// Create an [`Ident`]ifier suitable for field names with the given `name`.
+    #[must_use]
+    pub const fn name(name: &'static str) -> Self {
+        // We do not have a separate `IdentType` for fields, so we just use `IdentType::Type`
+        Self::type_(name)
+    }
+
     /// Set the namespace of the identifier.
     #[must_use]
     pub fn with_ns(mut self, ns: Option<NamespaceId>) -> Self {
