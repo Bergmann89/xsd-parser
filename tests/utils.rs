@@ -13,10 +13,7 @@ use xsd_parser::{
     config::{Config, Generate, IdentTriple, OptimizerFlags, Schema},
     generate,
     generator::GeneratorFlags,
-    quick_xml::{
-        deserialize_new::DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
-        XmlReader,
-    },
+    quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
 };
 
 pub trait ConfigEx {

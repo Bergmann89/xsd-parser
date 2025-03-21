@@ -1,15 +1,12 @@
 #![allow(
-    missing_docs,
-    unused_imports,
-    clippy::large_enum_variant,
+    unused_mut,
+    unused_variables,
     clippy::redundant_field_names,
-    clippy::single_match,
-    clippy::too_many_lines,
-    clippy::wildcard_imports
+    clippy::large_enum_variant
 )]
 
 use super::{MaxOccurs, QName};
 
 pub type Use = AttributeUseType;
 
-include!("./xs_generated.rs");
+include!("./xs_generated_new.rs");
