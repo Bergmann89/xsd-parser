@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <DirectoryReq xmlns="http://www.betaalvereniging.nl/iDx/messages/Merchant-Acquirer/1.0.0"
-    xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" productID="NL:BVN:eMandatesCore:1.0"
-    version="1.0.0">
+    xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" version="1.0.0">
     <createDateTimestamp>2025-02-25T12:05:24.743Z</createDateTimestamp>
     <Merchant>
         <merchantID>0000000001</merchantID>

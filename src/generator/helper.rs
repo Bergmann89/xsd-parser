@@ -1,140 +1,14 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, BTreeSet, HashSet};
+use std::str::FromStr;
 
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::quote;
-use tracing::instrument;
 
-use crate::schema::{xs::Use, NamespaceId};
-use crate::types::{BuildInInfo, ComplexInfo, Ident, Type, Types};
+use crate::generator::misc::IdentPath;
+use crate::schema::xs::Use;
+use crate::types::{ComplexInfo, Ident, Type, Types};
 
-use super::misc::{format_type_ref, format_variant_ident, Occurs, TypeRef};
-use super::{Error, GenerateFlags, Generator};
-
-/* Helpers */
-
-impl Generator<'_> {
-    pub(super) fn check_generate_flags(&self, mode: GenerateFlags) -> bool {
-        self.generate_flags.intersects(mode)
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn get_default(
-        &mut self,
-        current_ns: Option<NamespaceId>,
-        default: &str,
-        ident: &Ident,
-    ) -> Result<TokenStream, Error> {
-        let ty = self
-            .types
-            .get(ident)
-            .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-        let type_ref = self.get_or_create_type_ref(ident.clone())?;
-
-        macro_rules! build_in {
-            ($ty:ty) => {
-                if let Ok(val) = default.parse::<$ty>() {
-                    return Ok(quote!(#val));
-                }
-            };
-        }
-
-        match ty {
-            Type::BuildIn(BuildInInfo::U8) => build_in!(u8),
-            Type::BuildIn(BuildInInfo::U16) => build_in!(u16),
-            Type::BuildIn(BuildInInfo::U32) => build_in!(u32),
-            Type::BuildIn(BuildInInfo::U64) => build_in!(u64),
-            Type::BuildIn(BuildInInfo::U128) => build_in!(u128),
-            Type::BuildIn(BuildInInfo::Usize) => build_in!(usize),
-
-            Type::BuildIn(BuildInInfo::I8) => build_in!(i8),
-            Type::BuildIn(BuildInInfo::I16) => build_in!(i16),
-            Type::BuildIn(BuildInInfo::I32) => build_in!(i32),
-            Type::BuildIn(BuildInInfo::I64) => build_in!(i64),
-            Type::BuildIn(BuildInInfo::I128) => build_in!(i128),
-            Type::BuildIn(BuildInInfo::Isize) => build_in!(isize),
-
-            Type::BuildIn(BuildInInfo::F32) => build_in!(f32),
-            Type::BuildIn(BuildInInfo::F64) => build_in!(f64),
-
-            Type::BuildIn(BuildInInfo::Bool) => match default.to_ascii_lowercase().as_str() {
-                "true" | "yes" | "1" => return Ok(quote!(true)),
-                "false" | "no" | "0" => return Ok(quote!(false)),
-                _ => (),
-            },
-            Type::BuildIn(BuildInInfo::String) => {
-                return Ok(quote!(String::from(#default)));
-            }
-            Type::BuildIn(BuildInInfo::Custom(x)) => {
-                if let Some(x) = x.default(default) {
-                    return Ok(x);
-                }
-            }
-
-            Type::Enumeration(ei) => {
-                let target_type = format_type_ref(current_ns, type_ref);
-
-                for var in &*ei.variants {
-                    if var.type_.is_none()
-                        && matches!(var.ident.name.as_str(), Some(x) if x == default)
-                    {
-                        let variant_ident =
-                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
-
-                        return Ok(quote!(#target_type :: #variant_ident));
-                    }
-
-                    if let Some(target_ident) = &var.type_ {
-                        if let Ok(default) = self.get_default(current_ns, default, target_ident) {
-                            let variant_ident = match self.cache.get(target_ident) {
-                                Some(type_ref) if var.ident.name.is_unnamed() => {
-                                    type_ref.type_ident.clone()
-                                }
-                                _ => format_variant_ident(
-                                    &var.ident.name,
-                                    var.display_name.as_deref(),
-                                ),
-                            };
-
-                            return Ok(quote!(#target_type :: #variant_ident(#default)));
-                        }
-                    }
-                }
-            }
-
-            Type::Union(ui) => {
-                let target_type = format_type_ref(current_ns, type_ref);
-
-                for ty in &*ui.types {
-                    if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
-                        let variant_ident =
-                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
-
-                        return Ok(quote! {
-                            #target_type :: #variant_ident ( #code )
-                        });
-                    }
-                }
-            }
-
-            Type::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
-                Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
-                Occurs::DynamicList if default.is_empty() => {
-                    let type_ident = format_type_ref(current_ns, type_ref);
-
-                    return Ok(quote! { #type_ident(Vec::new()) });
-                }
-                _ => (),
-            },
-
-            _ => (),
-        }
-
-        Err(Error::InvalidDefaultValue(
-            ident.clone(),
-            default.to_owned(),
-        ))
-    }
-}
+use super::misc::{Occurs, TypeRef};
 
 /* Walk */
 
@@ -222,4 +96,63 @@ impl<'a> Walk<'a> {
 
         ret
     }
+}
+
+pub(super) fn render_usings<I>(usings: I) -> TokenStream
+where
+    I: IntoIterator,
+    I::Item: AsRef<str>,
+{
+    #[derive(Default)]
+    struct Module {
+        usings: BTreeSet<Ident2>,
+        sub_modules: BTreeMap<Ident2, Module>,
+    }
+
+    impl Module {
+        fn render(&self) -> TokenStream {
+            let count = self.usings.len() + self.sub_modules.len();
+
+            let usings = self.usings.iter().map(|ident| quote!(#ident));
+            let sub_modules = self.sub_modules.iter().map(|(ident, module)| {
+                let using = module.render();
+
+                quote!(#ident::#using)
+            });
+
+            let items = usings.chain(sub_modules);
+
+            if count > 1 {
+                quote!({ #( #items ),* })
+            } else {
+                quote!(#( #items )*)
+            }
+        }
+    }
+
+    let mut root = Module::default();
+
+    for using in usings {
+        let using = using.as_ref();
+        let Ok(ident) = IdentPath::from_str(using) else {
+            continue;
+        };
+
+        let (ident, path) = ident.into_parts();
+
+        let mut module = &mut root;
+        for part in path.into_iter().flat_map(|x| x.0) {
+            module = module.sub_modules.entry(part).or_default();
+        }
+
+        module.usings.insert(ident);
+    }
+
+    let mut ret = TokenStream::new();
+    for (ident, module) in &root.sub_modules {
+        let using = module.render();
+        ret.extend(quote!(use #ident::#using;));
+    }
+
+    ret
 }

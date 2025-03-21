@@ -7,7 +7,7 @@ use anyhow::Error;
 use clap::Parser;
 use tracing_subscriber::{fmt, EnvFilter};
 use xsd_parser::{
-    config::{GenerateFlags, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema},
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema},
     generate, Config,
 };
 
@@ -38,7 +38,7 @@ fn main() -> Result<(), Error> {
     config.parser.schemas = inputs.into_iter().map(Schema::File).collect();
     config.interpreter.flags = InterpreterFlags::all();
     config.optimizer.flags = OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES;
-    config.generator.flags = GenerateFlags::all();
+    config.generator.flags = GeneratorFlags::all();
 
     if let Some(out_dir) = args
         .enable_debug_output

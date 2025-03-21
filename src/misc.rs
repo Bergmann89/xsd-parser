@@ -110,13 +110,21 @@ impl From<&'static str> for RawByteStr {
 
 impl Debug for RawByteStr {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        format_utf8_slice(&self.0, f)
+        write!(f, "\"")?;
+        format_utf8_slice(&self.0, f)?;
+        write!(f, "\"")?;
+
+        Ok(())
     }
 }
 
 impl Display for RawByteStr {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        format_utf8_slice(&self.0, f)
+        write!(f, "\"")?;
+        format_utf8_slice(&self.0, f)?;
+        write!(f, "\"")?;
+
+        Ok(())
     }
 }
 

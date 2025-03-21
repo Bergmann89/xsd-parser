@@ -1,75 +1,104 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use tracing::instrument;
 
-use super::super::data::{
-    AttributeData, ComplexTypeData, DynamicData, EnumerationData, ReferenceData, UnionData,
+use crate::generator::{
+    data::{
+        ComplexType, ComplexTypeAttribute, ComplexTypeStruct, DynamicType, EnumerationType,
+        ReferenceType, UnionType,
+    },
+    Context,
 };
-use super::super::misc::StateFlags;
 
-pub(crate) struct ImplRenderer;
+/* UnionType */
 
-impl ImplRenderer {
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_union(&mut self, data: &mut UnionData<'_, '_>) {
+impl UnionType<'_> {
+    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
+        let _ctx = ctx;
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
+/* DynamicType */
+
+impl DynamicType<'_> {
+    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
+        let _ctx = ctx;
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_reference(&mut self, data: &mut ReferenceData<'_, '_>) {
+/* ReferenceType */
+
+impl ReferenceType<'_> {
+    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
+        let _ctx = ctx;
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_enumeration(&mut self, data: &mut EnumerationData<'_, '_>) {
+/* EnumerationType */
+
+impl EnumerationType<'_> {
+    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
         let _self = self;
-
-        data.current_type_ref_mut()
-            .add_flag_checked(StateFlags::HAS_TYPE);
+        let _ctx = ctx;
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_complex_type(&mut self, data: &mut ComplexTypeData<'_, '_>) {
-        let type_ref = data.current_type_ref();
-        let type_ident = &type_ref.type_ident;
+/* ComplexType */
+
+impl ComplexType<'_> {
+    pub(crate) fn render_impl(&self, ctx: &mut Context<'_, '_>) {
+        match self {
+            ComplexType::Enum {
+                type_: _,
+                content_type,
+            } => {
+                if let Some(content_type) = content_type {
+                    content_type.render_impl(ctx);
+                }
+            }
+            ComplexType::Struct {
+                type_,
+                content_type,
+            } => {
+                type_.render_impl(ctx);
+
+                if let Some(content_type) = content_type {
+                    content_type.render_impl(ctx);
+                }
+            }
+        }
+    }
+}
+
+impl ComplexTypeStruct<'_> {
+    pub(crate) fn render_impl(&self, ctx: &mut Context<'_, '_>) {
+        let type_ident = &self.type_ident;
         let mut has_attributes = false;
-        let attribute_defaults = data
+        let attribute_defaults = self
             .attributes
             .iter()
-            .filter_map(AttributeData::render_attribute_default_fn)
+            .filter_map(ComplexTypeAttribute::render_default_fn)
             .inspect(|_| has_attributes = true);
 
-        let code = quote! {
+        let impl_ = quote! {
             impl #type_ident {
                 #( #attribute_defaults )*
             }
         };
 
         if has_attributes {
-            data.add_code(code);
+            ctx.main().code(impl_);
         }
     }
 }
 
-impl AttributeData<'_> {
-    fn render_attribute_default_fn(&self) -> Option<TokenStream> {
+impl ComplexTypeAttribute<'_> {
+    fn render_default_fn(&self) -> Option<TokenStream> {
         let default = self.default_value.as_ref()?;
-        let target_type = &self.target_type;
-        let default_fn_ident = format_ident!("default_{}", self.field_ident);
+        let target_type = self.target_type.ident();
+        let default_fn_ident = format_ident!("default_{}", self.ident);
 
         Some(quote! {
             #[must_use]

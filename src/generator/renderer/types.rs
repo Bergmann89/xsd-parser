@@ -1,46 +1,36 @@
 use std::fmt::Display;
-use std::ops::Not;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
-use tracing::instrument;
 
-use crate::schema::xs::Use;
-
-use super::super::data::{
-    AttributeData, ComplexTypeData, DynamicData, ElementData, EnumVariantData, EnumerationData,
-    ReferenceData, TraitData, TypeData, UnionData, UnionVariantData,
+use crate::{
+    config::{GeneratorFlags, SerdeSupport, TypedefMode},
+    generator::{
+        data::{
+            ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement,
+            ComplexTypeEnum, ComplexTypeStruct, DynamicType, EnumerationType,
+            EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
+        },
+        misc::{IdentPath, Occurs},
+        Config, Context, DynTypeTraits,
+    },
+    schema::xs::Use,
 };
-use super::super::misc::{
-    BoxFlags, DynTypeTraits, GenerateFlags, Occurs, StateFlags, TypeMode, TypedefMode,
-};
-use super::super::{Generator, SerdeSupport};
 
-pub(crate) struct TypeRenderer;
+/* UnionType */
 
-impl TypeRenderer {
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_union(&mut self, data: &mut UnionData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
-        let type_ident = type_ref.type_ident.clone();
-        let derive = Self::get_derive(data, Option::<String>::None);
-        let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
-        let variants = data.variants.iter().map(|data| {
-            let UnionVariantData {
-                variant_ident,
-                target_type,
-                ..
-            } = data;
-
-            quote! {
-                #variant_ident ( #target_type ),
-            }
-        });
+impl UnionType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            trait_impls,
+            variants,
+            ..
+        } = self;
+        let derive = get_derive(ctx, Option::<String>::None);
+        let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
+        let variants = variants.iter().map(|x| x.render_variant(ctx));
 
         let code = quote! {
             #derive
@@ -51,27 +41,47 @@ impl TypeRenderer {
             #( #trait_impls )*
         };
 
-        data.add_code(code);
+        ctx.main().code(code);
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_dynamic(&mut self, data: &mut DynamicData<'_, '_>) {
-        let type_ref = data.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
+/* UnionTypeVariant */
+
+impl UnionTypeVariant<'_> {
+    fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let Self {
+            variant_ident,
+            target_type,
+            ..
+        } = self;
+
+        let target_type = ctx.resolve_type_for_module(target_type);
+
+        quote! {
+            #variant_ident ( #target_type ),
         }
+    }
+}
 
-        let type_ident = type_ref.type_ident.clone();
-        let xsd_crate = &data.xsd_parser_crate;
-        let trait_ident = &data.trait_ident;
-        let derive = Self::get_derive(data, Option::<String>::None);
-        let trait_impls = Self::render_trait_impls(&data.inner, &[]);
+/* DynamicType */
 
-        let dyn_traits = if let Some(traits) = &data.sub_traits {
-            Self::format_traits(traits)
-        } else {
-            Self::get_dyn_type_traits(data, [quote!(#xsd_crate::AsAny)])
-        };
+impl DynamicType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            trait_ident,
+            sub_traits,
+            ..
+        } = self;
+
+        let xsd_crate = &ctx.xsd_parser_crate;
+
+        let derive = get_derive(ctx, Option::<String>::None);
+        let trait_impls = render_trait_impls(ctx, type_ident, &[]);
+        let dyn_traits = sub_traits.as_ref().map_or_else(
+            || get_dyn_type_traits(ctx, [quote!(#xsd_crate::AsAny)]),
+            |traits| format_traits(traits.iter().map(|x| ctx.resolve_type_for_module(x))),
+        );
 
         let code = quote! {
             #derive
@@ -82,33 +92,38 @@ impl TypeRenderer {
             #( #trait_impls )*
         };
 
-        data.add_code(code);
+        ctx.main().code(code);
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_reference(&mut self, data: &mut ReferenceData<'_, '_>) {
-        let ReferenceData {
+/* ReferenceType */
+
+impl ReferenceType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
             mode,
-            inner,
             occurs,
             type_ident,
-            target_ident,
+            target_type,
+            trait_impls,
             ..
-        } = data;
+        } = self;
+
+        let target_type = ctx.resolve_type_for_module(target_type);
 
         let code = match mode {
             TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
-                let target_type = occurs.make_type(target_ident, false);
+                let target_type = occurs.make_type(&target_type, false);
 
                 quote! { pub type #type_ident = #target_type; }
             }
             TypedefMode::NewType => {
-                let target_type = occurs.make_type(target_ident, false);
+                let target_type = occurs.make_type(&target_type, false);
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
-                let derive = Self::get_derive(inner, extra_derive);
-                let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
+                let derive = get_derive(ctx, extra_derive);
+                let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
 
                 quote! {
                     #derive
@@ -119,54 +134,27 @@ impl TypeRenderer {
             }
         };
 
-        data.add_code(code);
+        ctx.main().code(code);
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_enumeration(&mut self, data: &mut EnumerationData<'_, '_>) {
-        let EnumerationData {
-            inner,
+/* EnumerationType */
+
+impl EnumerationType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
             type_ident,
             variants,
+            trait_impls,
             ..
-        } = data;
+        } = self;
 
-        let type_ref = inner.current_type_ref_mut();
-        if type_ref.add_flag_checked(StateFlags::HAS_TYPE) {
-            return;
-        }
-
-        let derive = Self::get_derive(inner, Option::<String>::None);
-        let trait_impls = Self::render_trait_impls(inner, &data.trait_impls);
+        let derive = get_derive(ctx, Option::<String>::None);
+        let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
 
         let variants = variants
             .iter()
-            .map(|d| {
-                let EnumVariantData {
-                    var,
-                    variant_ident,
-                    target_type,
-                } = d;
-
-                let serde = if inner.serde_support == SerdeSupport::None {
-                    None
-                } else if var.type_.is_some() {
-                    Some(quote!(#[serde(other)]))
-                } else {
-                    let name = format!("{}", d.var.ident.name);
-
-                    Some(quote!(#[serde(rename = #name)]))
-                };
-
-                let target_type = target_type
-                    .as_ref()
-                    .map(|target_type| quote!((#target_type)));
-
-                quote! {
-                    #serde
-                    #variant_ident #target_type,
-                }
-            })
+            .map(|d| d.render_variant(ctx))
             .collect::<Vec<_>>();
 
         let code = quote! {
@@ -178,289 +166,162 @@ impl TypeRenderer {
             #( #trait_impls )*
         };
 
-        data.add_code(code);
+        ctx.main().code(code);
     }
+}
 
-    #[instrument(level = "trace", skip(self))]
-    pub fn render_complex_type(&mut self, data: &mut ComplexTypeData<'_, '_>) {
-        let derive = Self::get_derive(data, Option::<String>::None);
-        let type_ident = data.current_type_ref().type_ident.clone();
-        let trait_impls = Self::render_trait_impls(&data.inner, &data.trait_impls);
-        let attributes = data
-            .attributes
-            .iter()
-            .map(|attrib| attrib.render_field(&type_ident, data));
+impl EnumerationTypeVariant<'_> {
+    fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let Self {
+            info,
+            variant_ident,
+            target_type,
+        } = self;
 
-        // If the target mode for the content is `Simple` it will generate a simple content sequence.
-        if matches!(data.type_mode, TypeMode::Simple) {
-            let content_type = &data.simple_content.as_ref().map(|x| &x.target_type);
+        let serde = if ctx.serde_support == SerdeSupport::None {
+            None
+        } else if info.type_.is_some() {
+            Some(quote!(#[serde(other)]))
+        } else {
+            let name = format!("{}", info.ident.name);
 
-            let serde = match data.serde_support {
-                SerdeSupport::None => None,
-                SerdeSupport::QuickXml => Some(quote!(#[serde(rename = "$text")])),
-                SerdeSupport::SerdeXmlRs => Some(quote!(#[serde(rename = "$value")])),
-            };
-
-            let code = quote! {
-                #derive
-                pub struct #type_ident {
-                    #( #attributes )*
-
-                    #serde
-                    pub content: #content_type,
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // If the target mode for the content is `All` or `Sequence` we will generate a sequence.
-        if matches!(data.type_mode, TypeMode::All | TypeMode::Sequence) {
-            let elements = data
-                .elements
-                .iter()
-                .map(|element| element.render_sequence_field(data));
-
-            let code = quote! {
-                #derive
-                pub struct #type_ident {
-                    #( #attributes )*
-                    #( #elements )*
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // Otherwise the content should be rendered as enum. If the attributes are empty
-        // we will render the enum directly.
-        let elements = data
-            .elements
-            .iter()
-            .map(|element| element.render_choice_variant(data.occurs.is_direct(), data));
-        if data.attributes.is_empty()
-            && data.check_generate_flags(GenerateFlags::FLATTEN_CONTENT)
-            && data.occurs == Occurs::Single
-        {
-            let code = quote! {
-                #derive
-                pub enum #type_ident {
-                    #( #elements )*
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
-        }
-
-        // If we do not have a content at all, we render a struct with the attributes only.
-        let content_ident = &data.content_ident;
-        let Some(content_type) = data.occurs.make_type(&quote!(#content_ident), false) else {
-            let code = quote! {
-                #derive
-                pub struct #type_ident {
-                    #( #attributes )*
-                }
-
-                #( #trait_impls )*
-            };
-
-            return data.add_code(code);
+            Some(quote!(#[serde(rename = #name)]))
         };
 
-        // If we have attributes and content, we render a struct containing the
-        // attributes and a enum containing the content.
-        let serde = data.serde_support.is_none().not().then(|| {
-            let default = (data.min_occurs == 0).then(|| quote!(default,));
+        let target_type = target_type.as_ref().map(|target_type| {
+            let target_type = ctx.resolve_type_for_module(target_type);
 
-            quote!(#[serde(#default rename = "$value")])
+            quote!((#target_type))
         });
+
+        quote! {
+            #serde
+            #variant_ident #target_type,
+        }
+    }
+}
+
+/* ComplexType */
+
+impl ComplexType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        match self {
+            Self::Enum {
+                type_,
+                content_type,
+            } => {
+                type_.render_type(ctx);
+
+                if let Some(content_type) = content_type {
+                    content_type.render_types(ctx);
+                }
+            }
+            Self::Struct {
+                type_,
+                content_type,
+            } => {
+                type_.render_type(ctx);
+
+                if let Some(content_type) = content_type {
+                    content_type.render_types(ctx);
+                }
+            }
+        };
+    }
+}
+
+impl ComplexTypeEnum<'_> {
+    fn render_type(&self, ctx: &mut Context<'_, '_>) {
+        let derive = get_derive(ctx, Option::<String>::None);
+        let type_ident = &self.type_ident;
+        let trait_impls = render_trait_impls(ctx, type_ident, &self.trait_impls);
+
+        let variants = self.elements.iter().map(|x| x.render_variant(ctx));
+
         let code = quote! {
             #derive
-            pub struct #type_ident {
-                #( #attributes )*
-
-                #serde
-                pub content: #content_type,
-            }
-
-            #derive
-            pub enum #content_ident {
-                #( #elements )*
+            pub enum #type_ident {
+                #( #variants )*
             }
 
             #( #trait_impls )*
         };
 
-        data.add_code(code);
-    }
-
-    fn get_derive<I>(generator: &Generator<'_>, extra: I) -> TokenStream
-    where
-        I: IntoIterator,
-        I::Item: Display,
-    {
-        let serde: SmallVec<[Ident2; 2]> = if generator.serde_support == SerdeSupport::None {
-            smallvec![]
-        } else {
-            smallvec![format_ident!("Serialize"), format_ident!("Deserialize")]
-        };
-
-        let extra = extra.into_iter().map(|x| format_ident!("{x}"));
-        let types = generator
-            .derive
-            .iter()
-            .cloned()
-            .chain(serde)
-            .chain(extra)
-            .collect::<Vec<_>>();
-
-        if types.is_empty() {
-            quote! {}
-        } else {
-            quote! {
-                #[derive( #( #types ),* )]
-            }
-        }
-    }
-
-    fn get_dyn_type_traits<I>(generator: &Generator<'_>, extra: I) -> TokenStream
-    where
-        I: IntoIterator,
-        I::Item: Into<TokenStream>,
-    {
-        let xsd_parser = &generator.xsd_parser_crate;
-
-        let serde: SmallVec<[TokenStream; 2]> = if generator.serde_support == SerdeSupport::None {
-            smallvec![]
-        } else {
-            smallvec![quote!(serde::Serialize), quote!(serde::DeserializeOwned)]
-        };
-
-        let traits = match &generator.dyn_type_traits {
-            DynTypeTraits::Custom(x) => x.clone(),
-            DynTypeTraits::Auto => generator
-                .derive
-                .iter()
-                .map(|x| match x.to_string().as_str() {
-                    "Debug" => quote!(core::fmt::Debug),
-                    "Hash" => quote!(core::has::Hash),
-                    _ => quote!(#x),
-                })
-                .chain(serde)
-                .chain(
-                    generator
-                        .check_generate_flags(GenerateFlags::QUICK_XML_SERIALIZE)
-                        .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
-                )
-                .chain(extra.into_iter().map(Into::into))
-                .collect::<Vec<_>>(),
-        };
-
-        Self::format_traits(traits)
-    }
-
-    fn format_traits<I>(iter: I) -> TokenStream
-    where
-        I: IntoIterator,
-        I::Item: ToTokens,
-    {
-        let parts =
-            iter.into_iter()
-                .enumerate()
-                .map(|(i, x)| if i == 0 { quote!(#x) } else { quote!(+ #x) });
-
-        quote! {
-            #( #parts )*
-        }
-    }
-
-    fn render_trait_impls<'a>(
-        type_data: &'a TypeData<'_, '_>,
-        trait_data: &'a [TraitData],
-    ) -> impl Iterator<Item = TokenStream> + 'a {
-        let trait_with_namespace = type_data
-            .check_generate_flags(GenerateFlags::WITH_NAMESPACE_TRAIT)
-            .then(|| Self::render_trait_with_namespace(type_data))
-            .flatten();
-
-        let type_ident = &type_data.current_type_ref().type_ident;
-        trait_data
-            .iter()
-            .map(move |TraitData { trait_ident, .. }| {
-                quote! {
-                    impl #trait_ident for #type_ident { }
-                }
-            })
-            .chain(trait_with_namespace)
-    }
-
-    fn render_trait_with_namespace(data: &TypeData<'_, '_>) -> Option<TokenStream> {
-        let ns = data.ident.ns.as_ref()?;
-        let module = data.types.modules.get(ns)?;
-
-        let xsd_parser = &data.xsd_parser_crate;
-        let type_ident = &data.current_type_ref().type_ident;
-
-        let (prefix, namespace) = match (&module.name, &module.namespace) {
-            (Some(prefix), Some(namespace)) => {
-                let prefix = prefix.to_string();
-                let namespace = namespace.to_string();
-
-                (quote!(Some(#prefix)), quote!(Some(#namespace)))
-            }
-            (None, Some(namespace)) => {
-                let namespace = namespace.to_string();
-
-                (quote!(None), quote!(Some(#namespace)))
-            }
-            (_, None) => (quote!(None), quote!(None)),
-        };
-
-        let code = quote! {
-            impl #xsd_parser::WithNamespace for #type_ident {
-                fn prefix() -> Option<&'static str> {
-                    #prefix
-                }
-
-                fn namespace() -> Option<&'static str> {
-                    #namespace
-                }
-            }
-        };
-
-        Some(code)
+        ctx.main().code(code);
     }
 }
 
-impl AttributeData<'_> {
-    fn render_field(&self, type_ident: &Ident2, generator: &Generator<'_>) -> TokenStream {
-        let field_ident = &self.field_ident;
-        let target_type = &self.target_type;
+impl ComplexTypeStruct<'_> {
+    fn render_type(&self, ctx: &mut Context<'_, '_>) {
+        let derive = get_derive(ctx, Option::<String>::None);
+        let type_ident = &self.type_ident;
+        let trait_impls = render_trait_impls(ctx, type_ident, &self.trait_impls);
+
+        let attributes = self
+            .attributes
+            .iter()
+            .map(|x| x.render_field(ctx, type_ident));
+        let fields = self.elements().iter().map(|x| x.render_field(ctx));
+        let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
+
+        let code = quote! {
+            #derive
+            pub struct #type_ident {
+                #( #attributes )*
+                #( #fields )*
+                #content
+            }
+
+            #( #trait_impls )*
+        };
+
+        ctx.main().code(code);
+    }
+}
+
+impl ComplexTypeContent {
+    fn render_field(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let target_type = ctx.resolve_type_for_module(&self.target_type);
+        let target_type = self.occurs.make_type(&target_type, false)?;
+        let serde_default = (self.min_occurs == 0).then(|| quote!(default,));
+        let serde = match (ctx.serde_support, self.is_simple) {
+            (SerdeSupport::None, _) => None,
+            (SerdeSupport::QuickXml, true) => {
+                Some(quote!(#[serde(#serde_default rename = "$text")]))
+            }
+            (_, _) => Some(quote!(#[serde(#serde_default rename = "$value")])),
+        };
+
+        Some(quote! {
+            #serde
+            pub content: #target_type,
+        })
+    }
+}
+
+impl ComplexTypeAttribute<'_> {
+    fn render_field(&self, ctx: &Context<'_, '_>, type_ident: &Ident2) -> TokenStream {
+        let field_ident = &self.ident;
+        let target_type = ctx.resolve_type_for_module(&self.target_type);
         let default = if self.default_value.is_some() {
             let default_path = format!("{type_ident}::default_{field_ident}");
 
             quote!(default = #default_path,)
-        } else if self.attrib.use_ == Use::Optional {
+        } else if self.info.use_ == Use::Optional {
             quote!(default,)
         } else {
             quote!()
         };
 
-        let serde = match generator.serde_support {
+        let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml => {
-                let name = format!("@{}", self.attrib.ident.name);
+                let name = format!("@{}", self.info.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
             SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", self.attrib.ident.name);
+                let name = format!("{}", self.info.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
@@ -480,20 +341,19 @@ impl AttributeData<'_> {
     }
 }
 
-impl ElementData<'_> {
-    fn render_sequence_field(&self, generator: &Generator<'_>) -> TokenStream {
+impl ComplexTypeElement<'_> {
+    fn render_field(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let field_ident = &self.field_ident;
-        let force_box = generator.box_flags.contains(BoxFlags::STRUCT_ELEMENTS);
-        let need_indirection = self.need_box || force_box;
+        let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
             .occurs
-            .make_type(&self.target_type, need_indirection)
+            .make_type(&target_type, self.need_indirection)
             .unwrap();
 
-        let serde = match generator.serde_support {
+        let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", self.element.ident.name);
+                let name = self.info.ident.name.to_string();
                 let default = match self.occurs {
                     Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
                     Occurs::Optional | Occurs::DynamicList => quote!(default,),
@@ -509,16 +369,15 @@ impl ElementData<'_> {
         }
     }
 
-    fn render_choice_variant(&self, is_direct: bool, data: &TypeData<'_, '_>) -> TokenStream {
-        let force_box = data.box_flags.contains(BoxFlags::ENUM_ELEMENTS);
-        let need_indirection = (is_direct && self.need_box) || force_box;
+    fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let variant_ident = &self.variant_ident;
-        let target_type = self.occurs.make_type(&self.target_type, need_indirection);
+        let target_type = ctx.resolve_type_for_module(&self.target_type);
+        let target_type = self.occurs.make_type(&target_type, self.need_indirection);
 
-        let serde = match data.serde_support {
+        let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", self.element.ident.name);
+                let name = self.info.ident.name.to_string();
 
                 Some(quote!(#[serde(rename = #name)]))
             }
@@ -529,4 +388,143 @@ impl ElementData<'_> {
             #variant_ident(#target_type),
         }
     }
+}
+
+/* Helper */
+
+fn get_derive<I>(ctx: &Context<'_, '_>, extra: I) -> TokenStream
+where
+    I: IntoIterator,
+    I::Item: Display,
+{
+    let serde: SmallVec<[Ident2; 2]> = if ctx.serde_support == SerdeSupport::None {
+        smallvec![]
+    } else {
+        ctx.add_usings([quote!(serde::Serialize), quote!(serde::Deserialize)]);
+
+        smallvec![format_ident!("Serialize"), format_ident!("Deserialize")]
+    };
+
+    let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+    let types = ctx
+        .derive
+        .iter()
+        .cloned()
+        .chain(serde)
+        .chain(extra)
+        .collect::<Vec<_>>();
+
+    if types.is_empty() {
+        quote! {}
+    } else {
+        quote! {
+            #[derive( #( #types ),* )]
+        }
+    }
+}
+
+fn get_dyn_type_traits<I>(config: &Config<'_>, extra: I) -> TokenStream
+where
+    I: IntoIterator,
+    I::Item: Into<TokenStream>,
+{
+    let xsd_parser = &config.xsd_parser_crate;
+
+    let serde: SmallVec<[TokenStream; 2]> = if config.serde_support == SerdeSupport::None {
+        smallvec![]
+    } else {
+        smallvec![quote!(serde::Serialize), quote!(serde::DeserializeOwned)]
+    };
+
+    format_traits(match &config.dyn_type_traits {
+        DynTypeTraits::Custom(x) => x.clone(),
+        DynTypeTraits::Auto => config
+            .derive
+            .iter()
+            .map(|x| match x.to_string().as_str() {
+                "Debug" => quote!(core::fmt::Debug),
+                "Hash" => quote!(core::has::Hash),
+                _ => quote!(#x),
+            })
+            .chain(serde)
+            .chain(
+                config
+                    .check_flags(GeneratorFlags::QUICK_XML_SERIALIZE)
+                    .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
+            )
+            .chain(extra.into_iter().map(Into::into))
+            .collect::<Vec<_>>(),
+    })
+}
+
+fn format_traits<I>(iter: I) -> TokenStream
+where
+    I: IntoIterator,
+    I::Item: ToTokens,
+{
+    let parts = iter
+        .into_iter()
+        .enumerate()
+        .map(|(i, x)| if i == 0 { quote!(#x) } else { quote!(+ #x) });
+
+    quote! {
+        #( #parts )*
+    }
+}
+
+fn render_trait_impls<'a>(
+    ctx: &Context<'_, '_>,
+    type_ident: &'a Ident2,
+    trait_data: &'a [IdentPath],
+) -> impl Iterator<Item = TokenStream> + 'a {
+    let trait_with_namespace = ctx
+        .check_flags(GeneratorFlags::WITH_NAMESPACE_TRAIT)
+        .then(|| render_trait_with_namespace(ctx, type_ident))
+        .flatten();
+
+    trait_data
+        .iter()
+        .map(move |trait_ident| {
+            let trait_ident = trait_ident.ident();
+
+            quote! {
+                impl #trait_ident for #type_ident { }
+            }
+        })
+        .chain(trait_with_namespace)
+}
+
+fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Option<TokenStream> {
+    let ns = ctx.current_ns()?;
+    let module = ctx.types.modules.get(&ns)?;
+    let xsd_parser = &ctx.xsd_parser_crate;
+
+    let (prefix, namespace) = match (&module.name, &module.namespace) {
+        (Some(prefix), Some(namespace)) => {
+            let prefix = prefix.to_string();
+            let namespace = namespace.to_string();
+
+            (quote!(Some(#prefix)), quote!(Some(#namespace)))
+        }
+        (None, Some(namespace)) => {
+            let namespace = namespace.to_string();
+
+            (quote!(None), quote!(Some(#namespace)))
+        }
+        (_, None) => (quote!(None), quote!(None)),
+    };
+
+    let code = quote! {
+        impl #xsd_parser::WithNamespace for #type_ident {
+            fn prefix() -> Option<&'static str> {
+                #prefix
+            }
+
+            fn namespace() -> Option<&'static str> {
+                #namespace
+            }
+        }
+    };
+
+    Some(code)
 }

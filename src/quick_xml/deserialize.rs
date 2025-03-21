@@ -1,10 +1,16 @@
+use std::borrow::Cow;
 use std::fmt::Debug;
 use std::marker::PhantomData;
 use std::str::{from_utf8, FromStr};
 
-use quick_xml::events::Event;
+use quick_xml::events::attributes::Attribute;
+use quick_xml::name::QName;
+use quick_xml::{
+    events::Event,
+    name::{Namespace, ResolveResult},
+};
 
-use super::{Error, ErrorKind, XmlReader, XmlReaderSync};
+use super::{Error, ErrorKind, RawByteStr, XmlReader, XmlReaderSync};
 
 /// Trait that defines the [`Deserializer`] for a type.
 pub trait WithDeserializer: Sized {
@@ -262,6 +268,184 @@ where
         T::deserialize_bytes(reader, self.data[..].trim_ascii())
     }
 }
+
+/* DeserializeReader */
+
+/// Reader trait with additional helper methods for deserializing.
+pub trait DeserializeReader: XmlReader {
+    /// Helper function to convert and store an attribute from the XML event.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
+    /// already contained a value.
+    fn read_attrib<T>(
+        &self,
+        store: &mut Option<T>,
+        name: &'static [u8],
+        value: &[u8],
+    ) -> Result<(), Error>
+    where
+        T: DeserializeBytes,
+    {
+        if store.is_some() {
+            self.err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
+        }
+
+        let value = self.map_result(T::deserialize_bytes(self, value))?;
+        *store = Some(value);
+
+        Ok(())
+    }
+
+    /// Raise the [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) error
+    /// for the passed `attrib`.
+    ///
+    /// # Errors
+    ///
+    /// Will always return the [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute)
+    /// error.
+    fn raise_unexpected_attrib(&self, attrib: Attribute<'_>) -> Result<(), Error> {
+        self.err(ErrorKind::UnexpectedAttribute(RawByteStr::from_slice(
+            attrib.key.into_inner(),
+        )))
+    }
+
+    /// Try to resolve the local name of the passed qname and the expected namespace.
+    ///
+    /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`
+    /// and returns the local name of it. If `name` does not have a namespace prefix
+    /// to resolve, the local name is just returned as is.
+    fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
+        match self.resolve(name, true) {
+            (ResolveResult::Unbound, local) => Some(local.into_inner()),
+            (ResolveResult::Bound(x), local) if x.0 == ns => Some(local.into_inner()),
+            (_, _) => None,
+        }
+    }
+
+    /// Try to extract the resolved tag name of either a [`Start`](Event::Start) or a
+    /// [`Empty`](Event::Empty) event.
+    fn check_start_tag_name(&self, event: &Event<'_>, ns: Option<&[u8]>, name: &[u8]) -> bool {
+        let (Event::Start(x) | Event::Empty(x)) = event else {
+            return false;
+        };
+
+        if let Some(ns) = ns {
+            matches!(self.resolve_local_name(x.name(), ns), Some(x) if x == name)
+        } else {
+            x.name().local_name().as_ref() == name
+        }
+    }
+
+    /// Try to extract the type name of a dynamic type from the passed event.
+    ///
+    /// This method will try to extract the name of a dynamic type from
+    /// [`Event::Start`] or [`Event::Empty`] by either using the explicit set name
+    /// in the `type` attribute or by using the name of the xml tag.
+    ///
+    /// # Errors
+    ///
+    /// Raise an error if the attributes of the tag could not be resolved.
+    fn get_dynamic_type_name<'a>(
+        &self,
+        event: &'a Event<'_>,
+    ) -> Result<Option<Cow<'a, [u8]>>, Error> {
+        let (Event::Start(b) | Event::Empty(b)) = &event else {
+            return Ok(None);
+        };
+
+        let attrib = b
+            .attributes()
+            .find(|attrib| {
+                let Ok(attrib) = attrib else { return false };
+                let (resolve, name) = self.resolve(attrib.key, true);
+                matches!(
+                    resolve,
+                    ResolveResult::Unbound
+                        | ResolveResult::Bound(Namespace(
+                            b"http://www.w3.org/2001/XMLSchema-instance"
+                        ))
+                ) && name.as_ref() == b"type"
+            })
+            .transpose()?;
+
+        let name = attrib.map_or_else(|| Cow::Borrowed(b.name().0), |attrib| attrib.value);
+
+        Ok(Some(name))
+    }
+
+    /// Try to initialize a deserializer for `V` from the given `event` if `type_name` matches
+    /// `expected_name`.
+    ///
+    /// This method will try to initialize a deserializer for the type `V` from the passed `event`
+    /// if the passed `type_name` matches `expected_name`.
+    ///
+    /// If a deserializer for `V` could be initialized, `F` is used to map the resulting data to
+    /// `T` and `G` is used to map the resulting deserializer to `B`. `T` and `B` represent the
+    /// data and deserializer types of the type that holds the dynamic element.
+    ///
+    /// If the type names do not match the following [`DeserializerOutput`] is returned:
+    ///
+    /// ```rust,ignore
+    /// DeserializerOutput {
+    ///     data: None,
+    ///     deserializer: None,
+    ///     event: Some(event),
+    ///     allow_any: false,
+    /// }
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error that is raised by [`Deserializer::init`].
+    #[inline]
+    fn try_init_dynamic_type_deserializer<'a, T, V, B, F, G>(
+        &self,
+        event: Event<'a>,
+        type_name: &[u8],
+        namespace: Option<&[u8]>,
+        expected_name: &[u8],
+        map_data: F,
+        map_deserializer: G,
+    ) -> DeserializerResult<'a, T, B>
+    where
+        V: WithDeserializer,
+        F: FnOnce(V) -> T,
+        G: FnOnce(V::Deserializer) -> B,
+    {
+        let resolved_name = if let Some(ns) = namespace {
+            self.resolve_local_name(QName(type_name), ns)
+        } else {
+            Some(type_name)
+        };
+
+        if matches!(resolved_name, Some(resolved_name) if resolved_name == expected_name) {
+            let DeserializerOutput {
+                data,
+                deserializer,
+                event,
+                allow_any,
+            } = V::Deserializer::init(self, event)?;
+
+            Ok(DeserializerOutput {
+                data: data.map(map_data),
+                deserializer: deserializer.map(map_deserializer),
+                event,
+                allow_any,
+            })
+        } else {
+            Ok(DeserializerOutput {
+                data: None,
+                deserializer: None,
+                event: Some(event),
+                allow_any: false,
+            })
+        }
+    }
+}
+
+impl<X> DeserializeReader for X where X: XmlReader {}
 
 /* DeserializeHelper */
 

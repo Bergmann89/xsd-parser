@@ -1,10 +1,12 @@
-#![allow(missing_docs, unused_variables, unreachable_pub)]
+#![allow(unused_mut, missing_docs, unused_variables, unreachable_pub)]
 
 mod all;
 mod any;
 mod build_in;
 mod choice;
+mod choice_with_sequence;
 mod complex_type_with_group;
+mod complex_type_with_repeated_content;
 mod dynamic_types;
 mod enumeration;
 mod extension_base;
@@ -17,9 +19,9 @@ mod numeric_fields;
 mod ref_to_attribute;
 mod sequence;
 mod sequence_with_choice;
-mod shiporder;
 mod simple_content;
 mod simple_type;
+mod simple_type_max_length;
 mod static_list;
 mod tuple_with_integer;
 mod tuple_with_string;

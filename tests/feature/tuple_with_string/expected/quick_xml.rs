@@ -1,16 +1,25 @@
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
+use std::borrow::Cow;
+use xsd_parser::{
+    quick_xml::{
+        deserialize_new::{DeserializeBytes, DeserializeReader},
+        Error, SerializeBytes,
+    },
+    schema::Namespace,
+};
 #[derive(Debug, Clone)]
 pub struct Foo(pub String);
-impl xsd_parser::quick_xml::SerializeBytes for Foo {
-    fn serialize_bytes(
-        &self,
-    ) -> Result<Option<std::borrow::Cow<'_, str>>, xsd_parser::quick_xml::Error> {
+impl SerializeBytes for Foo {
+    fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         self.0.serialize_bytes()
     }
 }
-impl xsd_parser::quick_xml::DeserializeBytes for Foo {
-    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, xsd_parser::quick_xml::Error>
+impl DeserializeBytes for Foo {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
-        R: xsd_parser::quick_xml::XmlReader,
+        R: DeserializeReader,
     {
         Ok(Self(String::deserialize_bytes(reader, bytes)?))
     }

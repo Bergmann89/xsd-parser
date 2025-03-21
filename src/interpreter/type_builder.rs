@@ -75,17 +75,6 @@ macro_rules! init_any {
     }};
 }
 
-/// Get the type `$variant` of a `$builder` or panic if the variant does not match.
-macro_rules! get_any {
-    ($builder:expr, $variant:ident) => {
-        match &mut $builder.type_ {
-            None => crate::unreachable!("Type is not assigned yet!"),
-            Some(Type::$variant(ret)) => ret,
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
 /// Get the type `$variant` of a `$builder` or set the type variant if unset.
 macro_rules! get_or_init_any {
     ($builder:expr, $variant:ident) => {
@@ -735,20 +724,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
         match ty {
             Facet::Enumeration(x) => self.apply_enumeration(x)?,
-            Facet::MinLength(x) => {
-                let ti = get_any!(self, Reference);
-                ti.min_occurs = x
-                    .value
-                    .parse::<usize>()
-                    .map_err(|_| Error::InvalidValue("value"))?;
-            }
-            Facet::MaxLength(x) => {
-                let ti = get_any!(self, Reference);
-                ti.max_occurs = x
-                    .value
-                    .parse::<MaxOccurs>()
-                    .map_err(|_| Error::InvalidValue("value"))?;
-            }
             x => tracing::warn!("Unknown facet: {x:#?}"),
         }
 

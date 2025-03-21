@@ -40,14 +40,14 @@ The possibilities for customization and extension are nearly limitless.
 To quickly generate Rust code from an XML schema, you can use the [`generate`] function. This function acts as a simple wrapper for the entire process described above and is controlled via a [`Config`] structure to adjust various parameters.
 
 ```rust,ignore
-use xsd_parser::{generate, Config, Error, config::{Schema, InterpreterFlags, OptimizerFlags, GenerateFlags}};
+use xsd_parser::{generate, Config, Error, config::{Schema, InterpreterFlags, OptimizerFlags, GeneratorFlags}};
 
 fn main() -> Result<(), Error> {
     let mut config = Config::default();
     config.parser.schemas = vec![Schema::File("my-schema.xsd".into())];
     config.interpreter.flags = InterpreterFlags::all();
     config.optimizer.flags = OptimizerFlags::all();
-    config.generator.flags = GenerateFlags::all();
+    config.generator.flags = GeneratorFlags::all();
 
     let code = generate(config)?;
     println!("{code}");

@@ -1,4 +1,4 @@
-use xsd_parser::{types::IdentType, Config};
+use xsd_parser::{config::GeneratorFlags, types::IdentType, Config};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -7,7 +7,9 @@ fn generate_default() {
     generate_test(
         "tests/feature/sequence_with_choice/schema.xsd",
         "tests/feature/sequence_with_choice/expected/default.rs",
-        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
+        Config::test_default()
+            .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
+            .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
 
@@ -18,6 +20,7 @@ fn generate_quick_xml() {
         "tests/feature/sequence_with_choice/expected/quick_xml.rs",
         Config::test_default()
             .with_quick_xml()
+            .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }

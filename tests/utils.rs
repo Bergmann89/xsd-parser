@@ -9,12 +9,14 @@ use std::process::{Command, Stdio};
 use quick_xml::Reader;
 use serde::Deserialize;
 
-use xsd_parser::config::IdentTriple;
 use xsd_parser::{
-    config::{Config, Generate, OptimizerFlags, Schema},
+    config::{Config, Generate, IdentTriple, OptimizerFlags, Schema},
     generate,
-    generator::GenerateFlags,
-    quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
+    generator::GeneratorFlags,
+    quick_xml::{
+        deserialize_new::DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer,
+        XmlReader,
+    },
 };
 
 pub trait ConfigEx {
@@ -25,8 +27,10 @@ impl ConfigEx for Config {
     fn test_default() -> Self {
         let mut config = Config::default();
 
-        config.generator.type_postfix.element_type = "Type".into();
         config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
+
+        config.generator.type_postfix.element_type = "Type".into();
+        config.generator.flags |= GeneratorFlags::FLATTEN_STRUCT_CONTENT;
 
         config
     }
@@ -119,7 +123,7 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
     config.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
     config.generator.derive = Some(Vec::new());
-    config.generator.flags -= GenerateFlags::USE_MODULES;
+    config.generator.flags -= GeneratorFlags::USE_MODULES;
 
     let input_xsd = input_xsd.as_ref();
 

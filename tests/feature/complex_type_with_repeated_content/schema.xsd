@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+    <xs:element name="Foo">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="a" type="xs:int" />
+                <xs:element name="b" type="xs:string" />
+                <xs:element name="c" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

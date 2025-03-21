@@ -23,7 +23,7 @@ pub use self::slice_reader::SliceReader;
 #[cfg(feature = "async")]
 pub use self::fut::{ReadTag, SkipCurrent};
 
-use super::{DeserializeBytes, Error, ErrorKind, RawByteStr};
+use super::{Error, ErrorKind};
 
 /// Trait that defines the basics for an XML reader.
 pub trait XmlReader: Sized {
@@ -72,47 +72,9 @@ pub trait XmlReader: Sized {
         Err(self.map_error(error))
     }
 
-    /// Helper function to convert and store an attribute from the XML event.
-    ///
-    /// # Errors
-    ///
-    /// Returns an [`Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
-    /// already contained a value.
-    fn read_attrib<T>(
-        &self,
-        store: &mut Option<T>,
-        name: &'static [u8],
-        value: &[u8],
-    ) -> Result<(), Error>
-    where
-        T: DeserializeBytes,
-    {
-        if store.is_some() {
-            self.err(ErrorKind::DuplicateAttribute(RawByteStr::from(name)))?;
-        }
-
-        let value = self.map_result(T::deserialize_bytes(self, value))?;
-        *store = Some(value);
-
-        Ok(())
-    }
-
     /// Wraps the current reader in a new [`ErrorReader`].
     fn with_error_info(self) -> ErrorReader<Self> {
         ErrorReader::new(self)
-    }
-
-    /// Try to resolve the local name of the passed qname and the expected namespace.
-    ///
-    /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`
-    /// and returns the local name of it. If `name` does not have a namespace prefix
-    /// to resolve, the local name is just returned as is.
-    fn resolve_local_name<'a>(&self, name: QName<'a>, ns: &[u8]) -> Option<&'a [u8]> {
-        match self.resolve(name, true) {
-            (ResolveResult::Unbound, local) => Some(local.into_inner()),
-            (ResolveResult::Bound(x), local) if x.0 == ns => Some(local.into_inner()),
-            (_, _) => None,
-        }
     }
 }
 

@@ -457,7 +457,7 @@ impl crate::WithNamespace for FullDerivationSetType {
 impl crate::quick_xml::DeserializeBytes for FullDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"#all" => Ok(Self::All),
@@ -480,7 +480,7 @@ impl crate::WithNamespace for TypeDerivationControlList {
 impl crate::quick_xml::DeserializeBytes for TypeDerivationControlList {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -506,7 +506,7 @@ impl crate::WithNamespace for BlockSetType {
 impl crate::quick_xml::DeserializeBytes for BlockSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"#all" => Ok(Self::All),
@@ -529,7 +529,7 @@ impl crate::WithNamespace for BlockSetItemList {
 impl crate::quick_xml::DeserializeBytes for BlockSetItemList {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -555,7 +555,7 @@ impl crate::WithNamespace for FormChoiceType {
 impl crate::quick_xml::DeserializeBytes for FormChoiceType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"qualified" => Ok(Self::Qualified),
@@ -585,7 +585,7 @@ impl crate::WithNamespace for XpathDefaultNamespaceType {
 impl crate::quick_xml::DeserializeBytes for XpathDefaultNamespaceType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"##defaultNamespace" => Ok(Self::DefaultNamespace),
@@ -667,7 +667,7 @@ impl crate::WithNamespace for DefaultOpenContentModeType {
 impl crate::quick_xml::DeserializeBytes for DefaultOpenContentModeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"interleave" => Ok(Self::Interleave),
@@ -754,7 +754,7 @@ impl crate::WithNamespace for SimpleDerivationSetType {
 impl crate::quick_xml::DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"#all" => Ok(Self::All),
@@ -893,7 +893,7 @@ impl crate::WithNamespace for DerivationSetType {
 impl crate::quick_xml::DeserializeBytes for DerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"#all" => Ok(Self::All),
@@ -1018,7 +1018,7 @@ impl crate::WithNamespace for ElementSubstitutionGroupType {
 impl crate::quick_xml::DeserializeBytes for ElementSubstitutionGroupType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1045,7 +1045,7 @@ impl crate::WithNamespace for AttributeUseType {
 impl crate::quick_xml::DeserializeBytes for AttributeUseType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"prohibited" => Ok(Self::Prohibited),
@@ -1077,7 +1077,7 @@ impl crate::WithNamespace for NamespaceListType {
 impl crate::quick_xml::DeserializeBytes for NamespaceListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"##any" => Ok(Self::Any),
@@ -1101,7 +1101,7 @@ impl crate::WithNamespace for NotNamespaceType {
 impl crate::quick_xml::DeserializeBytes for NotNamespaceType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1128,7 +1128,7 @@ impl crate::WithNamespace for ProcessContentsType {
 impl crate::quick_xml::DeserializeBytes for ProcessContentsType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"skip" => Ok(Self::Skip),
@@ -1182,7 +1182,7 @@ impl crate::WithNamespace for UnionMemberTypesType {
 impl crate::quick_xml::DeserializeBytes for UnionMemberTypesType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1205,7 +1205,7 @@ impl crate::WithNamespace for SimpleDerivationSetItemList {
 impl crate::quick_xml::DeserializeBytes for SimpleDerivationSetItemList {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1294,7 +1294,7 @@ impl crate::WithNamespace for OpenContentModeType {
 impl crate::quick_xml::DeserializeBytes for OpenContentModeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"none" => Ok(Self::None),
@@ -1320,7 +1320,7 @@ impl crate::WithNamespace for QnameListAType {
 impl crate::quick_xml::DeserializeBytes for QnameListAType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1343,7 +1343,7 @@ impl crate::WithNamespace for ReducedDerivationControlList {
 impl crate::quick_xml::DeserializeBytes for ReducedDerivationControlList {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1366,7 +1366,7 @@ impl crate::WithNamespace for QnameListType {
 impl crate::quick_xml::DeserializeBytes for QnameListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1413,7 +1413,7 @@ impl crate::WithNamespace for DerivationControlType {
 impl crate::quick_xml::DeserializeBytes for DerivationControlType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"substitution" => Ok(Self::Substitution),
@@ -1441,7 +1441,7 @@ impl crate::WithNamespace for BasicNamespaceListType {
 impl crate::quick_xml::DeserializeBytes for BasicNamespaceListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         Ok(Self(
             bytes
@@ -1468,7 +1468,7 @@ impl crate::WithNamespace for BasicNamespaceListItemType {
 impl crate::quick_xml::DeserializeBytes for BasicNamespaceListItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"##targetNamespace" => Ok(Self::TargetNamespace),
@@ -1518,7 +1518,7 @@ impl crate::WithNamespace for QnameListAItemType {
 impl crate::quick_xml::DeserializeBytes for QnameListAItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"##defined" => Ok(Self::Defined),
@@ -1544,7 +1544,7 @@ impl crate::WithNamespace for QnameListItemType {
 impl crate::quick_xml::DeserializeBytes for QnameListItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, crate::quick_xml::Error>
     where
-        R: crate::quick_xml::XmlReader,
+        R: crate::quick_xml::DeserializeReader,
     {
         match bytes {
             b"##defined" => Ok(Self::Defined),
@@ -1595,7 +1595,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -1702,7 +1702,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Schema, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -1739,7 +1739,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Schema, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -2322,7 +2322,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Schema, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Schema {
@@ -2358,7 +2358,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -2393,7 +2393,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Include, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -2430,7 +2430,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Include, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -2575,7 +2575,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Include, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Include {
@@ -2604,7 +2604,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -2645,7 +2645,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Import, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -2682,7 +2682,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Import, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -2827,7 +2827,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Import, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Import {
@@ -2860,7 +2860,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -2895,7 +2895,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Redefine, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -2932,7 +2932,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Redefine, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -3184,7 +3184,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Redefine, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Redefine {
@@ -3219,7 +3219,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -3254,7 +3254,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Override, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -3291,7 +3291,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Override, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -3667,7 +3667,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Override, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Override {
@@ -3695,7 +3695,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -3722,7 +3722,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Annotation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -3759,7 +3759,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Annotation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -3879,7 +3879,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Annotation, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Annotation {
@@ -3909,7 +3909,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -3951,7 +3951,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::DefaultOpenContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -3988,7 +3988,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::DefaultOpenContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -4262,7 +4262,7 @@ pub mod quick_xml_deserialize {
             _reader: &R,
         ) -> Result<super::DefaultOpenContent, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::DefaultOpenContent {
@@ -4298,7 +4298,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -4335,7 +4335,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::SimpleBaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -4372,7 +4372,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::SimpleBaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -4574,7 +4574,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::SimpleBaseType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::SimpleBaseType {
@@ -4619,7 +4619,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -4683,7 +4683,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ComplexBaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -4720,7 +4720,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ComplexBaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -5273,7 +5273,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::ComplexBaseType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::ComplexBaseType {
@@ -5315,7 +5315,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -5364,7 +5364,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::GroupType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -5401,7 +5401,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::GroupType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -5721,7 +5721,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::GroupType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::GroupType {
@@ -5756,7 +5756,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -5793,7 +5793,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AttributeGroupType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -5830,7 +5830,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AttributeGroupType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -6062,7 +6062,7 @@ pub mod quick_xml_deserialize {
             _reader: &R,
         ) -> Result<super::AttributeGroupType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::AttributeGroupType {
@@ -6110,7 +6110,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -6218,7 +6218,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ElementType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -6255,7 +6255,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ElementType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -6585,7 +6585,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::ElementType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::ElementType {
@@ -6636,7 +6636,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -6709,7 +6709,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AttributeType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -6746,7 +6746,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AttributeType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -7008,7 +7008,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::AttributeType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::AttributeType {
@@ -7047,7 +7047,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -7092,7 +7092,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Notation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7129,7 +7129,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Notation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -7274,7 +7274,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Notation, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Notation {
@@ -7296,7 +7296,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -7322,7 +7322,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Appinfo, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7359,7 +7359,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Appinfo, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7382,7 +7382,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Appinfo, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Appinfo {
@@ -7401,7 +7401,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -7434,7 +7434,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Documentation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7471,7 +7471,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Documentation, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7494,7 +7494,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Documentation, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Documentation {
@@ -7523,7 +7523,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -7572,7 +7572,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::WildcardType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7609,7 +7609,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::WildcardType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -7756,7 +7756,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::WildcardType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::WildcardType {
@@ -7788,7 +7788,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -7819,7 +7819,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Restriction, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -7856,7 +7856,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Restriction, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -8030,7 +8030,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Restriction, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Restriction {
@@ -8060,7 +8060,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -8095,7 +8095,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::List, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -8132,7 +8132,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::List, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -8388,7 +8388,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::List, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::List {
@@ -8419,7 +8419,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -8454,7 +8454,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Union, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -8491,7 +8491,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Union, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -8734,7 +8734,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Union, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Union {
@@ -8764,7 +8764,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -8791,7 +8791,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::SimpleContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -8828,7 +8828,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::SimpleContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -8995,7 +8995,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::SimpleContent, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::SimpleContent {
@@ -9024,7 +9024,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -9057,7 +9057,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ComplexContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -9094,7 +9094,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ComplexContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -9262,7 +9262,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::ComplexContent, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::ComplexContent {
@@ -9292,7 +9292,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -9324,7 +9324,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::OpenContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -9361,7 +9361,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::OpenContent, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -9616,7 +9616,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::OpenContent, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::OpenContent {
@@ -9648,7 +9648,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -9704,7 +9704,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AnyAttribute, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -9741,7 +9741,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AnyAttribute, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -9888,7 +9888,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::AnyAttribute, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::AnyAttribute {
@@ -9920,7 +9920,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -9962,7 +9962,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AssertionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -9999,7 +9999,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AssertionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -10146,7 +10146,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::AssertionType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::AssertionType {
@@ -10180,7 +10180,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -10250,7 +10250,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Any, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -10287,7 +10287,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Any, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -10431,7 +10431,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Any, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Any {
@@ -10468,7 +10468,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -10514,7 +10514,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AltType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -10551,7 +10551,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::AltType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -10720,7 +10720,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::AltType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::AltType {
@@ -10755,7 +10755,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -10792,7 +10792,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::KeybaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -10829,7 +10829,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::KeybaseType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -11184,7 +11184,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::KeybaseType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::KeybaseType {
@@ -11223,7 +11223,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -11264,7 +11264,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Keyref, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -11301,7 +11301,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Keyref, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -11650,7 +11650,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Keyref, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Keyref {
@@ -11696,7 +11696,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Facet, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             let deserializer = Self {
@@ -11720,7 +11720,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Facet, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -12483,7 +12483,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Facet, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(self
@@ -12520,7 +12520,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -12553,7 +12553,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::RestrictionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -12590,7 +12590,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::RestrictionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -13145,7 +13145,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::RestrictionType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::RestrictionType {
@@ -13182,7 +13182,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -13213,7 +13213,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ExtensionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -13250,7 +13250,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::ExtensionType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -13705,7 +13705,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::ExtensionType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::ExtensionType {
@@ -13734,7 +13734,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -13776,7 +13776,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Field, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -13813,7 +13813,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::Field, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -13958,7 +13958,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::Field, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::Field {
@@ -13988,7 +13988,7 @@ pub mod quick_xml_deserialize {
             bytes_start: &crate::quick_xml::BytesStart<'_>,
         ) -> Result<Self, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             const NS_XS: &[u8] = b"http://www.w3.org/2001/XMLSchema";
@@ -14023,7 +14023,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::FacetType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{DeserializerOutput, Event};
             match event {
@@ -14060,7 +14060,7 @@ pub mod quick_xml_deserialize {
             event: crate::quick_xml::Event<'de>,
         ) -> crate::quick_xml::DeserializerResult<'de, super::FacetType, Self>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::{
                 Deserializer, DeserializerOutput, ErrorKind, Event, RawByteStr, WithDeserializer,
@@ -14206,7 +14206,7 @@ pub mod quick_xml_deserialize {
         }
         fn finish<R>(self, _reader: &R) -> Result<super::FacetType, crate::quick_xml::Error>
         where
-            R: crate::quick_xml::XmlReader,
+            R: crate::quick_xml::DeserializeReader,
         {
             use crate::quick_xml::ErrorKind;
             Ok(super::FacetType {

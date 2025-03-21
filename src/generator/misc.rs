@@ -1,34 +1,37 @@
 use std::borrow::Cow;
 use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::ops::Deref;
+use std::ops::{Deref, DerefMut};
+use std::str::FromStr;
 
 use bitflags::bitflags;
 use inflector::Inflector;
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
+use smallvec::SmallVec;
 
 use crate::schema::{MaxOccurs, MinOccurs, NamespaceId};
 use crate::types::{DynamicInfo, Ident, Name, Type, Types};
 
+use super::helper::render_usings;
 use super::Error;
 
 bitflags! {
     /// Different flags that control what code the [`Generator`](super::Generator)
     /// is generating.
     #[derive(Debug, Clone, Copy)]
-    pub struct GenerateFlags: u32 {
+    pub struct GeneratorFlags: u32 {
         /// None of the features are enabled.
         ///
         /// # Examples
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Setting none of the flags will result in the following code:
         /// ```rust
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/empty.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/empty.rs")]
         /// ```
         const NONE = 0;
 
@@ -38,12 +41,12 @@ bitflags! {
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Enable the `USE_MODULES` feature only will result in the following code:
         /// ```rust,ignore
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/use_modules.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/use_modules.rs")]
         /// ```
         const USE_MODULES = 1 << 0;
 
@@ -54,28 +57,46 @@ bitflags! {
         ///
         /// Consider the following XML schema:
         /// ```xml
-        #[doc = include_str!("../../tests/generator/generate_flags/schema.xsd")]
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
         /// Enable the `FLATTEN_CONTENT` feature only will result in the following code:
         /// ```rust
-        #[doc = include_str!("../../tests/generator/generate_flags/expected/flatten_content.rs")]
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/flatten_content.rs")]
         /// ```
-        const FLATTEN_CONTENT = 1 << 1;
+        const FLATTEN_CONTENT = Self::FLATTEN_ENUM_CONTENT.bits()
+            | Self::FLATTEN_STRUCT_CONTENT.bits();
+
+        /// The generator flattens the content of enum types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_ENUM_CONTENT = 1 << 1;
+
+        /// The generator flattens the content of struct types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_STRUCT_CONTENT = 1 << 2;
 
         /// The generator will generate code to serialize the generated types using
         /// the `quick_xml` crate.
-        const QUICK_XML_SERIALIZE = 1 << 2;
+        const QUICK_XML_SERIALIZE = 1 << 3;
 
         /// The generator will generate code to deserialize the generated types using
         /// the `quick_xml` crate.
-        const QUICK_XML_DESERIALIZE = 1 << 3;
+        const QUICK_XML_DESERIALIZE = 1 << 4;
 
-        /// Combination of `QUICK_XML_SERIALIZE` and [`QUICK_XML_DESERIALIZE`].
-        const QUICK_XML = Self::QUICK_XML_SERIALIZE.bits() | Self::QUICK_XML_DESERIALIZE.bits();
+        /// Combination of [`WITH_NAMESPACE_CONSTANTS`](Self::WITH_NAMESPACE_CONSTANTS),
+        /// [`QUICK_XML_SERIALIZE`](Self::QUICK_XML_SERIALIZE)
+        /// and [`QUICK_XML_DESERIALIZE`](Self::QUICK_XML_DESERIALIZE).
+        const QUICK_XML = Self::WITH_NAMESPACE_CONSTANTS.bits()
+            | Self::QUICK_XML_SERIALIZE.bits()
+            | Self::QUICK_XML_DESERIALIZE.bits();
 
         /// Implement the [`WithNamespace`](crate::WithNamespace) trait for the generated types.
-        const WITH_NAMESPACE_TRAIT = 1 << 4;
+        const WITH_NAMESPACE_TRAIT = 1 << 5;
+
+        /// Will generate constants for the different namespace used by the schema.
+        const WITH_NAMESPACE_CONSTANTS = 1 << 6;
     }
 }
 
@@ -250,6 +271,12 @@ impl SerdeSupport {
     pub fn is_none(&self) -> bool {
         matches!(self, Self::None)
     }
+
+    /// Returns `false` if this is equal to [`SerdeSupport::None`], `true` otherwise.
+    #[must_use]
+    pub fn is_some(&self) -> bool {
+        !matches!(self, Self::None)
+    }
 }
 
 /* Modules */
@@ -261,9 +288,13 @@ impl Modules {
     pub(super) fn get_mut(&mut self, ns: Option<NamespaceId>) -> &mut Module {
         self.0.entry(ns).or_default()
     }
+}
 
-    pub(super) fn add_code(&mut self, ns: Option<NamespaceId>, code: TokenStream) {
-        self.get_mut(ns).code.extend(code);
+impl Deref for Modules {
+    type Target = BTreeMap<Option<NamespaceId>, Module>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
@@ -271,9 +302,49 @@ impl Modules {
 
 #[derive(Default, Debug)]
 pub(super) struct Module {
+    pub main: ModuleCode,
+    pub quick_xml_serialize: Option<ModuleCode>,
+    pub quick_xml_deserialize: Option<ModuleCode>,
+}
+
+/* ModuleCode */
+
+#[derive(Default, Debug)]
+pub(super) struct ModuleCode {
     pub code: TokenStream,
-    pub quick_xml_serialize: Option<TokenStream>,
-    pub quick_xml_deserialize: Option<TokenStream>,
+    pub usings: BTreeSet<String>,
+}
+
+impl ModuleCode {
+    pub(super) fn code(&mut self, code: TokenStream) -> &mut Self {
+        self.code.extend(code);
+
+        self
+    }
+
+    pub(super) fn usings<I>(&mut self, usings: I) -> &mut Self
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        for using in usings {
+            self.usings.insert(using.to_string());
+        }
+
+        self
+    }
+}
+
+impl ToTokens for ModuleCode {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let Self { code, usings } = self;
+        let usings = render_usings(usings.iter());
+
+        tokens.extend(quote! {
+            #usings
+            #code
+        });
+    }
 }
 
 /* PendingType */
@@ -288,10 +359,9 @@ pub(super) struct PendingType<'types> {
 
 #[derive(Debug)]
 pub(super) struct TypeRef {
-    pub ns: Option<NamespaceId>,
-    pub module_ident: Option<Ident2>,
+    pub ident: Ident,
     pub type_ident: Ident2,
-    pub flags: StateFlags,
+    pub module_ident: Option<Ident2>,
     pub boxed_elements: HashSet<Ident>,
 }
 
@@ -390,21 +460,6 @@ pub(super) struct TraitInfo {
     pub traits_direct: BTreeSet<Ident>,
 }
 
-/* StateFlags */
-
-bitflags! {
-    #[derive(Debug, Clone, Copy)]
-    pub(super) struct StateFlags: u32 {
-        const HAS_TYPE = 1 << 0;
-        const HAS_IMPL = 1 << 1;
-
-        const HAS_QUICK_XML_SERIALIZE = 1 << 2;
-        const HAS_QUICK_XML_DESERIALIZE = 1 << 3;
-
-        const HAS_QUICK_XML = Self::HAS_QUICK_XML_SERIALIZE.bits() | Self::HAS_QUICK_XML_DESERIALIZE.bits();
-    }
-}
-
 /* Occurs */
 
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
@@ -445,19 +500,13 @@ impl Occurs {
         }
     }
 
+    pub(super) fn is_some(&self) -> bool {
+        *self != Self::None
+    }
+
     pub(super) fn is_direct(&self) -> bool {
         matches!(self, Self::Single | Self::Optional | Self::StaticList(_))
     }
-}
-
-/* TypeMode */
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub(super) enum TypeMode {
-    All,
-    Choice,
-    Sequence,
-    Simple,
 }
 
 /* DynTypeTraits */
@@ -467,6 +516,171 @@ pub(super) enum DynTypeTraits {
     #[default]
     Auto,
     Custom(Vec<TokenStream>),
+}
+
+/* TypePath */
+
+#[derive(Debug, Clone)]
+pub(super) struct IdentPath {
+    path: Option<ModulePath>,
+    ident: Ident2,
+}
+
+#[derive(Default, Debug, Clone)]
+pub(super) struct ModulePath(pub SmallVec<[Ident2; 2]>);
+
+impl IdentPath {
+    pub(super) fn from_type_ref(type_ref: &TypeRef) -> Self {
+        if type_ref.ident.is_build_in() {
+            Self::from_ident(type_ref.type_ident.clone())
+        } else {
+            Self::from_ident(type_ref.type_ident.clone()).with_path(type_ref.module_ident.clone())
+        }
+    }
+
+    pub(super) fn from_parts<I>(path: I, ident: Ident2) -> Self
+    where
+        I: IntoIterator<Item = Ident2>,
+    {
+        Self::from_ident(ident).with_path(path)
+    }
+
+    pub(super) fn from_ident(ident: Ident2) -> Self {
+        Self { ident, path: None }
+    }
+
+    pub(super) fn with_ident(mut self, ident: Ident2) -> Self {
+        self.ident = ident;
+
+        self
+    }
+
+    pub(super) fn with_path<I>(mut self, path: I) -> Self
+    where
+        I: IntoIterator<Item = Ident2>,
+    {
+        self.path = Some(ModulePath(path.into_iter().collect()));
+
+        self
+    }
+
+    pub(super) fn into_parts(self) -> (Ident2, Option<ModulePath>) {
+        let Self { ident, path } = self;
+
+        (ident, path)
+    }
+
+    pub(super) fn ident(&self) -> &Ident2 {
+        &self.ident
+    }
+
+    pub(super) fn relative_to(&self, dst: &ModulePath) -> TokenStream {
+        let ident = &self.ident;
+
+        let Some(src) = &self.path else {
+            return quote!(#ident);
+        };
+
+        let mut ret = TokenStream::new();
+        let mut src = src.0.iter().fuse();
+        let mut dst = dst.0.iter().fuse();
+
+        macro_rules! push {
+            ($x:expr) => {{
+                let x = $x;
+                if ret.is_empty() {
+                    ret.extend(x)
+                } else {
+                    ret.extend(quote!(::#x))
+                }
+            }};
+        }
+
+        loop {
+            match (src.next(), dst.next()) {
+                (Some(a), Some(b)) if a == b => {}
+                (Some(a), Some(_)) => {
+                    push!(quote!(super));
+                    while dst.next().is_some() {
+                        push!(quote!(super));
+                    }
+
+                    push!(quote!(#a));
+                    for a in src {
+                        push!(quote!(#a));
+                    }
+
+                    push!(quote!(#ident));
+
+                    return ret;
+                }
+                (Some(a), None) => push!(quote!(#a)),
+                (None, Some(_)) => push!(quote!(super)),
+                (None, None) => {
+                    push!(quote!(#ident));
+                    return ret;
+                }
+            }
+        }
+    }
+}
+
+impl FromStr for IdentPath {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut ident = None;
+        let mut path = ModulePath::default();
+
+        for part in s.split("::") {
+            let part = part.trim();
+            if part.is_empty() {
+                continue;
+            }
+
+            if let Some(ident) = ident.take() {
+                path.0.push(ident);
+            }
+
+            ident = Some(format_ident!("{part}"));
+        }
+
+        Ok(Self {
+            ident: ident.ok_or(())?,
+            path: Some(path),
+        })
+    }
+}
+
+impl ModulePath {
+    pub(super) fn from_namespace(ns: Option<NamespaceId>, types: &Types) -> Self {
+        let ident = ns
+            .and_then(|id| types.modules.get(&id))
+            .and_then(|module| module.name.as_ref())
+            .map(format_module_ident);
+
+        Self(ident.into_iter().collect())
+    }
+
+    pub(super) fn join(mut self, other: Ident2) -> Self {
+        self.0.push(other);
+
+        self
+    }
+}
+
+impl Deref for ModulePath {
+    type Target = SmallVec<[Ident2; 2]>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+
+impl DerefMut for ModulePath {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
 }
 
 /* Helper */
@@ -548,32 +762,6 @@ pub(super) fn format_module(
     Ok(Some(format_module_ident(name)))
 }
 
-pub(super) fn format_type_ref(current_ns: Option<NamespaceId>, type_: &TypeRef) -> TokenStream {
-    format_type_ref_ex(current_ns, None, &type_.type_ident, type_)
-}
-
-pub(super) fn format_type_ref_ex(
-    current_ns: Option<NamespaceId>,
-    extra: Option<&TokenStream>,
-    type_ident: &Ident2,
-    type_: &TypeRef,
-) -> TokenStream {
-    let module_ident = match (current_ns, type_.ns) {
-        (Some(a), Some(b)) if a != b => Some(&type_.module_ident),
-        (_, _) => None,
-    };
-
-    if let Some(module_ident) = module_ident {
-        quote! {
-            #module_ident #extra :: #type_ident
-        }
-    } else {
-        quote! {
-            #type_ident
-        }
-    }
-}
-
 pub(super) fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
     match (ty, &ident.name) {
         (Type::Reference(ti), Name::Unnamed { .. }) if ti.type_.name.is_named() => {
@@ -648,3 +836,77 @@ const KEYWORDS: &[(&str, &str)] = &[
     ("while", "while_"),
     ("yield", "yield_"),
 ];
+
+#[cfg(test)]
+mod tests {
+    use quote::{format_ident, quote};
+
+    use crate::generator::misc::ModulePath;
+
+    use super::IdentPath;
+
+    #[test]
+    #[rustfmt::skip]
+    fn type_path() {
+        let string = IdentPath::from_ident(format_ident!("String"));
+        let my_type = IdentPath::from_parts(
+            [format_ident!("my_module")],
+            format_ident!("MyType"),
+        );
+        let serializer = IdentPath::from_parts(
+            [
+                format_ident!("my_module"),
+                format_ident!("quick_xml_serialize"),
+            ],
+            format_ident!("MyTypeSerializer"),
+        );
+        let deserializer = IdentPath::from_parts(
+            [
+                format_ident!("my_module"),
+                format_ident!("quick_xml_deserialize"),
+            ],
+            format_ident!("MyTypeDeserializer"),
+        );
+
+        let empty_path = ModulePath::default();
+        let module_path = ModulePath::default().join(format_ident!("my_module"));
+        let other_module_path = ModulePath::default().join(format_ident!("other_module"));
+        let serializer_path = module_path.clone().join(format_ident!("quick_xml_serialize"));
+        let deserializer_path = module_path.clone().join(format_ident!("quick_xml_deserialize"));
+
+        macro_rules! test {
+            ($actual:expr, $( $expected:tt )*) => {{
+                let a = $actual.to_string();
+                let b = quote!($( $expected )*).to_string();
+
+                assert_eq!(a, b);
+            }};
+        }
+
+        /* With modules */
+
+        test!(string.relative_to(&empty_path), String);
+        test!(string.relative_to(&module_path), String);
+        test!(string.relative_to(&other_module_path), String);
+        test!(string.relative_to(&serializer_path), String);
+        test!(string.relative_to(&deserializer_path), String);
+
+        test!(my_type.relative_to(&empty_path), my_module::MyType);
+        test!(my_type.relative_to(&module_path), MyType);
+        test!(my_type.relative_to(&other_module_path), super::my_module::MyType);
+        test!(my_type.relative_to(&serializer_path), super::MyType);
+        test!(my_type.relative_to(&deserializer_path), super::MyType);
+
+        test!(serializer.relative_to(&empty_path), my_module::quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&module_path), quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&other_module_path), super::my_module::quick_xml_serialize::MyTypeSerializer);
+        test!(serializer.relative_to(&serializer_path), MyTypeSerializer);
+        test!(serializer.relative_to(&deserializer_path), super::quick_xml_serialize::MyTypeSerializer);
+
+        test!(deserializer.relative_to(&empty_path), my_module::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&module_path), quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&other_module_path), super::my_module::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&serializer_path), super::quick_xml_deserialize::MyTypeDeserializer);
+        test!(deserializer.relative_to(&deserializer_path), MyTypeDeserializer);
+    }
+}

@@ -1,12 +1,12 @@
 pub struct MyComplexType {
-    pub content: MyComplexTypeContent,
+    pub content: Vec<MyComplexTypeContent>,
 }
 pub enum MyComplexTypeContent {
-    ElementA(Vec<String>),
-    ElementB(Vec<i32>),
+    ElementA(String),
+    ElementB(i32),
     ElementC(bool),
-    ElementD(Option<String>),
-    ElementE(Option<i32>),
+    ElementD(String),
+    ElementE(i32),
     ElementF(String),
-    ElementG(Vec<i32>),
+    ElementG(i32),
 }

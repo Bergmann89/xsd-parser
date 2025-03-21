@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+use std::ops::Deref;
 
 use crate::misc::format_utf8_slice;
 
@@ -26,6 +27,29 @@ impl Namespace {
         X: Into<Cow<'static, [u8]>>,
     {
         Self(value.into())
+    }
+
+    /// Create a new [`Namespace`] instance from the passed `value`.
+    ///
+    /// In contrast to [`new`](Self::new) this is a const function
+    /// and can be used during compile time.
+    #[must_use]
+    pub const fn new_const(value: &'static [u8]) -> Self {
+        Self(Cow::Borrowed(value))
+    }
+}
+
+impl AsRef<[u8]> for Namespace {
+    fn as_ref(&self) -> &[u8] {
+        &self.0
+    }
+}
+
+impl Deref for Namespace {
+    type Target = Cow<'static, [u8]>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

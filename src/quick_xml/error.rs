@@ -77,6 +77,12 @@ pub enum Kind {
     #[error("Missing content")]
     MissingContent,
 
+    /// Duplicate content.
+    ///
+    /// The content was expected only once.
+    #[error("Duplicate content")]
+    DuplicateContent,
+
     /// Missing name.
     ///
     /// The serializer is not able to set a default name for the specified value.

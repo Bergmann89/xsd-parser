@@ -1,7 +1,24 @@
+use inflector::Inflector;
+use quote::format_ident;
+
+use crate::types::Module;
+
+use super::misc::IdentPath;
+
 mod impl_;
 mod quick_xml;
 mod types;
 
-pub(crate) use impl_::ImplRenderer;
-pub(crate) use quick_xml::QuickXmlRenderer;
-pub(crate) use types::TypeRenderer;
+impl Module {
+    pub(super) fn make_ns_const(&self) -> IdentPath {
+        let ident = format_ident!(
+            "NS_{}",
+            self.name
+                .as_ref()
+                .map_or_else(|| String::from("DEFAULT"), ToString::to_string)
+                .to_screaming_snake_case()
+        );
+
+        IdentPath::from_parts([], ident)
+    }
+}
