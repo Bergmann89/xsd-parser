@@ -447,9 +447,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(None));
-                *self.state = ShiporderTypeDeserializerState::Shipto(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.orderperson.is_some() {
+                    fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(None));
+                    *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderTypeDeserializerState::Orderperson(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -458,23 +463,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_orderperson(data)?;
-                    *self.state = ShiporderTypeDeserializerState::Orderperson(None);
+                    *self.state = ShiporderTypeDeserializerState::Shipto(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderTypeDeserializerState::Orderperson(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderTypeDeserializerState::Shipto(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderTypeDeserializerState::Orderperson(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderTypeDeserializerState::Orderperson(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_shipto<'de, R>(
@@ -492,9 +502,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(None));
-                *self.state = ShiporderTypeDeserializerState::Item(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.shipto.is_some() {
+                    fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(None));
+                    *self.state = ShiporderTypeDeserializerState::Item(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -503,22 +518,26 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_shipto(data)?;
-                    *self.state = ShiporderTypeDeserializerState::Shipto(None);
+                    *self.state = ShiporderTypeDeserializerState::Item(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderTypeDeserializerState::Shipto(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderTypeDeserializerState::Item(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state = ShiporderTypeDeserializerState::Shipto(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state = ShiporderTypeDeserializerState::Shipto(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_item<'de, R>(
@@ -536,9 +555,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderTypeDeserializerState::Item(None));
-                *self.state = ShiporderTypeDeserializerState::Done__;
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.item.len() < 1usize {
+                    *self.state = ShiporderTypeDeserializerState::Item(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    fallback.get_or_insert(ShiporderTypeDeserializerState::Item(None));
+                    *self.state = ShiporderTypeDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -550,19 +574,27 @@ pub mod quick_xml_deserialize {
                     *self.state = ShiporderTypeDeserializerState::Item(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderTypeDeserializerState::Item(Some(
                             deserializer,
                         )));
-                        *self.state = ShiporderTypeDeserializerState::Done__;
+                        if self.item.len().saturating_add(1) < 1usize {
+                            *self.state = ShiporderTypeDeserializerState::Item(None);
+                        } else {
+                            *self.state = ShiporderTypeDeserializerState::Done__;
+                        }
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state = ShiporderTypeDeserializerState::Item(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state = ShiporderTypeDeserializerState::Item(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
     }
@@ -571,6 +603,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -581,6 +614,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("NEXT", &event, &self);
             use ShiporderTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -694,7 +728,10 @@ pub mod quick_xml_deserialize {
                             event
                         }
                     }
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (Some(event), allow_any_element);
+                    }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
@@ -715,6 +752,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, ShiporderTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ShiporderType {
@@ -833,9 +871,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(None));
-                *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.name.is_some() {
+                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(None));
+                    *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderShiptoTypeDeserializerState::Name(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -844,23 +887,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_name(data)?;
-                    *self.state = ShiporderShiptoTypeDeserializerState::Name(None);
+                    *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Name(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Name(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderShiptoTypeDeserializerState::Name(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_address<'de, R>(
@@ -878,9 +926,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(None));
-                *self.state = ShiporderShiptoTypeDeserializerState::City(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.address.is_some() {
+                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(None));
+                    *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -889,23 +942,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_address(data)?;
-                    *self.state = ShiporderShiptoTypeDeserializerState::Address(None);
+                    *self.state = ShiporderShiptoTypeDeserializerState::City(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Address(
                             Some(deserializer),
                         ));
                         *self.state = ShiporderShiptoTypeDeserializerState::City(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Address(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderShiptoTypeDeserializerState::Address(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_city<'de, R>(
@@ -923,9 +981,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(None));
-                *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.city.is_some() {
+                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(None));
+                    *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -934,23 +997,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_city(data)?;
-                    *self.state = ShiporderShiptoTypeDeserializerState::City(None);
+                    *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::City(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::City(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderShiptoTypeDeserializerState::City(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_country<'de, R>(
@@ -968,9 +1036,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(None));
-                *self.state = ShiporderShiptoTypeDeserializerState::Done__;
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.country.is_some() {
+                    fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(None));
+                    *self.state = ShiporderShiptoTypeDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -979,23 +1052,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_country(data)?;
-                    *self.state = ShiporderShiptoTypeDeserializerState::Country(None);
+                    *self.state = ShiporderShiptoTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderShiptoTypeDeserializerState::Country(
                             Some(deserializer),
                         ));
                         *self.state = ShiporderShiptoTypeDeserializerState::Done__;
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderShiptoTypeDeserializerState::Country(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderShiptoTypeDeserializerState::Country(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
     }
@@ -1007,6 +1085,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -1017,6 +1096,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("NEXT", &event, &self);
             use ShiporderShiptoTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1159,7 +1239,10 @@ pub mod quick_xml_deserialize {
                             event
                         }
                     }
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (Some(event), allow_any_element);
+                    }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
@@ -1180,6 +1263,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ShiporderShiptoTypeDeserializerState::Unknown__,
@@ -1305,9 +1389,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(None));
-                *self.state = ShiporderItemTypeDeserializerState::Note(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.title.is_some() {
+                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(None));
+                    *self.state = ShiporderItemTypeDeserializerState::Note(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderItemTypeDeserializerState::Title(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -1316,22 +1405,26 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_title(data)?;
-                    *self.state = ShiporderItemTypeDeserializerState::Title(None);
+                    *self.state = ShiporderItemTypeDeserializerState::Note(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderItemTypeDeserializerState::Title(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderItemTypeDeserializerState::Note(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state = ShiporderItemTypeDeserializerState::Title(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state = ShiporderItemTypeDeserializerState::Title(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_note<'de, R>(
@@ -1360,22 +1453,26 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_note(data)?;
-                    *self.state = ShiporderItemTypeDeserializerState::Note(None);
+                    *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderItemTypeDeserializerState::Note(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state = ShiporderItemTypeDeserializerState::Note(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state = ShiporderItemTypeDeserializerState::Note(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_quantity<'de, R>(
@@ -1393,9 +1490,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(None));
-                *self.state = ShiporderItemTypeDeserializerState::Price(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.quantity.is_some() {
+                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(None));
+                    *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -1404,23 +1506,28 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_quantity(data)?;
-                    *self.state = ShiporderItemTypeDeserializerState::Quantity(None);
+                    *self.state = ShiporderItemTypeDeserializerState::Price(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderItemTypeDeserializerState::Quantity(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderItemTypeDeserializerState::Price(None);
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state =
+                            ShiporderItemTypeDeserializerState::Quantity(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state =
                             ShiporderItemTypeDeserializerState::Quantity(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
         fn handle_price<'de, R>(
@@ -1438,9 +1545,14 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(None));
-                *self.state = ShiporderItemTypeDeserializerState::Done__;
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                if self.price.is_some() {
+                    fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(None));
+                    *self.state = ShiporderItemTypeDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
             }
             if let Some(fallback) = fallback.take() {
                 self.finish_state(reader, fallback)?;
@@ -1449,22 +1561,26 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_price(data)?;
-                    *self.state = ShiporderItemTypeDeserializerState::Price(None);
+                    *self.state = ShiporderItemTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
+                DeserializerArtifact::Deserializer(deserializer) => match event {
+                    Some(event @ (Event::Start(_) | Event::Empty(_))) => {
                         fallback.get_or_insert(ShiporderItemTypeDeserializerState::Price(Some(
                             deserializer,
                         )));
                         *self.state = ShiporderItemTypeDeserializerState::Done__;
                         ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
+                    }
+                    Some(event @ Event::End(_)) => {
+                        *self.state = ShiporderItemTypeDeserializerState::Price(Some(deserializer));
+                        ElementHandlerOutput::continue_(event, allow_any)
+                    }
+                    _ => {
                         *self.state = ShiporderItemTypeDeserializerState::Price(Some(deserializer));
                         ElementHandlerOutput::break_(event, allow_any)
                     }
-                }
+                },
             })
         }
     }
@@ -1476,6 +1592,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -1486,6 +1603,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("NEXT", &event, &self);
             use ShiporderItemTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -1628,7 +1746,10 @@ pub mod quick_xml_deserialize {
                             event
                         }
                     }
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (Some(event), allow_any_element);
+                    }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
@@ -1649,6 +1770,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 ShiporderItemTypeDeserializerState::Unknown__,

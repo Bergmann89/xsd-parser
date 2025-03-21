@@ -1006,6 +1006,8 @@ impl<'types> ComplexType<'types> {
         elements: &'types [ElementInfo],
         any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
+        let s = req.ident.to_string();
+        println!("{s}");
         let base = ComplexTypeBase::new(&mut req)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten =

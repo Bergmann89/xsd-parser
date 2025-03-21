@@ -116,7 +116,9 @@
             },
             "args": [
                 "--nocapture",
-                "schema::ideal_merchant_acquirer::read_quick_xml"
+                // "schema::xml_schema::read_quick_xml"
+                "schema::xml_schema::generate_quick_xml"
+
             ],
             "cwd": "${workspaceFolder}"
         },

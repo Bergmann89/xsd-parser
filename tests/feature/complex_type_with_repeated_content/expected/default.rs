@@ -6,6 +6,6 @@ pub struct FooType {
 #[derive(Debug, Clone)]
 pub struct FooTypeContent {
     pub a: i32,
-    pub b: String,
+    pub b: Option<String>,
     pub c: Option<String>,
 }

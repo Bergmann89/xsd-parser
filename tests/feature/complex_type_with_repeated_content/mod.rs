@@ -35,18 +35,23 @@ fn read_quick_xml() {
 
     let item = items.next().unwrap();
     assert_eq!(item.a, 1);
-    assert_eq!(item.b, "String B-1");
+    assert_eq!(item.b.as_deref(), Some("String B-1"));
     assert_eq!(item.c.as_deref(), Some("String C-1"));
 
     let item = items.next().unwrap();
     assert_eq!(item.a, 2);
-    assert_eq!(item.b, "String B-2");
+    assert_eq!(item.b.as_deref(), Some("String B-2"));
     assert_eq!(item.c.as_deref(), None);
 
     let item = items.next().unwrap();
     assert_eq!(item.a, 3);
-    assert_eq!(item.b, "String B-3");
-    assert_eq!(item.c.as_deref(), Some("String C-3"));
+    assert_eq!(item.b.as_deref(), None);
+    assert_eq!(item.c.as_deref(), None);
+
+    let item = items.next().unwrap();
+    assert_eq!(item.a, 4);
+    assert_eq!(item.b.as_deref(), Some("String B-4"));
+    assert_eq!(item.c.as_deref(), Some("String C-4"));
 
     assert!(items.next().is_none());
 }
@@ -60,18 +65,23 @@ fn write_quick_xml() {
         content: vec![
             FooTypeContent {
                 a: 1,
-                b: "String B-1".into(),
+                b: Some("String B-1".into()),
                 c: Some("String C-1".into()),
             },
             FooTypeContent {
                 a: 2,
-                b: "String B-2".into(),
+                b: Some("String B-2".into()),
                 c: None,
             },
             FooTypeContent {
                 a: 3,
-                b: "String B-3".into(),
-                c: Some("String C-3".into()),
+                b: None,
+                c: None,
+            },
+            FooTypeContent {
+                a: 4,
+                b: Some("String B-4".into()),
+                c: Some("String C-4".into()),
             },
         ],
     };

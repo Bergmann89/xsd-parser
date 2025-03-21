@@ -18,7 +18,7 @@ use crate::{
         misc::Occurs,
         Context,
     },
-    schema::xs::Use,
+    schema::{xs::Use, MaxOccurs},
     types::{ComplexInfo, ElementMode, Ident, Type, Types},
 };
 
@@ -587,6 +587,7 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
+                    dbg!("INIT", &event);
                     #fn_init
                 }
 
@@ -598,6 +599,7 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
+                    dbg!("NEXT", &event, &self);
                     #fn_next
                 }
 
@@ -605,6 +607,7 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
+                    dbg!("FINISH", &self);
                     #fn_finish
                 }
             }
@@ -1579,6 +1582,11 @@ impl ComplexTypeStruct<'_> {
                 allow_any_element = true;
             }
         });
+        let done_allow_any = if allow_any {
+            quote!(true)
+        } else {
+            quote!(allow_any_element)
+        };
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1613,7 +1621,10 @@ impl ComplexTypeStruct<'_> {
                         event
                     },
                     #( #handlers_create )*
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (Some(event), #done_allow_any);
+                    },
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
@@ -2653,6 +2664,7 @@ impl ComplexTypeElement<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_handle_sequence(
         &self,
         ctx: &Context<'_, '_>,
@@ -2663,6 +2675,7 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let store_ident = self.store_ident();
+        let field_ident = &self.field_ident;
         let variant_ident = &self.variant_ident;
         let handler_ident = self.handler_ident();
 
@@ -2679,6 +2692,97 @@ impl ComplexTypeElement<'_> {
             quote!(#deserializer_state_ident::#variant_ident(None))
         } else {
             quote!(#deserializer_state_ident::Done__)
+        };
+
+        // Handler for `DeserializerArtifact::None` case: Should only be the
+        // case if we try to initialize a new deserializer.
+        let handler_none = match (self.occurs, self.info.min_occurs) {
+            (Occurs::None, _) => unreachable!(),
+            // If we do not expect any data we continue with the next state
+            (_, 0) | (Occurs::Optional, _) => quote! {
+                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                *self.state = #next_state;
+
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            },
+            // If we got the expected data, we move on, otherwise we stay in the
+            // current state and break.
+            (Occurs::Single, _) => quote! {
+                if self.#field_ident.is_some() {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+            },
+            // If we did not reach the expected amount of data, we stay in the
+            // current state and break, otherwise we continue with the next state.
+            (Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
+                if self.#field_ident.len() < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Data` case:
+        let data_handler = match (self.occurs, self.info.max_occurs) {
+            // If we got some data we simple move one to the next element
+            (Occurs::Single | Occurs::Optional, _) => quote! {
+                *self.state = #next_state;
+            },
+            // If we got some data and the maximum amount of elements of this
+            // type is reached we move on, otherwise we stay in the current state.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => quote! {
+                if self.#field_ident.len() < #max {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Unbounded amount. Stay in the current state in any case.
+            (_, _) => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Deserializer` case:
+        let min = self.info.min_occurs;
+        let deserializer_handler = match self.occurs {
+            // If we expect only one element we continue to the next state,
+            // because the old yet unfinished deserializer already contains
+            // this data.
+            Occurs::Single | Occurs::Optional => quote! {
+                *self.state = #next_state;
+            },
+            // If we have enough space for more data of the same element, we stay
+            // inside the state, otherwise we continue with the next one.
+            // The `+1` is for the data that is contained in the yet unfinished
+            // deserializer.
+            Occurs::DynamicList | Occurs::StaticList(_) if min > 0 => quote! {
+                if self.#field_ident.len().saturating_add(1) < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Infinit amount of data: Stay in the current state.
+            _ => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
         };
 
         quote! {
@@ -2698,11 +2802,7 @@ impl ComplexTypeElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
-
-                    *self.state = #next_state;
-
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    #handler_none
                 }
 
                 if let Some(fallback) = fallback.take() {
@@ -2714,21 +2814,34 @@ impl ComplexTypeElement<'_> {
                     DeserializerArtifact::Data(data) => {
                         self.#store_ident(data)?;
 
-                        *self.state = #deserializer_state_ident::#variant_ident(None);
+                        #data_handler
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
+                        match event {
+                            // If we have a `Start` or `Empty` event (with indicates a new element)
+                            // and the current deserializer is ready to being finished, we store
+                            // it as fallback and continue.
+                            Some(event @ (Event::Start(_) | Event::Empty(_))) => {
+                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
 
-                            *self.state = #next_state;
+                                #deserializer_handler
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
+                                ElementHandlerOutput::continue_(event, allow_any)
+                            }
+                            // This end event might terminate the current containing type, so
+                            // we continue, that the state machine could finish up.
+                            Some(event @ Event::End(_)) => {
+                                *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
 
-                            ElementHandlerOutput::break_(event, allow_any)
+                                ElementHandlerOutput::continue_(event, allow_any)
+                            }
+                            _ => {
+                                *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
+
+                                ElementHandlerOutput::break_(event, allow_any)
+                            }
                         }
                     }
                 })
