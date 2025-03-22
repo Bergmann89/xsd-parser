@@ -69,7 +69,7 @@ pub enum ElementHandlerOutput<'a> {
 
     /// Break the deserialization
     Break {
-        event: Option<Event<'a>>,
+        event: DeserializerEvent<'a>,
         allow_any: bool,
         finish: bool,
     },
@@ -84,7 +84,7 @@ impl<'a> ElementHandlerOutput<'a> {
 
     /// Create a [`Break`](Self::Break) instance.
     #[must_use]
-    pub fn break_(event: Option<Event<'a>>, allow_any: bool) -> Self {
+    pub fn break_(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
         Self::Break {
             event,
             allow_any,
@@ -92,19 +92,33 @@ impl<'a> ElementHandlerOutput<'a> {
         }
     }
 
-    /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
-    /// a [`Some(Start)`](Event::Start), [`Some(Empty)`](Event::Empty), or
-    /// [`Some(End)`](Event::End), a [`Break`](Self::Break) instance otherwise.
+    /// Create a [`Break`](Self::Break) instance that will return the passed
+    /// `event` to the parent deserializer for further processing.
     #[must_use]
-    pub fn from_event(event: Option<Event<'a>>, allow_any: bool) -> Self {
-        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-            Self::Continue { event, allow_any }
-        } else {
-            Self::Break {
-                event,
-                allow_any,
-                finish: false,
+    pub fn return_to_parent(event: Event<'a>, allow_any: bool) -> Self {
+        Self::break_(DeserializerEvent::Continue(event), allow_any)
+    }
+
+    /// Create a [`Break`](Self::Break) instance that will return the passed
+    /// `event` to root of the deserialization process.
+    #[must_use]
+    pub fn return_to_root(event: Event<'a>, allow_any: bool) -> Self {
+        Self::break_(DeserializerEvent::Break(event), allow_any)
+    }
+
+    /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
+    /// a `Continue(Start)`, `Continue(Empty)`, or `Continue(End)`,
+    /// a [`Break`](Self::Break) instance otherwise.
+    #[must_use]
+    pub fn from_event(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
+        match event {
+            DeserializerEvent::Continue(
+                event @ (Event::Start(_) | Event::Empty(_) | Event::End(_)),
+            ) => Self::continue_(event, allow_any),
+            DeserializerEvent::Continue(event) => {
+                Self::break_(DeserializerEvent::Break(event), allow_any)
             }
+            event => Self::break_(event, allow_any),
         }
     }
 }
@@ -119,7 +133,7 @@ where
     pub artifact: DeserializerArtifact<T>,
 
     /// Contains the processed event if it was not consumed by the deserializer.
-    pub event: Option<Event<'a>>,
+    pub event: DeserializerEvent<'a>,
 
     /// Whether the deserializer allows other XML elements in the current state or not.
     /// If this is set to `true` and the `event` is not consumed, the event should
@@ -197,6 +211,32 @@ where
             Self::Deserializer(deserializer) => {
                 DeserializerArtifact::Deserializer(deserializer_mapper(deserializer))
             }
+        }
+    }
+}
+
+/// Indicates what to do with a event returned by a deserializer
+#[derive(Debug)]
+pub enum DeserializerEvent<'a> {
+    /// The event was consumed by the deserializer, nothing to handle here.
+    None,
+
+    /// The event is handled and should be returned to the deserialization root
+    /// for additional evaluation.
+    Break(Event<'a>),
+
+    /// The event was not consumed by the deserializer an may be processed again
+    /// by it's direct parent.
+    Continue(Event<'a>),
+}
+
+impl<'a> DeserializerEvent<'a> {
+    /// Extract the event as `Option`.
+    #[must_use]
+    pub fn into_event(self) -> Option<Event<'a>> {
+        match self {
+            Self::None => None,
+            Self::Break(event) | Self::Continue(event) => Some(event),
         }
     }
 }
@@ -336,7 +376,7 @@ where
                     data: Vec::new(),
                     marker: PhantomData,
                 }),
-                event: None,
+                event: DeserializerEvent::None,
                 allow_any: false,
             }),
             Event::Empty(_) => {
@@ -344,13 +384,13 @@ where
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(data),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             }
             event => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Continue(event),
                 allow_any: false,
             }),
         }
@@ -366,7 +406,7 @@ where
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             }
@@ -375,13 +415,13 @@ where
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(data),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             }
             event => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
-                event: Some(event),
+                event: DeserializerEvent::Break(event),
                 allow_any: false,
             }),
         }
@@ -525,7 +565,7 @@ pub trait DeserializeReader: XmlReader {
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(deserializer),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             }
@@ -535,13 +575,13 @@ pub trait DeserializeReader: XmlReader {
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(data),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             }
             event => Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Continue(event),
                 allow_any: false,
             }),
         }
@@ -593,7 +633,7 @@ where
 
         self.deserializer = deserializer;
 
-        match event {
+        match event.into_event() {
             None
             | Some(
                 Event::Decl(_)

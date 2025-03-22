@@ -131,7 +131,7 @@ pub mod quick_xml_deserialize {
     use xsd_parser::quick_xml::{
         deserialize_new::{
             ContentDeserializer, DeserializeReader, Deserializer, DeserializerArtifact,
-            DeserializerOutput, DeserializerResult, WithDeserializer,
+            DeserializerEvent, DeserializerOutput, DeserializerResult, WithDeserializer,
         },
         filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event,
     };
@@ -238,7 +238,7 @@ pub mod quick_xml_deserialize {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 });
             };

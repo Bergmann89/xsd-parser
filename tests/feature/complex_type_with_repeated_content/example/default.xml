@@ -2,9 +2,13 @@
     <tns:a>1</tns:a>
     <tns:b>String B-1</tns:b>
     <tns:c>String C-1</tns:c>
+
     <tns:a>2</tns:a>
     <tns:b>String B-2</tns:b>
+
     <tns:a>3</tns:a>
-    <tns:b>String B-3</tns:b>
-    <tns:c>String C-3</tns:c>
+
+    <tns:a>4</tns:a>
+    <tns:b>String B-4</tns:b>
+    <tns:c>String C-4</tns:c>
 </tns:Foo>

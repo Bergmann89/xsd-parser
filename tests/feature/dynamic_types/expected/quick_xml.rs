@@ -285,8 +285,8 @@ pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
         deserialize_new::{
-            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
-            DeserializerResult, ElementHandlerOutput, WithDeserializer,
+            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
+            DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
         },
         filter_xmlns_attributes, BytesStart, Error, Event, QName,
     };
@@ -365,15 +365,18 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
-                        fallback.get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
-                        *self.state = ListTypeDeserializerState::Done__;
-                        ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
-                        *self.state = ListTypeDeserializerState::Base(Some(deserializer));
-                        ElementHandlerOutput::break_(event, allow_any)
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback
+                                .get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
+                            *self.state = ListTypeDeserializerState::Base(None);
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = ListTypeDeserializerState::Base(Some(deserializer));
+                        }
                     }
+                    ret
                 }
             })
         }
@@ -418,7 +421,7 @@ pub mod quick_xml_deserialize {
                         }
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                            event: None,
+                            event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
@@ -440,11 +443,14 @@ pub mod quick_xml_deserialize {
                             } => break (event, allow_any),
                         }
                     }
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (DeserializerEvent::Continue(event), allow_any_element);
+                    }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
-                        break (Some(event), false);
+                        break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
@@ -479,7 +485,7 @@ pub mod quick_xml_deserialize {
             let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 });
             };
@@ -518,7 +524,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Break(event),
                 allow_any: false,
             })
         }
@@ -640,13 +646,13 @@ pub mod quick_xml_deserialize {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 })
             }
@@ -747,13 +753,13 @@ pub mod quick_xml_deserialize {
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 })
             }
@@ -784,7 +790,7 @@ pub mod quick_xml_deserialize {
             let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 });
             };
@@ -827,7 +833,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Break(event),
                 allow_any: false,
             })
         }

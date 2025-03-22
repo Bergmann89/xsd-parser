@@ -18,7 +18,7 @@ use crate::{
         misc::Occurs,
         Context,
     },
-    schema::xs::Use,
+    schema::{xs::Use, MaxOccurs},
     types::{ComplexInfo, ElementMode, Ident, Type, Types},
 };
 
@@ -168,6 +168,7 @@ impl DynamicType<'_> {
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::deserialize_new::Deserializer),
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
@@ -185,7 +186,7 @@ impl DynamicType<'_> {
                     let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::None,
-                            event: None,
+                            event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     };
@@ -195,7 +196,7 @@ impl DynamicType<'_> {
 
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::None,
-                        event: Some(event),
+                        event: DeserializerEvent::Break(event),
                         allow_any: false,
                     })
                 }
@@ -529,11 +530,16 @@ impl ComplexType<'_> {
 }
 
 impl ComplexTypeBase {
-    fn return_end_event(&self) -> (TokenStream, TokenStream) {
+    fn return_end_event(&self, ctx: &Context<'_, '_>) -> (TokenStream, TokenStream) {
+        let xsd_parser = &ctx.xsd_parser_crate;
+        ctx.add_quick_xml_deserialize_usings([
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
+        ]);
+
         if self.represents_element() {
-            (quote!(), quote!(None))
+            (quote!(), quote!(DeserializerEvent::None))
         } else {
-            (quote!(event @), quote!(Some(event)))
+            (quote!(event @), quote!(DeserializerEvent::Continue(event)))
         }
     }
 
@@ -734,7 +740,7 @@ impl ComplexTypeEnum<'_> {
                 let (Event::Start(#x) | Event::Empty(#x)) = &event else {
                     *self = Self::Init__;
 
-                    return Ok(ElementHandlerOutput::break_(Some(event), #allow_any));
+                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
                 };
 
                 #allow_any_decl
@@ -744,7 +750,7 @@ impl ComplexTypeEnum<'_> {
 
                 *self = Self::Init__;
 
-                Ok(ElementHandlerOutput::break_(Some(event), #allow_any_result))
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
             }
         }
     }
@@ -827,7 +833,7 @@ impl ComplexTypeEnum<'_> {
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
 
         let handlers_continue = self
             .elements
@@ -1115,7 +1121,7 @@ impl ComplexTypeStruct<'_> {
                 R: DeserializeReader,
             {
                 let (Event::Start(x) | Event::Empty(x)) = &event else {
-                    return Ok(ElementHandlerOutput::break_(Some(event), #allow_any));
+                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
                 };
 
                 #allow_any_decl
@@ -1123,7 +1129,7 @@ impl ComplexTypeStruct<'_> {
                 #( #elements )*
                 #( #groups )*
 
-                Ok(ElementHandlerOutput::break_(Some(event), #allow_any_result))
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
             }
         }
     }
@@ -1303,6 +1309,7 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
             quote!(#xsd_parser::quick_xml::deserialize_new::ContentDeserializer),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
@@ -1312,7 +1319,7 @@ impl ComplexTypeStruct<'_> {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 });
             };
@@ -1378,10 +1385,11 @@ impl ComplexTypeStruct<'_> {
     ) -> TokenStream {
         let _self = self;
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (_, return_end_event) = self.return_end_event();
+        let (_, return_end_event) = self.return_end_event(ctx);
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
         ]);
@@ -1396,7 +1404,7 @@ impl ComplexTypeStruct<'_> {
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: #allow_any,
                 })
             }
@@ -1437,7 +1445,7 @@ impl ComplexTypeStruct<'_> {
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&content.target_type);
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         ctx.add_quick_xml_deserialize_usings([
@@ -1496,7 +1504,7 @@ impl ComplexTypeStruct<'_> {
     }
 
     fn render_deserializer_fn_next_all(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let handlers = self
@@ -1547,7 +1555,7 @@ impl ComplexTypeStruct<'_> {
     fn render_deserializer_fn_next_sequence(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let allow_any = self.any_element().is_some();
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let elements = self.elements();
@@ -1569,6 +1577,7 @@ impl ComplexTypeStruct<'_> {
             quote!(core::mem::replace),
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
             quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
@@ -1579,6 +1588,11 @@ impl ComplexTypeStruct<'_> {
                 allow_any_element = true;
             }
         });
+        let done_allow_any = if allow_any {
+            quote!(true)
+        } else {
+            quote!(allow_any_element)
+        };
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1613,11 +1627,14 @@ impl ComplexTypeStruct<'_> {
                         event
                     },
                     #( #handlers_create )*
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (DeserializerEvent::Continue(event), #done_allow_any);
+                    },
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
-                        break (Some(event), false);
+                        break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
@@ -1881,17 +1898,20 @@ impl ComplexTypeContent {
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #deserializer_state_ident::Next__;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::Content__(deserializer);
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                *self.state = #deserializer_state_ident::Next__;
+                            },
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::Content__(deserializer);
+                            }
                         }
+
+                        ret
                     }
                 })
             }
@@ -2300,15 +2320,15 @@ impl ComplexTypeElement<'_> {
             !represents_element && matches!(self.occurs, Occurs::Single | Occurs::Optional);
         let data_handler = if early_return {
             quote! {
-                Ok(ElementHandlerOutput::Break {
+                ElementHandlerOutput::Break {
                     event,
                     allow_any,
                     finish: true,
-                })
+                }
             }
         } else {
             quote! {
-                Ok(ElementHandlerOutput::from_event(event, allow_any))
+                ElementHandlerOutput::from_event(event, allow_any)
             }
         };
 
@@ -2348,7 +2368,7 @@ impl ComplexTypeElement<'_> {
                     Some(_) => unreachable!(),
                 }
 
-                match artifact {
+                Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::#store_ident(&mut values, data)?;
@@ -2358,27 +2378,22 @@ impl ComplexTypeElement<'_> {
                         #data_handler
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        match event {
-                            Some(event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
+
+                        match &ret {
+                            ElementHandlerOutput::Break { .. } => {
+                                *self = Self::#variant_ident(values, Some(deserializer));
+                            }
+                            ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
 
                                 *self = Self::#variant_ident(values, None);
-
-                                Ok(ElementHandlerOutput::continue_(event, allow_any))
-                            }
-                            Some(event @ Event::End(_)) => {
-                                *self = Self::#variant_ident(values, Some(deserializer));
-
-                                Ok(ElementHandlerOutput::continue_(event, allow_any))
-                            }
-                            _ => {
-                                *self = Self::#variant_ident(values, Some(deserializer));
-
-                                Ok(ElementHandlerOutput::break_(event, allow_any))
                             }
                         }
+
+                        ret
                     }
-                }
+                })
             }
         }
     }
@@ -2636,23 +2651,27 @@ impl ComplexTypeElement<'_> {
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #deserializer_state_ident::Next__;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::#variant_ident(deserializer);
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                *self.state = #deserializer_state_ident::Next__;
+                            }
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::#variant_ident(deserializer);
+                            }
                         }
+
+                        ret
                     }
                 })
             }
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_handle_sequence(
         &self,
         ctx: &Context<'_, '_>,
@@ -2663,6 +2682,7 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let store_ident = self.store_ident();
+        let field_ident = &self.field_ident;
         let variant_ident = &self.variant_ident;
         let handler_ident = self.handler_ident();
 
@@ -2679,6 +2699,97 @@ impl ComplexTypeElement<'_> {
             quote!(#deserializer_state_ident::#variant_ident(None))
         } else {
             quote!(#deserializer_state_ident::Done__)
+        };
+
+        // Handler for `DeserializerArtifact::None`: Should only be the
+        // case if we try to initialize a new deserializer.
+        let handler_none = match (self.occurs, self.info.min_occurs) {
+            (Occurs::None, _) => unreachable!(),
+            // If we do not expect any data we continue with the next state
+            (_, 0) | (Occurs::Optional, _) => quote! {
+                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                *self.state = #next_state;
+
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            },
+            // If we got the expected data, we move on, otherwise we stay in the
+            // current state and break.
+            (Occurs::Single, _) => quote! {
+                if self.#field_ident.is_some() {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+            },
+            // If we did not reach the expected amount of data, we stay in the
+            // current state and break, otherwise we continue with the next state.
+            (Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
+                if self.#field_ident.len() < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Data`:
+        let data_handler = match (self.occurs, self.info.max_occurs) {
+            // If we got some data we simple move one to the next element
+            (Occurs::Single | Occurs::Optional, _) => quote! {
+                *self.state = #next_state;
+            },
+            // If we got some data and the maximum amount of elements of this
+            // type is reached we move on, otherwise we stay in the current state.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => quote! {
+                if self.#field_ident.len() < #max {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Unbounded amount. Stay in the current state in any case.
+            (_, _) => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Deserializer:
+        let min = self.info.min_occurs;
+        let deserializer_handler = match self.occurs {
+            // If we expect only one element we continue to the next state,
+            // because the old yet unfinished deserializer already contains
+            // this data.
+            Occurs::Single | Occurs::Optional => quote! {
+                *self.state = #next_state;
+            },
+            // If we have enough space for more data of the same element, we stay
+            // inside the state, otherwise we continue with the next one.
+            // The `+1` is for the data that is contained in the yet unfinished
+            // deserializer.
+            Occurs::DynamicList | Occurs::StaticList(_) if min > 0 => quote! {
+                if self.#field_ident.len().saturating_add(1) < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Infinit amount of data: Stay in the current state.
+            _ => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
         };
 
         quote! {
@@ -2698,11 +2809,7 @@ impl ComplexTypeElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
-
-                    *self.state = #next_state;
-
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    #handler_none
                 }
 
                 if let Some(fallback) = fallback.take() {
@@ -2714,22 +2821,25 @@ impl ComplexTypeElement<'_> {
                     DeserializerArtifact::Data(data) => {
                         self.#store_ident(data)?;
 
-                        *self.state = #deserializer_state_ident::#variant_ident(None);
+                        #data_handler
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #next_state;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                #deserializer_handler
+                            }
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
+                            }
                         }
+
+                        ret
                     }
                 })
             }
