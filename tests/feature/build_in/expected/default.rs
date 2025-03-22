@@ -14,7 +14,7 @@ pub type Notationtype = String;
 pub type NameType = String;
 pub type QnameType = String;
 #[derive(Debug, Clone)]
-pub struct AnyType {}
+pub struct AnyType;
 pub type AnyURIType = String;
 pub type Base64BinaryType = String;
 pub type BooleanType = bool;

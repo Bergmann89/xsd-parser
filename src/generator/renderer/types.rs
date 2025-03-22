@@ -264,13 +264,22 @@ impl ComplexTypeStruct<'_> {
         let fields = self.elements().iter().map(|x| x.render_field(ctx));
         let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
 
+        let struct_data = if self.is_unit_struct() {
+            quote!(;)
+        } else {
+            quote! {
+                {
+                    #( #attributes )*
+                    #( #fields )*
+                    #content
+                }
+            }
+        };
+
         let code = quote! {
             #derive
-            pub struct #type_ident {
-                #( #attributes )*
-                #( #fields )*
-                #content
-            }
+            pub struct #type_ident
+                #struct_data
 
             #( #trait_impls )*
         };

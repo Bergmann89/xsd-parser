@@ -120,7 +120,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     pub(super) fn finish(self) -> Result<Type, Error> {
-        self.type_.ok_or(Error::InternalError)
+        self.type_.ok_or(Error::NoType)
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -285,6 +285,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
         self.type_mode = TypeMode::Complex;
         self.content_mode = ContentMode::Complex;
+
+        get_or_init_any!(self, ComplexType);
 
         for c in &ty.content {
             match c {

@@ -1170,6 +1170,10 @@ impl Deref for ComplexTypeEnum<'_> {
 }
 
 impl ComplexTypeStruct<'_> {
+    pub(super) fn is_unit_struct(&self) -> bool {
+        matches!(&self.mode, StructMode::Empty { .. }) && !self.has_attributes()
+    }
+
     pub(super) fn has_attributes(&self) -> bool {
         !self.attributes.is_empty()
     }
