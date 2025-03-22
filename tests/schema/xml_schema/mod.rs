@@ -37,6 +37,7 @@ fn generate_quick_xml() {
 fn read_quick_xml() {
     use quick_xml::Schema;
 
+    let _obj = crate::utils::quick_xml_read_test::<Schema, _>("schema/xml.xsd");
     let _obj = crate::utils::quick_xml_read_test::<Schema, _>("schema/XMLSchema.xsd");
 }
 

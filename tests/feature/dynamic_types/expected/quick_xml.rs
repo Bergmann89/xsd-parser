@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{deserialize_new::WithDeserializer, BoxedSerializer, Error, WithSerializer},
+    quick_xml::{BoxedSerializer, Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
 pub type List = ListType;
@@ -284,11 +284,9 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
-            DeserializerResult, ElementHandlerOutput, WithDeserializer,
-        },
-        filter_xmlns_attributes, BytesStart, Error, Event, QName,
+        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+        Event, QName, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct ListTypeDeserializer {
@@ -307,7 +305,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 reader.raise_unexpected_attrib(attrib)?;
             }
@@ -365,15 +363,18 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event
-                    {
-                        fallback.get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
-                        *self.state = ListTypeDeserializerState::Done__;
-                        ElementHandlerOutput::continue_(event, allow_any)
-                    } else {
-                        *self.state = ListTypeDeserializerState::Base(Some(deserializer));
-                        ElementHandlerOutput::break_(event, allow_any)
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback
+                                .get_or_insert(ListTypeDeserializerState::Base(Some(deserializer)));
+                            *self.state = ListTypeDeserializerState::Base(None);
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = ListTypeDeserializerState::Base(Some(deserializer));
+                        }
                     }
+                    ret
                 }
             })
         }
@@ -383,7 +384,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -394,7 +394,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use ListTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
@@ -409,9 +408,9 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (_, Event::End(_)) => {
@@ -420,7 +419,7 @@ pub mod quick_xml_deserialize {
                         }
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                            event: None,
+                            event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     }
@@ -437,16 +436,19 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (DeserializerEvent::Continue(event), allow_any_element);
+                    }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
-                        break (Some(event), false);
+                        break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
@@ -463,7 +465,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, ListTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ListType { base: self.base })
@@ -482,7 +483,7 @@ pub mod quick_xml_deserialize {
             let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 });
             };
@@ -521,7 +522,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Break(event),
                 allow_any: false,
             })
         }
@@ -585,7 +586,7 @@ pub mod quick_xml_deserialize {
         {
             let mut base_value: Option<i32> = None;
             let mut intermediate_value: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),
@@ -630,7 +631,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -641,17 +641,16 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 })
             }
@@ -660,7 +659,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(
                 &mut *self.state,
                 IntermediateTypeDeserializerState::Unknown__,
@@ -692,7 +690,7 @@ pub mod quick_xml_deserialize {
             let mut base_value: Option<i32> = None;
             let mut intermediate_value: Option<i32> = None;
             let mut final_value: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),
@@ -740,7 +738,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -751,17 +748,16 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 })
             }
@@ -770,7 +766,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, FinalTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FinalType {
@@ -793,7 +788,7 @@ pub mod quick_xml_deserialize {
             let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 });
             };
@@ -836,7 +831,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::None,
-                event: Some(event),
+                event: DeserializerEvent::Break(event),
                 allow_any: false,
             })
         }

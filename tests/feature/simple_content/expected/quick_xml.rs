@@ -4,8 +4,8 @@ pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
     quick_xml::{
-        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
-        Error, ErrorKind, RawByteStr, SerializeBytes, WithSerializer,
+        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
+        WithDeserializer, WithSerializer,
     },
     schema::Namespace,
 };
@@ -129,11 +129,9 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            ContentDeserializer, DeserializeReader, Deserializer, DeserializerArtifact,
-            DeserializerOutput, DeserializerResult, WithDeserializer,
-        },
-        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event,
+        filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader, Deserializer,
+        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult, Error,
+        ErrorKind, Event, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
@@ -153,7 +151,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let mut value: Option<String> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),
@@ -235,11 +233,10 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 });
             };
@@ -253,7 +250,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             use FooTypeDeserializerState as S;
             match replace(&mut *self.state, S::Unknown__) {
                 S::Init__ => {
@@ -271,7 +267,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType {

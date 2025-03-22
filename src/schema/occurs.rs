@@ -18,6 +18,15 @@ pub enum MaxOccurs {
     Bounded(usize),
 }
 
+impl MaxOccurs {
+    /// Returns `true` if this a [`Bounded`], `false otherwise.`
+    #[inline]
+    #[must_use]
+    pub fn is_bounded(&self) -> bool {
+        matches!(self, Self::Bounded(_))
+    }
+}
+
 impl Add for MaxOccurs {
     type Output = Self;
 

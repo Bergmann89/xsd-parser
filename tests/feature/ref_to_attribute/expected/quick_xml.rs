@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{deserialize_new::WithDeserializer, Error, WithSerializer},
+    quick_xml::{Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
 pub type Foo = FooType;
@@ -80,11 +80,8 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerOutput,
-            DeserializerResult,
-        },
-        filter_xmlns_attributes, BytesStart, Error, Event,
+        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, Error, Event,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
@@ -102,7 +99,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let mut id: Option<String> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),
@@ -134,7 +131,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("INIT", &event);
             reader.init_deserializer_from_start_event(event, Self::from_bytes_start)
         }
         fn next<R>(
@@ -145,17 +141,16 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("NEXT", &event, &self);
             if let Event::End(_) = &event {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: None,
+                    event: DeserializerEvent::None,
                     allow_any: false,
                 })
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 })
             }
@@ -164,7 +159,6 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            dbg!("FINISH", &self);
             let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType { id: self.id })

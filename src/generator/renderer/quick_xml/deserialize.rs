@@ -18,7 +18,7 @@ use crate::{
         misc::Occurs,
         Context,
     },
-    schema::xs::Use,
+    schema::{xs::Use, MaxOccurs},
     types::{ComplexInfo, ElementMode, Ident, Type, Types},
 };
 
@@ -40,7 +40,7 @@ impl UnionType<'_> {
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::ErrorKind),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
             quote!(#xsd_parser::quick_xml::XmlReader),
         ];
         let code = quote! {
@@ -101,7 +101,7 @@ impl DynamicType<'_> {
         } = self;
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = quick_xml_deserialize::#deserializer_ident;
@@ -129,7 +129,7 @@ impl DynamicType<'_> {
             }
         });
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             #[derive(Debug)]
             pub enum #deserializer_ident {
@@ -167,11 +167,12 @@ impl DynamicType<'_> {
         let usings = [
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::Deserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::Deserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ];
         let code = quote! {
             impl<'de> Deserializer<'de, super::#type_ident> for #deserializer_ident {
@@ -185,7 +186,7 @@ impl DynamicType<'_> {
                     let Some(type_name) = reader.get_dynamic_type_name(&event)? else {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::None,
-                            event: None,
+                            event: DeserializerEvent::None,
                             allow_any: false,
                         });
                     };
@@ -195,7 +196,7 @@ impl DynamicType<'_> {
 
                     Ok(DeserializerOutput {
                         artifact: DeserializerArtifact::None,
-                        event: Some(event),
+                        event: DeserializerEvent::Break(event),
                         allow_any: false,
                     })
                 }
@@ -245,8 +246,8 @@ impl DerivedType {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::QName),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
         ]);
 
         let target_type = ctx.resolve_type_for_deserialize_module(target_type);
@@ -387,8 +388,8 @@ impl ReferenceType<'_> {
 
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ];
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -445,8 +446,8 @@ impl EnumerationType<'_> {
 
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ];
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -529,11 +530,14 @@ impl ComplexType<'_> {
 }
 
 impl ComplexTypeBase {
-    fn return_end_event(&self) -> (TokenStream, TokenStream) {
+    fn return_end_event(&self, ctx: &Context<'_, '_>) -> (TokenStream, TokenStream) {
+        let xsd_parser = &ctx.xsd_parser_crate;
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::DeserializerEvent)]);
+
         if self.represents_element() {
-            (quote!(), quote!(None))
+            (quote!(), quote!(DeserializerEvent::None))
         } else {
-            (quote!(event @), quote!(Some(event)))
+            (quote!(event @), quote!(DeserializerEvent::Continue(event)))
         }
     }
 
@@ -546,7 +550,7 @@ impl ComplexTypeBase {
 
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = quick_xml_deserialize::#deserializer_ident;
@@ -573,9 +577,9 @@ impl ComplexTypeBase {
         let usings = [
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::Deserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::Deserializer),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
         ];
 
         let code = quote! {
@@ -587,8 +591,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("INIT", &event);
-
                     #fn_init
                 }
 
@@ -600,8 +602,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("NEXT", &event, &self);
-
                     #fn_next
                 }
 
@@ -609,8 +609,6 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
-                    dbg!("FINISH", &self);
-
                     #fn_finish
                 }
             }
@@ -638,6 +636,7 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_deserializer_type(&self, ctx: &mut Context<'_, '_>) {
+        let type_ident = &self.type_ident;
         let deserializer_ident = &self.deserializer_ident;
         let variants = self
             .elements
@@ -649,6 +648,7 @@ impl ComplexTypeEnum<'_> {
             pub enum #deserializer_ident {
                 Init__,
                 #( #variants )*
+                Done__(super::#type_ident),
                 Unknown__,
             }
         };
@@ -722,9 +722,9 @@ impl ComplexTypeEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -740,7 +740,7 @@ impl ComplexTypeEnum<'_> {
                 let (Event::Start(#x) | Event::Empty(#x)) = &event else {
                     *self = Self::Init__;
 
-                    return Ok(ElementHandlerOutput::break_(Some(event), #allow_any));
+                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
                 };
 
                 #allow_any_decl
@@ -750,7 +750,7 @@ impl ComplexTypeEnum<'_> {
 
                 *self = Self::Init__;
 
-                Ok(ElementHandlerOutput::break_(Some(event), #allow_any_result))
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
             }
         }
     }
@@ -764,7 +764,7 @@ impl ComplexTypeEnum<'_> {
             ]);
 
             quote! {
-                for attrib in filter_xmlns_attributes(&bytes_start) {
+                for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     reader.raise_unexpected_attrib(attrib)?;
                 }
@@ -774,7 +774,7 @@ impl ComplexTypeEnum<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::BytesStart),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -815,7 +815,7 @@ impl ComplexTypeEnum<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -833,7 +833,7 @@ impl ComplexTypeEnum<'_> {
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
 
         let handlers_continue = self
             .elements
@@ -846,16 +846,17 @@ impl ComplexTypeEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
             let mut event = event;
             let mut fallback = None;
 
-            let (event, allow_any, finish) = loop {
+            let (event, allow_any) = loop {
                 let state = replace(&mut self, Self::Unknown__);
                 event = match (state, event) {
                     #( #handlers_continue )*
@@ -867,18 +868,22 @@ impl ComplexTypeEnum<'_> {
                         });
                     }
                     (Self::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
-                        ElementHandlerOutput::Break { event, allow_any, finish } => break (event, allow_any, finish),
+                        ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     #( #handlers_create )*
+                    (s @ Self::Done__(_), event) => {
+                        self = s;
+
+                        break (DeserializerEvent::Continue(event), false);
+                    },
                     (Self::Unknown__, _) => unreachable!(),
                 }
             };
 
-            let artifact = if finish {
-                DeserializerArtifact::Data(self.finish(reader)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
+            let artifact = match self {
+                Self::Done__(data) => DeserializerArtifact::Data(data),
+                deserializer => DeserializerArtifact::Deserializer(deserializer),
             };
 
             Ok(DeserializerOutput {
@@ -904,6 +909,7 @@ impl ComplexTypeEnum<'_> {
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 #( #finish_elements )*
+                Self::Done__(data) => Ok(data),
                 Self::Unknown__ => unreachable!(),
             }
         }
@@ -949,8 +955,7 @@ impl ComplexTypeStruct<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let mut use_with_deserializer =
-            Some(quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer));
+        let mut use_with_deserializer = Some(quote!(#xsd_parser::quick_xml::WithDeserializer));
 
         let variants = match &self.mode {
             StructMode::Empty { .. } => {
@@ -1105,9 +1110,9 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1121,7 +1126,7 @@ impl ComplexTypeStruct<'_> {
                 R: DeserializeReader,
             {
                 let (Event::Start(x) | Event::Empty(x)) = &event else {
-                    return Ok(ElementHandlerOutput::break_(Some(event), #allow_any));
+                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
                 };
 
                 #allow_any_decl
@@ -1129,7 +1134,7 @@ impl ComplexTypeStruct<'_> {
                 #( #elements )*
                 #( #groups )*
 
-                Ok(ElementHandlerOutput::break_(Some(event), #allow_any_result))
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
             }
         }
     }
@@ -1179,7 +1184,7 @@ impl ComplexTypeStruct<'_> {
             ]);
 
             quote! {
-                for attrib in filter_xmlns_attributes(&bytes_start) {
+                for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
 
                     #( #attrib_match )*
@@ -1191,7 +1196,7 @@ impl ComplexTypeStruct<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::BytesStart),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -1270,7 +1275,7 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -1309,16 +1314,17 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ContentDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ContentDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 return Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::None,
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: false,
                 });
             };
@@ -1340,7 +1346,7 @@ impl ComplexTypeStruct<'_> {
             .map(ComplexTypeContent::deserializer_struct_field_init);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1384,12 +1390,13 @@ impl ComplexTypeStruct<'_> {
     ) -> TokenStream {
         let _self = self;
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (_, return_end_event) = self.return_end_event();
+        let (_, return_end_event) = self.return_end_event(ctx);
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1402,7 +1409,7 @@ impl ComplexTypeStruct<'_> {
             } else {
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
-                    event: Some(event),
+                    event: DeserializerEvent::Break(event),
                     allow_any: #allow_any,
                 })
             }
@@ -1414,9 +1421,9 @@ impl ComplexTypeStruct<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ContentDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ContentDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1443,13 +1450,13 @@ impl ComplexTypeStruct<'_> {
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&content.target_type);
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -1465,7 +1472,7 @@ impl ComplexTypeStruct<'_> {
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
-                            ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
@@ -1479,7 +1486,7 @@ impl ComplexTypeStruct<'_> {
                     (old_state @ (S::Init__ | S::Next__), event) => {
                         let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
-                            ElementHandlerOutput::Break { event, allow_any, .. } => {
+                            ElementHandlerOutput::Break { event, allow_any } => {
                                 if matches!(&*self.state, S::Unknown__) {
                                     *self.state = old_state;
                                 }
@@ -1502,7 +1509,7 @@ impl ComplexTypeStruct<'_> {
     }
 
     fn render_deserializer_fn_next_all(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let handlers = self
@@ -1530,7 +1537,7 @@ impl ComplexTypeStruct<'_> {
                     }
                     (old_state @ (S::Init__ | S::Next__), event) => match self.find_suitable(reader, event, &mut fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
-                        ElementHandlerOutput::Break { event, allow_any, .. } => {
+                        ElementHandlerOutput::Break { event, allow_any } => {
                             if matches!(&*self.state, S::Unknown__) {
                                 *self.state = old_state;
                             }
@@ -1553,7 +1560,7 @@ impl ComplexTypeStruct<'_> {
     fn render_deserializer_fn_next_sequence(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let allow_any = self.any_element().is_some();
         let xsd_parser = &ctx.xsd_parser_crate;
-        let (event_at, return_end_event) = self.return_end_event();
+        let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let elements = self.elements();
@@ -1574,10 +1581,11 @@ impl ComplexTypeStruct<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         let init_set_any = allow_any.then(|| {
@@ -1585,6 +1593,11 @@ impl ComplexTypeStruct<'_> {
                 allow_any_element = true;
             }
         });
+        let done_allow_any = if allow_any {
+            quote!(true)
+        } else {
+            quote!(allow_any_element)
+        };
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1619,11 +1632,14 @@ impl ComplexTypeStruct<'_> {
                         event
                     },
                     #( #handlers_create )*
-                    (S::Done__, event) => break (Some(event), allow_any_element),
+                    (S::Done__, event) => {
+                        fallback.get_or_insert(S::Done__);
+                        break (DeserializerEvent::Continue(event), #done_allow_any);
+                    },
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
                         *self.state = state;
-                        break (Some(event), false);
+                        break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
@@ -1787,10 +1803,10 @@ impl ComplexTypeContent {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1845,10 +1861,10 @@ impl ComplexTypeContent {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1887,17 +1903,20 @@ impl ComplexTypeContent {
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #deserializer_state_ident::Next__;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::Content__(deserializer);
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                *self.state = #deserializer_state_ident::Next__;
+                            },
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::Content__(deserializer);
+                            }
                         }
+
+                        ret
                     }
                 })
             }
@@ -2063,9 +2082,7 @@ impl ComplexTypeElement<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         let body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -2104,8 +2121,8 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         let handle_continue = if handle_any {
@@ -2140,9 +2157,7 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         match self.occurs {
             Occurs::Single | Occurs::Optional => quote! {
@@ -2220,7 +2235,7 @@ impl ComplexTypeElement<'_> {
         };
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2277,6 +2292,7 @@ impl ComplexTypeElement<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_enum_variant_fn_handle(
         &self,
         ctx: &Context<'_, '_>,
@@ -2290,10 +2306,10 @@ impl ComplexTypeElement<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         let values = match self.occurs {
@@ -2302,20 +2318,101 @@ impl ComplexTypeElement<'_> {
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
         };
 
-        let early_return =
-            !represents_element && matches!(self.occurs, Occurs::Single | Occurs::Optional);
-        let data_handler = if early_return {
-            quote! {
-                Ok(ElementHandlerOutput::Break {
+        // Handler for `DeserializerArtifact::Data`
+        let data_handler = match (represents_element, self.occurs, self.info.max_occurs) {
+            (_, Occurs::None, _) => unreachable!(),
+            // Return instantly if we have received the expected a value
+            (false, Occurs::Single | Occurs::Optional, _) => quote! {
+                let data = Self::#variant_ident(values, None).finish(reader)?;
+                *self = Self::Done__(data);
+
+                ElementHandlerOutput::Break {
                     event,
                     allow_any,
-                    finish: true,
-                })
+                }
+            },
+            // Finish the deserialization if the expected max value has been reached.
+            // Continue if not.
+            (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                quote! {
+                    if values.len() < #max {
+                        *self = Self::#variant_ident(values, None);
+
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    } else {
+                        let data = Self::#variant_ident(values, None).finish(reader)?;
+                        *self = Self::Done__(data);
+
+                        ElementHandlerOutput::Break {
+                            event,
+                            allow_any,
+                        }
+                    }
+                }
             }
-        } else {
-            quote! {
-                Ok(ElementHandlerOutput::from_event(event, allow_any))
+            // Value is unbound, continue in any case
+            (_, _, _) => quote! {
+                *self = Self::#variant_ident(values, None);
+
+                ElementHandlerOutput::from_event(event, allow_any)
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Deserializer`
+        let deserializer_handler = match (self.occurs, self.info.max_occurs) {
+            (Occurs::None, _) => unreachable!(),
+            // If we only expect one element we never initialize a new deserializer
+            // we only continue the deserialization process for `End` events (because
+            // thy may finish this deserializer).
+            (Occurs::Single | Occurs::Optional, _) => quote! {
+                *self = Self::#variant_ident(values, Some(deserializer));
+
+                ElementHandlerOutput::from_event_end(event, allow_any)
+            },
+            // If we expect multiple elements we only try to initialize a new
+            // deserializer if the the maximum has not reached yet.
+            // The `+1` is for the data that is contained in the yet unfinished
+            // deserializer.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                quote! {
+                    let can_have_more = values.len().saturating_add(1) < #max;
+                    let ret = if can_have_more {
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    } else {
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    };
+
+                    match (can_have_more, &ret) {
+                        (true, ElementHandlerOutput::Continue { .. })  => {
+                            fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
+
+                            *self = Self::#variant_ident(values, None);
+                        }
+                        (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
+                            *self = Self::#variant_ident(values, Some(deserializer));
+                        }
+                    }
+
+                    ret
+                }
             }
+            // Unbound, we can try a new deserializer in any case.
+            (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
+                let ret = ElementHandlerOutput::from_event(event, allow_any);
+
+                match &ret {
+                    ElementHandlerOutput::Break { .. } => {
+                        *self = Self::#variant_ident(values, Some(deserializer));
+                    }
+                    ElementHandlerOutput::Continue { .. } => {
+                        fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
+
+                        *self = Self::#variant_ident(values, None);
+                    }
+                }
+
+                ret
+            },
         };
 
         quote! {
@@ -2354,37 +2451,17 @@ impl ComplexTypeElement<'_> {
                     Some(_) => unreachable!(),
                 }
 
-                match artifact {
+                Ok(match artifact {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::#store_ident(&mut values, data)?;
 
-                        *self = Self::#variant_ident(values, None);
-
                         #data_handler
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        match event {
-                            Some(event @ (Event::Start(_) | Event::Empty(_))) => {
-                                fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
-
-                                *self = Self::#variant_ident(values, None);
-
-                                Ok(ElementHandlerOutput::continue_(event, allow_any))
-                            }
-                            Some(event @ Event::End(_)) => {
-                                *self = Self::#variant_ident(values, Some(deserializer));
-
-                                Ok(ElementHandlerOutput::continue_(event, allow_any))
-                            }
-                            _ => {
-                                *self = Self::#variant_ident(values, Some(deserializer));
-
-                                Ok(ElementHandlerOutput::break_(event, allow_any))
-                            }
-                        }
+                        #deserializer_handler
                     }
-                }
+                })
             }
         }
     }
@@ -2400,9 +2477,7 @@ impl ComplexTypeElement<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         let matcher = quote!(None);
         let output = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event));
@@ -2421,7 +2496,7 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -2429,7 +2504,7 @@ impl ComplexTypeElement<'_> {
                 let output = #output?;
 
                 match self.#handler_ident(reader, values, output, &mut fallback)? {
-                    ElementHandlerOutput::Break { event, allow_any, finish } => break (event, allow_any, finish),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                     ElementHandlerOutput::Continue { event, .. } => event,
                 }
             },
@@ -2595,10 +2670,10 @@ impl ComplexTypeElement<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -2642,23 +2717,27 @@ impl ComplexTypeElement<'_> {
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #deserializer_state_ident::Next__;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::#variant_ident(deserializer);
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                *self.state = #deserializer_state_ident::Next__;
+                            }
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::#variant_ident(deserializer);
+                            }
                         }
+
+                        ret
                     }
                 })
             }
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_handle_sequence(
         &self,
         ctx: &Context<'_, '_>,
@@ -2669,14 +2748,15 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         let store_ident = self.store_ident();
+        let field_ident = &self.field_ident;
         let variant_ident = &self.variant_ident;
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         let next_state = if let Some(next) = next {
@@ -2685,6 +2765,97 @@ impl ComplexTypeElement<'_> {
             quote!(#deserializer_state_ident::#variant_ident(None))
         } else {
             quote!(#deserializer_state_ident::Done__)
+        };
+
+        // Handler for `DeserializerArtifact::None`: Should only be the
+        // case if we try to initialize a new deserializer.
+        let handler_none = match (self.occurs, self.info.min_occurs) {
+            (Occurs::None, _) => unreachable!(),
+            // If we do not expect any data we continue with the next state
+            (_, 0) | (Occurs::Optional, _) => quote! {
+                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                *self.state = #next_state;
+
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            },
+            // If we got the expected data, we move on, otherwise we stay in the
+            // current state and break.
+            (Occurs::Single, _) => quote! {
+                if self.#field_ident.is_some() {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+            },
+            // If we did not reach the expected amount of data, we stay in the
+            // current state and break, otherwise we continue with the next state.
+            (Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
+                if self.#field_ident.len() < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                } else {
+                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                }
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Data`:
+        let data_handler = match (self.occurs, self.info.max_occurs) {
+            // If we got some data we simple move one to the next element
+            (Occurs::Single | Occurs::Optional, _) => quote! {
+                *self.state = #next_state;
+            },
+            // If we got some data and the maximum amount of elements of this
+            // type is reached we move on, otherwise we stay in the current state.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => quote! {
+                if self.#field_ident.len() < #max {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Unbounded amount. Stay in the current state in any case.
+            (_, _) => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Deserializer:
+        let min = self.info.min_occurs;
+        let deserializer_handler = match self.occurs {
+            // If we expect only one element we continue to the next state,
+            // because the old yet unfinished deserializer already contains
+            // this data.
+            Occurs::Single | Occurs::Optional => quote! {
+                *self.state = #next_state;
+            },
+            // If we have enough space for more data of the same element, we stay
+            // inside the state, otherwise we continue with the next one.
+            // The `+1` is for the data that is contained in the yet unfinished
+            // deserializer.
+            Occurs::DynamicList | Occurs::StaticList(_) if min > 0 => quote! {
+                if self.#field_ident.len().saturating_add(1) < #min {
+                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                } else {
+                    *self.state = #next_state;
+                }
+            },
+            // Infinit amount of data: Stay in the current state.
+            _ => quote! {
+                *self.state = #deserializer_state_ident::#variant_ident(None);
+            },
         };
 
         quote! {
@@ -2704,11 +2875,7 @@ impl ComplexTypeElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
-
-                    *self.state = #next_state;
-
-                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    #handler_none
                 }
 
                 if let Some(fallback) = fallback.take() {
@@ -2720,22 +2887,25 @@ impl ComplexTypeElement<'_> {
                     DeserializerArtifact::Data(data) => {
                         self.#store_ident(data)?;
 
-                        *self.state = #deserializer_state_ident::#variant_ident(None);
+                        #data_handler
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        if let Some(event @ (Event::Start(_) | Event::Empty(_) | Event::End(_))) = event {
-                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
+                        let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                            *self.state = #next_state;
+                        match &ret {
+                            ElementHandlerOutput::Continue { .. } => {
+                                fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Some(deserializer)));
 
-                            ElementHandlerOutput::continue_(event, allow_any)
-                        } else {
-                            *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
-
-                            ElementHandlerOutput::break_(event, allow_any)
+                                #deserializer_handler
+                            }
+                            ElementHandlerOutput::Break { .. } => {
+                                *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
+                            }
                         }
+
+                        ret
                     }
                 })
             }
@@ -2748,9 +2918,9 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xad_parser::quick_xml::DeserializerOutput),
+            quote!(#xad_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xad_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2761,7 +2931,7 @@ impl ComplexTypeElement<'_> {
                 let output = deserializer.next(reader, event)?;
                 match self.#handler_ident(reader, output, &mut fallback)? {
                     ElementHandlerOutput::Continue { event, .. } => event,
-                    ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }
@@ -2776,9 +2946,9 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xad_parser::quick_xml::DeserializerOutput),
+            quote!(#xad_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xad_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2793,7 +2963,7 @@ impl ComplexTypeElement<'_> {
 
                         event
                     },
-                    ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }
@@ -2834,7 +3004,7 @@ impl ComplexTypeElement<'_> {
 
                     event
                 },
-                ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
             }
         };
 
