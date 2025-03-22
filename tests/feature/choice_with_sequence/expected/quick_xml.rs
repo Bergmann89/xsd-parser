@@ -289,6 +289,7 @@ pub mod quick_xml_deserialize {
             Option<super::FooContent6Type>,
             Option<<super::FooContent6Type as WithDeserializer>::Deserializer>,
         ),
+        Done__(super::FooType),
         Unknown__,
     }
     impl FooTypeDeserializer {
@@ -415,20 +416,8 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self = Self::Content3(values, Some(deserializer));
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(Self::Content3(
-                                Default::default(),
-                                Some(deserializer),
-                            ));
-                            *self = Self::Content3(values, None);
-                        }
-                    }
-                    ret
+                    *self = Self::Content3(values, Some(deserializer));
+                    ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
         }
@@ -473,20 +462,8 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Break { .. } => {
-                            *self = Self::Content6(values, Some(deserializer));
-                        }
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(Self::Content6(
-                                Default::default(),
-                                Some(deserializer),
-                            ));
-                            *self = Self::Content6(values, None);
-                        }
-                    }
-                    ret
+                    *self = Self::Content6(values, Some(deserializer));
+                    ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
         }
@@ -508,28 +485,24 @@ pub mod quick_xml_deserialize {
         {
             let mut event = event;
             let mut fallback = None;
-            let (event, allow_any, finish) = loop {
+            let (event, allow_any) = loop {
                 let state = replace(&mut self, Self::Unknown__);
                 event = match (state, event) {
                     (Self::Content3(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content_3(reader, values, output, &mut fallback)? {
-                            ElementHandlerOutput::Break {
-                                event,
-                                allow_any,
-                                finish,
-                            } => break (event, allow_any, finish),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
                     (Self::Content6(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content_6(reader, values, output, &mut fallback)? {
-                            ElementHandlerOutput::Break {
-                                event,
-                                allow_any,
-                                finish,
-                            } => break (event, allow_any, finish),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
@@ -542,11 +515,9 @@ pub mod quick_xml_deserialize {
                     }
                     (Self::Init__, event) => {
                         match self.find_suitable(reader, event, &mut fallback)? {
-                            ElementHandlerOutput::Break {
-                                event,
-                                allow_any,
-                                finish,
-                            } => break (event, allow_any, finish),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
@@ -556,11 +527,9 @@ pub mod quick_xml_deserialize {
                                 reader, event,
                             )?;
                         match self.handle_content_3(reader, values, output, &mut fallback)? {
-                            ElementHandlerOutput::Break {
-                                event,
-                                allow_any,
-                                finish,
-                            } => break (event, allow_any, finish),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
@@ -570,21 +539,22 @@ pub mod quick_xml_deserialize {
                                 reader, event,
                             )?;
                         match self.handle_content_6(reader, values, output, &mut fallback)? {
-                            ElementHandlerOutput::Break {
-                                event,
-                                allow_any,
-                                finish,
-                            } => break (event, allow_any, finish),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
+                    }
+                    (s @ Self::Done__(_), event) => {
+                        self = s;
+                        break (DeserializerEvent::Continue(event), false);
                     }
                     (Self::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = if finish {
-                DeserializerArtifact::Data(self.finish(reader)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
+            let artifact = match self {
+                Self::Done__(data) => DeserializerArtifact::Data(data),
+                deserializer => DeserializerArtifact::Deserializer(deserializer),
             };
             Ok(DeserializerOutput {
                 artifact,
@@ -616,6 +586,7 @@ pub mod quick_xml_deserialize {
                         ErrorKind::MissingElement("Content6".into())
                     })?))
                 }
+                Self::Done__(data) => Ok(data),
                 Self::Unknown__ => unreachable!(),
             }
         }
@@ -821,9 +792,9 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Element2(Some(deserializer)), event) => {
@@ -833,9 +804,9 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (_, event @ Event::End(_)) => {
@@ -862,9 +833,9 @@ pub mod quick_xml_deserialize {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
                                 }
-                                ElementHandlerOutput::Break {
-                                    event, allow_any, ..
-                                } => break (event, allow_any),
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         } else {
                             *self.state = S::Element2(None);
@@ -880,9 +851,9 @@ pub mod quick_xml_deserialize {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
                                 }
-                                ElementHandlerOutput::Break {
-                                    event, allow_any, ..
-                                } => break (event, allow_any),
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         } else {
                             *self.state = S::Done__;
@@ -1129,9 +1100,9 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Element4(Some(deserializer)), event) => {
@@ -1141,9 +1112,9 @@ pub mod quick_xml_deserialize {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
                             }
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (_, event @ Event::End(_)) => {
@@ -1170,9 +1141,9 @@ pub mod quick_xml_deserialize {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
                                 }
-                                ElementHandlerOutput::Break {
-                                    event, allow_any, ..
-                                } => break (event, allow_any),
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         } else {
                             *self.state = S::Element4(None);
@@ -1188,9 +1159,9 @@ pub mod quick_xml_deserialize {
                                     allow_any_element = allow_any_element || allow_any;
                                     event
                                 }
-                                ElementHandlerOutput::Break {
-                                    event, allow_any, ..
-                                } => break (event, allow_any),
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         } else {
                             *self.state = S::Done__;

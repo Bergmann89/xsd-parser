@@ -491,36 +491,36 @@ pub mod quick_xml_deserialize {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_once(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Optional(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_optional(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::OnceSpecify(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_once_specify(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TwiceOrMore(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_twice_or_more(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (_, Event::End(_)) => {
@@ -533,9 +533,7 @@ pub mod quick_xml_deserialize {
                     (old_state @ (S::Init__ | S::Next__), event) => {
                         match self.find_suitable(reader, event, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
-                            ElementHandlerOutput::Break {
-                                event, allow_any, ..
-                            } => {
+                            ElementHandlerOutput::Break { event, allow_any } => {
                                 if matches!(&*self.state, S::Unknown__) {
                                     *self.state = old_state;
                                 }

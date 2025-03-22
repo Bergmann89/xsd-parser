@@ -638,6 +638,7 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_deserializer_type(&self, ctx: &mut Context<'_, '_>) {
+        let type_ident = &self.type_ident;
         let deserializer_ident = &self.deserializer_ident;
         let variants = self
             .elements
@@ -649,6 +650,7 @@ impl ComplexTypeEnum<'_> {
             pub enum #deserializer_ident {
                 Init__,
                 #( #variants )*
+                Done__(super::#type_ident),
                 Unknown__,
             }
         };
@@ -846,16 +848,17 @@ impl ComplexTypeEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
             quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
         ]);
 
         quote! {
             let mut event = event;
             let mut fallback = None;
 
-            let (event, allow_any, finish) = loop {
+            let (event, allow_any) = loop {
                 let state = replace(&mut self, Self::Unknown__);
                 event = match (state, event) {
                     #( #handlers_continue )*
@@ -867,18 +870,22 @@ impl ComplexTypeEnum<'_> {
                         });
                     }
                     (Self::Init__, event) => match self.find_suitable(reader, event, &mut fallback)? {
-                        ElementHandlerOutput::Break { event, allow_any, finish } => break (event, allow_any, finish),
+                        ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     #( #handlers_create )*
+                    (s @ Self::Done__(_), event) => {
+                        self = s;
+
+                        break (DeserializerEvent::Continue(event), false);
+                    },
                     (Self::Unknown__, _) => unreachable!(),
                 }
             };
 
-            let artifact = if finish {
-                DeserializerArtifact::Data(self.finish(reader)?)
-            } else {
-                DeserializerArtifact::Deserializer(self)
+            let artifact = match self {
+                Self::Done__(data) => DeserializerArtifact::Data(data),
+                deserializer => DeserializerArtifact::Deserializer(deserializer),
             };
 
             Ok(DeserializerOutput {
@@ -904,6 +911,7 @@ impl ComplexTypeEnum<'_> {
             match self {
                 Self::Init__ => Err(ErrorKind::MissingContent.into()),
                 #( #finish_elements )*
+                Self::Done__(data) => Ok(data),
                 Self::Unknown__ => unreachable!(),
             }
         }
@@ -1467,7 +1475,7 @@ impl ComplexTypeStruct<'_> {
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
-                            ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                            ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
@@ -1481,7 +1489,7 @@ impl ComplexTypeStruct<'_> {
                     (old_state @ (S::Init__ | S::Next__), event) => {
                         let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_content(reader, output, &mut fallback)? {
-                            ElementHandlerOutput::Break { event, allow_any, .. } => {
+                            ElementHandlerOutput::Break { event, allow_any } => {
                                 if matches!(&*self.state, S::Unknown__) {
                                     *self.state = old_state;
                                 }
@@ -1532,7 +1540,7 @@ impl ComplexTypeStruct<'_> {
                     }
                     (old_state @ (S::Init__ | S::Next__), event) => match self.find_suitable(reader, event, &mut fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
-                        ElementHandlerOutput::Break { event, allow_any, .. } => {
+                        ElementHandlerOutput::Break { event, allow_any } => {
                             if matches!(&*self.state, S::Unknown__) {
                                 *self.state = old_state;
                             }
@@ -2291,6 +2299,7 @@ impl ComplexTypeElement<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_enum_variant_fn_handle(
         &self,
         ctx: &Context<'_, '_>,
@@ -2316,20 +2325,101 @@ impl ComplexTypeElement<'_> {
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
         };
 
-        let early_return =
-            !represents_element && matches!(self.occurs, Occurs::Single | Occurs::Optional);
-        let data_handler = if early_return {
-            quote! {
+        // Handler for `DeserializerArtifact::Data`
+        let data_handler = match (represents_element, self.occurs, self.info.max_occurs) {
+            (_, Occurs::None, _) => unreachable!(),
+            // Return instantly if we have received the expected a value
+            (false, Occurs::Single | Occurs::Optional, _) => quote! {
+                let data = Self::#variant_ident(values, None).finish(reader)?;
+                *self = Self::Done__(data);
+
                 ElementHandlerOutput::Break {
                     event,
                     allow_any,
-                    finish: true,
+                }
+            },
+            // Finish the deserialization if the expected max value has been reached.
+            // Continue if not.
+            (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                quote! {
+                    if values.len() < #max {
+                        *self = Self::#variant_ident(values, None);
+
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    } else {
+                        let data = Self::#variant_ident(values, None).finish(reader)?;
+                        *self = Self::Done__(data);
+
+                        ElementHandlerOutput::Break {
+                            event,
+                            allow_any,
+                        }
+                    }
                 }
             }
-        } else {
-            quote! {
+            // Value is unbound, continue in any case
+            (_, _, _) => quote! {
+                *self = Self::#variant_ident(values, None);
+
                 ElementHandlerOutput::from_event(event, allow_any)
+            },
+        };
+
+        // Handler for `DeserializerArtifact::Deserializer`
+        let deserializer_handler = match (self.occurs, self.info.max_occurs) {
+            (Occurs::None, _) => unreachable!(),
+            // If we only expect one element we never initialize a new deserializer
+            // we only continue the deserialization process for `End` events (because
+            // thy may finish this deserializer).
+            (Occurs::Single | Occurs::Optional, _) => quote! {
+                *self = Self::#variant_ident(values, Some(deserializer));
+
+                ElementHandlerOutput::from_event_end(event, allow_any)
+            },
+            // If we expect multiple elements we only try to initialize a new
+            // deserializer if the the maximum has not reached yet.
+            // The `+1` is for the data that is contained in the yet unfinished
+            // deserializer.
+            (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
+                quote! {
+                    let can_have_more = values.len().saturating_add(1) < #max;
+                    let ret = if can_have_more {
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    } else {
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    };
+
+                    match (can_have_more, &ret) {
+                        (true, ElementHandlerOutput::Continue { .. })  => {
+                            fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
+
+                            *self = Self::#variant_ident(values, None);
+                        }
+                        (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
+                            *self = Self::#variant_ident(values, Some(deserializer));
+                        }
+                    }
+
+                    ret
+                }
             }
+            // Unbound, we can try a new deserializer in any case.
+            (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
+                let ret = ElementHandlerOutput::from_event(event, allow_any);
+
+                match &ret {
+                    ElementHandlerOutput::Break { .. } => {
+                        *self = Self::#variant_ident(values, Some(deserializer));
+                    }
+                    ElementHandlerOutput::Continue { .. } => {
+                        fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
+
+                        *self = Self::#variant_ident(values, None);
+                    }
+                }
+
+                ret
+            },
         };
 
         quote! {
@@ -2373,25 +2463,10 @@ impl ComplexTypeElement<'_> {
                     DeserializerArtifact::Data(data) => {
                         Self::#store_ident(&mut values, data)?;
 
-                        *self = Self::#variant_ident(values, None);
-
                         #data_handler
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        let ret = ElementHandlerOutput::from_event(event, allow_any);
-
-                        match &ret {
-                            ElementHandlerOutput::Break { .. } => {
-                                *self = Self::#variant_ident(values, Some(deserializer));
-                            }
-                            ElementHandlerOutput::Continue { .. } => {
-                                fallback.get_or_insert(Self::#variant_ident(Default::default(), Some(deserializer)));
-
-                                *self = Self::#variant_ident(values, None);
-                            }
-                        }
-
-                        ret
+                        #deserializer_handler
                     }
                 })
             }
@@ -2438,7 +2513,7 @@ impl ComplexTypeElement<'_> {
                 let output = #output?;
 
                 match self.#handler_ident(reader, values, output, &mut fallback)? {
-                    ElementHandlerOutput::Break { event, allow_any, finish } => break (event, allow_any, finish),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                     ElementHandlerOutput::Continue { event, .. } => event,
                 }
             },
@@ -2865,7 +2940,7 @@ impl ComplexTypeElement<'_> {
                 let output = deserializer.next(reader, event)?;
                 match self.#handler_ident(reader, output, &mut fallback)? {
                     ElementHandlerOutput::Continue { event, .. } => event,
-                    ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }
@@ -2897,7 +2972,7 @@ impl ComplexTypeElement<'_> {
 
                         event
                     },
-                    ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }
@@ -2938,7 +3013,7 @@ impl ComplexTypeElement<'_> {
 
                     event
                 },
-                ElementHandlerOutput::Break { event, allow_any, .. } => break (event, allow_any),
+                ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
             }
         };
 

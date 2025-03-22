@@ -71,7 +71,6 @@ pub enum ElementHandlerOutput<'a> {
     Break {
         event: DeserializerEvent<'a>,
         allow_any: bool,
-        finish: bool,
     },
 }
 
@@ -85,11 +84,7 @@ impl<'a> ElementHandlerOutput<'a> {
     /// Create a [`Break`](Self::Break) instance.
     #[must_use]
     pub fn break_(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
-        Self::Break {
-            event,
-            allow_any,
-            finish: false,
-        }
+        Self::Break { event, allow_any }
     }
 
     /// Create a [`Break`](Self::Break) instance that will return the passed
@@ -115,6 +110,19 @@ impl<'a> ElementHandlerOutput<'a> {
             DeserializerEvent::Continue(
                 event @ (Event::Start(_) | Event::Empty(_) | Event::End(_)),
             ) => Self::continue_(event, allow_any),
+            DeserializerEvent::Continue(event) => {
+                Self::break_(DeserializerEvent::Break(event), allow_any)
+            }
+            event => Self::break_(event, allow_any),
+        }
+    }
+
+    /// Create a [`Continue`](Self::Continue) instance if the passed `event` is
+    /// a `Continue(End)`, a [`Break`](Self::Break) instance otherwise.
+    #[must_use]
+    pub fn from_event_end(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
+        match event {
+            DeserializerEvent::Continue(event @ Event::End(_)) => Self::continue_(event, allow_any),
             DeserializerEvent::Continue(event) => {
                 Self::break_(DeserializerEvent::Break(event), allow_any)
             }
