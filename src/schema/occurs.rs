@@ -20,7 +20,7 @@ pub enum MaxOccurs {
 }
 
 impl MaxOccurs {
-    /// Returns `true` if this a [`Bounded`], `false otherwise.`
+    /// Returns `true` if this a [`Bounded`](Self::Bounded), `false otherwise.`
     #[inline]
     #[must_use]
     pub fn is_bounded(&self) -> bool {

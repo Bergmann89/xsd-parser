@@ -1953,6 +1953,7 @@ version = "0.2.0"
 dependencies = [
  "Inflector",
  "anyhow",
+ "base64",
  "bitflags",
  "clap",
  "futures",

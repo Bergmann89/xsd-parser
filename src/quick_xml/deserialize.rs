@@ -34,7 +34,7 @@ where
     ///
     /// # Errors
     ///
-    /// Returns an [`Error`] if the initialization of the deserializer failed.
+    /// Returns an [`struct@Error`] if the initialization of the deserializer failed.
     fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
     where
         R: XmlReader;
@@ -43,7 +43,7 @@ where
     ///
     /// # Errors
     ///
-    /// Returns an [`Error`] if processing the event failed.
+    /// Returns an [`struct@Error`] if processing the event failed.
     fn next<R>(self, reader: &R, event: Event<'de>) -> DeserializerResult<'de, T>
     where
         R: XmlReader;
@@ -52,7 +52,7 @@ where
     ///
     /// # Errors
     ///
-    /// Returns an [`Error`] if the deserializer could not finish.
+    /// Returns an [`struct@Error`] if the deserializer could not finish.
     fn finish<R>(self, reader: &R) -> Result<T, Error>
     where
         R: XmlReader;
@@ -353,7 +353,7 @@ pub trait DeserializeBytes: Sized {
     ///
     /// # Errors
     ///
-    /// Returns a suitable [`Error`] if the deserialization was not successful.
+    /// Returns a suitable [`struct@Error`] if the deserialization was not successful.
     fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error>;
 }
 
@@ -475,7 +475,7 @@ pub trait DeserializeReader: XmlReader {
     ///
     /// # Errors
     ///
-    /// Returns an [`Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
+    /// Returns an [`struct@Error`] with [`ErrorKind::DuplicateAttribute`] if `store`
     /// already contained a value.
     fn read_attrib<T>(
         &self,

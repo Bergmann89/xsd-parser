@@ -44,6 +44,8 @@ jobs:
 
     - name: cargo doc
       run: cargo doc --no-deps
+      env:
+        RUSTDOCFLAGS: '-D warnings'
 
     - name: cargo build
       run: cargo build --release
