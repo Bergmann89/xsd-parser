@@ -3,7 +3,7 @@
 use std::hash::{Hash, Hasher};
 
 use crate::schema::xs::{
-    Annotation, NamespaceListType, NotNamespaceType, ProcessContentsType, QnameListAType,
+    Annotation, BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListAType,
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
@@ -60,7 +60,7 @@ pub struct GroupInfo {
 pub struct AnyInfo {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<NotNamespaceType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
     pub process_contents: Option<ProcessContentsType>,
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: Option<MinOccurs>,
@@ -75,7 +75,7 @@ pub struct AnyInfo {
 pub struct AnyAttributeInfo {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<NotNamespaceType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
     pub process_contents: Option<ProcessContentsType>,
     pub not_q_name: Option<QnameListAType>,
     pub annotation: Option<Annotation>,

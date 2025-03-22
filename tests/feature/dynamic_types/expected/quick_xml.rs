@@ -2,7 +2,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
-    quick_xml::{deserialize_new::WithDeserializer, BoxedSerializer, Error, WithSerializer},
+    quick_xml::{BoxedSerializer, Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
 pub type List = ListType;
@@ -284,11 +284,9 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
-            DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
-        },
-        filter_xmlns_attributes, BytesStart, Error, Event, QName,
+        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
+        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
+        Event, QName, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct ListTypeDeserializer {
@@ -307,7 +305,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 reader.raise_unexpected_attrib(attrib)?;
             }
@@ -588,7 +586,7 @@ pub mod quick_xml_deserialize {
         {
             let mut base_value: Option<i32> = None;
             let mut intermediate_value: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),
@@ -692,7 +690,7 @@ pub mod quick_xml_deserialize {
             let mut base_value: Option<i32> = None;
             let mut intermediate_value: Option<i32> = None;
             let mut final_value: Option<i32> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),

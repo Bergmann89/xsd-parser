@@ -3,8 +3,8 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 use std::borrow::Cow;
 use xsd_parser::{
     quick_xml::{
-        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
-        Error, SerializeBytes, WithSerializer,
+        DeserializeBytes, DeserializeReader, Error, SerializeBytes, WithDeserializer,
+        WithSerializer,
     },
     schema::Namespace,
 };
@@ -244,11 +244,8 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
-            DeserializerOutput, DeserializerResult,
-        },
-        BytesStart, Error, Event,
+        BytesStart, DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
+        DeserializerOutput, DeserializerResult, Error, Event,
     };
     #[derive(Debug)]
     pub struct AnyTypeDeserializer {

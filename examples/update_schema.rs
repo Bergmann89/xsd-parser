@@ -37,7 +37,7 @@ fn main() -> Result<(), Error> {
     };
     let output = match args.next() {
         Some(output) => PathBuf::from(output),
-        None => cwd.join("src/schema/xs_generated.rs"),
+        None => cwd.join("src/schema/xs_generated_new.rs"),
     };
 
     tracing::info!("Generate Code for {input:#?} to {output:#?}");
@@ -71,6 +71,8 @@ fn main() -> Result<(), Error> {
     config.generator.flags =
         GeneratorFlags::all() - GeneratorFlags::QUICK_XML_SERIALIZE - GeneratorFlags::USE_MODULES;
     config.generator.xsd_parser = "crate".into();
+    config.generator.type_postfix.element = String::default();
+    config.generator.type_postfix.element_type = String::default();
     config.generator.generate =
         Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
     config.generator.derive = Some(

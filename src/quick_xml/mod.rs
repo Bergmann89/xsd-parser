@@ -8,9 +8,6 @@ mod deserialize;
 mod error;
 mod serialize;
 
-#[allow(missing_docs)] // TODO
-pub mod deserialize_new;
-
 pub use std::io::Write as XmlWrite;
 
 pub use quick_xml::{
@@ -23,8 +20,9 @@ pub use crate::misc::RawByteStr;
 
 pub use self::attributes::{filter_xmlns_attributes, write_attrib, write_attrib_opt};
 pub use self::deserialize::{
-    ContentDeserializer, DeserializeBytes, DeserializeReader, DeserializeSync, Deserializer,
-    DeserializerOutput, DeserializerResult, WithDeserializer,
+    ContentDeserializer, DeserializeBytes, DeserializeReader, DeserializeStrError, DeserializeSync,
+    Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
+    ElementHandlerOutput, WithDeserializer,
 };
 pub use self::error::{Error, Kind as ErrorKind, UnionError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
@@ -40,7 +38,7 @@ pub use tokio::io::AsyncWrite as XmlWriteAsync;
 pub use self::serialize::SerializeAsync;
 
 #[cfg(feature = "async")]
-pub use self::deserialize_new::DeserializeAsync;
+pub use self::deserialize::DeserializeAsync;
 
 #[cfg(feature = "async")]
 pub use self::reader::XmlReaderAsync;

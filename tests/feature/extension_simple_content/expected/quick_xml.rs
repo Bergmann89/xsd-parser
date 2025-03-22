@@ -4,8 +4,8 @@ pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
     quick_xml::{
-        deserialize_new::{DeserializeBytes, DeserializeReader, WithDeserializer},
-        Error, ErrorKind, RawByteStr, SerializeBytes, WithSerializer,
+        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
+        WithDeserializer, WithSerializer,
     },
     schema::Namespace,
 };
@@ -135,11 +135,9 @@ pub mod quick_xml_serialize {
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
-        deserialize_new::{
-            ContentDeserializer, DeserializeReader, Deserializer, DeserializerArtifact,
-            DeserializerEvent, DeserializerOutput, DeserializerResult, WithDeserializer,
-        },
-        filter_xmlns_attributes, BytesStart, Error, ErrorKind, Event,
+        filter_xmlns_attributes, BytesStart, ContentDeserializer, DeserializeReader, Deserializer,
+        DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult, Error,
+        ErrorKind, Event, WithDeserializer,
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
@@ -161,7 +159,7 @@ pub mod quick_xml_deserialize {
         {
             let mut value: Option<String> = None;
             let mut another_value: Option<String> = None;
-            for attrib in filter_xmlns_attributes(&bytes_start) {
+            for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
                     reader.resolve_local_name(attrib.key, &super::NS_TNS),

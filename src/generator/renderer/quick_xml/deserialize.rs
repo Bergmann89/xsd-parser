@@ -40,7 +40,7 @@ impl UnionType<'_> {
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::ErrorKind),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
             quote!(#xsd_parser::quick_xml::XmlReader),
         ];
         let code = quote! {
@@ -101,7 +101,7 @@ impl DynamicType<'_> {
         } = self;
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = quick_xml_deserialize::#deserializer_ident;
@@ -129,7 +129,7 @@ impl DynamicType<'_> {
             }
         });
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             #[derive(Debug)]
             pub enum #deserializer_ident {
@@ -167,12 +167,12 @@ impl DynamicType<'_> {
         let usings = [
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::Deserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::Deserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ];
         let code = quote! {
             impl<'de> Deserializer<'de, super::#type_ident> for #deserializer_ident {
@@ -246,8 +246,8 @@ impl DerivedType {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::QName),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
         ]);
 
         let target_type = ctx.resolve_type_for_deserialize_module(target_type);
@@ -388,8 +388,8 @@ impl ReferenceType<'_> {
 
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ];
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -446,8 +446,8 @@ impl EnumerationType<'_> {
 
         let usings = [
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeBytes),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeBytes),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ];
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -532,9 +532,7 @@ impl ComplexType<'_> {
 impl ComplexTypeBase {
     fn return_end_event(&self, ctx: &Context<'_, '_>) -> (TokenStream, TokenStream) {
         let xsd_parser = &ctx.xsd_parser_crate;
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::DeserializerEvent)]);
 
         if self.represents_element() {
             (quote!(), quote!(DeserializerEvent::None))
@@ -552,7 +550,7 @@ impl ComplexTypeBase {
 
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let usings = [quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer)];
+        let usings = [quote!(#xsd_parser::quick_xml::WithDeserializer)];
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = quick_xml_deserialize::#deserializer_ident;
@@ -579,9 +577,9 @@ impl ComplexTypeBase {
         let usings = [
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::Deserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::Deserializer),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
         ];
 
         let code = quote! {
@@ -724,9 +722,9 @@ impl ComplexTypeEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -766,7 +764,7 @@ impl ComplexTypeEnum<'_> {
             ]);
 
             quote! {
-                for attrib in filter_xmlns_attributes(&bytes_start) {
+                for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     reader.raise_unexpected_attrib(attrib)?;
                 }
@@ -776,7 +774,7 @@ impl ComplexTypeEnum<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::BytesStart),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -817,7 +815,7 @@ impl ComplexTypeEnum<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -848,10 +846,10 @@ impl ComplexTypeEnum<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -957,8 +955,7 @@ impl ComplexTypeStruct<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let mut use_with_deserializer =
-            Some(quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer));
+        let mut use_with_deserializer = Some(quote!(#xsd_parser::quick_xml::WithDeserializer));
 
         let variants = match &self.mode {
             StructMode::Empty { .. } => {
@@ -1113,9 +1110,9 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1187,7 +1184,7 @@ impl ComplexTypeStruct<'_> {
             ]);
 
             quote! {
-                for attrib in filter_xmlns_attributes(&bytes_start) {
+                for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
 
                     #( #attrib_match )*
@@ -1199,7 +1196,7 @@ impl ComplexTypeStruct<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
             quote!(#xsd_parser::quick_xml::BytesStart),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -1278,7 +1275,7 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
         ]);
 
         quote! {
@@ -1317,10 +1314,10 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ContentDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ContentDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1349,7 +1346,7 @@ impl ComplexTypeStruct<'_> {
             .map(ComplexTypeContent::deserializer_struct_field_init);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1397,9 +1394,9 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1424,9 +1421,9 @@ impl ComplexTypeStruct<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ContentDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ContentDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1458,8 +1455,8 @@ impl ComplexTypeStruct<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -1584,11 +1581,11 @@ impl ComplexTypeStruct<'_> {
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerEvent),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::DeserializerEvent),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         let init_set_any = allow_any.then(|| {
@@ -1806,10 +1803,10 @@ impl ComplexTypeContent {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerResult),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerResult),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -1864,10 +1861,10 @@ impl ComplexTypeContent {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2085,9 +2082,7 @@ impl ComplexTypeElement<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         let body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -2126,8 +2121,8 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         let handle_continue = if handle_any {
@@ -2162,9 +2157,7 @@ impl ComplexTypeElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         match self.occurs {
             Occurs::Single | Occurs::Optional => quote! {
@@ -2242,7 +2235,7 @@ impl ComplexTypeElement<'_> {
         };
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2313,10 +2306,10 @@ impl ComplexTypeElement<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
         let values = match self.occurs {
@@ -2484,9 +2477,7 @@ impl ComplexTypeElement<'_> {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::WithDeserializer),
-        ]);
+        ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
         let matcher = quote!(None);
         let output = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event));
@@ -2505,7 +2496,7 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -2679,10 +2670,10 @@ impl ComplexTypeElement<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerArtifact),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializerArtifact),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         quote! {
@@ -2763,9 +2754,9 @@ impl ComplexTypeElement<'_> {
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializeReader),
-            quote!(#xsd_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xsd_parser::quick_xml::deserialize_new::ElementHandlerOutput),
+            quote!(#xsd_parser::quick_xml::DeserializeReader),
+            quote!(#xsd_parser::quick_xml::DeserializerOutput),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
         ]);
 
         let next_state = if let Some(next) = next {
@@ -2927,9 +2918,9 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xad_parser::quick_xml::DeserializerOutput),
+            quote!(#xad_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xad_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
@@ -2955,9 +2946,9 @@ impl ComplexTypeElement<'_> {
         let handler_ident = self.handler_ident();
 
         ctx.add_quick_xml_deserialize_usings([
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::ElementHandlerOutput),
-            quote!(#xad_parser::quick_xml::deserialize_new::DeserializerArtifact),
+            quote!(#xad_parser::quick_xml::DeserializerOutput),
+            quote!(#xad_parser::quick_xml::ElementHandlerOutput),
+            quote!(#xad_parser::quick_xml::DeserializerArtifact),
         ]);
 
         quote! {
