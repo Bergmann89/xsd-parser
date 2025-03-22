@@ -44,6 +44,7 @@ text-diff = "0.4"
 tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }
 
 [build-dependencies]
+base64 = "0.22"
 regex = "1.11"
 
 [lints.rust]

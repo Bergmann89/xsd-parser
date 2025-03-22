@@ -1,9 +1,10 @@
 //! Build script for the `xsd_parser` crate.
 
 use std::env::var;
-use std::fs::{read_to_string, write};
+use std::fs::{read, read_to_string, write};
 use std::path::PathBuf;
 
+use base64::{prelude::BASE64_STANDARD, Engine};
 use regex::{Captures, Regex};
 
 fn main() {
@@ -12,13 +13,18 @@ fn main() {
     let cargo_dir = PathBuf::from(cargo_dir);
 
     let readme = cargo_dir.join("README.md");
+    let doc_svg = cargo_dir.join("doc/overview.svg");
 
     println!("cargo:rerun-if-changed={}", readme.display());
 
-    let rx = Regex::new(r">\s*\[!WARNING\]\n((?:>\s*(?:[^\n]*\n))+)").unwrap();
+    let rx = Regex::new(r">\s*\[!WARNING\]\r?\n((?:>\s*(?:[^\n]*\r?\n))+)").unwrap();
+
+    let doc_svg = read(doc_svg).expect("Unable to load `doc/overview.svg`");
+    let doc_svg = BASE64_STANDARD.encode(doc_svg);
+    let doc_svg = format!("data:image/svg+xml;base64,{doc_svg}");
 
     let readme = read_to_string(readme).expect("Unable to read `README.md`");
-    let readme = readme.replace("(doc/overview.svg", "(../doc/overview.svg");
+    let readme = readme.replace("doc/overview.svg", &doc_svg);
     let readme = rx.replace_all(&readme, |c: &Captures<'_>| {
         let message = c[1]
             .lines()
@@ -26,7 +32,7 @@ fn main() {
             .collect::<Vec<_>>()
             .join("\n");
 
-        format!("<div class=\"warning\">\n{message}\n</div>")
+        format!("<div class=\"warning\">\n{message}\n</div>\n")
     });
 
     let out_dir = var("OUT_DIR").expect("Missing `OUT_DIR` environment variable!");

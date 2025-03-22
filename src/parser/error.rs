@@ -33,7 +33,7 @@ pub enum Error<E> {
 
     /// Invalid file path!
     ///
-    /// Is raised if the file path could not be converted to an [`Url`].
+    /// Is raised if the file path could not be converted to an [`Url`](url::Url).
     #[error("Invalid file path: {0}!")]
     InvalidFilePath(PathBuf),
 }
