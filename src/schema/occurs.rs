@@ -1,7 +1,8 @@
+use std::cmp::Ordering;
 use std::num::ParseIntError;
+use std::ops::AddAssign;
 use std::ops::{Add, Mul, MulAssign};
 use std::str::FromStr;
-use std::{cmp::Ordering, ops::AddAssign};
 
 use serde::{de::Error as DeError, Deserialize, Serialize};
 

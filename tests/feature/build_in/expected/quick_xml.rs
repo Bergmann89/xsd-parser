@@ -144,7 +144,7 @@ pub type Notationtype = String;
 pub type NameType = String;
 pub type QnameType = String;
 #[derive(Debug, Clone)]
-pub struct AnyType {}
+pub struct AnyType;
 impl WithSerializer for AnyType {
     type Serializer<'x> = quick_xml_serialize::AnyTypeSerializer<'x>;
     fn serializer<'ser>(

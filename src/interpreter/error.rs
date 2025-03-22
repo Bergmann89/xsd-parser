@@ -83,11 +83,12 @@ pub enum Error {
     #[error("Invalid attribute reference: {0:#?}!")]
     InvalidAttributeReference(Box<AttributeType>),
 
-    /// Internal error.
+    /// Unable to create type information.
     ///
-    /// IS raised if an internal error occurred. Check the log output for more details.
-    #[error("Internal error!")]
-    InternalError,
+    /// Is raised if the interpreter was not able to generate a `Type` from the
+    /// provided schema information.
+    #[error("Unable to create type information!")]
+    NoType,
 
     /// The interpreter expected a group type (like `xs:all`, `xs:choice` or `xs:sequence`).
     #[error("Expected group type!")]

@@ -5,6 +5,7 @@ mod any;
 mod build_in;
 mod choice;
 mod choice_with_sequence;
+mod complex_type_empty;
 mod complex_type_with_group;
 mod complex_type_with_repeated_content;
 mod dynamic_types;

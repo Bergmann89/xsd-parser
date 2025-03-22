@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.iata.org/IATA/2007/00" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.iata.org/IATA/2007/00" elementFormDefault="qualified"
+           version="2.009" id="IATA2021.3">
+    <xs:complexType name="SuccessType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Standard way to indicate successful processing of an IATA message. Returning an empty element of this type indicates success.</xs:documentation>
+        </xs:annotation>
+    </xs:complexType>
+</xs:schema>
