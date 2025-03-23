@@ -302,6 +302,27 @@ bitflags! {
 }
 
 impl Config {
+    /// Set interpreter flags to the config.
+    pub fn set_interpreter_flags(mut self, flags: InterpreterFlags) -> Self {
+        self.interpreter.flags = flags;
+
+        self
+    }
+
+    /// Add code interpreter flags to the config.
+    pub fn with_interpreter_flags(mut self, flags: InterpreterFlags) -> Self {
+        self.interpreter.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove code interpreter flags to the config.
+    pub fn without_interpreter_flags(mut self, flags: InterpreterFlags) -> Self {
+        self.interpreter.flags.remove(flags);
+
+        self
+    }
+
     /// Set optimizer flags to the config.
     pub fn set_optimizer_flags(mut self, flags: OptimizerFlags) -> Self {
         self.optimizer.flags = flags;

@@ -442,7 +442,7 @@ impl Config<'_> {
 }
 
 impl<'types> State<'types> {
-    #[instrument(level = "trace", skip(self))]
+    #[instrument(level = "trace", skip(self, config))]
     fn get_or_create_type_ref(
         &mut self,
         config: &Config<'types>,

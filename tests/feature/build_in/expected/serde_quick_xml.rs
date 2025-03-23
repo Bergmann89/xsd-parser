@@ -1,22 +1,22 @@
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Entitiestype(pub Vec<String>);
+pub struct EntitiesType(pub Vec<String>);
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Entitytype(pub Vec<String>);
-pub type Idtype = String;
-pub type Idreftype = String;
+pub struct EntityType(pub Vec<String>);
+pub type IdType = String;
+pub type IdrefType = String;
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Idrefstype(pub Vec<String>);
-pub type NcnameType = String;
-pub type Nmtokentype = String;
+pub struct IdrefsType(pub Vec<String>);
+pub type NcNameType = String;
+pub type NmtokenType = String;
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct Nmtokenstype(pub Vec<String>);
-pub type Notationtype = String;
+pub struct NmtokensType(pub Vec<String>);
+pub type NotationType = String;
 pub type NameType = String;
 pub type QnameType = String;
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AnyType;
-pub type AnyURIType = String;
+pub type AnyUriType = String;
 pub type Base64BinaryType = String;
 pub type BooleanType = bool;
 pub type ByteType = i8;

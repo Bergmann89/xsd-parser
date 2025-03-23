@@ -23,6 +23,15 @@ pub enum Name {
 }
 
 impl Name {
+    /// Generate a unified name from the passed string.
+    #[must_use]
+    pub fn unify(s: &str) -> String {
+        // This is a trick to get weird type name to simple pascal case
+        s.replace('.', "_")
+            .to_screaming_snake_case()
+            .to_pascal_case()
+    }
+
     /// Create a new [`Name::Named`] using the passed `name`.
     #[must_use]
     pub const fn named(name: &'static str) -> Self {
@@ -115,30 +124,26 @@ impl Name {
     pub fn to_type_name(&self, with_id: bool, name: Option<&str>) -> Self {
         match (self, name) {
             (Self::Named(s), _) => Self::Named(Cow::Owned(s.to_pascal_case())),
-            (Self::Unnamed { id, ext: Some(ext) }, Some(name)) if with_id => {
-                Self::Named(Cow::Owned(format!(
-                    "{}{}{id}",
-                    ext.to_pascal_case(),
-                    name.to_pascal_case()
-                )))
-            }
+            (Self::Unnamed { id, ext: Some(ext) }, Some(name)) if with_id => Self::Named(
+                Cow::Owned(format!("{}{}{id}", Self::unify(ext), Self::unify(name))),
+            ),
             (Self::Unnamed { ext: Some(ext), .. }, Some(name)) => Self::Named(Cow::Owned(format!(
                 "{}{}",
-                ext.to_pascal_case(),
-                name.to_pascal_case()
+                Self::unify(ext),
+                Self::unify(name)
             ))),
             (Self::Unnamed { id, ext: None, .. }, Some(name)) if with_id => {
-                Self::Named(Cow::Owned(format!("{}{id}", name.to_pascal_case())))
+                Self::Named(Cow::Owned(format!("{}{id}", Self::unify(name))))
             }
             (Self::Unnamed { ext: None, .. }, Some(name)) => {
-                Self::Named(Cow::Owned(name.to_pascal_case()))
+                Self::Named(Cow::Owned(Self::unify(name)))
             }
             (
                 Self::Unnamed {
                     id, ext: Some(ext), ..
                 },
                 None,
-            ) => Self::Named(Cow::Owned(format!("{}Unnamed{id}", ext.to_pascal_case()))),
+            ) => Self::Named(Cow::Owned(format!("{}Unnamed{id}", Self::unify(ext)))),
             (Self::Unnamed { id, ext: None, .. }, None) => {
                 Self::Named(Cow::Owned(format!("Unnamed{id}")))
             }
@@ -185,11 +190,11 @@ impl Name {
     /// # use xsd_parser::types::Name;
     ///
     /// let name = Name::new("test");
-    /// assert_eq!(Name::new("extTest"), name.extend(false, Some("ext")));
+    /// assert_eq!(Name::new("ExtTest"), name.extend(false, Some("ext")));
     ///
     /// let name = Name::Unnamed { id: 123, ext: Some(Cow::Borrowed("ext")) };
-    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("fuu".into())) }, name.clone().extend(true, Some("fuu")));
-    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("fuuExt".into())) }, name.extend(false, Some("fuu")));
+    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("Fuu".into())) }, name.clone().extend(true, Some("fuu")));
+    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("FuuExt".into())) }, name.extend(false, Some("fuu")));
     /// ``````
     #[must_use]
     pub fn extend<I>(mut self, mut replace: bool, iter: I) -> Self
@@ -198,12 +203,15 @@ impl Name {
         I::Item: Display,
     {
         for s in iter {
+            let s = s.to_string().to_pascal_case();
             match &mut self {
                 Self::Named(name) => *name = Cow::Owned(format!("{s}{}", name.to_pascal_case())),
                 Self::Unnamed { ext: Some(ext), .. } if !take(&mut replace) => {
                     *ext = Cow::Owned(format!("{s}{}", ext.to_pascal_case()));
                 }
-                Self::Unnamed { ext, .. } => *ext = Some(Cow::Owned(s.to_string())),
+                Self::Unnamed { ext, .. } => {
+                    *ext = Some(Cow::Owned(s));
+                }
             }
         }
 
