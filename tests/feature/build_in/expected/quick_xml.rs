@@ -9,8 +9,8 @@ use xsd_parser::{
     schema::Namespace,
 };
 #[derive(Debug, Clone, Default)]
-pub struct Entitiestype(pub Vec<String>);
-impl SerializeBytes for Entitiestype {
+pub struct EntitiesType(pub Vec<String>);
+impl SerializeBytes for EntitiesType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
@@ -27,7 +27,7 @@ impl SerializeBytes for Entitiestype {
         Ok(Some(Cow::Owned(data)))
     }
 }
-impl DeserializeBytes for Entitiestype {
+impl DeserializeBytes for EntitiesType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -41,8 +41,8 @@ impl DeserializeBytes for Entitiestype {
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct Entitytype(pub Vec<String>);
-impl SerializeBytes for Entitytype {
+pub struct EntityType(pub Vec<String>);
+impl SerializeBytes for EntityType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
@@ -59,7 +59,7 @@ impl SerializeBytes for Entitytype {
         Ok(Some(Cow::Owned(data)))
     }
 }
-impl DeserializeBytes for Entitytype {
+impl DeserializeBytes for EntityType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -72,11 +72,11 @@ impl DeserializeBytes for Entitytype {
         ))
     }
 }
-pub type Idtype = String;
-pub type Idreftype = String;
+pub type IdType = String;
+pub type IdrefType = String;
 #[derive(Debug, Clone, Default)]
-pub struct Idrefstype(pub Vec<String>);
-impl SerializeBytes for Idrefstype {
+pub struct IdrefsType(pub Vec<String>);
+impl SerializeBytes for IdrefsType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
@@ -93,7 +93,7 @@ impl SerializeBytes for Idrefstype {
         Ok(Some(Cow::Owned(data)))
     }
 }
-impl DeserializeBytes for Idrefstype {
+impl DeserializeBytes for IdrefsType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -106,11 +106,11 @@ impl DeserializeBytes for Idrefstype {
         ))
     }
 }
-pub type NcnameType = String;
-pub type Nmtokentype = String;
+pub type NcNameType = String;
+pub type NmtokenType = String;
 #[derive(Debug, Clone, Default)]
-pub struct Nmtokenstype(pub Vec<String>);
-impl SerializeBytes for Nmtokenstype {
+pub struct NmtokensType(pub Vec<String>);
+impl SerializeBytes for NmtokensType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         if self.0.is_empty() {
             return Ok(None);
@@ -127,7 +127,7 @@ impl SerializeBytes for Nmtokenstype {
         Ok(Some(Cow::Owned(data)))
     }
 }
-impl DeserializeBytes for Nmtokenstype {
+impl DeserializeBytes for NmtokensType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -140,7 +140,7 @@ impl DeserializeBytes for Nmtokenstype {
         ))
     }
 }
-pub type Notationtype = String;
+pub type NotationType = String;
 pub type NameType = String;
 pub type QnameType = String;
 #[derive(Debug, Clone)]
@@ -163,7 +163,7 @@ impl WithSerializer for AnyType {
 impl WithDeserializer for AnyType {
     type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
 }
-pub type AnyURIType = String;
+pub type AnyUriType = String;
 pub type Base64BinaryType = String;
 pub type BooleanType = bool;
 pub type ByteType = i8;

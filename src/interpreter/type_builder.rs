@@ -1,4 +1,5 @@
 use std::borrow::Cow;
+use std::collections::btree_map::Entry;
 use std::ops::{Deref, DerefMut};
 use std::str::from_utf8;
 
@@ -19,12 +20,24 @@ use super::{Error, NameExtend, NameFallback, NameUnwrap, SchemaInterpreter};
 
 #[derive(Debug)]
 pub(super) struct TypeBuilder<'a, 'schema, 'state> {
+    /// Type that is constructed by the builder
     type_: Option<Type>,
 
+    /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
+
+    /// Mode of the constructed type
     type_mode: TypeMode,
+
+    /// Mode of the content of the constructed type
     content_mode: ContentMode,
+
+    /// Contains the type identifier for the simple content type
     simple_base: Option<Ident>,
+
+    /// `true` if the simple content type of a complex type was already duplicated
+    /// and is now unique for this type.
+    is_simple_content_unique: bool,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
 }
@@ -115,6 +128,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
             simple_base: None,
+            is_simple_content_unique: false,
             owner,
         }
     }
@@ -739,37 +753,41 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);
 
-        let ei = get_or_init_any!(self, Enumeration);
-        let var = ei.variants.find_or_insert(ident, VariantInfo::new);
-        var.use_ = Use::Required;
+        self.simple_content_builder(|builder| {
+            let ei = get_or_init_any!(builder, Enumeration);
+            let var = ei.variants.find_or_insert(ident, VariantInfo::new);
+            var.use_ = Use::Required;
 
-        Ok(())
+            Ok(())
+        })
     }
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
-        let ui = get_or_init_any!(self, Union);
+        self.simple_content_builder(|builder| {
+            let ui = get_or_init_any!(builder, Union);
 
-        if let Some(types) = &ty.member_types {
-            for type_ in &types.0 {
-                let type_ = self.owner.parse_qname(type_)?;
+            if let Some(types) = &ty.member_types {
+                for type_ in &types.0 {
+                    let type_ = builder.owner.parse_qname(type_)?;
+                    ui.types.push(UnionTypeInfo::new(type_));
+                }
+            }
+
+            let ns = builder.owner.state.current_ns();
+
+            for x in &ty.simple_type {
+                let name = x
+                    .name
+                    .clone()
+                    .auto_extend(false, true, builder.owner.state)
+                    .unwrap_or_unnamed(builder.owner.state);
+                let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
                 ui.types.push(UnionTypeInfo::new(type_));
             }
-        }
 
-        let ns = self.owner.state.current_ns();
-
-        for x in &ty.simple_type {
-            let name = x
-                .name
-                .clone()
-                .auto_extend(false, true, self.owner.state)
-                .unwrap_or_unnamed(self.owner.state);
-            let type_ = self.owner.create_simple_type(ns, Some(name), x)?;
-            ui.types.push(UnionTypeInfo::new(type_));
-        }
-
-        Ok(())
+            Ok(())
+        })
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -804,10 +822,14 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
 
         if let Some(type_) = type_ {
-            let ti = get_or_init_any!(self, Reference, ReferenceInfo::new(type_.clone()));
-            ti.type_ = type_;
-            ti.min_occurs = 0;
-            ti.max_occurs = MaxOccurs::Unbounded;
+            self.simple_content_builder(|builder| {
+                let ti = get_or_init_any!(builder, Reference, ReferenceInfo::new(type_.clone()));
+                ti.type_ = type_;
+                ti.min_occurs = 0;
+                ti.max_occurs = MaxOccurs::Unbounded;
+
+                Ok(())
+            })?;
         }
 
         Ok(())
@@ -896,7 +918,6 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         Ok(())
     }
 
-    // #[instrument(err, level = "trace", skip(self, f))]
     fn walk_substitution_groups<F>(
         &mut self,
         groups: &ElementSubstitutionGroupType,
@@ -930,6 +951,68 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
 
         inner(self, groups, &mut f)
+    }
+
+    fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
+    where
+        F: FnOnce(&mut TypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+    {
+        match (self.type_mode, self.content_mode) {
+            (TypeMode::Simple, _) => f(self)?,
+            (TypeMode::Complex, ContentMode::Simple) => {
+                let ci = get_or_init_any!(self, ComplexType);
+                if let Some(content) = self.simple_base.take() {
+                    ci.content = Some(content);
+                }
+
+                let Some(mut content_ident) = ci.content.clone() else {
+                    crate::unreachable!(
+                        "Complex type does not have a simple content identifier: {:?}",
+                        &self.type_
+                    );
+                };
+
+                let content = self.owner.get_simple_type(&content_ident)?.clone();
+                if !self.is_simple_content_unique {
+                    self.is_simple_content_unique = true;
+                    let content_name = self
+                        .owner
+                        .state
+                        .make_unnamed()
+                        .auto_extend(false, true, self.owner.state)
+                        .remove_suffix("Type")
+                        .remove_suffix("Content")
+                        .to_type_name(true, Some("Content"));
+                    content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
+
+                    ci.content = Some(content_ident.clone());
+                }
+
+                let mut builder = TypeBuilder::new(&mut *self.owner);
+                builder.type_ = Some(content);
+                builder.type_mode = TypeMode::Simple;
+                builder.content_mode = ContentMode::Simple;
+
+                f(&mut builder)?;
+
+                let content = builder.type_.unwrap();
+
+                match self.owner.state.types.entry(content_ident) {
+                    Entry::Vacant(e) => {
+                        e.insert(content);
+                    }
+                    Entry::Occupied(e) => {
+                        *e.into_mut() = content;
+                    }
+                }
+            }
+            (TypeMode::Complex, ContentMode::Complex) => {
+                crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.type_);
+            }
+            (_, _) => crate::unreachable!("Unset or invalid combination!"),
+        }
+
+        Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self, f))]

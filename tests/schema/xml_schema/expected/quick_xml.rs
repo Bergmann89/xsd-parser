@@ -335,7 +335,7 @@ pub struct GroupType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub min_occurs: usize,
-    pub max_occurs: AllNNIType,
+    pub max_occurs: AllNniType,
     pub content: Vec<GroupTypeContent>,
 }
 #[derive(Debug, Clone)]
@@ -354,8 +354,8 @@ impl GroupType {
         1usize
     }
     #[must_use]
-    pub fn default_max_occurs() -> AllNNIType {
-        AllNNIType::Usize(1usize)
+    pub fn default_max_occurs() -> AllNniType {
+        AllNniType::Usize(1usize)
     }
 }
 impl WithDeserializer for GroupType {
@@ -390,9 +390,9 @@ pub struct ElementType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub type_: Option<String>,
-    pub substitution_group: Option<Entitiestype>,
+    pub substitution_group: Option<EntitiesType>,
     pub min_occurs: usize,
-    pub max_occurs: AllNNIType,
+    pub max_occurs: AllNniType,
     pub default: Option<String>,
     pub fixed: Option<String>,
     pub nillable: Option<bool>,
@@ -419,8 +419,8 @@ impl ElementType {
         1usize
     }
     #[must_use]
-    pub fn default_max_occurs() -> AllNNIType {
-        AllNNIType::Usize(1usize)
+    pub fn default_max_occurs() -> AllNniType {
+        AllNniType::Usize(1usize)
     }
     #[must_use]
     pub fn default_abstract_() -> bool {
@@ -606,7 +606,7 @@ impl WithDeserializer for ListElementType {
 #[derive(Debug, Clone)]
 pub struct UnionElementType {
     pub id: Option<String>,
-    pub member_types: Option<Entitiestype>,
+    pub member_types: Option<EntitiesType>,
     pub annotation: Option<AnnotationElementType>,
     pub simple_type: Vec<SimpleBaseType>,
 }
@@ -711,11 +711,11 @@ impl WithDeserializer for AssertionType {
     type Deserializer = quick_xml_deserialize::AssertionTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub enum AllNNIType {
+pub enum AllNniType {
     Usize(usize),
     Unbounded,
 }
-impl DeserializeBytes for AllNNIType {
+impl DeserializeBytes for AllNniType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -734,7 +734,7 @@ pub struct AnyElementType {
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: usize,
-    pub max_occurs: AllNNIType,
+    pub max_occurs: AllNniType,
     pub annotation: Option<AnnotationElementType>,
 }
 impl AnyElementType {
@@ -747,16 +747,16 @@ impl AnyElementType {
         1usize
     }
     #[must_use]
-    pub fn default_max_occurs() -> AllNNIType {
-        AllNNIType::Usize(1usize)
+    pub fn default_max_occurs() -> AllNniType {
+        AllNniType::Usize(1usize)
     }
 }
 impl WithDeserializer for AnyElementType {
     type Deserializer = quick_xml_deserialize::AnyElementTypeDeserializer;
 }
 #[derive(Debug, Clone, Default)]
-pub struct Entitiestype(pub Vec<String>);
-impl DeserializeBytes for Entitiestype {
+pub struct EntitiesType(pub Vec<String>);
+impl DeserializeBytes for EntitiesType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -9060,7 +9060,7 @@ pub mod quick_xml_deserialize {
         name: Option<String>,
         ref_: Option<String>,
         min_occurs: usize,
-        max_occurs: super::AllNNIType,
+        max_occurs: super::AllNniType,
         content: Vec<super::GroupTypeContent>,
         state: Box<GroupTypeDeserializerState>,
     }
@@ -9081,7 +9081,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
             let mut min_occurs: Option<usize> = None;
-            let mut max_occurs: Option<super::AllNNIType> = None;
+            let mut max_occurs: Option<super::AllNniType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -10920,9 +10920,9 @@ pub mod quick_xml_deserialize {
         name: Option<String>,
         ref_: Option<String>,
         type_: Option<String>,
-        substitution_group: Option<super::Entitiestype>,
+        substitution_group: Option<super::EntitiesType>,
         min_occurs: usize,
-        max_occurs: super::AllNNIType,
+        max_occurs: super::AllNniType,
         default: Option<String>,
         fixed: Option<String>,
         nillable: Option<bool>,
@@ -10951,9 +10951,9 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
             let mut type_: Option<String> = None;
-            let mut substitution_group: Option<super::Entitiestype> = None;
+            let mut substitution_group: Option<super::EntitiesType> = None;
             let mut min_occurs: Option<usize> = None;
-            let mut max_occurs: Option<super::AllNNIType> = None;
+            let mut max_occurs: Option<super::AllNniType> = None;
             let mut default: Option<String> = None;
             let mut fixed: Option<String> = None;
             let mut nillable: Option<bool> = None;
@@ -14137,7 +14137,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct UnionElementTypeDeserializer {
         id: Option<String>,
-        member_types: Option<super::Entitiestype>,
+        member_types: Option<super::EntitiesType>,
         annotation: Option<super::AnnotationElementType>,
         simple_type: Vec<super::SimpleBaseType>,
         state: Box<UnionElementTypeDeserializerState>,
@@ -14156,7 +14156,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let mut id: Option<String> = None;
-            let mut member_types: Option<super::Entitiestype> = None;
+            let mut member_types: Option<super::EntitiesType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -16603,7 +16603,7 @@ pub mod quick_xml_deserialize {
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListType>,
         min_occurs: usize,
-        max_occurs: super::AllNNIType,
+        max_occurs: super::AllNniType,
         annotation: Option<super::AnnotationElementType>,
         state: Box<AnyElementTypeDeserializerState>,
     }
@@ -16625,7 +16625,7 @@ pub mod quick_xml_deserialize {
             let mut process_contents: Option<super::ProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListType> = None;
             let mut min_occurs: Option<usize> = None;
-            let mut max_occurs: Option<super::AllNNIType> = None;
+            let mut max_occurs: Option<super::AllNniType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(

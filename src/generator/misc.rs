@@ -780,7 +780,7 @@ pub(super) fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> 
 
     match &ident.name {
         Name::Named(s) if s.ends_with(postfix) => Name::Named(s.clone()),
-        Name::Named(s) => Name::Named(Cow::Owned(format!("{s}{postfix}"))),
+        Name::Named(s) => Name::Named(Cow::Owned(format!("{}{postfix}", Name::unify(s)))),
         name => name.to_type_name(false, None),
     }
 }
