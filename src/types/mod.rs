@@ -73,6 +73,17 @@ impl Types {
 
         get_resolved(self, ident, &mut visit).map(|(_ident, ty)| ty)
     }
+
+    /// Get the type ident of the passed `ident` with all single type references resolved.
+    ///
+    /// Like [`get_resolved`](Self::get_resolved), but instead of returning the type it will
+    /// return the identifier of the resolved type.
+    #[must_use]
+    pub fn get_resolved_ident<'a>(&'a self, ident: &'a Ident) -> Option<&'a Ident> {
+        let mut visit = Vec::new();
+
+        get_resolved(self, ident, &mut visit).map(|(ident, _ty)| ident)
+    }
 }
 
 impl Deref for Types {

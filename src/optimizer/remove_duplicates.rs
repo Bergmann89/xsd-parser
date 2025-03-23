@@ -76,7 +76,9 @@ impl Optimizer {
             for (ident, type_) in self.types.iter() {
                 match map.entry(Value { type_, types }) {
                     Entry::Vacant(e) => {
-                        e.insert(ident.clone());
+                        if let Some(ident) = types.get_resolved_ident(ident) {
+                            e.insert(ident.clone());
+                        }
                     }
                     Entry::Occupied(e) => {
                         let reference_ident = e.get();
