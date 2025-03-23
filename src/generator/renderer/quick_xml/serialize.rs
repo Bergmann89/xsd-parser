@@ -296,7 +296,7 @@ impl ComplexTypeBase {
         quote! {
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
-                state: quick_xml_serialize::#serializer_state_ident::Init__,
+                state: Box::new(quick_xml_serialize::#serializer_state_ident::Init__),
                 name: name.unwrap_or(#tag_name),
                 is_root,
             })
@@ -316,7 +316,7 @@ impl ComplexTypeBase {
 
             Ok(quick_xml_serialize::#serializer_ident {
                 value: self,
-                state: quick_xml_serialize::#serializer_state_ident::Init__,
+                state: Box::new(quick_xml_serialize::#serializer_state_ident::Init__),
             })
         }
     }
@@ -339,7 +339,7 @@ impl ComplexTypeBase {
             #[derive(Debug)]
             pub struct #serializer_ident<'ser> {
                 pub(super) value: &'ser super::#type_ident,
-                pub(super) state: #serializer_state_ident<'ser>,
+                pub(super) state: Box<#serializer_state_ident<'ser>>,
                 #extra
             }
         };
@@ -355,7 +355,7 @@ impl ComplexTypeBase {
 
         quote! {
             #serializer_state_ident::End__ => {
-                self.state = #serializer_state_ident::Done__;
+                *self.state = #serializer_state_ident::Done__;
 
                 return Ok(Some(
                     Event::End(
@@ -448,8 +448,7 @@ impl ComplexTypeEnum<'_> {
         let variants_init = self.elements.iter().map(|element| {
             let type_ident = &self.type_ident;
             let variant_ident = &element.variant_ident;
-            let init =
-                element.render_serializer_state_init(ctx, &self.serializer_state_ident, &quote!(x));
+            let init = element.render_serializer_enum_state_init(ctx, &self.serializer_state_ident);
 
             quote! {
                 super::#type_ident::#variant_ident(x) => #init,
@@ -469,7 +468,7 @@ impl ComplexTypeEnum<'_> {
                 #serializer_state_ident::#variant_ident(x) => {
                     match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = #final_state,
+                        None => *self.state = #final_state,
                     }
                 }
             }
@@ -488,7 +487,7 @@ impl ComplexTypeEnum<'_> {
             impl<'ser> #serializer_ident<'ser> {
                 fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                     loop {
-                        match &mut self.state {
+                        match &mut *self.state {
                             #serializer_state_ident::Init__ => {
                                 #handle_state_init
                                 #emit_start_event
@@ -510,7 +509,7 @@ impl ComplexTypeEnum<'_> {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
                         Err(error) => {
-                            self.state = #serializer_state_ident::Done__;
+                            *self.state = #serializer_state_ident::Done__;
 
                             Some(Err(error))
                         }
@@ -608,12 +607,7 @@ impl ComplexTypeStruct<'_> {
 
         let elements = self.elements();
         let handle_state_init = if let Some(first) = elements.first() {
-            let field_ident = &first.field_ident;
-            let init = first.render_serializer_state_init(
-                ctx,
-                serializer_state_ident,
-                &quote!(&self.value.#field_ident),
-            );
+            let init = first.render_serializer_struct_state_init(ctx, serializer_state_ident);
 
             quote!(#init;)
         } else if let Some(content) = &self.content() {
@@ -621,7 +615,7 @@ impl ComplexTypeStruct<'_> {
 
             quote!(#init;)
         } else {
-            quote!(self.state = #final_state;)
+            quote!(*self.state = #final_state;)
         };
 
         let handle_state_variants = (0..).take(elements.len()).map(|i| {
@@ -629,17 +623,12 @@ impl ComplexTypeStruct<'_> {
             let variant_ident = &element.variant_ident;
 
             let next = if let Some(next) = elements.get(i + 1) {
-                let field_ident = &next.field_ident;
-                let init = next.render_serializer_state_init(
-                    ctx,
-                    serializer_state_ident,
-                    &quote!(&self.value.#field_ident),
-                );
+                let init = next.render_serializer_struct_state_init(ctx, serializer_state_ident);
 
                 quote!(#init,)
             } else {
                 quote! {
-                    self.state = #final_state,
+                    *self.state = #final_state,
                 }
             };
 
@@ -655,7 +644,7 @@ impl ComplexTypeStruct<'_> {
             quote! {
                 #serializer_state_ident::Content__(x) => match x.next().transpose()? {
                     Some(event) => return Ok(Some(event)),
-                    None => self.state = #final_state,
+                    None => *self.state = #final_state,
                 }
             }
         });
@@ -674,7 +663,7 @@ impl ComplexTypeStruct<'_> {
                 fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error>
                 {
                     loop {
-                        match &mut self.state {
+                        match &mut *self.state {
                             #serializer_state_ident::Init__ => {
                                 #handle_state_init
                                 #emit_start_event
@@ -697,7 +686,7 @@ impl ComplexTypeStruct<'_> {
                         Ok(Some(event)) => Some(Ok(event)),
                         Ok(None) => None,
                         Err(error) => {
-                            self.state = #serializer_state_ident::Done__;
+                            *self.state = #serializer_state_ident::Done__;
 
                             Some(Err(error))
                         }
@@ -793,20 +782,35 @@ impl ComplexTypeContent {
                 ]);
 
                 quote! {
-                    self.state = #state_ident::Content__(
+                    *self.state = #state_ident::Content__(
                         WithSerializer::serializer(&self.value.content, None, false)?
                     )
                 }
             }
-            Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
+            Occurs::Optional => {
                 ctx.add_quick_xml_serialize_usings([
                     quote!(#xsd_parser::quick_xml::IterSerializer),
                 ]);
 
                 quote! {
-                    self.state = #state_ident::Content__(
+                    *self.state = #state_ident::Content__(
                         IterSerializer::new(
-                            &self.value.content,
+                            self.value.content.as_ref(),
+                            None,
+                            false
+                        )
+                    )
+                }
+            }
+            Occurs::DynamicList | Occurs::StaticList(_) => {
+                ctx.add_quick_xml_serialize_usings([
+                    quote!(#xsd_parser::quick_xml::IterSerializer),
+                ]);
+
+                quote! {
+                    *self.state = #state_ident::Content__(
+                        IterSerializer::new(
+                            &self.value.content[..],
                             None,
                             false
                         )
@@ -829,6 +833,44 @@ impl ComplexTypeElement<'_> {
         }
     }
 
+    fn render_serializer_enum_state_init(
+        &self,
+        ctx: &Context<'_, '_>,
+        state_ident: &Ident2,
+    ) -> TokenStream {
+        let value = match self.occurs {
+            Occurs::None => unreachable!(),
+            Occurs::Single if self.need_indirection => quote!(&**x),
+            Occurs::Single => quote!(x),
+            Occurs::Optional if self.need_indirection => quote!(x.as_ref().map(|x| &**x)),
+            Occurs::Optional => quote!(x.as_ref()),
+            Occurs::DynamicList | Occurs::StaticList(_) => quote!(&x[..]),
+        };
+
+        self.render_serializer_state_init(ctx, state_ident, &value)
+    }
+
+    fn render_serializer_struct_state_init(
+        &self,
+        ctx: &Context<'_, '_>,
+        state_ident: &Ident2,
+    ) -> TokenStream {
+        let field_ident = &self.field_ident;
+
+        let value = match self.occurs {
+            Occurs::None => unreachable!(),
+            Occurs::Single if self.need_indirection => quote!(&*self.value.#field_ident),
+            Occurs::Single => quote!(&self.value.#field_ident),
+            Occurs::Optional if self.need_indirection => {
+                quote!(self.value.#field_ident.as_ref().map(|x| &**x))
+            }
+            Occurs::Optional => quote!(self.value.#field_ident.as_ref()),
+            Occurs::DynamicList | Occurs::StaticList(_) => quote!(&self.value.#field_ident[..]),
+        };
+
+        self.render_serializer_state_init(ctx, state_ident, &value)
+    }
+
     fn render_serializer_state_init(
         &self,
         ctx: &Context<'_, '_>,
@@ -848,7 +890,7 @@ impl ComplexTypeElement<'_> {
                 ]);
 
                 quote! {
-                    self.state = #state_ident::#variant_ident(
+                    *self.state = #state_ident::#variant_ident(
                         WithSerializer::serializer(#value, Some(#field_name), false)?
                     )
                 }
@@ -859,7 +901,7 @@ impl ComplexTypeElement<'_> {
                 ]);
 
                 quote! {
-                    self.state = #state_ident::#variant_ident(
+                    *self.state = #state_ident::#variant_ident(
                         IterSerializer::new(
                             #value,
                             Some(#field_name),
@@ -878,13 +920,10 @@ impl Occurs {
             Occurs::None => None,
             Occurs::Single => Some(quote!(<#target_type as WithSerializer>::Serializer<'ser>)),
             Occurs::Optional => {
-                Some(quote!(IterSerializer<'ser, Option<#target_type>, #target_type>))
+                Some(quote!(IterSerializer<'ser, Option<&'ser #target_type>, #target_type>))
             }
-            Occurs::DynamicList => {
-                Some(quote!(IterSerializer<'ser, Vec<#target_type>, #target_type>))
-            }
-            Occurs::StaticList(sz) => {
-                Some(quote!(IterSerializer<'ser, [#target_type; #sz], #target_type>))
+            Occurs::DynamicList | Occurs::StaticList(..) => {
+                Some(quote!(IterSerializer<'ser, &'ser [#target_type], #target_type>))
             }
         }
     }

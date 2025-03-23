@@ -154,7 +154,7 @@ impl WithSerializer for AnyType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::AnyTypeSerializer {
             value: self,
-            state: quick_xml_serialize::AnyTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
             name: name.unwrap_or("xs:anyType"),
             is_root,
         })
@@ -202,7 +202,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct AnyTypeSerializer<'ser> {
         pub(super) value: &'ser super::AnyType,
-        pub(super) state: AnyTypeSerializerState<'ser>,
+        pub(super) state: Box<AnyTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -215,9 +215,9 @@ pub mod quick_xml_serialize {
     impl<'ser> AnyTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     AnyTypeSerializerState::Init__ => {
-                        self.state = AnyTypeSerializerState::Done__;
+                        *self.state = AnyTypeSerializerState::Done__;
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Empty(bytes)));
                     }
@@ -234,7 +234,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = AnyTypeSerializerState::Done__;
+                    *self.state = AnyTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

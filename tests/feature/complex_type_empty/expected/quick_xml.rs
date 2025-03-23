@@ -16,7 +16,7 @@ impl WithSerializer for SuccessType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::SuccessTypeSerializer {
             value: self,
-            state: quick_xml_serialize::SuccessTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::SuccessTypeSerializerState::Init__),
             name: name.unwrap_or("SuccessType"),
             is_root,
         })
@@ -31,7 +31,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct SuccessTypeSerializer<'ser> {
         pub(super) value: &'ser super::SuccessType,
-        pub(super) state: SuccessTypeSerializerState<'ser>,
+        pub(super) state: Box<SuccessTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -44,9 +44,9 @@ pub mod quick_xml_serialize {
     impl<'ser> SuccessTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     SuccessTypeSerializerState::Init__ => {
-                        self.state = SuccessTypeSerializerState::Done__;
+                        *self.state = SuccessTypeSerializerState::Done__;
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Empty(bytes)));
                     }
@@ -63,7 +63,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = SuccessTypeSerializerState::Done__;
+                    *self.state = SuccessTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

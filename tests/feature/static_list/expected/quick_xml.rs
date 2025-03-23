@@ -19,7 +19,7 @@ impl WithSerializer for ArrayType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ArrayTypeSerializer {
             value: self,
-            state: quick_xml_serialize::ArrayTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::ArrayTypeSerializerState::Init__),
             name: name.unwrap_or("tns:ArrayType"),
             is_root,
         })
@@ -34,14 +34,14 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct ArrayTypeSerializer<'ser> {
         pub(super) value: &'ser super::ArrayType,
-        pub(super) state: ArrayTypeSerializerState<'ser>,
+        pub(super) state: Box<ArrayTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ArrayTypeSerializerState<'ser> {
         Init__,
-        Item(IterSerializer<'ser, [i32; 5usize], i32>),
+        Item(IterSerializer<'ser, &'ser [i32], i32>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -49,10 +49,10 @@ pub mod quick_xml_serialize {
     impl<'ser> ArrayTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     ArrayTypeSerializerState::Init__ => {
-                        self.state = ArrayTypeSerializerState::Item(IterSerializer::new(
-                            &self.value.item,
+                        *self.state = ArrayTypeSerializerState::Item(IterSerializer::new(
+                            &self.value.item[..],
                             Some("tns:Item"),
                             false,
                         ));
@@ -64,10 +64,10 @@ pub mod quick_xml_serialize {
                     }
                     ArrayTypeSerializerState::Item(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = ArrayTypeSerializerState::End__,
+                        None => *self.state = ArrayTypeSerializerState::End__,
                     },
                     ArrayTypeSerializerState::End__ => {
-                        self.state = ArrayTypeSerializerState::Done__;
+                        *self.state = ArrayTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ArrayTypeSerializerState::Done__ => return Ok(None),
@@ -83,7 +83,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = ArrayTypeSerializerState::Done__;
+                    *self.state = ArrayTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -120,6 +120,9 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
+                *self.state = fallback
+                    .take()
+                    .unwrap_or(ArrayTypeDeserializerState::Init__);
                 return Ok(ElementHandlerOutput::return_to_parent(event, false));
             };
             if matches!(
@@ -129,6 +132,9 @@ pub mod quick_xml_deserialize {
                 let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
                 return self.handle_item(reader, output, &mut *fallback);
             }
+            *self.state = fallback
+                .take()
+                .unwrap_or(ArrayTypeDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
@@ -250,14 +256,12 @@ pub mod quick_xml_deserialize {
                             allow_any: false,
                         });
                     }
-                    (old_state @ (S::Init__ | S::Next__), event) => {
+                    (state @ (S::Init__ | S::Next__), event) => {
+                        fallback.get_or_insert(state);
                         match self.find_suitable(reader, event, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, .. } => event,
                             ElementHandlerOutput::Break { event, allow_any } => {
-                                if matches!(&*self.state, S::Unknown__) {
-                                    *self.state = old_state;
-                                }
-                                break (event, allow_any);
+                                break (event, allow_any)
                             }
                         }
                     }

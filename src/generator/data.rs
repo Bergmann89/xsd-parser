@@ -709,6 +709,7 @@ pub(super) struct ComplexTypeContent {
     pub occurs: Occurs,
     pub is_simple: bool,
     pub min_occurs: MinOccurs,
+    pub max_occurs: MaxOccurs,
     pub target_type: IdentPath,
 }
 
@@ -889,6 +890,7 @@ impl<'types> ComplexType<'types> {
             occurs,
             is_simple: true,
             min_occurs,
+            max_occurs,
             target_type,
         };
         let type_ = ComplexTypeStruct {
@@ -973,6 +975,7 @@ impl<'types> ComplexType<'types> {
                 occurs,
                 is_simple: false,
                 min_occurs,
+                max_occurs,
                 target_type,
             };
 
@@ -1089,6 +1092,7 @@ impl<'types> ComplexType<'types> {
                 occurs,
                 is_simple: false,
                 min_occurs,
+                max_occurs,
                 target_type,
             };
 

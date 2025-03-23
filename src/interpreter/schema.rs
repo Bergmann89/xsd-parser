@@ -228,7 +228,13 @@ impl SchemaInterpreter<'_, '_> {
     where
         F: FnMut(&mut TypeBuilder<'_, '_, '_>) -> Result<(), Error>,
     {
-        if self.state.types.types.contains_key(&ident) {
+        if self.state.types.types.contains_key(&ident)
+            || self
+                .state
+                .type_stack
+                .iter()
+                .any(|x| x.as_ref() == Some(&ident))
+        {
             return Ok(ident);
         }
 
