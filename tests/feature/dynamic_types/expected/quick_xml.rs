@@ -19,7 +19,7 @@ impl WithSerializer for ListType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
-            state: quick_xml_serialize::ListTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
             name: name.unwrap_or("tns:list"),
             is_root,
         })
@@ -64,7 +64,7 @@ impl WithSerializer for IntermediateType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::IntermediateTypeSerializer {
             value: self,
-            state: quick_xml_serialize::IntermediateTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::IntermediateTypeSerializerState::Init__),
             name: name.unwrap_or("tns:intermediate"),
             is_root,
         })
@@ -90,7 +90,7 @@ impl WithSerializer for FinalType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FinalTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FinalTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FinalTypeSerializerState::Init__),
             name: name.unwrap_or("tns:final"),
             is_root,
         })
@@ -124,14 +124,14 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct ListTypeSerializer<'ser> {
         pub(super) value: &'ser super::ListType,
-        pub(super) state: ListTypeSerializerState<'ser>,
+        pub(super) state: Box<ListTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum ListTypeSerializerState<'ser> {
         Init__,
-        Base(IterSerializer<'ser, Vec<super::Base>, super::Base>),
+        Base(IterSerializer<'ser, &'ser [super::Base], super::Base>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -139,10 +139,10 @@ pub mod quick_xml_serialize {
     impl<'ser> ListTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     ListTypeSerializerState::Init__ => {
-                        self.state = ListTypeSerializerState::Base(IterSerializer::new(
-                            &self.value.base,
+                        *self.state = ListTypeSerializerState::Base(IterSerializer::new(
+                            &self.value.base[..],
                             Some("tns:base"),
                             false,
                         ));
@@ -154,10 +154,10 @@ pub mod quick_xml_serialize {
                     }
                     ListTypeSerializerState::Base(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = ListTypeSerializerState::End__,
+                        None => *self.state = ListTypeSerializerState::End__,
                     },
                     ListTypeSerializerState::End__ => {
-                        self.state = ListTypeSerializerState::Done__;
+                        *self.state = ListTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     ListTypeSerializerState::Done__ => return Ok(None),
@@ -173,7 +173,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = ListTypeSerializerState::Done__;
+                    *self.state = ListTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -182,7 +182,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct IntermediateTypeSerializer<'ser> {
         pub(super) value: &'ser super::IntermediateType,
-        pub(super) state: IntermediateTypeSerializerState<'ser>,
+        pub(super) state: Box<IntermediateTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -195,9 +195,9 @@ pub mod quick_xml_serialize {
     impl<'ser> IntermediateTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     IntermediateTypeSerializerState::Init__ => {
-                        self.state = IntermediateTypeSerializerState::Done__;
+                        *self.state = IntermediateTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
@@ -223,7 +223,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = IntermediateTypeSerializerState::Done__;
+                    *self.state = IntermediateTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -232,7 +232,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FinalTypeSerializer<'ser> {
         pub(super) value: &'ser super::FinalType,
-        pub(super) state: FinalTypeSerializerState<'ser>,
+        pub(super) state: Box<FinalTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -245,9 +245,9 @@ pub mod quick_xml_serialize {
     impl<'ser> FinalTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FinalTypeSerializerState::Init__ => {
-                        self.state = FinalTypeSerializerState::Done__;
+                        *self.state = FinalTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
@@ -274,7 +274,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FinalTypeSerializerState::Done__;
+                    *self.state = FinalTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

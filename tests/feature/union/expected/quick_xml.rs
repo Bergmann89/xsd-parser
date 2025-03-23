@@ -23,7 +23,7 @@ impl WithSerializer for FooType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
             is_root,
         })
@@ -68,7 +68,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
-        pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -81,9 +81,9 @@ pub mod quick_xml_serialize {
     impl<'ser> FooTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::Done__;
+                        *self.state = FooTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
@@ -104,7 +104,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FooTypeSerializerState::Done__;
+                    *self.state = FooTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

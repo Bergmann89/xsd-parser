@@ -21,7 +21,7 @@ impl WithSerializer for FooType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
             is_root,
         })
@@ -36,7 +36,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
-        pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -53,9 +53,9 @@ pub mod quick_xml_serialize {
     impl<'ser> FooTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::B(WithSerializer::serializer(
+                        *self.state = FooTypeSerializerState::B(WithSerializer::serializer(
                             &self.value.b,
                             Some("tns:b"),
                             false,
@@ -69,7 +69,7 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::B(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            self.state = FooTypeSerializerState::C(WithSerializer::serializer(
+                            *self.state = FooTypeSerializerState::C(WithSerializer::serializer(
                                 &self.value.c,
                                 Some("tns:c"),
                                 false,
@@ -79,7 +79,7 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::C(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            self.state = FooTypeSerializerState::A(WithSerializer::serializer(
+                            *self.state = FooTypeSerializerState::A(WithSerializer::serializer(
                                 &self.value.a,
                                 Some("tns:a"),
                                 false,
@@ -88,10 +88,10 @@ pub mod quick_xml_serialize {
                     },
                     FooTypeSerializerState::A(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = FooTypeSerializerState::End__,
+                        None => *self.state = FooTypeSerializerState::End__,
                     },
                     FooTypeSerializerState::End__ => {
-                        self.state = FooTypeSerializerState::Done__;
+                        *self.state = FooTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
@@ -107,7 +107,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FooTypeSerializerState::Done__;
+                    *self.state = FooTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

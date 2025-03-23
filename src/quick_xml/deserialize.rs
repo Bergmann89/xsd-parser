@@ -98,7 +98,7 @@ impl<'a> ElementHandlerOutput<'a> {
     }
 
     /// Create a [`Break`](Self::Break) instance that will return the passed
-    /// `event` to the parent deserializer for further processing.
+    /// `event` to the parent deserializers for further processing.
     #[must_use]
     pub fn return_to_parent(event: Event<'a>, allow_any: bool) -> Self {
         Self::break_(DeserializerEvent::Continue(event), allow_any)
@@ -120,9 +120,6 @@ impl<'a> ElementHandlerOutput<'a> {
             DeserializerEvent::Continue(
                 event @ (Event::Start(_) | Event::Empty(_) | Event::End(_)),
             ) => Self::continue_(event, allow_any),
-            DeserializerEvent::Continue(event) => {
-                Self::break_(DeserializerEvent::Break(event), allow_any)
-            }
             event => Self::break_(event, allow_any),
         }
     }
@@ -253,7 +250,7 @@ pub enum DeserializerEvent<'a> {
     Break(Event<'a>),
 
     /// The event was not consumed by the deserializer an may be processed again
-    /// by it's direct parent.
+    /// by it's any of it's parents.
     Continue(Event<'a>),
 }
 

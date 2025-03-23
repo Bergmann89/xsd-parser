@@ -25,7 +25,7 @@ impl WithSerializer for FooType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
             is_root,
         })
@@ -70,7 +70,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
-        pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -85,13 +85,11 @@ pub mod quick_xml_serialize {
     impl<'ser> FooTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::Content__(WithSerializer::serializer(
-                            &self.value.content,
-                            None,
-                            false,
-                        )?);
+                        *self.state = FooTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
@@ -106,10 +104,10 @@ pub mod quick_xml_serialize {
                     }
                     FooTypeSerializerState::Content__(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = FooTypeSerializerState::End__,
+                        None => *self.state = FooTypeSerializerState::End__,
                     },
                     FooTypeSerializerState::End__ => {
-                        self.state = FooTypeSerializerState::Done__;
+                        *self.state = FooTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
@@ -125,7 +123,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FooTypeSerializerState::Done__;
+                    *self.state = FooTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

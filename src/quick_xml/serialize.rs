@@ -271,17 +271,17 @@ where
 #[allow(missing_docs)]
 pub enum IterSerializer<'ser, T, TItem>
 where
-    &'ser T: IntoIterator<Item = &'ser TItem>,
-    <&'ser T as IntoIterator>::IntoIter: Debug,
+    T: IntoIterator<Item = &'ser TItem> + 'ser,
+    <T as IntoIterator>::IntoIter: Debug,
     TItem: WithSerializer + 'ser,
 {
     Pending {
         name: Option<&'ser str>,
-        iter: <&'ser T as IntoIterator>::IntoIter,
+        iter: <T as IntoIterator>::IntoIter,
     },
     Emitting {
         name: Option<&'ser str>,
-        iter: <&'ser T as IntoIterator>::IntoIter,
+        iter: <T as IntoIterator>::IntoIter,
         serializer: TItem::Serializer<'ser>,
     },
     Done,
@@ -289,9 +289,8 @@ where
 
 impl<'ser, T, TItem> Iterator for IterSerializer<'ser, T, TItem>
 where
-    T: 'ser,
-    &'ser T: IntoIterator<Item = &'ser TItem>,
-    <&'ser T as IntoIterator>::IntoIter: Debug,
+    T: IntoIterator<Item = &'ser TItem> + 'ser,
+    <T as IntoIterator>::IntoIter: Debug,
     TItem: WithSerializer + 'ser,
 {
     type Item = Result<Event<'ser>, Error>;
@@ -338,13 +337,12 @@ where
 
 impl<'ser, T, TItem> IterSerializer<'ser, T, TItem>
 where
-    T: Debug + 'ser,
-    &'ser T: IntoIterator<Item = &'ser TItem>,
-    <&'ser T as IntoIterator>::IntoIter: Debug,
-    TItem: WithSerializer + Debug + 'ser,
+    T: IntoIterator<Item = &'ser TItem> + 'ser,
+    <T as IntoIterator>::IntoIter: Debug,
+    TItem: WithSerializer + 'ser,
 {
     /// Create a new [`IterSerializer`] instance from the passed arguments.
-    pub fn new(value: &'ser T, name: Option<&'ser str>, is_root: bool) -> Self {
+    pub fn new(value: T, name: Option<&'ser str>, is_root: bool) -> Self {
         let _is_root = is_root;
 
         Self::Pending {

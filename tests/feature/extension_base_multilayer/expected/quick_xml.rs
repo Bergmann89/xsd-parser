@@ -19,7 +19,7 @@ impl WithSerializer for FooType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FooTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FooTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooType"),
             is_root,
         })
@@ -43,7 +43,7 @@ impl WithSerializer for FooTypeMessagesType {
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(quick_xml_serialize::FooTypeMessagesTypeSerializer {
             value: self,
-            state: quick_xml_serialize::FooTypeMessagesTypeSerializerState::Init__,
+            state: Box::new(quick_xml_serialize::FooTypeMessagesTypeSerializerState::Init__),
             name: name.unwrap_or("tns:FooTypeMessages"),
             is_root,
         })
@@ -58,7 +58,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooType,
-        pub(super) state: FooTypeSerializerState<'ser>,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -73,9 +73,9 @@ pub mod quick_xml_serialize {
     impl<'ser> FooTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
-                        self.state = FooTypeSerializerState::Messages(WithSerializer::serializer(
+                        *self.state = FooTypeSerializerState::Messages(WithSerializer::serializer(
                             &self.value.messages,
                             Some("tns:Messages"),
                             false,
@@ -88,10 +88,10 @@ pub mod quick_xml_serialize {
                     }
                     FooTypeSerializerState::Messages(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = FooTypeSerializerState::End__,
+                        None => *self.state = FooTypeSerializerState::End__,
                     },
                     FooTypeSerializerState::End__ => {
-                        self.state = FooTypeSerializerState::Done__;
+                        *self.state = FooTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),
@@ -107,7 +107,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FooTypeSerializerState::Done__;
+                    *self.state = FooTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -116,7 +116,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub struct FooTypeMessagesTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooTypeMessagesType,
-        pub(super) state: FooTypeMessagesTypeSerializerState<'ser>,
+        pub(super) state: Box<FooTypeMessagesTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
@@ -133,9 +133,9 @@ pub mod quick_xml_serialize {
     impl<'ser> FooTypeMessagesTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match &mut self.state {
+                match &mut *self.state {
                     FooTypeMessagesTypeSerializerState::Init__ => {
-                        self.state = FooTypeMessagesTypeSerializerState::Aa(
+                        *self.state = FooTypeMessagesTypeSerializerState::Aa(
                             WithSerializer::serializer(&self.value.aa, Some("tns:aa"), false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
@@ -147,7 +147,7 @@ pub mod quick_xml_serialize {
                     FooTypeMessagesTypeSerializerState::Aa(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            self.state = FooTypeMessagesTypeSerializerState::Bb(
+                            *self.state = FooTypeMessagesTypeSerializerState::Bb(
                                 WithSerializer::serializer(&self.value.bb, Some("tns:bb"), false)?,
                             )
                         }
@@ -155,17 +155,17 @@ pub mod quick_xml_serialize {
                     FooTypeMessagesTypeSerializerState::Bb(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            self.state = FooTypeMessagesTypeSerializerState::A(
+                            *self.state = FooTypeMessagesTypeSerializerState::A(
                                 WithSerializer::serializer(&self.value.a, Some("tns:a"), false)?,
                             )
                         }
                     },
                     FooTypeMessagesTypeSerializerState::A(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => self.state = FooTypeMessagesTypeSerializerState::End__,
+                        None => *self.state = FooTypeMessagesTypeSerializerState::End__,
                     },
                     FooTypeMessagesTypeSerializerState::End__ => {
-                        self.state = FooTypeMessagesTypeSerializerState::Done__;
+                        *self.state = FooTypeMessagesTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
                     FooTypeMessagesTypeSerializerState::Done__ => return Ok(None),
@@ -181,7 +181,7 @@ pub mod quick_xml_serialize {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    self.state = FooTypeMessagesTypeSerializerState::Done__;
+                    *self.state = FooTypeMessagesTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
