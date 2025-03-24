@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{Ident, Type, Types};
+use crate::types::{Ident, TypeVariant, Types};
 
 #[derive(Debug)]
 pub(crate) struct TypedefMap(HashMap<Ident, Ident>);
@@ -10,7 +10,7 @@ impl TypedefMap {
         let mut ret = HashMap::new();
 
         for (ident, type_) in &types.types {
-            if let Type::Reference(x) = type_ {
+            if let TypeVariant::Reference(x) = &type_.variant {
                 if x.is_single() {
                     ret.insert(ident.clone(), x.type_.clone());
                 }

@@ -6,7 +6,7 @@ use std::io::Error as IoError;
 use anyhow::Error as AnyError;
 use thiserror::Error;
 
-use crate::types::{ElementMode, Ident, Type, Types};
+use crate::types::{ElementMode, Ident, Type, TypeVariant, Types};
 use crate::{GeneratorError, InterpreterError, ParserError};
 
 /// Trait that adds namespace information to a type.
@@ -195,21 +195,23 @@ impl<'a> TypesPrinter<'a> {
             return Ok(());
         }
 
-        match ty {
-            Type::BuildIn(x) => {
+        match &ty.variant {
+            TypeVariant::BuildIn(x) => {
                 writeln!(f, "{}: BuildIn", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("type={x:?}");
 
                 s.level -= 1;
             }
-            Type::Union(x) => {
+            TypeVariant::Union(x) => {
                 writeln!(f, "{}: Union", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
                 indentln!("types");
 
@@ -221,22 +223,24 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            Type::Reference(x) => {
+            TypeVariant::Reference(x) => {
                 writeln!(f, "{}: Reference", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("min={}", x.min_occurs);
                 indentln!("max={:?}", x.max_occurs);
                 indentln!("type={}", x.type_);
 
                 s.level -= 1;
             }
-            Type::Dynamic(x) => {
+            TypeVariant::Dynamic(x) => {
                 writeln!(f, "{}: Dynamic", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("types");
 
                 s.level += 1;
@@ -247,11 +251,12 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            Type::Enumeration(x) => {
+            TypeVariant::Enumeration(x) => {
                 writeln!(f, "{}: Enumeration", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
                 indentln!("variants");
 
@@ -263,15 +268,17 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            Type::All(x) | Type::Choice(x) | Type::Sequence(x) => {
-                match ty {
-                    Type::All(_) => writeln!(f, "{}: All", ident)?,
-                    Type::Choice(_) => writeln!(f, "{}: Choice", ident)?,
-                    Type::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
+            TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
+                match &ty.variant {
+                    TypeVariant::All(_) => writeln!(f, "{}: All", ident)?,
+                    TypeVariant::Choice(_) => writeln!(f, "{}: Choice", ident)?,
+                    TypeVariant::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
                     _ => (),
                 }
 
                 s.level += 1;
+
+                indentln!("display_name={:?}", &ty.display_name);
 
                 if let Some(x) = &x.any {
                     indentln!("any");
@@ -322,11 +329,12 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            Type::ComplexType(x) => {
+            TypeVariant::ComplexType(x) => {
                 writeln!(f, "{}: ComplexType", ident)?;
 
                 s.level += 1;
 
+                indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
                 indentln!("min_occurs={}", x.min_occurs);
                 indentln!("max_occurs={:?}", x.max_occurs);

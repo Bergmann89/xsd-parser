@@ -4,7 +4,7 @@ mod error;
 mod helper;
 mod schema;
 mod state;
-mod type_builder;
+mod variant_builder;
 
 use std::fmt::Debug;
 
@@ -13,7 +13,7 @@ use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
 use crate::types::{
     AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, GroupInfo, Ident, Module, Name,
-    ReferenceInfo, Type, Types,
+    ReferenceInfo, Type, TypeVariant, Types,
 };
 
 pub use error::Error;
@@ -22,7 +22,7 @@ use tracing::instrument;
 use self::helper::{NameExtend, NameFallback, NameUnwrap};
 use self::schema::SchemaInterpreter;
 use self::state::{Node, State};
-use self::type_builder::TypeBuilder;
+use self::variant_builder::VariantBuilder;
 
 /// The [`Interpreter`] is used to interpret the XML schema information.
 ///
@@ -233,7 +233,7 @@ impl<'a> Interpreter<'a> {
         // content type
         let content_name = self.state.make_unnamed();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
-        let content_type = Type::Sequence(GroupInfo {
+        let content_variant = TypeVariant::Sequence(GroupInfo {
             any: Some(AnyInfo {
                 min_occurs: Some(0),
                 max_occurs: Some(MaxOccurs::Unbounded),
@@ -242,12 +242,13 @@ impl<'a> Interpreter<'a> {
             }),
             ..Default::default()
         });
+        let content_type = Type::new(content_variant);
         self.state
             .add_type(content_ident.clone(), content_type, true)?;
 
         // xs:anyType
         let ident = Ident::type_("anyType").with_ns(Some(xs));
-        let type_ = Type::ComplexType(ComplexInfo {
+        let variant = TypeVariant::ComplexType(ComplexInfo {
             content: Some(content_ident),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -257,6 +258,7 @@ impl<'a> Interpreter<'a> {
             }),
             ..Default::default()
         });
+        let type_ = Type::new(variant);
         self.state.add_type(ident, type_, true)?;
 
         Ok(self)

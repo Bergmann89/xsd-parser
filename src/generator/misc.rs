@@ -10,7 +10,7 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
 
 use crate::schema::{MaxOccurs, MinOccurs, NamespaceId};
-use crate::types::{DynamicInfo, Ident, Name, Type, Types};
+use crate::types::{DynamicInfo, Ident, Name, Type, TypeVariant, Types};
 
 use super::helper::render_usings;
 use super::Error;
@@ -157,7 +157,7 @@ bitflags! {
 pub enum TypedefMode {
     /// The [`Generator`](super::Generator) will automatically detect if a
     /// new type struct or a simple type definition should be used
-    /// for a [`Reference`](Type::Reference) type.
+    /// for a [`Reference`](TypeVariant::Reference) type.
     ///
     /// Detecting the correct type automatically depends basically on the
     /// occurrence of the references type. If the target type is only referenced
@@ -180,7 +180,7 @@ pub enum TypedefMode {
     Auto,
 
     /// The [`Generator`](super::Generator) will always use a simple type definition
-    /// for a [`Reference`](Type::Reference) type.
+    /// for a [`Reference`](TypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -196,7 +196,7 @@ pub enum TypedefMode {
     Typedef,
 
     /// The [`Generator`](super::Generator) will always use a new type struct
-    /// for a [`Reference`](Type::Reference) type.
+    /// for a [`Reference`](TypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -376,7 +376,7 @@ impl TraitInfos {
         let mut ret = Self(BTreeMap::new());
 
         for (base_ident, ty) in types.iter() {
-            let Type::Dynamic(ai) = ty else {
+            let TypeVariant::Dynamic(ai) = &ty.variant else {
                 continue;
             };
 
@@ -387,8 +387,8 @@ impl TraitInfos {
                     .traits_all
                     .insert(base_ident.clone());
 
-                match types.get(type_ident) {
-                    Some(Type::Dynamic(DynamicInfo {
+                match types.get_variant(type_ident) {
+                    Some(TypeVariant::Dynamic(DynamicInfo {
                         type_: Some(type_ident),
                         ..
                     })) => {
@@ -398,7 +398,7 @@ impl TraitInfos {
                             .traits_all
                             .insert(base_ident.clone());
                     }
-                    Some(Type::Reference(ri)) if ri.is_single() => {
+                    Some(TypeVariant::Reference(ri)) if ri.is_single() => {
                         ret.0
                             .entry(ri.type_.clone())
                             .or_default()
@@ -763,8 +763,8 @@ pub(super) fn format_module(
 }
 
 pub(super) fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
-    match (ty, &ident.name) {
-        (Type::Reference(ti), Name::Unnamed { .. }) if ti.type_.name.is_named() => {
+    match (&ty.variant, &ident.name) {
+        (TypeVariant::Reference(ti), Name::Unnamed { .. }) if ti.type_.name.is_named() => {
             match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
                 Occurs::DynamicList => return Name::new(format!("{}List", ti.type_.name)),
                 Occurs::Optional => return Name::new(format!("{}Opt", ti.type_.name)),

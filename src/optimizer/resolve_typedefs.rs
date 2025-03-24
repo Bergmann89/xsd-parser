@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, Type};
+use crate::types::{Base, TypeVariant};
 
 use super::{get_typedefs, Optimizer};
 
@@ -42,29 +42,29 @@ impl Optimizer {
         let mut replaced_references = HashMap::new();
 
         for type_ in self.types.values_mut() {
-            match type_ {
-                Type::Reference(x) if x.is_single() => {
+            match &mut type_.variant {
+                TypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
                         .entry(x.type_.clone())
                         .or_insert_with(|| new_type.clone());
                     x.type_ = new_type;
                 }
-                Type::Union(x) => {
+                TypeVariant::Union(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.types {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                Type::Dynamic(x) => {
+                TypeVariant::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
                     for x in &mut x.derived_types {
                         *x = typedefs.resolve(x).clone();
                     }
                 }
-                Type::Enumeration(x) => {
+                TypeVariant::Enumeration(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.variants {
@@ -73,7 +73,7 @@ impl Optimizer {
                         }
                     }
                 }
-                Type::ComplexType(x) => {
+                TypeVariant::ComplexType(x) => {
                     resolve_base!(&mut x.base);
 
                     if let Some(ident) = &mut x.content {
@@ -84,7 +84,7 @@ impl Optimizer {
                         attrib.type_ = typedefs.resolve(&attrib.type_).clone();
                     }
                 }
-                Type::All(x) | Type::Choice(x) | Type::Sequence(x) => {
+                TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
                         element.type_ = typedefs.resolve(&element.type_).clone();
                     }
@@ -94,11 +94,11 @@ impl Optimizer {
         }
 
         for type_ in self.types.values_mut() {
-            let Type::Dynamic(ai) = type_ else {
+            let TypeVariant::Dynamic(di) = &mut type_.variant else {
                 continue;
             };
 
-            for derived in &mut ai.derived_types {
+            for derived in &mut di.derived_types {
                 if let Some(new_type) = replaced_references.get(derived) {
                     *derived = new_type.clone();
                 }

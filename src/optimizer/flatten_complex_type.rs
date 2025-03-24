@@ -1,6 +1,6 @@
 use crate::{
     schema::{MaxOccurs, MinOccurs},
-    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type},
+    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant},
 };
 
 use super::{Error, Optimizer};
@@ -38,7 +38,7 @@ impl Optimizer {
             return Err(Error::UnknownType(ident));
         };
 
-        let Type::ComplexType(ci) = ty else {
+        let TypeVariant::ComplexType(ci) = &ty.variant else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -51,15 +51,16 @@ impl Optimizer {
         self.flatten_complex_type_impl(&content_ident, 1, MaxOccurs::Bounded(1), &mut ctx);
 
         if ctx.count > 1 {
-            let type_ = match ctx.mode {
+            let variant = match ctx.mode {
                 Mode::Unknown => unreachable!(),
-                Mode::Sequence => Type::Sequence(ctx.info),
-                Mode::Mixed | Mode::Choice => Type::Choice(ctx.info),
+                Mode::Sequence => TypeVariant::Sequence(ctx.info),
+                Mode::Mixed | Mode::Choice => TypeVariant::Choice(ctx.info),
             };
+            let type_ = Type::new(variant);
 
             self.types.insert(content_ident, type_);
 
-            if let Some(Type::ComplexType(ci)) = self.types.get_mut(&ident) {
+            if let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
                 ci.min_occurs *= ctx.occurs.min;
                 ci.max_occurs *= ctx.occurs.max;
             }
@@ -78,7 +79,7 @@ impl Optimizer {
             .types
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(type_, Type::ComplexType(ci) if ci.has_complex_content(&self.types)) {
+                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(&self.types)) {
                     Some(ident)
                 } else {
                     None
@@ -105,13 +106,13 @@ impl Optimizer {
             return;
         };
 
-        let si = match type_ {
-            Type::Choice(si) => {
+        let si = match &type_.variant {
+            TypeVariant::Choice(si) => {
                 ctx.set_mode(Mode::Choice);
 
                 si
             }
-            Type::All(si) | Type::Sequence(si) => {
+            TypeVariant::All(si) | TypeVariant::Sequence(si) => {
                 if max > MaxOccurs::Bounded(1) {
                     ctx.set_mode(Mode::Choice);
                 } else {
@@ -120,7 +121,7 @@ impl Optimizer {
 
                 si
             }
-            Type::Reference(ti) if ti.is_single() => {
+            TypeVariant::Reference(ti) if ti.is_single() => {
                 self.flatten_complex_type_impl(
                     &ti.type_,
                     min * ti.min_occurs,
@@ -259,15 +260,16 @@ impl Default for ContextOccurs {
 mod tests {
     use crate::{
         schema::MaxOccurs,
-        types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, Types},
+        types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types},
         Optimizer,
     };
 
     macro_rules! make_type {
         ($types:expr, $name:literal, $type:ident $( $rest:tt )*) => {{
-            let mut ty = Type::$type(Default::default());
-            let Type::$type(info) = &mut ty else { unreachable!(); };
+            let mut variant = TypeVariant::$type(Default::default());
+            let TypeVariant::$type(info) = &mut variant else { unreachable!(); };
             make_type!(__init info $type $( $rest )*);
+            let ty = Type::new(variant);
             $types.insert(Ident::type_($name), ty);
         }};
         (__init $info:ident ComplexType($name:literal) $(,)? ) => {
@@ -324,13 +326,13 @@ mod tests {
 
     macro_rules! assert_type {
         ($types:expr, $main_ident:literal, $content_type:ident($content_ident:literal)) => {{
-            let main = $types.get(&Ident::type_($main_ident)).unwrap();
-            let content = $types.get(&Ident::type_($content_ident)).unwrap();
+            let main = $types.get_variant(&Ident::type_($main_ident)).unwrap();
+            let content = $types.get_variant(&Ident::type_($content_ident)).unwrap();
 
-            let Type::ComplexType(main) = main else {
+            let TypeVariant::ComplexType(main) = main else {
                 panic!("Wrong type");
             };
-            let Type::$content_type(content) = content else {
+            let TypeVariant::$content_type(content) = content else {
                 panic!("Wrong type");
             };
 

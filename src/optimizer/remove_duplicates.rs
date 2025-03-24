@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use crate::types::{ReferenceInfo, Type, TypeEq, Types};
+use crate::types::{ReferenceInfo, Type, TypeEq, TypeVariant, Types};
 
 use super::Optimizer;
 
@@ -82,7 +82,8 @@ impl Optimizer {
                     }
                     Entry::Occupied(e) => {
                         let reference_ident = e.get();
-                        if !matches!(type_, Type::Reference(ti) if &ti.type_ == reference_ident) {
+                        if !matches!(&type_.variant, TypeVariant::Reference(ti) if &ti.type_ == reference_ident)
+                        {
                             idents.insert(ident.clone(), reference_ident.clone());
                         }
                     }
@@ -99,8 +100,8 @@ impl Optimizer {
                     "Create reference for duplicate type: {ident} => {referenced_type}"
                 );
 
-                self.types
-                    .insert(ident, Type::Reference(ReferenceInfo::new(referenced_type)));
+                let ty = self.types.get_mut(&ident).unwrap();
+                ty.variant = TypeVariant::Reference(ReferenceInfo::new(referenced_type));
             }
         }
 

@@ -2,6 +2,7 @@
 
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
+use std::ops::{Deref, DerefMut};
 
 use super::{
     ComplexInfo, CustomType, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
@@ -10,7 +11,17 @@ use super::{
 
 /// Represents a type that was read and interpreted from an XML schema.
 #[derive(Debug, Clone)]
-pub enum Type {
+pub struct Type {
+    /// Name to use for rendering instead of the auto generated name.
+    pub display_name: Option<String>,
+
+    /// Actual data type this type represents.
+    pub variant: TypeVariant,
+}
+
+/// Actual data type a [`Type`] represents.
+#[derive(Debug, Clone)]
+pub enum TypeVariant {
     /// Represents a union type
     Union(UnionInfo),
 
@@ -119,7 +130,7 @@ macro_rules! impl_from {
     ($var:ident, $ty:ty) => {
         impl From<$ty> for Type {
             fn from(value: $ty) -> Self {
-                Self::$var(value)
+                Type::new(TypeVariant::$var(value))
             }
         }
     };
@@ -128,13 +139,42 @@ macro_rules! impl_from {
 impl_from!(Reference, ReferenceInfo);
 impl_from!(BuildIn, BuildInInfo);
 impl_from!(Enumeration, EnumerationInfo);
+impl_from!(Dynamic, DynamicInfo);
+impl_from!(ComplexType, ComplexInfo);
+
+impl Type {
+    /// Create a new [`Type`] instance from the passed `variant`.
+    #[must_use]
+    pub fn new(variant: TypeVariant) -> Self {
+        Self {
+            variant,
+            display_name: None,
+        }
+    }
+}
+
+impl Deref for Type {
+    type Target = TypeVariant;
+
+    fn deref(&self) -> &Self::Target {
+        &self.variant
+    }
+}
+
+impl DerefMut for Type {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.variant
+    }
+}
 
 impl TypeEq for Type {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
         #[allow(clippy::enum_glob_use)]
-        use Type::*;
+        use TypeVariant::*;
 
-        match self {
+        self.display_name.hash(hasher);
+
+        match &self.variant {
             Union(x) => x.type_hash(hasher, types),
             BuildIn(x) => x.hash(hasher),
             Reference(x) => x.type_hash(hasher, types),
@@ -149,9 +189,13 @@ impl TypeEq for Type {
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         #[allow(clippy::enum_glob_use)]
-        use Type::*;
+        use TypeVariant::*;
 
-        match (self, other) {
+        if self.display_name != other.display_name {
+            return false;
+        }
+
+        match (&self.variant, &other.variant) {
             (Union(x), Union(y)) => x.type_eq(y, types),
             (BuildIn(x), BuildIn(y)) => x == y,
             (Reference(x), Reference(y)) => x.type_eq(y, types),

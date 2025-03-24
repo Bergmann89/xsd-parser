@@ -21,7 +21,7 @@ pub use self::info::{
     UnionTypeInfo, UnionTypesInfo, VariantInfo,
 };
 pub use self::name::Name;
-pub use self::type_::{BuildInInfo, Type, TypeEq};
+pub use self::type_::{BuildInInfo, Type, TypeEq, TypeVariant};
 
 use crate::schema::{Namespace, NamespaceId};
 
@@ -62,27 +62,53 @@ impl Types {
         }
     }
 
-    /// Get the type of the passed `ident` with all single type references resolved.
+    /// Get the identifier and the type of the passed `ident` with all single
+    /// type references resolved.
     ///
     /// Tries to find the type specified by the passed `ident` and resolve simple
     /// type definitions to the very base type. If the type could not be found `None`
     /// is returned.
     #[must_use]
-    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<&'a Type> {
+    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<(&'a Ident, &'a Type)> {
         let mut visit = Vec::new();
 
-        get_resolved(self, ident, &mut visit).map(|(_ident, ty)| ty)
+        get_resolved_impl(self, ident, &mut visit)
+    }
+
+    /// Get the type of the passed `ident` with all single type references resolved.
+    ///
+    /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
+    /// the type it will return only the resolved type.
+    #[must_use]
+    pub fn get_resolved_type<'a>(&'a self, ident: &'a Ident) -> Option<&'a Type> {
+        self.get_resolved(ident).map(|(_ident, ty)| ty)
     }
 
     /// Get the type ident of the passed `ident` with all single type references resolved.
     ///
-    /// Like [`get_resolved`](Self::get_resolved), but instead of returning the type it will
-    /// return the identifier of the resolved type.
+    /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
+    /// the type it will return only the identifier of the resolved type.
     #[must_use]
     pub fn get_resolved_ident<'a>(&'a self, ident: &'a Ident) -> Option<&'a Ident> {
-        let mut visit = Vec::new();
+        self.get_resolved(ident).map(|(ident, _ty)| ident)
+    }
 
-        get_resolved(self, ident, &mut visit).map(|(ident, _ty)| ident)
+    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
+    ///
+    /// This is a shorthand for `self.get(ident).map(|ty| &type.variant)`.
+    #[inline]
+    #[must_use]
+    pub fn get_variant(&self, ident: &Ident) -> Option<&TypeVariant> {
+        self.get(ident).map(|ty| &ty.variant)
+    }
+
+    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
+    ///
+    /// This is a shorthand for `self.get_mut(ident).map(|ty| &type.variant)`.
+    #[inline]
+    #[must_use]
+    pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut TypeVariant> {
+        self.get_mut(ident).map(|ty| &mut ty.variant)
     }
 }
 
@@ -100,7 +126,7 @@ impl DerefMut for Types {
     }
 }
 
-pub(crate) fn get_resolved<'a>(
+fn get_resolved_impl<'a>(
     types: &'a Types,
     ident: &'a Ident,
     visited: &mut Vec<&'a Ident>,
@@ -120,11 +146,11 @@ pub(crate) fn get_resolved<'a>(
 
     let ty = types.get(ident)?;
 
-    match ty {
-        Type::Reference(x) if x.is_single() => {
+    match &ty.variant {
+        TypeVariant::Reference(x) if x.is_single() => {
             visited.push(ident);
 
-            let ret = match get_resolved(types, &x.type_, visited) {
+            let ret = match get_resolved_impl(types, &x.type_, visited) {
                 None => Some((ident, ty)),
                 Some((ident, ty)) => Some((ident, ty)),
             };

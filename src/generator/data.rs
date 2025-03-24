@@ -9,8 +9,8 @@ use crate::{
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
         AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
-        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, Types, UnionInfo,
-        UnionTypeInfo, VariantInfo,
+        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, TypeVariant, Types,
+        UnionInfo, UnionTypeInfo, VariantInfo,
     },
 };
 
@@ -158,39 +158,41 @@ impl<'a, 'types> Request<'a, 'types> {
             };
         }
 
-        match ty {
-            Type::BuildIn(BuildInInfo::U8) => build_in!(u8),
-            Type::BuildIn(BuildInInfo::U16) => build_in!(u16),
-            Type::BuildIn(BuildInInfo::U32) => build_in!(u32),
-            Type::BuildIn(BuildInInfo::U64) => build_in!(u64),
-            Type::BuildIn(BuildInInfo::U128) => build_in!(u128),
-            Type::BuildIn(BuildInInfo::Usize) => build_in!(usize),
+        match &ty.variant {
+            TypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
+            TypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
+            TypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
+            TypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
+            TypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
+            TypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
 
-            Type::BuildIn(BuildInInfo::I8) => build_in!(i8),
-            Type::BuildIn(BuildInInfo::I16) => build_in!(i16),
-            Type::BuildIn(BuildInInfo::I32) => build_in!(i32),
-            Type::BuildIn(BuildInInfo::I64) => build_in!(i64),
-            Type::BuildIn(BuildInInfo::I128) => build_in!(i128),
-            Type::BuildIn(BuildInInfo::Isize) => build_in!(isize),
+            TypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
+            TypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
+            TypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
+            TypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
+            TypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
+            TypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
 
-            Type::BuildIn(BuildInInfo::F32) => build_in!(f32),
-            Type::BuildIn(BuildInInfo::F64) => build_in!(f64),
+            TypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
+            TypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
 
-            Type::BuildIn(BuildInInfo::Bool) => match default.to_ascii_lowercase().as_str() {
-                "true" | "yes" | "1" => return Ok(quote!(true)),
-                "false" | "no" | "0" => return Ok(quote!(false)),
-                _ => (),
-            },
-            Type::BuildIn(BuildInInfo::String) => {
+            TypeVariant::BuildIn(BuildInInfo::Bool) => {
+                match default.to_ascii_lowercase().as_str() {
+                    "true" | "yes" | "1" => return Ok(quote!(true)),
+                    "false" | "no" | "0" => return Ok(quote!(false)),
+                    _ => (),
+                }
+            }
+            TypeVariant::BuildIn(BuildInInfo::String) => {
                 return Ok(quote!(String::from(#default)));
             }
-            Type::BuildIn(BuildInInfo::Custom(x)) => {
+            TypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
                 if let Some(x) = x.default(default) {
                     return Ok(x);
                 }
             }
 
-            Type::Enumeration(ei) => {
+            TypeVariant::Enumeration(ei) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
 
@@ -222,7 +224,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            Type::Union(ui) => {
+            TypeVariant::Union(ui) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
 
@@ -238,7 +240,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            Type::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
+            TypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
                 Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
                 Occurs::DynamicList if default.is_empty() => {
                     let module_path = ModulePath::from_namespace(current_ns, types);
@@ -788,19 +790,24 @@ impl<'types> ComplexType<'types> {
     }
 
     fn new_complex(info: &'types ComplexInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
-        let (type_mode, elements, any_element) = match info
-            .content
-            .as_ref()
-            .and_then(|ident| req.types.get_resolved(ident).map(|ty| (ty, ident)))
-        {
+        let (type_mode, elements, any_element) = match info.content.as_ref().and_then(|ident| {
+            req.types
+                .get_resolved_type(ident)
+                .map(|ty| (&ty.variant, ident))
+        }) {
             None => (TypeMode::Sequence, &[][..], None),
-            Some((Type::All(si), _)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
-            Some((Type::Choice(si), _)) => (TypeMode::Choice, &si.elements[..], si.any.as_ref()),
-            Some((Type::Sequence(si), _)) => {
+            Some((TypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
+            Some((TypeVariant::Choice(si), _)) => {
+                (TypeMode::Choice, &si.elements[..], si.any.as_ref())
+            }
+            Some((TypeVariant::Sequence(si), _)) => {
                 (TypeMode::Sequence, &si.elements[..], si.any.as_ref())
             }
             Some((
-                Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_) | Type::Reference(_),
+                TypeVariant::BuildIn(_)
+                | TypeVariant::Union(_)
+                | TypeVariant::Enumeration(_)
+                | TypeVariant::Reference(_),
                 ident,
             )) => {
                 let content_ref = req.get_or_create_type_ref(ident.clone())?;
@@ -1133,7 +1140,7 @@ impl ComplexTypeBase {
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
         ret.trait_impls = req.make_trait_impls()?;
 
-        if let Some(Type::ComplexType(ci)) = req.types.get(req.ident) {
+        if let Some(TypeVariant::ComplexType(ci)) = req.types.get_variant(req.ident) {
             ret.is_complex = true;
             ret.is_dynamic = ci.is_dynamic;
         }
@@ -1360,10 +1367,10 @@ fn is_dynamic(ident: &Ident, types: &Types) -> bool {
         return false;
     };
 
-    match ty {
-        Type::Dynamic(_) => true,
-        Type::ComplexType(ci) => ci.is_dynamic,
-        Type::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+    match &ty.variant {
+        TypeVariant::Dynamic(_) => true,
+        TypeVariant::ComplexType(ci) => ci.is_dynamic,
+        TypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
         _ => false,
     }
 }
@@ -1394,12 +1401,12 @@ fn make_derived_type_data<'types>(
         .types
         .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-    let ident = (if let Type::Dynamic(di) = ty {
+    let base_ident = if let TypeVariant::Dynamic(di) = &ty.variant {
         di.type_.clone()
     } else {
         None
-    })
-    .unwrap_or(ident.clone());
+    };
+    let ident = base_ident.unwrap_or(ident.clone());
 
     let target_ref = req.get_or_create_type_ref(ident.clone())?;
     let target_type = IdentPath::from_type_ref(target_ref);

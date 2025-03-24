@@ -1,6 +1,6 @@
 use crate::{
     schema::MaxOccurs,
-    types::{Ident, Type},
+    types::{Ident, TypeVariant},
 };
 
 use super::{Error, Optimizer};
@@ -33,11 +33,11 @@ impl Optimizer {
     pub fn merge_choice_cardinality(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("merge_choice_cardinality(ident={ident:?})");
 
-        let Some(ty) = self.types.get(&ident) else {
+        let Some(ty) = self.types.get_variant(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let Type::ComplexType(ci) = ty else {
+        let TypeVariant::ComplexType(ci) = ty else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -45,7 +45,7 @@ impl Optimizer {
             return Err(Error::MissingContentType(ident));
         };
 
-        let Some(Type::Choice(ci)) = self.types.get_mut(&content_ident) else {
+        let Some(TypeVariant::Choice(ci)) = self.types.get_variant_mut(&content_ident) else {
             return Err(Error::ExpectedComplexChoice(ident));
         };
 
@@ -60,7 +60,7 @@ impl Optimizer {
             element.max_occurs = MaxOccurs::Bounded(1);
         }
 
-        let Some(Type::ComplexType(ci)) = self.types.get_mut(&ident) else {
+        let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) else {
             unreachable!();
         };
 
@@ -81,7 +81,7 @@ impl Optimizer {
             .types
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(type_, Type::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
+                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
                     Some(ident)
                 } else {
                     None

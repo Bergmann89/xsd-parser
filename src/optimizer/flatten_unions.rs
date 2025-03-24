@@ -1,4 +1,4 @@
-use crate::types::{Ident, Type, UnionInfo, UnionTypeInfo};
+use crate::types::{Ident, TypeVariant, UnionInfo, UnionTypeInfo};
 
 use super::{Error, Optimizer};
 
@@ -38,7 +38,7 @@ impl Optimizer {
             return Err(Error::UnknownType(ident));
         };
 
-        let Type::Union(ui) = ty else {
+        let TypeVariant::Union(ui) = &ty.variant else {
             return Err(Error::ExpectedUnion(ident));
         };
 
@@ -52,7 +52,8 @@ impl Optimizer {
         if info.count > 1 {
             info.info.base = ui.base.clone();
 
-            self.types.insert(ident, Type::Union(info.info));
+            let ty = self.types.get_mut(&ident).unwrap();
+            ty.variant = TypeVariant::Union(info.info);
         }
 
         Ok(self)
@@ -68,7 +69,7 @@ impl Optimizer {
             .types
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(type_, Type::Union(_)) {
+                if matches!(&type_.variant, TypeVariant::Union(_)) {
                     Some(ident)
                 } else {
                     None
@@ -94,14 +95,14 @@ impl Optimizer {
             return;
         };
 
-        match type_ {
-            Type::Union(x) => {
+        match &type_.variant {
+            TypeVariant::Union(x) => {
                 next.count += 1;
                 for t in &*x.types {
                     self.flatten_union_impl(&t.type_, t.display_name.as_deref(), next);
                 }
             }
-            Type::Reference(x) if x.is_single() => {
+            TypeVariant::Reference(x) if x.is_single() => {
                 self.flatten_union_impl(&x.type_, display_name, next);
             }
             _ => {

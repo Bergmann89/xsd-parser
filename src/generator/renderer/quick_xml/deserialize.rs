@@ -19,7 +19,7 @@ use crate::{
         Context,
     },
     schema::{xs::Use, MaxOccurs},
-    types::{ComplexInfo, ElementMode, Ident, Type, Types},
+    types::{ComplexInfo, ElementMode, Ident, TypeVariant, Types},
 };
 
 /* UnionType */
@@ -2176,15 +2176,15 @@ impl ComplexTypeElement<'_> {
                 return false;
             }
 
-            match types.get(ident) {
-                Some(Type::All(si) | Type::Choice(si)) => {
+            match types.get_variant(ident) {
+                Some(TypeVariant::All(si) | TypeVariant::Choice(si)) => {
                     if si.any.is_some() {
                         return true;
                     }
 
                     si.elements.iter().any(|f| walk(types, visit, &f.type_))
                 }
-                Some(Type::Sequence(si)) => {
+                Some(TypeVariant::Sequence(si)) => {
                     if si.any.is_some() {
                         return true;
                     }
@@ -2195,7 +2195,7 @@ impl ComplexTypeElement<'_> {
 
                     false
                 }
-                Some(Type::ComplexType(ComplexInfo {
+                Some(TypeVariant::ComplexType(ComplexInfo {
                     content: Some(content),
                     ..
                 })) => walk(types, visit, content),

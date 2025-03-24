@@ -6,7 +6,7 @@ use quote::quote;
 
 use crate::generator::misc::IdentPath;
 use crate::schema::xs::Use;
-use crate::types::{ComplexInfo, Ident, Type, Types};
+use crate::types::{ComplexInfo, Ident, TypeVariant, Types};
 
 use super::misc::{Occurs, TypeRef};
 
@@ -38,13 +38,13 @@ impl<'a> Walk<'a> {
 
         let mut ret = false;
 
-        match self.types.get(current) {
-            Some(Type::Reference(x)) => {
+        match self.types.get_variant(current) {
+            Some(TypeVariant::Reference(x)) => {
                 let occurs = Occurs::from_occurs(x.min_occurs, x.max_occurs);
 
                 ret = occurs.is_direct() && self.is_loop(origin, &x.type_);
             }
-            Some(Type::Union(x)) => {
+            Some(TypeVariant::Union(x)) => {
                 for var in x.types.iter() {
                     if self.is_loop(origin, &var.type_) {
                         ret = true;
@@ -52,7 +52,7 @@ impl<'a> Walk<'a> {
                     }
                 }
             }
-            Some(Type::Enumeration(x)) => {
+            Some(TypeVariant::Enumeration(x)) => {
                 for var in x.variants.iter() {
                     if let Some(type_) = &var.type_ {
                         if var.use_ != Use::Prohibited && self.is_loop(origin, type_) {
@@ -62,7 +62,7 @@ impl<'a> Walk<'a> {
                     }
                 }
             }
-            Some(Type::ComplexType(ComplexInfo {
+            Some(TypeVariant::ComplexType(ComplexInfo {
                 content: Some(content),
                 min_occurs,
                 max_occurs,
@@ -72,7 +72,7 @@ impl<'a> Walk<'a> {
 
                 ret = occurs.is_direct() && self.is_loop(origin, content);
             }
-            Some(Type::All(x) | Type::Choice(x) | Type::Sequence(x)) => {
+            Some(TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x)) => {
                 for f in x.elements.iter() {
                     let already_boxed = self
                         .cache
