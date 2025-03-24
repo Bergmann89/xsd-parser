@@ -10,9 +10,10 @@ use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::fmt::Display;
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
 use tracing::instrument;
 
+use crate::code::{format_module, format_type_ident, make_type_name, Module};
 use crate::types::{Ident, IdentType, Type, TypeVariant, Types};
 
 pub use self::error::Error;
@@ -20,10 +21,7 @@ pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
 use self::data::{Context, Request};
 use self::helper::Walk;
-use self::misc::{
-    format_module, format_type_ident, make_type_name, DynTypeTraits, Module, Modules, PendingType,
-    TraitInfos, TypeRef,
-};
+use self::misc::{DynTypeTraits, PendingType, TraitInfos, TypeRef};
 
 /// Type that is used to generate rust code from a [`Types`] object.
 #[must_use]
@@ -43,7 +41,7 @@ pub struct Generator<'types> {
 pub struct GeneratorFixed<'types> {
     config: Config<'types>,
     state: State<'types>,
-    modules: Modules,
+    module: Module,
 }
 
 #[derive(Debug)]
@@ -254,7 +252,7 @@ impl<'types> Generator<'types> {
     /// Will convert the generator into a [`GeneratorFixed`].
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
         let Self { mut config, state } = self;
-        let modules = Modules::default();
+        let module = Module::default();
 
         if config.flags.intersects(GeneratorFlags::QUICK_XML) {
             config.flags |= GeneratorFlags::WITH_NAMESPACE_CONSTANTS;
@@ -263,7 +261,7 @@ impl<'types> Generator<'types> {
         GeneratorFixed {
             config,
             state,
-            modules,
+            module,
         }
     }
 }
@@ -323,17 +321,10 @@ impl<'types> GeneratorFixed<'types> {
             .config
             .check_flags(GeneratorFlags::WITH_NAMESPACE_CONSTANTS);
 
-        if with_namespace_constants {
-            self.modules
-                .0
-                .entry(None)
-                .or_default()
-                .main
-                .usings([quote!(#xsd_parser::schema::Namespace)]);
-        }
-
         let namespace_constants = with_namespace_constants
             .then(|| {
+                self.module.usings([quote!(#xsd_parser::schema::Namespace)]);
+
                 self.config.types.modules.values().filter_map(|module| {
                     let ns = module.namespace.as_ref()?;
                     let const_name = module.make_ns_const();
@@ -348,53 +339,9 @@ impl<'types> GeneratorFixed<'types> {
             .into_iter()
             .flatten();
 
-        let modules = self.modules.0.into_iter().map(|(ns, module)| {
-            let Module {
-                main,
-                quick_xml_serialize,
-                quick_xml_deserialize,
-            } = module;
+        self.module.prepend(quote! { #( #namespace_constants )* });
 
-            let quick_xml_serialize = quick_xml_serialize.map(|code| {
-                quote! {
-                    pub mod quick_xml_serialize {
-                        #code
-                    }
-                }
-            });
-
-            let quick_xml_deserialize = quick_xml_deserialize.map(|code| {
-                quote! {
-                    pub mod quick_xml_deserialize {
-                        #code
-                    }
-                }
-            });
-
-            let code = quote! {
-                #main
-                #quick_xml_serialize
-                #quick_xml_deserialize
-            };
-
-            if let Some(name) =
-                ns.and_then(|ns| format_module(self.config.types, Some(ns)).unwrap())
-            {
-                quote! {
-                    pub mod #name {
-                        #code
-                    }
-                }
-            } else {
-                code
-            }
-        });
-
-        quote! {
-            #( #namespace_constants )*
-
-            #( #modules )*
-        }
+        self.module.to_token_stream()
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -412,10 +359,10 @@ impl<'types> GeneratorFixed<'types> {
         let Self {
             config,
             state,
-            modules,
+            module,
         } = self;
         let req = Request::new(&ident, config, state);
-        let mut ctx = Context::new(&ident, config, modules);
+        let mut ctx = Context::new(&ident, config, module);
 
         tracing::debug!("Render type: {ident}");
 

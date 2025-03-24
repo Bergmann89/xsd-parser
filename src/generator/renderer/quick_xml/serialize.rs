@@ -46,7 +46,7 @@ impl UnionType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -89,7 +89,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -160,7 +160,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -194,7 +194,7 @@ impl EnumerationType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -283,7 +283,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 
     fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {
@@ -344,7 +344,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.quick_xml_serialize().code(code);
+        ctx.quick_xml_serialize().append(code);
     }
 
     fn render_serializer_handle_state_end(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -427,7 +427,7 @@ impl ComplexTypeEnum<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().code(code);
+        ctx.quick_xml_serialize().append(code);
     }
 
     fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
@@ -518,7 +518,7 @@ impl ComplexTypeEnum<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().usings(usings).code(code);
+        ctx.quick_xml_serialize().usings(usings).append(code);
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -586,7 +586,7 @@ impl ComplexTypeStruct<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().code(code);
+        ctx.quick_xml_serialize().append(code);
     }
 
     #[allow(clippy::too_many_lines)]
@@ -695,7 +695,7 @@ impl ComplexTypeStruct<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().usings(usings).code(code);
+        ctx.quick_xml_serialize().usings(usings).append(code);
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {

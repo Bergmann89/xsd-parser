@@ -5,6 +5,7 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 
 use crate::{
+    code::IdentPath,
     config::{GeneratorFlags, SerdeSupport, TypedefMode},
     generator::{
         data::{
@@ -12,7 +13,7 @@ use crate::{
             ComplexTypeEnum, ComplexTypeStruct, DynamicType, EnumerationType,
             EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
         },
-        misc::{IdentPath, Occurs},
+        misc::Occurs,
         Config, Context, DynTypeTraits,
     },
     schema::xs::Use,
@@ -41,7 +42,7 @@ impl UnionType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 
@@ -92,7 +93,7 @@ impl DynamicType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 
@@ -134,7 +135,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 
@@ -166,7 +167,7 @@ impl EnumerationType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 
@@ -247,7 +248,7 @@ impl ComplexTypeEnum<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 
@@ -284,7 +285,7 @@ impl ComplexTypeStruct<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().code(code);
+        ctx.main().append(code);
     }
 }
 

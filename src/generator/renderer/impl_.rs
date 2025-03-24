@@ -89,7 +89,7 @@ impl ComplexTypeStruct<'_> {
         };
 
         if has_attributes {
-            ctx.main().code(impl_);
+            ctx.main().append(impl_);
         }
     }
 }

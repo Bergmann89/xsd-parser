@@ -1,10 +1,5 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet};
-use std::str::FromStr;
+use std::collections::{BTreeMap, HashSet};
 
-use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::quote;
-
-use crate::generator::misc::IdentPath;
 use crate::schema::xs::Use;
 use crate::types::{ComplexInfo, Ident, TypeVariant, Types};
 
@@ -96,63 +91,4 @@ impl<'a> Walk<'a> {
 
         ret
     }
-}
-
-pub(super) fn render_usings<I>(usings: I) -> TokenStream
-where
-    I: IntoIterator,
-    I::Item: AsRef<str>,
-{
-    #[derive(Default)]
-    struct Module {
-        usings: BTreeSet<Ident2>,
-        sub_modules: BTreeMap<Ident2, Module>,
-    }
-
-    impl Module {
-        fn render(&self) -> TokenStream {
-            let count = self.usings.len() + self.sub_modules.len();
-
-            let usings = self.usings.iter().map(|ident| quote!(#ident));
-            let sub_modules = self.sub_modules.iter().map(|(ident, module)| {
-                let using = module.render();
-
-                quote!(#ident::#using)
-            });
-
-            let items = usings.chain(sub_modules);
-
-            if count > 1 {
-                quote!({ #( #items ),* })
-            } else {
-                quote!(#( #items )*)
-            }
-        }
-    }
-
-    let mut root = Module::default();
-
-    for using in usings {
-        let using = using.as_ref();
-        let Ok(ident) = IdentPath::from_str(using) else {
-            continue;
-        };
-
-        let (ident, path) = ident.into_parts();
-
-        let mut module = &mut root;
-        for part in path.into_iter().flat_map(|x| x.0) {
-            module = module.sub_modules.entry(part).or_default();
-        }
-
-        module.usings.insert(ident);
-    }
-
-    let mut ret = TokenStream::new();
-    for (ident, module) in &root.sub_modules {
-        let using = module.render();
-        ret.extend(quote!(use #ident::#using;));
-    }
-
-    ret
 }

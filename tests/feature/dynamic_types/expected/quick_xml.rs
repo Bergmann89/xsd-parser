@@ -1,10 +1,10 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
     quick_xml::{BoxedSerializer, Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type List = ListType;
 #[derive(Debug)]
 pub struct ListType {
@@ -115,171 +115,6 @@ impl WithSerializer for Intermediate {
 }
 impl WithDeserializer for Intermediate {
     type Deserializer = quick_xml_deserialize::IntermediateDeserializer;
-}
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{
-        write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
-    };
-    #[derive(Debug)]
-    pub struct ListTypeSerializer<'ser> {
-        pub(super) value: &'ser super::ListType,
-        pub(super) state: Box<ListTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum ListTypeSerializerState<'ser> {
-        Init__,
-        Base(IterSerializer<'ser, &'ser [super::Base], super::Base>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> ListTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    ListTypeSerializerState::Init__ => {
-                        *self.state = ListTypeSerializerState::Base(IterSerializer::new(
-                            &self.value.base[..],
-                            Some("tns:base"),
-                            false,
-                        ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    ListTypeSerializerState::Base(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = ListTypeSerializerState::End__,
-                    },
-                    ListTypeSerializerState::End__ => {
-                        *self.state = ListTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    ListTypeSerializerState::Done__ => return Ok(None),
-                    ListTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for ListTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = ListTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct IntermediateTypeSerializer<'ser> {
-        pub(super) value: &'ser super::IntermediateType,
-        pub(super) state: Box<IntermediateTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum IntermediateTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> IntermediateTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    IntermediateTypeSerializerState::Init__ => {
-                        *self.state = IntermediateTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
-                        write_attrib_opt(
-                            &mut bytes,
-                            "tns:intermediateValue",
-                            &self.value.intermediate_value,
-                        )?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    IntermediateTypeSerializerState::Done__ => return Ok(None),
-                    IntermediateTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for IntermediateTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = IntermediateTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct FinalTypeSerializer<'ser> {
-        pub(super) value: &'ser super::FinalType,
-        pub(super) state: Box<FinalTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum FinalTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FinalTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FinalTypeSerializerState::Init__ => {
-                        *self.state = FinalTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
-                        write_attrib_opt(
-                            &mut bytes,
-                            "tns:intermediateValue",
-                            &self.value.intermediate_value,
-                        )?;
-                        write_attrib_opt(&mut bytes, "tns:finalValue", &self.value.final_value)?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    FinalTypeSerializerState::Done__ => return Ok(None),
-                    FinalTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FinalTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FinalTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -881,6 +716,171 @@ pub mod quick_xml_deserialize {
             match self {
                 Self::Intermediate(x) => Ok(super::Intermediate(Box::new(x.finish(reader)?))),
                 Self::Final(x) => Ok(super::Intermediate(Box::new(x.finish(reader)?))),
+            }
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{
+        write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+    };
+    #[derive(Debug)]
+    pub struct ListTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ListType,
+        pub(super) state: Box<ListTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ListTypeSerializerState<'ser> {
+        Init__,
+        Base(IterSerializer<'ser, &'ser [super::Base], super::Base>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ListTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    ListTypeSerializerState::Init__ => {
+                        *self.state = ListTypeSerializerState::Base(IterSerializer::new(
+                            &self.value.base[..],
+                            Some("tns:base"),
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ListTypeSerializerState::Base(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = ListTypeSerializerState::End__,
+                    },
+                    ListTypeSerializerState::End__ => {
+                        *self.state = ListTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ListTypeSerializerState::Done__ => return Ok(None),
+                    ListTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ListTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = ListTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct IntermediateTypeSerializer<'ser> {
+        pub(super) value: &'ser super::IntermediateType,
+        pub(super) state: Box<IntermediateTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum IntermediateTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> IntermediateTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    IntermediateTypeSerializerState::Init__ => {
+                        *self.state = IntermediateTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
+                        write_attrib_opt(
+                            &mut bytes,
+                            "tns:intermediateValue",
+                            &self.value.intermediate_value,
+                        )?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    IntermediateTypeSerializerState::Done__ => return Ok(None),
+                    IntermediateTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for IntermediateTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = IntermediateTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct FinalTypeSerializer<'ser> {
+        pub(super) value: &'ser super::FinalType,
+        pub(super) state: Box<FinalTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum FinalTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FinalTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FinalTypeSerializerState::Init__ => {
+                        *self.state = FinalTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
+                        write_attrib_opt(
+                            &mut bytes,
+                            "tns:intermediateValue",
+                            &self.value.intermediate_value,
+                        )?;
+                        write_attrib_opt(&mut bytes, "tns:finalValue", &self.value.final_value)?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    FinalTypeSerializerState::Done__ => return Ok(None),
+                    FinalTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FinalTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FinalTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
             }
         }
     }

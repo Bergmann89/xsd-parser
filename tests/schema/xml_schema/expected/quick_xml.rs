@@ -1,11 +1,11 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 use xsd_parser::{
     quick_xml::{
         DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, WithDeserializer,
     },
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Schema = SchemaElementType;
 #[derive(Debug, Clone)]
 pub struct SchemaElementType {
@@ -40,11 +40,11 @@ pub enum SchemaElementTypeContent {
 impl SchemaElementType {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
-        FullDerivationSetType::TypeDerivationControlList(TypeDerivationControlList(Vec::new()))
+        FullDerivationSetType::TypeDerivationControlOpt(TypeDerivationControlOpt(Vec::new()))
     }
     #[must_use]
     pub fn default_block_default() -> BlockSetType {
-        BlockSetType::BlockSetItemList(BlockSetItemList(Vec::new()))
+        BlockSetType::BlockSetItemOpt(BlockSetItemOpt(Vec::new()))
     }
     #[must_use]
     pub fn default_attribute_form_default() -> FormChoiceType {
@@ -68,7 +68,7 @@ impl WithDeserializer for SchemaElementTypeContent {
 #[derive(Debug, Clone)]
 pub enum FullDerivationSetType {
     All,
-    TypeDerivationControlList(TypeDerivationControlList),
+    TypeDerivationControlOpt(TypeDerivationControlOpt),
 }
 impl DeserializeBytes for FullDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -77,15 +77,15 @@ impl DeserializeBytes for FullDerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::TypeDerivationControlList(
-                TypeDerivationControlList::deserialize_bytes(reader, x)?,
+            x => Ok(Self::TypeDerivationControlOpt(
+                TypeDerivationControlOpt::deserialize_bytes(reader, x)?,
             )),
         }
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct TypeDerivationControlList(pub Vec<TypeDerivationControlType>);
-impl DeserializeBytes for TypeDerivationControlList {
+pub struct TypeDerivationControlOpt(pub Vec<TypeDerivationControlType>);
+impl DeserializeBytes for TypeDerivationControlOpt {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -101,7 +101,7 @@ impl DeserializeBytes for TypeDerivationControlList {
 #[derive(Debug, Clone)]
 pub enum BlockSetType {
     All,
-    BlockSetItemList(BlockSetItemList),
+    BlockSetItemOpt(BlockSetItemOpt),
 }
 impl DeserializeBytes for BlockSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -110,15 +110,15 @@ impl DeserializeBytes for BlockSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::BlockSetItemList(BlockSetItemList::deserialize_bytes(
+            x => Ok(Self::BlockSetItemOpt(BlockSetItemOpt::deserialize_bytes(
                 reader, x,
             )?)),
         }
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct BlockSetItemList(pub Vec<BlockSetItemType>);
-impl DeserializeBytes for BlockSetItemList {
+pub struct BlockSetItemOpt(pub Vec<BlockSetItemType>);
+impl DeserializeBytes for BlockSetItemOpt {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -560,7 +560,7 @@ impl WithDeserializer for WildcardType {
 #[derive(Debug, Clone)]
 pub enum SimpleDerivationSetType {
     All,
-    SimpleDerivationSetItemList(SimpleDerivationSetItemList),
+    SimpleDerivationSetItemOpt(SimpleDerivationSetItemOpt),
 }
 impl DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -569,8 +569,8 @@ impl DeserializeBytes for SimpleDerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSetItemList(
-                SimpleDerivationSetItemList::deserialize_bytes(reader, x)?,
+            x => Ok(Self::SimpleDerivationSetItemOpt(
+                SimpleDerivationSetItemOpt::deserialize_bytes(reader, x)?,
             )),
         }
     }
@@ -616,7 +616,7 @@ impl WithDeserializer for UnionElementType {
 #[derive(Debug, Clone)]
 pub enum DerivationSetType {
     All,
-    ReducedDerivationControlList(ReducedDerivationControlList),
+    ReducedDerivationControlOpt(ReducedDerivationControlOpt),
 }
 impl DeserializeBytes for DerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -625,8 +625,8 @@ impl DeserializeBytes for DerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::ReducedDerivationControlList(
-                ReducedDerivationControlList::deserialize_bytes(reader, x)?,
+            x => Ok(Self::ReducedDerivationControlOpt(
+                ReducedDerivationControlOpt::deserialize_bytes(reader, x)?,
             )),
         }
     }
@@ -902,8 +902,8 @@ impl DeserializeBytes for ProcessContentsType {
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct SimpleDerivationSetItemList(pub Vec<SimpleDerivationSetItemType>);
-impl DeserializeBytes for SimpleDerivationSetItemList {
+pub struct SimpleDerivationSetItemOpt(pub Vec<SimpleDerivationSetItemType>);
+impl DeserializeBytes for SimpleDerivationSetItemOpt {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -937,8 +937,8 @@ impl WithDeserializer for Facet {
     type Deserializer = quick_xml_deserialize::FacetDeserializer;
 }
 #[derive(Debug, Clone, Default)]
-pub struct ReducedDerivationControlList(pub Vec<ReducedDerivationControlType>);
-impl DeserializeBytes for ReducedDerivationControlList {
+pub struct ReducedDerivationControlOpt(pub Vec<ReducedDerivationControlType>);
+impl DeserializeBytes for ReducedDerivationControlOpt {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,

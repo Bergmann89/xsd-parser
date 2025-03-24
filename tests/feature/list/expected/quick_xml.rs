@@ -1,6 +1,3 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use std::borrow::Cow;
 use xsd_parser::{
     quick_xml::{
@@ -9,6 +6,9 @@ use xsd_parser::{
     },
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub struct FooType {
@@ -71,55 +71,6 @@ impl DeserializeBytes for ListType {
     }
 }
 pub type StringType = String;
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{write_attrib, BytesStart, Error, Event};
-    #[derive(Debug)]
-    pub struct FooTypeSerializer<'ser> {
-        pub(super) value: &'ser super::FooType,
-        pub(super) state: Box<FooTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FooTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FooTypeSerializerState::Init__ => {
-                        *self.state = FooTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
-                        write_attrib(&mut bytes, "tns:a-list", &self.value.a_list)?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    FooTypeSerializerState::Done__ => return Ok(None),
-                    FooTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FooTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FooTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
@@ -207,6 +158,55 @@ pub mod quick_xml_deserialize {
             Ok(super::FooType {
                 a_list: self.a_list,
             })
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{write_attrib, BytesStart, Error, Event};
+    #[derive(Debug)]
+    pub struct FooTypeSerializer<'ser> {
+        pub(super) value: &'ser super::FooType,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FooTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FooTypeSerializerState::Init__ => {
+                        *self.state = FooTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                        }
+                        write_attrib(&mut bytes, "tns:a-list", &self.value.a_list)?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    FooTypeSerializerState::Done__ => return Ok(None),
+                    FooTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FooTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FooTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

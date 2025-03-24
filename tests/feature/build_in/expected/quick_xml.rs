@@ -1,5 +1,3 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 use std::borrow::Cow;
 use xsd_parser::{
     quick_xml::{
@@ -8,6 +6,8 @@ use xsd_parser::{
     },
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 #[derive(Debug, Clone, Default)]
 pub struct EntitiesType(pub Vec<String>);
 impl SerializeBytes for EntitiesType {
@@ -196,51 +196,6 @@ pub type UnsignedByteType = u8;
 pub type UnsignedIntType = u32;
 pub type UnsignedLongType = u64;
 pub type UnsignedShortType = u16;
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{BytesStart, Error, Event};
-    #[derive(Debug)]
-    pub struct AnyTypeSerializer<'ser> {
-        pub(super) value: &'ser super::AnyType,
-        pub(super) state: Box<AnyTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum AnyTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> AnyTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    AnyTypeSerializerState::Init__ => {
-                        *self.state = AnyTypeSerializerState::Done__;
-                        let bytes = BytesStart::new(self.name);
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    AnyTypeSerializerState::Done__ => return Ok(None),
-                    AnyTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for AnyTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = AnyTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
@@ -312,6 +267,51 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, AnyTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AnyType {})
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{BytesStart, Error, Event};
+    #[derive(Debug)]
+    pub struct AnyTypeSerializer<'ser> {
+        pub(super) value: &'ser super::AnyType,
+        pub(super) state: Box<AnyTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum AnyTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> AnyTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    AnyTypeSerializerState::Init__ => {
+                        *self.state = AnyTypeSerializerState::Done__;
+                        let bytes = BytesStart::new(self.name);
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    AnyTypeSerializerState::Done__ => return Ok(None),
+                    AnyTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for AnyTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = AnyTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

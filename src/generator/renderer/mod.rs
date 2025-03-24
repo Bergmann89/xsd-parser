@@ -1,9 +1,7 @@
 use inflector::Inflector;
 use quote::format_ident;
 
-use crate::types::Module;
-
-use super::misc::IdentPath;
+use crate::{code::IdentPath, types::Module};
 
 mod impl_;
 mod quick_xml;

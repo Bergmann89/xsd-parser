@@ -6,6 +6,7 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::{
+    code::{format_field_ident, format_variant_ident, IdentPath, Module, ModulePath},
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
         AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
@@ -15,8 +16,7 @@ use crate::{
 };
 
 use super::{
-    misc::{format_field_ident, format_variant_ident, IdentPath, ModuleCode, ModulePath, Occurs},
-    BoxFlags, Config, Error, GeneratorFlags, Modules, State, TraitInfos, TypeRef, TypedefMode,
+    misc::Occurs, BoxFlags, Config, Error, GeneratorFlags, State, TraitInfos, TypeRef, TypedefMode,
 };
 
 /* Request */
@@ -131,7 +131,7 @@ impl<'a, 'types> Request<'a, 'types> {
             .map(|ident| {
                 let type_ref = self.get_or_create_type_ref(ident.clone())?;
                 let ident = format_ident!("{}Trait", type_ref.type_ident);
-                let trait_type = IdentPath::from_type_ref(type_ref).with_ident(ident);
+                let trait_type = type_ref.to_ident_path().with_ident(ident);
 
                 Ok(trait_type)
             })
@@ -194,7 +194,7 @@ impl<'a, 'types> Request<'a, 'types> {
 
             TypeVariant::Enumeration(ei) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
+                let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
                 for var in &*ei.variants {
                     if var.type_.is_none()
@@ -226,7 +226,7 @@ impl<'a, 'types> Request<'a, 'types> {
 
             TypeVariant::Union(ui) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
+                let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
                 for ty in &*ui.types {
                     if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
@@ -244,7 +244,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
                 Occurs::DynamicList if default.is_empty() => {
                     let module_path = ModulePath::from_namespace(current_ns, types);
-                    let target_type = IdentPath::from_type_ref(type_ref).relative_to(&module_path);
+                    let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
                     return Ok(quote! { #target_type(Vec::new()) });
                 }
@@ -269,13 +269,13 @@ impl<'types> Deref for Request<'_, 'types> {
     }
 }
 
-/* Code */
+/* Context */
 
 /// Helper type that is used to collect the generated code.
 pub(super) struct Context<'a, 'types> {
     ident: &'a Ident,
     config: &'a Config<'types>,
-    modules: Mutex<&'a mut Modules>,
+    module: Mutex<&'a mut Module>,
 
     module_path: ModulePath,
     serialize_module_path: ModulePath,
@@ -286,7 +286,7 @@ impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn new(
         ident: &'a Ident,
         config: &'a Config<'types>,
-        modules: &'a mut Modules,
+        module: &'a mut Module,
     ) -> Self {
         let ns = config
             .check_flags(GeneratorFlags::USE_MODULES)
@@ -303,7 +303,7 @@ impl<'a, 'types> Context<'a, 'types> {
         Self {
             ident,
             config,
-            modules: Mutex::new(modules),
+            module: Mutex::new(module),
 
             module_path,
             serialize_module_path,
@@ -329,30 +329,18 @@ impl<'a, 'types> Context<'a, 'types> {
         ident.relative_to(&self.deserialize_module_path)
     }
 
-    pub(super) fn main(&mut self) -> &mut ModuleCode {
-        let ns = self.current_ns();
+    pub(super) fn main(&mut self) -> &mut Module {
+        let root = self.module.get_mut();
 
-        &mut self.modules.get_mut().get_mut(ns).main
+        Self::main_module(self.module_path.last(), root)
     }
 
-    pub(super) fn quick_xml_serialize(&mut self) -> &mut ModuleCode {
-        let ns = self.current_ns();
-
-        self.modules
-            .get_mut()
-            .get_mut(ns)
-            .quick_xml_serialize
-            .get_or_insert_default()
+    pub(super) fn quick_xml_serialize(&mut self) -> &mut Module {
+        self.main().module_mut("quick_xml_serialize")
     }
 
-    pub(super) fn quick_xml_deserialize(&mut self) -> &mut ModuleCode {
-        let ns = self.current_ns();
-
-        self.modules
-            .get_mut()
-            .get_mut(ns)
-            .quick_xml_deserialize
-            .get_or_insert_default()
+    pub(super) fn quick_xml_deserialize(&mut self) -> &mut Module {
+        self.main().module_mut("quick_xml_deserialize")
     }
 
     pub(super) fn add_usings<I>(&self, usings: I)
@@ -360,9 +348,8 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
-        let ns = self.current_ns();
-
-        self.modules.lock().get_mut(ns).main.usings(usings);
+        let mut root = self.module.lock();
+        Self::main_module(self.module_path.last(), &mut root).usings(usings);
     }
 
     pub(super) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
@@ -370,13 +357,9 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
-        let ns = self.current_ns();
-
-        self.modules
-            .lock()
-            .get_mut(ns)
-            .quick_xml_serialize
-            .get_or_insert_default()
+        let mut root = self.module.lock();
+        Self::main_module(self.module_path.last(), &mut root)
+            .module_mut("quick_xml_serialize")
             .usings(usings);
     }
 
@@ -385,14 +368,18 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
-        let ns = self.current_ns();
-
-        self.modules
-            .lock()
-            .get_mut(ns)
-            .quick_xml_deserialize
-            .get_or_insert_default()
+        let mut root = self.module.lock();
+        Self::main_module(self.module_path.last(), &mut root)
+            .module_mut("quick_xml_deserialize")
             .usings(usings);
+    }
+
+    fn main_module<'x>(ident: Option<&Ident2>, root: &'x mut Module) -> &'x mut Module {
+        if let Some(ident) = ident {
+            root.module_mut(ident.to_string())
+        } else {
+            root
+        }
     }
 }
 
@@ -448,7 +435,7 @@ impl UnionTypeInfo {
         req: &mut Request<'_, 'types>,
     ) -> Result<UnionTypeVariant<'types>, Error> {
         let type_ref = req.get_or_create_type_ref(self.type_.clone())?;
-        let target_type = IdentPath::from_type_ref(type_ref);
+        let target_type = type_ref.to_ident_path();
         let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
 
         Ok(UnionTypeVariant {
@@ -496,7 +483,7 @@ impl<'types> DynamicType<'types> {
                         req.get_or_create_type_ref(ident.clone()).map(|x| {
                             let ident = format_ident!("{}Trait", x.type_ident);
 
-                            IdentPath::from_type_ref(x).with_ident(ident)
+                            x.to_ident_path().with_ident(ident)
                         })
                     })
                     .collect::<Result<Vec<_>, _>>()
@@ -539,7 +526,7 @@ impl<'types> ReferenceType<'types> {
         let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
         let type_ident = req.current_type_ref().type_ident.clone();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
-        let target_type = IdentPath::from_type_ref(target_ref);
+        let target_type = target_ref.to_ident_path();
         let trait_impls = req.make_trait_impls()?;
 
         let mode = match (req.typedef_mode, occurs) {
@@ -628,7 +615,7 @@ impl VariantInfo {
                     format_variant_ident(&self.ident.name, self.display_name.as_deref())
                 };
 
-                let target_type = type_ref.map(IdentPath::from_type_ref);
+                let target_type = type_ref.map(TypeRef::to_ident_path);
 
                 Some(Ok(EnumerationTypeVariant {
                     info: self,
@@ -811,7 +798,7 @@ impl<'types> ComplexType<'types> {
                 ident,
             )) => {
                 let content_ref = req.get_or_create_type_ref(ident.clone())?;
-                let target_type = IdentPath::from_type_ref(content_ref);
+                let target_type = content_ref.to_ident_path();
 
                 (TypeMode::Simple { target_type }, &[][..], None)
             }
@@ -977,7 +964,7 @@ impl<'types> ComplexType<'types> {
 
         let mode = if has_content {
             let type_ref = req.current_type_ref();
-            let target_type = IdentPath::from_type_ref(type_ref).with_ident(content_ident.clone());
+            let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
             let content = ComplexTypeContent {
                 occurs,
                 is_simple: false,
@@ -1094,7 +1081,7 @@ impl<'types> ComplexType<'types> {
 
         let mode = if has_content {
             let type_ref = req.current_type_ref();
-            let target_type = IdentPath::from_type_ref(type_ref).with_ident(content_ident.clone());
+            let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
             let content = ComplexTypeContent {
                 occurs,
                 is_simple: false,
@@ -1274,7 +1261,7 @@ impl<'types> ComplexTypeElement<'types> {
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
-        let target_type = IdentPath::from_type_ref(target_ref);
+        let target_type = target_ref.to_ident_path();
 
         let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
@@ -1307,7 +1294,7 @@ impl<'types> ComplexTypeAttribute<'types> {
         let current_module = req.current_module();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
-        let target_type = IdentPath::from_type_ref(target_ref);
+        let target_type = target_ref.to_ident_path();
         let s_name = info.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let tag_name = make_tag_name(req.types, &info.ident);
@@ -1409,7 +1396,7 @@ fn make_derived_type_data<'types>(
     let ident = base_ident.unwrap_or(ident.clone());
 
     let target_ref = req.get_or_create_type_ref(ident.clone())?;
-    let target_type = IdentPath::from_type_ref(target_ref);
+    let target_type = target_ref.to_ident_path();
     let variant_ident = format_variant_ident(&ident.name, None);
 
     Ok(DerivedType {
