@@ -1,12 +1,12 @@
+use xsd_parser::{
+    quick_xml::{Error, WithDeserializer, WithSerializer},
+    schema::Namespace,
+};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_DEFAULT: Namespace =
     Namespace::new_const(b"http://www.idealdesk.com/ideal/messages/mer-acq/3.3.1");
 pub const NS_DS: Namespace = Namespace::new_const(b"http://www.w3.org/2000/09/xmldsig#");
-use xsd_parser::{
-    quick_xml::{Error, WithDeserializer, WithSerializer},
-    schema::Namespace,
-};
 pub type DirectoryReq = DirectoryReqType;
 #[derive(Debug, Clone)]
 pub struct DirectoryReqType {
@@ -782,2237 +782,6 @@ impl WithSerializer for X509IssuerSerialType {
 }
 impl WithDeserializer for X509IssuerSerialType {
     type Deserializer = quick_xml_deserialize::X509IssuerSerialTypeDeserializer;
-}
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{
-        write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
-        WithSerializer,
-    };
-    #[derive(Debug)]
-    pub struct DirectoryReqTypeSerializer<'ser> {
-        pub(super) value: &'ser super::DirectoryReqType,
-        pub(super) state: Box<DirectoryReqTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum DirectoryReqTypeSerializerState<'ser> {
-        Init__,
-        CreateDateTimestamp(<String as WithSerializer>::Serializer<'ser>),
-        Merchant(<super::DirectoryReqMerchantType as WithSerializer>::Serializer<'ser>),
-        Signature(<super::SignatureType as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DirectoryReqTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DirectoryReqTypeSerializerState::Init__ => {
-                        *self.state = DirectoryReqTypeSerializerState::CreateDateTimestamp(
-                            WithSerializer::serializer(
-                                &self.value.create_date_timestamp,
-                                Some("createDateTimestamp"),
-                                false,
-                            )?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib(&mut bytes, "version", &self.value.version)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    DirectoryReqTypeSerializerState::CreateDateTimestamp(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = DirectoryReqTypeSerializerState::Merchant(
-                                    WithSerializer::serializer(
-                                        &self.value.merchant,
-                                        Some("Merchant"),
-                                        false,
-                                    )?,
-                                )
-                            }
-                        }
-                    }
-                    DirectoryReqTypeSerializerState::Merchant(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = DirectoryReqTypeSerializerState::Signature(
-                                WithSerializer::serializer(
-                                    &self.value.signature,
-                                    Some("ds:Signature"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    DirectoryReqTypeSerializerState::Signature(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = DirectoryReqTypeSerializerState::End__,
-                    },
-                    DirectoryReqTypeSerializerState::End__ => {
-                        *self.state = DirectoryReqTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    DirectoryReqTypeSerializerState::Done__ => return Ok(None),
-                    DirectoryReqTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DirectoryReqTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DirectoryReqTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct DirectoryReqMerchantTypeSerializer<'ser> {
-        pub(super) value: &'ser super::DirectoryReqMerchantType,
-        pub(super) state: Box<DirectoryReqMerchantTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum DirectoryReqMerchantTypeSerializerState<'ser> {
-        Init__,
-        MerchantID(<String as WithSerializer>::Serializer<'ser>),
-        SubID(<usize as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DirectoryReqMerchantTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DirectoryReqMerchantTypeSerializerState::Init__ => {
-                        *self.state = DirectoryReqMerchantTypeSerializerState::MerchantID(
-                            WithSerializer::serializer(
-                                &self.value.merchant_id,
-                                Some("merchantID"),
-                                false,
-                            )?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    DirectoryReqMerchantTypeSerializerState::MerchantID(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = DirectoryReqMerchantTypeSerializerState::SubID(
-                                    WithSerializer::serializer(
-                                        &self.value.sub_id,
-                                        Some("subID"),
-                                        false,
-                                    )?,
-                                )
-                            }
-                        }
-                    }
-                    DirectoryReqMerchantTypeSerializerState::SubID(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = DirectoryReqMerchantTypeSerializerState::End__,
-                        }
-                    }
-                    DirectoryReqMerchantTypeSerializerState::End__ => {
-                        *self.state = DirectoryReqMerchantTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    DirectoryReqMerchantTypeSerializerState::Done__ => return Ok(None),
-                    DirectoryReqMerchantTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DirectoryReqMerchantTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DirectoryReqMerchantTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SignatureTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SignatureType,
-        pub(super) state: Box<SignatureTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SignatureTypeSerializerState<'ser> {
-        Init__,
-        SignedInfo(<super::SignedInfoType as WithSerializer>::Serializer<'ser>),
-        SignatureValue(<super::SignatureValueType as WithSerializer>::Serializer<'ser>),
-        KeyInfo(IterSerializer<'ser, Option<&'ser super::KeyInfoType>, super::KeyInfoType>),
-        Object(IterSerializer<'ser, &'ser [super::ObjectType], super::ObjectType>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SignatureTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SignatureTypeSerializerState::Init__ => {
-                        *self.state =
-                            SignatureTypeSerializerState::SignedInfo(WithSerializer::serializer(
-                                &self.value.signed_info,
-                                Some("ds:SignedInfo"),
-                                false,
-                            )?);
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    SignatureTypeSerializerState::SignedInfo(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = SignatureTypeSerializerState::SignatureValue(
-                                WithSerializer::serializer(
-                                    &self.value.signature_value,
-                                    Some("ds:SignatureValue"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    SignatureTypeSerializerState::SignatureValue(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    SignatureTypeSerializerState::KeyInfo(IterSerializer::new(
-                                        self.value.key_info.as_ref(),
-                                        Some("ds:KeyInfo"),
-                                        false,
-                                    ))
-                            }
-                        }
-                    }
-                    SignatureTypeSerializerState::KeyInfo(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = SignatureTypeSerializerState::Object(IterSerializer::new(
-                                &self.value.object[..],
-                                Some("ds:Object"),
-                                false,
-                            ))
-                        }
-                    },
-                    SignatureTypeSerializerState::Object(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = SignatureTypeSerializerState::End__,
-                    },
-                    SignatureTypeSerializerState::End__ => {
-                        *self.state = SignatureTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    SignatureTypeSerializerState::Done__ => return Ok(None),
-                    SignatureTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SignatureTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SignatureTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SignedInfoTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SignedInfoType,
-        pub(super) state: Box<SignedInfoTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SignedInfoTypeSerializerState<'ser> {
-        Init__,
-        CanonicalizationMethod(
-            <super::CanonicalizationMethodType as WithSerializer>::Serializer<'ser>,
-        ),
-        SignatureMethod(<super::SignatureMethodType as WithSerializer>::Serializer<'ser>),
-        Reference(IterSerializer<'ser, &'ser [super::ReferenceType], super::ReferenceType>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SignedInfoTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SignedInfoTypeSerializerState::Init__ => {
-                        *self.state = SignedInfoTypeSerializerState::CanonicalizationMethod(
-                            WithSerializer::serializer(
-                                &self.value.canonicalization_method,
-                                Some("ds:CanonicalizationMethod"),
-                                false,
-                            )?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    SignedInfoTypeSerializerState::CanonicalizationMethod(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = SignedInfoTypeSerializerState::SignatureMethod(
-                                    WithSerializer::serializer(
-                                        &self.value.signature_method,
-                                        Some("ds:SignatureMethod"),
-                                        false,
-                                    )?,
-                                )
-                            }
-                        }
-                    }
-                    SignedInfoTypeSerializerState::SignatureMethod(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state =
-                                    SignedInfoTypeSerializerState::Reference(IterSerializer::new(
-                                        &self.value.reference[..],
-                                        Some("ds:Reference"),
-                                        false,
-                                    ))
-                            }
-                        }
-                    }
-                    SignedInfoTypeSerializerState::Reference(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = SignedInfoTypeSerializerState::End__,
-                    },
-                    SignedInfoTypeSerializerState::End__ => {
-                        *self.state = SignedInfoTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    SignedInfoTypeSerializerState::Done__ => return Ok(None),
-                    SignedInfoTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SignedInfoTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SignedInfoTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SignatureValueTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SignatureValueType,
-        pub(super) state: Box<SignatureValueTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SignatureValueTypeSerializerState<'ser> {
-        Init__,
-        Content__(<String as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SignatureValueTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SignatureValueTypeSerializerState::Init__ => {
-                        *self.state = SignatureValueTypeSerializerState::Content__(
-                            WithSerializer::serializer(&self.value.content, None, false)?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    SignatureValueTypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = SignatureValueTypeSerializerState::End__,
-                        }
-                    }
-                    SignatureValueTypeSerializerState::End__ => {
-                        *self.state = SignatureValueTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    SignatureValueTypeSerializerState::Done__ => return Ok(None),
-                    SignatureValueTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SignatureValueTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SignatureValueTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct KeyInfoTypeSerializer<'ser> {
-        pub(super) value: &'ser super::KeyInfoType,
-        pub(super) state: Box<KeyInfoTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum KeyInfoTypeSerializerState<'ser> {
-        Init__,
-        Content__(
-            IterSerializer<'ser, &'ser [super::KeyInfoTypeContent], super::KeyInfoTypeContent>,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> KeyInfoTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    KeyInfoTypeSerializerState::Init__ => {
-                        *self.state = KeyInfoTypeSerializerState::Content__(IterSerializer::new(
-                            &self.value.content[..],
-                            None,
-                            false,
-                        ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    KeyInfoTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = KeyInfoTypeSerializerState::End__,
-                    },
-                    KeyInfoTypeSerializerState::End__ => {
-                        *self.state = KeyInfoTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    KeyInfoTypeSerializerState::Done__ => return Ok(None),
-                    KeyInfoTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for KeyInfoTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = KeyInfoTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct KeyInfoTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::KeyInfoTypeContent,
-        pub(super) state: Box<KeyInfoTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum KeyInfoTypeContentSerializerState<'ser> {
-        Init__,
-        KeyName(<String as WithSerializer>::Serializer<'ser>),
-        KeyValue(<super::KeyValueType as WithSerializer>::Serializer<'ser>),
-        RetrievalMethod(<super::RetrievalMethodType as WithSerializer>::Serializer<'ser>),
-        X509Data(<super::X509DataType as WithSerializer>::Serializer<'ser>),
-        Pgpdata(<super::PgpdataType as WithSerializer>::Serializer<'ser>),
-        Spkidata(<super::SpkidataType as WithSerializer>::Serializer<'ser>),
-        MgmtData(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> KeyInfoTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    KeyInfoTypeContentSerializerState::Init__ => match self.value {
-                        super::KeyInfoTypeContent::KeyName(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::KeyName(
-                                WithSerializer::serializer(x, Some("ds:KeyName"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::KeyValue(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::KeyValue(
-                                WithSerializer::serializer(x, Some("ds:KeyValue"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::RetrievalMethod(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::RetrievalMethod(
-                                WithSerializer::serializer(x, Some("ds:RetrievalMethod"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::X509Data(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::X509Data(
-                                WithSerializer::serializer(x, Some("ds:X509Data"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::Pgpdata(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::Pgpdata(
-                                WithSerializer::serializer(x, Some("ds:PGPData"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::Spkidata(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::Spkidata(
-                                WithSerializer::serializer(x, Some("ds:SPKIData"), false)?,
-                            )
-                        }
-                        super::KeyInfoTypeContent::MgmtData(x) => {
-                            *self.state = KeyInfoTypeContentSerializerState::MgmtData(
-                                WithSerializer::serializer(x, Some("ds:MgmtData"), false)?,
-                            )
-                        }
-                    },
-                    KeyInfoTypeContentSerializerState::KeyName(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                    },
-                    KeyInfoTypeContentSerializerState::KeyValue(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyInfoTypeContentSerializerState::RetrievalMethod(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyInfoTypeContentSerializerState::X509Data(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyInfoTypeContentSerializerState::Pgpdata(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                    },
-                    KeyInfoTypeContentSerializerState::Spkidata(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyInfoTypeContentSerializerState::MgmtData(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyInfoTypeContentSerializerState::Done__ => return Ok(None),
-                    KeyInfoTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for KeyInfoTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = KeyInfoTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct ObjectTypeSerializer<'ser> {
-        pub(super) value: &'ser super::ObjectType,
-        pub(super) state: Box<ObjectTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum ObjectTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> ObjectTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    ObjectTypeSerializerState::Init__ => {
-                        *self.state = ObjectTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        write_attrib_opt(&mut bytes, "ds:MimeType", &self.value.mime_type)?;
-                        write_attrib_opt(&mut bytes, "ds:Encoding", &self.value.encoding)?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    ObjectTypeSerializerState::Done__ => return Ok(None),
-                    ObjectTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for ObjectTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = ObjectTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct CanonicalizationMethodTypeSerializer<'ser> {
-        pub(super) value: &'ser super::CanonicalizationMethodType,
-        pub(super) state: Box<CanonicalizationMethodTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum CanonicalizationMethodTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> CanonicalizationMethodTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    CanonicalizationMethodTypeSerializerState::Init__ => {
-                        *self.state = CanonicalizationMethodTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    CanonicalizationMethodTypeSerializerState::Done__ => return Ok(None),
-                    CanonicalizationMethodTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for CanonicalizationMethodTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = CanonicalizationMethodTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SignatureMethodTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SignatureMethodType,
-        pub(super) state: Box<SignatureMethodTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SignatureMethodTypeSerializerState<'ser> {
-        Init__,
-        HmacoutputLength(IterSerializer<'ser, Option<&'ser i32>, i32>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SignatureMethodTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SignatureMethodTypeSerializerState::Init__ => {
-                        *self.state = SignatureMethodTypeSerializerState::HmacoutputLength(
-                            IterSerializer::new(
-                                self.value.hmacoutput_length.as_ref(),
-                                Some("ds:HMACOutputLength"),
-                                false,
-                            ),
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    SignatureMethodTypeSerializerState::HmacoutputLength(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = SignatureMethodTypeSerializerState::End__,
-                        }
-                    }
-                    SignatureMethodTypeSerializerState::End__ => {
-                        *self.state = SignatureMethodTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    SignatureMethodTypeSerializerState::Done__ => return Ok(None),
-                    SignatureMethodTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SignatureMethodTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SignatureMethodTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct ReferenceTypeSerializer<'ser> {
-        pub(super) value: &'ser super::ReferenceType,
-        pub(super) state: Box<ReferenceTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum ReferenceTypeSerializerState<'ser> {
-        Init__,
-        Transforms(
-            IterSerializer<'ser, Option<&'ser super::TransformsType>, super::TransformsType>,
-        ),
-        DigestMethod(<super::DigestMethodType as WithSerializer>::Serializer<'ser>),
-        DigestValue(<String as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> ReferenceTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    ReferenceTypeSerializerState::Init__ => {
-                        *self.state =
-                            ReferenceTypeSerializerState::Transforms(IterSerializer::new(
-                                self.value.transforms.as_ref(),
-                                Some("ds:Transforms"),
-                                false,
-                            ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
-                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    ReferenceTypeSerializerState::Transforms(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ReferenceTypeSerializerState::DigestMethod(
-                                WithSerializer::serializer(
-                                    &self.value.digest_method,
-                                    Some("ds:DigestMethod"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    ReferenceTypeSerializerState::DigestMethod(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = ReferenceTypeSerializerState::DigestValue(
-                                WithSerializer::serializer(
-                                    &self.value.digest_value,
-                                    Some("ds:DigestValue"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    ReferenceTypeSerializerState::DigestValue(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = ReferenceTypeSerializerState::End__,
-                    },
-                    ReferenceTypeSerializerState::End__ => {
-                        *self.state = ReferenceTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    ReferenceTypeSerializerState::Done__ => return Ok(None),
-                    ReferenceTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for ReferenceTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = ReferenceTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct KeyValueTypeSerializer<'ser> {
-        pub(super) value: &'ser super::KeyValueType,
-        pub(super) state: Box<KeyValueTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum KeyValueTypeSerializerState<'ser> {
-        Init__,
-        Content__(<super::KeyValueTypeContent as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> KeyValueTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    KeyValueTypeSerializerState::Init__ => {
-                        *self.state = KeyValueTypeSerializerState::Content__(
-                            WithSerializer::serializer(&self.value.content, None, false)?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    KeyValueTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = KeyValueTypeSerializerState::End__,
-                    },
-                    KeyValueTypeSerializerState::End__ => {
-                        *self.state = KeyValueTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    KeyValueTypeSerializerState::Done__ => return Ok(None),
-                    KeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for KeyValueTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = KeyValueTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct KeyValueTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::KeyValueTypeContent,
-        pub(super) state: Box<KeyValueTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum KeyValueTypeContentSerializerState<'ser> {
-        Init__,
-        DsakeyValue(<super::DsakeyValueType as WithSerializer>::Serializer<'ser>),
-        RsakeyValue(<super::RsakeyValueType as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> KeyValueTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    KeyValueTypeContentSerializerState::Init__ => match self.value {
-                        super::KeyValueTypeContent::DsakeyValue(x) => {
-                            *self.state = KeyValueTypeContentSerializerState::DsakeyValue(
-                                WithSerializer::serializer(x, Some("ds:DSAKeyValue"), false)?,
-                            )
-                        }
-                        super::KeyValueTypeContent::RsakeyValue(x) => {
-                            *self.state = KeyValueTypeContentSerializerState::RsakeyValue(
-                                WithSerializer::serializer(x, Some("ds:RSAKeyValue"), false)?,
-                            )
-                        }
-                    },
-                    KeyValueTypeContentSerializerState::DsakeyValue(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyValueTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyValueTypeContentSerializerState::RsakeyValue(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = KeyValueTypeContentSerializerState::Done__,
-                        }
-                    }
-                    KeyValueTypeContentSerializerState::Done__ => return Ok(None),
-                    KeyValueTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for KeyValueTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = KeyValueTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct RetrievalMethodTypeSerializer<'ser> {
-        pub(super) value: &'ser super::RetrievalMethodType,
-        pub(super) state: Box<RetrievalMethodTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum RetrievalMethodTypeSerializerState<'ser> {
-        Init__,
-        Transforms(
-            IterSerializer<'ser, Option<&'ser super::TransformsType>, super::TransformsType>,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> RetrievalMethodTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    RetrievalMethodTypeSerializerState::Init__ => {
-                        *self.state =
-                            RetrievalMethodTypeSerializerState::Transforms(IterSerializer::new(
-                                self.value.transforms.as_ref(),
-                                Some("ds:Transforms"),
-                                false,
-                            ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
-                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    RetrievalMethodTypeSerializerState::Transforms(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = RetrievalMethodTypeSerializerState::End__,
-                        }
-                    }
-                    RetrievalMethodTypeSerializerState::End__ => {
-                        *self.state = RetrievalMethodTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    RetrievalMethodTypeSerializerState::Done__ => return Ok(None),
-                    RetrievalMethodTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for RetrievalMethodTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = RetrievalMethodTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct X509DataTypeSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataType,
-        pub(super) state: Box<X509DataTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum X509DataTypeSerializerState<'ser> {
-        Init__,
-        Content__(
-            IterSerializer<'ser, &'ser [super::X509DataTypeContent], super::X509DataTypeContent>,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> X509DataTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    X509DataTypeSerializerState::Init__ => {
-                        *self.state = X509DataTypeSerializerState::Content__(IterSerializer::new(
-                            &self.value.content[..],
-                            None,
-                            false,
-                        ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    X509DataTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = X509DataTypeSerializerState::End__,
-                    },
-                    X509DataTypeSerializerState::End__ => {
-                        *self.state = X509DataTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    X509DataTypeSerializerState::Done__ => return Ok(None),
-                    X509DataTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for X509DataTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = X509DataTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct X509DataTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataTypeContent,
-        pub(super) state: Box<X509DataTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum X509DataTypeContentSerializerState<'ser> {
-        Init__,
-        Content103(<super::X509DataContent103Type as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> X509DataTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    X509DataTypeContentSerializerState::Init__ => {
-                        *self.state = X509DataTypeContentSerializerState::Content103(
-                            WithSerializer::serializer(
-                                &self.value.content_103,
-                                Some("ds:Content103"),
-                                false,
-                            )?,
-                        );
-                    }
-                    X509DataTypeContentSerializerState::Content103(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = X509DataTypeContentSerializerState::Done__,
-                        }
-                    }
-                    X509DataTypeContentSerializerState::Done__ => return Ok(None),
-                    X509DataTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for X509DataTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = X509DataTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct PgpdataTypeSerializer<'ser> {
-        pub(super) value: &'ser super::PgpdataType,
-        pub(super) state: Box<PgpdataTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum PgpdataTypeSerializerState<'ser> {
-        Init__,
-        Content__(<super::PgpdataTypeContent as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> PgpdataTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    PgpdataTypeSerializerState::Init__ => {
-                        *self.state = PgpdataTypeSerializerState::Content__(
-                            WithSerializer::serializer(&self.value.content, None, false)?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    PgpdataTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = PgpdataTypeSerializerState::End__,
-                    },
-                    PgpdataTypeSerializerState::End__ => {
-                        *self.state = PgpdataTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    PgpdataTypeSerializerState::Done__ => return Ok(None),
-                    PgpdataTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for PgpdataTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = PgpdataTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct PgpdataTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::PgpdataTypeContent,
-        pub(super) state: Box<PgpdataTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum PgpdataTypeContentSerializerState<'ser> {
-        Init__,
-        Content113(<super::PgpdataContent113Type as WithSerializer>::Serializer<'ser>),
-        Content116(<super::PgpdataContent116Type as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> PgpdataTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    PgpdataTypeContentSerializerState::Init__ => match self.value {
-                        super::PgpdataTypeContent::Content113(x) => {
-                            *self.state = PgpdataTypeContentSerializerState::Content113(
-                                WithSerializer::serializer(x, Some("ds:Content113"), false)?,
-                            )
-                        }
-                        super::PgpdataTypeContent::Content116(x) => {
-                            *self.state = PgpdataTypeContentSerializerState::Content116(
-                                WithSerializer::serializer(x, Some("ds:Content116"), false)?,
-                            )
-                        }
-                    },
-                    PgpdataTypeContentSerializerState::Content113(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpdataTypeContentSerializerState::Done__,
-                        }
-                    }
-                    PgpdataTypeContentSerializerState::Content116(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpdataTypeContentSerializerState::Done__,
-                        }
-                    }
-                    PgpdataTypeContentSerializerState::Done__ => return Ok(None),
-                    PgpdataTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for PgpdataTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = PgpdataTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SpkidataTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SpkidataType,
-        pub(super) state: Box<SpkidataTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SpkidataTypeSerializerState<'ser> {
-        Init__,
-        Content__(
-            IterSerializer<'ser, &'ser [super::SpkidataTypeContent], super::SpkidataTypeContent>,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SpkidataTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SpkidataTypeSerializerState::Init__ => {
-                        *self.state = SpkidataTypeSerializerState::Content__(IterSerializer::new(
-                            &self.value.content[..],
-                            None,
-                            false,
-                        ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    SpkidataTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = SpkidataTypeSerializerState::End__,
-                    },
-                    SpkidataTypeSerializerState::End__ => {
-                        *self.state = SpkidataTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    SpkidataTypeSerializerState::Done__ => return Ok(None),
-                    SpkidataTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SpkidataTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SpkidataTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct SpkidataTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::SpkidataTypeContent,
-        pub(super) state: Box<SpkidataTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum SpkidataTypeContentSerializerState<'ser> {
-        Init__,
-        Spkisexp(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SpkidataTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SpkidataTypeContentSerializerState::Init__ => {
-                        *self.state = SpkidataTypeContentSerializerState::Spkisexp(
-                            WithSerializer::serializer(
-                                &self.value.spkisexp,
-                                Some("ds:SPKISexp"),
-                                false,
-                            )?,
-                        );
-                    }
-                    SpkidataTypeContentSerializerState::Spkisexp(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = SpkidataTypeContentSerializerState::Done__,
-                        }
-                    }
-                    SpkidataTypeContentSerializerState::Done__ => return Ok(None),
-                    SpkidataTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SpkidataTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SpkidataTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct TransformsTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TransformsType,
-        pub(super) state: Box<TransformsTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum TransformsTypeSerializerState<'ser> {
-        Init__,
-        Transform(IterSerializer<'ser, &'ser [super::TransformType], super::TransformType>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> TransformsTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    TransformsTypeSerializerState::Init__ => {
-                        *self.state =
-                            TransformsTypeSerializerState::Transform(IterSerializer::new(
-                                &self.value.transform[..],
-                                Some("ds:Transform"),
-                                false,
-                            ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    TransformsTypeSerializerState::Transform(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TransformsTypeSerializerState::End__,
-                    },
-                    TransformsTypeSerializerState::End__ => {
-                        *self.state = TransformsTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    TransformsTypeSerializerState::Done__ => return Ok(None),
-                    TransformsTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for TransformsTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = TransformsTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct DigestMethodTypeSerializer<'ser> {
-        pub(super) value: &'ser super::DigestMethodType,
-        pub(super) state: Box<DigestMethodTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum DigestMethodTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DigestMethodTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DigestMethodTypeSerializerState::Init__ => {
-                        *self.state = DigestMethodTypeSerializerState::Done__;
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    DigestMethodTypeSerializerState::Done__ => return Ok(None),
-                    DigestMethodTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DigestMethodTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DigestMethodTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct DsakeyValueTypeSerializer<'ser> {
-        pub(super) value: &'ser super::DsakeyValueType,
-        pub(super) state: Box<DsakeyValueTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum DsakeyValueTypeSerializerState<'ser> {
-        Init__,
-        Content125(
-            IterSerializer<
-                'ser,
-                Option<&'ser super::DsakeyValueContent125Type>,
-                super::DsakeyValueContent125Type,
-            >,
-        ),
-        G(IterSerializer<'ser, Option<&'ser String>, String>),
-        Y(<String as WithSerializer>::Serializer<'ser>),
-        J(IterSerializer<'ser, Option<&'ser String>, String>),
-        Content131(
-            IterSerializer<
-                'ser,
-                Option<&'ser super::DsakeyValueContent131Type>,
-                super::DsakeyValueContent131Type,
-            >,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DsakeyValueTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DsakeyValueTypeSerializerState::Init__ => {
-                        *self.state =
-                            DsakeyValueTypeSerializerState::Content125(IterSerializer::new(
-                                self.value.content_125.as_ref(),
-                                Some("ds:Content125"),
-                                false,
-                            ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    DsakeyValueTypeSerializerState::Content125(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = DsakeyValueTypeSerializerState::G(
-                                    IterSerializer::new(self.value.g.as_ref(), Some("ds:G"), false),
-                                )
-                            }
-                        }
-                    }
-                    DsakeyValueTypeSerializerState::G(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = DsakeyValueTypeSerializerState::Y(
-                                WithSerializer::serializer(&self.value.y, Some("ds:Y"), false)?,
-                            )
-                        }
-                    },
-                    DsakeyValueTypeSerializerState::Y(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = DsakeyValueTypeSerializerState::J(
-                                    IterSerializer::new(self.value.j.as_ref(), Some("ds:J"), false),
-                                )
-                            }
-                        }
-                    }
-                    DsakeyValueTypeSerializerState::J(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state =
-                                DsakeyValueTypeSerializerState::Content131(IterSerializer::new(
-                                    self.value.content_131.as_ref(),
-                                    Some("ds:Content131"),
-                                    false,
-                                ))
-                        }
-                    },
-                    DsakeyValueTypeSerializerState::Content131(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = DsakeyValueTypeSerializerState::End__,
-                    },
-                    DsakeyValueTypeSerializerState::End__ => {
-                        *self.state = DsakeyValueTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    DsakeyValueTypeSerializerState::Done__ => return Ok(None),
-                    DsakeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DsakeyValueTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DsakeyValueTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct RsakeyValueTypeSerializer<'ser> {
-        pub(super) value: &'ser super::RsakeyValueType,
-        pub(super) state: Box<RsakeyValueTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum RsakeyValueTypeSerializerState<'ser> {
-        Init__,
-        Modulus(<String as WithSerializer>::Serializer<'ser>),
-        Exponent(<String as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> RsakeyValueTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    RsakeyValueTypeSerializerState::Init__ => {
-                        *self.state =
-                            RsakeyValueTypeSerializerState::Modulus(WithSerializer::serializer(
-                                &self.value.modulus,
-                                Some("ds:Modulus"),
-                                false,
-                            )?);
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    RsakeyValueTypeSerializerState::Modulus(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = RsakeyValueTypeSerializerState::Exponent(
-                                WithSerializer::serializer(
-                                    &self.value.exponent,
-                                    Some("ds:Exponent"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    RsakeyValueTypeSerializerState::Exponent(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = RsakeyValueTypeSerializerState::End__,
-                    },
-                    RsakeyValueTypeSerializerState::End__ => {
-                        *self.state = RsakeyValueTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    RsakeyValueTypeSerializerState::Done__ => return Ok(None),
-                    RsakeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for RsakeyValueTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = RsakeyValueTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct X509DataContent103TypeSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataContent103Type,
-        pub(super) state: Box<X509DataContent103TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum X509DataContent103TypeSerializerState<'ser> {
-        Init__,
-        Content__(<super::X509DataContent103TypeContent as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> X509DataContent103TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    X509DataContent103TypeSerializerState::Init__ => {
-                        *self.state = X509DataContent103TypeSerializerState::Content__(
-                            WithSerializer::serializer(&self.value.content, None, false)?,
-                        );
-                    }
-                    X509DataContent103TypeSerializerState::Content__(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = X509DataContent103TypeSerializerState::Done__,
-                        }
-                    }
-                    X509DataContent103TypeSerializerState::Done__ => return Ok(None),
-                    X509DataContent103TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for X509DataContent103TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = X509DataContent103TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct X509DataContent103TypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataContent103TypeContent,
-        pub(super) state: Box<X509DataContent103TypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum X509DataContent103TypeContentSerializerState<'ser> {
-        Init__,
-        X509IssuerSerial(<super::X509IssuerSerialType as WithSerializer>::Serializer<'ser>),
-        X509Ski(<String as WithSerializer>::Serializer<'ser>),
-        X509SubjectName(<String as WithSerializer>::Serializer<'ser>),
-        X509Certificate(<String as WithSerializer>::Serializer<'ser>),
-        X509Crl(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> X509DataContent103TypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    X509DataContent103TypeContentSerializerState::Init__ => match self.value {
-                        super::X509DataContent103TypeContent::X509IssuerSerial(x) => {
-                            *self.state =
-                                X509DataContent103TypeContentSerializerState::X509IssuerSerial(
-                                    WithSerializer::serializer(
-                                        x,
-                                        Some("ds:X509IssuerSerial"),
-                                        false,
-                                    )?,
-                                )
-                        }
-                        super::X509DataContent103TypeContent::X509Ski(x) => {
-                            *self.state = X509DataContent103TypeContentSerializerState::X509Ski(
-                                WithSerializer::serializer(x, Some("ds:X509SKI"), false)?,
-                            )
-                        }
-                        super::X509DataContent103TypeContent::X509SubjectName(x) => {
-                            *self.state =
-                                X509DataContent103TypeContentSerializerState::X509SubjectName(
-                                    WithSerializer::serializer(
-                                        x,
-                                        Some("ds:X509SubjectName"),
-                                        false,
-                                    )?,
-                                )
-                        }
-                        super::X509DataContent103TypeContent::X509Certificate(x) => {
-                            *self.state =
-                                X509DataContent103TypeContentSerializerState::X509Certificate(
-                                    WithSerializer::serializer(
-                                        x,
-                                        Some("ds:X509Certificate"),
-                                        false,
-                                    )?,
-                                )
-                        }
-                        super::X509DataContent103TypeContent::X509Crl(x) => {
-                            *self.state = X509DataContent103TypeContentSerializerState::X509Crl(
-                                WithSerializer::serializer(x, Some("ds:X509CRL"), false)?,
-                            )
-                        }
-                    },
-                    X509DataContent103TypeContentSerializerState::X509IssuerSerial(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509DataContent103TypeContentSerializerState::Done__
-                            }
-                        }
-                    }
-                    X509DataContent103TypeContentSerializerState::X509Ski(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509DataContent103TypeContentSerializerState::Done__
-                            }
-                        }
-                    }
-                    X509DataContent103TypeContentSerializerState::X509SubjectName(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509DataContent103TypeContentSerializerState::Done__
-                            }
-                        }
-                    }
-                    X509DataContent103TypeContentSerializerState::X509Certificate(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509DataContent103TypeContentSerializerState::Done__
-                            }
-                        }
-                    }
-                    X509DataContent103TypeContentSerializerState::X509Crl(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509DataContent103TypeContentSerializerState::Done__
-                            }
-                        }
-                    }
-                    X509DataContent103TypeContentSerializerState::Done__ => return Ok(None),
-                    X509DataContent103TypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for X509DataContent103TypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = X509DataContent103TypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct PgpdataContent113TypeSerializer<'ser> {
-        pub(super) value: &'ser super::PgpdataContent113Type,
-        pub(super) state: Box<PgpdataContent113TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum PgpdataContent113TypeSerializerState<'ser> {
-        Init__,
-        PgpkeyID(<String as WithSerializer>::Serializer<'ser>),
-        PgpkeyPacket(IterSerializer<'ser, Option<&'ser String>, String>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> PgpdataContent113TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    PgpdataContent113TypeSerializerState::Init__ => {
-                        *self.state = PgpdataContent113TypeSerializerState::PgpkeyID(
-                            WithSerializer::serializer(
-                                &self.value.pgpkey_id,
-                                Some("ds:PGPKeyID"),
-                                false,
-                            )?,
-                        );
-                    }
-                    PgpdataContent113TypeSerializerState::PgpkeyID(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = PgpdataContent113TypeSerializerState::PgpkeyPacket(
-                                    IterSerializer::new(
-                                        self.value.pgpkey_packet.as_ref(),
-                                        Some("ds:PGPKeyPacket"),
-                                        false,
-                                    ),
-                                )
-                            }
-                        }
-                    }
-                    PgpdataContent113TypeSerializerState::PgpkeyPacket(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpdataContent113TypeSerializerState::Done__,
-                        }
-                    }
-                    PgpdataContent113TypeSerializerState::Done__ => return Ok(None),
-                    PgpdataContent113TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for PgpdataContent113TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = PgpdataContent113TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct PgpdataContent116TypeSerializer<'ser> {
-        pub(super) value: &'ser super::PgpdataContent116Type,
-        pub(super) state: Box<PgpdataContent116TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum PgpdataContent116TypeSerializerState<'ser> {
-        Init__,
-        PgpkeyPacket(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> PgpdataContent116TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    PgpdataContent116TypeSerializerState::Init__ => {
-                        *self.state = PgpdataContent116TypeSerializerState::PgpkeyPacket(
-                            WithSerializer::serializer(
-                                &self.value.pgpkey_packet,
-                                Some("ds:PGPKeyPacket"),
-                                false,
-                            )?,
-                        );
-                    }
-                    PgpdataContent116TypeSerializerState::PgpkeyPacket(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpdataContent116TypeSerializerState::Done__,
-                        }
-                    }
-                    PgpdataContent116TypeSerializerState::Done__ => return Ok(None),
-                    PgpdataContent116TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for PgpdataContent116TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = PgpdataContent116TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct TransformTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TransformType,
-        pub(super) state: Box<TransformTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum TransformTypeSerializerState<'ser> {
-        Init__,
-        Content__(
-            IterSerializer<'ser, &'ser [super::TransformTypeContent], super::TransformTypeContent>,
-        ),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> TransformTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    TransformTypeSerializerState::Init__ => {
-                        *self.state = TransformTypeSerializerState::Content__(IterSerializer::new(
-                            &self.value.content[..],
-                            None,
-                            false,
-                        ));
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    TransformTypeSerializerState::Content__(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TransformTypeSerializerState::End__,
-                    },
-                    TransformTypeSerializerState::End__ => {
-                        *self.state = TransformTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    TransformTypeSerializerState::Done__ => return Ok(None),
-                    TransformTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for TransformTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = TransformTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct TransformTypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::TransformTypeContent,
-        pub(super) state: Box<TransformTypeContentSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum TransformTypeContentSerializerState<'ser> {
-        Init__,
-        Xpath(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> TransformTypeContentSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    TransformTypeContentSerializerState::Init__ => match self.value {
-                        super::TransformTypeContent::Xpath(x) => {
-                            *self.state = TransformTypeContentSerializerState::Xpath(
-                                WithSerializer::serializer(x, Some("ds:XPath"), false)?,
-                            )
-                        }
-                    },
-                    TransformTypeContentSerializerState::Xpath(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TransformTypeContentSerializerState::Done__,
-                    },
-                    TransformTypeContentSerializerState::Done__ => return Ok(None),
-                    TransformTypeContentSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for TransformTypeContentSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = TransformTypeContentSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct DsakeyValueContent125TypeSerializer<'ser> {
-        pub(super) value: &'ser super::DsakeyValueContent125Type,
-        pub(super) state: Box<DsakeyValueContent125TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum DsakeyValueContent125TypeSerializerState<'ser> {
-        Init__,
-        P(<String as WithSerializer>::Serializer<'ser>),
-        Q(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DsakeyValueContent125TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DsakeyValueContent125TypeSerializerState::Init__ => {
-                        *self.state = DsakeyValueContent125TypeSerializerState::P(
-                            WithSerializer::serializer(&self.value.p, Some("ds:P"), false)?,
-                        );
-                    }
-                    DsakeyValueContent125TypeSerializerState::P(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = DsakeyValueContent125TypeSerializerState::Q(
-                                WithSerializer::serializer(&self.value.q, Some("ds:Q"), false)?,
-                            )
-                        }
-                    },
-                    DsakeyValueContent125TypeSerializerState::Q(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = DsakeyValueContent125TypeSerializerState::Done__,
-                    },
-                    DsakeyValueContent125TypeSerializerState::Done__ => return Ok(None),
-                    DsakeyValueContent125TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DsakeyValueContent125TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DsakeyValueContent125TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct DsakeyValueContent131TypeSerializer<'ser> {
-        pub(super) value: &'ser super::DsakeyValueContent131Type,
-        pub(super) state: Box<DsakeyValueContent131TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum DsakeyValueContent131TypeSerializerState<'ser> {
-        Init__,
-        Seed(<String as WithSerializer>::Serializer<'ser>),
-        PgenCounter(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> DsakeyValueContent131TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    DsakeyValueContent131TypeSerializerState::Init__ => {
-                        *self.state = DsakeyValueContent131TypeSerializerState::Seed(
-                            WithSerializer::serializer(&self.value.seed, Some("ds:Seed"), false)?,
-                        );
-                    }
-                    DsakeyValueContent131TypeSerializerState::Seed(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = DsakeyValueContent131TypeSerializerState::PgenCounter(
-                                    WithSerializer::serializer(
-                                        &self.value.pgen_counter,
-                                        Some("ds:PgenCounter"),
-                                        false,
-                                    )?,
-                                )
-                            }
-                        }
-                    }
-                    DsakeyValueContent131TypeSerializerState::PgenCounter(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = DsakeyValueContent131TypeSerializerState::Done__,
-                        }
-                    }
-                    DsakeyValueContent131TypeSerializerState::Done__ => return Ok(None),
-                    DsakeyValueContent131TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for DsakeyValueContent131TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = DsakeyValueContent131TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct X509IssuerSerialTypeSerializer<'ser> {
-        pub(super) value: &'ser super::X509IssuerSerialType,
-        pub(super) state: Box<X509IssuerSerialTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum X509IssuerSerialTypeSerializerState<'ser> {
-        Init__,
-        X509IssuerName(<String as WithSerializer>::Serializer<'ser>),
-        X509SerialNumber(<i32 as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> X509IssuerSerialTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    X509IssuerSerialTypeSerializerState::Init__ => {
-                        *self.state = X509IssuerSerialTypeSerializerState::X509IssuerName(
-                            WithSerializer::serializer(
-                                &self.value.x509_issuer_name,
-                                Some("ds:X509IssuerName"),
-                                false,
-                            )?,
-                        );
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    X509IssuerSerialTypeSerializerState::X509IssuerName(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = X509IssuerSerialTypeSerializerState::X509SerialNumber(
-                                    WithSerializer::serializer(
-                                        &self.value.x509_serial_number,
-                                        Some("ds:X509SerialNumber"),
-                                        false,
-                                    )?,
-                                )
-                            }
-                        }
-                    }
-                    X509IssuerSerialTypeSerializerState::X509SerialNumber(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = X509IssuerSerialTypeSerializerState::End__,
-                        }
-                    }
-                    X509IssuerSerialTypeSerializerState::End__ => {
-                        *self.state = X509IssuerSerialTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    X509IssuerSerialTypeSerializerState::Done__ => return Ok(None),
-                    X509IssuerSerialTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for X509IssuerSerialTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = X509IssuerSerialTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -12771,6 +10540,2237 @@ pub mod quick_xml_deserialize {
                     .x509_serial_number
                     .ok_or_else(|| ErrorKind::MissingElement("X509SerialNumber".into()))?,
             })
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{
+        write_attrib, write_attrib_opt, BytesEnd, BytesStart, Error, Event, IterSerializer,
+        WithSerializer,
+    };
+    #[derive(Debug)]
+    pub struct DirectoryReqTypeSerializer<'ser> {
+        pub(super) value: &'ser super::DirectoryReqType,
+        pub(super) state: Box<DirectoryReqTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum DirectoryReqTypeSerializerState<'ser> {
+        Init__,
+        CreateDateTimestamp(<String as WithSerializer>::Serializer<'ser>),
+        Merchant(<super::DirectoryReqMerchantType as WithSerializer>::Serializer<'ser>),
+        Signature(<super::SignatureType as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DirectoryReqTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DirectoryReqTypeSerializerState::Init__ => {
+                        *self.state = DirectoryReqTypeSerializerState::CreateDateTimestamp(
+                            WithSerializer::serializer(
+                                &self.value.create_date_timestamp,
+                                Some("createDateTimestamp"),
+                                false,
+                            )?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib(&mut bytes, "version", &self.value.version)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    DirectoryReqTypeSerializerState::CreateDateTimestamp(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = DirectoryReqTypeSerializerState::Merchant(
+                                    WithSerializer::serializer(
+                                        &self.value.merchant,
+                                        Some("Merchant"),
+                                        false,
+                                    )?,
+                                )
+                            }
+                        }
+                    }
+                    DirectoryReqTypeSerializerState::Merchant(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = DirectoryReqTypeSerializerState::Signature(
+                                WithSerializer::serializer(
+                                    &self.value.signature,
+                                    Some("ds:Signature"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    DirectoryReqTypeSerializerState::Signature(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = DirectoryReqTypeSerializerState::End__,
+                    },
+                    DirectoryReqTypeSerializerState::End__ => {
+                        *self.state = DirectoryReqTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    DirectoryReqTypeSerializerState::Done__ => return Ok(None),
+                    DirectoryReqTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DirectoryReqTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DirectoryReqTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DirectoryReqMerchantTypeSerializer<'ser> {
+        pub(super) value: &'ser super::DirectoryReqMerchantType,
+        pub(super) state: Box<DirectoryReqMerchantTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum DirectoryReqMerchantTypeSerializerState<'ser> {
+        Init__,
+        MerchantID(<String as WithSerializer>::Serializer<'ser>),
+        SubID(<usize as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DirectoryReqMerchantTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DirectoryReqMerchantTypeSerializerState::Init__ => {
+                        *self.state = DirectoryReqMerchantTypeSerializerState::MerchantID(
+                            WithSerializer::serializer(
+                                &self.value.merchant_id,
+                                Some("merchantID"),
+                                false,
+                            )?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    DirectoryReqMerchantTypeSerializerState::MerchantID(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = DirectoryReqMerchantTypeSerializerState::SubID(
+                                    WithSerializer::serializer(
+                                        &self.value.sub_id,
+                                        Some("subID"),
+                                        false,
+                                    )?,
+                                )
+                            }
+                        }
+                    }
+                    DirectoryReqMerchantTypeSerializerState::SubID(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = DirectoryReqMerchantTypeSerializerState::End__,
+                        }
+                    }
+                    DirectoryReqMerchantTypeSerializerState::End__ => {
+                        *self.state = DirectoryReqMerchantTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    DirectoryReqMerchantTypeSerializerState::Done__ => return Ok(None),
+                    DirectoryReqMerchantTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DirectoryReqMerchantTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DirectoryReqMerchantTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SignatureTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SignatureType,
+        pub(super) state: Box<SignatureTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SignatureTypeSerializerState<'ser> {
+        Init__,
+        SignedInfo(<super::SignedInfoType as WithSerializer>::Serializer<'ser>),
+        SignatureValue(<super::SignatureValueType as WithSerializer>::Serializer<'ser>),
+        KeyInfo(IterSerializer<'ser, Option<&'ser super::KeyInfoType>, super::KeyInfoType>),
+        Object(IterSerializer<'ser, &'ser [super::ObjectType], super::ObjectType>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SignatureTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SignatureTypeSerializerState::Init__ => {
+                        *self.state =
+                            SignatureTypeSerializerState::SignedInfo(WithSerializer::serializer(
+                                &self.value.signed_info,
+                                Some("ds:SignedInfo"),
+                                false,
+                            )?);
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    SignatureTypeSerializerState::SignedInfo(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = SignatureTypeSerializerState::SignatureValue(
+                                WithSerializer::serializer(
+                                    &self.value.signature_value,
+                                    Some("ds:SignatureValue"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    SignatureTypeSerializerState::SignatureValue(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    SignatureTypeSerializerState::KeyInfo(IterSerializer::new(
+                                        self.value.key_info.as_ref(),
+                                        Some("ds:KeyInfo"),
+                                        false,
+                                    ))
+                            }
+                        }
+                    }
+                    SignatureTypeSerializerState::KeyInfo(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = SignatureTypeSerializerState::Object(IterSerializer::new(
+                                &self.value.object[..],
+                                Some("ds:Object"),
+                                false,
+                            ))
+                        }
+                    },
+                    SignatureTypeSerializerState::Object(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = SignatureTypeSerializerState::End__,
+                    },
+                    SignatureTypeSerializerState::End__ => {
+                        *self.state = SignatureTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    SignatureTypeSerializerState::Done__ => return Ok(None),
+                    SignatureTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SignatureTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SignatureTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SignedInfoTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SignedInfoType,
+        pub(super) state: Box<SignedInfoTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SignedInfoTypeSerializerState<'ser> {
+        Init__,
+        CanonicalizationMethod(
+            <super::CanonicalizationMethodType as WithSerializer>::Serializer<'ser>,
+        ),
+        SignatureMethod(<super::SignatureMethodType as WithSerializer>::Serializer<'ser>),
+        Reference(IterSerializer<'ser, &'ser [super::ReferenceType], super::ReferenceType>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SignedInfoTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SignedInfoTypeSerializerState::Init__ => {
+                        *self.state = SignedInfoTypeSerializerState::CanonicalizationMethod(
+                            WithSerializer::serializer(
+                                &self.value.canonicalization_method,
+                                Some("ds:CanonicalizationMethod"),
+                                false,
+                            )?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    SignedInfoTypeSerializerState::CanonicalizationMethod(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = SignedInfoTypeSerializerState::SignatureMethod(
+                                    WithSerializer::serializer(
+                                        &self.value.signature_method,
+                                        Some("ds:SignatureMethod"),
+                                        false,
+                                    )?,
+                                )
+                            }
+                        }
+                    }
+                    SignedInfoTypeSerializerState::SignatureMethod(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state =
+                                    SignedInfoTypeSerializerState::Reference(IterSerializer::new(
+                                        &self.value.reference[..],
+                                        Some("ds:Reference"),
+                                        false,
+                                    ))
+                            }
+                        }
+                    }
+                    SignedInfoTypeSerializerState::Reference(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = SignedInfoTypeSerializerState::End__,
+                    },
+                    SignedInfoTypeSerializerState::End__ => {
+                        *self.state = SignedInfoTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    SignedInfoTypeSerializerState::Done__ => return Ok(None),
+                    SignedInfoTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SignedInfoTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SignedInfoTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SignatureValueTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SignatureValueType,
+        pub(super) state: Box<SignatureValueTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SignatureValueTypeSerializerState<'ser> {
+        Init__,
+        Content__(<String as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SignatureValueTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SignatureValueTypeSerializerState::Init__ => {
+                        *self.state = SignatureValueTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    SignatureValueTypeSerializerState::Content__(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = SignatureValueTypeSerializerState::End__,
+                        }
+                    }
+                    SignatureValueTypeSerializerState::End__ => {
+                        *self.state = SignatureValueTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    SignatureValueTypeSerializerState::Done__ => return Ok(None),
+                    SignatureValueTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SignatureValueTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SignatureValueTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct KeyInfoTypeSerializer<'ser> {
+        pub(super) value: &'ser super::KeyInfoType,
+        pub(super) state: Box<KeyInfoTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum KeyInfoTypeSerializerState<'ser> {
+        Init__,
+        Content__(
+            IterSerializer<'ser, &'ser [super::KeyInfoTypeContent], super::KeyInfoTypeContent>,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> KeyInfoTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    KeyInfoTypeSerializerState::Init__ => {
+                        *self.state = KeyInfoTypeSerializerState::Content__(IterSerializer::new(
+                            &self.value.content[..],
+                            None,
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    KeyInfoTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = KeyInfoTypeSerializerState::End__,
+                    },
+                    KeyInfoTypeSerializerState::End__ => {
+                        *self.state = KeyInfoTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    KeyInfoTypeSerializerState::Done__ => return Ok(None),
+                    KeyInfoTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for KeyInfoTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = KeyInfoTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct KeyInfoTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::KeyInfoTypeContent,
+        pub(super) state: Box<KeyInfoTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum KeyInfoTypeContentSerializerState<'ser> {
+        Init__,
+        KeyName(<String as WithSerializer>::Serializer<'ser>),
+        KeyValue(<super::KeyValueType as WithSerializer>::Serializer<'ser>),
+        RetrievalMethod(<super::RetrievalMethodType as WithSerializer>::Serializer<'ser>),
+        X509Data(<super::X509DataType as WithSerializer>::Serializer<'ser>),
+        Pgpdata(<super::PgpdataType as WithSerializer>::Serializer<'ser>),
+        Spkidata(<super::SpkidataType as WithSerializer>::Serializer<'ser>),
+        MgmtData(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> KeyInfoTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    KeyInfoTypeContentSerializerState::Init__ => match self.value {
+                        super::KeyInfoTypeContent::KeyName(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::KeyName(
+                                WithSerializer::serializer(x, Some("ds:KeyName"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::KeyValue(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::KeyValue(
+                                WithSerializer::serializer(x, Some("ds:KeyValue"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::RetrievalMethod(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::RetrievalMethod(
+                                WithSerializer::serializer(x, Some("ds:RetrievalMethod"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::X509Data(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::X509Data(
+                                WithSerializer::serializer(x, Some("ds:X509Data"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::Pgpdata(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::Pgpdata(
+                                WithSerializer::serializer(x, Some("ds:PGPData"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::Spkidata(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::Spkidata(
+                                WithSerializer::serializer(x, Some("ds:SPKIData"), false)?,
+                            )
+                        }
+                        super::KeyInfoTypeContent::MgmtData(x) => {
+                            *self.state = KeyInfoTypeContentSerializerState::MgmtData(
+                                WithSerializer::serializer(x, Some("ds:MgmtData"), false)?,
+                            )
+                        }
+                    },
+                    KeyInfoTypeContentSerializerState::KeyName(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                    },
+                    KeyInfoTypeContentSerializerState::KeyValue(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyInfoTypeContentSerializerState::RetrievalMethod(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyInfoTypeContentSerializerState::X509Data(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyInfoTypeContentSerializerState::Pgpdata(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                    },
+                    KeyInfoTypeContentSerializerState::Spkidata(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyInfoTypeContentSerializerState::MgmtData(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyInfoTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyInfoTypeContentSerializerState::Done__ => return Ok(None),
+                    KeyInfoTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for KeyInfoTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = KeyInfoTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct ObjectTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ObjectType,
+        pub(super) state: Box<ObjectTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ObjectTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ObjectTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    ObjectTypeSerializerState::Init__ => {
+                        *self.state = ObjectTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "ds:MimeType", &self.value.mime_type)?;
+                        write_attrib_opt(&mut bytes, "ds:Encoding", &self.value.encoding)?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    ObjectTypeSerializerState::Done__ => return Ok(None),
+                    ObjectTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ObjectTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = ObjectTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct CanonicalizationMethodTypeSerializer<'ser> {
+        pub(super) value: &'ser super::CanonicalizationMethodType,
+        pub(super) state: Box<CanonicalizationMethodTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum CanonicalizationMethodTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> CanonicalizationMethodTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    CanonicalizationMethodTypeSerializerState::Init__ => {
+                        *self.state = CanonicalizationMethodTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    CanonicalizationMethodTypeSerializerState::Done__ => return Ok(None),
+                    CanonicalizationMethodTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for CanonicalizationMethodTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = CanonicalizationMethodTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SignatureMethodTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SignatureMethodType,
+        pub(super) state: Box<SignatureMethodTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SignatureMethodTypeSerializerState<'ser> {
+        Init__,
+        HmacoutputLength(IterSerializer<'ser, Option<&'ser i32>, i32>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SignatureMethodTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SignatureMethodTypeSerializerState::Init__ => {
+                        *self.state = SignatureMethodTypeSerializerState::HmacoutputLength(
+                            IterSerializer::new(
+                                self.value.hmacoutput_length.as_ref(),
+                                Some("ds:HMACOutputLength"),
+                                false,
+                            ),
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    SignatureMethodTypeSerializerState::HmacoutputLength(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = SignatureMethodTypeSerializerState::End__,
+                        }
+                    }
+                    SignatureMethodTypeSerializerState::End__ => {
+                        *self.state = SignatureMethodTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    SignatureMethodTypeSerializerState::Done__ => return Ok(None),
+                    SignatureMethodTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SignatureMethodTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SignatureMethodTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct ReferenceTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ReferenceType,
+        pub(super) state: Box<ReferenceTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ReferenceTypeSerializerState<'ser> {
+        Init__,
+        Transforms(
+            IterSerializer<'ser, Option<&'ser super::TransformsType>, super::TransformsType>,
+        ),
+        DigestMethod(<super::DigestMethodType as WithSerializer>::Serializer<'ser>),
+        DigestValue(<String as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ReferenceTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    ReferenceTypeSerializerState::Init__ => {
+                        *self.state =
+                            ReferenceTypeSerializerState::Transforms(IterSerializer::new(
+                                self.value.transforms.as_ref(),
+                                Some("ds:Transforms"),
+                                false,
+                            ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
+                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ReferenceTypeSerializerState::Transforms(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = ReferenceTypeSerializerState::DigestMethod(
+                                WithSerializer::serializer(
+                                    &self.value.digest_method,
+                                    Some("ds:DigestMethod"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    ReferenceTypeSerializerState::DigestMethod(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = ReferenceTypeSerializerState::DigestValue(
+                                WithSerializer::serializer(
+                                    &self.value.digest_value,
+                                    Some("ds:DigestValue"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    ReferenceTypeSerializerState::DigestValue(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = ReferenceTypeSerializerState::End__,
+                    },
+                    ReferenceTypeSerializerState::End__ => {
+                        *self.state = ReferenceTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ReferenceTypeSerializerState::Done__ => return Ok(None),
+                    ReferenceTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ReferenceTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = ReferenceTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct KeyValueTypeSerializer<'ser> {
+        pub(super) value: &'ser super::KeyValueType,
+        pub(super) state: Box<KeyValueTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum KeyValueTypeSerializerState<'ser> {
+        Init__,
+        Content__(<super::KeyValueTypeContent as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> KeyValueTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    KeyValueTypeSerializerState::Init__ => {
+                        *self.state = KeyValueTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    KeyValueTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = KeyValueTypeSerializerState::End__,
+                    },
+                    KeyValueTypeSerializerState::End__ => {
+                        *self.state = KeyValueTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    KeyValueTypeSerializerState::Done__ => return Ok(None),
+                    KeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for KeyValueTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = KeyValueTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct KeyValueTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::KeyValueTypeContent,
+        pub(super) state: Box<KeyValueTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum KeyValueTypeContentSerializerState<'ser> {
+        Init__,
+        DsakeyValue(<super::DsakeyValueType as WithSerializer>::Serializer<'ser>),
+        RsakeyValue(<super::RsakeyValueType as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> KeyValueTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    KeyValueTypeContentSerializerState::Init__ => match self.value {
+                        super::KeyValueTypeContent::DsakeyValue(x) => {
+                            *self.state = KeyValueTypeContentSerializerState::DsakeyValue(
+                                WithSerializer::serializer(x, Some("ds:DSAKeyValue"), false)?,
+                            )
+                        }
+                        super::KeyValueTypeContent::RsakeyValue(x) => {
+                            *self.state = KeyValueTypeContentSerializerState::RsakeyValue(
+                                WithSerializer::serializer(x, Some("ds:RSAKeyValue"), false)?,
+                            )
+                        }
+                    },
+                    KeyValueTypeContentSerializerState::DsakeyValue(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyValueTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyValueTypeContentSerializerState::RsakeyValue(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = KeyValueTypeContentSerializerState::Done__,
+                        }
+                    }
+                    KeyValueTypeContentSerializerState::Done__ => return Ok(None),
+                    KeyValueTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for KeyValueTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = KeyValueTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct RetrievalMethodTypeSerializer<'ser> {
+        pub(super) value: &'ser super::RetrievalMethodType,
+        pub(super) state: Box<RetrievalMethodTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum RetrievalMethodTypeSerializerState<'ser> {
+        Init__,
+        Transforms(
+            IterSerializer<'ser, Option<&'ser super::TransformsType>, super::TransformsType>,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> RetrievalMethodTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    RetrievalMethodTypeSerializerState::Init__ => {
+                        *self.state =
+                            RetrievalMethodTypeSerializerState::Transforms(IterSerializer::new(
+                                self.value.transforms.as_ref(),
+                                Some("ds:Transforms"),
+                                false,
+                            ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
+                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    RetrievalMethodTypeSerializerState::Transforms(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = RetrievalMethodTypeSerializerState::End__,
+                        }
+                    }
+                    RetrievalMethodTypeSerializerState::End__ => {
+                        *self.state = RetrievalMethodTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    RetrievalMethodTypeSerializerState::Done__ => return Ok(None),
+                    RetrievalMethodTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for RetrievalMethodTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = RetrievalMethodTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct X509DataTypeSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataType,
+        pub(super) state: Box<X509DataTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum X509DataTypeSerializerState<'ser> {
+        Init__,
+        Content__(
+            IterSerializer<'ser, &'ser [super::X509DataTypeContent], super::X509DataTypeContent>,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> X509DataTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    X509DataTypeSerializerState::Init__ => {
+                        *self.state = X509DataTypeSerializerState::Content__(IterSerializer::new(
+                            &self.value.content[..],
+                            None,
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    X509DataTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = X509DataTypeSerializerState::End__,
+                    },
+                    X509DataTypeSerializerState::End__ => {
+                        *self.state = X509DataTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    X509DataTypeSerializerState::Done__ => return Ok(None),
+                    X509DataTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for X509DataTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = X509DataTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct X509DataTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataTypeContent,
+        pub(super) state: Box<X509DataTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum X509DataTypeContentSerializerState<'ser> {
+        Init__,
+        Content103(<super::X509DataContent103Type as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> X509DataTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    X509DataTypeContentSerializerState::Init__ => {
+                        *self.state = X509DataTypeContentSerializerState::Content103(
+                            WithSerializer::serializer(
+                                &self.value.content_103,
+                                Some("ds:Content103"),
+                                false,
+                            )?,
+                        );
+                    }
+                    X509DataTypeContentSerializerState::Content103(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = X509DataTypeContentSerializerState::Done__,
+                        }
+                    }
+                    X509DataTypeContentSerializerState::Done__ => return Ok(None),
+                    X509DataTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for X509DataTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = X509DataTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct PgpdataTypeSerializer<'ser> {
+        pub(super) value: &'ser super::PgpdataType,
+        pub(super) state: Box<PgpdataTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum PgpdataTypeSerializerState<'ser> {
+        Init__,
+        Content__(<super::PgpdataTypeContent as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> PgpdataTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    PgpdataTypeSerializerState::Init__ => {
+                        *self.state = PgpdataTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    PgpdataTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = PgpdataTypeSerializerState::End__,
+                    },
+                    PgpdataTypeSerializerState::End__ => {
+                        *self.state = PgpdataTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    PgpdataTypeSerializerState::Done__ => return Ok(None),
+                    PgpdataTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for PgpdataTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = PgpdataTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct PgpdataTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::PgpdataTypeContent,
+        pub(super) state: Box<PgpdataTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum PgpdataTypeContentSerializerState<'ser> {
+        Init__,
+        Content113(<super::PgpdataContent113Type as WithSerializer>::Serializer<'ser>),
+        Content116(<super::PgpdataContent116Type as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> PgpdataTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    PgpdataTypeContentSerializerState::Init__ => match self.value {
+                        super::PgpdataTypeContent::Content113(x) => {
+                            *self.state = PgpdataTypeContentSerializerState::Content113(
+                                WithSerializer::serializer(x, Some("ds:Content113"), false)?,
+                            )
+                        }
+                        super::PgpdataTypeContent::Content116(x) => {
+                            *self.state = PgpdataTypeContentSerializerState::Content116(
+                                WithSerializer::serializer(x, Some("ds:Content116"), false)?,
+                            )
+                        }
+                    },
+                    PgpdataTypeContentSerializerState::Content113(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = PgpdataTypeContentSerializerState::Done__,
+                        }
+                    }
+                    PgpdataTypeContentSerializerState::Content116(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = PgpdataTypeContentSerializerState::Done__,
+                        }
+                    }
+                    PgpdataTypeContentSerializerState::Done__ => return Ok(None),
+                    PgpdataTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for PgpdataTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = PgpdataTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SpkidataTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SpkidataType,
+        pub(super) state: Box<SpkidataTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SpkidataTypeSerializerState<'ser> {
+        Init__,
+        Content__(
+            IterSerializer<'ser, &'ser [super::SpkidataTypeContent], super::SpkidataTypeContent>,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SpkidataTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SpkidataTypeSerializerState::Init__ => {
+                        *self.state = SpkidataTypeSerializerState::Content__(IterSerializer::new(
+                            &self.value.content[..],
+                            None,
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    SpkidataTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = SpkidataTypeSerializerState::End__,
+                    },
+                    SpkidataTypeSerializerState::End__ => {
+                        *self.state = SpkidataTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    SpkidataTypeSerializerState::Done__ => return Ok(None),
+                    SpkidataTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SpkidataTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SpkidataTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct SpkidataTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::SpkidataTypeContent,
+        pub(super) state: Box<SpkidataTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum SpkidataTypeContentSerializerState<'ser> {
+        Init__,
+        Spkisexp(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SpkidataTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SpkidataTypeContentSerializerState::Init__ => {
+                        *self.state = SpkidataTypeContentSerializerState::Spkisexp(
+                            WithSerializer::serializer(
+                                &self.value.spkisexp,
+                                Some("ds:SPKISexp"),
+                                false,
+                            )?,
+                        );
+                    }
+                    SpkidataTypeContentSerializerState::Spkisexp(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = SpkidataTypeContentSerializerState::Done__,
+                        }
+                    }
+                    SpkidataTypeContentSerializerState::Done__ => return Ok(None),
+                    SpkidataTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SpkidataTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SpkidataTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct TransformsTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TransformsType,
+        pub(super) state: Box<TransformsTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum TransformsTypeSerializerState<'ser> {
+        Init__,
+        Transform(IterSerializer<'ser, &'ser [super::TransformType], super::TransformType>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> TransformsTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    TransformsTypeSerializerState::Init__ => {
+                        *self.state =
+                            TransformsTypeSerializerState::Transform(IterSerializer::new(
+                                &self.value.transform[..],
+                                Some("ds:Transform"),
+                                false,
+                            ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    TransformsTypeSerializerState::Transform(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = TransformsTypeSerializerState::End__,
+                    },
+                    TransformsTypeSerializerState::End__ => {
+                        *self.state = TransformsTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    TransformsTypeSerializerState::Done__ => return Ok(None),
+                    TransformsTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for TransformsTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = TransformsTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DigestMethodTypeSerializer<'ser> {
+        pub(super) value: &'ser super::DigestMethodType,
+        pub(super) state: Box<DigestMethodTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum DigestMethodTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DigestMethodTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DigestMethodTypeSerializerState::Init__ => {
+                        *self.state = DigestMethodTypeSerializerState::Done__;
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    DigestMethodTypeSerializerState::Done__ => return Ok(None),
+                    DigestMethodTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DigestMethodTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DigestMethodTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DsakeyValueTypeSerializer<'ser> {
+        pub(super) value: &'ser super::DsakeyValueType,
+        pub(super) state: Box<DsakeyValueTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum DsakeyValueTypeSerializerState<'ser> {
+        Init__,
+        Content125(
+            IterSerializer<
+                'ser,
+                Option<&'ser super::DsakeyValueContent125Type>,
+                super::DsakeyValueContent125Type,
+            >,
+        ),
+        G(IterSerializer<'ser, Option<&'ser String>, String>),
+        Y(<String as WithSerializer>::Serializer<'ser>),
+        J(IterSerializer<'ser, Option<&'ser String>, String>),
+        Content131(
+            IterSerializer<
+                'ser,
+                Option<&'ser super::DsakeyValueContent131Type>,
+                super::DsakeyValueContent131Type,
+            >,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DsakeyValueTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DsakeyValueTypeSerializerState::Init__ => {
+                        *self.state =
+                            DsakeyValueTypeSerializerState::Content125(IterSerializer::new(
+                                self.value.content_125.as_ref(),
+                                Some("ds:Content125"),
+                                false,
+                            ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    DsakeyValueTypeSerializerState::Content125(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = DsakeyValueTypeSerializerState::G(
+                                    IterSerializer::new(self.value.g.as_ref(), Some("ds:G"), false),
+                                )
+                            }
+                        }
+                    }
+                    DsakeyValueTypeSerializerState::G(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = DsakeyValueTypeSerializerState::Y(
+                                WithSerializer::serializer(&self.value.y, Some("ds:Y"), false)?,
+                            )
+                        }
+                    },
+                    DsakeyValueTypeSerializerState::Y(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = DsakeyValueTypeSerializerState::J(
+                                    IterSerializer::new(self.value.j.as_ref(), Some("ds:J"), false),
+                                )
+                            }
+                        }
+                    }
+                    DsakeyValueTypeSerializerState::J(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state =
+                                DsakeyValueTypeSerializerState::Content131(IterSerializer::new(
+                                    self.value.content_131.as_ref(),
+                                    Some("ds:Content131"),
+                                    false,
+                                ))
+                        }
+                    },
+                    DsakeyValueTypeSerializerState::Content131(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = DsakeyValueTypeSerializerState::End__,
+                    },
+                    DsakeyValueTypeSerializerState::End__ => {
+                        *self.state = DsakeyValueTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    DsakeyValueTypeSerializerState::Done__ => return Ok(None),
+                    DsakeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DsakeyValueTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DsakeyValueTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct RsakeyValueTypeSerializer<'ser> {
+        pub(super) value: &'ser super::RsakeyValueType,
+        pub(super) state: Box<RsakeyValueTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum RsakeyValueTypeSerializerState<'ser> {
+        Init__,
+        Modulus(<String as WithSerializer>::Serializer<'ser>),
+        Exponent(<String as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> RsakeyValueTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    RsakeyValueTypeSerializerState::Init__ => {
+                        *self.state =
+                            RsakeyValueTypeSerializerState::Modulus(WithSerializer::serializer(
+                                &self.value.modulus,
+                                Some("ds:Modulus"),
+                                false,
+                            )?);
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    RsakeyValueTypeSerializerState::Modulus(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = RsakeyValueTypeSerializerState::Exponent(
+                                WithSerializer::serializer(
+                                    &self.value.exponent,
+                                    Some("ds:Exponent"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    RsakeyValueTypeSerializerState::Exponent(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = RsakeyValueTypeSerializerState::End__,
+                    },
+                    RsakeyValueTypeSerializerState::End__ => {
+                        *self.state = RsakeyValueTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    RsakeyValueTypeSerializerState::Done__ => return Ok(None),
+                    RsakeyValueTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for RsakeyValueTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = RsakeyValueTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct X509DataContent103TypeSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataContent103Type,
+        pub(super) state: Box<X509DataContent103TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum X509DataContent103TypeSerializerState<'ser> {
+        Init__,
+        Content__(<super::X509DataContent103TypeContent as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> X509DataContent103TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    X509DataContent103TypeSerializerState::Init__ => {
+                        *self.state = X509DataContent103TypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
+                    }
+                    X509DataContent103TypeSerializerState::Content__(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = X509DataContent103TypeSerializerState::Done__,
+                        }
+                    }
+                    X509DataContent103TypeSerializerState::Done__ => return Ok(None),
+                    X509DataContent103TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for X509DataContent103TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = X509DataContent103TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct X509DataContent103TypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataContent103TypeContent,
+        pub(super) state: Box<X509DataContent103TypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum X509DataContent103TypeContentSerializerState<'ser> {
+        Init__,
+        X509IssuerSerial(<super::X509IssuerSerialType as WithSerializer>::Serializer<'ser>),
+        X509Ski(<String as WithSerializer>::Serializer<'ser>),
+        X509SubjectName(<String as WithSerializer>::Serializer<'ser>),
+        X509Certificate(<String as WithSerializer>::Serializer<'ser>),
+        X509Crl(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> X509DataContent103TypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    X509DataContent103TypeContentSerializerState::Init__ => match self.value {
+                        super::X509DataContent103TypeContent::X509IssuerSerial(x) => {
+                            *self.state =
+                                X509DataContent103TypeContentSerializerState::X509IssuerSerial(
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("ds:X509IssuerSerial"),
+                                        false,
+                                    )?,
+                                )
+                        }
+                        super::X509DataContent103TypeContent::X509Ski(x) => {
+                            *self.state = X509DataContent103TypeContentSerializerState::X509Ski(
+                                WithSerializer::serializer(x, Some("ds:X509SKI"), false)?,
+                            )
+                        }
+                        super::X509DataContent103TypeContent::X509SubjectName(x) => {
+                            *self.state =
+                                X509DataContent103TypeContentSerializerState::X509SubjectName(
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("ds:X509SubjectName"),
+                                        false,
+                                    )?,
+                                )
+                        }
+                        super::X509DataContent103TypeContent::X509Certificate(x) => {
+                            *self.state =
+                                X509DataContent103TypeContentSerializerState::X509Certificate(
+                                    WithSerializer::serializer(
+                                        x,
+                                        Some("ds:X509Certificate"),
+                                        false,
+                                    )?,
+                                )
+                        }
+                        super::X509DataContent103TypeContent::X509Crl(x) => {
+                            *self.state = X509DataContent103TypeContentSerializerState::X509Crl(
+                                WithSerializer::serializer(x, Some("ds:X509CRL"), false)?,
+                            )
+                        }
+                    },
+                    X509DataContent103TypeContentSerializerState::X509IssuerSerial(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509DataContent103TypeContentSerializerState::Done__
+                            }
+                        }
+                    }
+                    X509DataContent103TypeContentSerializerState::X509Ski(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509DataContent103TypeContentSerializerState::Done__
+                            }
+                        }
+                    }
+                    X509DataContent103TypeContentSerializerState::X509SubjectName(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509DataContent103TypeContentSerializerState::Done__
+                            }
+                        }
+                    }
+                    X509DataContent103TypeContentSerializerState::X509Certificate(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509DataContent103TypeContentSerializerState::Done__
+                            }
+                        }
+                    }
+                    X509DataContent103TypeContentSerializerState::X509Crl(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509DataContent103TypeContentSerializerState::Done__
+                            }
+                        }
+                    }
+                    X509DataContent103TypeContentSerializerState::Done__ => return Ok(None),
+                    X509DataContent103TypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for X509DataContent103TypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = X509DataContent103TypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct PgpdataContent113TypeSerializer<'ser> {
+        pub(super) value: &'ser super::PgpdataContent113Type,
+        pub(super) state: Box<PgpdataContent113TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum PgpdataContent113TypeSerializerState<'ser> {
+        Init__,
+        PgpkeyID(<String as WithSerializer>::Serializer<'ser>),
+        PgpkeyPacket(IterSerializer<'ser, Option<&'ser String>, String>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> PgpdataContent113TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    PgpdataContent113TypeSerializerState::Init__ => {
+                        *self.state = PgpdataContent113TypeSerializerState::PgpkeyID(
+                            WithSerializer::serializer(
+                                &self.value.pgpkey_id,
+                                Some("ds:PGPKeyID"),
+                                false,
+                            )?,
+                        );
+                    }
+                    PgpdataContent113TypeSerializerState::PgpkeyID(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = PgpdataContent113TypeSerializerState::PgpkeyPacket(
+                                    IterSerializer::new(
+                                        self.value.pgpkey_packet.as_ref(),
+                                        Some("ds:PGPKeyPacket"),
+                                        false,
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                    PgpdataContent113TypeSerializerState::PgpkeyPacket(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = PgpdataContent113TypeSerializerState::Done__,
+                        }
+                    }
+                    PgpdataContent113TypeSerializerState::Done__ => return Ok(None),
+                    PgpdataContent113TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for PgpdataContent113TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = PgpdataContent113TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct PgpdataContent116TypeSerializer<'ser> {
+        pub(super) value: &'ser super::PgpdataContent116Type,
+        pub(super) state: Box<PgpdataContent116TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum PgpdataContent116TypeSerializerState<'ser> {
+        Init__,
+        PgpkeyPacket(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> PgpdataContent116TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    PgpdataContent116TypeSerializerState::Init__ => {
+                        *self.state = PgpdataContent116TypeSerializerState::PgpkeyPacket(
+                            WithSerializer::serializer(
+                                &self.value.pgpkey_packet,
+                                Some("ds:PGPKeyPacket"),
+                                false,
+                            )?,
+                        );
+                    }
+                    PgpdataContent116TypeSerializerState::PgpkeyPacket(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = PgpdataContent116TypeSerializerState::Done__,
+                        }
+                    }
+                    PgpdataContent116TypeSerializerState::Done__ => return Ok(None),
+                    PgpdataContent116TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for PgpdataContent116TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = PgpdataContent116TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct TransformTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TransformType,
+        pub(super) state: Box<TransformTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum TransformTypeSerializerState<'ser> {
+        Init__,
+        Content__(
+            IterSerializer<'ser, &'ser [super::TransformTypeContent], super::TransformTypeContent>,
+        ),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> TransformTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    TransformTypeSerializerState::Init__ => {
+                        *self.state = TransformTypeSerializerState::Content__(IterSerializer::new(
+                            &self.value.content[..],
+                            None,
+                            false,
+                        ));
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    TransformTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = TransformTypeSerializerState::End__,
+                    },
+                    TransformTypeSerializerState::End__ => {
+                        *self.state = TransformTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    TransformTypeSerializerState::Done__ => return Ok(None),
+                    TransformTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for TransformTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = TransformTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct TransformTypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::TransformTypeContent,
+        pub(super) state: Box<TransformTypeContentSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum TransformTypeContentSerializerState<'ser> {
+        Init__,
+        Xpath(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> TransformTypeContentSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    TransformTypeContentSerializerState::Init__ => match self.value {
+                        super::TransformTypeContent::Xpath(x) => {
+                            *self.state = TransformTypeContentSerializerState::Xpath(
+                                WithSerializer::serializer(x, Some("ds:XPath"), false)?,
+                            )
+                        }
+                    },
+                    TransformTypeContentSerializerState::Xpath(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = TransformTypeContentSerializerState::Done__,
+                    },
+                    TransformTypeContentSerializerState::Done__ => return Ok(None),
+                    TransformTypeContentSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for TransformTypeContentSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = TransformTypeContentSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DsakeyValueContent125TypeSerializer<'ser> {
+        pub(super) value: &'ser super::DsakeyValueContent125Type,
+        pub(super) state: Box<DsakeyValueContent125TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum DsakeyValueContent125TypeSerializerState<'ser> {
+        Init__,
+        P(<String as WithSerializer>::Serializer<'ser>),
+        Q(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DsakeyValueContent125TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DsakeyValueContent125TypeSerializerState::Init__ => {
+                        *self.state = DsakeyValueContent125TypeSerializerState::P(
+                            WithSerializer::serializer(&self.value.p, Some("ds:P"), false)?,
+                        );
+                    }
+                    DsakeyValueContent125TypeSerializerState::P(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = DsakeyValueContent125TypeSerializerState::Q(
+                                WithSerializer::serializer(&self.value.q, Some("ds:Q"), false)?,
+                            )
+                        }
+                    },
+                    DsakeyValueContent125TypeSerializerState::Q(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = DsakeyValueContent125TypeSerializerState::Done__,
+                    },
+                    DsakeyValueContent125TypeSerializerState::Done__ => return Ok(None),
+                    DsakeyValueContent125TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DsakeyValueContent125TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DsakeyValueContent125TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct DsakeyValueContent131TypeSerializer<'ser> {
+        pub(super) value: &'ser super::DsakeyValueContent131Type,
+        pub(super) state: Box<DsakeyValueContent131TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum DsakeyValueContent131TypeSerializerState<'ser> {
+        Init__,
+        Seed(<String as WithSerializer>::Serializer<'ser>),
+        PgenCounter(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> DsakeyValueContent131TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    DsakeyValueContent131TypeSerializerState::Init__ => {
+                        *self.state = DsakeyValueContent131TypeSerializerState::Seed(
+                            WithSerializer::serializer(&self.value.seed, Some("ds:Seed"), false)?,
+                        );
+                    }
+                    DsakeyValueContent131TypeSerializerState::Seed(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = DsakeyValueContent131TypeSerializerState::PgenCounter(
+                                    WithSerializer::serializer(
+                                        &self.value.pgen_counter,
+                                        Some("ds:PgenCounter"),
+                                        false,
+                                    )?,
+                                )
+                            }
+                        }
+                    }
+                    DsakeyValueContent131TypeSerializerState::PgenCounter(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = DsakeyValueContent131TypeSerializerState::Done__,
+                        }
+                    }
+                    DsakeyValueContent131TypeSerializerState::Done__ => return Ok(None),
+                    DsakeyValueContent131TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for DsakeyValueContent131TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = DsakeyValueContent131TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct X509IssuerSerialTypeSerializer<'ser> {
+        pub(super) value: &'ser super::X509IssuerSerialType,
+        pub(super) state: Box<X509IssuerSerialTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum X509IssuerSerialTypeSerializerState<'ser> {
+        Init__,
+        X509IssuerName(<String as WithSerializer>::Serializer<'ser>),
+        X509SerialNumber(<i32 as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> X509IssuerSerialTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    X509IssuerSerialTypeSerializerState::Init__ => {
+                        *self.state = X509IssuerSerialTypeSerializerState::X509IssuerName(
+                            WithSerializer::serializer(
+                                &self.value.x509_issuer_name,
+                                Some("ds:X509IssuerName"),
+                                false,
+                            )?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    X509IssuerSerialTypeSerializerState::X509IssuerName(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = X509IssuerSerialTypeSerializerState::X509SerialNumber(
+                                    WithSerializer::serializer(
+                                        &self.value.x509_serial_number,
+                                        Some("ds:X509SerialNumber"),
+                                        false,
+                                    )?,
+                                )
+                            }
+                        }
+                    }
+                    X509IssuerSerialTypeSerializerState::X509SerialNumber(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = X509IssuerSerialTypeSerializerState::End__,
+                        }
+                    }
+                    X509IssuerSerialTypeSerializerState::End__ => {
+                        *self.state = X509IssuerSerialTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    X509IssuerSerialTypeSerializerState::Done__ => return Ok(None),
+                    X509IssuerSerialTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for X509IssuerSerialTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = X509IssuerSerialTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

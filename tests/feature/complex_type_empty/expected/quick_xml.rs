@@ -1,10 +1,10 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
 use xsd_parser::{
     quick_xml::{Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_DEFAULT: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
 #[derive(Debug, Clone)]
 pub struct SuccessType;
 impl WithSerializer for SuccessType {
@@ -24,51 +24,6 @@ impl WithSerializer for SuccessType {
 }
 impl WithDeserializer for SuccessType {
     type Deserializer = quick_xml_deserialize::SuccessTypeDeserializer;
-}
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{BytesStart, Error, Event};
-    #[derive(Debug)]
-    pub struct SuccessTypeSerializer<'ser> {
-        pub(super) value: &'ser super::SuccessType,
-        pub(super) state: Box<SuccessTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum SuccessTypeSerializerState<'ser> {
-        Init__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> SuccessTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    SuccessTypeSerializerState::Init__ => {
-                        *self.state = SuccessTypeSerializerState::Done__;
-                        let bytes = BytesStart::new(self.name);
-                        return Ok(Some(Event::Empty(bytes)));
-                    }
-                    SuccessTypeSerializerState::Done__ => return Ok(None),
-                    SuccessTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for SuccessTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = SuccessTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -145,6 +100,51 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, SuccessTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::SuccessType {})
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{BytesStart, Error, Event};
+    #[derive(Debug)]
+    pub struct SuccessTypeSerializer<'ser> {
+        pub(super) value: &'ser super::SuccessType,
+        pub(super) state: Box<SuccessTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum SuccessTypeSerializerState<'ser> {
+        Init__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> SuccessTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    SuccessTypeSerializerState::Init__ => {
+                        *self.state = SuccessTypeSerializerState::Done__;
+                        let bytes = BytesStart::new(self.name);
+                        return Ok(Some(Event::Empty(bytes)));
+                    }
+                    SuccessTypeSerializerState::Done__ => return Ok(None),
+                    SuccessTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for SuccessTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = SuccessTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }

@@ -61,7 +61,7 @@ impl UnionType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -108,7 +108,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 
     fn render_deserializer_types(&self, ctx: &mut Context<'_, '_>) {
@@ -137,7 +137,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).code(code);
+        ctx.quick_xml_deserialize().usings(usings).append(code);
     }
 
     fn render_deserializer_impls(&self, ctx: &mut Context<'_, '_>) {
@@ -228,7 +228,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).code(code);
+        ctx.quick_xml_deserialize().usings(usings).append(code);
     }
 }
 
@@ -405,7 +405,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -466,7 +466,7 @@ impl EnumerationType<'_> {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 }
 
@@ -557,7 +557,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.main().usings(usings).code(code);
+        ctx.main().usings(usings).append(code);
     }
 
     fn render_deserializer_impl(
@@ -614,7 +614,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).code(code);
+        ctx.quick_xml_deserialize().usings(usings).append(code);
     }
 
     fn render_deserializer_fn_init_for_element(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -647,7 +647,7 @@ impl ComplexTypeEnum<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().code(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_state_type(&self, ctx: &mut Context<'_, '_>) {
@@ -668,7 +668,7 @@ impl ComplexTypeEnum<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().code(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
@@ -700,7 +700,7 @@ impl ComplexTypeEnum<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().code(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -988,7 +988,7 @@ impl ComplexTypeStruct<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().code(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_state_type(&self, ctx: &mut Context<'_, '_>) {
@@ -1073,7 +1073,7 @@ impl ComplexTypeStruct<'_> {
 
         ctx.quick_xml_deserialize()
             .usings(use_with_deserializer)
-            .code(code);
+            .append(code);
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
@@ -1129,7 +1129,7 @@ impl ComplexTypeStruct<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().code(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {

@@ -1,10 +1,10 @@
-pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
-pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 use xsd_parser::{
     quick_xml::{Error, WithDeserializer, WithSerializer},
     schema::Namespace,
 };
+pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
+pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
+pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub enum FooType {
@@ -74,200 +74,6 @@ impl WithSerializer for FooContent6Type {
 }
 impl WithDeserializer for FooContent6Type {
     type Deserializer = quick_xml_deserialize::FooContent6TypeDeserializer;
-}
-pub mod quick_xml_serialize {
-    use core::iter::Iterator;
-    use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
-    #[derive(Debug)]
-    pub struct FooTypeSerializer<'ser> {
-        pub(super) value: &'ser super::FooType,
-        pub(super) state: Box<FooTypeSerializerState<'ser>>,
-        pub(super) name: &'ser str,
-        pub(super) is_root: bool,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooTypeSerializerState<'ser> {
-        Init__,
-        Content3(<super::FooContent3Type as WithSerializer>::Serializer<'ser>),
-        Content6(<super::FooContent6Type as WithSerializer>::Serializer<'ser>),
-        End__,
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FooTypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FooTypeSerializerState::Init__ => {
-                        match self.value {
-                            super::FooType::Content3(x) => {
-                                *self.state = FooTypeSerializerState::Content3(
-                                    WithSerializer::serializer(x, Some("tns:Content3"), false)?,
-                                )
-                            }
-                            super::FooType::Content6(x) => {
-                                *self.state = FooTypeSerializerState::Content6(
-                                    WithSerializer::serializer(x, Some("tns:Content6"), false)?,
-                                )
-                            }
-                        }
-                        let mut bytes = BytesStart::new(self.name);
-                        if self.is_root {
-                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
-                        }
-                        return Ok(Some(Event::Start(bytes)));
-                    }
-                    FooTypeSerializerState::Content3(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = FooTypeSerializerState::End__,
-                    },
-                    FooTypeSerializerState::Content6(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = FooTypeSerializerState::End__,
-                    },
-                    FooTypeSerializerState::End__ => {
-                        *self.state = FooTypeSerializerState::Done__;
-                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
-                    }
-                    FooTypeSerializerState::Done__ => return Ok(None),
-                    FooTypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FooTypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FooTypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct FooContent3TypeSerializer<'ser> {
-        pub(super) value: &'ser super::FooContent3Type,
-        pub(super) state: Box<FooContent3TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooContent3TypeSerializerState<'ser> {
-        Init__,
-        Element1(<i32 as WithSerializer>::Serializer<'ser>),
-        Element2(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FooContent3TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FooContent3TypeSerializerState::Init__ => {
-                        *self.state =
-                            FooContent3TypeSerializerState::Element1(WithSerializer::serializer(
-                                &self.value.element_1,
-                                Some("tns:Element1"),
-                                false,
-                            )?);
-                    }
-                    FooContent3TypeSerializerState::Element1(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = FooContent3TypeSerializerState::Element2(
-                                WithSerializer::serializer(
-                                    &self.value.element_2,
-                                    Some("tns:Element2"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    FooContent3TypeSerializerState::Element2(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = FooContent3TypeSerializerState::Done__,
-                    },
-                    FooContent3TypeSerializerState::Done__ => return Ok(None),
-                    FooContent3TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FooContent3TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FooContent3TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct FooContent6TypeSerializer<'ser> {
-        pub(super) value: &'ser super::FooContent6Type,
-        pub(super) state: Box<FooContent6TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooContent6TypeSerializerState<'ser> {
-        Init__,
-        Element3(<i32 as WithSerializer>::Serializer<'ser>),
-        Element4(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FooContent6TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FooContent6TypeSerializerState::Init__ => {
-                        *self.state =
-                            FooContent6TypeSerializerState::Element3(WithSerializer::serializer(
-                                &self.value.element_3,
-                                Some("tns:Element3"),
-                                false,
-                            )?);
-                    }
-                    FooContent6TypeSerializerState::Element3(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = FooContent6TypeSerializerState::Element4(
-                                WithSerializer::serializer(
-                                    &self.value.element_4,
-                                    Some("tns:Element4"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    FooContent6TypeSerializerState::Element4(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = FooContent6TypeSerializerState::Done__,
-                    },
-                    FooContent6TypeSerializerState::Done__ => return Ok(None),
-                    FooContent6TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FooContent6TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FooContent6TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -1221,6 +1027,200 @@ pub mod quick_xml_deserialize {
                     .element_4
                     .ok_or_else(|| ErrorKind::MissingElement("Element4".into()))?,
             })
+        }
+    }
+}
+pub mod quick_xml_serialize {
+    use core::iter::Iterator;
+    use xsd_parser::quick_xml::{BytesEnd, BytesStart, Error, Event, WithSerializer};
+    #[derive(Debug)]
+    pub struct FooTypeSerializer<'ser> {
+        pub(super) value: &'ser super::FooType,
+        pub(super) state: Box<FooTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooTypeSerializerState<'ser> {
+        Init__,
+        Content3(<super::FooContent3Type as WithSerializer>::Serializer<'ser>),
+        Content6(<super::FooContent6Type as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FooTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FooTypeSerializerState::Init__ => {
+                        match self.value {
+                            super::FooType::Content3(x) => {
+                                *self.state = FooTypeSerializerState::Content3(
+                                    WithSerializer::serializer(x, Some("tns:Content3"), false)?,
+                                )
+                            }
+                            super::FooType::Content6(x) => {
+                                *self.state = FooTypeSerializerState::Content6(
+                                    WithSerializer::serializer(x, Some("tns:Content6"), false)?,
+                                )
+                            }
+                        }
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
+                        }
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    FooTypeSerializerState::Content3(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = FooTypeSerializerState::End__,
+                    },
+                    FooTypeSerializerState::Content6(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = FooTypeSerializerState::End__,
+                    },
+                    FooTypeSerializerState::End__ => {
+                        *self.state = FooTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    FooTypeSerializerState::Done__ => return Ok(None),
+                    FooTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FooTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FooTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct FooContent3TypeSerializer<'ser> {
+        pub(super) value: &'ser super::FooContent3Type,
+        pub(super) state: Box<FooContent3TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooContent3TypeSerializerState<'ser> {
+        Init__,
+        Element1(<i32 as WithSerializer>::Serializer<'ser>),
+        Element2(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FooContent3TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FooContent3TypeSerializerState::Init__ => {
+                        *self.state =
+                            FooContent3TypeSerializerState::Element1(WithSerializer::serializer(
+                                &self.value.element_1,
+                                Some("tns:Element1"),
+                                false,
+                            )?);
+                    }
+                    FooContent3TypeSerializerState::Element1(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = FooContent3TypeSerializerState::Element2(
+                                WithSerializer::serializer(
+                                    &self.value.element_2,
+                                    Some("tns:Element2"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    FooContent3TypeSerializerState::Element2(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = FooContent3TypeSerializerState::Done__,
+                    },
+                    FooContent3TypeSerializerState::Done__ => return Ok(None),
+                    FooContent3TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FooContent3TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FooContent3TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct FooContent6TypeSerializer<'ser> {
+        pub(super) value: &'ser super::FooContent6Type,
+        pub(super) state: Box<FooContent6TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooContent6TypeSerializerState<'ser> {
+        Init__,
+        Element3(<i32 as WithSerializer>::Serializer<'ser>),
+        Element4(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FooContent6TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FooContent6TypeSerializerState::Init__ => {
+                        *self.state =
+                            FooContent6TypeSerializerState::Element3(WithSerializer::serializer(
+                                &self.value.element_3,
+                                Some("tns:Element3"),
+                                false,
+                            )?);
+                    }
+                    FooContent6TypeSerializerState::Element3(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = FooContent6TypeSerializerState::Element4(
+                                WithSerializer::serializer(
+                                    &self.value.element_4,
+                                    Some("tns:Element4"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    FooContent6TypeSerializerState::Element4(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = FooContent6TypeSerializerState::Done__,
+                    },
+                    FooContent6TypeSerializerState::Done__ => return Ok(None),
+                    FooContent6TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FooContent6TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FooContent6TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
         }
     }
 }
