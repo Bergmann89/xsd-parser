@@ -13,7 +13,7 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 use tracing::instrument;
 
-use crate::types::{Ident, IdentType, Type, Types};
+use crate::types::{Ident, IdentType, Type, TypeVariant, Types};
 
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
@@ -419,16 +419,16 @@ impl<'types> GeneratorFixed<'types> {
 
         tracing::debug!("Render type: {ident}");
 
-        match ty {
-            Type::BuildIn(_) => (),
-            Type::Union(x) => req.into_union_type(x)?.render(config, &mut ctx),
-            Type::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut ctx),
-            Type::Reference(x) => req.into_reference_type(x)?.render(config, &mut ctx),
-            Type::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut ctx),
-            Type::All(x) => req.into_all_type(x)?.render(config, &mut ctx),
-            Type::Choice(x) => req.into_choice_type(x)?.render(config, &mut ctx),
-            Type::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut ctx),
-            Type::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut ctx),
+        match &ty.variant {
+            TypeVariant::BuildIn(_) => (),
+            TypeVariant::Union(x) => req.into_union_type(x)?.render(config, &mut ctx),
+            TypeVariant::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut ctx),
+            TypeVariant::Reference(x) => req.into_reference_type(x)?.render(config, &mut ctx),
+            TypeVariant::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut ctx),
+            TypeVariant::All(x) => req.into_all_type(x)?.render(config, &mut ctx),
+            TypeVariant::Choice(x) => req.into_choice_type(x)?.render(config, &mut ctx),
+            TypeVariant::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut ctx),
+            TypeVariant::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut ctx),
         }
 
         Ok(())
@@ -454,13 +454,13 @@ impl<'types> State<'types> {
                 .get(&ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
             let name = make_type_name(&config.postfixes, ty, &ident);
-            let (module_ident, type_ident) = if let Type::BuildIn(x) = ty {
+            let (module_ident, type_ident) = if let TypeVariant::BuildIn(x) = &ty.variant {
                 (None, format_ident!("{x}"))
             } else {
                 let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
                 let module_ident =
                     format_module(config.types, use_modules.then_some(ident.ns).flatten())?;
-                let type_ident = format_type_ident(&name, None);
+                let type_ident = format_type_ident(&name, ty.display_name.as_deref());
 
                 (module_ident, type_ident)
             };
@@ -495,14 +495,14 @@ fn get_boxed_elements<'a>(
     types: &'a Types,
     cache: &BTreeMap<Ident, TypeRef>,
 ) -> HashSet<Ident> {
-    if let Type::ComplexType(ci) = ty {
+    if let TypeVariant::ComplexType(ci) = &ty.variant {
         if let Some(type_) = ci.content.as_ref().and_then(|ident| types.get(ident)) {
             ty = type_;
         }
     }
 
-    match ty {
-        Type::All(si) | Type::Choice(si) | Type::Sequence(si) => si
+    match &ty.variant {
+        TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si) => si
             .elements
             .iter()
             .filter_map(|f| {

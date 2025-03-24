@@ -1,4 +1,6 @@
-use crate::types::{ComplexInfo, ElementInfo, ElementMode, GroupInfo, Ident, Type, VecHelper};
+use crate::types::{
+    ComplexInfo, ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant, VecHelper,
+};
 
 use super::Optimizer;
 
@@ -31,7 +33,7 @@ impl Optimizer {
             .types
             .iter()
             .filter_map(|(ident, ty)| {
-                if matches!(ty, Type::Dynamic(_)) {
+                if matches!(&ty.variant, TypeVariant::Dynamic(_)) {
                     Some(ident)
                 } else {
                     None
@@ -44,7 +46,7 @@ impl Optimizer {
             let content_ident = Ident::new(self.types.make_unnamed()).with_ns(ident.ns);
 
             let type_ = self.types.get_mut(&ident).unwrap();
-            let Type::Dynamic(x) = type_ else {
+            let TypeVariant::Dynamic(x) = &mut type_.variant else {
                 crate::unreachable!();
             };
 
@@ -55,7 +57,7 @@ impl Optimizer {
                 });
             }
 
-            *type_ = Type::ComplexType(ComplexInfo {
+            type_.variant = TypeVariant::ComplexType(ComplexInfo {
                 content: Some(content_ident.clone()),
                 is_dynamic: true,
                 ..Default::default()
@@ -63,7 +65,7 @@ impl Optimizer {
 
             match self.types.entry(content_ident) {
                 Entry::Vacant(e) => {
-                    e.insert(Type::Choice(si));
+                    e.insert(Type::new(TypeVariant::Choice(si)));
                 }
                 Entry::Occupied(_) => crate::unreachable!(),
             }

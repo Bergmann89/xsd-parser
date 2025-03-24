@@ -1,105 +1,53 @@
-use xsd_parser::{generator::SerdeSupport, types::IdentType, Config};
+use std::path::PathBuf;
 
-use crate::utils::{generate_test, ConfigEx};
+use xsd_parser::{
+    config::{GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, Schema},
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser,
+    types::IdentType,
+    Config,
+};
+
+use crate::utils::{generate_test_validate, ConfigEx};
 
 #[test]
 fn generate_default() {
-    generate_test(
+    let ident_1 = IdentTriple::from((IdentType::Type, "tns:fooType"));
+    let ident_2 = IdentTriple::from((IdentType::Type, "tns:FooType"));
+
+    let mut config = Config::test_default()
+        .with_interpreter_flags(InterpreterFlags::all())
+        .with_optimizer_flags(OptimizerFlags::all())
+        .with_generate([ident_1.clone(), ident_2.clone()]);
+
+    config.parser.schemas.push(Schema::File(PathBuf::from(
         "tests/feature/type_name_clash/schema.xsd",
-        "tests/feature/type_name_clash/expected/default.rs",
-        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
-    );
-}
+    )));
 
-#[test]
-fn generate_quick_xml() {
-    generate_test(
-        "tests/feature/type_name_clash/schema.xsd",
-        "tests/feature/type_name_clash/expected/quick_xml.rs",
-        Config::test_default()
-            .with_quick_xml()
-            .with_generate([(IdentType::Element, "tns:Foo")]),
-    );
-}
+    let schemas = exec_parser(config.parser).expect("Parser failed");
+    let ident_1 = ident_1
+        .resolve(&schemas)
+        .expect("Unable to resolve ident triple");
+    let ident_2 = ident_2
+        .resolve(&schemas)
+        .expect("Unable to resolve ident triple");
 
-#[test]
-fn generate_serde_xml_rs() {
-    generate_test(
-        "tests/feature/type_name_clash/schema.xsd",
-        "tests/feature/type_name_clash/expected/serde_xml_rs.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
-            .with_generate([(IdentType::Element, "tns:Foo")]),
-    );
-}
+    let types = exec_interpreter(config.interpreter, &schemas).expect("Interpreter failed");
+    let mut types = exec_optimizer(config.optimizer, types).expect("Optimizer failed");
 
-#[test]
-fn generate_serde_quick_xml() {
-    generate_test(
-        "tests/feature/type_name_clash/schema.xsd",
-        "tests/feature/type_name_clash/expected/serde_quick_xml.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
-            .with_generate([(IdentType::Element, "tns:Foo")]),
-    );
-}
+    let ty1 = types
+        .get_mut(&ident_1)
+        .expect("Failed to resolve `tns:fooType`");
+    ty1.display_name = Some("Bar".into());
 
-#[test]
-#[cfg(not(feature = "update-expectations"))]
-fn read_quick_xml() {
-    use quick_xml::Foo;
+    let ty2 = types
+        .get_mut(&ident_2)
+        .expect("Failed to resolve `tns:FooType`");
+    ty2.display_name = Some("Baz".into());
 
-    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
-        "tests/feature/type_name_clash/example/default.xml",
-    );
+    let code = exec_generator(config.generator, &schemas, &types).expect("Generator failed");
+    let code = code.to_string();
 
-    assert_eq!(obj.bar.a.as_deref(), Some("a-string"));
-    assert_eq!(obj.bar.b.as_deref(), Some("b-string"));
-}
-
-#[test]
-#[cfg(not(feature = "update-expectations"))]
-fn write_quick_xml() {
-    use quick_xml::{Foo, FooTypeBarType};
-
-    let obj = Foo {
-        bar: FooTypeBarType {
-            a: Some("a-string".into()),
-            b: Some("b-string".into()),
-        },
-    };
-
-    crate::utils::quick_xml_write_test(
-        &obj,
-        "tns:Foo",
-        "tests/feature/type_name_clash/example/serialize.xml",
-    );
-}
-
-#[test]
-#[cfg(not(feature = "update-expectations"))]
-fn read_serde_xml_rs() {
-    use serde_xml_rs::Foo;
-
-    let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>(
-        "tests/feature/type_name_clash/example/serde.xml",
-    );
-
-    assert_eq!(obj.bar.a.as_deref(), Some("a-string"));
-    assert_eq!(obj.bar.b.as_deref(), Some("b-string"));
-}
-
-#[test]
-#[cfg(not(feature = "update-expectations"))]
-fn read_serde_quick_xml() {
-    use serde_quick_xml::Foo;
-
-    let obj = crate::utils::serde_quick_xml_read_test::<Foo, _>(
-        "tests/feature/type_name_clash/example/serde.xml",
-    );
-
-    assert_eq!(obj.bar.a.as_deref(), Some("a-string"));
-    assert_eq!(obj.bar.b.as_deref(), Some("b-string"));
+    generate_test_validate(code, "tests/feature/type_name_clash/expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]
@@ -107,25 +55,4 @@ mod default {
     #![allow(unused_imports)]
 
     include!("expected/default.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod quick_xml {
-    #![allow(unused_imports)]
-
-    include!("expected/quick_xml.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod serde_xml_rs {
-    #![allow(unused_imports)]
-
-    include!("expected/serde_xml_rs.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod serde_quick_xml {
-    #![allow(unused_imports)]
-
-    include!("expected/serde_quick_xml.rs");
 }

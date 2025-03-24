@@ -5,7 +5,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::schema::NamespaceId;
 
-use super::{get_resolved, Name, TypeEq, Types};
+use super::{Name, TypeEq, Types};
 
 /// Represents a type identifier.
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
@@ -192,25 +192,12 @@ impl Display for Ident {
 
 impl TypeEq for Ident {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
-        let mut visit = Vec::new();
-
-        get_resolved(types, self, &mut visit)
-            .map_or(self, |(ident, _ty)| ident)
-            .hash(hasher);
+        types.get_resolved_ident(self).unwrap_or(self).hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
-        let a = {
-            let mut visit = Vec::new();
-
-            get_resolved(types, self, &mut visit).map(|(ident, _ty)| ident)
-        };
-
-        let b = {
-            let mut visit = Vec::new();
-
-            get_resolved(types, other, &mut visit).map(|(ident, _ty)| ident)
-        };
+        let a = types.get_resolved_ident(self).unwrap_or(self);
+        let b = types.get_resolved_ident(other).unwrap_or(other);
 
         a == b
     }

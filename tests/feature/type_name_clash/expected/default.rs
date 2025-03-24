@@ -1,10 +1,9 @@
-pub type Foo = FooType;
 #[derive(Debug, Clone)]
-pub struct FooType {
-    pub bar: FooTypeBarType,
+pub struct Bar {
+    pub a: Option<String>,
 }
 #[derive(Debug, Clone)]
-pub struct FooTypeBarType {
+pub struct Baz {
     pub a: Option<String>,
     pub b: Option<String>,
 }

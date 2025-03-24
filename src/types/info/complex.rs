@@ -7,7 +7,7 @@ use crate::schema::xs::{
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::{Ident, Type, TypeEq, Types};
+use crate::types::{Ident, TypeEq, TypeVariant, Types};
 
 use super::{AttributesInfo, Base, ElementsInfo};
 
@@ -104,40 +104,48 @@ impl TypeEq for GroupInfo {
 
 impl ComplexInfo {
     /// Returns `true` if the content of this complex type information
-    /// is a [`Type::Choice`], `false` otherwise.
+    /// is a [`TypeVariant::Choice`], `false` otherwise.
     #[must_use]
     pub fn has_complex_choice_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved(ident)),
-            Some(Type::Choice(_))
+                .and_then(|ident| types.get_resolved_type(ident))
+                .map(|ty| &ty.variant),
+            Some(TypeVariant::Choice(_))
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`Type::All`], [`Type::Choice`] or [`Type::Sequence`],
+    /// is a [`TypeVariant::All`], [`TypeVariant::Choice`] or [`TypeVariant::Sequence`],
     /// `false` otherwise.
     #[must_use]
     pub fn has_complex_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved(ident)),
-            Some(Type::All(_) | Type::Choice(_) | Type::Sequence(_))
+                .and_then(|ident| types.get_resolved_type(ident))
+                .map(|ty| &ty.variant),
+            Some(TypeVariant::All(_) | TypeVariant::Choice(_) | TypeVariant::Sequence(_))
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`Type::BuildIn`], [`Type::Union`] or [`Type::Enumeration`],
+    /// is a [`TypeVariant::BuildIn`], [`TypeVariant::Union`] or [`TypeVariant::Enumeration`],
     /// `false` otherwise.
     #[must_use]
     pub fn has_simple_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved(ident)),
-            Some(Type::Reference(_) | Type::BuildIn(_) | Type::Union(_) | Type::Enumeration(_))
+                .and_then(|ident| types.get_resolved_type(ident))
+                .map(|ty| &ty.variant),
+            Some(
+                TypeVariant::Reference(_)
+                    | TypeVariant::BuildIn(_)
+                    | TypeVariant::Union(_)
+                    | TypeVariant::Enumeration(_)
+            )
         )
     }
 }

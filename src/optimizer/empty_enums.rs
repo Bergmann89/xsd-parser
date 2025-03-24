@@ -1,4 +1,4 @@
-use crate::types::{Name, ReferenceInfo, Type};
+use crate::types::{Name, ReferenceInfo, TypeVariant};
 
 use super::Optimizer;
 
@@ -25,7 +25,7 @@ impl Optimizer {
         tracing::debug!("remove_empty_enum_variants");
 
         for type_ in self.types.types.values_mut() {
-            if let Type::Enumeration(x) = type_ {
+            if let TypeVariant::Enumeration(x) = &mut type_.variant {
                 x.variants
                     .retain(|x| !matches!(&x.ident.name, Name::Named(x) if x.is_empty()));
             }
@@ -61,11 +61,11 @@ impl Optimizer {
         tracing::debug!("remove_empty_enums");
 
         for type_ in self.types.types.values_mut() {
-            if let Type::Enumeration(x) = type_ {
+            if let TypeVariant::Enumeration(x) = &mut type_.variant {
                 if x.variants.is_empty() {
                     if let Some(base) = x.base.as_ident() {
                         self.typedefs = None;
-                        *type_ = Type::Reference(ReferenceInfo::new(base.clone()));
+                        type_.variant = TypeVariant::Reference(ReferenceInfo::new(base.clone()));
                     }
                 }
             }

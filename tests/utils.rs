@@ -49,7 +49,18 @@ where
     // config.optimizer.debug_output = Some("optimizer.log".into());
 
     let actual = generate(config).unwrap();
-    let actual_str = fmt_code(&actual.to_string());
+    let actual = actual.to_string();
+
+    generate_test_validate(actual, expected_rs);
+}
+
+pub fn generate_test_validate<P1, P2>(actual: P1, expected_rs: P2)
+where
+    P1: AsRef<str>,
+    P2: AsRef<Path>,
+{
+    let actual = actual.as_ref();
+    let actual = fmt_code(actual);
 
     #[cfg(not(feature = "update-expectations"))]
     {
@@ -61,14 +72,14 @@ where
 
         let expected = read_to_string(expected_rs).unwrap();
         let expected = TokenStream::from_str(&expected).unwrap();
-        let expected_str = fmt_code(&expected.to_string());
+        let expected = fmt_code(&expected.to_string());
 
-        if expected_str != actual_str {
-            println!("=== expected:\n{expected_str}");
-            println!("=== actual:\n{actual_str}");
+        if expected != actual {
+            println!("=== expected:\n{expected}");
+            println!("=== actual:\n{actual}");
             println!("=== diff:\n");
 
-            print_diff(&expected_str, &actual_str, "\n");
+            print_diff(&expected, &actual, "\n");
 
             panic!("Code does not match!");
         }
@@ -76,7 +87,7 @@ where
 
     #[cfg(feature = "update-expectations")]
     {
-        std::fs::write(expected_rs, actual_str).unwrap();
+        std::fs::write(expected_rs, actual).unwrap();
     }
 }
 

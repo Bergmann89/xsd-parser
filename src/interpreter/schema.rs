@@ -8,9 +8,9 @@ use crate::schema::xs::{
     SchemaContent, SimpleBaseType,
 };
 use crate::schema::{Namespace, NamespaceId, QName, Schemas};
-use crate::types::{Ident, IdentType, Name, Type};
+use crate::types::{Ident, IdentType, Name, Type, TypeVariant};
 
-use super::{Error, NameFallback, NameUnwrap, Node, State, TypeBuilder};
+use super::{Error, NameFallback, NameUnwrap, Node, State, VariantBuilder};
 
 #[derive(Debug)]
 pub(super) struct SchemaInterpreter<'schema, 'state> {
@@ -96,7 +96,7 @@ impl SchemaInterpreter<'_, '_> {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_simple_type(&mut self, ident: &Ident) -> Result<&Type, Error> {
+    pub(super) fn get_simple_type_variant(&mut self, ident: &Ident) -> Result<&TypeVariant, Error> {
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
@@ -106,24 +106,29 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        match self.state.types.get(ident) {
+        match self.state.types.get_variant(ident) {
             None
             | Some(
-                Type::ComplexType(_)
-                | Type::All(_)
-                | Type::Choice(_)
-                | Type::Sequence(_)
-                | Type::Dynamic(_),
+                TypeVariant::ComplexType(_)
+                | TypeVariant::All(_)
+                | TypeVariant::Choice(_)
+                | TypeVariant::Sequence(_)
+                | TypeVariant::Dynamic(_),
             ) => Err(Error::UnknownType(ident.clone())),
             Some(
-                ty
-                @ (Type::Enumeration(_) | Type::BuildIn(_) | Type::Union(_) | Type::Reference(_)),
+                ty @ (TypeVariant::Enumeration(_)
+                | TypeVariant::BuildIn(_)
+                | TypeVariant::Union(_)
+                | TypeVariant::Reference(_)),
             ) => Ok(ty),
         }
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_complex_type(&mut self, ident: &Ident) -> Result<&Type, Error> {
+    pub(super) fn get_complex_type_variant(
+        &mut self,
+        ident: &Ident,
+    ) -> Result<&TypeVariant, Error> {
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_complex_type(ident.clone())
@@ -133,17 +138,20 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        match self.state.types.get(ident) {
+        match self.state.types.get_variant(ident) {
             None
-            | Some(Type::Enumeration(_) | Type::BuildIn(_) | Type::Union(_) | Type::Reference(_)) => {
-                Err(Error::UnknownType(ident.clone()))
-            }
+            | Some(
+                TypeVariant::Enumeration(_)
+                | TypeVariant::BuildIn(_)
+                | TypeVariant::Union(_)
+                | TypeVariant::Reference(_),
+            ) => Err(Error::UnknownType(ident.clone())),
             Some(
-                ty @ (Type::ComplexType(_)
-                | Type::All(_)
-                | Type::Choice(_)
-                | Type::Sequence(_)
-                | Type::Dynamic(_)),
+                ty @ (TypeVariant::ComplexType(_)
+                | TypeVariant::All(_)
+                | TypeVariant::Choice(_)
+                | TypeVariant::Sequence(_)
+                | TypeVariant::Dynamic(_)),
             ) => Ok(ty),
         }
     }
@@ -226,7 +234,7 @@ impl SchemaInterpreter<'_, '_> {
 
     pub(super) fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
     where
-        F: FnMut(&mut TypeBuilder<'_, '_, '_>) -> Result<(), Error>,
+        F: FnMut(&mut VariantBuilder<'_, '_, '_>) -> Result<(), Error>,
     {
         if self.state.types.types.contains_key(&ident)
             || self
@@ -240,7 +248,7 @@ impl SchemaInterpreter<'_, '_> {
 
         self.state.type_stack.push(Some(ident));
 
-        let mut builder = TypeBuilder::new(self);
+        let mut builder = VariantBuilder::new(self);
         let type_ = f(&mut builder).and_then(|()| builder.finish());
 
         let ident = self.state.type_stack.pop().unwrap().unwrap();

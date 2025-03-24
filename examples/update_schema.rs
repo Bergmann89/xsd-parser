@@ -54,13 +54,13 @@ fn main() -> Result<(), Error> {
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
-            Type::BuildIn(BuildInInfo::Custom(
+            Type::from(BuildInInfo::Custom(
                 CustomType::new("MaxOccurs").with_default(max_occurs_default),
             )),
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
-            Type::BuildIn(BuildInInfo::Custom(CustomType::new("QName"))),
+            Type::from(BuildInInfo::Custom(CustomType::new("QName"))),
         ),
     ];
 

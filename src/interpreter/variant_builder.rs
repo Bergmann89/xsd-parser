@@ -13,15 +13,15 @@ use crate::schema::xs::{
 use crate::schema::{MaxOccurs, MinOccurs, Namespace};
 use crate::types::{
     AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode, Ident,
-    IdentType, Name, ReferenceInfo, Type, UnionTypeInfo, VariantInfo, VecHelper,
+    IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
 use super::{Error, NameExtend, NameFallback, NameUnwrap, SchemaInterpreter};
 
 #[derive(Debug)]
-pub(super) struct TypeBuilder<'a, 'schema, 'state> {
-    /// Type that is constructed by the builder
-    type_: Option<Type>,
+pub(super) struct VariantBuilder<'a, 'schema, 'state> {
+    /// Type variant that is constructed by the builder
+    variant: Option<TypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
@@ -77,10 +77,10 @@ macro_rules! init_any {
         init_any!($builder, $variant, Default::default(), true)
     };
     ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.type_ = Some(Type::$variant($value));
+        $builder.variant = Some(TypeVariant::$variant($value));
         $builder.fixed = $fixed;
 
-        let Type::$variant(ret) = $builder.type_.as_mut().unwrap() else {
+        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
         };
 
@@ -94,9 +94,9 @@ macro_rules! get_or_init_any {
         get_or_init_any!($builder, $variant, Default::default())
     };
     ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.type_ {
+        match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(Type::$variant(ret)) => ret,
+            Some(TypeVariant::$variant(ret)) => ret,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -109,9 +109,9 @@ macro_rules! get_or_init_type {
         get_or_init_type!($builder, $variant, Default::default())
     };
     ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.type_ {
+        match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(Type::All(si) | Type::Choice(si) | Type::Sequence(si)) => si,
+            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -120,10 +120,10 @@ macro_rules! get_or_init_type {
 
 /* TypeBuilder */
 
-impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
+impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     pub(super) fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
         Self {
-            type_: None,
+            variant: None,
             fixed: false,
             type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
@@ -134,7 +134,9 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 
     pub(super) fn finish(self) -> Result<Type, Error> {
-        self.type_.ok_or(Error::NoType)
+        let variant = self.variant.ok_or(Error::NoType)?;
+
+        Ok(Type::new(variant))
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -190,9 +192,9 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         };
 
         if ty.abstract_ {
-            let type_ = match self.type_.take() {
+            let type_ = match self.variant.take() {
                 None => None,
-                Some(Type::Reference(ti)) => Some(ti.type_),
+                Some(TypeVariant::Reference(ti)) => Some(ti.type_),
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
@@ -205,14 +207,14 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 let ident = builder.state.current_ident().unwrap().clone();
                 let base_ty = builder.get_element_mut(base_ident)?;
 
-                if let Type::Reference(ti) = base_ty {
-                    *base_ty = Type::Dynamic(DynamicInfo {
+                if let TypeVariant::Reference(ti) = &mut base_ty.variant {
+                    base_ty.variant = TypeVariant::Dynamic(DynamicInfo {
                         type_: Some(ti.type_.clone()),
                         derived_types: vec![ti.type_.clone()],
                     });
                 }
 
-                let Type::Dynamic(ai) = base_ty else {
+                let TypeVariant::Dynamic(ai) = &mut base_ty.variant else {
                     return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
 
@@ -281,11 +283,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         }
 
         if let Some(base) = base {
-            match &mut self.type_ {
-                Some(Type::Reference(_)) => (),
-                Some(Type::Union(e)) => e.base = Base::Extension(base),
-                Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-                Some(Type::ComplexType(e)) => e.base = Base::Extension(base),
+            match &mut self.variant {
+                Some(TypeVariant::Reference(_)) => (),
+                Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
+                Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
+                Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
                 e => unreachable!("Unexpected type: {e:#?}"),
             }
         }
@@ -378,11 +380,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Extension)?;
         self.apply_extension(ty)?;
 
-        match &mut self.type_ {
-            Some(Type::Reference(_)) => (),
-            Some(Type::Union(e)) => e.base = Base::Extension(base),
-            Some(Type::Enumeration(e)) => e.base = Base::Extension(base),
-            Some(Type::ComplexType(e)) => e.base = Base::Extension(base),
+        match &mut self.variant {
+            Some(TypeVariant::Reference(_)) => (),
+            Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
+            Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
+            Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
             e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
@@ -396,11 +398,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Restriction)?;
         self.apply_restriction(ty)?;
 
-        match &mut self.type_ {
-            Some(Type::Reference(_)) => (),
-            Some(Type::Union(e)) => e.base = Base::Restriction(base),
-            Some(Type::Enumeration(e)) => e.base = Base::Restriction(base),
-            Some(Type::ComplexType(e)) => e.base = Base::Restriction(base),
+        match &mut self.variant {
+            Some(TypeVariant::Reference(_)) => (),
+            Some(TypeVariant::Union(e)) => e.base = Base::Restriction(base),
+            Some(TypeVariant::Enumeration(e)) => e.base = Base::Restriction(base),
+            Some(TypeVariant::ComplexType(e)) => e.base = Base::Restriction(base),
             e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
@@ -841,23 +843,27 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 self.fixed = false;
                 self.simple_base = Some(base.clone());
 
-                self.owner.get_simple_type(base)?
+                self.owner.get_simple_type_variant(base)?
             }
-            (TypeMode::Complex, ContentMode::Simple) => match self.owner.get_simple_type(base) {
-                Ok(ty) => {
-                    self.fixed = false;
-                    self.simple_base = Some(base.clone());
+            (TypeMode::Complex, ContentMode::Simple) => {
+                match self.owner.get_simple_type_variant(base) {
+                    Ok(ty) => {
+                        self.fixed = false;
+                        self.simple_base = Some(base.clone());
 
-                    ty
-                }
-                Err(Error::UnknownType(_)) => {
-                    self.fixed = true;
+                        ty
+                    }
+                    Err(Error::UnknownType(_)) => {
+                        self.fixed = true;
 
-                    self.owner.get_complex_type(base)?
+                        self.owner.get_complex_type_variant(base)?
+                    }
+                    Err(error) => Err(error)?,
                 }
-                Err(error) => Err(error)?,
-            },
-            (TypeMode::Complex, ContentMode::Complex) => self.owner.get_complex_type(base)?,
+            }
+            (TypeMode::Complex, ContentMode::Complex) => {
+                self.owner.get_complex_type_variant(base)?
+            }
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
 
@@ -866,8 +872,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         let mut base = base.clone();
 
         match (self.content_mode, &mut base) {
-            (ContentMode::Simple, Type::Enumeration(ei)) => ei.variants.clear(),
-            (ContentMode::Complex, Type::ComplexType(ci)) => {
+            (ContentMode::Simple, TypeVariant::Enumeration(ei)) => ei.variants.clear(),
+            (ContentMode::Complex, TypeVariant::ComplexType(ci)) => {
                 if let Some(content_ident) = &ci.content {
                     let mut content_type = self
                         .owner
@@ -877,8 +883,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                         .ok_or_else(|| Error::UnknownType(content_ident.clone()))?
                         .clone();
 
-                    match (&mut content_type, mode) {
-                        (Type::All(si) | Type::Choice(si) | Type::Sequence(si), UpdateMode::Restriction) => {
+                    match (&mut content_type.variant, mode) {
+                        (TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si), UpdateMode::Restriction) => {
                             si.elements.retain(|element| element.min_occurs > 0);
 
                             if matches!(
@@ -913,7 +919,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             (_, _) => (),
         }
 
-        self.type_ = Some(base);
+        self.variant = Some(base);
 
         Ok(())
     }
@@ -927,12 +933,12 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
-            builder: &mut TypeBuilder<'x, 'y, 'z>,
+            builder: &mut VariantBuilder<'x, 'y, 'z>,
             groups: &ElementSubstitutionGroupType,
             f: &mut F,
         ) -> Result<(), Error>
         where
-            F: FnMut(&mut TypeBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
+            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
         {
             for head in &groups.0 {
                 let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
@@ -955,7 +961,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
     where
-        F: FnOnce(&mut TypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
         match (self.type_mode, self.content_mode) {
             (TypeMode::Simple, _) => f(self)?,
@@ -968,11 +974,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 let Some(mut content_ident) = ci.content.clone() else {
                     crate::unreachable!(
                         "Complex type does not have a simple content identifier: {:?}",
-                        &self.type_
+                        &self.variant
                     );
                 };
 
-                let content = self.owner.get_simple_type(&content_ident)?.clone();
+                let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
                     let content_name = self
@@ -988,14 +994,15 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     ci.content = Some(content_ident.clone());
                 }
 
-                let mut builder = TypeBuilder::new(&mut *self.owner);
-                builder.type_ = Some(content);
+                let mut builder = VariantBuilder::new(&mut *self.owner);
+                builder.variant = Some(content);
                 builder.type_mode = TypeMode::Simple;
                 builder.content_mode = ContentMode::Simple;
 
                 f(&mut builder)?;
 
-                let content = builder.type_.unwrap();
+                let content = builder.variant.unwrap();
+                let content = Type::new(content);
 
                 match self.owner.state.types.entry(content_ident) {
                     Entry::Vacant(e) => {
@@ -1007,7 +1014,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                 }
             }
             (TypeMode::Complex, ContentMode::Complex) => {
-                crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.type_);
+                crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
             }
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         }
@@ -1026,7 +1033,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
         f: F,
     ) -> Result<(), Error>
     where
-        F: FnOnce(&mut TypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
         enum UpdateContentMode {
             Unknown,
@@ -1034,10 +1041,10 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             Append,
         }
 
-        let mut ty = None;
+        let mut variant = None;
         let mut update_content_mode = UpdateContentMode::Unknown;
 
-        if let Some(Type::ComplexType(ci)) = &self.type_ {
+        if let Some(TypeVariant::ComplexType(ci)) = &self.variant {
             if let Some(content_ident) = &ci.content {
                 let content_ty = self
                     .owner
@@ -1046,11 +1053,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     .get(content_ident)
                     .ok_or_else(|| Error::UnknownType(content_ident.clone()))?;
 
-                match (complex_content_type, content_ty) {
-                    (ComplexContentType::All, Type::All(_))
-                    | (ComplexContentType::Choice, Type::Choice(_))
-                    | (ComplexContentType::Sequence, Type::Sequence(_)) => {
-                        ty = Some(content_ty.clone());
+                match (complex_content_type, &content_ty.variant) {
+                    (ComplexContentType::All, TypeVariant::All(_))
+                    | (ComplexContentType::Choice, TypeVariant::Choice(_))
+                    | (ComplexContentType::Sequence, TypeVariant::Sequence(_)) => {
+                        variant = Some(content_ty.variant.clone());
                         update_content_mode = UpdateContentMode::Update;
                     }
                     (_, _) => update_content_mode = UpdateContentMode::Append,
@@ -1058,21 +1065,23 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
             }
         }
 
-        let ty = ty.unwrap_or_else(|| match complex_content_type {
-            ComplexContentType::All => Type::All(Default::default()),
-            ComplexContentType::Choice => Type::Choice(Default::default()),
-            ComplexContentType::Sequence => Type::Sequence(Default::default()),
+        let variant = variant.unwrap_or_else(|| match complex_content_type {
+            ComplexContentType::All => TypeVariant::All(Default::default()),
+            ComplexContentType::Choice => TypeVariant::Choice(Default::default()),
+            ComplexContentType::Sequence => TypeVariant::Sequence(Default::default()),
         });
 
-        let mut builder = TypeBuilder::new(&mut *self.owner);
+        let mut builder = VariantBuilder::new(&mut *self.owner);
         builder.type_mode = self.type_mode;
-        builder.type_ = Some(ty);
+        builder.variant = Some(variant);
 
         f(&mut builder)?;
 
         let ty = builder.finish()?;
 
-        let (Type::All(si) | Type::Choice(si) | Type::Sequence(si)) = &ty else {
+        let (TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) =
+            &ty.variant
+        else {
             return Err(Error::ExpectedGroupType);
         };
 
@@ -1082,8 +1091,8 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
         let ns = self.state.current_ns();
 
-        match &mut self.type_ {
-            Some(Type::ComplexType(ci)) => match update_content_mode {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => match update_content_mode {
                 UpdateContentMode::Unknown => {
                     self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
@@ -1104,8 +1113,11 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
 
                     let content_ident = ci.content.as_ref().unwrap();
                     let content_type = self.owner.state.types.get_mut(content_ident).unwrap();
+                    let content_variant = &mut content_type.variant;
 
-                    let (Type::All(si) | Type::Choice(si) | Type::Sequence(si)) = content_type
+                    let (TypeVariant::All(si)
+                    | TypeVariant::Choice(si)
+                    | TypeVariant::Sequence(si)) = content_variant
                     else {
                         unreachable!();
                     };
@@ -1121,7 +1133,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
                     element.max_occurs = element.max_occurs.max(max_occurs);
                 }
             },
-            Some(Type::All(si) | Type::Choice(si) | Type::Sequence(si)) => {
+            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => {
                 self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
                 let ident = Ident::new(field_name)
@@ -1168,7 +1180,7 @@ impl<'a, 'schema, 'state> TypeBuilder<'a, 'schema, 'state> {
     }
 }
 
-impl<'schema, 'state> Deref for TypeBuilder<'_, 'schema, 'state> {
+impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
     type Target = SchemaInterpreter<'schema, 'state>;
 
     fn deref(&self) -> &Self::Target {
@@ -1176,7 +1188,7 @@ impl<'schema, 'state> Deref for TypeBuilder<'_, 'schema, 'state> {
     }
 }
 
-impl DerefMut for TypeBuilder<'_, '_, '_> {
+impl DerefMut for VariantBuilder<'_, '_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.owner
     }

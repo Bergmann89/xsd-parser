@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::types::{ReferenceInfo, Type};
+use crate::types::{ReferenceInfo, TypeVariant};
 
 use super::{get_typedefs, Optimizer};
 
@@ -32,7 +32,7 @@ impl Optimizer {
         let typedefs = get_typedefs!(self);
 
         for type_ in self.types.types.values_mut() {
-            if let Type::Union(x) = type_ {
+            if let TypeVariant::Union(x) = &mut type_.variant {
                 let mut i = 0;
                 let mut types_ = HashSet::new();
 
@@ -73,12 +73,12 @@ impl Optimizer {
         tracing::debug!("remove_empty_unions");
 
         for type_ in self.types.types.values_mut() {
-            if let Type::Union(x) = type_ {
+            if let TypeVariant::Union(x) = &type_.variant {
                 if x.types.len() <= 1 {
                     let base = x.types.first().map(|x| &x.type_).or(x.base.as_ident());
                     if let Some(base) = base {
                         self.typedefs = None;
-                        *type_ = Type::Reference(ReferenceInfo::new(base.clone()));
+                        type_.variant = TypeVariant::Reference(ReferenceInfo::new(base.clone()));
                     }
                 }
             }
