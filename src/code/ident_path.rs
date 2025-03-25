@@ -182,7 +182,7 @@ impl ModulePath {
         Self(ident.into_iter().collect())
     }
 
-    /// Add a module to the module path.
+    /// Add a module to the module
     #[must_use]
     pub fn join(mut self, other: Ident2) -> Self {
         self.0.push(other);

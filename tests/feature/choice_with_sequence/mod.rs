@@ -34,8 +34,8 @@ fn read_quick_xml() {
         "tests/feature/choice_with_sequence/example/default.xml",
     );
 
-    let Foo::Content3(content) = obj else {
-        panic!("Expected `Foo::Content3`");
+    let Foo::Content2(content) = obj else {
+        panic!("Expected `Foo::Content2`");
     };
 
     assert_eq!(content.element_1, 3);
@@ -45,9 +45,9 @@ fn read_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::{Foo, FooContent3Type};
+    use quick_xml::{Foo, FooContent2Type};
 
-    let obj = Foo::Content3(FooContent3Type {
+    let obj = Foo::Content2(FooContent2Type {
         element_1: 3,
         element_2: "test".into(),
     });

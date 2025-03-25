@@ -6,8 +6,7 @@ mod ident_path;
 mod module;
 
 pub use self::format::{
-    format_field_ident, format_field_name, format_module, format_module_ident, format_type_ident,
-    format_type_name, format_variant_ident, make_type_name, UnknownNamespace,
+    format_field_ident, format_module_ident, format_type_ident, format_variant_ident,
 };
 pub use self::ident_path::{IdentPath, ModulePath};
 pub use self::module::Module;

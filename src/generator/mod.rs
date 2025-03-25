@@ -13,8 +13,9 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use tracing::instrument;
 
-use crate::code::{format_module, format_type_ident, make_type_name, Module};
-use crate::types::{Ident, IdentType, Type, TypeVariant, Types};
+use crate::code::{format_module_ident, format_type_ident, Module};
+use crate::schema::NamespaceId;
+use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
 
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
@@ -286,6 +287,28 @@ impl<'types> GeneratorFixed<'types> {
         Ok(self)
     }
 
+    /// Generate the code for all types.
+    ///
+    /// This will generate the code for all types that are specified in
+    /// the [`Types`] object passed to the generator.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let generator = Generator::new(types)
+    ///     .generate_all_types();
+    /// ```
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn generate_all_types(mut self) -> Result<Self, Error> {
+        for ident in self.config.types.keys() {
+            self.state
+                .get_or_create_type_ref(&self.config, ident.clone())?;
+        }
+        self.generate_pending()?;
+
+        Ok(self)
+    }
+
     /// Generate the code for all named types.
     ///
     /// This will generate the code for all types with an explicit name and all
@@ -296,10 +319,10 @@ impl<'types> GeneratorFixed<'types> {
     ///
     /// ```ignore
     /// let generator = Generator::new(types)
-    ///     .generate_all_types();
+    ///     .generate_named_types();
     /// ```
     #[instrument(err, level = "trace", skip(self))]
-    pub fn generate_all_types(mut self) -> Result<Self, Error> {
+    pub fn generate_named_types(mut self) -> Result<Self, Error> {
         for ident in self.config.types.keys() {
             if ident.name.is_named() {
                 self.state
@@ -462,4 +485,41 @@ fn get_boxed_elements<'a>(
             .collect(),
         _ => HashSet::new(),
     }
+}
+
+fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
+    if let TypeVariant::Reference(ti) = &ty.variant {
+        if ident.name.is_generated() && ti.type_.name.is_named() {
+            if ti.min_occurs > 1 {
+                return Name::new_generated(format!("{}List", ti.type_.name.to_type_name()));
+            } else if ti.min_occurs == 0 {
+                return Name::new_generated(format!("{}Opt", ti.type_.name.to_type_name()));
+            }
+        }
+    }
+
+    let postfix = postfixes
+        .get(ident.type_ as usize)
+        .map_or("", |s| s.as_str());
+
+    let s = ident.name.to_type_name();
+
+    if s.ends_with(postfix) {
+        ident.name.clone()
+    } else {
+        Name::new_generated(dbg!(format!("{s}{postfix}")))
+    }
+}
+
+fn format_module(types: &Types, ns: Option<NamespaceId>) -> Result<Option<Ident2>, Error> {
+    let Some(ns) = ns else {
+        return Ok(None);
+    };
+
+    let module = types.modules.get(&ns).ok_or(Error::UnknownNamespace(ns))?;
+    let Some(name) = &module.name else {
+        return Ok(None);
+    };
+
+    Ok(Some(format_module_ident(name)))
 }

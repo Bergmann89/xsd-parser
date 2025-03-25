@@ -1,13 +1,11 @@
 use std::collections::{btree_map::Entry, BTreeMap};
 
-use crate::schema::{
-    xs::{
-        AttributeGroupType, ComplexBaseType, ElementType, GroupType, Schema, SchemaContent,
-        SimpleBaseType,
-    },
-    NamespaceId, Schemas,
+use crate::schema::xs::{
+    AttributeGroupType, ComplexBaseType, ElementType, GroupType, Schema, SchemaContent,
+    SimpleBaseType,
 };
-use crate::types::{Ident, IdentType, Name, Type, Types};
+use crate::schema::{NamespaceId, Schemas};
+use crate::types::{Ident, IdentType, Name, NameBuilder, Type, Types};
 
 use super::Error;
 
@@ -39,7 +37,7 @@ impl<'a> State<'a> {
     pub(super) fn last_named_type(&self, stop_at_group: bool) -> Option<&str> {
         for x in self.type_stack.iter().rev() {
             match x {
-                Some(x) if x.name.is_named() => return x.name.as_str(),
+                Some(x) if x.name.is_named() => return Some(x.name.as_str()),
                 None if stop_at_group => return None,
                 _ => (),
             }
@@ -48,8 +46,17 @@ impl<'a> State<'a> {
         None
     }
 
-    pub(super) fn make_unnamed(&mut self) -> Name {
-        self.types.make_unnamed()
+    pub(super) fn name_builder(&mut self) -> NameBuilder {
+        self.types.name_builder()
+    }
+
+    pub(super) fn make_content_name(&mut self) -> Name {
+        self.name_builder()
+            .auto_extend(false, true, self)
+            .remove_suffix("Type")
+            .remove_suffix("Content")
+            .shared_name("Content")
+            .finish()
     }
 
     pub(super) fn add_type<I, T>(
@@ -99,7 +106,7 @@ fn search_in_schemas<'a>(
     schema: &'a Schema,
     ident: &Ident,
 ) -> Option<Node<'a>> {
-    let name = ident.name.as_str()?;
+    let name = ident.name.as_named_str()?;
     let type_ = ident.type_;
 
     if let Some(ns) = &ident.ns {

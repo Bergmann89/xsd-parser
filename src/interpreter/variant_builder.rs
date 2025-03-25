@@ -16,7 +16,7 @@ use crate::types::{
     IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
-use super::{Error, NameExtend, NameFallback, NameUnwrap, SchemaInterpreter};
+use super::{Error, SchemaInterpreter};
 
 #[derive(Debug)]
 pub(super) struct VariantBuilder<'a, 'schema, 'state> {
@@ -553,7 +553,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 ..
             } => {
                 let type_ = self.parse_qname(ref_)?.with_type(IdentType::Element);
-                let name = name.clone().or_fallback(type_.name.clone());
+                let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
                     .with_type(IdentType::Element);
@@ -566,20 +566,21 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 element.update(ty);
             }
             ty => {
-                let field_name = ty.name.clone().unwrap_or_unnamed(self.state);
+                let field_name = self.state.name_builder().or(&ty.name).finish();
                 let field_ident = Ident::new(field_name)
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Element);
                 let type_name = self
                     .state
-                    .make_unnamed()
+                    .name_builder()
                     .extend(true, ty.name.clone())
                     .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
-                    type_name.to_type_name(false, Some(""))
+                    type_name.with_id(false)
                 } else {
-                    type_name.to_type_name(true, Some("Temp"))
+                    type_name.shared_name("Temp")
                 };
+                let type_name = type_name.finish();
 
                 let ns = self.state.current_ns();
                 let type_ = self.create_element(ns, Some(type_name), ty)?;
@@ -680,7 +681,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 ..
             } => {
                 let type_ = self.parse_qname(ref_)?.with_type(IdentType::Attribute);
-                let name = name.clone().or_fallback(type_.name.clone());
+                let name = self.state.name_builder().or(name).or(&type_.name).finish();
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
@@ -698,7 +699,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let type_ = simple_type
                     .as_ref()
                     .map(|x| {
-                        let type_name = name.clone().auto_extend(true, true, self.state);
+                        let type_name = self
+                            .state
+                            .name_builder()
+                            .or(name)
+                            .auto_extend(true, true, self.state)
+                            .finish();
                         let ns = self.state.current_ns();
 
                         self.create_simple_type(ns, Some(type_name), x)
@@ -779,11 +785,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             let ns = builder.owner.state.current_ns();
 
             for x in &ty.simple_type {
-                let name = x
-                    .name
-                    .clone()
+                let name = builder
+                    .owner
+                    .state
+                    .name_builder()
+                    .or(&x.name)
                     .auto_extend(false, true, builder.owner.state)
-                    .unwrap_or_unnamed(builder.owner.state);
+                    .finish();
                 let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
                 ui.types.push(UnionTypeInfo::new(type_));
             }
@@ -802,15 +810,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         if let Some(x) = &ty.simple_type {
             let last_named_type = self.state.last_named_type(false).map(ToOwned::to_owned);
-            let name = x
-                .name
-                .clone()
-                .or_fallback(|| {
-                    Some(Name::new(
-                        from_utf8(ty.item_type.as_ref()?.local_name()).ok()?,
-                    ))
-                })
-                .or_fallback(|| {
+            let name = self
+                .state
+                .name_builder()
+                .or(&x.name)
+                .or_else(|| from_utf8(ty.item_type.as_ref()?.local_name()).ok())
+                .or_else(|| {
                     let s = last_named_type?;
                     let s = s.as_str();
                     let s = s.strip_suffix("Type").unwrap_or(s);
@@ -818,7 +823,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                     Some(Name::from(s))
                 })
-                .unwrap_or_unnamed(self.state);
+                .finish();
             let ns = self.owner.state.current_ns();
             type_ = Some(self.owner.create_simple_type(ns, Some(name), x)?);
         }
@@ -901,14 +906,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         (_, _) => tracing::warn!("Complex type does not has `All`, `Choice` or `Sequence` as content: {content_ident:#?} => {content_type:#?}!"),
                     }
 
-                    let content_ident = self
-                        .state
-                        .make_unnamed()
-                        .auto_extend(false, true, self.state)
-                        .remove_suffix("Type")
-                        .remove_suffix("Content")
-                        .to_type_name(true, Some("Content"));
-                    let content_ident = Ident::new(content_ident).with_ns(self.state.current_ns());
+                    let content_name = self.state.make_content_name();
+                    let content_ident = Ident::new(content_name).with_ns(self.state.current_ns());
 
                     self.state
                         .add_type(content_ident.clone(), content_type, false)?;
@@ -981,14 +980,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
                 if !self.is_simple_content_unique {
                     self.is_simple_content_unique = true;
-                    let content_name = self
-                        .owner
-                        .state
-                        .make_unnamed()
-                        .auto_extend(false, true, self.owner.state)
-                        .remove_suffix("Type")
-                        .remove_suffix("Content")
-                        .to_type_name(true, Some("Content"));
+                    let content_name = self.owner.state.make_content_name();
                     content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
 
                     ci.content = Some(content_ident.clone());
@@ -1162,18 +1154,21 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     fn make_field_name_and_type(&mut self, ty: &GroupType) -> (Name, Ident) {
-        let name = ty
-            .name
-            .clone()
-            .unwrap_or_unnamed(self.state)
+        let name = self
+            .state
+            .name_builder()
+            .generate_id()
+            .or(ty.name.clone())
             .remove_suffix("Type")
             .remove_suffix("Content");
-        let field_name = name.to_type_name(true, Some("Content"));
+        let field_name = name.clone().shared_name("Content").finish();
         let type_name = name
             .auto_extend(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
-            .to_type_name(true, Some("Content"));
+            .shared_name("Content")
+            .with_id(true)
+            .finish();
         let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
 
         (field_name, type_)

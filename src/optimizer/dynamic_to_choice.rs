@@ -43,7 +43,8 @@ impl Optimizer {
             .collect::<Vec<_>>();
 
         for ident in idents {
-            let content_ident = Ident::new(self.types.make_unnamed()).with_ns(ident.ns);
+            let content_name = self.types.name_builder().shared_name("Content").finish();
+            let content_ident = Ident::new(content_name).with_ns(ident.ns);
 
             let type_ = self.types.get_mut(&ident).unwrap();
             let TypeVariant::Dynamic(x) = &mut type_.variant else {

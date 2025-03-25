@@ -67,9 +67,9 @@ pub enum KeyInfoTypeContent {
     #[serde(rename = "X509Data")]
     X509Data(X509DataType),
     #[serde(rename = "PGPData")]
-    Pgpdata(PgpdataType),
+    PgpData(PgpDataType),
     #[serde(rename = "SPKIData")]
-    Spkidata(SpkidataType),
+    SpkiData(SpkiDataType),
     #[serde(rename = "MgmtData")]
     MgmtData(String),
 }
@@ -92,7 +92,7 @@ pub struct SignatureMethodType {
     #[serde(rename = "Algorithm")]
     pub algorithm: String,
     #[serde(default, rename = "HMACOutputLength")]
-    pub hmacoutput_length: Option<i32>,
+    pub hmac_output_length: Option<i32>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReferenceType {
@@ -117,9 +117,9 @@ pub struct KeyValueType {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum KeyValueTypeContent {
     #[serde(rename = "DSAKeyValue")]
-    DsakeyValue(DsakeyValueType),
+    DsaKeyValue(DsaKeyValueType),
     #[serde(rename = "RSAKeyValue")]
-    RsakeyValue(RsakeyValueType),
+    RsaKeyValue(RsaKeyValueType),
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RetrievalMethodType {
@@ -149,26 +149,26 @@ pub enum X509DataTypeContent {
     X509Crl(String),
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct PgpdataType {
+pub struct PgpDataType {
     #[serde(rename = "$value")]
-    pub content: [PgpdataTypeContent; 2usize],
+    pub content: [PgpDataTypeContent; 2usize],
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum PgpdataTypeContent {
+pub enum PgpDataTypeContent {
     #[serde(rename = "PGPKeyID")]
-    PgpkeyID(String),
+    PgpKeyId(String),
     #[serde(rename = "PGPKeyPacket")]
-    PgpkeyPacket(String),
+    PgpKeyPacket(String),
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SpkidataType {
+pub struct SpkiDataType {
     #[serde(rename = "$value")]
-    pub content: Vec<SpkidataTypeContent>,
+    pub content: Vec<SpkiDataTypeContent>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct SpkidataTypeContent {
+pub struct SpkiDataTypeContent {
     #[serde(rename = "SPKISexp")]
-    pub spkisexp: String,
+    pub spki_sexp: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TransformsType {
@@ -181,7 +181,7 @@ pub struct DigestMethodType {
     pub algorithm: String,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct DsakeyValueType {
+pub struct DsaKeyValueType {
     #[serde(default, rename = "P")]
     pub p: Option<String>,
     #[serde(default, rename = "Q")]
@@ -198,7 +198,7 @@ pub struct DsakeyValueType {
     pub pgen_counter: Option<String>,
 }
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct RsakeyValueType {
+pub struct RsaKeyValueType {
     #[serde(rename = "Modulus")]
     pub modulus: String,
     #[serde(rename = "Exponent")]
