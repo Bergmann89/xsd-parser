@@ -254,6 +254,7 @@ pub fn exec_generator(
     let mut generator = generator.into_fixed();
     match config.generate {
         Generate::All => generator = generator.generate_all_types()?,
+        Generate::Named => generator = generator.generate_named_types()?,
         Generate::Types(idents) => {
             for triple in idents {
                 let ident = triple.resolve(schemas)?;

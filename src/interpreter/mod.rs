@@ -1,7 +1,7 @@
 //! The `interpreter` module contains the schema [`Interpreter`] and all related types.
 
 mod error;
-mod helper;
+mod name_builder;
 mod schema;
 mod state;
 mod variant_builder;
@@ -19,7 +19,6 @@ use crate::types::{
 pub use error::Error;
 use tracing::instrument;
 
-use self::helper::{NameExtend, NameFallback, NameUnwrap};
 use self::schema::SchemaInterpreter;
 use self::state::{Node, State};
 use self::variant_builder::VariantBuilder;
@@ -231,7 +230,7 @@ impl<'a> Interpreter<'a> {
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
         // content type
-        let content_name = self.state.make_unnamed();
+        let content_name = self.state.name_builder().shared_name("Content").finish();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
         let content_variant = TypeVariant::Sequence(GroupInfo {
             any: Some(AnyInfo {
@@ -277,7 +276,7 @@ impl<'a> Interpreter<'a> {
                 name: info
                     .prefix
                     .as_ref()
-                    .map(|prefix| Name::new(prefix.to_string())),
+                    .map(|prefix| Name::new_named(prefix.to_string())),
                 namespace: info.namespace.clone(),
             };
 

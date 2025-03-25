@@ -70,6 +70,7 @@ impl Optimizer {
 
             let types = &self.types;
 
+            #[allow(clippy::mutable_key_type)]
             let mut map = HashMap::new();
             let mut idents = HashMap::new();
 

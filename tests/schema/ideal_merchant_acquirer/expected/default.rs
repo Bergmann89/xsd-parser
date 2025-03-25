@@ -42,8 +42,8 @@ pub enum KeyInfoTypeContent {
     KeyValue(KeyValueType),
     RetrievalMethod(RetrievalMethodType),
     X509Data(X509DataType),
-    Pgpdata(PgpdataType),
-    Spkidata(SpkidataType),
+    PgpData(PgpDataType),
+    SpkiData(SpkiDataType),
     MgmtData(String),
 }
 #[derive(Debug, Clone)]
@@ -59,7 +59,7 @@ pub struct CanonicalizationMethodType {
 #[derive(Debug, Clone)]
 pub struct SignatureMethodType {
     pub algorithm: String,
-    pub hmacoutput_length: Option<i32>,
+    pub hmac_output_length: Option<i32>,
 }
 #[derive(Debug, Clone)]
 pub struct ReferenceType {
@@ -76,8 +76,8 @@ pub struct KeyValueType {
 }
 #[derive(Debug, Clone)]
 pub enum KeyValueTypeContent {
-    DsakeyValue(DsakeyValueType),
-    RsakeyValue(RsakeyValueType),
+    DsaKeyValue(DsaKeyValueType),
+    RsaKeyValue(RsaKeyValueType),
 }
 #[derive(Debug, Clone)]
 pub struct RetrievalMethodType {
@@ -91,24 +91,24 @@ pub struct X509DataType {
 }
 #[derive(Debug, Clone)]
 pub struct X509DataTypeContent {
-    pub content_103: X509DataContent103Type,
+    pub content_37: X509DataContent37Type,
 }
 #[derive(Debug, Clone)]
-pub struct PgpdataType {
-    pub content: PgpdataTypeContent,
+pub struct PgpDataType {
+    pub content: PgpDataTypeContent,
 }
 #[derive(Debug, Clone)]
-pub enum PgpdataTypeContent {
-    Content113(PgpdataContent113Type),
-    Content116(PgpdataContent116Type),
+pub enum PgpDataTypeContent {
+    Content40(PgpDataContent40Type),
+    Content41(PgpDataContent41Type),
 }
 #[derive(Debug, Clone)]
-pub struct SpkidataType {
-    pub content: Vec<SpkidataTypeContent>,
+pub struct SpkiDataType {
+    pub content: Vec<SpkiDataTypeContent>,
 }
 #[derive(Debug, Clone)]
-pub struct SpkidataTypeContent {
-    pub spkisexp: String,
+pub struct SpkiDataTypeContent {
+    pub spki_sexp: String,
 }
 #[derive(Debug, Clone)]
 pub struct TransformsType {
@@ -119,24 +119,24 @@ pub struct DigestMethodType {
     pub algorithm: String,
 }
 #[derive(Debug, Clone)]
-pub struct DsakeyValueType {
-    pub content_125: Option<DsakeyValueContent125Type>,
+pub struct DsaKeyValueType {
+    pub content_48: Option<DsaKeyValueContent48Type>,
     pub g: Option<String>,
     pub y: String,
     pub j: Option<String>,
-    pub content_131: Option<DsakeyValueContent131Type>,
+    pub content_49: Option<DsaKeyValueContent49Type>,
 }
 #[derive(Debug, Clone)]
-pub struct RsakeyValueType {
+pub struct RsaKeyValueType {
     pub modulus: String,
     pub exponent: String,
 }
 #[derive(Debug, Clone)]
-pub struct X509DataContent103Type {
-    pub content: X509DataContent103TypeContent,
+pub struct X509DataContent37Type {
+    pub content: X509DataContent37TypeContent,
 }
 #[derive(Debug, Clone)]
-pub enum X509DataContent103TypeContent {
+pub enum X509DataContent37TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
     X509Ski(String),
     X509SubjectName(String),
@@ -144,13 +144,13 @@ pub enum X509DataContent103TypeContent {
     X509Crl(String),
 }
 #[derive(Debug, Clone)]
-pub struct PgpdataContent113Type {
-    pub pgpkey_id: String,
-    pub pgpkey_packet: Option<String>,
+pub struct PgpDataContent40Type {
+    pub pgp_key_id: String,
+    pub pgp_key_packet: Option<String>,
 }
 #[derive(Debug, Clone)]
-pub struct PgpdataContent116Type {
-    pub pgpkey_packet: String,
+pub struct PgpDataContent41Type {
+    pub pgp_key_packet: String,
 }
 #[derive(Debug, Clone)]
 pub struct TransformType {
@@ -162,12 +162,12 @@ pub enum TransformTypeContent {
     Xpath(String),
 }
 #[derive(Debug, Clone)]
-pub struct DsakeyValueContent125Type {
+pub struct DsaKeyValueContent48Type {
     pub p: String,
     pub q: String,
 }
 #[derive(Debug, Clone)]
-pub struct DsakeyValueContent131Type {
+pub struct DsaKeyValueContent49Type {
     pub seed: String,
     pub pgen_counter: String,
 }

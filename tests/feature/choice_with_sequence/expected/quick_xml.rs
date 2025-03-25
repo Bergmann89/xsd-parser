@@ -8,8 +8,8 @@ pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug, Clone)]
 pub enum FooType {
+    Content2(FooContent2Type),
     Content3(FooContent3Type),
-    Content6(FooContent6Type),
 }
 impl WithSerializer for FooType {
     type Serializer<'x> = quick_xml_serialize::FooTypeSerializer<'x>;
@@ -30,9 +30,32 @@ impl WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub struct FooContent3Type {
+pub struct FooContent2Type {
     pub element_1: i32,
     pub element_2: String,
+}
+impl WithSerializer for FooContent2Type {
+    type Serializer<'x> = quick_xml_serialize::FooContent2TypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        let _name = name;
+        let _is_root = is_root;
+        Ok(quick_xml_serialize::FooContent2TypeSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::FooContent2TypeSerializerState::Init__),
+        })
+    }
+}
+impl WithDeserializer for FooContent2Type {
+    type Deserializer = quick_xml_deserialize::FooContent2TypeDeserializer;
+}
+#[derive(Debug, Clone)]
+pub struct FooContent3Type {
+    pub element_3: i32,
+    pub element_4: String,
 }
 impl WithSerializer for FooContent3Type {
     type Serializer<'x> = quick_xml_serialize::FooContent3TypeSerializer<'x>;
@@ -52,29 +75,6 @@ impl WithSerializer for FooContent3Type {
 impl WithDeserializer for FooContent3Type {
     type Deserializer = quick_xml_deserialize::FooContent3TypeDeserializer;
 }
-#[derive(Debug, Clone)]
-pub struct FooContent6Type {
-    pub element_3: i32,
-    pub element_4: String,
-}
-impl WithSerializer for FooContent6Type {
-    type Serializer<'x> = quick_xml_serialize::FooContent6TypeSerializer<'x>;
-    fn serializer<'ser>(
-        &'ser self,
-        name: Option<&'ser str>,
-        is_root: bool,
-    ) -> Result<Self::Serializer<'ser>, Error> {
-        let _name = name;
-        let _is_root = is_root;
-        Ok(quick_xml_serialize::FooContent6TypeSerializer {
-            value: self,
-            state: Box::new(quick_xml_serialize::FooContent6TypeSerializerState::Init__),
-        })
-    }
-}
-impl WithDeserializer for FooContent6Type {
-    type Deserializer = quick_xml_deserialize::FooContent6TypeDeserializer;
-}
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::quick_xml::{
@@ -89,13 +89,13 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub enum FooTypeDeserializerState {
         Init__,
+        Content2(
+            Option<super::FooContent2Type>,
+            Option<<super::FooContent2Type as WithDeserializer>::Deserializer>,
+        ),
         Content3(
             Option<super::FooContent3Type>,
             Option<<super::FooContent3Type as WithDeserializer>::Deserializer>,
-        ),
-        Content6(
-            Option<super::FooContent6Type>,
-            Option<<super::FooContent6Type as WithDeserializer>::Deserializer>,
         ),
         Done__(super::FooType),
         Unknown__,
@@ -116,10 +116,10 @@ pub mod quick_xml_deserialize {
             };
             let mut allow_any_element = false;
             let event = {
-                let output = <super::FooContent3Type as WithDeserializer>::Deserializer::init(
+                let output = <super::FooContent2Type as WithDeserializer>::Deserializer::init(
                     reader, event,
                 )?;
-                match self.handle_content_3(reader, Default::default(), output, &mut *fallback)? {
+                match self.handle_content_2(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
                         event
@@ -130,10 +130,10 @@ pub mod quick_xml_deserialize {
                 }
             };
             let event = {
-                let output = <super::FooContent6Type as WithDeserializer>::Deserializer::init(
+                let output = <super::FooContent3Type as WithDeserializer>::Deserializer::init(
                     reader, event,
                 )?;
-                match self.handle_content_6(reader, Default::default(), output, &mut *fallback)? {
+                match self.handle_content_3(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
                         event
@@ -171,6 +171,15 @@ pub mod quick_xml_deserialize {
             use FooTypeDeserializerState as S;
             match state {
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
+                S::Content2(mut values, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(reader)?;
+                        Self::store_content_2(&mut values, value)?;
+                    }
+                    Ok(super::FooType::Content2(values.ok_or_else(|| {
+                        ErrorKind::MissingElement("Content2".into())
+                    })?))
+                }
                 S::Content3(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
@@ -180,18 +189,21 @@ pub mod quick_xml_deserialize {
                         ErrorKind::MissingElement("Content3".into())
                     })?))
                 }
-                S::Content6(mut values, deserializer) => {
-                    if let Some(deserializer) = deserializer {
-                        let value = deserializer.finish(reader)?;
-                        Self::store_content_6(&mut values, value)?;
-                    }
-                    Ok(super::FooType::Content6(values.ok_or_else(|| {
-                        ErrorKind::MissingElement("Content6".into())
-                    })?))
-                }
                 S::Done__(data) => Ok(data),
                 S::Unknown__ => unreachable!(),
             }
+        }
+        fn store_content_2(
+            values: &mut Option<super::FooContent2Type>,
+            value: super::FooContent2Type,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"Content2",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
         }
         fn store_content_3(
             values: &mut Option<super::FooContent3Type>,
@@ -205,17 +217,51 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_content_6(
-            values: &mut Option<super::FooContent6Type>,
-            value: super::FooContent6Type,
-        ) -> Result<(), Error> {
-            if values.is_some() {
-                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content6",
-                )))?;
+        fn handle_content_2<'de, R>(
+            &mut self,
+            reader: &R,
+            mut values: Option<super::FooContent2Type>,
+            output: DeserializerOutput<'de, super::FooContent2Type>,
+            fallback: &mut Option<FooTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                *self.state = match fallback.take() {
+                    None => FooTypeDeserializerState::Init__,
+                    Some(FooTypeDeserializerState::Content2(_, Some(deserializer))) => {
+                        FooTypeDeserializerState::Content2(values, Some(deserializer))
+                    }
+                    _ => unreachable!(),
+                };
+                return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
-            *values = Some(value);
-            Ok(())
+            match fallback.take() {
+                None => (),
+                Some(FooTypeDeserializerState::Content2(_, Some(deserializer))) => {
+                    let data = deserializer.finish(reader)?;
+                    Self::store_content_2(&mut values, data)?;
+                }
+                Some(_) => unreachable!(),
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_content_2(&mut values, data)?;
+                    *self.state = FooTypeDeserializerState::Content2(values, None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state = FooTypeDeserializerState::Content2(values, Some(deserializer));
+                    ElementHandlerOutput::from_event_end(event, allow_any)
+                }
+            })
         }
         fn handle_content_3<'de, R>(
             &mut self,
@@ -263,52 +309,6 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_content_6<'de, R>(
-            &mut self,
-            reader: &R,
-            mut values: Option<super::FooContent6Type>,
-            output: DeserializerOutput<'de, super::FooContent6Type>,
-            fallback: &mut Option<FooTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                *self.state = match fallback.take() {
-                    None => FooTypeDeserializerState::Init__,
-                    Some(FooTypeDeserializerState::Content6(_, Some(deserializer))) => {
-                        FooTypeDeserializerState::Content6(values, Some(deserializer))
-                    }
-                    _ => unreachable!(),
-                };
-                return Ok(ElementHandlerOutput::break_(event, allow_any));
-            }
-            match fallback.take() {
-                None => (),
-                Some(FooTypeDeserializerState::Content6(_, Some(deserializer))) => {
-                    let data = deserializer.finish(reader)?;
-                    Self::store_content_6(&mut values, data)?;
-                }
-                Some(_) => unreachable!(),
-            }
-            Ok(match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    Self::store_content_6(&mut values, data)?;
-                    *self.state = FooTypeDeserializerState::Content6(values, None);
-                    ElementHandlerOutput::from_event(event, allow_any)
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = FooTypeDeserializerState::Content6(values, Some(deserializer));
-                    ElementHandlerOutput::from_event_end(event, allow_any)
-                }
-            })
-        }
     }
     impl<'de> Deserializer<'de, super::FooType> for FooTypeDeserializer {
         fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooType>
@@ -331,18 +331,18 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
                 event = match (state, event) {
-                    (S::Content3(values, Some(deserializer)), event) => {
+                    (S::Content2(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_3(reader, values, output, &mut fallback)? {
+                        match self.handle_content_2(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Content6(values, Some(deserializer)), event) => {
+                    (S::Content3(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_6(reader, values, output, &mut fallback)? {
+                        match self.handle_content_3(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -364,24 +364,24 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Content3(values, None), event) => {
+                    (S::Content2(values, None), event) => {
                         let output =
-                            <super::FooContent3Type as WithDeserializer>::Deserializer::init(
+                            <super::FooContent2Type as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
-                        match self.handle_content_3(reader, values, output, &mut fallback)? {
+                        match self.handle_content_2(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Content6(values, None), event) => {
+                    (S::Content3(values, None), event) => {
                         let output =
-                            <super::FooContent6Type as WithDeserializer>::Deserializer::init(
+                            <super::FooContent3Type as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
-                        match self.handle_content_6(reader, values, output, &mut fallback)? {
+                        match self.handle_content_3(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -414,29 +414,29 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct FooContent3TypeDeserializer {
+    pub struct FooContent2TypeDeserializer {
         element_1: Option<i32>,
         element_2: Option<String>,
-        state: Box<FooContent3TypeDeserializerState>,
+        state: Box<FooContent2TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum FooContent3TypeDeserializerState {
+    enum FooContent2TypeDeserializerState {
         Init__,
         Element1(Option<<i32 as WithDeserializer>::Deserializer>),
         Element2(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl FooContent3TypeDeserializer {
+    impl FooContent2TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: FooContent3TypeDeserializerState,
+            state: FooContent2TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use FooContent3TypeDeserializerState as S;
+            use FooContent2TypeDeserializerState as S;
             match state {
                 S::Element1(Some(deserializer)) => {
                     self.store_element_1(deserializer.finish(reader)?)?
@@ -470,7 +470,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<FooContent3TypeDeserializerState>,
+            fallback: &mut Option<FooContent2TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -482,11 +482,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.element_1.is_some() {
-                    fallback.get_or_insert(FooContent3TypeDeserializerState::Element1(None));
-                    *self.state = FooContent3TypeDeserializerState::Element2(None);
+                    fallback.get_or_insert(FooContent2TypeDeserializerState::Element1(None));
+                    *self.state = FooContent2TypeDeserializerState::Element2(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooContent3TypeDeserializerState::Element1(None);
+                    *self.state = FooContent2TypeDeserializerState::Element1(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -497,21 +497,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_element_1(data)?;
-                    *self.state = FooContent3TypeDeserializerState::Element2(None);
+                    *self.state = FooContent2TypeDeserializerState::Element2(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(FooContent3TypeDeserializerState::Element1(
+                            fallback.get_or_insert(FooContent2TypeDeserializerState::Element1(
                                 Some(deserializer),
                             ));
-                            *self.state = FooContent3TypeDeserializerState::Element2(None);
+                            *self.state = FooContent2TypeDeserializerState::Element2(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                FooContent3TypeDeserializerState::Element1(Some(deserializer));
+                                FooContent2TypeDeserializerState::Element1(Some(deserializer));
                         }
                     }
                     ret
@@ -522,7 +522,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<FooContent3TypeDeserializerState>,
+            fallback: &mut Option<FooContent2TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -534,11 +534,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.element_2.is_some() {
-                    fallback.get_or_insert(FooContent3TypeDeserializerState::Element2(None));
-                    *self.state = FooContent3TypeDeserializerState::Done__;
+                    fallback.get_or_insert(FooContent2TypeDeserializerState::Element2(None));
+                    *self.state = FooContent2TypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooContent3TypeDeserializerState::Element2(None);
+                    *self.state = FooContent2TypeDeserializerState::Element2(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -549,21 +549,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_element_2(data)?;
-                    *self.state = FooContent3TypeDeserializerState::Done__;
+                    *self.state = FooContent2TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(FooContent3TypeDeserializerState::Element2(
+                            fallback.get_or_insert(FooContent2TypeDeserializerState::Element2(
                                 Some(deserializer),
                             ));
-                            *self.state = FooContent3TypeDeserializerState::Done__;
+                            *self.state = FooContent2TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                FooContent3TypeDeserializerState::Element2(Some(deserializer));
+                                FooContent2TypeDeserializerState::Element2(Some(deserializer));
                         }
                     }
                     ret
@@ -571,20 +571,20 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::FooContent3Type> for FooContent3TypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooContent3Type>
+    impl<'de> Deserializer<'de, super::FooContent2Type> for FooContent2TypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooContent2Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 element_1: None,
                 element_2: None,
-                state: Box::new(FooContent3TypeDeserializerState::Init__),
+                state: Box::new(FooContent2TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, FooContent3TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, FooContent2TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -596,11 +596,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FooContent3Type>
+        ) -> DeserializerResult<'de, super::FooContent2Type>
         where
             R: DeserializeReader,
         {
-            use FooContent3TypeDeserializerState as S;
+            use FooContent2TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -643,7 +643,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = FooContent3TypeDeserializerState::Element1(None);
+                        *self.state = FooContent2TypeDeserializerState::Element1(None);
                         event
                     }
                     (S::Element1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -702,16 +702,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::FooContent3Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooContent2Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                FooContent3TypeDeserializerState::Unknown__,
+                FooContent2TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::FooContent3Type {
+            Ok(super::FooContent2Type {
                 element_1: self
                     .element_1
                     .ok_or_else(|| ErrorKind::MissingElement("Element1".into()))?,
@@ -722,29 +722,29 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct FooContent6TypeDeserializer {
+    pub struct FooContent3TypeDeserializer {
         element_3: Option<i32>,
         element_4: Option<String>,
-        state: Box<FooContent6TypeDeserializerState>,
+        state: Box<FooContent3TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum FooContent6TypeDeserializerState {
+    enum FooContent3TypeDeserializerState {
         Init__,
         Element3(Option<<i32 as WithDeserializer>::Deserializer>),
         Element4(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl FooContent6TypeDeserializer {
+    impl FooContent3TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: FooContent6TypeDeserializerState,
+            state: FooContent3TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use FooContent6TypeDeserializerState as S;
+            use FooContent3TypeDeserializerState as S;
             match state {
                 S::Element3(Some(deserializer)) => {
                     self.store_element_3(deserializer.finish(reader)?)?
@@ -778,7 +778,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, i32>,
-            fallback: &mut Option<FooContent6TypeDeserializerState>,
+            fallback: &mut Option<FooContent3TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -790,11 +790,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.element_3.is_some() {
-                    fallback.get_or_insert(FooContent6TypeDeserializerState::Element3(None));
-                    *self.state = FooContent6TypeDeserializerState::Element4(None);
+                    fallback.get_or_insert(FooContent3TypeDeserializerState::Element3(None));
+                    *self.state = FooContent3TypeDeserializerState::Element4(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooContent6TypeDeserializerState::Element3(None);
+                    *self.state = FooContent3TypeDeserializerState::Element3(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -805,21 +805,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_element_3(data)?;
-                    *self.state = FooContent6TypeDeserializerState::Element4(None);
+                    *self.state = FooContent3TypeDeserializerState::Element4(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(FooContent6TypeDeserializerState::Element3(
+                            fallback.get_or_insert(FooContent3TypeDeserializerState::Element3(
                                 Some(deserializer),
                             ));
-                            *self.state = FooContent6TypeDeserializerState::Element4(None);
+                            *self.state = FooContent3TypeDeserializerState::Element4(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                FooContent6TypeDeserializerState::Element3(Some(deserializer));
+                                FooContent3TypeDeserializerState::Element3(Some(deserializer));
                         }
                     }
                     ret
@@ -830,7 +830,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<FooContent6TypeDeserializerState>,
+            fallback: &mut Option<FooContent3TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -842,11 +842,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.element_4.is_some() {
-                    fallback.get_or_insert(FooContent6TypeDeserializerState::Element4(None));
-                    *self.state = FooContent6TypeDeserializerState::Done__;
+                    fallback.get_or_insert(FooContent3TypeDeserializerState::Element4(None));
+                    *self.state = FooContent3TypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooContent6TypeDeserializerState::Element4(None);
+                    *self.state = FooContent3TypeDeserializerState::Element4(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -857,21 +857,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_element_4(data)?;
-                    *self.state = FooContent6TypeDeserializerState::Done__;
+                    *self.state = FooContent3TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(FooContent6TypeDeserializerState::Element4(
+                            fallback.get_or_insert(FooContent3TypeDeserializerState::Element4(
                                 Some(deserializer),
                             ));
-                            *self.state = FooContent6TypeDeserializerState::Done__;
+                            *self.state = FooContent3TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                FooContent6TypeDeserializerState::Element4(Some(deserializer));
+                                FooContent3TypeDeserializerState::Element4(Some(deserializer));
                         }
                     }
                     ret
@@ -879,20 +879,20 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::FooContent6Type> for FooContent6TypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooContent6Type>
+    impl<'de> Deserializer<'de, super::FooContent3Type> for FooContent3TypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::FooContent3Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 element_3: None,
                 element_4: None,
-                state: Box::new(FooContent6TypeDeserializerState::Init__),
+                state: Box::new(FooContent3TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, FooContent6TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, FooContent3TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -904,11 +904,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::FooContent6Type>
+        ) -> DeserializerResult<'de, super::FooContent3Type>
         where
             R: DeserializeReader,
         {
-            use FooContent6TypeDeserializerState as S;
+            use FooContent3TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -951,7 +951,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = FooContent6TypeDeserializerState::Element3(None);
+                        *self.state = FooContent3TypeDeserializerState::Element3(None);
                         event
                     }
                     (S::Element3(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1010,16 +1010,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::FooContent6Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::FooContent3Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                FooContent6TypeDeserializerState::Unknown__,
+                FooContent3TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::FooContent6Type {
+            Ok(super::FooContent3Type {
                 element_3: self
                     .element_3
                     .ok_or_else(|| ErrorKind::MissingElement("Element3".into()))?,
@@ -1043,8 +1043,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
+        Content2(<super::FooContent2Type as WithSerializer>::Serializer<'ser>),
         Content3(<super::FooContent3Type as WithSerializer>::Serializer<'ser>),
-        Content6(<super::FooContent6Type as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -1055,14 +1055,14 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     FooTypeSerializerState::Init__ => {
                         match self.value {
+                            super::FooType::Content2(x) => {
+                                *self.state = FooTypeSerializerState::Content2(
+                                    WithSerializer::serializer(x, Some("tns:Content2"), false)?,
+                                )
+                            }
                             super::FooType::Content3(x) => {
                                 *self.state = FooTypeSerializerState::Content3(
                                     WithSerializer::serializer(x, Some("tns:Content3"), false)?,
-                                )
-                            }
-                            super::FooType::Content6(x) => {
-                                *self.state = FooTypeSerializerState::Content6(
-                                    WithSerializer::serializer(x, Some("tns:Content6"), false)?,
                                 )
                             }
                         }
@@ -1072,11 +1072,11 @@ pub mod quick_xml_serialize {
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    FooTypeSerializerState::Content3(x) => match x.next().transpose()? {
+                    FooTypeSerializerState::Content2(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = FooTypeSerializerState::End__,
                     },
-                    FooTypeSerializerState::Content6(x) => match x.next().transpose()? {
+                    FooTypeSerializerState::Content3(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = FooTypeSerializerState::End__,
                     },
@@ -1104,6 +1104,66 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
+    pub struct FooContent2TypeSerializer<'ser> {
+        pub(super) value: &'ser super::FooContent2Type,
+        pub(super) state: Box<FooContent2TypeSerializerState<'ser>>,
+    }
+    #[derive(Debug)]
+    pub(super) enum FooContent2TypeSerializerState<'ser> {
+        Init__,
+        Element1(<i32 as WithSerializer>::Serializer<'ser>),
+        Element2(<String as WithSerializer>::Serializer<'ser>),
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> FooContent2TypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    FooContent2TypeSerializerState::Init__ => {
+                        *self.state =
+                            FooContent2TypeSerializerState::Element1(WithSerializer::serializer(
+                                &self.value.element_1,
+                                Some("tns:Element1"),
+                                false,
+                            )?);
+                    }
+                    FooContent2TypeSerializerState::Element1(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = FooContent2TypeSerializerState::Element2(
+                                WithSerializer::serializer(
+                                    &self.value.element_2,
+                                    Some("tns:Element2"),
+                                    false,
+                                )?,
+                            )
+                        }
+                    },
+                    FooContent2TypeSerializerState::Element2(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = FooContent2TypeSerializerState::Done__,
+                    },
+                    FooContent2TypeSerializerState::Done__ => return Ok(None),
+                    FooContent2TypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for FooContent2TypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = FooContent2TypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
     pub struct FooContent3TypeSerializer<'ser> {
         pub(super) value: &'ser super::FooContent3Type,
         pub(super) state: Box<FooContent3TypeSerializerState<'ser>>,
@@ -1111,8 +1171,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FooContent3TypeSerializerState<'ser> {
         Init__,
-        Element1(<i32 as WithSerializer>::Serializer<'ser>),
-        Element2(<String as WithSerializer>::Serializer<'ser>),
+        Element3(<i32 as WithSerializer>::Serializer<'ser>),
+        Element4(<String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -1122,25 +1182,25 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     FooContent3TypeSerializerState::Init__ => {
                         *self.state =
-                            FooContent3TypeSerializerState::Element1(WithSerializer::serializer(
-                                &self.value.element_1,
-                                Some("tns:Element1"),
+                            FooContent3TypeSerializerState::Element3(WithSerializer::serializer(
+                                &self.value.element_3,
+                                Some("tns:Element3"),
                                 false,
                             )?);
                     }
-                    FooContent3TypeSerializerState::Element1(x) => match x.next().transpose()? {
+                    FooContent3TypeSerializerState::Element3(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = FooContent3TypeSerializerState::Element2(
+                            *self.state = FooContent3TypeSerializerState::Element4(
                                 WithSerializer::serializer(
-                                    &self.value.element_2,
-                                    Some("tns:Element2"),
+                                    &self.value.element_4,
+                                    Some("tns:Element4"),
                                     false,
                                 )?,
                             )
                         }
                     },
-                    FooContent3TypeSerializerState::Element2(x) => match x.next().transpose()? {
+                    FooContent3TypeSerializerState::Element4(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = FooContent3TypeSerializerState::Done__,
                     },
@@ -1158,66 +1218,6 @@ pub mod quick_xml_serialize {
                 Ok(None) => None,
                 Err(error) => {
                     *self.state = FooContent3TypeSerializerState::Done__;
-                    Some(Err(error))
-                }
-            }
-        }
-    }
-    #[derive(Debug)]
-    pub struct FooContent6TypeSerializer<'ser> {
-        pub(super) value: &'ser super::FooContent6Type,
-        pub(super) state: Box<FooContent6TypeSerializerState<'ser>>,
-    }
-    #[derive(Debug)]
-    pub(super) enum FooContent6TypeSerializerState<'ser> {
-        Init__,
-        Element3(<i32 as WithSerializer>::Serializer<'ser>),
-        Element4(<String as WithSerializer>::Serializer<'ser>),
-        Done__,
-        Phantom__(&'ser ()),
-    }
-    impl<'ser> FooContent6TypeSerializer<'ser> {
-        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
-            loop {
-                match &mut *self.state {
-                    FooContent6TypeSerializerState::Init__ => {
-                        *self.state =
-                            FooContent6TypeSerializerState::Element3(WithSerializer::serializer(
-                                &self.value.element_3,
-                                Some("tns:Element3"),
-                                false,
-                            )?);
-                    }
-                    FooContent6TypeSerializerState::Element3(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = FooContent6TypeSerializerState::Element4(
-                                WithSerializer::serializer(
-                                    &self.value.element_4,
-                                    Some("tns:Element4"),
-                                    false,
-                                )?,
-                            )
-                        }
-                    },
-                    FooContent6TypeSerializerState::Element4(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = FooContent6TypeSerializerState::Done__,
-                    },
-                    FooContent6TypeSerializerState::Done__ => return Ok(None),
-                    FooContent6TypeSerializerState::Phantom__(_) => unreachable!(),
-                }
-            }
-        }
-    }
-    impl<'ser> Iterator for FooContent6TypeSerializer<'ser> {
-        type Item = Result<Event<'ser>, Error>;
-        fn next(&mut self) -> Option<Self::Item> {
-            match self.next_event() {
-                Ok(Some(event)) => Some(Ok(event)),
-                Ok(None) => None,
-                Err(error) => {
-                    *self.state = FooContent6TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

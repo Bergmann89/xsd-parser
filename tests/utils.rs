@@ -26,6 +26,7 @@ impl ConfigEx for Config {
 
         config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
 
+        config.generator.generate = Generate::Named;
         config.generator.type_postfix.element_type = "Type".into();
         config.generator.flags |= GeneratorFlags::FLATTEN_STRUCT_CONTENT;
 

@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, Schema},
+    config::{IdentTriple, InterpreterFlags, OptimizerFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser,
     types::IdentType,
     Config,

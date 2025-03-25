@@ -7,10 +7,13 @@ pub mod name;
 pub mod type_;
 
 mod helper;
+mod name_builder;
 
 use std::collections::BTreeMap;
 use std::ops::Deref;
 use std::ops::DerefMut;
+use std::sync::atomic::AtomicUsize;
+use std::sync::Arc;
 
 pub use self::custom::CustomType;
 pub use self::helper::{VecHelper, WithIdent};
@@ -21,6 +24,7 @@ pub use self::info::{
     UnionTypeInfo, UnionTypesInfo, VariantInfo,
 };
 pub use self::name::Name;
+pub use self::name_builder::{NameBuilder, NameFallback};
 pub use self::type_::{BuildInInfo, Type, TypeEq, TypeVariant};
 
 use crate::schema::{Namespace, NamespaceId};
@@ -38,7 +42,7 @@ pub struct Types {
     /// Map of the different namespaces.
     pub modules: BTreeMap<NamespaceId, Module>,
 
-    next_name_id: usize,
+    next_name_id: Arc<AtomicUsize>,
 }
 
 /// Represents a module used by type information in the [`Types`] structure.
@@ -52,14 +56,9 @@ pub struct Module {
 }
 
 impl Types {
-    /// Create a new [`Name::Unnamed`] name by using a unique io for this name.
-    pub fn make_unnamed(&mut self) -> Name {
-        self.next_name_id = self.next_name_id.wrapping_add(1);
-
-        Name::Unnamed {
-            id: self.next_name_id,
-            ext: None,
-        }
+    /// Create a new [`NameBuilder`] instance, that can be used to build type named.
+    pub fn name_builder(&mut self) -> NameBuilder {
+        NameBuilder::new(self.next_name_id.clone())
     }
 
     /// Get the identifier and the type of the passed `ident` with all single

@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use crate::{code::UnknownNamespace, schema::NamespaceId};
+use crate::schema::NamespaceId;
 
 use super::Ident;
 
@@ -27,10 +27,4 @@ pub enum Error {
     /// could not be converted to a suitable default code snippet.
     #[error("Invalid default value for type {0:?}: {1}!")]
     InvalidDefaultValue(Ident, String),
-}
-
-impl From<UnknownNamespace> for Error {
-    fn from(value: UnknownNamespace) -> Self {
-        Self::UnknownNamespace(value.0)
-    }
 }

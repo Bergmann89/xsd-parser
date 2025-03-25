@@ -197,9 +197,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
                 for var in &*ei.variants {
-                    if var.type_.is_none()
-                        && matches!(var.ident.name.as_str(), Some(x) if x == default)
-                    {
+                    if var.type_.is_none() && var.ident.name.as_str() == default {
                         let variant_ident =
                             format_variant_ident(&var.ident.name, var.display_name.as_deref());
 
@@ -208,15 +206,8 @@ impl<'a, 'types> Request<'a, 'types> {
 
                     if let Some(target_ident) = &var.type_ {
                         if let Ok(default) = self.get_default(current_ns, default, target_ident) {
-                            let variant_ident = match self.state.cache.get(target_ident) {
-                                Some(type_ref) if var.ident.name.is_unnamed() => {
-                                    type_ref.type_ident.clone()
-                                }
-                                _ => format_variant_ident(
-                                    &var.ident.name,
-                                    var.display_name.as_deref(),
-                                ),
-                            };
+                            let variant_ident =
+                                format_variant_ident(&var.ident.name, var.display_name.as_deref());
 
                             return Ok(quote!(#target_type :: #variant_ident(#default)));
                         }
@@ -605,9 +596,7 @@ impl VariantInfo {
 
                 let variant_ident = if let Some(display_name) = self.display_name.as_deref() {
                     format_ident!("{display_name}")
-                } else if let (Some(type_ref), true) = (type_ref, self.ident.name.is_unnamed()) {
-                    type_ref.type_ident.clone()
-                } else if matches!(self.ident.name.as_str(), Some("")) {
+                } else if self.ident.name.as_str().is_empty() {
                     *unknown += 1;
 
                     format_ident!("Unknown{unknown}")

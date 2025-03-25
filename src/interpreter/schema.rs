@@ -10,7 +10,7 @@ use crate::schema::xs::{
 use crate::schema::{Namespace, NamespaceId, QName, Schemas};
 use crate::types::{Ident, IdentType, Name, Type, TypeVariant};
 
-use super::{Error, NameFallback, NameUnwrap, Node, State, VariantBuilder};
+use super::{Error, Node, State, VariantBuilder};
 
 #[derive(Debug)]
 pub(super) struct SchemaInterpreter<'schema, 'state> {
@@ -169,9 +169,7 @@ impl SchemaInterpreter<'_, '_> {
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
-            name: name
-                .or_fallback(ty.name.clone())
-                .unwrap_or_unnamed(self.state),
+            name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Element,
         };
 
@@ -187,9 +185,7 @@ impl SchemaInterpreter<'_, '_> {
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
-            name: name
-                .or_fallback(ty.name.clone())
-                .unwrap_or_unnamed(self.state),
+            name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Attribute,
         };
 
@@ -205,9 +201,7 @@ impl SchemaInterpreter<'_, '_> {
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
-            name: name
-                .or_fallback(ty.name.clone())
-                .unwrap_or_unnamed(self.state),
+            name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
         };
 
@@ -223,9 +217,7 @@ impl SchemaInterpreter<'_, '_> {
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
-            name: name
-                .or_fallback(ty.name.clone())
-                .unwrap_or_unnamed(self.state),
+            name: self.state.name_builder().or(name).or(&ty.name).finish(),
             type_: IdentType::Type,
         };
 
@@ -326,9 +318,10 @@ impl SchemaInterpreter<'_, '_> {
         let name = qname.local_name();
         let name =
             from_utf8(name).map_err(|_| Error::InvalidLocalName(RawByteStr::from_slice(name)))?;
+        let name = name.to_owned();
 
         Ok(Ident {
-            name: Name::new(name),
+            name: Name::new_named(name),
             ns,
             type_: IdentType::Type,
         })

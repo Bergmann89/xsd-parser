@@ -2,152 +2,48 @@
 
 use std::borrow::Cow;
 use std::fmt::{Display, Formatter, Result as FmtResult};
-use std::mem::take;
 
 use inflector::Inflector;
 
-/// Type that represents a name of a XSD element
+/// Type that represents a name of a XSD element.
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub enum Name {
     /// The name was explicitly set to the given value.
     Named(Cow<'static, str>),
 
-    /// The name is unknown and should be generated out of the provided information.
-    Unnamed {
-        /// Unique id for this name.
-        id: usize,
-
-        /// Extension that may be added to the name.
-        ext: Option<Cow<'static, str>>,
-    },
+    /// The name was generated.
+    Generated(Cow<'static, str>),
 }
 
 impl Name {
-    /// Generate a unified name from the passed string.
-    #[must_use]
-    pub fn unify(s: &str) -> String {
-        // This is a trick to get weird type name to simple pascal case
-        s.replace('.', "_")
-            .to_screaming_snake_case()
-            .to_pascal_case()
-    }
-
     /// Create a new [`Name::Named`] using the passed `name`.
     #[must_use]
     pub const fn named(name: &'static str) -> Self {
         Self::Named(Cow::Borrowed(name))
     }
 
+    /// Create a new [`Name::Generated`] using the passed `name`.
+    #[must_use]
+    pub const fn generated(name: &'static str) -> Self {
+        Self::Generated(Cow::Borrowed(name))
+    }
+
     /// Create a new [`Name::Named`] using the passed `name`.
     #[must_use]
-    pub fn new<S: Into<String>>(name: S) -> Self {
-        Self::Named(Cow::Owned(name.into()))
+    pub fn new_named<T>(name: T) -> Self
+    where
+        T: Into<Cow<'static, str>>,
+    {
+        Self::Named(name.into())
     }
 
-    /// Remove the provided `suffix` from the [`Name::Named`] or the [`Name::Unnamed::ext`]
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use std::borrow::Cow;
-    /// # use xsd_parser::types::Name;
-    /// let name = Name::new("test-fuu");
-    /// let expected = Name::new("test");
-    /// assert_eq!(name.remove_suffix("-fuu"), expected);
-    ///
-    /// let name = Name::Unnamed { id: 123, ext: Some(Cow::Borrowed("test-fuu")) };
-    /// let expected = Name::Unnamed { id: 123, ext: Some(Cow::Owned("test".into())) };;
-    /// assert_eq!(name.remove_suffix("-fuu"), expected);
-    /// ```
+    /// Create a new [`Name::Generated`] using the passed `name`.
     #[must_use]
-    pub fn remove_suffix(&self, suffix: &str) -> Self {
-        match self {
-            Self::Named(s) => {
-                if let Some(s) = s.strip_suffix(suffix) {
-                    Self::new(s)
-                } else {
-                    Self::Named(s.clone())
-                }
-            }
-            Self::Unnamed { id, ext: Some(ext) } => {
-                if let Some(ext) = ext.strip_suffix(suffix) {
-                    Self::Unnamed {
-                        id: *id,
-                        ext: Some(Cow::Owned(ext.to_owned())),
-                    }
-                } else {
-                    Self::Unnamed {
-                        id: *id,
-                        ext: Some(ext.clone()),
-                    }
-                }
-            }
-            x => x.clone(),
-        }
-    }
-
-    /// Create a type name from this [`Name`] object.
-    ///
-    /// This method can be used to generate a rust type name from this name object.
-    /// The resulting name is written in pascal case and may or may not contain
-    /// additional information depending on the passed arguments.
-    ///
-    /// # Arguments
-    /// - `with_id` Wether to add the unique id of the name to the resulting name or not
-    /// - `name` Optional name that should be added to the resulting name
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use std::borrow::Cow;
-    /// # use xsd_parser::types::Name;
-    ///
-    /// let name = Name::new("test");
-    /// assert_eq!(Name::new("Test"), name.to_type_name(false, None));
-    /// assert_eq!(Name::new("Test"), name.to_type_name(true, None));
-    /// assert_eq!(Name::new("Test"), name.to_type_name(false, Some("extra")));
-    /// assert_eq!(Name::new("Test"), name.to_type_name(true, Some("extra")));
-    ///
-    /// let name = Name::Unnamed { id: 123, ext: None };
-    /// assert_eq!(Name::new("Unnamed123"), name.to_type_name(false, None));
-    /// assert_eq!(Name::new("Extra"), name.to_type_name(false, Some("extra")));
-    /// assert_eq!(Name::new("Unnamed123"), name.to_type_name(true, None));
-    /// assert_eq!(Name::new("Extra123"), name.to_type_name(true, Some("extra")));
-    ///
-    /// let name = Name::Unnamed { id: 123, ext: Some(Cow::Borrowed("ext")) };
-    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_name(false, None));
-    /// assert_eq!(Name::new("ExtExtra"), name.to_type_name(false, Some("extra")));
-    /// assert_eq!(Name::new("ExtUnnamed123"), name.to_type_name(true, None));
-    /// assert_eq!(Name::new("ExtExtra123"), name.to_type_name(true, Some("extra")));
-    /// ```
-    #[must_use]
-    pub fn to_type_name(&self, with_id: bool, name: Option<&str>) -> Self {
-        match (self, name) {
-            (Self::Named(s), _) => Self::Named(Cow::Owned(s.to_pascal_case())),
-            (Self::Unnamed { id, ext: Some(ext) }, Some(name)) if with_id => Self::Named(
-                Cow::Owned(format!("{}{}{id}", Self::unify(ext), Self::unify(name))),
-            ),
-            (Self::Unnamed { ext: Some(ext), .. }, Some(name)) => Self::Named(Cow::Owned(format!(
-                "{}{}",
-                Self::unify(ext),
-                Self::unify(name)
-            ))),
-            (Self::Unnamed { id, ext: None, .. }, Some(name)) if with_id => {
-                Self::Named(Cow::Owned(format!("{}{id}", Self::unify(name))))
-            }
-            (Self::Unnamed { ext: None, .. }, Some(name)) => {
-                Self::Named(Cow::Owned(Self::unify(name)))
-            }
-            (
-                Self::Unnamed {
-                    id, ext: Some(ext), ..
-                },
-                None,
-            ) => Self::Named(Cow::Owned(format!("{}Unnamed{id}", Self::unify(ext)))),
-            (Self::Unnamed { id, ext: None, .. }, None) => {
-                Self::Named(Cow::Owned(format!("Unnamed{id}")))
-            }
-        }
+    pub fn new_generated<T>(name: T) -> Self
+    where
+        T: Into<Cow<'static, str>>,
+    {
+        Self::Generated(name.into())
     }
 
     /// Returns `true` if this is a [`Name::Named`], `false` otherwise.
@@ -156,66 +52,82 @@ impl Name {
         matches!(self, Self::Named(_))
     }
 
-    /// Returns `true` if this is a [`Name::Unnamed`], `false` otherwise.
+    /// Returns `true` if this is a [`Name::Generated`], `false` otherwise.
     #[must_use]
-    pub fn is_unnamed(&self) -> bool {
-        matches!(self, Self::Unnamed { .. })
+    pub fn is_generated(&self) -> bool {
+        matches!(self, Self::Generated { .. })
     }
 
-    /// Returns `true` if this is a [`Name::Unnamed`] with extensions, `false` otherwise.
+    /// Returns the value of [`Name::Named`] or [`Name::Generated`].
     #[must_use]
-    pub fn has_extension(&self) -> bool {
-        matches!(self, Self::Unnamed { ext: Some(_), .. })
+    pub fn as_str(&self) -> &str {
+        match self {
+            Self::Named(s) => s,
+            Self::Generated(s) => s,
+        }
     }
 
-    /// Returns the value of [`Name::Named`] as `Some(&str)`, or `None` if it's an [`Name::Unnamed`].
+    /// Returns the value of [`Name::Named`] or `None`.
     #[must_use]
-    pub fn as_str(&self) -> Option<&str> {
+    pub fn as_named_str(&self) -> Option<&str> {
         match self {
             Self::Named(s) => Some(s),
-            Self::Unnamed { .. } => None,
+            Self::Generated(_) => None,
         }
     }
 
-    /// Adds extensions to this name.
-    ///
-    /// # Arguments
-    /// - `replace` replace any existing extension with the new one
-    /// - `iter` iterator of extensions to apply
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use std::borrow::Cow;
-    /// # use xsd_parser::types::Name;
-    ///
-    /// let name = Name::new("test");
-    /// assert_eq!(Name::new("ExtTest"), name.extend(false, Some("ext")));
-    ///
-    /// let name = Name::Unnamed { id: 123, ext: Some(Cow::Borrowed("ext")) };
-    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("Fuu".into())) }, name.clone().extend(true, Some("fuu")));
-    /// assert_eq!(Name::Unnamed { id: 123, ext: Some(Cow::Owned("FuuExt".into())) }, name.extend(false, Some("fuu")));
-    /// ``````
+    /// Formats this name as type name.
     #[must_use]
-    pub fn extend<I>(mut self, mut replace: bool, iter: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Display,
-    {
-        for s in iter {
-            let s = s.to_string().to_pascal_case();
-            match &mut self {
-                Self::Named(name) => *name = Cow::Owned(format!("{s}{}", name.to_pascal_case())),
-                Self::Unnamed { ext: Some(ext), .. } if !take(&mut replace) => {
-                    *ext = Cow::Owned(format!("{s}{}", ext.to_pascal_case()));
-                }
-                Self::Unnamed { ext, .. } => {
-                    *ext = Some(Cow::Owned(s));
-                }
-            }
+    pub fn to_type_name(&self) -> String {
+        Self::format_type_name(self.as_str())
+    }
+
+    /// Formats this name as field name.
+    #[must_use]
+    pub fn to_field_name(&self) -> String {
+        Self::format_field_name(self.as_str())
+    }
+
+    /// Unifies the passed string `s`.
+    #[must_use]
+    pub fn unify(s: &str) -> String {
+        s.replace(|c: char| c != '_' && !c.is_alphanumeric(), "_")
+            .to_screaming_snake_case()
+            .to_pascal_case()
+    }
+
+    /// Formats the passed string `s` as type name.
+    #[must_use]
+    pub fn format_type_name(s: &str) -> String {
+        let name = Name::unify(s).to_pascal_case();
+
+        if name.starts_with(char::is_numeric) {
+            format!("_{name}")
+        } else {
+            name
+        }
+    }
+
+    /// Formats the passed string `s` as field name.
+    #[must_use]
+    pub fn format_field_name(s: &str) -> String {
+        let mut name = Name::unify(s).to_snake_case();
+
+        if let Ok(idx) = KEYWORDS.binary_search_by(|(key, _)| key.cmp(&&*name)) {
+            name = KEYWORDS[idx].1.into();
         }
 
-        self
+        if name.starts_with(char::is_numeric) {
+            name = format!("_{name}");
+        }
+
+        name
+    }
+}
+
+impl AsRef<str> for Name {
+    fn as_ref(&self) -> &str {
+        self.as_str()
     }
 }
 
@@ -223,8 +135,7 @@ impl Display for Name {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             Self::Named(x) => write!(f, "{x}"),
-            Self::Unnamed { id, ext: None } => write!(f, "Unnamed{id}"),
-            Self::Unnamed { id, ext: Some(ext) } => write!(f, "{ext}Unnamed{id}"),
+            Self::Generated(x) => write!(f, "{x}"),
         }
     }
 }
@@ -240,3 +151,55 @@ impl From<&'static str> for Name {
         Self::Named(Cow::Borrowed(value))
     }
 }
+
+const KEYWORDS: &[(&str, &str)] = &[
+    ("abstract", "abstract_"),
+    ("as", "as_"),
+    ("become", "become_"),
+    ("box", "box_"),
+    ("break", "break_"),
+    ("const", "const_"),
+    ("continue", "continue_"),
+    ("crate", "crate_"),
+    ("do", "do_"),
+    ("else", "else_"),
+    ("enum", "enum_"),
+    ("extern", "extern_"),
+    ("false", "false_"),
+    ("final", "final_"),
+    ("fn", "fn_"),
+    ("for", "for_"),
+    ("if", "if_"),
+    ("impl", "impl_"),
+    ("in", "in_"),
+    ("let", "let_"),
+    ("loop", "loop_"),
+    ("macro", "macro_"),
+    ("match", "match_"),
+    ("mod", "mod_"),
+    ("move", "move_"),
+    ("mut", "mut_"),
+    ("override", "override_"),
+    ("priv", "priv_"),
+    ("pub", "pub_"),
+    ("ref", "ref_"),
+    ("return", "return_"),
+    ("self", "self_"),
+    ("Self", "Self_"),
+    ("static", "static_"),
+    ("struct", "struct_"),
+    ("super", "super_"),
+    ("trait", "trait_"),
+    ("true", "true_"),
+    ("try", "try_"),
+    ("type", "type_"),
+    ("typeof", "typeof_"),
+    ("union", "union_"),
+    ("unsafe", "unsafe_"),
+    ("unsized", "unsized_"),
+    ("use", "use_"),
+    ("virtual", "virtual_"),
+    ("where", "where_"),
+    ("while", "while_"),
+    ("yield", "yield_"),
+];

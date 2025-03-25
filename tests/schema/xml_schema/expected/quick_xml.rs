@@ -40,11 +40,11 @@ pub enum SchemaElementTypeContent {
 impl SchemaElementType {
     #[must_use]
     pub fn default_final_default() -> FullDerivationSetType {
-        FullDerivationSetType::TypeDerivationControlOpt(TypeDerivationControlOpt(Vec::new()))
+        FullDerivationSetType::FullDerivationSet7(FullDerivationSet7Type(Vec::new()))
     }
     #[must_use]
     pub fn default_block_default() -> BlockSetType {
-        BlockSetType::BlockSetItemOpt(BlockSetItemOpt(Vec::new()))
+        BlockSetType::BlockSet93(BlockSet93Type(Vec::new()))
     }
     #[must_use]
     pub fn default_attribute_form_default() -> FormChoiceType {
@@ -68,7 +68,7 @@ impl WithDeserializer for SchemaElementTypeContent {
 #[derive(Debug, Clone)]
 pub enum FullDerivationSetType {
     All,
-    TypeDerivationControlOpt(TypeDerivationControlOpt),
+    FullDerivationSet7(FullDerivationSet7Type),
 }
 impl DeserializeBytes for FullDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -77,15 +77,15 @@ impl DeserializeBytes for FullDerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::TypeDerivationControlOpt(
-                TypeDerivationControlOpt::deserialize_bytes(reader, x)?,
+            x => Ok(Self::FullDerivationSet7(
+                FullDerivationSet7Type::deserialize_bytes(reader, x)?,
             )),
         }
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct TypeDerivationControlOpt(pub Vec<TypeDerivationControlType>);
-impl DeserializeBytes for TypeDerivationControlOpt {
+pub struct FullDerivationSet7Type(pub Vec<TypeDerivationControlType>);
+impl DeserializeBytes for FullDerivationSet7Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -101,7 +101,7 @@ impl DeserializeBytes for TypeDerivationControlOpt {
 #[derive(Debug, Clone)]
 pub enum BlockSetType {
     All,
-    BlockSetItemOpt(BlockSetItemOpt),
+    BlockSet93(BlockSet93Type),
 }
 impl DeserializeBytes for BlockSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -110,15 +110,15 @@ impl DeserializeBytes for BlockSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::BlockSetItemOpt(BlockSetItemOpt::deserialize_bytes(
+            x => Ok(Self::BlockSet93(BlockSet93Type::deserialize_bytes(
                 reader, x,
             )?)),
         }
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct BlockSetItemOpt(pub Vec<BlockSetItemType>);
-impl DeserializeBytes for BlockSetItemOpt {
+pub struct BlockSet93Type(pub Vec<BlockSet93ItemType>);
+impl DeserializeBytes for BlockSet93Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -126,7 +126,7 @@ impl DeserializeBytes for BlockSetItemOpt {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| BlockSetItemType::deserialize_bytes(reader, bytes))
+                .map(|bytes| BlockSet93ItemType::deserialize_bytes(reader, bytes))
                 .collect::<Result<Vec<_>, _>>()?,
         ))
     }
@@ -250,7 +250,7 @@ impl WithDeserializer for AnnotationElementTypeContent {
 pub struct DefaultOpenContentElementType {
     pub id: Option<String>,
     pub applies_to_empty: bool,
-    pub mode: DefaultOpenContentModeType,
+    pub mode: DefaultOpenContentmodeType,
     pub annotation: Option<AnnotationElementType>,
     pub any: WildcardType,
 }
@@ -260,8 +260,8 @@ impl DefaultOpenContentElementType {
         false
     }
     #[must_use]
-    pub fn default_mode() -> DefaultOpenContentModeType {
-        DefaultOpenContentModeType::Interleave
+    pub fn default_mode() -> DefaultOpenContentmodeType {
+        DefaultOpenContentmodeType::Interleave
     }
 }
 impl WithDeserializer for DefaultOpenContentElementType {
@@ -439,7 +439,7 @@ pub struct AttributeType {
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub type_: Option<String>,
-    pub use_: AttributeUseType,
+    pub use_: AttributeuseType,
     pub default: Option<String>,
     pub fixed: Option<String>,
     pub form: Option<FormChoiceType>,
@@ -450,8 +450,8 @@ pub struct AttributeType {
 }
 impl AttributeType {
     #[must_use]
-    pub fn default_use_() -> AttributeUseType {
-        AttributeUseType::Optional
+    pub fn default_use_() -> AttributeuseType {
+        AttributeuseType::Optional
     }
 }
 impl WithDeserializer for AttributeType {
@@ -490,12 +490,12 @@ impl DeserializeBytes for TypeDerivationControlType {
     }
 }
 #[derive(Debug, Clone)]
-pub enum BlockSetItemType {
+pub enum BlockSet93ItemType {
     Extension,
     Restriction,
     Substitution,
 }
-impl DeserializeBytes for BlockSetItemType {
+impl DeserializeBytes for BlockSet93ItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -524,11 +524,11 @@ impl WithDeserializer for DocumentationElementType {
     type Deserializer = quick_xml_deserialize::DocumentationElementTypeDeserializer;
 }
 #[derive(Debug, Clone)]
-pub enum DefaultOpenContentModeType {
+pub enum DefaultOpenContentmodeType {
     Interleave,
     Suffix,
 }
-impl DeserializeBytes for DefaultOpenContentModeType {
+impl DeserializeBytes for DefaultOpenContentmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -560,7 +560,7 @@ impl WithDeserializer for WildcardType {
 #[derive(Debug, Clone)]
 pub enum SimpleDerivationSetType {
     All,
-    SimpleDerivationSetItemOpt(SimpleDerivationSetItemOpt),
+    SimpleDerivationSet163(SimpleDerivationSet163Type),
 }
 impl DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -569,8 +569,8 @@ impl DeserializeBytes for SimpleDerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSetItemOpt(
-                SimpleDerivationSetItemOpt::deserialize_bytes(reader, x)?,
+            x => Ok(Self::SimpleDerivationSet163(
+                SimpleDerivationSet163Type::deserialize_bytes(reader, x)?,
             )),
         }
     }
@@ -616,7 +616,7 @@ impl WithDeserializer for UnionElementType {
 #[derive(Debug, Clone)]
 pub enum DerivationSetType {
     All,
-    ReducedDerivationControlOpt(ReducedDerivationControlOpt),
+    DerivationSet5(DerivationSet5Type),
 }
 impl DeserializeBytes for DerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -625,9 +625,9 @@ impl DeserializeBytes for DerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::ReducedDerivationControlOpt(
-                ReducedDerivationControlOpt::deserialize_bytes(reader, x)?,
-            )),
+            x => Ok(Self::DerivationSet5(DerivationSet5Type::deserialize_bytes(
+                reader, x,
+            )?)),
         }
     }
 }
@@ -669,14 +669,14 @@ impl WithDeserializer for ComplexContentElementTypeContent {
 #[derive(Debug, Clone)]
 pub struct OpenContentElementType {
     pub id: Option<String>,
-    pub mode: OpenContentModeType,
+    pub mode: OpenContentmodeType,
     pub annotation: Option<AnnotationElementType>,
     pub any: Option<WildcardType>,
 }
 impl OpenContentElementType {
     #[must_use]
-    pub fn default_mode() -> OpenContentModeType {
-        OpenContentModeType::Interleave
+    pub fn default_mode() -> OpenContentmodeType {
+        OpenContentmodeType::Interleave
     }
 }
 impl WithDeserializer for OpenContentElementType {
@@ -829,12 +829,12 @@ impl WithDeserializer for KeyrefElementTypeContent {
     type Deserializer = quick_xml_deserialize::KeyrefElementTypeContentDeserializer;
 }
 #[derive(Debug, Clone)]
-pub enum AttributeUseType {
+pub enum AttributeuseType {
     Prohibited,
     Optional,
     Required,
 }
-impl DeserializeBytes for AttributeUseType {
+impl DeserializeBytes for AttributeuseType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -902,8 +902,8 @@ impl DeserializeBytes for ProcessContentsType {
     }
 }
 #[derive(Debug, Clone, Default)]
-pub struct SimpleDerivationSetItemOpt(pub Vec<SimpleDerivationSetItemType>);
-impl DeserializeBytes for SimpleDerivationSetItemOpt {
+pub struct SimpleDerivationSet163Type(pub Vec<SimpleDerivationSet163ItemType>);
+impl DeserializeBytes for SimpleDerivationSet163Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -911,7 +911,7 @@ impl DeserializeBytes for SimpleDerivationSetItemOpt {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| SimpleDerivationSetItemType::deserialize_bytes(reader, bytes))
+                .map(|bytes| SimpleDerivationSet163ItemType::deserialize_bytes(reader, bytes))
                 .collect::<Result<Vec<_>, _>>()?,
         ))
     }
@@ -937,8 +937,8 @@ impl WithDeserializer for Facet {
     type Deserializer = quick_xml_deserialize::FacetDeserializer;
 }
 #[derive(Debug, Clone, Default)]
-pub struct ReducedDerivationControlOpt(pub Vec<ReducedDerivationControlType>);
-impl DeserializeBytes for ReducedDerivationControlOpt {
+pub struct DerivationSet5Type(pub Vec<ReducedDerivationControlType>);
+impl DeserializeBytes for DerivationSet5Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1004,12 +1004,12 @@ impl WithDeserializer for ExtensionTypeContent {
     type Deserializer = quick_xml_deserialize::ExtensionTypeContentDeserializer;
 }
 #[derive(Debug, Clone)]
-pub enum OpenContentModeType {
+pub enum OpenContentmodeType {
     None,
     Interleave,
     Suffix,
 }
-impl DeserializeBytes for OpenContentModeType {
+impl DeserializeBytes for OpenContentmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1081,13 +1081,13 @@ impl DeserializeBytes for BasicNamespaceListItemType {
     }
 }
 #[derive(Debug, Clone)]
-pub enum SimpleDerivationSetItemType {
+pub enum SimpleDerivationSet163ItemType {
     List,
     Union,
     Restriction,
     Extension,
 }
-impl DeserializeBytes for SimpleDerivationSetItemType {
+impl DeserializeBytes for SimpleDerivationSet163ItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -6242,7 +6242,7 @@ pub mod quick_xml_deserialize {
     pub struct DefaultOpenContentElementTypeDeserializer {
         id: Option<String>,
         applies_to_empty: bool,
-        mode: super::DefaultOpenContentModeType,
+        mode: super::DefaultOpenContentmodeType,
         annotation: Option<super::AnnotationElementType>,
         any: Option<super::WildcardType>,
         state: Box<DefaultOpenContentElementTypeDeserializerState>,
@@ -6262,7 +6262,7 @@ pub mod quick_xml_deserialize {
         {
             let mut id: Option<String> = None;
             let mut applies_to_empty: Option<bool> = None;
-            let mut mode: Option<super::DefaultOpenContentModeType> = None;
+            let mut mode: Option<super::DefaultOpenContentmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -12106,7 +12106,7 @@ pub mod quick_xml_deserialize {
         name: Option<String>,
         ref_: Option<String>,
         type_: Option<String>,
-        use_: super::AttributeUseType,
+        use_: super::AttributeuseType,
         default: Option<String>,
         fixed: Option<String>,
         form: Option<super::FormChoiceType>,
@@ -12133,7 +12133,7 @@ pub mod quick_xml_deserialize {
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
             let mut type_: Option<String> = None;
-            let mut use_: Option<super::AttributeUseType> = None;
+            let mut use_: Option<super::AttributeuseType> = None;
             let mut default: Option<String> = None;
             let mut fixed: Option<String> = None;
             let mut form: Option<super::FormChoiceType> = None;
@@ -15793,7 +15793,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct OpenContentElementTypeDeserializer {
         id: Option<String>,
-        mode: super::OpenContentModeType,
+        mode: super::OpenContentmodeType,
         annotation: Option<super::AnnotationElementType>,
         any: Option<super::WildcardType>,
         state: Box<OpenContentElementTypeDeserializerState>,
@@ -15812,7 +15812,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let mut id: Option<String> = None;
-            let mut mode: Option<super::OpenContentModeType> = None;
+            let mut mode: Option<super::OpenContentmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(

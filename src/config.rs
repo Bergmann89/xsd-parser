@@ -164,6 +164,9 @@ pub enum Generate {
     /// The generator will generate code for all types of the schemas.
     All,
 
+    /// The generator will generate code for all types that have a name.
+    Named,
+
     /// List of identifiers the generator will generate code for.
     Types(Vec<IdentTriple>),
 }
@@ -533,7 +536,7 @@ impl IdentTriple {
 
         Ok(Ident {
             ns,
-            name: Name::new(self.name),
+            name: Name::new_named(self.name),
             type_: self.type_,
         })
     }
