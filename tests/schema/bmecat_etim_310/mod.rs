@@ -7,7 +7,7 @@ use xsd_parser::{
 
 use crate::utils::{generate_test, ConfigEx};
 
-const NS: Namespace = Namespace::new_const(b"https://www.etim-international.com/bmecat/50");
+const NS: Namespace = Namespace::new_const(b"http://www.etim-international.com/bmecat/31");
 
 fn config() -> Config {
     let mut config = Config::test_default()
@@ -32,8 +32,8 @@ fn config() -> Config {
 #[test]
 fn generate_default() {
     generate_test(
-        "tests/schema/bmecat_etim_501/schema.xsd",
-        "tests/schema/bmecat_etim_501/expected/default.rs",
+        "tests/schema/bmecat_etim_310/schema.xsd",
+        "tests/schema/bmecat_etim_310/expected/default.rs",
         config(),
     );
 }
@@ -41,45 +41,11 @@ fn generate_default() {
 #[test]
 fn generate_quick_xml() {
     generate_test(
-        "tests/schema/bmecat_etim_501/schema.xsd",
-        "tests/schema/bmecat_etim_501/expected/quick_xml.rs",
+        "tests/schema/bmecat_etim_310/schema.xsd",
+        "tests/schema/bmecat_etim_310/expected/quick_xml.rs",
         config().with_quick_xml(),
     );
 }
-
-macro_rules! define_test_read_quick_xml {
-    ($name:ident, $file:literal) => {
-        #[test]
-        #[cfg(not(feature = "update-expectations"))]
-        fn $name() {
-            use quick_xml::Bmecat;
-
-            crate::utils::quick_xml_read_test::<Bmecat, _>(
-                std::path::Path::new("tests/schema/bmecat_etim_501/example").join($file),
-            );
-        }
-    };
-}
-
-define_test_read_quick_xml!(
-    read_quick_xml_etim7,
-    "SampleFile_bmecat_etim_V5_T_NEW_CATALOG_ETIM7.xml"
-);
-
-define_test_read_quick_xml!(
-    read_quick_xml_etim8,
-    "SampleFile_bmecat_etim_V5_T_NEW_CATALOG_ETIM8.xml"
-);
-
-define_test_read_quick_xml!(
-    read_quick_xml_etim9,
-    "SampleFile_bmecat_etim_V5_T_NEW_CATALOG_ETIM9.xml"
-);
-
-define_test_read_quick_xml!(
-    read_quick_xml_etim10,
-    "SampleFile_bmecat_etim_V5_T_NEW_CATALOG_ETIM10.xml"
-);
 
 #[cfg(not(feature = "update-expectations"))]
 mod default {
