@@ -22,6 +22,7 @@ mod ref_to_attribute;
 mod sequence;
 mod sequence_with_choice;
 mod simple_content;
+mod simple_content_with_extension;
 mod simple_type;
 mod simple_type_max_length;
 mod static_list;

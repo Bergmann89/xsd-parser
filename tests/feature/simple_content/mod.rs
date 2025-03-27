@@ -10,6 +10,7 @@ fn generate_default() {
         Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
+
 #[test]
 fn generate_quick_xml() {
     generate_test(

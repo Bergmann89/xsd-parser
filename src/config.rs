@@ -489,7 +489,7 @@ impl Default for GeneratorConfig {
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
-            generate: Generate::All,
+            generate: Generate::Named,
             flags: GeneratorFlags::empty(),
             xsd_parser: "xsd_parser".into(),
         }

@@ -507,7 +507,7 @@ fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
     if s.ends_with(postfix) {
         ident.name.clone()
     } else {
-        Name::new_generated(dbg!(format!("{s}{postfix}")))
+        Name::new_generated(format!("{s}{postfix}"))
     }
 }
 

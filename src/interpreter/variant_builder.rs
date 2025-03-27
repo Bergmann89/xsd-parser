@@ -32,9 +32,6 @@ pub(super) struct VariantBuilder<'a, 'schema, 'state> {
     /// Mode of the content of the constructed type
     content_mode: ContentMode,
 
-    /// Contains the type identifier for the simple content type
-    simple_base: Option<Ident>,
-
     /// `true` if the simple content type of a complex type was already duplicated
     /// and is now unique for this type.
     is_simple_content_unique: bool,
@@ -127,7 +124,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             fixed: false,
             type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
-            simple_base: None,
             is_simple_content_unique: false,
             owner,
         }
@@ -313,27 +309,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     self.apply_complex_content(x)?;
                 }
                 C::SimpleContent(x) => self.apply_simple_content(x)?,
-                C::All(x) => {
-                    get_or_init_any!(self, ComplexType);
-                    self.apply_all(x)?;
-                }
-                C::Choice(x) => {
-                    get_or_init_any!(self, ComplexType);
-                    self.apply_choice(x)?;
-                }
-                C::Sequence(x) => {
-                    get_or_init_any!(self, ComplexType);
-                    self.apply_sequence(x)?;
-                }
+                C::All(x) => self.apply_all(x)?,
+                C::Choice(x) => self.apply_choice(x)?,
+                C::Sequence(x) => self.apply_sequence(x)?,
                 C::Attribute(x) => self.apply_attribute_ref(x)?,
                 C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::Group(x) => self.apply_group_ref(x)?,
                 C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
             }
-        }
-
-        if ty.abstract_ {
-            get_or_init_any!(self, ComplexType);
         }
 
         Ok(())
@@ -670,10 +653,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
-
-                if let Some(content) = self.simple_base.take() {
-                    ci.content = Some(content);
-                }
             }
             AttributeType {
                 ref_: Some(ref_),
@@ -843,10 +822,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
+        let mut simple_base_ident = None;
         let base = match (self.type_mode, self.content_mode) {
             (TypeMode::Simple, ContentMode::Simple) => {
                 self.fixed = false;
-                self.simple_base = Some(base.clone());
+
+                simple_base_ident = Some(base.clone());
 
                 self.owner.get_simple_type_variant(base)?
             }
@@ -854,7 +835,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 match self.owner.get_simple_type_variant(base) {
                     Ok(ty) => {
                         self.fixed = false;
-                        self.simple_base = Some(base.clone());
+
+                        simple_base_ident = Some(base.clone());
 
                         ty
                     }
@@ -918,7 +900,19 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             (_, _) => (),
         }
 
-        self.variant = Some(base);
+        match (simple_base_ident, self.type_mode, self.content_mode) {
+            (Some(_), TypeMode::Simple, _) => self.variant = Some(base),
+            (Some(base_ident), TypeMode::Complex, ContentMode::Simple) => {
+                let ci = get_or_init_any!(self, ComplexType);
+                ci.content.get_or_insert(base_ident);
+            }
+            (None, TypeMode::Complex, ContentMode::Simple | ContentMode::Complex) => {
+                self.variant = Some(base);
+            }
+            (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
+        }
+
+        tracing::debug!("{:#?}", self.variant);
 
         Ok(())
     }
@@ -966,9 +960,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             (TypeMode::Simple, _) => f(self)?,
             (TypeMode::Complex, ContentMode::Simple) => {
                 let ci = get_or_init_any!(self, ComplexType);
-                if let Some(content) = self.simple_base.take() {
-                    ci.content = Some(content);
-                }
 
                 let Some(mut content_ident) = ci.content.clone() else {
                     crate::unreachable!(
