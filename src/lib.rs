@@ -25,11 +25,6 @@ pub type ParserError<E> = parser::Error<E>;
 use std::fs::write;
 
 pub use config::Config;
-use config::Renderer;
-use generator::renderer::{
-    DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
-    QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
-};
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
@@ -42,10 +37,14 @@ use tracing::instrument;
 
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
-    OptimizerFlags, ParserConfig, ParserFlags, Resolver, Schema,
+    OptimizerFlags, ParserConfig, ParserFlags, Resolver, Schema, Renderer,
 };
 use self::misc::TypesPrinter;
 use self::parser::resolver::{FileResolver, ManyResolver};
+use self::generator::renderer::{
+    DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
+    QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
+};
 use self::schema::Schemas;
 use self::types::{IdentType, Types};
 
