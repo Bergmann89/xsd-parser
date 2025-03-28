@@ -1,9 +1,9 @@
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub union_: UnionType,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UnionType {
     I32(i32),
     String(String),

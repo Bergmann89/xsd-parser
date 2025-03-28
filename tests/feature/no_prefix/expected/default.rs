@@ -1,5 +1,5 @@
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub once: i32,
     pub optional: Option<i32>,

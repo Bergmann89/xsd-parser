@@ -11,12 +11,12 @@ pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/
 pub const NS_DEFAULT: Namespace =
     Namespace::new_const(b"https://www.etim-international.com/bmecat/50");
 pub type Bmecat = BmecatElementType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct BmecatElementType {
     pub version: TypeBmEcatVersionType,
     pub content: Vec<BmecatElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BmecatElementTypeContent {
     Header(HeaderElementType),
     TnewCatalog(TnewCatalogElementType),
@@ -60,7 +60,7 @@ impl WithDeserializer for BmecatElementType {
 impl WithDeserializer for BmecatElementTypeContent {
     type Deserializer = quick_xml_deserialize::BmecatElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TypeBmEcatVersionType {
     _2005,
 }
@@ -82,7 +82,7 @@ impl DeserializeBytes for TypeBmEcatVersionType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct HeaderElementType {
     pub generator_info: Option<String>,
     pub catalog: CatalogElementType,
@@ -108,7 +108,7 @@ impl WithSerializer for HeaderElementType {
 impl WithDeserializer for HeaderElementType {
     type Deserializer = quick_xml_deserialize::HeaderElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TnewCatalogElementType {
     pub product: Vec<TnewCatalogProductElementType>,
 }
@@ -130,7 +130,7 @@ impl WithSerializer for TnewCatalogElementType {
 impl WithDeserializer for TnewCatalogElementType {
     type Deserializer = quick_xml_deserialize::TnewCatalogElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TupdateProductsElementType {
     pub prev_version: i32,
     pub product: Vec<TupdateProductsProductElementType>,
@@ -153,7 +153,7 @@ impl WithSerializer for TupdateProductsElementType {
 impl WithDeserializer for TupdateProductsElementType {
     type Deserializer = quick_xml_deserialize::TupdateProductsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TupdatePricesElementType {
     pub prev_version: i32,
     pub product: Vec<TupdatePricesProductElementType>,
@@ -176,7 +176,7 @@ impl WithSerializer for TupdatePricesElementType {
 impl WithDeserializer for TupdatePricesElementType {
     type Deserializer = quick_xml_deserialize::TupdatePricesElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TnewProductdataElementType {
     pub product: Vec<TnewProductdataProductElementType>,
 }
@@ -198,7 +198,7 @@ impl WithSerializer for TnewProductdataElementType {
 impl WithDeserializer for TnewProductdataElementType {
     type Deserializer = quick_xml_deserialize::TnewProductdataElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CatalogElementType {
     pub language: Vec<LanguageElementType>,
     pub catalog_id: String,
@@ -227,7 +227,7 @@ impl WithSerializer for CatalogElementType {
 impl WithDeserializer for CatalogElementType {
     type Deserializer = quick_xml_deserialize::CatalogElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct BuyerElementType {
     pub buyer_id: Vec<TypePartyIdType>,
     pub buyer_name: String,
@@ -250,7 +250,7 @@ impl WithSerializer for BuyerElementType {
 impl WithDeserializer for BuyerElementType {
     type Deserializer = quick_xml_deserialize::BuyerElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SupplierElementType {
     pub supplier_id: Vec<TypePartyIdType>,
     pub supplier_name: String,
@@ -275,7 +275,7 @@ impl WithSerializer for SupplierElementType {
 impl WithDeserializer for SupplierElementType {
     type Deserializer = quick_xml_deserialize::SupplierElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxHeaderType {
     pub udx_edxf_version: TypeBmEcatEtimVersionType,
 }
@@ -297,7 +297,7 @@ impl WithSerializer for UdxHeaderType {
 impl WithDeserializer for UdxHeaderType {
     type Deserializer = quick_xml_deserialize::UdxHeaderTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TnewCatalogProductElementType {
     pub mode: TnewCatalogProductmodeType,
     pub supplier_pid: String,
@@ -337,7 +337,7 @@ impl WithSerializer for TnewCatalogProductElementType {
 impl WithDeserializer for TnewCatalogProductElementType {
     type Deserializer = quick_xml_deserialize::TnewCatalogProductElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TupdateProductsProductElementType {
     pub mode: TupdateProductsProductmodeType,
     pub supplier_pid: String,
@@ -371,7 +371,7 @@ impl WithSerializer for TupdateProductsProductElementType {
 impl WithDeserializer for TupdateProductsProductElementType {
     type Deserializer = quick_xml_deserialize::TupdateProductsProductElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TupdatePricesProductElementType {
     pub mode: TupdatePricesProductmodeType,
     pub supplier_pid: String,
@@ -406,7 +406,7 @@ impl WithSerializer for TupdatePricesProductElementType {
 impl WithDeserializer for TupdatePricesProductElementType {
     type Deserializer = quick_xml_deserialize::TupdatePricesProductElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TnewProductdataProductElementType {
     pub mode: TnewProductdataProductmodeType,
     pub supplier_pid: String,
@@ -443,7 +443,7 @@ impl WithSerializer for TnewProductdataProductElementType {
 impl WithDeserializer for TnewProductdataProductElementType {
     type Deserializer = quick_xml_deserialize::TnewProductdataProductElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct LanguageElementType {
     pub default: Option<String>,
     pub content: DtLangType,
@@ -466,7 +466,7 @@ impl WithSerializer for LanguageElementType {
 impl WithDeserializer for LanguageElementType {
     type Deserializer = quick_xml_deserialize::LanguageElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DtMlstringType {
     pub lang: Option<DtLangType>,
     pub content: String,
@@ -489,7 +489,7 @@ impl WithSerializer for DtMlstringType {
 impl WithDeserializer for DtMlstringType {
     type Deserializer = quick_xml_deserialize::DtMlstringTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CatalogDatetimeElementType {
     pub type_: CatalogDatetimetypeType,
     pub date: String,
@@ -512,7 +512,7 @@ impl WithSerializer for CatalogDatetimeElementType {
 impl WithDeserializer for CatalogDatetimeElementType {
     type Deserializer = quick_xml_deserialize::CatalogDatetimeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DtCurrenciesType {
     Adp,
     Aed,
@@ -1215,7 +1215,7 @@ impl DeserializeBytes for DtCurrenciesType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TypePartyIdType {
     pub type_: String,
     pub content: String,
@@ -1238,7 +1238,7 @@ impl WithSerializer for TypePartyIdType {
 impl WithDeserializer for TypePartyIdType {
     type Deserializer = quick_xml_deserialize::TypePartyIdTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SupplierAddressElementType {
     pub type_: SupplierAddresstypeType,
     pub contact: Vec<DtMlstringType>,
@@ -1268,7 +1268,7 @@ impl WithSerializer for SupplierAddressElementType {
 impl WithDeserializer for SupplierAddressElementType {
     type Deserializer = quick_xml_deserialize::SupplierAddressElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MimeInfoElementType {
     pub mime: Vec<MimeElementType>,
 }
@@ -1290,7 +1290,7 @@ impl WithSerializer for MimeInfoElementType {
 impl WithDeserializer for MimeInfoElementType {
     type Deserializer = quick_xml_deserialize::MimeInfoElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TypeBmEcatEtimVersionType {
     _50,
 }
@@ -1312,7 +1312,7 @@ impl DeserializeBytes for TypeBmEcatEtimVersionType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TnewCatalogProductmodeType {
     New,
 }
@@ -1334,7 +1334,7 @@ impl DeserializeBytes for TnewCatalogProductmodeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductDetailsElementType {
     pub description_short: Vec<DtMlstringType>,
     pub description_long: Vec<DtMlstringType>,
@@ -1369,7 +1369,7 @@ impl WithSerializer for ProductDetailsElementType {
 impl WithDeserializer for ProductDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductFeaturesElementType {
     pub reference_feature_system_name: TypeClassificationSystemNameType,
     pub reference_feature_group_id: String,
@@ -1393,7 +1393,7 @@ impl WithSerializer for ProductFeaturesElementType {
 impl WithDeserializer for ProductFeaturesElementType {
     type Deserializer = quick_xml_deserialize::ProductFeaturesElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductOrderDetailsElementType {
     pub order_unit: DtUnitType,
     pub content_unit: DtUnitType,
@@ -1424,7 +1424,7 @@ impl WithSerializer for ProductOrderDetailsElementType {
 impl WithDeserializer for ProductOrderDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductOrderDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductPriceDetailsElementType {
     pub datetime: Vec<ProductPriceDetailsDatetimeElementType>,
     pub daily_price: Option<String>,
@@ -1453,7 +1453,7 @@ impl WithSerializer for ProductPriceDetailsElementType {
 impl WithDeserializer for ProductPriceDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductPriceDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxProductType {
     pub udx_edxf_mime_info: Option<UdxEdxfMimeInfoElementType>,
     pub udx_edxf_manufacturer_acronym: Option<String>,
@@ -1504,7 +1504,7 @@ impl WithSerializer for UdxProductType {
 impl WithDeserializer for UdxProductType {
     type Deserializer = quick_xml_deserialize::UdxProductTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductReferenceElementType {
     pub type_: ProductReferencetypeType,
     pub quantity: Option<i32>,
@@ -1533,7 +1533,7 @@ impl WithSerializer for ProductReferenceElementType {
 impl WithDeserializer for ProductReferenceElementType {
     type Deserializer = quick_xml_deserialize::ProductReferenceElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductLogisticDetailsElementType {
     pub customs_tariff_number: Vec<CustomsTariffNumberElementType>,
     pub statistics_factor: Option<f64>,
@@ -1561,7 +1561,7 @@ impl WithSerializer for ProductLogisticDetailsElementType {
 impl WithDeserializer for ProductLogisticDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductLogisticDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TupdateProductsProductmodeType {
     Delete,
     New,
@@ -1589,7 +1589,7 @@ impl DeserializeBytes for TupdateProductsProductmodeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TupdatePricesProductmodeType {
     Update,
 }
@@ -1611,7 +1611,7 @@ impl DeserializeBytes for TupdatePricesProductmodeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TnewProductdataProductmodeType {
     New,
 }
@@ -1633,7 +1633,7 @@ impl DeserializeBytes for TnewProductdataProductmodeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxProductdataType {
     pub udx_edxf_mime_info: Option<UdxEdxfMimeInfoElementType>,
     pub udx_edxf_manufacturer_acronym: Option<String>,
@@ -1669,7 +1669,7 @@ impl WithSerializer for UdxProductdataType {
 impl WithDeserializer for UdxProductdataType {
     type Deserializer = quick_xml_deserialize::UdxProductdataTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DtLangType {
     Aar,
     Abk,
@@ -3068,7 +3068,7 @@ impl DeserializeBytes for DtLangType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum CatalogDatetimetypeType {
     GenerationDate,
 }
@@ -3090,7 +3090,7 @@ impl DeserializeBytes for CatalogDatetimetypeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SupplierAddresstypeType {
     Supplier,
 }
@@ -3112,7 +3112,7 @@ impl DeserializeBytes for SupplierAddresstypeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MimeElementType {
     pub mime_source: Vec<DtMlstringType>,
     pub mime_descr: Vec<DtMlstringType>,
@@ -3136,7 +3136,7 @@ impl WithSerializer for MimeElementType {
 impl WithDeserializer for MimeElementType {
     type Deserializer = quick_xml_deserialize::MimeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct InternationalPidElementType {
     pub type_: Option<String>,
     pub content: String,
@@ -3161,7 +3161,7 @@ impl WithSerializer for InternationalPidElementType {
 impl WithDeserializer for InternationalPidElementType {
     type Deserializer = quick_xml_deserialize::InternationalPidElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct BuyerPidElementType {
     pub type_: Option<String>,
     pub content: String,
@@ -3184,7 +3184,7 @@ impl WithSerializer for BuyerPidElementType {
 impl WithDeserializer for BuyerPidElementType {
     type Deserializer = quick_xml_deserialize::BuyerPidElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SpecialTreatmentClassElementType {
     pub type_: String,
     pub content: String,
@@ -3211,7 +3211,7 @@ impl WithSerializer for SpecialTreatmentClassElementType {
 impl WithDeserializer for SpecialTreatmentClassElementType {
     type Deserializer = quick_xml_deserialize::SpecialTreatmentClassElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductStatusElementType {
     pub lang: Option<DtLangType>,
     pub type_: ProductStatustypeType,
@@ -3235,7 +3235,7 @@ impl WithSerializer for ProductStatusElementType {
 impl WithDeserializer for ProductStatusElementType {
     type Deserializer = quick_xml_deserialize::ProductStatusElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ProductTypeElementType {
     Contract,
     License,
@@ -3266,7 +3266,7 @@ impl DeserializeBytes for ProductTypeElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TypeClassificationSystemNameType {
     String(String),
     Dynamic,
@@ -3290,7 +3290,7 @@ impl DeserializeBytes for TypeClassificationSystemNameType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FeatureElementType {
     pub fname: Vec<DtMlstringType>,
     pub fvalue: Vec<DtMlstringType>,
@@ -3315,7 +3315,7 @@ impl WithSerializer for FeatureElementType {
 impl WithDeserializer for FeatureElementType {
     type Deserializer = quick_xml_deserialize::FeatureElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DtUnitType {
     Ann,
     Be,
@@ -3487,7 +3487,7 @@ impl DeserializeBytes for DtUnitType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
     pub type_: ProductPriceDetailsDatetimetypeType,
     pub date: String,
@@ -3505,7 +3505,7 @@ impl WithSerializer for ProductPriceDetailsDatetimeElementType {
 impl WithDeserializer for ProductPriceDetailsDatetimeElementType {
     type Deserializer = quick_xml_deserialize::ProductPriceDetailsDatetimeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ProductPriceElementType {
     pub price_type: String,
     pub price_amount: f64,
@@ -3533,7 +3533,7 @@ impl WithSerializer for ProductPriceElementType {
 impl WithDeserializer for ProductPriceElementType {
     type Deserializer = quick_xml_deserialize::ProductPriceElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PriceBaseElementType {
     pub price_unit: DtUnitType,
     pub price_unit_factor: Option<f32>,
@@ -3556,7 +3556,7 @@ impl WithSerializer for PriceBaseElementType {
 impl WithDeserializer for PriceBaseElementType {
     type Deserializer = quick_xml_deserialize::PriceBaseElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfMimeInfoElementType {
     pub udx_edxf_mime: Vec<UdxEdxfMimeElementType>,
 }
@@ -3578,11 +3578,11 @@ impl WithSerializer for UdxEdxfMimeInfoElementType {
 impl WithDeserializer for UdxEdxfMimeInfoElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfMimeInfoElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfDiscountGroupElementType {
     pub content: Vec<UdxEdxfDiscountGroupElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfDiscountGroupElementTypeContent {
     UdxEdxfDiscountGroupManufacturer(String),
     UdxEdxfDiscountGroupSupplier(String),
@@ -3624,7 +3624,7 @@ impl WithDeserializer for UdxEdxfDiscountGroupElementType {
 impl WithDeserializer for UdxEdxfDiscountGroupElementTypeContent {
     type Deserializer = quick_xml_deserialize::UdxEdxfDiscountGroupElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfAdditionalFactorsElementType {
     pub udx_edxf_additional_price_factor: f64,
     pub udx_edxf_additional_factor_info: Vec<DtMlstringType>,
@@ -3651,7 +3651,7 @@ impl WithSerializer for UdxEdxfAdditionalFactorsElementType {
 impl WithDeserializer for UdxEdxfAdditionalFactorsElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfAdditionalFactorsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfCountryBranchNumbersElementType {
     pub udx_edxf_country_branch_number:
         Vec<UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType>,
@@ -3669,7 +3669,7 @@ impl WithSerializer for UdxEdxfCountryBranchNumbersElementType {
 impl WithDeserializer for UdxEdxfCountryBranchNumbersElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfCountryBranchNumbersElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfCountryBranchSupplierIdsElementType {
     pub udx_edxf_country_branch_supplier_id:
         Vec<UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType>,
@@ -3689,7 +3689,7 @@ impl WithDeserializer for UdxEdxfCountryBranchSupplierIdsElementType {
     type Deserializer =
         quick_xml_deserialize::UdxEdxfCountryBranchSupplierIdsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfPackingUnitsElementType {
     pub udx_edxf_packing_unit: Vec<UdxEdxfPackingUnitElementType>,
 }
@@ -3715,7 +3715,7 @@ impl WithSerializer for UdxEdxfPackingUnitsElementType {
 impl WithDeserializer for UdxEdxfPackingUnitsElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfPackingUnitsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfProductLogisticDetailsElementType {
     pub udx_edxf_netvolume: Option<f64>,
     pub udx_edxf_netweight: Option<f64>,
@@ -3739,7 +3739,7 @@ impl WithSerializer for UdxEdxfProductLogisticDetailsElementType {
 impl WithDeserializer for UdxEdxfProductLogisticDetailsElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfProductLogisticDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfRohsIndicatorElementType {
     True,
     False,
@@ -3767,7 +3767,7 @@ impl DeserializeBytes for UdxEdxfRohsIndicatorElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfReachElementType {
     pub udx_edxf_reach_listdate: Option<String>,
     pub udx_edxf_reach_info: UdxEdxfReachInfoElementType,
@@ -3792,7 +3792,7 @@ impl WithSerializer for UdxEdxfReachElementType {
 impl WithDeserializer for UdxEdxfReachElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfReachElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfSpecialTreatmentClassDetailsElementType {
     pub udx_edxf_hazardous_substances: Vec<UdxEdxfHazardousSubstancesElementType>,
     pub udx_edxf_shipping_name: Option<DtMlstringType>,
@@ -3833,7 +3833,7 @@ impl WithDeserializer for UdxEdxfSpecialTreatmentClassDetailsElementType {
     type Deserializer =
         quick_xml_deserialize::UdxEdxfSpecialTreatmentClassDetailsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfSurchargeListElementType {
     pub udx_edxf_surcharge: Vec<UdxEdxfSurchargeElementType>,
 }
@@ -3859,7 +3859,7 @@ impl WithSerializer for UdxEdxfSurchargeListElementType {
 impl WithDeserializer for UdxEdxfSurchargeListElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfSurchargeListElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfWarrantyElementType {
     pub udx_edxf_warranty_business: Option<i32>,
     pub udx_edxf_warranty_consumer: Option<i32>,
@@ -3882,7 +3882,7 @@ impl WithSerializer for UdxEdxfWarrantyElementType {
 impl WithDeserializer for UdxEdxfWarrantyElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfWarrantyElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfProductEtimDynamicElementType {
     pub udx_edxf_product_etim_release_date: String,
 }
@@ -3899,7 +3899,7 @@ impl WithSerializer for UdxEdxfProductEtimDynamicElementType {
 impl WithDeserializer for UdxEdxfProductEtimDynamicElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfProductEtimDynamicElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfProductFeaturesMcElementType {
     pub udx_edxf_reference_feature_mc_id: String,
     pub udx_edxf_reference_feature_mc_version: i32,
@@ -3928,7 +3928,7 @@ impl WithSerializer for UdxEdxfProductFeaturesMcElementType {
 impl WithDeserializer for UdxEdxfProductFeaturesMcElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfProductFeaturesMcElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfProductCharacteristicsElementType {
     pub udx_edxf_product_characteristic: Vec<UdxEdxfProductCharacteristicElementType>,
 }
@@ -3946,7 +3946,7 @@ impl WithSerializer for UdxEdxfProductCharacteristicsElementType {
 impl WithDeserializer for UdxEdxfProductCharacteristicsElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfProductCharacteristicsElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ProductReferencetypeType {
     Accessories,
     BaseProduct,
@@ -3992,7 +3992,7 @@ impl DeserializeBytes for ProductReferencetypeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CustomsTariffNumberElementType {
     pub customs_number: String,
 }
@@ -4018,7 +4018,7 @@ impl WithSerializer for CustomsTariffNumberElementType {
 impl WithDeserializer for CustomsTariffNumberElementType {
     type Deserializer = quick_xml_deserialize::CustomsTariffNumberElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ProductStatustypeType {
     Bargain,
     CoreProduct,
@@ -4061,7 +4061,7 @@ impl DeserializeBytes for ProductStatustypeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ProductPriceDetailsDatetimetypeType {
     ValidStartDate,
     ValidEndDate,
@@ -4086,7 +4086,7 @@ impl DeserializeBytes for ProductPriceDetailsDatetimetypeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfMimeElementType {
     pub udx_edxf_mime_source: Vec<DtMlstringType>,
     pub udx_edxf_mime_code: UdxEdxfMimeCodeElementType,
@@ -4115,7 +4115,7 @@ impl WithSerializer for UdxEdxfMimeElementType {
 impl WithDeserializer for UdxEdxfMimeElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfMimeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
     pub type_: String,
     pub country: String,
@@ -4134,7 +4134,7 @@ impl WithSerializer for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberEle
 impl WithDeserializer for UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType {
     type Deserializer = quick_xml_deserialize :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializer ;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType {
     pub type_: String,
     pub country: String,
@@ -4153,7 +4153,7 @@ impl WithSerializer for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSuppl
 impl WithDeserializer for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType {
     type Deserializer = quick_xml_deserialize :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializer ;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_quantity_min: f32,
     pub udx_edxf_quantity_max: Option<f32>,
@@ -4192,7 +4192,7 @@ impl WithSerializer for UdxEdxfPackingUnitElementType {
 impl WithDeserializer for UdxEdxfPackingUnitElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfPackingUnitElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfReachInfoElementType {
     True,
     False,
@@ -4220,7 +4220,7 @@ impl DeserializeBytes for UdxEdxfReachInfoElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfHazardousSubstancesElementType {
     pub udx_edxf_un_number: String,
     pub udx_edxf_net_weight_of_hazardous_substance: Option<f64>,
@@ -4239,7 +4239,7 @@ impl WithSerializer for UdxEdxfHazardousSubstancesElementType {
 impl WithDeserializer for UdxEdxfHazardousSubstancesElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfHazardousSubstancesElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfPackingGroupElementType {
     I,
     Ii,
@@ -4267,7 +4267,7 @@ impl DeserializeBytes for UdxEdxfPackingGroupElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfAggregationStateElementType {
     L,
     S,
@@ -4295,7 +4295,7 @@ impl DeserializeBytes for UdxEdxfAggregationStateElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfHazardClassElementType {
     _1,
     _21,
@@ -4359,7 +4359,7 @@ impl DeserializeBytes for UdxEdxfHazardClassElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfTunnelCodeElementType {
     A,
     B,
@@ -4393,7 +4393,7 @@ impl DeserializeBytes for UdxEdxfTunnelCodeElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfGhsLabelCodeElementType {
     Ghs01,
     Ghs02,
@@ -4439,7 +4439,7 @@ impl DeserializeBytes for UdxEdxfGhsLabelCodeElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfGhsSignalWordElementType {
     D,
     W,
@@ -4464,11 +4464,11 @@ impl DeserializeBytes for UdxEdxfGhsSignalWordElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfSurchargeElementType {
     pub content: Vec<UdxEdxfSurchargeElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfSurchargeElementTypeContent {
     UdxEdxfSurchargeType(String),
     UdxEdxfSurchargeClass(String),
@@ -4529,7 +4529,7 @@ impl WithDeserializer for UdxEdxfSurchargeElementType {
 impl WithDeserializer for UdxEdxfSurchargeElementTypeContent {
     type Deserializer = quick_xml_deserialize::UdxEdxfSurchargeElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfBimStatusElementType {
     Ready,
     Test,
@@ -4557,11 +4557,11 @@ impl DeserializeBytes for UdxEdxfBimStatusElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfFeatureMcElementType {
     pub content: Vec<UdxEdxfFeatureMcElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfFeatureMcElementTypeContent {
     UdxEdxfPortcode(i32),
     UdxEdxfFname(String),
@@ -4613,11 +4613,11 @@ impl WithDeserializer for UdxEdxfFeatureMcElementType {
 impl WithDeserializer for UdxEdxfFeatureMcElementTypeContent {
     type Deserializer = quick_xml_deserialize::UdxEdxfFeatureMcElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfProductCharacteristicElementType {
     pub content: Vec<UdxEdxfProductCharacteristicElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfProductCharacteristicElementTypeContent {
     UdxEdxfProductCharacteristicCode(String),
     UdxEdxfProductCharacteristicName(DtMlstringType),
@@ -4662,7 +4662,7 @@ impl WithDeserializer for UdxEdxfProductCharacteristicElementTypeContent {
     type Deserializer =
         quick_xml_deserialize::UdxEdxfProductCharacteristicElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfMimeCodeElementType {
     Md01,
     Md02,
@@ -4876,7 +4876,7 @@ impl DeserializeBytes for UdxEdxfMimeCodeElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DtPunitType {
     Be,
     Bg,
@@ -4994,7 +4994,7 @@ impl DeserializeBytes for DtPunitType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfSurchargeMannerElementType {
     Base,
     Cumulated,
@@ -5019,7 +5019,7 @@ impl DeserializeBytes for UdxEdxfSurchargeMannerElementType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType {
     _1,
     _2,
@@ -5044,7 +5044,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType {
     _1,
     _2,
@@ -5069,7 +5069,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterEl
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType {
     _1,
     _2,
@@ -5094,7 +5094,7 @@ impl DeserializeBytes for UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditEle
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfMatrixValuesElementType {
     pub udx_edxf_matrix_value: Vec<UdxEdxfMatrixValueElementType>,
 }
@@ -5120,7 +5120,7 @@ impl WithSerializer for UdxEdxfMatrixValuesElementType {
 impl WithDeserializer for UdxEdxfMatrixValuesElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfMatrixValuesElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UdxEdxfMatrixValueElementType {
     pub udx_edxf_matrix_source_value: f32,
     pub udx_edxf_matrix_result_value: f32,

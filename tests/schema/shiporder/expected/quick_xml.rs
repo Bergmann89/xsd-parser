@@ -5,7 +5,7 @@ use xsd_parser::{
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Shiporder = ShiporderType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderType {
     pub orderid: String,
     pub orderperson: String,
@@ -30,7 +30,7 @@ impl WithSerializer for ShiporderType {
 impl WithDeserializer for ShiporderType {
     type Deserializer = quick_xml_deserialize::ShiporderTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderShiptoType {
     pub name: String,
     pub address: String,
@@ -55,7 +55,7 @@ impl WithSerializer for ShiporderShiptoType {
 impl WithDeserializer for ShiporderShiptoType {
     type Deserializer = quick_xml_deserialize::ShiporderShiptoTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderItemType {
     pub title: String,
     pub note: Option<String>,

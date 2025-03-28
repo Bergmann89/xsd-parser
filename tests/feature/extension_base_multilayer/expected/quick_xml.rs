@@ -6,7 +6,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub messages: FooTypeMessagesType,
 }
@@ -28,7 +28,7 @@ impl WithSerializer for FooType {
 impl WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooTypeMessagesType {
     pub aa: i32,
     pub bb: String,

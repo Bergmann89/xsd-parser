@@ -7,7 +7,7 @@ use xsd_parser::{
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Schema = SchemaElementType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SchemaElementType {
     pub target_namespace: Option<String>,
     pub version: Option<String>,
@@ -21,7 +21,7 @@ pub struct SchemaElementType {
     pub lang: Option<String>,
     pub content: Vec<SchemaElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SchemaElementTypeContent {
     Include(IncludeElementType),
     Import(ImportElementType),
@@ -65,7 +65,7 @@ impl WithDeserializer for SchemaElementType {
 impl WithDeserializer for SchemaElementTypeContent {
     type Deserializer = quick_xml_deserialize::SchemaElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FullDerivationSetType {
     All,
     FullDerivationSet7(FullDerivationSet7Type),
@@ -83,7 +83,7 @@ impl DeserializeBytes for FullDerivationSetType {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct FullDerivationSet7Type(pub Vec<TypeDerivationControlType>);
 impl DeserializeBytes for FullDerivationSet7Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -98,7 +98,7 @@ impl DeserializeBytes for FullDerivationSet7Type {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BlockSetType {
     All,
     BlockSet93(BlockSet93Type),
@@ -116,7 +116,7 @@ impl DeserializeBytes for BlockSetType {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct BlockSet93Type(pub Vec<BlockSet93ItemType>);
 impl DeserializeBytes for BlockSet93Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -131,7 +131,7 @@ impl DeserializeBytes for BlockSet93Type {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FormChoiceType {
     Qualified,
     Unqualified,
@@ -148,7 +148,7 @@ impl DeserializeBytes for FormChoiceType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum XpathDefaultNamespaceType {
     String(String),
     DefaultNamespace,
@@ -168,7 +168,7 @@ impl DeserializeBytes for XpathDefaultNamespaceType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct IncludeElementType {
     pub id: Option<String>,
     pub schema_location: String,
@@ -177,7 +177,7 @@ pub struct IncludeElementType {
 impl WithDeserializer for IncludeElementType {
     type Deserializer = quick_xml_deserialize::IncludeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ImportElementType {
     pub id: Option<String>,
     pub namespace: Option<String>,
@@ -187,13 +187,13 @@ pub struct ImportElementType {
 impl WithDeserializer for ImportElementType {
     type Deserializer = quick_xml_deserialize::ImportElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RedefineElementType {
     pub schema_location: String,
     pub id: Option<String>,
     pub content: Vec<RedefineElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RedefineElementTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
@@ -207,13 +207,13 @@ impl WithDeserializer for RedefineElementType {
 impl WithDeserializer for RedefineElementTypeContent {
     type Deserializer = quick_xml_deserialize::RedefineElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct OverrideElementType {
     pub schema_location: String,
     pub id: Option<String>,
     pub content: Vec<OverrideElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum OverrideElementTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
@@ -230,12 +230,12 @@ impl WithDeserializer for OverrideElementType {
 impl WithDeserializer for OverrideElementTypeContent {
     type Deserializer = quick_xml_deserialize::OverrideElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnnotationElementType {
     pub id: Option<String>,
     pub content: Vec<AnnotationElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum AnnotationElementTypeContent {
     Appinfo(AppinfoElementType),
     Documentation(DocumentationElementType),
@@ -246,7 +246,7 @@ impl WithDeserializer for AnnotationElementType {
 impl WithDeserializer for AnnotationElementTypeContent {
     type Deserializer = quick_xml_deserialize::AnnotationElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DefaultOpenContentElementType {
     pub id: Option<String>,
     pub applies_to_empty: bool,
@@ -267,14 +267,14 @@ impl DefaultOpenContentElementType {
 impl WithDeserializer for DefaultOpenContentElementType {
     type Deserializer = quick_xml_deserialize::DefaultOpenContentElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SimpleBaseType {
     pub id: Option<String>,
     pub final_: Option<SimpleDerivationSetType>,
     pub name: Option<String>,
     pub content: Vec<SimpleBaseTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SimpleBaseTypeContent {
     Annotation(AnnotationElementType),
     Restriction(RestrictionElementType),
@@ -287,7 +287,7 @@ impl WithDeserializer for SimpleBaseType {
 impl WithDeserializer for SimpleBaseTypeContent {
     type Deserializer = quick_xml_deserialize::SimpleBaseTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ComplexBaseType {
     pub id: Option<String>,
     pub name: Option<String>,
@@ -298,7 +298,7 @@ pub struct ComplexBaseType {
     pub default_attributes_apply: bool,
     pub content: Vec<ComplexBaseTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ComplexBaseTypeContent {
     Annotation(AnnotationElementType),
     SimpleContent(SimpleContentElementType),
@@ -329,7 +329,7 @@ impl WithDeserializer for ComplexBaseType {
 impl WithDeserializer for ComplexBaseTypeContent {
     type Deserializer = quick_xml_deserialize::ComplexBaseTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct GroupType {
     pub id: Option<String>,
     pub name: Option<String>,
@@ -338,7 +338,7 @@ pub struct GroupType {
     pub max_occurs: AllNniType,
     pub content: Vec<GroupTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum GroupTypeContent {
     Annotation(AnnotationElementType),
     Element(ElementType),
@@ -364,14 +364,14 @@ impl WithDeserializer for GroupType {
 impl WithDeserializer for GroupTypeContent {
     type Deserializer = quick_xml_deserialize::GroupTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AttributeGroupType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub content: Vec<AttributeGroupTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum AttributeGroupTypeContent {
     Annotation(AnnotationElementType),
     Attribute(AttributeType),
@@ -384,7 +384,7 @@ impl WithDeserializer for AttributeGroupType {
 impl WithDeserializer for AttributeGroupTypeContent {
     type Deserializer = quick_xml_deserialize::AttributeGroupTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ElementType {
     pub id: Option<String>,
     pub name: Option<String>,
@@ -403,7 +403,7 @@ pub struct ElementType {
     pub target_namespace: Option<String>,
     pub content: Vec<ElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ElementTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
@@ -433,7 +433,7 @@ impl WithDeserializer for ElementType {
 impl WithDeserializer for ElementTypeContent {
     type Deserializer = quick_xml_deserialize::ElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AttributeType {
     pub id: Option<String>,
     pub name: Option<String>,
@@ -457,7 +457,7 @@ impl AttributeType {
 impl WithDeserializer for AttributeType {
     type Deserializer = quick_xml_deserialize::AttributeTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct NotationElementType {
     pub id: Option<String>,
     pub name: String,
@@ -468,7 +468,7 @@ pub struct NotationElementType {
 impl WithDeserializer for NotationElementType {
     type Deserializer = quick_xml_deserialize::NotationElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TypeDerivationControlType {
     Extension,
     Restriction,
@@ -489,7 +489,7 @@ impl DeserializeBytes for TypeDerivationControlType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BlockSet93ItemType {
     Extension,
     Restriction,
@@ -508,14 +508,14 @@ impl DeserializeBytes for BlockSet93ItemType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AppinfoElementType {
     pub source: Option<String>,
 }
 impl WithDeserializer for AppinfoElementType {
     type Deserializer = quick_xml_deserialize::AppinfoElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DocumentationElementType {
     pub source: Option<String>,
     pub lang: Option<String>,
@@ -523,7 +523,7 @@ pub struct DocumentationElementType {
 impl WithDeserializer for DocumentationElementType {
     type Deserializer = quick_xml_deserialize::DocumentationElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DefaultOpenContentmodeType {
     Interleave,
     Suffix,
@@ -540,7 +540,7 @@ impl DeserializeBytes for DefaultOpenContentmodeType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct WildcardType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
@@ -557,7 +557,7 @@ impl WildcardType {
 impl WithDeserializer for WildcardType {
     type Deserializer = quick_xml_deserialize::WildcardTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SimpleDerivationSetType {
     All,
     SimpleDerivationSet163(SimpleDerivationSet163Type),
@@ -575,13 +575,13 @@ impl DeserializeBytes for SimpleDerivationSetType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RestrictionElementType {
     pub id: Option<String>,
     pub base: Option<String>,
     pub content: Vec<RestrictionElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RestrictionElementTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
@@ -593,7 +593,7 @@ impl WithDeserializer for RestrictionElementType {
 impl WithDeserializer for RestrictionElementTypeContent {
     type Deserializer = quick_xml_deserialize::RestrictionElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ListElementType {
     pub id: Option<String>,
     pub item_type: Option<String>,
@@ -603,7 +603,7 @@ pub struct ListElementType {
 impl WithDeserializer for ListElementType {
     type Deserializer = quick_xml_deserialize::ListElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UnionElementType {
     pub id: Option<String>,
     pub member_types: Option<EntitiesType>,
@@ -613,7 +613,7 @@ pub struct UnionElementType {
 impl WithDeserializer for UnionElementType {
     type Deserializer = quick_xml_deserialize::UnionElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DerivationSetType {
     All,
     DerivationSet5(DerivationSet5Type),
@@ -631,12 +631,12 @@ impl DeserializeBytes for DerivationSetType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SimpleContentElementType {
     pub id: Option<String>,
     pub content: Vec<SimpleContentElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SimpleContentElementTypeContent {
     Annotation(AnnotationElementType),
     Restriction(RestrictionType),
@@ -648,13 +648,13 @@ impl WithDeserializer for SimpleContentElementType {
 impl WithDeserializer for SimpleContentElementTypeContent {
     type Deserializer = quick_xml_deserialize::SimpleContentElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ComplexContentElementType {
     pub id: Option<String>,
     pub mixed: Option<bool>,
     pub content: Vec<ComplexContentElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ComplexContentElementTypeContent {
     Annotation(AnnotationElementType),
     Restriction(RestrictionType),
@@ -666,7 +666,7 @@ impl WithDeserializer for ComplexContentElementType {
 impl WithDeserializer for ComplexContentElementTypeContent {
     type Deserializer = quick_xml_deserialize::ComplexContentElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct OpenContentElementType {
     pub id: Option<String>,
     pub mode: OpenContentmodeType,
@@ -682,7 +682,7 @@ impl OpenContentElementType {
 impl WithDeserializer for OpenContentElementType {
     type Deserializer = quick_xml_deserialize::OpenContentElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnyAttributeElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
@@ -700,7 +700,7 @@ impl AnyAttributeElementType {
 impl WithDeserializer for AnyAttributeElementType {
     type Deserializer = quick_xml_deserialize::AnyAttributeElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AssertionType {
     pub id: Option<String>,
     pub test: Option<String>,
@@ -710,7 +710,7 @@ pub struct AssertionType {
 impl WithDeserializer for AssertionType {
     type Deserializer = quick_xml_deserialize::AssertionTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum AllNniType {
     Usize(usize),
     Unbounded,
@@ -726,7 +726,7 @@ impl DeserializeBytes for AllNniType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnyElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
@@ -754,7 +754,7 @@ impl AnyElementType {
 impl WithDeserializer for AnyElementType {
     type Deserializer = quick_xml_deserialize::AnyElementTypeDeserializer;
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct EntitiesType(pub Vec<String>);
 impl DeserializeBytes for EntitiesType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -769,7 +769,7 @@ impl DeserializeBytes for EntitiesType {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AltType {
     pub id: Option<String>,
     pub test: Option<String>,
@@ -777,7 +777,7 @@ pub struct AltType {
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
     pub content: Vec<AltTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum AltTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
@@ -789,14 +789,14 @@ impl WithDeserializer for AltType {
 impl WithDeserializer for AltTypeContent {
     type Deserializer = quick_xml_deserialize::AltTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeybaseType {
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
     pub content: Option<KeybaseTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeybaseTypeContent {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
@@ -808,7 +808,7 @@ impl WithDeserializer for KeybaseType {
 impl WithDeserializer for KeybaseTypeContent {
     type Deserializer = quick_xml_deserialize::KeybaseTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeyrefElementType {
     pub id: Option<String>,
     pub name: Option<String>,
@@ -816,7 +816,7 @@ pub struct KeyrefElementType {
     pub refer: Option<String>,
     pub content: Option<KeyrefElementTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeyrefElementTypeContent {
     pub annotation: Option<AnnotationElementType>,
     pub selector: FieldElementType,
@@ -828,7 +828,7 @@ impl WithDeserializer for KeyrefElementType {
 impl WithDeserializer for KeyrefElementTypeContent {
     type Deserializer = quick_xml_deserialize::KeyrefElementTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum AttributeuseType {
     Prohibited,
     Optional,
@@ -847,7 +847,7 @@ impl DeserializeBytes for AttributeuseType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum NamespaceListType {
     Any,
     Other,
@@ -867,7 +867,7 @@ impl DeserializeBytes for NamespaceListType {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct BasicNamespaceListType(pub Vec<BasicNamespaceListItemType>);
 impl DeserializeBytes for BasicNamespaceListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -882,7 +882,7 @@ impl DeserializeBytes for BasicNamespaceListType {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ProcessContentsType {
     Skip,
     Lax,
@@ -901,7 +901,7 @@ impl DeserializeBytes for ProcessContentsType {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct SimpleDerivationSet163Type(pub Vec<SimpleDerivationSet163ItemType>);
 impl DeserializeBytes for SimpleDerivationSet163Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -916,7 +916,7 @@ impl DeserializeBytes for SimpleDerivationSet163Type {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum Facet {
     MinExclusive(FacetType),
     MinInclusive(FacetType),
@@ -936,7 +936,7 @@ pub enum Facet {
 impl WithDeserializer for Facet {
     type Deserializer = quick_xml_deserialize::FacetDeserializer;
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct DerivationSet5Type(pub Vec<ReducedDerivationControlType>);
 impl DeserializeBytes for DerivationSet5Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -951,13 +951,13 @@ impl DeserializeBytes for DerivationSet5Type {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RestrictionType {
     pub id: Option<String>,
     pub base: String,
     pub content: Vec<RestrictionTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RestrictionTypeContent {
     Annotation(AnnotationElementType),
     OpenContent(OpenContentElementType),
@@ -978,13 +978,13 @@ impl WithDeserializer for RestrictionType {
 impl WithDeserializer for RestrictionTypeContent {
     type Deserializer = quick_xml_deserialize::RestrictionTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ExtensionType {
     pub id: Option<String>,
     pub base: String,
     pub content: Vec<ExtensionTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ExtensionTypeContent {
     Annotation(AnnotationElementType),
     OpenContent(OpenContentElementType),
@@ -1003,7 +1003,7 @@ impl WithDeserializer for ExtensionType {
 impl WithDeserializer for ExtensionTypeContent {
     type Deserializer = quick_xml_deserialize::ExtensionTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum OpenContentmodeType {
     None,
     Interleave,
@@ -1022,7 +1022,7 @@ impl DeserializeBytes for OpenContentmodeType {
         }
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct QnameListAType(pub Vec<QnameListAItemType>);
 impl DeserializeBytes for QnameListAType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -1037,7 +1037,7 @@ impl DeserializeBytes for QnameListAType {
         ))
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct QnameListType(pub Vec<QnameListItemType>);
 impl DeserializeBytes for QnameListType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -1052,7 +1052,7 @@ impl DeserializeBytes for QnameListType {
         ))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FieldElementType {
     pub id: Option<String>,
     pub xpath: String,
@@ -1062,7 +1062,7 @@ pub struct FieldElementType {
 impl WithDeserializer for FieldElementType {
     type Deserializer = quick_xml_deserialize::FieldElementTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum BasicNamespaceListItemType {
     String(String),
     TargetNamespace,
@@ -1080,7 +1080,7 @@ impl DeserializeBytes for BasicNamespaceListItemType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SimpleDerivationSet163ItemType {
     List,
     Union,
@@ -1101,7 +1101,7 @@ impl DeserializeBytes for SimpleDerivationSet163ItemType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FacetType {
     pub id: Option<String>,
     pub value: String,
@@ -1117,7 +1117,7 @@ impl FacetType {
 impl WithDeserializer for FacetType {
     type Deserializer = quick_xml_deserialize::FacetTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ReducedDerivationControlType {
     Extension,
     Restriction,
@@ -1134,7 +1134,7 @@ impl DeserializeBytes for ReducedDerivationControlType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum QnameListAItemType {
     String(String),
     Defined,
@@ -1150,7 +1150,7 @@ impl DeserializeBytes for QnameListAItemType {
         }
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum QnameListItemType {
     String(String),
     Defined,

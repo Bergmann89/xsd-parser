@@ -1,19 +1,19 @@
 pub type Shiporder = ShiporderType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderType {
     pub orderid: String,
     pub orderperson: String,
     pub shipto: ShiporderShiptoType,
     pub item: Vec<ShiporderItemType>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderShiptoType {
     pub name: String,
     pub address: String,
     pub city: String,
     pub country: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ShiporderItemType {
     pub title: String,
     pub note: Option<String>,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 pub type Foo = FooType;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FooType {
     #[serde(rename = "Name")]
     pub name: String,

@@ -1,10 +1,10 @@
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub value: Option<String>,
     pub content: EnumType,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EnumType {
     Off,
     On,

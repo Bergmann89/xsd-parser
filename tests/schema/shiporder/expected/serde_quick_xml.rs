@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 pub type Shiporder = ShiporderType;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ShiporderType {
     #[serde(rename = "@orderid")]
     pub orderid: String,
@@ -11,7 +11,7 @@ pub struct ShiporderType {
     #[serde(default, rename = "item")]
     pub item: Vec<ShiporderItemType>,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ShiporderShiptoType {
     #[serde(rename = "name")]
     pub name: String,
@@ -22,7 +22,7 @@ pub struct ShiporderShiptoType {
     #[serde(rename = "country")]
     pub country: String,
 }
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ShiporderItemType {
     #[serde(rename = "title")]
     pub title: String,

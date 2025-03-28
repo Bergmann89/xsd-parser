@@ -1,20 +1,20 @@
 use serde::{Deserialize, Serialize};
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct EntitiesType(pub Vec<String>);
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct EntityType(pub Vec<String>);
 pub type IdType = String;
 pub type IdrefType = String;
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct IdrefsType(pub Vec<String>);
 pub type NcNameType = String;
 pub type NmtokenType = String;
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct NmtokensType(pub Vec<String>);
 pub type NotationType = String;
 pub type NameType = String;
 pub type QnameType = String;
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct AnyType;
 pub type AnyUriType = String;
 pub type Base64BinaryType = String;

@@ -6,7 +6,7 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub content_2: FooContent2Type,
     pub content_3: FooContent3Type,
@@ -29,7 +29,7 @@ impl WithSerializer for FooType {
 impl WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FooContent2Type {
     Element1(i32),
     Element2(String),
@@ -52,7 +52,7 @@ impl WithSerializer for FooContent2Type {
 impl WithDeserializer for FooContent2Type {
     type Deserializer = quick_xml_deserialize::FooContent2TypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FooContent3Type {
     Element3(i32),
     Element4(String),

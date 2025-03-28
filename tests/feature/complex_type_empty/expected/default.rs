@@ -1,2 +1,2 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SuccessType;

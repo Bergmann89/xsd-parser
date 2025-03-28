@@ -1,9 +1,9 @@
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub _4: EnumType,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EnumType {
     _1,
     _2,

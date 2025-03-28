@@ -6,11 +6,11 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub content: FooTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FooTypeContent {
     Bar(String),
     Baz(i32),

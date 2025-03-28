@@ -106,7 +106,7 @@ impl<'types> Generator<'types> {
         let config = Config {
             types,
             flags: GeneratorFlags::empty(),
-            derive: vec![format_ident!("Debug"), format_ident!("Clone")],
+            derive: vec![format_ident!("Debug")],
             postfixes: [
                 String::from("Type"),        // Type = 0
                 String::new(),               // Group = 1
