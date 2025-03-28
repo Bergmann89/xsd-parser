@@ -136,7 +136,7 @@ pub struct TypePostfix {
     pub element_type: String,
 }
 
-/// Configuration for the resolver used in [`ParserConfig`].
+/// Configuration for the [`Resolver`](crate::parser::resolver::Resolver)s used in [`ParserConfig`].
 #[derive(Debug, Clone)]
 pub enum Resolver {
     /// Resolver that is used to resolve ewb resources (like `http://...` or `https://...`).

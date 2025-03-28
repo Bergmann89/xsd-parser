@@ -15,8 +15,8 @@ use super::{Config, GeneratorFlags};
 /// Context for the rendering process.
 ///
 /// This contains different additional information and configuration that may be
-/// needed by a [`Renderer`] to render the actual code. It is also used to collect
-/// the rendered code and add it to the corresponding module.
+/// needed by a [`Renderer`](super::Renderer) to render the actual code. It is
+/// also used to collect the rendered code and add it to the corresponding module.
 #[derive(Debug)]
 pub struct Context<'a, 'types> {
     ident: &'a Ident,
