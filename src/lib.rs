@@ -37,14 +37,14 @@ use tracing::instrument;
 
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
-    OptimizerFlags, ParserConfig, ParserFlags, Resolver, Schema, Renderer,
+    OptimizerFlags, ParserConfig, ParserFlags, Renderer, Resolver, Schema,
 };
-use self::misc::TypesPrinter;
-use self::parser::resolver::{FileResolver, ManyResolver};
 use self::generator::renderer::{
     DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
     QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
 };
+use self::misc::TypesPrinter;
+use self::parser::resolver::{FileResolver, ManyResolver};
 use self::schema::Schemas;
 use self::types::{IdentType, Types};
 

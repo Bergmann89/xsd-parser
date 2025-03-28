@@ -1,5 +1,5 @@
 pub type Array = ArrayType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ArrayType {
     pub item: [i32; 5usize],
 }

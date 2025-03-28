@@ -8,7 +8,7 @@ pub const NS_DEFAULT: Namespace =
     Namespace::new_const(b"http://www.idealdesk.com/ideal/messages/mer-acq/3.3.1");
 pub const NS_DS: Namespace = Namespace::new_const(b"http://www.w3.org/2000/09/xmldsig#");
 pub type DirectoryReq = DirectoryReqType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DirectoryReqType {
     pub version: String,
     pub create_date_timestamp: String,
@@ -33,7 +33,7 @@ impl WithSerializer for DirectoryReqType {
 impl WithDeserializer for DirectoryReqType {
     type Deserializer = quick_xml_deserialize::DirectoryReqTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DirectoryReqMerchantType {
     pub merchant_id: String,
     pub sub_id: usize,
@@ -56,7 +56,7 @@ impl WithSerializer for DirectoryReqMerchantType {
 impl WithDeserializer for DirectoryReqMerchantType {
     type Deserializer = quick_xml_deserialize::DirectoryReqMerchantTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SignatureType {
     pub id: Option<String>,
     pub signed_info: SignedInfoType,
@@ -82,7 +82,7 @@ impl WithSerializer for SignatureType {
 impl WithDeserializer for SignatureType {
     type Deserializer = quick_xml_deserialize::SignatureTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SignedInfoType {
     pub id: Option<String>,
     pub canonicalization_method: CanonicalizationMethodType,
@@ -107,7 +107,7 @@ impl WithSerializer for SignedInfoType {
 impl WithDeserializer for SignedInfoType {
     type Deserializer = quick_xml_deserialize::SignedInfoTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SignatureValueType {
     pub id: Option<String>,
     pub content: String,
@@ -130,12 +130,12 @@ impl WithSerializer for SignatureValueType {
 impl WithDeserializer for SignatureValueType {
     type Deserializer = quick_xml_deserialize::SignatureValueTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeyInfoType {
     pub id: Option<String>,
     pub content: Vec<KeyInfoTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum KeyInfoTypeContent {
     KeyName(String),
     KeyValue(KeyValueType),
@@ -181,7 +181,7 @@ impl WithDeserializer for KeyInfoType {
 impl WithDeserializer for KeyInfoTypeContent {
     type Deserializer = quick_xml_deserialize::KeyInfoTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ObjectType {
     pub id: Option<String>,
     pub mime_type: Option<String>,
@@ -205,7 +205,7 @@ impl WithSerializer for ObjectType {
 impl WithDeserializer for ObjectType {
     type Deserializer = quick_xml_deserialize::ObjectTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CanonicalizationMethodType {
     pub algorithm: String,
 }
@@ -227,7 +227,7 @@ impl WithSerializer for CanonicalizationMethodType {
 impl WithDeserializer for CanonicalizationMethodType {
     type Deserializer = quick_xml_deserialize::CanonicalizationMethodTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SignatureMethodType {
     pub algorithm: String,
     pub hmac_output_length: Option<i32>,
@@ -250,7 +250,7 @@ impl WithSerializer for SignatureMethodType {
 impl WithDeserializer for SignatureMethodType {
     type Deserializer = quick_xml_deserialize::SignatureMethodTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ReferenceType {
     pub id: Option<String>,
     pub uri: Option<String>,
@@ -277,11 +277,11 @@ impl WithSerializer for ReferenceType {
 impl WithDeserializer for ReferenceType {
     type Deserializer = quick_xml_deserialize::ReferenceTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct KeyValueType {
     pub content: KeyValueTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum KeyValueTypeContent {
     DsaKeyValue(DsaKeyValueType),
     RsaKeyValue(RsaKeyValueType),
@@ -322,7 +322,7 @@ impl WithDeserializer for KeyValueType {
 impl WithDeserializer for KeyValueTypeContent {
     type Deserializer = quick_xml_deserialize::KeyValueTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RetrievalMethodType {
     pub uri: Option<String>,
     pub type_: Option<String>,
@@ -346,11 +346,11 @@ impl WithSerializer for RetrievalMethodType {
 impl WithDeserializer for RetrievalMethodType {
     type Deserializer = quick_xml_deserialize::RetrievalMethodTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct X509DataType {
     pub content: Vec<X509DataTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct X509DataTypeContent {
     pub content_37: X509DataContent37Type,
 }
@@ -390,11 +390,11 @@ impl WithDeserializer for X509DataType {
 impl WithDeserializer for X509DataTypeContent {
     type Deserializer = quick_xml_deserialize::X509DataTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PgpDataType {
     pub content: PgpDataTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PgpDataTypeContent {
     Content40(PgpDataContent40Type),
     Content41(PgpDataContent41Type),
@@ -435,11 +435,11 @@ impl WithDeserializer for PgpDataType {
 impl WithDeserializer for PgpDataTypeContent {
     type Deserializer = quick_xml_deserialize::PgpDataTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SpkiDataType {
     pub content: Vec<SpkiDataTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SpkiDataTypeContent {
     pub spki_sexp: String,
 }
@@ -479,7 +479,7 @@ impl WithDeserializer for SpkiDataType {
 impl WithDeserializer for SpkiDataTypeContent {
     type Deserializer = quick_xml_deserialize::SpkiDataTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TransformsType {
     pub transform: Vec<TransformType>,
 }
@@ -501,7 +501,7 @@ impl WithSerializer for TransformsType {
 impl WithDeserializer for TransformsType {
     type Deserializer = quick_xml_deserialize::TransformsTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DigestMethodType {
     pub algorithm: String,
 }
@@ -523,7 +523,7 @@ impl WithSerializer for DigestMethodType {
 impl WithDeserializer for DigestMethodType {
     type Deserializer = quick_xml_deserialize::DigestMethodTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DsaKeyValueType {
     pub content_48: Option<DsaKeyValueContent48Type>,
     pub g: Option<String>,
@@ -549,7 +549,7 @@ impl WithSerializer for DsaKeyValueType {
 impl WithDeserializer for DsaKeyValueType {
     type Deserializer = quick_xml_deserialize::DsaKeyValueTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RsaKeyValueType {
     pub modulus: String,
     pub exponent: String,
@@ -572,11 +572,11 @@ impl WithSerializer for RsaKeyValueType {
 impl WithDeserializer for RsaKeyValueType {
     type Deserializer = quick_xml_deserialize::RsaKeyValueTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct X509DataContent37Type {
     pub content: X509DataContent37TypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum X509DataContent37TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
     X509Ski(String),
@@ -624,7 +624,7 @@ impl WithDeserializer for X509DataContent37Type {
 impl WithDeserializer for X509DataContent37TypeContent {
     type Deserializer = quick_xml_deserialize::X509DataContent37TypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PgpDataContent40Type {
     pub pgp_key_id: String,
     pub pgp_key_packet: Option<String>,
@@ -647,7 +647,7 @@ impl WithSerializer for PgpDataContent40Type {
 impl WithDeserializer for PgpDataContent40Type {
     type Deserializer = quick_xml_deserialize::PgpDataContent40TypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PgpDataContent41Type {
     pub pgp_key_packet: String,
 }
@@ -669,12 +669,12 @@ impl WithSerializer for PgpDataContent41Type {
 impl WithDeserializer for PgpDataContent41Type {
     type Deserializer = quick_xml_deserialize::PgpDataContent41TypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TransformType {
     pub algorithm: String,
     pub content: Vec<TransformTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum TransformTypeContent {
     Xpath(String),
 }
@@ -714,7 +714,7 @@ impl WithDeserializer for TransformType {
 impl WithDeserializer for TransformTypeContent {
     type Deserializer = quick_xml_deserialize::TransformTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DsaKeyValueContent48Type {
     pub p: String,
     pub q: String,
@@ -737,7 +737,7 @@ impl WithSerializer for DsaKeyValueContent48Type {
 impl WithDeserializer for DsaKeyValueContent48Type {
     type Deserializer = quick_xml_deserialize::DsaKeyValueContent48TypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DsaKeyValueContent49Type {
     pub seed: String,
     pub pgen_counter: String,
@@ -760,7 +760,7 @@ impl WithSerializer for DsaKeyValueContent49Type {
 impl WithDeserializer for DsaKeyValueContent49Type {
     type Deserializer = quick_xml_deserialize::DsaKeyValueContent49TypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct X509IssuerSerialType {
     pub x509_issuer_name: String,
     pub x509_serial_number: i32,

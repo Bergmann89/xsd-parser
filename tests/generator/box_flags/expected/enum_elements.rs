@@ -1,14 +1,14 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MyChoiceType {
     pub content: MyChoiceTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum MyChoiceTypeContent {
     A(Box<i32>),
     B(Box<String>),
     C(Box<MySequenceType>),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MySequenceType {
     pub a: i32,
     pub b: String,

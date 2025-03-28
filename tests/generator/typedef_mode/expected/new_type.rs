@@ -1,6 +1,6 @@
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct MyType(pub i32);
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct MyListType(pub Vec<IntType>);
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct IntType(pub i32);

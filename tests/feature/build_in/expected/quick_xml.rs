@@ -8,7 +8,7 @@ use xsd_parser::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct EntitiesType(pub Vec<String>);
 impl SerializeBytes for EntitiesType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -40,7 +40,7 @@ impl DeserializeBytes for EntitiesType {
         ))
     }
 }
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct EntityType(pub Vec<String>);
 impl SerializeBytes for EntityType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -74,7 +74,7 @@ impl DeserializeBytes for EntityType {
 }
 pub type IdType = String;
 pub type IdrefType = String;
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct IdrefsType(pub Vec<String>);
 impl SerializeBytes for IdrefsType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -108,7 +108,7 @@ impl DeserializeBytes for IdrefsType {
 }
 pub type NcNameType = String;
 pub type NmtokenType = String;
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Default)]
 pub struct NmtokensType(pub Vec<String>);
 impl SerializeBytes for NmtokensType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -143,7 +143,7 @@ impl DeserializeBytes for NmtokensType {
 pub type NotationType = String;
 pub type NameType = String;
 pub type QnameType = String;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnyType;
 impl WithSerializer for AnyType {
     type Serializer<'x> = quick_xml_serialize::AnyTypeSerializer<'x>;

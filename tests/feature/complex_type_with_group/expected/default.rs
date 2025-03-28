@@ -1,9 +1,9 @@
 pub type Foo = FooType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FooType {
     pub content: FooTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum FooTypeContent {
     Bar(String),
     Baz(i32),

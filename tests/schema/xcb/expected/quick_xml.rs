@@ -9,7 +9,7 @@ use xsd_parser::{
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Xcb = XcbType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XcbType {
     pub header: String,
     pub extension_xname: Option<String>,
@@ -19,7 +19,7 @@ pub struct XcbType {
     pub minor_version: Option<i32>,
     pub content: Vec<XcbTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum XcbTypeContent {
     Request(RequestType),
     Event(EventType),
@@ -76,14 +76,14 @@ impl WithDeserializer for XcbType {
 impl WithDeserializer for XcbTypeContent {
     type Deserializer = quick_xml_deserialize::XcbTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RequestType {
     pub name: String,
     pub opcode: i32,
     pub combine_adjacent: Option<bool>,
     pub content: Vec<RequestTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RequestTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -131,7 +131,7 @@ impl WithDeserializer for RequestType {
 impl WithDeserializer for RequestTypeContent {
     type Deserializer = quick_xml_deserialize::RequestTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EventType {
     pub name: String,
     pub number: i32,
@@ -139,7 +139,7 @@ pub struct EventType {
     pub xge: Option<bool>,
     pub content: Vec<EventTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EventTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -183,7 +183,7 @@ impl WithDeserializer for EventType {
 impl WithDeserializer for EventTypeContent {
     type Deserializer = quick_xml_deserialize::EventTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PacketStructCopyType {
     pub name: String,
     pub number: i32,
@@ -207,13 +207,13 @@ impl WithSerializer for PacketStructCopyType {
 impl WithDeserializer for PacketStructCopyType {
     type Deserializer = quick_xml_deserialize::PacketStructCopyTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PacketStructType {
     pub name: String,
     pub number: i32,
     pub content: Vec<PacketStructTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PacketStructTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -256,12 +256,12 @@ impl WithDeserializer for PacketStructType {
 impl WithDeserializer for PacketStructTypeContent {
     type Deserializer = quick_xml_deserialize::PacketStructTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StructType {
     pub name: String,
     pub content: Vec<StructTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum StructTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -305,7 +305,7 @@ impl WithDeserializer for StructType {
 impl WithDeserializer for StructTypeContent {
     type Deserializer = quick_xml_deserialize::StructTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XidtypeType {
     pub name: String,
 }
@@ -327,7 +327,7 @@ impl WithSerializer for XidtypeType {
 impl WithDeserializer for XidtypeType {
     type Deserializer = quick_xml_deserialize::XidtypeTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XidunionType {
     pub name: String,
     pub type_: Vec<String>,
@@ -350,12 +350,12 @@ impl WithSerializer for XidunionType {
 impl WithDeserializer for XidunionType {
     type Deserializer = quick_xml_deserialize::XidunionTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumType {
     pub name: String,
     pub content: Vec<EnumTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumTypeContent {
     pub item: EnumItemType,
     pub doc: Option<DocType>,
@@ -396,7 +396,7 @@ impl WithDeserializer for EnumType {
 impl WithDeserializer for EnumTypeContent {
     type Deserializer = quick_xml_deserialize::EnumTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TypedefType {
     pub oldname: String,
     pub newname: String,
@@ -419,7 +419,7 @@ impl WithSerializer for TypedefType {
 impl WithDeserializer for TypedefType {
     type Deserializer = quick_xml_deserialize::TypedefTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PadType {
     pub bytes: Option<i32>,
     pub align: Option<i32>,
@@ -442,7 +442,7 @@ impl WithSerializer for PadType {
 impl WithDeserializer for PadType {
     type Deserializer = quick_xml_deserialize::PadTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct VarType {
     pub name: String,
     pub type_: String,
@@ -468,7 +468,7 @@ impl WithSerializer for VarType {
 impl WithDeserializer for VarType {
     type Deserializer = quick_xml_deserialize::VarTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ListType {
     pub name: String,
     pub type_: String,
@@ -477,7 +477,7 @@ pub struct ListType {
     pub mask: Option<String>,
     pub content: Option<ListTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ListTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -524,7 +524,7 @@ impl WithDeserializer for ListType {
 impl WithDeserializer for ListTypeContent {
     type Deserializer = quick_xml_deserialize::ListTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnyType;
 impl WithSerializer for AnyType {
     type Serializer<'x> = quick_xml_serialize::AnyTypeSerializer<'x>;
@@ -544,7 +544,7 @@ impl WithSerializer for AnyType {
 impl WithDeserializer for AnyType {
     type Deserializer = quick_xml_deserialize::AnyTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ExprfieldType {
     pub name: String,
     pub type_: String,
@@ -553,7 +553,7 @@ pub struct ExprfieldType {
     pub mask: Option<String>,
     pub content: ExprfieldTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ExprfieldTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -600,7 +600,7 @@ impl WithDeserializer for ExprfieldType {
 impl WithDeserializer for ExprfieldTypeContent {
     type Deserializer = quick_xml_deserialize::ExprfieldTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ValueparamType {
     pub value_mask_type: String,
     pub value_mask_name: String,
@@ -624,12 +624,12 @@ impl WithSerializer for ValueparamType {
 impl WithDeserializer for ValueparamType {
     type Deserializer = quick_xml_deserialize::ValueparamTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SwitchexprType {
     pub name: String,
     pub content: Vec<SwitchexprTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SwitchexprTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -681,11 +681,11 @@ impl WithDeserializer for SwitchexprType {
 impl WithDeserializer for SwitchexprTypeContent {
     type Deserializer = quick_xml_deserialize::SwitchexprTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RequestReplyType {
     pub content: Vec<RequestReplyTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RequestReplyTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -731,11 +731,11 @@ impl WithDeserializer for RequestReplyType {
 impl WithDeserializer for RequestReplyTypeContent {
     type Deserializer = quick_xml_deserialize::RequestReplyTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DocType {
     pub content: Vec<DocTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DocTypeContent {
     Brief(String),
     Description(String),
@@ -780,12 +780,12 @@ impl WithDeserializer for DocType {
 impl WithDeserializer for DocTypeContent {
     type Deserializer = quick_xml_deserialize::DocTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumItemType {
     pub name: String,
     pub content: EnumItemTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EnumItemTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
@@ -826,12 +826,12 @@ impl WithDeserializer for EnumItemType {
 impl WithDeserializer for EnumItemTypeContent {
     type Deserializer = quick_xml_deserialize::EnumItemTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct OpType {
     pub op: String,
     pub content: [OpTypeContent; 8usize],
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum OpTypeContent {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -878,12 +878,12 @@ impl WithDeserializer for OpType {
 impl WithDeserializer for OpTypeContent {
     type Deserializer = quick_xml_deserialize::OpTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UnopType {
     pub op: String,
     pub content: [UnopTypeContent; 8usize],
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UnopTypeContent {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -930,7 +930,7 @@ impl WithDeserializer for UnopType {
 impl WithDeserializer for UnopTypeContent {
     type Deserializer = quick_xml_deserialize::UnopTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumrefType {
     pub ref_: String,
     pub content: String,
@@ -953,7 +953,7 @@ impl WithSerializer for EnumrefType {
 impl WithDeserializer for EnumrefType {
     type Deserializer = quick_xml_deserialize::EnumrefTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PopcountType {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -982,7 +982,7 @@ impl WithSerializer for PopcountType {
 impl WithDeserializer for PopcountType {
     type Deserializer = quick_xml_deserialize::PopcountTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SumofType {
     pub ref_: String,
 }
@@ -1004,7 +1004,7 @@ impl WithSerializer for SumofType {
 impl WithDeserializer for SumofType {
     type Deserializer = quick_xml_deserialize::SumofTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DecOrHexIntegerType {
     I32(i32),
     String(String),
@@ -1034,12 +1034,12 @@ impl DeserializeBytes for DecOrHexIntegerType {
         Err(reader.map_error(ErrorKind::InvalidUnion(errors.into())))
     }
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CaseexprType {
     pub name: Option<String>,
     pub content: Vec<CaseexprTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum CaseexprTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -1091,7 +1091,7 @@ impl WithDeserializer for CaseexprType {
 impl WithDeserializer for CaseexprTypeContent {
     type Deserializer = quick_xml_deserialize::CaseexprTypeContentDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FieldType {
     pub name: Option<String>,
     pub content: String,
@@ -1114,7 +1114,7 @@ impl WithSerializer for FieldType {
 impl WithDeserializer for FieldType {
     type Deserializer = quick_xml_deserialize::FieldTypeDeserializer;
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SeeType {
     pub name: Option<String>,
     pub type_: Option<String>,

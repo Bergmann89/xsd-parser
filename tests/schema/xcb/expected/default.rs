@@ -1,5 +1,5 @@
 pub type Xcb = XcbType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XcbType {
     pub header: String,
     pub extension_xname: Option<String>,
@@ -9,7 +9,7 @@ pub struct XcbType {
     pub minor_version: Option<i32>,
     pub content: Vec<XcbTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum XcbTypeContent {
     Request(RequestType),
     Event(EventType),
@@ -24,14 +24,14 @@ pub enum XcbTypeContent {
     Typedef(TypedefType),
     Import(String),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RequestType {
     pub name: String,
     pub opcode: i32,
     pub combine_adjacent: Option<bool>,
     pub content: Vec<RequestTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RequestTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -43,7 +43,7 @@ pub enum RequestTypeContent {
     Reply(RequestReplyType),
     Doc(DocType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EventType {
     pub name: String,
     pub number: i32,
@@ -51,7 +51,7 @@ pub struct EventType {
     pub xge: Option<bool>,
     pub content: Vec<EventTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EventTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -59,31 +59,31 @@ pub enum EventTypeContent {
     Fd(AnyType),
     Doc(DocType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PacketStructCopyType {
     pub name: String,
     pub number: i32,
     pub ref_: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PacketStructType {
     pub name: String,
     pub number: i32,
     pub content: Vec<PacketStructTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PacketStructTypeContent {
     Pad(PadType),
     Field(VarType),
     List(ListType),
     Fd(AnyType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct StructType {
     pub name: String,
     pub content: Vec<StructTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum StructTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -91,36 +91,36 @@ pub enum StructTypeContent {
     Fd(AnyType),
     Switch(SwitchexprType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XidtypeType {
     pub name: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct XidunionType {
     pub name: String,
     pub type_: Vec<String>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumType {
     pub name: String,
     pub content: Vec<EnumTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumTypeContent {
     pub item: EnumItemType,
     pub doc: Option<DocType>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct TypedefType {
     pub oldname: String,
     pub newname: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct PadType {
     pub bytes: Option<i32>,
     pub align: Option<i32>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct VarType {
     pub name: String,
     pub type_: String,
@@ -128,7 +128,7 @@ pub struct VarType {
     pub altenum: Option<String>,
     pub mask: Option<String>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ListType {
     pub name: String,
     pub type_: String,
@@ -137,7 +137,7 @@ pub struct ListType {
     pub mask: Option<String>,
     pub content: Option<ListTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ListTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -148,9 +148,9 @@ pub enum ListTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct AnyType;
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ExprfieldType {
     pub name: String,
     pub type_: String,
@@ -159,7 +159,7 @@ pub struct ExprfieldType {
     pub mask: Option<String>,
     pub content: ExprfieldTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum ExprfieldTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -170,18 +170,18 @@ pub enum ExprfieldTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct ValueparamType {
     pub value_mask_type: String,
     pub value_mask_name: String,
     pub value_list_name: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SwitchexprType {
     pub name: String,
     pub content: Vec<SwitchexprTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum SwitchexprTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -197,11 +197,11 @@ pub enum SwitchexprTypeContent {
     List(ListType),
     Fd(AnyType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RequestReplyType {
     pub content: Vec<RequestReplyTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum RequestReplyTypeContent {
     Pad(PadType),
     Field(VarType),
@@ -211,11 +211,11 @@ pub enum RequestReplyTypeContent {
     Switch(SwitchexprType),
     Doc(DocType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct DocType {
     pub content: Vec<DocTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DocTypeContent {
     Brief(String),
     Description(String),
@@ -224,22 +224,22 @@ pub enum DocTypeContent {
     Error(PacketStructType),
     See(SeeType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumItemType {
     pub name: String,
     pub content: EnumItemTypeContent,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum EnumItemTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct OpType {
     pub op: String,
     pub content: [OpTypeContent; 8usize],
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum OpTypeContent {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -250,12 +250,12 @@ pub enum OpTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct UnopType {
     pub op: String,
     pub content: [UnopTypeContent; 8usize],
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum UnopTypeContent {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -266,12 +266,12 @@ pub enum UnopTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct EnumrefType {
     pub ref_: String,
     pub content: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum PopcountType {
     Op(Box<OpType>),
     Unop(Box<UnopType>),
@@ -282,21 +282,21 @@ pub enum PopcountType {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SumofType {
     pub ref_: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum DecOrHexIntegerType {
     I32(i32),
     String(String),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct CaseexprType {
     pub name: Option<String>,
     pub content: Vec<CaseexprTypeContent>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub enum CaseexprTypeContent {
     Op(OpType),
     Unop(UnopType),
@@ -312,12 +312,12 @@ pub enum CaseexprTypeContent {
     Fd(AnyType),
     Switch(SwitchexprType),
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FieldType {
     pub name: Option<String>,
     pub content: String,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SeeType {
     pub name: Option<String>,
     pub type_: Option<String>,
