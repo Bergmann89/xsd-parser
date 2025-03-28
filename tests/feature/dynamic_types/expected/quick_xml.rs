@@ -1,6 +1,8 @@
+use core::fmt::Debug;
 use xsd_parser::{
-    quick_xml::{BoxedSerializer, Error, WithDeserializer, WithSerializer},
+    quick_xml::{BoxedSerializer, Error, WithBoxedSerializer, WithDeserializer, WithSerializer},
     schema::Namespace,
+    AsAny,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
@@ -30,10 +32,7 @@ impl WithDeserializer for ListType {
 }
 #[derive(Debug)]
 pub struct Base(pub Box<dyn BaseTrait>);
-pub trait BaseTrait:
-    core::fmt::Debug + xsd_parser::quick_xml::WithBoxedSerializer + xsd_parser::AsAny
-{
-}
+pub trait BaseTrait: Debug + AsAny + WithBoxedSerializer {}
 impl WithSerializer for Base {
     type Serializer<'x> = BoxedSerializer<'x>;
     fn serializer<'ser>(

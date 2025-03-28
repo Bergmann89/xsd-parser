@@ -78,12 +78,6 @@ pub struct TnewCatalogProductElementType {
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
-impl TnewCatalogProductElementType {
-    #[must_use]
-    pub fn default_mode() -> TnewCatalogProductmodeType {
-        TnewCatalogProductmodeType::New
-    }
-}
 #[derive(Debug, Clone)]
 pub struct TupdateProductsProductElementType {
     pub mode: TupdateProductsProductmodeType,
@@ -103,12 +97,6 @@ pub struct TupdatePricesProductElementType {
     pub supplier_pid: SupplierPidElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub user_defined_extensions: Option<UdxProductType>,
-}
-impl TupdatePricesProductElementType {
-    #[must_use]
-    pub fn default_mode() -> TupdatePricesProductmodeType {
-        TupdatePricesProductmodeType::Update
-    }
 }
 #[derive(Debug, Clone)]
 pub struct LanguageElementType {

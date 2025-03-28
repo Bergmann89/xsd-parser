@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote};
+use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
 
 use crate::{schema::NamespaceId, types::Types};
@@ -18,7 +18,7 @@ use super::format_module_ident;
 /// The identifier path contains two parts:
 /// - The identifier itself, which is more or less the name of the object to identify, and
 /// - the math of the module the object is provided at.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct IdentPath {
     path: Option<ModulePath>,
     ident: Ident2,
@@ -28,7 +28,7 @@ pub struct IdentPath {
 ///
 /// The module path is a chain ob module names separated by a double colon like
 /// `std::str`. It is used to identify modules inside the code.
-#[derive(Default, Debug, Clone)]
+#[derive(Default, Debug, Clone, Eq, PartialEq)]
 pub struct ModulePath(pub SmallVec<[Ident2; 2]>);
 
 impl IdentPath {
@@ -163,6 +163,20 @@ impl FromStr for IdentPath {
             ident: ident.ok_or(())?,
             path: Some(path),
         })
+    }
+}
+
+impl ToTokens for IdentPath {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        if let Some(path) = &self.path {
+            for module in &path.0 {
+                tokens.extend(quote!(#module::));
+            }
+        }
+
+        let ident = self.ident();
+
+        tokens.extend(quote!(#ident));
     }
 }
 

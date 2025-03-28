@@ -24,12 +24,6 @@ pub enum XcbTypeContent {
     Typedef(TypedefType),
     Import(String),
 }
-impl XcbType {
-    #[must_use]
-    pub fn default_extension_multiword() -> bool {
-        false
-    }
-}
 #[derive(Debug, Clone)]
 pub struct RequestType {
     pub name: String,

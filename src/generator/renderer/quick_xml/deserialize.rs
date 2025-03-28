@@ -12,15 +12,33 @@ use crate::{
         data::{
             ComplexType, ComplexTypeAttribute, ComplexTypeBase, ComplexTypeContent,
             ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, DerivedType, DynamicType,
-            EnumerationType, EnumerationTypeVariant, ReferenceType, StructMode, UnionType,
-            UnionTypeVariant,
+            EnumerationType, EnumerationTypeVariant, ReferenceType, StructMode, TypeData,
+            UnionType, UnionTypeVariant,
         },
         misc::Occurs,
+        renderer::Renderer,
         Context,
     },
     schema::{xs::Use, MaxOccurs},
     types::{ComplexInfo, ElementMode, Ident, TypeVariant, Types},
 };
+
+/// Implements a [`Renderer`] that renders the code for the `quick_xml` deserialization.
+#[derive(Debug)]
+pub struct QuickXmlDeserializeRenderer;
+
+impl Renderer for QuickXmlDeserializeRenderer {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
+        match ty {
+            TypeData::BuildIn(_) => (),
+            TypeData::Union(x) => x.render_deserializer(ctx),
+            TypeData::Dynamic(x) => x.render_deserializer(ctx),
+            TypeData::Reference(x) => x.render_deserializer(ctx),
+            TypeData::Enumeration(x) => x.render_deserializer(ctx),
+            TypeData::Complex(x) => x.render_deserializer(ctx),
+        }
+    }
+}
 
 /* UnionType */
 
@@ -61,7 +79,7 @@ impl UnionType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -108,7 +126,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 
     fn render_deserializer_types(&self, ctx: &mut Context<'_, '_>) {
@@ -405,7 +423,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -466,7 +484,7 @@ impl EnumerationType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -557,7 +575,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 
     fn render_deserializer_impl(

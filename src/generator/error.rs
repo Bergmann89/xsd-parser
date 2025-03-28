@@ -27,4 +27,10 @@ pub enum Error {
     /// could not be converted to a suitable default code snippet.
     #[error("Invalid default value for type {0:?}: {1}!")]
     InvalidDefaultValue(Ident, String),
+
+    /// Invalid identifier.
+    ///
+    /// Is raised if the user passed a invalid identifier.
+    #[error("Invalid identifier: {0}!")]
+    InvalidIdentifier(String),
 }

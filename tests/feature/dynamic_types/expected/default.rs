@@ -1,3 +1,5 @@
+use core::fmt::Debug;
+use xsd_parser::AsAny;
 pub type List = ListType;
 #[derive(Debug)]
 pub struct ListType {
@@ -5,7 +7,7 @@ pub struct ListType {
 }
 #[derive(Debug)]
 pub struct Base(pub Box<dyn BaseTrait>);
-pub trait BaseTrait: core::fmt::Debug + xsd_parser::AsAny {}
+pub trait BaseTrait: Debug + AsAny {}
 #[derive(Debug)]
 pub struct IntermediateType {
     pub base_value: Option<i32>,

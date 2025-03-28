@@ -25,6 +25,11 @@ pub type ParserError<E> = parser::Error<E>;
 use std::fs::write;
 
 pub use config::Config;
+use config::Renderer;
+use generator::renderer::{
+    DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
+    QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
+};
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
@@ -237,7 +242,7 @@ pub fn exec_generator(
     }
 
     if let Some(traits) = config.dyn_type_traits {
-        generator = generator.dyn_type_traits(traits);
+        generator = generator.dyn_type_traits(traits)?;
     }
 
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);
@@ -249,6 +254,25 @@ pub fn exec_generator(
         let ident = triple.resolve(schemas)?;
 
         generator = generator.with_type(ident)?;
+    }
+
+    for renderer in config.renderers {
+        match renderer {
+            Renderer::Types => generator = generator.with_renderer(TypesRenderer),
+            Renderer::Defaults => generator = generator.with_renderer(DefaultsRenderer),
+            Renderer::NamespaceConstants => {
+                generator = generator.with_renderer(NamespaceConstantsRenderer);
+            }
+            Renderer::WithNamespaceTrait => {
+                generator = generator.with_renderer(WithNamespaceTraitRenderer);
+            }
+            Renderer::QuickXmlSerialize => {
+                generator = generator.with_renderer(QuickXmlSerializeRenderer);
+            }
+            Renderer::QuickXmlDeserialize => {
+                generator = generator.with_renderer(QuickXmlDeserializeRenderer);
+            }
+        }
     }
 
     let mut generator = generator.into_fixed();
