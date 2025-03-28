@@ -1,16 +1,15 @@
 use std::mem::take;
 use std::ops::Deref;
 
-use parking_lot::Mutex;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::{
-    code::{format_field_ident, format_variant_ident, IdentPath, Module, ModulePath},
+    code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
         AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
-        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, TypeVariant, Types,
+        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, TypeVariant, Types,
         UnionInfo, UnionTypeInfo, VariantInfo,
     },
 };
@@ -19,385 +18,100 @@ use super::{
     misc::Occurs, BoxFlags, Config, Error, GeneratorFlags, State, TraitInfos, TypeRef, TypedefMode,
 };
 
-/* Request */
-
-/// Helper type that is used to request the code generation for a specific type.
-pub(super) struct Request<'a, 'types> {
-    pub ident: &'a Ident,
-    pub config: &'a Config<'types>,
-
-    state: &'a mut State<'types>,
-}
-
-impl<'a, 'types> Request<'a, 'types> {
-    pub(super) fn new(
-        ident: &'a Ident,
-        config: &'a Config<'types>,
-        state: &'a mut State<'types>,
-    ) -> Self {
-        Self {
-            ident,
-            config,
-            state,
-        }
-    }
-
-    pub(super) fn into_union_type(
-        self,
-        info: &'types UnionInfo,
-    ) -> Result<UnionType<'types>, Error> {
-        UnionType::new(info, self)
-    }
-
-    pub(super) fn into_dynamic_type(
-        self,
-        info: &'types DynamicInfo,
-    ) -> Result<DynamicType<'types>, Error> {
-        DynamicType::new(info, self)
-    }
-
-    pub(super) fn into_reference_type(
-        self,
-        info: &'types ReferenceInfo,
-    ) -> Result<ReferenceType<'types>, Error> {
-        ReferenceType::new(info, self)
-    }
-
-    pub(super) fn into_enumeration_type(
-        self,
-        info: &'types EnumerationInfo,
-    ) -> Result<EnumerationType<'types>, Error> {
-        EnumerationType::new(info, self)
-    }
-
-    pub(super) fn into_all_type(
-        self,
-        info: &'types GroupInfo,
-    ) -> Result<ComplexType<'types>, Error> {
-        ComplexType::new_all(info, self)
-    }
-
-    pub(super) fn into_choice_type(
-        self,
-        info: &'types GroupInfo,
-    ) -> Result<ComplexType<'types>, Error> {
-        ComplexType::new_choice(info, self)
-    }
-
-    pub(super) fn into_sequence_type(
-        self,
-        info: &'types GroupInfo,
-    ) -> Result<ComplexType<'types>, Error> {
-        ComplexType::new_sequence(info, self)
-    }
-
-    pub(super) fn into_complex_type(
-        self,
-        info: &'types ComplexInfo,
-    ) -> Result<ComplexType<'types>, Error> {
-        ComplexType::new_complex(info, self)
-    }
-
-    fn current_module(&self) -> Option<NamespaceId> {
-        self.check_flags(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten()
-    }
-
-    fn current_type_ref(&self) -> &TypeRef {
-        self.state.cache.get(self.ident).unwrap()
-    }
-
-    fn get_trait_infos(&mut self) -> &TraitInfos {
-        self.state
-            .trait_infos
-            .get_or_insert_with(|| TraitInfos::new(self.config.types))
-    }
-
-    fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
-        self.state.get_or_create_type_ref(self.config, ident)
-    }
-
-    fn make_trait_impls(&mut self) -> Result<Vec<IdentPath>, Error> {
-        let ident = self.ident.clone();
-
-        self.get_trait_infos()
-            .get(&ident)
-            .into_iter()
-            .flat_map(|info| &info.traits_all)
-            .cloned()
-            .collect::<Vec<_>>()
-            .into_iter()
-            .map(|ident| {
-                let type_ref = self.get_or_create_type_ref(ident.clone())?;
-                let ident = format_ident!("{}Trait", type_ref.type_ident);
-                let trait_type = type_ref.to_ident_path().with_ident(ident);
-
-                Ok(trait_type)
-            })
-            .collect::<Result<Vec<_>, _>>()
-    }
-
-    fn get_default(
-        &mut self,
-        current_ns: Option<NamespaceId>,
-        default: &str,
-        ident: &Ident,
-    ) -> Result<TokenStream, Error> {
-        let types = self.types;
-        let ty = types
-            .get(ident)
-            .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-        let type_ref = self.get_or_create_type_ref(ident.clone())?;
-
-        macro_rules! build_in {
-            ($ty:ty) => {
-                if let Ok(val) = default.parse::<$ty>() {
-                    return Ok(quote!(#val));
-                }
-            };
-        }
-
-        match &ty.variant {
-            TypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
-            TypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
-            TypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
-            TypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
-            TypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
-            TypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
-
-            TypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
-            TypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
-            TypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
-            TypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
-            TypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
-            TypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
-
-            TypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
-            TypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
-
-            TypeVariant::BuildIn(BuildInInfo::Bool) => {
-                match default.to_ascii_lowercase().as_str() {
-                    "true" | "yes" | "1" => return Ok(quote!(true)),
-                    "false" | "no" | "0" => return Ok(quote!(false)),
-                    _ => (),
-                }
-            }
-            TypeVariant::BuildIn(BuildInInfo::String) => {
-                return Ok(quote!(String::from(#default)));
-            }
-            TypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
-                if let Some(x) = x.default(default) {
-                    return Ok(x);
-                }
-            }
-
-            TypeVariant::Enumeration(ei) => {
-                let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = type_ref.to_ident_path().relative_to(&module_path);
-
-                for var in &*ei.variants {
-                    if var.type_.is_none() && var.ident.name.as_str() == default {
-                        let variant_ident =
-                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
-
-                        return Ok(quote!(#target_type :: #variant_ident));
-                    }
-
-                    if let Some(target_ident) = &var.type_ {
-                        if let Ok(default) = self.get_default(current_ns, default, target_ident) {
-                            let variant_ident =
-                                format_variant_ident(&var.ident.name, var.display_name.as_deref());
-
-                            return Ok(quote!(#target_type :: #variant_ident(#default)));
-                        }
-                    }
-                }
-            }
-
-            TypeVariant::Union(ui) => {
-                let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = type_ref.to_ident_path().relative_to(&module_path);
-
-                for ty in &*ui.types {
-                    if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
-                        let variant_ident =
-                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
-
-                        return Ok(quote! {
-                            #target_type :: #variant_ident ( #code )
-                        });
-                    }
-                }
-            }
-
-            TypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
-                Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
-                Occurs::DynamicList if default.is_empty() => {
-                    let module_path = ModulePath::from_namespace(current_ns, types);
-                    let target_type = type_ref.to_ident_path().relative_to(&module_path);
-
-                    return Ok(quote! { #target_type(Vec::new()) });
-                }
-                _ => (),
-            },
-
-            _ => (),
-        }
-
-        Err(Error::InvalidDefaultValue(
-            ident.clone(),
-            default.to_owned(),
-        ))
-    }
-}
-
-impl<'types> Deref for Request<'_, 'types> {
-    type Target = Config<'types>;
-
-    fn deref(&self) -> &Self::Target {
-        self.config
-    }
-}
-
-/* Context */
-
-/// Helper type that is used to collect the generated code.
-pub(super) struct Context<'a, 'types> {
-    ident: &'a Ident,
-    config: &'a Config<'types>,
-    module: Mutex<&'a mut Module>,
-
-    module_path: ModulePath,
-    serialize_module_path: ModulePath,
-    deserialize_module_path: ModulePath,
-}
-
-impl<'a, 'types> Context<'a, 'types> {
-    pub(super) fn new(
-        ident: &'a Ident,
-        config: &'a Config<'types>,
-        module: &'a mut Module,
-    ) -> Self {
-        let ns = config
-            .check_flags(GeneratorFlags::USE_MODULES)
-            .then_some(ident.ns)
-            .flatten();
-        let module_path = ModulePath::from_namespace(ns, config.types);
-        let serialize_module_path = module_path
-            .clone()
-            .join(format_ident!("quick_xml_serialize"));
-        let deserialize_module_path = module_path
-            .clone()
-            .join(format_ident!("quick_xml_deserialize"));
-
-        Self {
-            ident,
-            config,
-            module: Mutex::new(module),
-
-            module_path,
-            serialize_module_path,
-            deserialize_module_path,
-        }
-    }
-
-    pub(super) fn current_ns(&self) -> Option<NamespaceId> {
-        self.check_flags(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten()
-    }
-
-    pub(super) fn resolve_type_for_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.module_path)
-    }
-
-    pub(super) fn resolve_type_for_serialize_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.serialize_module_path)
-    }
-
-    pub(super) fn resolve_type_for_deserialize_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.deserialize_module_path)
-    }
-
-    pub(super) fn main(&mut self) -> &mut Module {
-        let root = self.module.get_mut();
-
-        Self::main_module(self.module_path.last(), root)
-    }
-
-    pub(super) fn quick_xml_serialize(&mut self) -> &mut Module {
-        self.main().module_mut("quick_xml_serialize")
-    }
-
-    pub(super) fn quick_xml_deserialize(&mut self) -> &mut Module {
-        self.main().module_mut("quick_xml_deserialize")
-    }
-
-    pub(super) fn add_usings<I>(&self, usings: I)
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
-        let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root).usings(usings);
-    }
-
-    pub(super) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
-        let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root)
-            .module_mut("quick_xml_serialize")
-            .usings(usings);
-    }
-
-    pub(super) fn add_quick_xml_deserialize_usings<I>(&self, usings: I)
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
-        let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root)
-            .module_mut("quick_xml_deserialize")
-            .usings(usings);
-    }
-
-    fn main_module<'x>(ident: Option<&Ident2>, root: &'x mut Module) -> &'x mut Module {
-        if let Some(ident) = ident {
-            root.module_mut(ident.to_string())
-        } else {
-            root
-        }
-    }
-}
-
-impl<'types> Deref for Context<'_, 'types> {
-    type Target = Config<'types>;
-
-    fn deref(&self) -> &Self::Target {
-        self.config
-    }
-}
-
-/* UnionType */
-
+/// Represents the type data that is generated by teh generator for a type that
+/// needs to be rendered.
+///
+/// The generator adds additional useful data that is needed for the rendering
+/// process to the actual [`Type`] that needs to be rendered. So instead of
+/// passing the type directly to the renderer and re-calculate the data inside
+/// every renderer, the type is once evaluated by the generator and then any
+/// renderer can profit from the enriched data.
 #[derive(Debug)]
-pub(super) struct UnionType<'types> {
-    #[allow(dead_code)]
+pub enum TypeData<'types> {
+    /// Corresponds to [`TypeVariant::BuildIn`].
+    BuildIn(BuildInType<'types>),
+
+    /// Corresponds to [`TypeVariant::Union`].
+    Union(UnionType<'types>),
+
+    /// Corresponds to [`TypeVariant::Dynamic`].
+    Dynamic(DynamicType<'types>),
+
+    /// Corresponds to [`TypeVariant::Reference`].
+    Reference(ReferenceType<'types>),
+
+    /// Corresponds to [`TypeVariant::Enumeration`].
+    Enumeration(EnumerationType<'types>),
+
+    /// Corresponds to [`TypeVariant::All`], [`TypeVariant::Choice`],
+    /// [`TypeVariant::Sequence`] or [`TypeVariant::ComplexType`].
+    Complex(ComplexType<'types>),
+}
+
+impl<'types> TypeData<'types> {
+    pub(super) fn new(
+        ty: &'types Type,
+        ident: &Ident,
+        config: &Config<'types>,
+        state: &mut State<'types>,
+    ) -> Result<Self, Error> {
+        let req = Request::new(ident, config, state);
+
+        Ok(match &ty.variant {
+            TypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
+            TypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
+            TypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
+            TypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
+            TypeVariant::Enumeration(x) => Self::Enumeration(EnumerationType::new(x, req)?),
+            TypeVariant::All(x) => Self::Complex(ComplexType::new_all(x, req)?),
+            TypeVariant::Choice(x) => Self::Complex(ComplexType::new_choice(x, req)?),
+            TypeVariant::Sequence(x) => Self::Complex(ComplexType::new_sequence(x, req)?),
+            TypeVariant::ComplexType(x) => Self::Complex(ComplexType::new_complex(x, req)?),
+        })
+    }
+}
+
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::BuildIn`] type.
+#[derive(Debug)]
+pub struct BuildInType<'types> {
+    /// Reference to the original type information.
+    pub info: &'types BuildInInfo,
+}
+
+impl<'types> BuildInType<'types> {
+    fn new(info: &'types BuildInInfo) -> Self {
+        Self { info }
+    }
+}
+
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::Union`] type.
+#[derive(Debug)]
+pub struct UnionType<'types> {
+    /// Reference to the original type information.
     pub info: &'types UnionInfo,
+
+    /// The identifier of the rendered type.
     pub type_ident: Ident2,
+
+    /// List of variants contained in this union.
     pub variants: Vec<UnionTypeVariant<'types>>,
+
+    /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<IdentPath>,
 }
 
+/// Type variant used in [`UnionType`].
 #[derive(Debug)]
-pub(super) struct UnionTypeVariant<'types> {
-    #[allow(dead_code)]
+pub struct UnionTypeVariant<'types> {
+    /// Reference to the original type information.
     pub info: &'types UnionTypeInfo,
+
+    /// The type that is stored by the this variant.
     pub target_type: IdentPath,
+
+    /// Identifier of this variant.
     pub variant_ident: Ident2,
 }
 
@@ -437,24 +151,44 @@ impl UnionTypeInfo {
     }
 }
 
-/* DynamicType */
-
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::Dynamic`] type.
 #[derive(Debug)]
-pub(super) struct DynamicType<'types> {
-    #[allow(dead_code)]
+pub struct DynamicType<'types> {
+    /// Reference to the original type information.
     pub info: &'types DynamicInfo,
+
+    /// The identifier of the rendered type.
     pub type_ident: Ident2,
+
+    /// The identifier of the trait that needs to be implemented
+    /// by the derived types.
     pub trait_ident: Ident2,
+
+    /// Identifier of the deserializer for this type.
     pub deserializer_ident: Ident2,
+
+    /// List of additional traits that need to be implemented by the derived
+    /// types (if this type was inherited from another dynamic type).
     pub sub_traits: Option<Vec<IdentPath>>,
+
+    /// List of derived types.
     pub derived_types: Vec<DerivedType>,
 }
 
+/// Represents a derived type used by [`DynamicType`].
 #[derive(Debug)]
-pub(super) struct DerivedType {
+pub struct DerivedType {
+    /// Identifier of the derived type.
     pub ident: Ident,
+
+    /// Name of the derived type as byte string literal.
     pub b_name: Literal,
+
+    /// The actual target type of this derived type information.
     pub target_type: IdentPath,
+
+    /// Name of the variant used for this derived type information.
     pub variant_ident: Ident2,
 }
 
@@ -499,16 +233,26 @@ impl<'types> DynamicType<'types> {
     }
 }
 
-/* ReferenceType */
-
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::Reference`] type.
 #[derive(Debug)]
-pub(super) struct ReferenceType<'types> {
-    #[allow(dead_code)]
+pub struct ReferenceType<'types> {
+    /// Reference to the original type information.
     pub info: &'types ReferenceInfo,
+
+    /// Typedef mode that should be used to render this reference type.
     pub mode: TypedefMode,
+
+    /// Occurrence of the referenced type within this type.
     pub occurs: Occurs,
+
+    /// The identifier of the rendered type.
     pub type_ident: Ident2,
+
+    /// Actual target type of this referenced type.
     pub target_type: IdentPath,
+
+    /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<IdentPath>,
 }
 
@@ -537,21 +281,33 @@ impl<'types> ReferenceType<'types> {
     }
 }
 
-/* EnumerationType */
-
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::Enumeration`] type.
 #[derive(Debug)]
-pub(super) struct EnumerationType<'types> {
-    #[allow(dead_code)]
+pub struct EnumerationType<'types> {
+    /// Reference to the original type information.
     pub info: &'types EnumerationInfo,
+
+    /// The identifier of the rendered type.
     pub type_ident: Ident2,
+
+    /// List of variants of this enumeration.
     pub variants: Vec<EnumerationTypeVariant<'types>>,
+
+    /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<IdentPath>,
 }
 
+/// Represents a enumeration variant used by [`EnumerationType`].
 #[derive(Debug)]
-pub(super) struct EnumerationTypeVariant<'types> {
+pub struct EnumerationTypeVariant<'types> {
+    /// Reference to the original type information.
     pub info: &'types VariantInfo,
+
+    /// Name of this variant.
     pub variant_ident: Ident2,
+
+    /// Target type of this variant.
     pub target_type: Option<IdentPath>,
 }
 
@@ -616,104 +372,240 @@ impl VariantInfo {
     }
 }
 
-/* ComplexType */
-
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::All`], [`TypeVariant::Choice`],
+/// [`TypeVariant::Sequence`] or [`TypeVariant::ComplexType`] type.
+///
+/// To simplify the rendering process this recursive type was added to the
+/// generator. It basically boils down to the following:
+///
+///   - A complex type with a `choice` will result in a struct with a enum
+///     content type.
+///   - A complex type with a `all` or `sequence` will result in a struct
+///     with a struct content type.
+///   - A simple `choice` will result in a single enum type.
+///   - A simple `all` or `sequence` will result in a single sequence.
+///
+/// Additional improvements may be applied to the type, to reduce the complexity
+/// of the generated type (for example flattening the content if possible).
 #[derive(Debug)]
-pub(super) enum ComplexType<'types> {
+pub enum ComplexType<'types> {
+    /// The type represents an enumeration.
+    ///
+    /// This is normally used for `choice` elements.
     Enum {
+        /// The main type.
         type_: ComplexTypeEnum<'types>,
+
+        /// The content of the main type (if needed).
         content_type: Option<Box<ComplexType<'types>>>,
     },
+
+    /// The type represents a struct.
+    ///
+    /// This is normally used for `all`
     Struct {
+        /// The main type.
         type_: ComplexTypeStruct<'types>,
+
+        /// The content of the main type (if needed).
         content_type: Option<Box<ComplexType<'types>>>,
     },
 }
 
+/// Contains basic information for that is shared between [`ComplexTypeEnum`]
+/// and [`ComplexTypeStruct`].
 #[derive(Debug)]
-pub(super) struct ComplexTypeBase {
+pub struct ComplexTypeBase {
+    /// The identifier of the rendered type.
     pub type_ident: Ident2,
+
+    /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<IdentPath>,
 
+    /// Name of the XML tag of the type (if the type represents an element in the XML).
     pub tag_name: Option<String>,
+
+    /// `true` if the type is a complex type, `false` otherwise.
     pub is_complex: bool,
+
+    /// `true` if the type is dynamic, `false` otherwise.
     pub is_dynamic: bool,
 
+    /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,
+
+    /// Identifier of the state of the serializer for this type.
     pub serializer_state_ident: Ident2,
 
+    /// Identifier of the deserializer for this type.
     pub deserializer_ident: Ident2,
+
+    /// Identifier of the state of the deserializer for this type.
     pub deserializer_state_ident: Ident2,
 }
 
+/// Represents a rust enum.
+///
+/// Is used as part of the [`ComplexType`].
 #[derive(Debug)]
-pub(super) struct ComplexTypeEnum<'types> {
+pub struct ComplexTypeEnum<'types> {
+    /// Basic type information.
     pub base: ComplexTypeBase,
 
+    /// List of `xs:element`s or variants contained in this enum
     pub elements: Vec<ComplexTypeElement<'types>>,
+
+    /// Content of the `xs:any`.
     pub any_element: Option<&'types AnyInfo>,
+
+    /// Content of the `xs:anyAttribute`.
     pub any_attribute: Option<&'types AnyAttributeInfo>,
 }
 
+/// Represents a rust struct.
+///
+/// Is used as part of the [`ComplexType`].
 #[derive(Debug)]
-pub(super) struct ComplexTypeStruct<'types> {
+pub struct ComplexTypeStruct<'types> {
+    /// Basic type information.
     pub base: ComplexTypeBase,
+
+    /// Additional information about the content of the struct.
     pub mode: StructMode<'types>,
 
+    /// List of `xs:attribute`s contained in this struct.
     pub attributes: Vec<ComplexTypeAttribute<'types>>,
+
+    /// Content of the `xs:anyAttribute`.
     pub any_attribute: Option<&'types AnyAttributeInfo>,
 }
 
+/// Content of a rust struct.
+///
+/// Used by [`ComplexTypeStruct`] to tell how the actual content of the struct
+/// should be rendered.
 #[derive(Debug)]
-pub(super) enum StructMode<'types> {
+pub enum StructMode<'types> {
+    /// The struct does not contain any `xs:element`s.
     Empty {
+        /// Content of the `xs:any`.
         any_element: Option<&'types AnyInfo>,
     },
+
+    /// The content of the struct is another generated type that contains
+    /// the actual data.
     Content {
+        /// Information about the content of the struct.
         content: ComplexTypeContent,
     },
+
+    /// The content of the struct is a `xs:all` group.
     All {
+        /// List of `xs:element`s inside the group.
         elements: Vec<ComplexTypeElement<'types>>,
+
+        /// Content of the `xs:any`.
         any_element: Option<&'types AnyInfo>,
     },
+
+    /// The content of the struct is a `xs:sequence` group.
     Sequence {
+        /// List of `xs:element`s inside the group.
         elements: Vec<ComplexTypeElement<'types>>,
+
+        /// Content of the `xs:any`.
         any_element: Option<&'types AnyInfo>,
     },
 }
 
+/// Contains details about the content of a struct.
+///
+/// Is used by [`StructMode`] to define the content of a struct.
 #[derive(Debug)]
-pub(super) struct ComplexTypeContent {
+pub struct ComplexTypeContent {
+    /// Occurrence of the content within this struct.
     pub occurs: Occurs,
+
+    /// `true` if the content is a simple type (e.g. a enum, union, string,
+    /// integer, ...), `false` otherwise.
     pub is_simple: bool,
+
+    /// Minimum occurrence.
     pub min_occurs: MinOccurs,
+
+    /// Maximum occurrence.
     pub max_occurs: MaxOccurs,
+
+    /// Actual target type of the content.
     pub target_type: IdentPath,
 }
 
+/// Contains the details of an XML element.
+///
+/// Is used in [`ComplexTypeEnum`] or [`StructMode`].
 #[derive(Debug)]
-pub(super) struct ComplexTypeElement<'types> {
+pub struct ComplexTypeElement<'types> {
+    /// Reference to the original type information.
     pub info: &'types ElementInfo,
+
+    /// Occurrence of the element within it's parent type.
     pub occurs: Occurs,
+
+    /// Name of the element as string.
     pub s_name: String,
+
+    /// Name of the element as byte string literal.
     pub b_name: Literal,
+
+    /// Name of the XML tag of the element.
     pub tag_name: String,
+
+    /// Field identifier of the element.
     pub field_ident: Ident2,
+
+    /// Variant identifier of the element.
     pub variant_ident: Ident2,
+
+    /// Actual target type of the element.
     pub target_type: IdentPath,
+
+    /// `true` if this element needs some indirection
+    /// (like a `Box` or a `Vec`), `false` otherwise.
     pub need_indirection: bool,
+
+    /// `true` if the target type of this element is dynamic,
+    /// `false` otherwise.
     pub target_is_dynamic: bool,
 }
 
+/// Contains the details of an XML attribute.
+///
+/// Is used in [`ComplexTypeStruct`].
 #[derive(Debug)]
-pub(super) struct ComplexTypeAttribute<'types> {
+pub struct ComplexTypeAttribute<'types> {
+    /// Reference to the original type information.
     pub info: &'types AttributeInfo,
+
+    /// Identifier of the attribute.
     pub ident: Ident2,
+
+    /// Name of the attribute as string.
     pub s_name: String,
+
+    /// Name of the attribute as byte string literal.
     pub b_name: Literal,
+
+    /// Name of the attribute inside the XML tag.
     pub tag_name: String,
+
+    /// `true` if this attribute is optional, `false` otherwise.
     pub is_option: bool,
+
+    /// The actual target type of the attribute.
     pub target_type: IdentPath,
+
+    /// The default value of the attribute.
     pub default_value: Option<TokenStream>,
 }
 
@@ -1308,35 +1200,188 @@ impl<'types> ComplexTypeAttribute<'types> {
     }
 }
 
-/* Helper */
+/* Request */
 
-macro_rules! impl_render {
-    ($ty:ident) => {
-        impl<'types> $ty<'types> {
-            pub(super) fn render(&self, config: &Config<'types>, ctx: &mut Context<'_, 'types>) {
-                self.render_types(ctx);
-                self.render_impl(ctx);
+/// Helper type that is used to request the code generation for a specific type.
+struct Request<'a, 'types> {
+    pub ident: &'a Ident,
+    pub config: &'a Config<'types>,
 
-                if config.flags.intersects(GeneratorFlags::QUICK_XML_SERIALIZE) {
-                    self.render_serializer(ctx);
-                }
-
-                if config
-                    .flags
-                    .intersects(GeneratorFlags::QUICK_XML_DESERIALIZE)
-                {
-                    self.render_deserializer(ctx);
-                }
-            }
-        }
-    };
+    state: &'a mut State<'types>,
 }
 
-impl_render!(UnionType);
-impl_render!(DynamicType);
-impl_render!(ReferenceType);
-impl_render!(EnumerationType);
-impl_render!(ComplexType);
+impl<'a, 'types> Request<'a, 'types> {
+    fn new(ident: &'a Ident, config: &'a Config<'types>, state: &'a mut State<'types>) -> Self {
+        Self {
+            ident,
+            config,
+            state,
+        }
+    }
+
+    fn current_module(&self) -> Option<NamespaceId> {
+        self.check_flags(GeneratorFlags::USE_MODULES)
+            .then_some(self.ident.ns)
+            .flatten()
+    }
+
+    fn current_type_ref(&self) -> &TypeRef {
+        self.state.cache.get(self.ident).unwrap()
+    }
+
+    fn get_trait_infos(&mut self) -> &TraitInfos {
+        self.state
+            .trait_infos
+            .get_or_insert_with(|| TraitInfos::new(self.config.types))
+    }
+
+    fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
+        self.state.get_or_create_type_ref(self.config, ident)
+    }
+
+    fn make_trait_impls(&mut self) -> Result<Vec<IdentPath>, Error> {
+        let ident = self.ident.clone();
+
+        self.get_trait_infos()
+            .get(&ident)
+            .into_iter()
+            .flat_map(|info| &info.traits_all)
+            .cloned()
+            .collect::<Vec<_>>()
+            .into_iter()
+            .map(|ident| {
+                let type_ref = self.get_or_create_type_ref(ident.clone())?;
+                let ident = format_ident!("{}Trait", type_ref.type_ident);
+                let trait_type = type_ref.to_ident_path().with_ident(ident);
+
+                Ok(trait_type)
+            })
+            .collect::<Result<Vec<_>, _>>()
+    }
+
+    fn get_default(
+        &mut self,
+        current_ns: Option<NamespaceId>,
+        default: &str,
+        ident: &Ident,
+    ) -> Result<TokenStream, Error> {
+        let types = self.types;
+        let ty = types
+            .get(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+        let type_ref = self.get_or_create_type_ref(ident.clone())?;
+
+        macro_rules! build_in {
+            ($ty:ty) => {
+                if let Ok(val) = default.parse::<$ty>() {
+                    return Ok(quote!(#val));
+                }
+            };
+        }
+
+        match &ty.variant {
+            TypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
+            TypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
+            TypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
+            TypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
+            TypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
+            TypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
+
+            TypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
+            TypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
+            TypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
+            TypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
+            TypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
+            TypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
+
+            TypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
+            TypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
+
+            TypeVariant::BuildIn(BuildInInfo::Bool) => {
+                match default.to_ascii_lowercase().as_str() {
+                    "true" | "yes" | "1" => return Ok(quote!(true)),
+                    "false" | "no" | "0" => return Ok(quote!(false)),
+                    _ => (),
+                }
+            }
+            TypeVariant::BuildIn(BuildInInfo::String) => {
+                return Ok(quote!(String::from(#default)));
+            }
+            TypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
+                if let Some(x) = x.default(default) {
+                    return Ok(x);
+                }
+            }
+
+            TypeVariant::Enumeration(ei) => {
+                let module_path = ModulePath::from_namespace(current_ns, types);
+                let target_type = type_ref.to_ident_path().relative_to(&module_path);
+
+                for var in &*ei.variants {
+                    if var.type_.is_none() && var.ident.name.as_str() == default {
+                        let variant_ident =
+                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
+
+                        return Ok(quote!(#target_type :: #variant_ident));
+                    }
+
+                    if let Some(target_ident) = &var.type_ {
+                        if let Ok(default) = self.get_default(current_ns, default, target_ident) {
+                            let variant_ident =
+                                format_variant_ident(&var.ident.name, var.display_name.as_deref());
+
+                            return Ok(quote!(#target_type :: #variant_ident(#default)));
+                        }
+                    }
+                }
+            }
+
+            TypeVariant::Union(ui) => {
+                let module_path = ModulePath::from_namespace(current_ns, types);
+                let target_type = type_ref.to_ident_path().relative_to(&module_path);
+
+                for ty in &*ui.types {
+                    if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
+                        let variant_ident =
+                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
+
+                        return Ok(quote! {
+                            #target_type :: #variant_ident ( #code )
+                        });
+                    }
+                }
+            }
+
+            TypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
+                Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
+                Occurs::DynamicList if default.is_empty() => {
+                    let module_path = ModulePath::from_namespace(current_ns, types);
+                    let target_type = type_ref.to_ident_path().relative_to(&module_path);
+
+                    return Ok(quote! { #target_type(Vec::new()) });
+                }
+                _ => (),
+            },
+
+            _ => (),
+        }
+
+        Err(Error::InvalidDefaultValue(
+            ident.clone(),
+            default.to_owned(),
+        ))
+    }
+}
+
+impl<'types> Deref for Request<'_, 'types> {
+    type Target = Config<'types>;
+
+    fn deref(&self) -> &Self::Target {
+        self.config
+    }
+}
+
+/* Helper */
 
 fn is_dynamic(ident: &Ident, types: &Types) -> bool {
     let Some(ty) = types.get(ident) else {

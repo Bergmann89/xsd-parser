@@ -42,7 +42,7 @@ fn main() -> Result<(), Error> {
 
     tracing::info!("Generate Code for {input:#?} to {output:#?}");
 
-    let mut config = Config::default();
+    let mut config = Config::default().with_quick_xml_serialize();
 
     // parser
     config.parser.flags = ParserFlags::all();
@@ -68,8 +68,7 @@ fn main() -> Result<(), Error> {
     config.optimizer.flags = OptimizerFlags::all();
 
     // generator
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::QUICK_XML_SERIALIZE - GeneratorFlags::USE_MODULES;
+    config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
     config.generator.xsd_parser = "crate".into();
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();

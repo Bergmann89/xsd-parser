@@ -1,5 +1,6 @@
+use xsd_parser::AsAny;
 pub struct Abstract(pub Box<dyn AbstractTrait>);
-pub trait AbstractTrait: xsd_parser::AsAny {}
+pub trait AbstractTrait: AsAny {}
 pub struct FirstType {
     pub a: String,
 }

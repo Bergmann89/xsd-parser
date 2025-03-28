@@ -1,71 +1,44 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::generator::{
-    data::{
-        ComplexType, ComplexTypeAttribute, ComplexTypeStruct, DynamicType, EnumerationType,
-        ReferenceType, UnionType,
-    },
-    Context,
-};
+use crate::generator::data::{ComplexType, ComplexTypeAttribute, ComplexTypeStruct};
 
-/* UnionType */
+use super::{Context, Renderer, TypeData};
 
-impl UnionType<'_> {
-    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
-        let _self = self;
-        let _ctx = ctx;
-    }
-}
+/// Implements a [`Renderer`] that renders associated methods that return the default
+/// values of the different attributes and elements according to the schema.
+#[derive(Debug)]
+pub struct DefaultsRenderer;
 
-/* DynamicType */
-
-impl DynamicType<'_> {
-    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
-        let _self = self;
-        let _ctx = ctx;
-    }
-}
-
-/* ReferenceType */
-
-impl ReferenceType<'_> {
-    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
-        let _self = self;
-        let _ctx = ctx;
-    }
-}
-
-/* EnumerationType */
-
-impl EnumerationType<'_> {
-    pub(crate) fn render_impl(&self, ctx: &Context<'_, '_>) {
-        let _self = self;
-        let _ctx = ctx;
+impl Renderer for DefaultsRenderer {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
+        if let TypeData::Complex(x) = ty {
+            x.render_defaults(ctx);
+        }
     }
 }
 
 /* ComplexType */
 
 impl ComplexType<'_> {
-    pub(crate) fn render_impl(&self, ctx: &mut Context<'_, '_>) {
+    pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {
         match self {
             ComplexType::Enum {
                 type_: _,
                 content_type,
             } => {
                 if let Some(content_type) = content_type {
-                    content_type.render_impl(ctx);
+                    content_type.render_defaults(ctx);
                 }
             }
             ComplexType::Struct {
                 type_,
                 content_type,
             } => {
-                type_.render_impl(ctx);
+                type_.render_defaults(ctx);
 
                 if let Some(content_type) = content_type {
-                    content_type.render_impl(ctx);
+                    content_type.render_defaults(ctx);
                 }
             }
         }
@@ -73,7 +46,7 @@ impl ComplexType<'_> {
 }
 
 impl ComplexTypeStruct<'_> {
-    pub(crate) fn render_impl(&self, ctx: &mut Context<'_, '_>) {
+    pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {
         let type_ident = &self.type_ident;
         let mut has_attributes = false;
         let attribute_defaults = self
@@ -89,7 +62,7 @@ impl ComplexTypeStruct<'_> {
         };
 
         if has_attributes {
-            ctx.main().append(impl_);
+            ctx.module().append(impl_);
         }
     }
 }

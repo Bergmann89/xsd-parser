@@ -11,7 +11,7 @@ use crate::utils::generate_test;
 
 #[test]
 fn generate_quick_xml() {
-    let mut config = Config::default();
+    let mut config = Config::default().with_quick_xml_deserialize();
 
     config.parser.flags = ParserFlags::all();
     config.parser.resolver = vec![Resolver::File];
@@ -20,8 +20,7 @@ fn generate_quick_xml() {
 
     config.optimizer.flags = OptimizerFlags::all();
 
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::QUICK_XML_SERIALIZE - GeneratorFlags::USE_MODULES;
+    config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
     config.generator.generate =
         Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
 

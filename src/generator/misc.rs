@@ -70,27 +70,6 @@ bitflags! {
         ///
         /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
         const FLATTEN_STRUCT_CONTENT = 1 << 2;
-
-        /// The generator will generate code to serialize the generated types using
-        /// the `quick_xml` crate.
-        const QUICK_XML_SERIALIZE = 1 << 3;
-
-        /// The generator will generate code to deserialize the generated types using
-        /// the `quick_xml` crate.
-        const QUICK_XML_DESERIALIZE = 1 << 4;
-
-        /// Combination of [`WITH_NAMESPACE_CONSTANTS`](Self::WITH_NAMESPACE_CONSTANTS),
-        /// [`QUICK_XML_SERIALIZE`](Self::QUICK_XML_SERIALIZE)
-        /// and [`QUICK_XML_DESERIALIZE`](Self::QUICK_XML_DESERIALIZE).
-        const QUICK_XML = Self::WITH_NAMESPACE_CONSTANTS.bits()
-            | Self::QUICK_XML_SERIALIZE.bits()
-            | Self::QUICK_XML_DESERIALIZE.bits();
-
-        /// Implement the [`WithNamespace`](crate::WithNamespace) trait for the generated types.
-        const WITH_NAMESPACE_TRAIT = 1 << 5;
-
-        /// Will generate constants for the different namespace used by the schema.
-        const WITH_NAMESPACE_CONSTANTS = 1 << 6;
     }
 }
 
@@ -273,6 +252,56 @@ impl SerdeSupport {
     }
 }
 
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum Occurs {
+    #[default]
+    None,
+    Single,
+    Optional,
+    DynamicList,
+    StaticList(usize),
+}
+
+impl Occurs {
+    pub fn from_occurs(min: MinOccurs, max: MaxOccurs) -> Self {
+        match (min, max) {
+            (0, MaxOccurs::Bounded(0)) => Self::None,
+            (1, MaxOccurs::Bounded(1)) => Self::Single,
+            (0, MaxOccurs::Bounded(1)) => Self::Optional,
+            (a, MaxOccurs::Bounded(b)) if a == b => Self::StaticList(a),
+            (_, _) => Self::DynamicList,
+        }
+    }
+
+    pub fn make_type(self, ident: &TokenStream, need_indirection: bool) -> Option<TokenStream> {
+        match self {
+            Self::None => None,
+            Self::Single if need_indirection => Some(quote! { Box<#ident> }),
+            Self::Single => Some(quote! { #ident }),
+            Self::Optional if need_indirection => Some(quote! { Option<Box<#ident>> }),
+            Self::Optional => Some(quote! { Option<#ident> }),
+            Self::DynamicList => Some(quote! { Vec<#ident> }),
+            Self::StaticList(sz) if need_indirection => Some(quote! { [Box<#ident>; #sz] }),
+            Self::StaticList(sz) => Some(quote! { [#ident; #sz] }),
+        }
+    }
+
+    pub fn is_some(&self) -> bool {
+        *self != Self::None
+    }
+
+    pub fn is_direct(&self) -> bool {
+        matches!(self, Self::Single | Self::Optional | Self::StaticList(_))
+    }
+}
+
+#[derive(Default, Debug)]
+pub enum DynTypeTraits {
+    #[default]
+    Auto,
+    Custom(Vec<IdentPath>),
+}
+
 /* PendingType */
 
 #[derive(Debug)]
@@ -394,62 +423,4 @@ impl Deref for TraitInfos {
 pub(super) struct TraitInfo {
     pub traits_all: BTreeSet<Ident>,
     pub traits_direct: BTreeSet<Ident>,
-}
-
-/* Occurs */
-
-#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
-pub(super) enum Occurs {
-    #[default]
-    None,
-    Single,
-    Optional,
-    DynamicList,
-    StaticList(usize),
-}
-
-impl Occurs {
-    pub(super) fn from_occurs(min: MinOccurs, max: MaxOccurs) -> Self {
-        match (min, max) {
-            (0, MaxOccurs::Bounded(0)) => Self::None,
-            (1, MaxOccurs::Bounded(1)) => Self::Single,
-            (0, MaxOccurs::Bounded(1)) => Self::Optional,
-            (a, MaxOccurs::Bounded(b)) if a == b => Self::StaticList(a),
-            (_, _) => Self::DynamicList,
-        }
-    }
-
-    pub(super) fn make_type(
-        self,
-        ident: &TokenStream,
-        need_indirection: bool,
-    ) -> Option<TokenStream> {
-        match self {
-            Self::None => None,
-            Self::Single if need_indirection => Some(quote! { Box<#ident> }),
-            Self::Single => Some(quote! { #ident }),
-            Self::Optional if need_indirection => Some(quote! { Option<Box<#ident>> }),
-            Self::Optional => Some(quote! { Option<#ident> }),
-            Self::DynamicList => Some(quote! { Vec<#ident> }),
-            Self::StaticList(sz) if need_indirection => Some(quote! { [Box<#ident>; #sz] }),
-            Self::StaticList(sz) => Some(quote! { [#ident; #sz] }),
-        }
-    }
-
-    pub(super) fn is_some(&self) -> bool {
-        *self != Self::None
-    }
-
-    pub(super) fn is_direct(&self) -> bool {
-        matches!(self, Self::Single | Self::Optional | Self::StaticList(_))
-    }
-}
-
-/* DynTypeTraits */
-
-#[derive(Default, Debug)]
-pub(super) enum DynTypeTraits {
-    #[default]
-    Auto,
-    Custom(Vec<TokenStream>),
 }

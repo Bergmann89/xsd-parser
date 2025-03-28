@@ -2,18 +2,50 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::{
+    code::IdentPath,
     config::TypedefMode,
     generator::{
         data::{
             ComplexType, ComplexTypeBase, ComplexTypeContent, ComplexTypeElement, ComplexTypeEnum,
             ComplexTypeStruct, DynamicType, EnumerationType, EnumerationTypeVariant, ReferenceType,
-            UnionType, UnionTypeVariant,
+            TypeData, UnionType, UnionTypeVariant,
         },
         misc::Occurs,
-        Context,
+        renderer::Renderer,
+        Config, Context, DynTypeTraits,
     },
     schema::Namespace,
 };
+
+/// Implements a [`Renderer`] that renders the code for the `quick_xml` serialization.
+#[derive(Debug)]
+pub struct QuickXmlSerializeRenderer;
+
+impl Renderer for QuickXmlSerializeRenderer {
+    fn initialize(&mut self, config: &mut Config<'_>) {
+        if let DynTypeTraits::Custom(x) = &mut config.dyn_type_traits {
+            let ident = IdentPath::from_parts(
+                [config.xsd_parser_crate.clone(), format_ident!("quick_xml")],
+                format_ident!("WithBoxedSerializer"),
+            );
+
+            if !x.contains(&ident) {
+                x.push(ident);
+            }
+        }
+    }
+
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
+        match ty {
+            TypeData::BuildIn(_) => (),
+            TypeData::Union(x) => x.render_serializer(ctx),
+            TypeData::Dynamic(x) => x.render_serializer(ctx),
+            TypeData::Reference(x) => x.render_serializer(ctx),
+            TypeData::Enumeration(x) => x.render_serializer(ctx),
+            TypeData::Complex(x) => x.render_serializer(ctx),
+        }
+    }
+}
 
 /* UnionType */
 
@@ -46,7 +78,7 @@ impl UnionType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -89,7 +121,7 @@ impl DynamicType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -160,7 +192,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -194,7 +226,7 @@ impl EnumerationType<'_> {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 }
 
@@ -283,7 +315,7 @@ impl ComplexTypeBase {
             }
         };
 
-        ctx.main().usings(usings).append(code);
+        ctx.module().usings(usings).append(code);
     }
 
     fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {

@@ -1,26 +1,37 @@
 //! The `generator` module contains the code [`Generator`] and all related types.
 
+pub mod renderer;
+
+mod context;
 mod data;
 mod error;
 mod helper;
 mod misc;
-mod renderer;
 
 use std::collections::{BTreeMap, HashSet, VecDeque};
 use std::fmt::Display;
+use std::str::FromStr;
 
-use proc_macro2::{Ident as Ident2, Literal, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use proc_macro2::{Ident as Ident2, TokenStream};
+use quote::{format_ident, ToTokens};
+use renderer::{Renderer, TypesRenderer};
+use smallvec::{smallvec, SmallVec};
 use tracing::instrument;
 
-use crate::code::{format_module_ident, format_type_ident, Module};
+use crate::code::{format_module_ident, format_type_ident, IdentPath, Module};
 use crate::schema::NamespaceId;
 use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
 
+pub use self::context::Context;
+pub use self::data::{
+    BuildInType, ComplexType, ComplexTypeAttribute, ComplexTypeBase, ComplexTypeContent,
+    ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, DerivedType, DynamicType,
+    EnumerationType, EnumerationTypeVariant, ReferenceType, StructMode, TypeData, UnionType,
+    UnionTypeVariant,
+};
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
-use self::data::{Context, Request};
 use self::helper::Walk;
 use self::misc::{DynTypeTraits, PendingType, TraitInfos, TypeRef};
 
@@ -30,6 +41,7 @@ use self::misc::{DynTypeTraits, PendingType, TraitInfos, TypeRef};
 pub struct Generator<'types> {
     config: Config<'types>,
     state: State<'types>,
+    renderers: Vec<Box<dyn Renderer>>,
 }
 
 /// Type that is used to generate rust code from a [`Types`] object.
@@ -43,20 +55,40 @@ pub struct GeneratorFixed<'types> {
     config: Config<'types>,
     state: State<'types>,
     module: Module,
+    renderers: Vec<Box<dyn Renderer>>,
 }
 
+/// Contains the configuration of the generator.
 #[derive(Debug)]
-struct Config<'types> {
-    types: &'types Types,
+pub struct Config<'types> {
+    /// Reference to the types the code should be generated for.
+    pub types: &'types Types,
 
-    flags: GeneratorFlags,
-    derive: Vec<Ident2>,
-    postfixes: [String; 8],
-    box_flags: BoxFlags,
-    typedef_mode: TypedefMode,
-    serde_support: SerdeSupport,
-    dyn_type_traits: DynTypeTraits,
-    xsd_parser_crate: Ident2,
+    /// Flags that controls the behavior of the generator.
+    pub flags: GeneratorFlags,
+
+    /// Traits the generator should derive the generated types from.
+    pub derive: Vec<Ident2>,
+
+    /// List of postfixed to add to the name of the generated types.
+    ///
+    /// This corresponds to the variants of [`IdentType`].
+    pub postfixes: [String; 8],
+
+    /// Tells the generator how to deal with boxed elements.
+    pub box_flags: BoxFlags,
+
+    /// Tells the generator how to deal with type definitions.
+    pub typedef_mode: TypedefMode,
+
+    /// Tells the generator if and how to generate code to support [`serde`].
+    pub serde_support: SerdeSupport,
+
+    /// List of traits that should be implemented by dynamic types.
+    pub dyn_type_traits: DynTypeTraits,
+
+    /// Name of the `xsd_parser` crate.
+    pub xsd_parser_crate: Ident2,
 }
 
 #[derive(Debug)]
@@ -96,8 +128,13 @@ impl<'types> Generator<'types> {
             trait_infos: None,
             pending: VecDeque::new(),
         };
+        let renderers = Vec::new();
 
-        Self { config, state }
+        Self {
+            config,
+            state,
+            renderers,
+        }
     }
 
     /// Set the name of the `xsd-parser` create that the generator should use for
@@ -132,29 +169,33 @@ impl<'types> Generator<'types> {
     ///
     /// The passed values must be valid type paths.
     ///
+    /// # Errors
+    ///
+    /// Will raise a [`InvalidIdentifier`](Error::InvalidIdentifier) error
+    /// if the passed strings does not represent a valid identifier.
+    ///
     /// # Examples
     ///
     /// ```ignore
     /// let generator = Generator::new(types)
     ///     .dyn_type_traits(["core::fmt::Debug", "core::any::Any"]);
     /// ```
-    pub fn dyn_type_traits<I>(mut self, value: I) -> Self
+    pub fn dyn_type_traits<I>(mut self, value: I) -> Result<Self, Error>
     where
         I: IntoIterator,
-        I::Item: Into<String>,
+        I::Item: AsRef<str>,
     {
-        fn parse_path(s: &str) -> TokenStream {
-            let parts = s.split("::").map(|x| format_ident!("{x}"));
+        let traits = value
+            .into_iter()
+            .map(|x| {
+                let s = x.as_ref();
+                IdentPath::from_str(s).map_err(|()| Error::InvalidIdentifier(s.into()))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
 
-            quote! {
-                #( #parts )*
-            }
-        }
+        self.config.dyn_type_traits = DynTypeTraits::Custom(traits);
 
-        self.config.dyn_type_traits =
-            DynTypeTraits::Custom(value.into_iter().map(|x| parse_path(&x.into())).collect());
-
-        self
+        Ok(self)
     }
 
     /// Set the [`BoxFlags`] flags the generator should use for generating the code.
@@ -233,6 +274,28 @@ impl<'types> Generator<'types> {
         Ok(self)
     }
 
+    /// Add a [`Renderer`] to the generator.
+    pub fn with_renderer<X>(mut self, renderer: X) -> Self
+    where
+        X: Renderer + 'static,
+    {
+        self.renderers.push(Box::new(renderer));
+
+        self
+    }
+
+    /// Add the default renderers to the generator.
+    pub fn with_default_renderers(self) -> Self {
+        self.with_renderer(TypesRenderer)
+    }
+
+    /// Remove all [`Renderer`]s from the generator.
+    pub fn clear_renderers(mut self) -> Self {
+        self.renderers.clear();
+
+        self
+    }
+
     /// Will fix the generator by call [`into_fixed`](Self::into_fixed) and then
     /// [`generate_type`](GeneratorFixed::generate_type).
     #[instrument(err, level = "trace", skip(self))]
@@ -252,17 +315,50 @@ impl<'types> Generator<'types> {
 
     /// Will convert the generator into a [`GeneratorFixed`].
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
-        let Self { mut config, state } = self;
+        let Self {
+            mut config,
+            state,
+            mut renderers,
+        } = self;
         let module = Module::default();
 
-        if config.flags.intersects(GeneratorFlags::QUICK_XML) {
-            config.flags |= GeneratorFlags::WITH_NAMESPACE_CONSTANTS;
+        config.dyn_type_traits = match config.dyn_type_traits {
+            DynTypeTraits::Auto => {
+                let traits = config.derive.iter().map(|x| match x.to_string().as_ref() {
+                    "Debug" => IdentPath::from_str("core::fmt::Debug").unwrap(),
+                    "Hash" => IdentPath::from_str("core::hash::Hash").unwrap(),
+                    _ => IdentPath::from_ident(x.clone()),
+                });
+
+                let serde: SmallVec<[IdentPath; 2]> = if config.serde_support == SerdeSupport::None
+                {
+                    smallvec![]
+                } else {
+                    smallvec![
+                        IdentPath::from_str("serde::Serialize").unwrap(),
+                        IdentPath::from_str("serde::DeserializeOwned").unwrap()
+                    ]
+                };
+
+                let as_any = IdentPath::from_parts(
+                    Some(config.xsd_parser_crate.clone()),
+                    format_ident!("AsAny"),
+                );
+
+                DynTypeTraits::Custom(traits.chain(serde).chain(Some(as_any)).collect())
+            }
+            x => x,
+        };
+
+        for renderer in &mut renderers {
+            renderer.initialize(&mut config);
         }
 
         GeneratorFixed {
             config,
             state,
             module,
+            renderers,
         }
     }
 }
@@ -338,33 +434,19 @@ impl<'types> GeneratorFixed<'types> {
     ///
     /// This will return the generated code as [`TokenStream`].
     #[instrument(level = "trace", skip(self))]
-    pub fn finish(mut self) -> TokenStream {
-        let xsd_parser = &self.config.xsd_parser_crate;
-        let with_namespace_constants = self
-            .config
-            .check_flags(GeneratorFlags::WITH_NAMESPACE_CONSTANTS);
+    pub fn finish(self) -> TokenStream {
+        let Self {
+            config,
+            mut module,
+            state: _,
+            mut renderers,
+        } = self;
 
-        let namespace_constants = with_namespace_constants
-            .then(|| {
-                self.module.usings([quote!(#xsd_parser::schema::Namespace)]);
+        for renderer in &mut renderers {
+            renderer.finish(&config, &mut module);
+        }
 
-                self.config.types.modules.values().filter_map(|module| {
-                    let ns = module.namespace.as_ref()?;
-                    let const_name = module.make_ns_const();
-                    let const_name = const_name.ident();
-                    let namespace = Literal::byte_string(&ns.0);
-
-                    Some(quote! {
-                        pub const #const_name: Namespace = Namespace::new_const(#namespace);
-                    })
-                })
-            })
-            .into_iter()
-            .flatten();
-
-        self.module.prepend(quote! { #( #namespace_constants )* });
-
-        self.module.to_token_stream()
+        module.to_token_stream()
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -383,22 +465,15 @@ impl<'types> GeneratorFixed<'types> {
             config,
             state,
             module,
+            renderers,
         } = self;
-        let req = Request::new(&ident, config, state);
+        let ty = TypeData::new(ty, &ident, config, state)?;
         let mut ctx = Context::new(&ident, config, module);
 
         tracing::debug!("Render type: {ident}");
 
-        match &ty.variant {
-            TypeVariant::BuildIn(_) => (),
-            TypeVariant::Union(x) => req.into_union_type(x)?.render(config, &mut ctx),
-            TypeVariant::Dynamic(x) => req.into_dynamic_type(x)?.render(config, &mut ctx),
-            TypeVariant::Reference(x) => req.into_reference_type(x)?.render(config, &mut ctx),
-            TypeVariant::Enumeration(x) => req.into_enumeration_type(x)?.render(config, &mut ctx),
-            TypeVariant::All(x) => req.into_all_type(x)?.render(config, &mut ctx),
-            TypeVariant::Choice(x) => req.into_choice_type(x)?.render(config, &mut ctx),
-            TypeVariant::Sequence(x) => req.into_sequence_type(x)?.render(config, &mut ctx),
-            TypeVariant::ComplexType(x) => req.into_complex_type(x)?.render(config, &mut ctx),
+        for renderer in renderers {
+            renderer.render_type(&mut ctx, &ty);
         }
 
         Ok(())

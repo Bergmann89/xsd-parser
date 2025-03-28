@@ -6,7 +6,7 @@ use smallvec::{smallvec, SmallVec};
 
 use crate::{
     code::IdentPath,
-    config::{GeneratorFlags, SerdeSupport, TypedefMode},
+    config::{SerdeSupport, TypedefMode},
     generator::{
         data::{
             ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement,
@@ -14,10 +14,29 @@ use crate::{
             EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
         },
         misc::Occurs,
-        Config, Context, DynTypeTraits,
+        DynTypeTraits,
     },
     schema::xs::Use,
 };
+
+use super::{Context, Renderer, TypeData};
+
+/// Implements a [`Renderer`] that renders the actual rust types of the types defined in the schema.
+#[derive(Debug)]
+pub struct TypesRenderer;
+
+impl Renderer for TypesRenderer {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
+        match ty {
+            TypeData::BuildIn(_) => (),
+            TypeData::Union(x) => x.render_types(ctx),
+            TypeData::Dynamic(x) => x.render_types(ctx),
+            TypeData::Reference(x) => x.render_types(ctx),
+            TypeData::Enumeration(x) => x.render_types(ctx),
+            TypeData::Complex(x) => x.render_types(ctx),
+        }
+    }
+}
 
 /* UnionType */
 
@@ -30,7 +49,7 @@ impl UnionType<'_> {
             ..
         } = self;
         let derive = get_derive(ctx, Option::<String>::None);
-        let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
+        let trait_impls = render_trait_impls(type_ident, trait_impls);
         let variants = variants.iter().map(|x| x.render_variant(ctx));
 
         let code = quote! {
@@ -42,7 +61,7 @@ impl UnionType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -75,12 +94,10 @@ impl DynamicType<'_> {
             ..
         } = self;
 
-        let xsd_crate = &ctx.xsd_parser_crate;
-
         let derive = get_derive(ctx, Option::<String>::None);
-        let trait_impls = render_trait_impls(ctx, type_ident, &[]);
+        let trait_impls = render_trait_impls(type_ident, &[]);
         let dyn_traits = sub_traits.as_ref().map_or_else(
-            || get_dyn_type_traits(ctx, [quote!(#xsd_crate::AsAny)]),
+            || get_dyn_type_traits(ctx),
             |traits| format_traits(traits.iter().map(|x| ctx.resolve_type_for_module(x))),
         );
 
@@ -93,7 +110,7 @@ impl DynamicType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -124,7 +141,7 @@ impl ReferenceType<'_> {
                 let extra_derive =
                     matches!(occurs, Occurs::Optional | Occurs::DynamicList).then_some("Default");
                 let derive = get_derive(ctx, extra_derive);
-                let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
+                let trait_impls = render_trait_impls(type_ident, trait_impls);
 
                 quote! {
                     #derive
@@ -135,7 +152,7 @@ impl ReferenceType<'_> {
             }
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -151,7 +168,7 @@ impl EnumerationType<'_> {
         } = self;
 
         let derive = get_derive(ctx, Option::<String>::None);
-        let trait_impls = render_trait_impls(ctx, type_ident, trait_impls);
+        let trait_impls = render_trait_impls(type_ident, trait_impls);
 
         let variants = variants
             .iter()
@@ -167,7 +184,7 @@ impl EnumerationType<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -235,7 +252,7 @@ impl ComplexTypeEnum<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
         let derive = get_derive(ctx, Option::<String>::None);
         let type_ident = &self.type_ident;
-        let trait_impls = render_trait_impls(ctx, type_ident, &self.trait_impls);
+        let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
 
         let variants = self.elements.iter().map(|x| x.render_variant(ctx));
 
@@ -248,7 +265,7 @@ impl ComplexTypeEnum<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -256,7 +273,7 @@ impl ComplexTypeStruct<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
         let derive = get_derive(ctx, Option::<String>::None);
         let type_ident = &self.type_ident;
-        let trait_impls = render_trait_impls(ctx, type_ident, &self.trait_impls);
+        let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
 
         let attributes = self
             .attributes
@@ -285,7 +302,7 @@ impl ComplexTypeStruct<'_> {
             #( #trait_impls )*
         };
 
-        ctx.main().append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -433,37 +450,19 @@ where
     }
 }
 
-fn get_dyn_type_traits<I>(config: &Config<'_>, extra: I) -> TokenStream
-where
-    I: IntoIterator,
-    I::Item: Into<TokenStream>,
-{
-    let xsd_parser = &config.xsd_parser_crate;
-
-    let serde: SmallVec<[TokenStream; 2]> = if config.serde_support == SerdeSupport::None {
-        smallvec![]
-    } else {
-        smallvec![quote!(serde::Serialize), quote!(serde::DeserializeOwned)]
-    };
-
-    format_traits(match &config.dyn_type_traits {
-        DynTypeTraits::Custom(x) => x.clone(),
-        DynTypeTraits::Auto => config
-            .derive
+fn get_dyn_type_traits(ctx: &Context<'_, '_>) -> TokenStream {
+    format_traits(match &ctx.dyn_type_traits {
+        DynTypeTraits::Custom(x) => x
             .iter()
-            .map(|x| match x.to_string().as_str() {
-                "Debug" => quote!(core::fmt::Debug),
-                "Hash" => quote!(core::has::Hash),
-                _ => quote!(#x),
+            .map(|ident| {
+                ctx.add_usings([quote!(#ident)]);
+
+                let ident = ident.ident();
+
+                quote!(#ident)
             })
-            .chain(serde)
-            .chain(
-                config
-                    .check_flags(GeneratorFlags::QUICK_XML_SERIALIZE)
-                    .then(|| quote!(#xsd_parser::quick_xml::WithBoxedSerializer)),
-            )
-            .chain(extra.into_iter().map(Into::into))
             .collect::<Vec<_>>(),
+        DynTypeTraits::Auto => vec![],
     })
 }
 
@@ -483,58 +482,14 @@ where
 }
 
 fn render_trait_impls<'a>(
-    ctx: &Context<'_, '_>,
     type_ident: &'a Ident2,
     trait_data: &'a [IdentPath],
 ) -> impl Iterator<Item = TokenStream> + 'a {
-    let trait_with_namespace = ctx
-        .check_flags(GeneratorFlags::WITH_NAMESPACE_TRAIT)
-        .then(|| render_trait_with_namespace(ctx, type_ident))
-        .flatten();
+    trait_data.iter().map(move |trait_ident| {
+        let trait_ident = trait_ident.ident();
 
-    trait_data
-        .iter()
-        .map(move |trait_ident| {
-            let trait_ident = trait_ident.ident();
-
-            quote! {
-                impl #trait_ident for #type_ident { }
-            }
-        })
-        .chain(trait_with_namespace)
-}
-
-fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Option<TokenStream> {
-    let ns = ctx.current_ns()?;
-    let module = ctx.types.modules.get(&ns)?;
-    let xsd_parser = &ctx.xsd_parser_crate;
-
-    let (prefix, namespace) = match (&module.name, &module.namespace) {
-        (Some(prefix), Some(namespace)) => {
-            let prefix = prefix.to_string();
-            let namespace = namespace.to_string();
-
-            (quote!(Some(#prefix)), quote!(Some(#namespace)))
+        quote! {
+            impl #trait_ident for #type_ident { }
         }
-        (None, Some(namespace)) => {
-            let namespace = namespace.to_string();
-
-            (quote!(None), quote!(Some(#namespace)))
-        }
-        (_, None) => (quote!(None), quote!(None)),
-    };
-
-    let code = quote! {
-        impl #xsd_parser::WithNamespace for #type_ident {
-            fn prefix() -> Option<&'static str> {
-                #prefix
-            }
-
-            fn namespace() -> Option<&'static str> {
-                #namespace
-            }
-        }
-    };
-
-    Some(code)
+    })
 }
