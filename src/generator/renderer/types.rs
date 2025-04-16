@@ -244,7 +244,7 @@ impl ComplexType<'_> {
                     content_type.render_types(ctx);
                 }
             }
-        };
+        }
     }
 }
 

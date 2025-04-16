@@ -34,7 +34,7 @@ jobs:
         key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo clippy
-      run: cargo clippy --all-features
+      run: cargo clippy --all-features -- --deny "warnings"
 
     - name: cargo fmt
       run: cargo fmt --all --check

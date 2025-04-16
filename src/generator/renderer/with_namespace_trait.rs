@@ -22,7 +22,7 @@ impl Renderer for WithNamespaceTraitRenderer {
             TypeData::Reference(x) => x.render_with_namespace_trait(ctx),
             TypeData::Enumeration(x) => x.render_with_namespace_trait(ctx),
             TypeData::Complex(x) => x.render_with_namespace_trait(ctx),
-        };
+        }
     }
 }
 
@@ -91,7 +91,7 @@ impl ComplexType<'_> {
                     content_type.render_with_namespace_trait(ctx);
                 }
             }
-        };
+        }
     }
 }
 
