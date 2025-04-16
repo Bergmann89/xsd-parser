@@ -2,8 +2,7 @@ A comprehensive library for parsing XML schemas and generating code based on the
 
 This project originated as a fork of [`xsd-parser-rs`](https://github.com/lumeohq/xsd-parser-rs) but has since evolved into a complete rewrite.
 
-> [!WARNING]
-> This crate is currently in an unstable state. If you encounter any issues, please report them by filing an issue.
+If you enjoy the project and would like to support my work, you can [buy me a coffee](https://ko-fi.com/bergmann89) or [send a tip via PayPal](https://paypal.me/bergmann891/5EUR). Thanks a lot! 😊
 
 <a href="https://github.com/Bergmann89/xsd-parser/blob/master/LICENSE"><img src="https://img.shields.io/crates/l/xsd-parser" alt="Crates.io License"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/v/xsd-parser" alt="Crates.io Version"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/d/xsd-parser" alt="Crates.io Total Downloads"></a> <a href="https://docs.rs/xsd-parser"><img src="https://img.shields.io/docsrs/xsd-parser" alt="docs.rs"></a> <a href="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml"><img src="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml/badge.svg" alt="Github CI"></a> <a href="https://deps.rs/repo/github/Bergmann89/xsd-parser"><img src="https://deps.rs/repo/github/Bergmann89/xsd-parser/status.svg" alt="Dependency Status"></a>
 
