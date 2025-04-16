@@ -12,16 +12,16 @@ If you enjoy the project and would like to support my work, you can [buy me a co
 The core idea of this library is to break down the code generation process into distinct steps, enabling better control and extensibility for users. The workflow is structured as follows:
 
 1. **Parsing XML Schemas:**
-   The [`Parser`] resolves XML schemas from various sources (e.g., local files, web links) and stores the processed information in the [`Schemas`] object. Resolving is done by using so called [`Resolver`]s, that can be implemented by the user.
+   The `Parser` resolves XML schemas from various sources (e.g., local files, web links) and stores the processed information in the `Schemas` object. Resolving is done by using so called `Resolver`s, that can be implemented by the user.
 
 2. **Interpreting Schemas:**
-   The [`Interpreter`] uses the [`Schemas`] object to extract type information by applying extensions and restrictions defined in the schema. This results in a simplified [`Types`] structure that represents language-agnostic types.
+   The `Interpreter` uses the `Schemas` object to extract type information by applying extensions and restrictions defined in the schema. This results in a simplified `Types` structure that represents language-agnostic types.
 
 3. **Optimizing Types:**
-   The [`Optimizer`] refines the [`Types`] structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
+   The `Optimizer` refines the `Types` structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
 
 4. **Generating Code:**
-   Finally, the [`Generator`] converts the optimized [`Types`] information into Rust code by using so called [`Renderer`]s. As the resolvers, renderers can be implemented by the user to extend code generator.
+   Finally, the `Generator` converts the optimized `Types` information into Rust code by using so called `Renderer`s. As the resolvers, renderers can be implemented by the user to extend code generator.
 
 ![overview](doc/overview.svg "Overview")
 
@@ -29,14 +29,14 @@ The core idea of this library is to break down the code generation process into 
 This layered approach allows users to customize or extend the process at multiple stages. For example:
 - Add custom logic to modify the type information.
 - Replace the default generator with a custom implementation.
-- Implement a custom interpreter to generate [`Types`] and use the default Rust code generator.
+- Implement a custom interpreter to generate `Types` and use the default Rust code generator.
 
 The possibilities for customization and extension are nearly limitless.
 
 
 # Example
 
-To quickly generate Rust code from an XML schema, you can use the [`generate`] function. This function acts as a simple wrapper for the entire process described above and is controlled via a [`Config`] structure to adjust various parameters.
+To quickly generate Rust code from an XML schema, you can use the `generate` function. This function acts as a simple wrapper for the entire process described above and is controlled via a `Config` structure to adjust various parameters.
 
 ```rust,ignore
 use xsd_parser::{generate, Config, Error, config::{Schema, InterpreterFlags, OptimizerFlags, GeneratorFlags}};

@@ -17,7 +17,7 @@ fn main() {
 
     println!("cargo:rerun-if-changed={}", readme.display());
 
-    let rx = Regex::new(r">\s*\[!WARNING\]\r?\n((?:>\s*(?:[^\n]*\r?\n))+)").unwrap();
+    let rx = Regex::new(r"`(.*?)`").unwrap();
 
     let doc_svg = read(doc_svg).expect("Unable to load `doc/overview.svg`");
     let doc_svg = BASE64_STANDARD.encode(doc_svg);
@@ -26,13 +26,12 @@ fn main() {
     let readme = read_to_string(readme).expect("Unable to read `README.md`");
     let readme = readme.replace("doc/overview.svg", &doc_svg);
     let readme = rx.replace_all(&readme, |c: &Captures<'_>| {
-        let message = c[1]
-            .lines()
-            .map(|s| s.strip_prefix(">").unwrap_or(s).trim())
-            .collect::<Vec<_>>()
-            .join("\n");
-
-        format!("<div class=\"warning\">\n{message}\n</div>\n")
+        let keyword = &c[1];
+        if KEYWORDS.contains(&keyword) {
+            format!("[`{keyword}`]")
+        } else {
+            format!("`{keyword}`")
+        }
     });
 
     let out_dir = var("OUT_DIR").expect("Missing `OUT_DIR` environment variable!");
@@ -40,3 +39,16 @@ fn main() {
 
     write(out_dir.join("README.md"), &*readme).expect("Unable to write `README.md`");
 }
+
+const KEYWORDS: &[&str] = &[
+    "Parser",
+    "Schemas",
+    "Resolver",
+    "Interpreter",
+    "Types",
+    "Optimizer",
+    "Generator",
+    "Renderer",
+    "generate",
+    "Config",
+];
