@@ -185,7 +185,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             let ident = Ident::ANY_TYPE.with_ns(Some(xs));
 
             init_any!(self, Reference, ReferenceInfo::new(ident), true);
-        };
+        }
 
         if ty.abstract_ {
             let type_ = match self.variant.take() {
@@ -575,7 +575,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
             }
-        };
+        }
 
         Ok(())
     }
@@ -702,7 +702,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .update(ty);
             }
             e => return Err(Error::InvalidAttributeReference(Box::new(e.clone()))),
-        };
+        }
 
         Ok(())
     }

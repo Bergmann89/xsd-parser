@@ -12,16 +12,16 @@ If you enjoy the project and would like to support my work, you can [buy me a co
 The core idea of this library is to break down the code generation process into distinct steps, enabling better control and extensibility for users. The workflow is structured as follows:
 
 1. **Parsing XML Schemas:**
-    The [`Parser`] resolves XML schemas from various sources (e.g., local files, web links) and stores the processed information in the [`Schemas`] object. Resolving is done by using so called [`Resolver`]s, that can be implemented by the user.
+   The [`Parser`] resolves XML schemas from various sources (e.g., local files, web links) and stores the processed information in the [`Schemas`] object. Resolving is done by using so called [`Resolver`]s, that can be implemented by the user.
 
-1. **Interpreting Schemas:**
-    The [`Interpreter`] uses the [`Schemas`] object to extract type information by applying extensions and restrictions defined in the schema. This results in a simplified [`Types`] structure that represents language-agnostic types.
+2. **Interpreting Schemas:**
+   The [`Interpreter`] uses the [`Schemas`] object to extract type information by applying extensions and restrictions defined in the schema. This results in a simplified [`Types`] structure that represents language-agnostic types.
 
-1. **Optimizing Types:**
-    The [`Optimizer`] refines the [`Types`] structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
+3. **Optimizing Types:**
+   The [`Optimizer`] refines the [`Types`] structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
 
-1. **Generating Code:**
-    Finally, the [`Generator`] converts the optimized [`Types`] information into Rust code by using so called [`Renderer`]s. As the resolvers, renderers can be implemented by the user to extend code generator.
+4. **Generating Code:**
+   Finally, the [`Generator`] converts the optimized [`Types`] information into Rust code by using so called [`Renderer`]s. As the resolvers, renderers can be implemented by the user to extend code generator.
 
 ![overview](doc/overview.svg "Overview")
 
