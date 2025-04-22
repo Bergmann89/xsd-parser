@@ -177,7 +177,7 @@ pub enum Generate {
 /// Identifier that is used inside the config.
 #[derive(Debug, Clone)]
 pub struct IdentTriple {
-    /// Namespace the type is defined in.
+    /// Namespace where the type is defined in.
     pub ns: Option<NamespaceIdent>,
 
     /// Name of the type.
@@ -215,11 +215,11 @@ pub enum Renderer {
     /// the generated types.
     WithNamespaceTrait,
 
-    /// Renderer that renders code for the the `quick_xml` serializer of the
+    /// Renderer that renders code for the `quick_xml` serializer of the
     /// different types.
     QuickXmlSerialize,
 
-    /// Renderer that renders code for the the `quick_xml` deserializer of the
+    /// Renderer that renders code for the `quick_xml` deserializer of the
     /// different types.
     QuickXmlDeserialize,
 }

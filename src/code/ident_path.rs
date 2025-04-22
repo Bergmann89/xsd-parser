@@ -9,11 +9,11 @@ use crate::{schema::NamespaceId, types::Types};
 
 use super::format_module_ident;
 
-/// Represents a identifier path.
+/// Represents an identifier path.
 ///
 /// A identifier path is the full path of a specific identifier in the code,
 /// like `std::str::FromStr`. The identified object can be a constant, a type,
-/// a trait or any thing else that is define within a module.
+/// a trait or anything else that is defined within a module.
 ///
 /// The identifier path contains two parts:
 /// - The identifier itself, which is more or less the name of the object to identify, and

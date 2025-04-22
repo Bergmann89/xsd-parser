@@ -1994,7 +1994,7 @@ impl ComplexTypeContent {
                 ElementHandlerOutput::from_event_end(event, allow_any)
             },
             // If we expect multiple elements we only try to initialize a new
-            // deserializer if the the maximum has not reached yet.
+            // deserializer if the maximum has not been reached yet.
             // The `+1` is for the data that is contained in the yet unfinished
             // deserializer.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
@@ -2528,7 +2528,7 @@ impl ComplexTypeElement<'_> {
                 ElementHandlerOutput::from_event_end(event, allow_any)
             },
             // If we expect multiple elements we only try to initialize a new
-            // deserializer if the the maximum has not reached yet.
+            // deserializer if the maximum has not been reached yet.
             // The `+1` is for the data that is contained in the yet unfinished
             // deserializer.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
