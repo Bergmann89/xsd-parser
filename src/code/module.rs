@@ -24,14 +24,14 @@ pub struct Module {
 }
 
 impl Module {
-    /// Append the passed `code` to this modules code.
+    /// Append the passed `code` to this module code.
     pub fn append(&mut self, code: TokenStream) -> &mut Self {
         self.code.extend(code);
 
         self
     }
 
-    /// Prepend the passed `code` to this modules code.
+    /// Prepend the passed `code` to this module code.
     pub fn prepend(&mut self, code: TokenStream) -> &mut Self {
         let code = replace(&mut self.code, code);
 
