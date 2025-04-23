@@ -1,33 +1,36 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, TypeVariant};
+use crate::types::{Base, TypeVariant, Types};
 
-use super::{get_typedefs, Optimizer};
+use super::{Error, TypeTransformer};
 
-impl Optimizer {
-    /// This will resolve all simple type definitions and use the target type
-    /// directly.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema.
-    /// ```xml
-    #[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
-    /// ```
-    ///
-    /// Without this optimization this will result in the following code:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/resolve_typedefs.rs")]
-    /// ```
-    ///
-    /// With this optimization the following code is generated:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/resolve_typedefs.rs")]
-    /// ```
-    pub fn resolve_typedefs(mut self) -> Self {
+/// This will resolve all simple type definitions and use the target type
+/// directly.
+///
+/// # Examples
+///
+/// Consider the following XML schema.
+/// ```xml
+#[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
+/// ```
+///
+/// Without this optimization this will result in the following code:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected0/resolve_typedefs.rs")]
+/// ```
+///
+/// With this optimization the following code is generated:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected1/resolve_typedefs.rs")]
+/// ```
+#[derive(Debug)]
+pub struct ResolveTypedefs;
+
+impl TypeTransformer for ResolveTypedefs {
+    fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("resolve_typedefs");
 
-        let typedefs = get_typedefs!(self);
+        let typedefs = crate::optimizer::TypedefMap::new(types);
 
         macro_rules! resolve_base {
             ($base:expr) => {
@@ -41,7 +44,7 @@ impl Optimizer {
 
         let mut replaced_references = HashMap::new();
 
-        for type_ in self.types.values_mut() {
+        for type_ in types.values_mut() {
             match &mut type_.variant {
                 TypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
@@ -93,7 +96,7 @@ impl Optimizer {
             }
         }
 
-        for type_ in self.types.values_mut() {
+        for type_ in types.values_mut() {
             let TypeVariant::Dynamic(di) = &mut type_.variant else {
                 continue;
             };
@@ -105,6 +108,6 @@ impl Optimizer {
             }
         }
 
-        self
+        Ok(())
     }
 }
