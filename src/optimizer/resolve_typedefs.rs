@@ -46,8 +46,8 @@ impl TypeTransformer for ResolveTypedefs {
 
         let mut replaced_references = HashMap::new();
 
-        for (_, type_) in types.simple_types_iter_mut() {
-            match &mut type_.variant {
+        for (_, variant) in types.simple_types_iter_mut() {
+            match variant {
                 SimpleTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
@@ -75,8 +75,8 @@ impl TypeTransformer for ResolveTypedefs {
             }
         }
 
-        for (_, type_) in types.complex_types_iter_mut() {
-            match &mut type_.variant {
+        for (_, variant) in types.complex_types_iter_mut() {
+            match variant {
                 ComplexTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
@@ -113,8 +113,8 @@ impl TypeTransformer for ResolveTypedefs {
             }
         }
 
-        for (_, type_) in types.complex_types_iter_mut() {
-            let ComplexTypeVariant::Dynamic(di) = &mut type_.variant else {
+        for (_, variant) in types.complex_types_iter_mut() {
+            let ComplexTypeVariant::Dynamic(di) = variant else {
                 continue;
             };
 

@@ -19,8 +19,8 @@ impl TypeTransformer for MergeEnumUnions {
 
         let idents = types
             .simple_types_iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, SimpleTypeVariant::Union(_)) {
+            .filter_map(|(ident, variant)| {
+                if matches!(&variant, SimpleTypeVariant::Union(_)) {
                     Some(ident)
                 } else {
                     None
@@ -93,7 +93,7 @@ impl MergeEnumUnions {
         display_name: Option<&str>,
         next: &mut Option<SimpleTypeVariant>,
     ) {
-        let Some(type_) = types.get_simple_type(&ident).map(|x| &x.variant) else {
+        let Some(type_) = types.get_simple_type(ident).map(|x| &x.variant) else {
             return;
         };
 

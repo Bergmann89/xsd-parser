@@ -29,8 +29,8 @@ impl TypeTransformer for RemoveEmptyEnumVariants {
     fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_enum_variants");
 
-        for (_, type_) in types.simple_types_iter_mut() {
-            if let SimpleTypeVariant::Enumeration(x) = &mut type_.variant {
+        for (_, variant) in types.simple_types_iter_mut() {
+            if let SimpleTypeVariant::Enumeration(x) = variant {
                 x.variants
                     .retain(|x| !matches!(&x.ident.name, Name::Named(x) if x.is_empty()));
             }
@@ -72,12 +72,11 @@ impl TypeTransformer for RemoveEmptyEnums {
     fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_enums");
 
-        for (_, type_) in types.simple_types_iter_mut() {
-            if let SimpleTypeVariant::Enumeration(x) = &mut type_.variant {
+        for (_, variant) in types.simple_types_iter_mut() {
+            if let SimpleTypeVariant::Enumeration(x) = variant {
                 if x.variants.is_empty() {
                     if let Some(base) = x.base.as_ident() {
-                        type_.variant =
-                            SimpleTypeVariant::Reference(ReferenceInfo::new(base.clone()));
+                        *variant = SimpleTypeVariant::Reference(ReferenceInfo::new(base.clone()));
                     }
                 }
             }

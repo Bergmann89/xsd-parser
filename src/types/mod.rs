@@ -92,38 +92,38 @@ impl Types {
         })
     }
 
-    pub fn simple_types_iter(
-        &self,
-    ) -> impl Iterator<Item = (&Ident, &TypeDescriptor<SimpleTypeVariant>)> {
+    pub fn simple_types_iter(&self) -> impl Iterator<Item = (&Ident, &SimpleTypeVariant)> {
         self.types.iter().filter_map(|(ident, t)| match t {
-            Type::SimpleType(type_descriptor) => Some((ident, type_descriptor)),
+            Type::SimpleType(type_descriptor) => Some((ident, &type_descriptor.variant)),
+            Type::ComplexType(TypeDescriptor {
+                variant: ComplexTypeVariant::SimpleType(simple_type),
+                ..
+            }) => Some((ident, simple_type)),
             _ => None,
         })
     }
 
     pub fn simple_types_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = (&Ident, &mut TypeDescriptor<SimpleTypeVariant>)> {
+    ) -> impl Iterator<Item = (&Ident, &mut SimpleTypeVariant)> {
         self.types.iter_mut().filter_map(|(ident, t)| match t {
-            Type::SimpleType(type_descriptor) => Some((ident, type_descriptor)),
+            Type::SimpleType(type_descriptor) => Some((ident, &mut type_descriptor.variant)),
             _ => None,
         })
     }
 
-    pub fn complex_types_iter(
-        &self,
-    ) -> impl Iterator<Item = (&Ident, &TypeDescriptor<ComplexTypeVariant>)> {
+    pub fn complex_types_iter(&self) -> impl Iterator<Item = (&Ident, &ComplexTypeVariant)> {
         self.types.iter().filter_map(|(ident, t)| match t {
-            Type::ComplexType(type_descriptor) => Some((ident, type_descriptor)),
+            Type::ComplexType(type_descriptor) => Some((ident, &type_descriptor.variant)),
             _ => None,
         })
     }
 
     pub fn complex_types_iter_mut(
         &mut self,
-    ) -> impl Iterator<Item = (&Ident, &mut TypeDescriptor<ComplexTypeVariant>)> {
+    ) -> impl Iterator<Item = (&Ident, &mut ComplexTypeVariant)> {
         self.types.iter_mut().filter_map(|(ident, t)| match t {
-            Type::ComplexType(type_descriptor) => Some((ident, type_descriptor)),
+            Type::ComplexType(type_descriptor) => Some((ident, &mut type_descriptor.variant)),
             _ => None,
         })
     }

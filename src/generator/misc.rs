@@ -342,8 +342,8 @@ impl TraitInfos {
     pub(super) fn new(types: &Types) -> Self {
         let mut ret = Self(BTreeMap::new());
 
-        for (base_ident, ty) in types.complex_types_iter() {
-            let ComplexTypeVariant::Dynamic(ai) = &ty.variant else {
+        for (base_ident, variant) in types.complex_types_iter() {
+            let ComplexTypeVariant::Dynamic(ai) = variant else {
                 continue;
             };
 

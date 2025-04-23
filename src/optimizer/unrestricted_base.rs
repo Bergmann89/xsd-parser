@@ -1,4 +1,4 @@
-use crate::types::{ReferenceInfo, SimpleTypeVariant, Types};
+use crate::types::{ComplexTypeVariant, ReferenceInfo, SimpleTypeVariant, Types};
 
 use super::{Error, TypeTransformer};
 
@@ -38,15 +38,21 @@ impl TypeTransformer for UseUnrestrictedBaseType {
 
         let bases = crate::optimizer::BaseMap::new(types);
 
-        for (ident, type_) in types.simple_types_iter_mut() {
-            match &type_.variant {
-                SimpleTypeVariant::Enumeration(_) | SimpleTypeVariant::Union(_) => {
-                    let base = bases.get_unrestricted(ident).clone();
-                    if *ident != base {
-                        type_.variant = SimpleTypeVariant::Reference(ReferenceInfo::new(base));
-                    }
+        for (ident, variant) in types.complex_types_iter_mut() {
+            if let ComplexTypeVariant::ComplexType(_) = variant {
+                let base = bases.get_unrestricted(ident).clone();
+                if *ident != base {
+                    *variant = ComplexTypeVariant::Reference(ReferenceInfo::new(base));
                 }
-                _ => (),
+            }
+        }
+
+        for (ident, variant) in types.simple_types_iter_mut() {
+            if let SimpleTypeVariant::Enumeration(_) | SimpleTypeVariant::Union(_) = variant {
+                let base = bases.get_unrestricted(ident).clone();
+                if *ident != base {
+                    *variant = SimpleTypeVariant::Reference(ReferenceInfo::new(base));
+                }
             }
         }
 

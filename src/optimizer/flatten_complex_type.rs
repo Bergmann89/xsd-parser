@@ -37,8 +37,8 @@ impl TypeTransformer for FlattenComplexTypes {
         let idents = 
             types
             .complex_types_iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, ComplexTypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
+            .filter_map(|(ident, variant)| {
+                if matches!(&variant, ComplexTypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
                     Some(ident)
                 } else {
                     None

@@ -21,8 +21,8 @@ impl TypeTransformer for FlattenUnions {
 
         let idents = types
             .simple_types_iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, SimpleTypeVariant::Union(_)) {
+            .filter_map(|(ident, variant)| {
+                if matches!(&variant, SimpleTypeVariant::Union(_)) {
                     Some(ident)
                 } else {
                     None
