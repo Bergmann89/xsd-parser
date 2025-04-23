@@ -9,7 +9,7 @@ use crate::schema::xs::{
     SchemaContent, SimpleBaseType,
 };
 use crate::schema::{Namespace, NamespaceId, QName, Schemas};
-use crate::types::{Ident, IdentType, Name, Type, TypeVariant};
+use crate::types::{ComplexTypeVariant, Ident, IdentType, Name, SimpleTypeVariant, Type};
 
 use super::{builders, Error, Node, State};
 
@@ -97,39 +97,34 @@ impl SchemaInterpreter<'_, '_> {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(crate) fn get_simple_type_variant(&mut self, ident: &Ident) -> Result<&TypeVariant, Error> {
+    pub(crate) fn get_simple_type_variant(
+        &mut self,
+        ident: &Ident,
+    ) -> Result<&mut SimpleTypeVariant, Error> {
+        println!("get_simple_type_variant: {ident}");
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+            println!("get_simple_type_variant type: {ty:#?}");
             let new_ident = self.create_simple_type(ident.ns, None, None, ty)?;
+            println!("get_simple_type_variant new_ident: {new_ident}");
 
             crate::assert_eq!(ident, &new_ident);
         }
 
-        match self.state.types.get_variant(ident) {
-            None
-            | Some(
-                TypeVariant::ComplexType(_)
-                | TypeVariant::All(_)
-                | TypeVariant::Choice(_)
-                | TypeVariant::Sequence(_)
-                | TypeVariant::Dynamic(_),
-            ) => Err(Error::UnknownType(ident.clone())),
-            Some(
-                ty @ (TypeVariant::Enumeration(_)
-                | TypeVariant::BuildIn(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Reference(_)),
-            ) => Ok(ty),
-        }
+        self.state
+            .types
+            .get_simple_type_mut(ident)
+            .map(|ty| &mut ty.variant)
+            .ok_or(Error::UnknownType(ident.clone()))
     }
 
     #[instrument(level = "trace", skip(self))]
     pub(crate) fn get_complex_type_variant(
         &mut self,
         ident: &Ident,
-    ) -> Result<&TypeVariant, Error> {
+    ) -> Result<&mut ComplexTypeVariant, Error> {
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_complex_type(ident.clone())
@@ -139,22 +134,11 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        match self.state.types.get_variant(ident) {
-            None
-            | Some(
-                TypeVariant::Enumeration(_)
-                | TypeVariant::BuildIn(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Reference(_),
-            ) => Err(Error::UnknownType(ident.clone())),
-            Some(
-                ty @ (TypeVariant::ComplexType(_)
-                | TypeVariant::All(_)
-                | TypeVariant::Choice(_)
-                | TypeVariant::Sequence(_)
-                | TypeVariant::Dynamic(_)),
-            ) => Ok(ty),
-        }
+        self.state
+            .types
+            .get_complex_type_mut(ident)
+            .map(|ty| &mut ty.variant)
+            .ok_or(Error::UnknownType(ident.clone()))
     }
 }
 
@@ -174,8 +158,8 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type_new(ident.clone(), move |mut owner| {
-            let mut builder = builders::ElementBuilder::new(owner.deref_mut());
+        self.create_type_new(ident.clone(), move |owner| {
+            let mut builder = builders::ElementBuilder::new(owner);
             builder.apply_element(ty)?;
             let type_ = builder.finish()?;
 
@@ -196,8 +180,8 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Attribute,
         };
 
-        self.create_type_new(ident.clone(), move |mut owner| {
-            let mut builder = builders::AttributeTypeBuilder::new(owner.deref_mut());
+        self.create_type_new(ident.clone(), move |owner| {
+            let mut builder = builders::AttributeTypeBuilder::new(owner);
             builder.apply_attribute(ty)?;
             let type_ = builder.finish()?;
 
@@ -219,8 +203,8 @@ impl SchemaInterpreter<'_, '_> {
             type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type_new(ident.clone(), move |mut owner| {
-            let mut builder = builders::SimpleTypeBuilder::new(owner.deref_mut());
+        self.create_type_new(ident.clone(), move |owner| {
+            let mut builder = builders::SimpleTypeBuilder::new(owner);
             builder.apply_simple_type(ty)?;
             let type_ = builder.finish()?;
 
@@ -242,8 +226,8 @@ impl SchemaInterpreter<'_, '_> {
             type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type_new(ident.clone(), move |mut owner| {
-            let mut builder = builders::ComplexTypeBuilder::new(owner.deref_mut());
+        self.create_type_new(ident.clone(), move |owner| {
+            let mut builder = builders::ComplexTypeBuilder::new(owner);
             builder.apply_complex_type(ty)?;
             let type_ = builder.finish()?;
 

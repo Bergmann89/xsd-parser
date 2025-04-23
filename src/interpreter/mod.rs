@@ -12,8 +12,8 @@ use crate::config::Namespace;
 use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, GroupInfo, Ident, Module, Name,
-    ReferenceInfo, Type, TypeVariant, Types,
+    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, ComplexType, ComplexTypeVariant,
+    GroupInfo, Ident, Module, Name, ReferenceInfo, SimpleType, SimpleTypeVariant, Type, Types,
 };
 
 pub use error::Error;
@@ -67,13 +67,42 @@ impl<'a> Interpreter<'a> {
     ///
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
-    pub fn with_typedef<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
+    pub fn with_typedef_simple<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
     where
         I: Into<Ident> + Debug,
         T: Into<Ident> + Debug,
     {
-        self.state
-            .add_type(ident, ReferenceInfo::new(type_), true)?;
+        self.state.add_type(
+            ident,
+            SimpleType::new(crate::types::SimpleTypeVariant::Reference(
+                ReferenceInfo::new(type_),
+            )),
+            true,
+        )?;
+
+        Ok(self)
+    }
+
+    /// Add a simple type definition to the resulting [`Types`] structure using
+    /// `ident` as identifier for the new type and `type_` as target type for the
+    /// type definition.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the operation was not successful.
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn with_typedef_complex<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
+    where
+        I: Into<Ident> + Debug,
+        T: Into<Ident> + Debug,
+    {
+        self.state.add_type(
+            ident,
+            ComplexType::new(crate::types::ComplexTypeVariant::Reference(
+                ReferenceInfo::new(type_),
+            )),
+            true,
+        )?;
 
         Ok(self)
     }
@@ -87,8 +116,11 @@ impl<'a> Interpreter<'a> {
     pub fn with_buildin_types(mut self) -> Result<Self, Error> {
         macro_rules! add {
             ($ident:ident, $type:ident) => {
-                self.state
-                    .add_type(Ident::$ident, BuildInInfo::$type, true)?;
+                self.state.add_type(
+                    Ident::$ident,
+                    SimpleType::new(crate::types::SimpleTypeVariant::BuildIn(BuildInInfo::$type)),
+                    true,
+                )?;
             };
         }
 
@@ -132,7 +164,9 @@ impl<'a> Interpreter<'a> {
             ($ns:ident, $src:expr, $dst:ident) => {
                 self.state.add_type(
                     Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceInfo::new(Ident::$dst),
+                    SimpleType::new(crate::types::SimpleTypeVariant::Reference(
+                        ReferenceInfo::new(Ident::$dst),
+                    )),
                     true,
                 )?;
             };
@@ -141,9 +175,11 @@ impl<'a> Interpreter<'a> {
             ($ns:ident, $src:expr, $dst:ident) => {
                 self.state.add_type(
                     Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceInfo::new(Ident::$dst)
-                        .min_occurs(0)
-                        .max_occurs(MaxOccurs::Unbounded),
+                    SimpleType::new(crate::types::SimpleTypeVariant::Reference(
+                        ReferenceInfo::new(Ident::$dst)
+                            .min_occurs(0)
+                            .max_occurs(MaxOccurs::Unbounded),
+                    )),
                     true,
                 )?;
             };
@@ -231,7 +267,7 @@ impl<'a> Interpreter<'a> {
         // content type
         let content_name = self.state.name_builder().shared_name("Content").finish();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
-        let content_variant = TypeVariant::Sequence(GroupInfo {
+        let content_variant = ComplexTypeVariant::Sequence(GroupInfo {
             any: Some(AnyInfo {
                 min_occurs: Some(0),
                 max_occurs: Some(MaxOccurs::Unbounded),
@@ -240,13 +276,13 @@ impl<'a> Interpreter<'a> {
             }),
             ..Default::default()
         });
-        let content_type = Type::new(content_variant);
+        let content_type = ComplexType::new(content_variant);
         self.state
             .add_type(content_ident.clone(), content_type, true)?;
 
         // xs:anyType
         let ident = Ident::type_("anyType").with_ns(Some(xs));
-        let variant = TypeVariant::ComplexType(ComplexInfo {
+        let variant = ComplexTypeVariant::ComplexType(ComplexInfo {
             content: Some(content_ident),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -256,7 +292,7 @@ impl<'a> Interpreter<'a> {
             }),
             ..Default::default()
         });
-        let type_ = Type::new(variant);
+        let type_ = ComplexType::new(variant);
         self.state.add_type(ident, type_, true)?;
 
         Ok(self)

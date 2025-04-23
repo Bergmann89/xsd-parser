@@ -9,19 +9,117 @@ use super::{
     UnionInfo,
 };
 
+pub type SimpleType = TypeDescriptor<SimpleTypeVariant>;
+pub type ComplexType = TypeDescriptor<ComplexTypeVariant>;
+
+#[derive(Debug, Clone)]
+pub enum Type {
+    SimpleType(SimpleType),
+    ComplexType(ComplexType),
+}
+
+impl Type {
+    pub fn display_name(&self) -> Option<&str> {
+        match self {
+            Type::SimpleType(TypeDescriptor { display_name, .. })
+            | Type::ComplexType(TypeDescriptor { display_name, .. }) => display_name.as_deref(),
+        }
+    }
+    pub fn display_name_mut(&mut self) -> &mut Option<String> {
+        match self {
+            Type::SimpleType(TypeDescriptor { display_name, .. })
+            | Type::ComplexType(TypeDescriptor { display_name, .. }) => display_name,
+        }
+    }
+
+    pub fn variant(&self) -> TypeVariant<&SimpleTypeVariant, &ComplexTypeVariant> {
+        match self {
+            Type::SimpleType(type_descriptor) => TypeVariant::SimpleType(&type_descriptor.variant),
+            Type::ComplexType(type_descriptor) => {
+                TypeVariant::ComplexType(&type_descriptor.variant)
+            }
+        }
+    }
+
+    pub fn variant_mut(&mut self) -> TypeVariant<&mut SimpleTypeVariant, &mut ComplexTypeVariant> {
+        match self {
+            Type::SimpleType(type_descriptor) => {
+                TypeVariant::SimpleType(&mut type_descriptor.variant)
+            }
+            Type::ComplexType(type_descriptor) => {
+                TypeVariant::ComplexType(&mut type_descriptor.variant)
+            }
+        }
+    }
+
+    pub fn simple_type_ref(&self) -> Option<&SimpleType> {
+        match self {
+            Type::SimpleType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        }
+    }
+
+    pub fn complex_type_ref(&self) -> Option<&ComplexType> {
+        match self {
+            Type::ComplexType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        }
+    }
+
+    pub fn reference_type(&self) -> Option<&ReferenceInfo> {
+        match self {
+            Type::SimpleType(TypeDescriptor {
+                variant: SimpleTypeVariant::Reference(ri),
+                ..
+            })
+            | Type::ComplexType(TypeDescriptor {
+                variant: ComplexTypeVariant::Reference(ri),
+                ..
+            }) => Some(ri),
+            _ => None,
+        }
+    }
+}
+
 /// Represents a type that was read and interpreted from an XML schema.
 #[derive(Debug, Clone)]
-pub struct Type {
+pub struct TypeDescriptor<T> {
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
 
     /// Actual data type this type represents.
-    pub variant: TypeVariant,
+    pub variant: T,
+}
+
+#[derive(Debug, Clone)]
+pub enum TypeVariant<S, C> {
+    SimpleType(S),
+    ComplexType(C),
+}
+
+impl TypeVariant<SimpleTypeVariant, ComplexTypeVariant> {
+    pub fn into_complex_type_variant(self) -> ComplexTypeVariant {
+        match self {
+            TypeVariant::SimpleType(variant) => ComplexTypeVariant::SimpleType(variant),
+            TypeVariant::ComplexType(variant) => variant,
+        }
+    }
+}
+
+impl<S: Deref<Target = SimpleTypeVariant>, C: Deref<Target = ComplexTypeVariant>>
+    TypeVariant<S, C>
+{
+    pub fn cloned(&self) -> TypeVariant<SimpleTypeVariant, ComplexTypeVariant> {
+        match self {
+            TypeVariant::SimpleType(variant) => TypeVariant::SimpleType((**variant).clone()),
+            TypeVariant::ComplexType(variant) => TypeVariant::ComplexType((**variant).clone()),
+        }
+    }
 }
 
 /// Actual data type a [`Type`] represents.
 #[derive(Debug, Clone)]
-pub enum TypeVariant {
+pub enum SimpleTypeVariant {
     /// Represents a union type
     Union(UnionInfo),
 
@@ -33,6 +131,13 @@ pub enum TypeVariant {
 
     /// Represents an enumeration
     Enumeration(EnumerationInfo),
+}
+
+/// Actual data type a [`Type`] represents.
+#[derive(Debug, Clone)]
+pub enum ComplexTypeVariant {
+    /// References an other type
+    Reference(ReferenceInfo),
 
     /// Represents an dynamic element
     Dynamic(DynamicInfo),
@@ -48,6 +153,9 @@ pub enum TypeVariant {
 
     /// Represents a complex type
     ComplexType(ComplexInfo),
+
+    /// Represents a simple type
+    SimpleType(SimpleTypeVariant),
 }
 
 /// Trait to check if two types are equal to each other or not.
@@ -127,25 +235,62 @@ pub enum BuildInInfo {
 /* Type */
 
 macro_rules! impl_from {
-    ($var:ident, $ty:ty) => {
-        impl From<$ty> for Type {
+    ($var:ident, $t:ty, $ty:ty) => {
+        impl ::std::convert::From<$ty> for TypeDescriptor<$t> {
             fn from(value: $ty) -> Self {
-                Type::new(TypeVariant::$var(value))
+                TypeDescriptor::new(<$t>::$var(value))
             }
         }
     };
 }
 
-impl_from!(Reference, ReferenceInfo);
-impl_from!(BuildIn, BuildInInfo);
-impl_from!(Enumeration, EnumerationInfo);
-impl_from!(Dynamic, DynamicInfo);
-impl_from!(ComplexType, ComplexInfo);
+macro_rules! impl_from_simple_type {
+    ($var:ident, $t:ty, $ty:ty) => {
+        impl ::std::convert::From<$ty> for Type {
+            fn from(value: $ty) -> Self {
+                Type::SimpleType(TypeDescriptor::<$t>::from(value))
+            }
+        }
+    };
+}
 
-impl Type {
+macro_rules! impl_from_complex_type {
+    ($var:ident, $t:ty, $ty:ty) => {
+        impl ::std::convert::From<$ty> for Type {
+            fn from(value: $ty) -> Self {
+                Type::ComplexType(TypeDescriptor::<$t>::from(value))
+            }
+        }
+    };
+}
+
+impl_from!(Reference, SimpleTypeVariant, ReferenceInfo);
+impl_from!(Reference, ComplexTypeVariant, ReferenceInfo);
+impl_from!(BuildIn, SimpleTypeVariant, BuildInInfo);
+impl_from!(Enumeration, SimpleTypeVariant, EnumerationInfo);
+impl_from!(Dynamic, ComplexTypeVariant, DynamicInfo);
+impl_from!(ComplexType, ComplexTypeVariant, ComplexInfo);
+impl_from_simple_type!(BuildIn, SimpleTypeVariant, BuildInInfo);
+impl_from_simple_type!(Enumeration, SimpleTypeVariant, EnumerationInfo);
+impl_from_complex_type!(Dynamic, ComplexTypeVariant, DynamicInfo);
+impl_from_complex_type!(ComplexType, ComplexTypeVariant, ComplexInfo);
+
+impl From<SimpleType> for Type {
+    fn from(value: SimpleType) -> Self {
+        Type::SimpleType(value)
+    }
+}
+
+impl From<ComplexType> for Type {
+    fn from(value: ComplexType) -> Self {
+        Type::ComplexType(value)
+    }
+}
+
+impl<T> TypeDescriptor<T> {
     /// Create a new [`Type`] instance from the passed `variant`.
     #[must_use]
-    pub fn new(variant: TypeVariant) -> Self {
+    pub fn new(variant: T) -> Self {
         Self {
             variant,
             display_name: None,
@@ -153,24 +298,24 @@ impl Type {
     }
 }
 
-impl Deref for Type {
-    type Target = TypeVariant;
+impl<T> Deref for TypeDescriptor<T> {
+    type Target = T;
 
     fn deref(&self) -> &Self::Target {
         &self.variant
     }
 }
 
-impl DerefMut for Type {
+impl<T> DerefMut for TypeDescriptor<T> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.variant
     }
 }
 
-impl TypeEq for Type {
+impl TypeEq for SimpleType {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
         #[allow(clippy::enum_glob_use)]
-        use TypeVariant::*;
+        use SimpleTypeVariant::*;
 
         self.display_name.hash(hasher);
 
@@ -179,32 +324,105 @@ impl TypeEq for Type {
             BuildIn(x) => x.hash(hasher),
             Reference(x) => x.type_hash(hasher, types),
             Enumeration(x) => x.type_hash(hasher, types),
-            Dynamic(x) => x.type_hash(hasher, types),
-            All(x) => x.type_hash(hasher, types),
-            Choice(x) => x.type_hash(hasher, types),
-            Sequence(x) => x.type_hash(hasher, types),
-            ComplexType(x) => x.type_hash(hasher, types),
+        }
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        if self.display_name != other.display_name {
+            return false;
+        }
+
+        self.variant.type_eq(&other.variant, types)
+    }
+}
+
+impl TypeEq for SimpleTypeVariant {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        #[allow(clippy::enum_glob_use)]
+        use SimpleTypeVariant::*;
+
+        match &self {
+            Union(x) => x.type_hash(hasher, types),
+            BuildIn(x) => x.hash(hasher),
+            Reference(x) => x.type_hash(hasher, types),
+            Enumeration(x) => x.type_hash(hasher, types),
         }
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         #[allow(clippy::enum_glob_use)]
-        use TypeVariant::*;
+        use SimpleTypeVariant::*;
 
-        if self.display_name != other.display_name {
-            return false;
-        }
-
-        match (&self.variant, &other.variant) {
+        match (&self, &other) {
             (Union(x), Union(y)) => x.type_eq(y, types),
             (BuildIn(x), BuildIn(y)) => x == y,
             (Reference(x), Reference(y)) => x.type_eq(y, types),
             (Enumeration(x), Enumeration(y)) => x.type_eq(y, types),
+            (_, _) => false,
+        }
+    }
+}
+
+impl TypeEq for ComplexType {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        self.display_name.hash(hasher);
+
+        self.variant.type_hash(hasher, types);
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        if self.display_name != other.display_name {
+            return false;
+        }
+
+        self.variant.type_eq(&other.variant, types)
+    }
+}
+
+impl TypeEq for ComplexTypeVariant {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        #[allow(clippy::enum_glob_use)]
+        use ComplexTypeVariant::*;
+
+        match &self {
+            Reference(x) => x.type_hash(hasher, types),
+            Dynamic(x) => x.type_hash(hasher, types),
+            All(x) => x.type_hash(hasher, types),
+            Choice(x) => x.type_hash(hasher, types),
+            Sequence(x) => x.type_hash(hasher, types),
+            ComplexType(x) => x.type_hash(hasher, types),
+            SimpleType(x) => x.type_hash(hasher, types),
+        }
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        #[allow(clippy::enum_glob_use)]
+        use ComplexTypeVariant::*;
+
+        match (&self, &other) {
+            (Reference(x), Reference(y)) => x.type_eq(y, types),
             (Dynamic(x), Dynamic(y)) => x.type_eq(y, types),
             (All(x), All(y)) => x.type_eq(y, types),
             (Choice(x), Choice(y)) => x.type_eq(y, types),
             (Sequence(x), Sequence(y)) => x.type_eq(y, types),
             (ComplexType(x), ComplexType(y)) => x.type_eq(y, types),
+            (_, _) => false,
+        }
+    }
+}
+
+impl TypeEq for Type {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        match self {
+            Type::SimpleType(type_descriptor) => type_descriptor.type_hash(hasher, types),
+            Type::ComplexType(type_descriptor) => type_descriptor.type_hash(hasher, types),
+        }
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        match (self, other) {
+            (Type::SimpleType(x), Type::SimpleType(y)) => x.type_eq(y, types),
+            (Type::ComplexType(x), Type::ComplexType(y)) => x.type_eq(y, types),
             (_, _) => false,
         }
     }

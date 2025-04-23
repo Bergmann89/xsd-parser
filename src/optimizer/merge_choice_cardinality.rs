@@ -1,6 +1,6 @@
 use crate::{
     schema::MaxOccurs,
-    types::{Ident, TypeVariant, Types},
+    types::{type_::ComplexTypeVariant, Ident, Types},
 };
 
 use super::{Error,  TypeTransformer};
@@ -20,9 +20,9 @@ impl TypeTransformer for MergeChoiceCardinalities {
 
         let idents = 
             types
-            .iter()
+            .complex_types_iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_choice_content(types)) {
+                if matches!(&type_.variant, ComplexTypeVariant::ComplexType(ci) if ci.has_complex_choice_content(types)) {
                     Some(ident)
                 } else {
                     None
@@ -71,11 +71,11 @@ impl MergeChoiceCardinalities {
     ) -> Result<(), Error> {
         tracing::debug!("merge_choice_cardinality(ident={ident:?})");
 
-        let Some(ty) = types.get_variant(&ident) else {
+        let Some(ty) = types.get_complex_type(&ident).map(|a| &a.variant) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::ComplexType(ci) = ty else {
+        let ComplexTypeVariant::ComplexType(ci) = ty else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -83,7 +83,7 @@ impl MergeChoiceCardinalities {
             return Err(Error::MissingContentType(ident));
         };
 
-        let Some(TypeVariant::Choice(ci)) = types.get_variant_mut(&content_ident) else {
+        let Some(ComplexTypeVariant::Choice(ci)) = types.get_complex_type_mut(&content_ident).map(|a| &mut a.variant) else {
             return Err(Error::ExpectedComplexChoice(ident));
         };
 
@@ -98,7 +98,7 @@ impl MergeChoiceCardinalities {
             element.max_occurs = MaxOccurs::Bounded(1);
         }
 
-        let Some(TypeVariant::ComplexType(ci)) = types.get_variant_mut(&ident) else {
+        let Some(ComplexTypeVariant::ComplexType(ci)) = types.get_complex_type_mut(&ident).map(|a| &mut a.variant) else {
             unreachable!();
         };
 

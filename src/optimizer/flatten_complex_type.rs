@@ -1,6 +1,6 @@
 use crate::{
     schema::{MaxOccurs, MinOccurs},
-    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant, Types},
+    types::{type_::{ComplexTypeVariant, TypeDescriptor}, ElementInfo, ElementMode, GroupInfo, Ident, Type, Types},
 };
 
 use super::{Error,  TypeTransformer};
@@ -36,9 +36,9 @@ impl TypeTransformer for FlattenComplexTypes {
 
         let idents = 
             types
-            .iter()
+            .complex_types_iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
+                if matches!(&type_.variant, ComplexTypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
                     Some(ident)
                 } else {
                     None
@@ -59,11 +59,11 @@ impl FlattenComplexTypes {
     fn flatten_complex_type( types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
-        let Some(ty) = types.get(&ident) else {
+        let Some(ty) = types.get_complex_type(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::ComplexType(ci) = &ty.variant else {
+        let ComplexTypeVariant::ComplexType(ci) = &ty.variant else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -78,14 +78,14 @@ impl FlattenComplexTypes {
         if ctx.count > 1 {
             let variant = match ctx.mode {
                 Mode::Unknown => unreachable!(),
-                Mode::Sequence => TypeVariant::Sequence(ctx.info),
-                Mode::Mixed | Mode::Choice => TypeVariant::Choice(ctx.info),
+                Mode::Sequence => ComplexTypeVariant::Sequence(ctx.info),
+                Mode::Mixed | Mode::Choice => ComplexTypeVariant::Choice(ctx.info),
             };
-            let type_ = Type::new(variant);
+            let type_ = Type::ComplexType(TypeDescriptor::new(variant));
 
             types.insert(content_ident, type_);
 
-            if let Some(TypeVariant::ComplexType(ci)) = types.get_variant_mut(&ident) {
+            if let Some(ComplexTypeVariant::ComplexType(ci)) = types.get_complex_type_mut(&ident).map(|t| &mut t.variant) {
                 ci.min_occurs *= ctx.occurs.min;
                 ci.max_occurs *= ctx.occurs.max;
             }
@@ -101,17 +101,17 @@ impl FlattenComplexTypes {
         max: MaxOccurs,
         ctx: &mut Context,
     ) {
-        let Some(type_) = types.get(ident) else {
+        let Some(type_) = types.get_complex_type(ident) else {
             return;
         };
 
         let si = match &type_.variant {
-            TypeVariant::Choice(si) => {
+            ComplexTypeVariant::Choice(si) => {
                 ctx.set_mode(Mode::Choice);
 
                 si
             }
-            TypeVariant::All(si) | TypeVariant::Sequence(si) => {
+            ComplexTypeVariant::All(si) | ComplexTypeVariant::Sequence(si) => {
                 if max > MaxOccurs::Bounded(1) {
                     ctx.set_mode(Mode::Choice);
                 } else {
@@ -120,7 +120,7 @@ impl FlattenComplexTypes {
 
                 si
             }
-            TypeVariant::Reference(ti) if ti.is_single() => {
+            ComplexTypeVariant::Reference(ti) if ti.is_single() => {
                 Self::flatten_complex_type_impl(
                     types,
                     &ti.type_,
@@ -260,15 +260,16 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::{
-        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types}
+        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, ComplexTypeVariant, Types, TypeDescriptor}
     };
+    
 
     macro_rules! make_type {
         ($types:expr, $name:literal, $type:ident $( $rest:tt )*) => {{
-            let mut variant = TypeVariant::$type(Default::default());
-            let TypeVariant::$type(info) = &mut variant else { unreachable!(); };
+            let mut variant = ComplexTypeVariant::$type(Default::default());
+            let ComplexTypeVariant::$type(info) = &mut variant else { unreachable!(); };
             make_type!(__init info $type $( $rest )*);
-            let ty = Type::new(variant);
+            let ty = Type::ComplexType(TypeDescriptor::<ComplexTypeVariant>::new(variant));
             $types.insert(Ident::type_($name), ty);
         }};
         (__init $info:ident ComplexType($name:literal) $(,)? ) => {
@@ -325,13 +326,13 @@ mod tests {
 
     macro_rules! assert_type {
         ($types:expr, $main_ident:literal, $content_type:ident($content_ident:literal)) => {{
-            let main = $types.get_variant(&Ident::type_($main_ident)).unwrap();
-            let content = $types.get_variant(&Ident::type_($content_ident)).unwrap();
+            let main = $types.get_complex_type(&Ident::type_($main_ident)).unwrap();
+            let content = $types.get_complex_type(&Ident::type_($content_ident)).unwrap();
 
-            let TypeVariant::ComplexType(main) = main else {
+            let ComplexTypeVariant::ComplexType(main) = &main.variant else {
                 panic!("Wrong type");
             };
-            let TypeVariant::$content_type(content) = content else {
+            let ComplexTypeVariant::$content_type(content) = &content.variant else {
                 panic!("Wrong type");
             };
 

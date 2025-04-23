@@ -5,7 +5,8 @@ use tracing::instrument;
 use super::Update;
 use crate::schema::xs::AttributeType;
 use crate::types::{
-    AttributeInfo, Ident, IdentType, Name, ReferenceInfo, Type, TypeVariant, VecHelper,
+    AttributeInfo, ComplexType, ComplexTypeVariant, Ident, IdentType, Name, ReferenceInfo, Type,
+    VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -16,7 +17,7 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
     type_: Option<Type>,
 
     /// Type variant that is constructed by the builder
-    variant: Option<TypeVariant>,
+    variant: Option<ComplexTypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
@@ -29,10 +30,10 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
 /// Initialize the type of a `$builder` to any type `$variant`.
 macro_rules! init_any {
     ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
+        $builder.variant = Some(ComplexTypeVariant::$variant($value));
         $builder.fixed = $fixed;
 
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
+        let ComplexTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
         };
 
@@ -48,7 +49,7 @@ macro_rules! get_or_init_any {
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::$variant(ret)) => ret,
+            Some(ComplexTypeVariant::$variant(ret)) => ret,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -68,9 +69,8 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
     }
 
     pub(crate) fn finish(self) -> Result<Type, Error> {
-        println!("AttributeTypeBuilder::finish");
         self.type_
-            .or_else(|| self.variant.map(Type::new))
+            .or_else(|| self.variant.map(ComplexType::new).map(Type::ComplexType))
             .ok_or(Error::NoType)
     }
 

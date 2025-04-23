@@ -6,7 +6,8 @@ use std::io::Error as IoError;
 use anyhow::Error as AnyError;
 use thiserror::Error;
 
-use crate::types::{ElementMode, Ident, Type, TypeVariant, Types};
+use crate::types::type_::{ComplexTypeVariant, SimpleTypeVariant};
+use crate::types::{ElementMode, Ident, Type, Types};
 use crate::{GeneratorError, InterpreterError, OptimizerError, ParserError};
 
 /// Trait that adds namespace information to a type.
@@ -173,12 +174,91 @@ impl<'a> TypesPrinter<'a> {
     }
 
     #[allow(clippy::too_many_lines)]
-    fn print_type(
+    fn print_simple_type(
         &self,
         f: &mut Formatter<'_>,
         s: &mut State,
         ident: &Ident,
-        ty: &Type,
+        display_name: &Option<String>,
+        variant: &SimpleTypeVariant,
+    ) -> FmtResult {
+        macro_rules! indentln {
+            ($( $tt:tt )*) => {{
+                write!(f, "{0:1$}", "", 4 * s.level)?;
+                writeln!(f, $( $tt )*)?;
+            }};
+        }
+
+        match &variant {
+            SimpleTypeVariant::BuildIn(x) => {
+                writeln!(f, "{}: BuildIn", ident)?;
+
+                s.level += 1;
+
+                indentln!("display_name={:?}", &display_name);
+                indentln!("type={x:?}");
+
+                s.level -= 1;
+            }
+            SimpleTypeVariant::Union(x) => {
+                writeln!(f, "{}: Union", ident)?;
+
+                s.level += 1;
+
+                indentln!("display_name={:?}", &display_name);
+                indentln!("base={}", x.base);
+                indentln!("types");
+
+                s.level += 1;
+
+                for ty in &*x.types {
+                    indentln!("{}", &ty.type_);
+                }
+
+                s.level -= 2;
+            }
+            SimpleTypeVariant::Reference(x) => {
+                writeln!(f, "{}: Reference", ident)?;
+
+                s.level += 1;
+
+                indentln!("display_name={:?}", &display_name);
+                indentln!("min={}", x.min_occurs);
+                indentln!("max={:?}", x.max_occurs);
+                indentln!("type={}", x.type_);
+
+                s.level -= 1;
+            }
+            SimpleTypeVariant::Enumeration(x) => {
+                writeln!(f, "{}: Enumeration", ident)?;
+
+                s.level += 1;
+
+                indentln!("display_name={:?}", &display_name);
+                indentln!("base={}", x.base);
+                indentln!("variants");
+
+                s.level += 1;
+
+                for var in &*x.variants {
+                    indentln!("{}={:?}", var.ident.name, var.use_);
+                }
+
+                s.level -= 2;
+            }
+        }
+
+        Ok(())
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn print_complex_type(
+        &self,
+        f: &mut Formatter<'_>,
+        s: &mut State,
+        ident: &Ident,
+        display_name: &Option<String>,
+        variant: &ComplexTypeVariant,
     ) -> FmtResult {
         macro_rules! indent {
             ($( $tt:tt )*) => {{
@@ -193,58 +273,25 @@ impl<'a> TypesPrinter<'a> {
             }};
         }
 
-        if !s.visit.insert(ident.clone()) {
-            writeln!(f, "LOOP DETECTED ({})", ident.name)?;
-
-            return Ok(());
-        }
-
-        match &ty.variant {
-            TypeVariant::BuildIn(x) => {
-                writeln!(f, "{}: BuildIn", ident)?;
-
-                s.level += 1;
-
-                indentln!("display_name={:?}", &ty.display_name);
-                indentln!("type={x:?}");
-
-                s.level -= 1;
-            }
-            TypeVariant::Union(x) => {
-                writeln!(f, "{}: Union", ident)?;
-
-                s.level += 1;
-
-                indentln!("display_name={:?}", &ty.display_name);
-                indentln!("base={}", x.base);
-                indentln!("types");
-
-                s.level += 1;
-
-                for ty in &*x.types {
-                    indentln!("{}", &ty.type_);
-                }
-
-                s.level -= 2;
-            }
-            TypeVariant::Reference(x) => {
+        match &variant {
+            ComplexTypeVariant::Reference(x) => {
                 writeln!(f, "{}: Reference", ident)?;
 
                 s.level += 1;
 
-                indentln!("display_name={:?}", &ty.display_name);
+                indentln!("display_name={:?}", &display_name);
                 indentln!("min={}", x.min_occurs);
                 indentln!("max={:?}", x.max_occurs);
                 indentln!("type={}", x.type_);
 
                 s.level -= 1;
             }
-            TypeVariant::Dynamic(x) => {
+            ComplexTypeVariant::Dynamic(x) => {
                 writeln!(f, "{}: Dynamic", ident)?;
 
                 s.level += 1;
 
-                indentln!("display_name={:?}", &ty.display_name);
+                indentln!("display_name={:?}", &display_name);
                 indentln!("types");
 
                 s.level += 1;
@@ -255,34 +302,19 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            TypeVariant::Enumeration(x) => {
-                writeln!(f, "{}: Enumeration", ident)?;
-
-                s.level += 1;
-
-                indentln!("display_name={:?}", &ty.display_name);
-                indentln!("base={}", x.base);
-                indentln!("variants");
-
-                s.level += 1;
-
-                for var in &*x.variants {
-                    indentln!("{}={:?}", var.ident.name, var.use_);
-                }
-
-                s.level -= 2;
-            }
-            TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
-                match &ty.variant {
-                    TypeVariant::All(_) => writeln!(f, "{}: All", ident)?,
-                    TypeVariant::Choice(_) => writeln!(f, "{}: Choice", ident)?,
-                    TypeVariant::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
+            ComplexTypeVariant::All(x)
+            | ComplexTypeVariant::Choice(x)
+            | ComplexTypeVariant::Sequence(x) => {
+                match &variant {
+                    ComplexTypeVariant::All(_) => writeln!(f, "{}: All", ident)?,
+                    ComplexTypeVariant::Choice(_) => writeln!(f, "{}: Choice", ident)?,
+                    ComplexTypeVariant::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
                     _ => (),
                 }
 
                 s.level += 1;
 
-                indentln!("display_name={:?}", &ty.display_name);
+                indentln!("display_name={:?}", &display_name);
 
                 if let Some(x) = &x.any {
                     indentln!("any");
@@ -333,12 +365,12 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            TypeVariant::ComplexType(x) => {
+            ComplexTypeVariant::ComplexType(x) => {
                 writeln!(f, "{}: ComplexType", ident)?;
 
                 s.level += 1;
 
-                indentln!("display_name={:?}", &ty.display_name);
+                indentln!("display_name={:?}", &display_name);
                 indentln!("base={}", x.base);
                 indentln!("min_occurs={}", x.min_occurs);
                 indentln!("max_occurs={:?}", x.max_occurs);
@@ -390,6 +422,35 @@ impl<'a> TypesPrinter<'a> {
                 }
 
                 s.level -= 1;
+            }
+            ComplexTypeVariant::SimpleType(simple_type_variant) => {
+                self.print_simple_type(f, s, ident, display_name, simple_type_variant)?;
+            }
+        }
+
+        Ok(())
+    }
+
+    #[allow(clippy::too_many_lines)]
+    fn print_type(
+        &self,
+        f: &mut Formatter<'_>,
+        s: &mut State,
+        ident: &Ident,
+        ty: &Type,
+    ) -> FmtResult {
+        if !s.visit.insert(ident.clone()) {
+            writeln!(f, "LOOP DETECTED ({})", ident.name)?;
+
+            return Ok(());
+        }
+
+        match &ty {
+            Type::SimpleType(ty) => {
+                self.print_simple_type(f, s, ident, &ty.display_name, &ty.variant)?
+            }
+            Type::ComplexType(ty) => {
+                self.print_complex_type(f, s, ident, &ty.display_name, &ty.variant)?
             }
         }
 

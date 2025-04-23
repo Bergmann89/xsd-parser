@@ -1,7 +1,9 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use crate::types::{ReferenceInfo, Type, TypeEq, TypeVariant, Types};
+use crate::types::{
+    ComplexTypeVariant, ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, TypeEq, Types,
+};
 
 use super::{Error, TypeTransformer};
 
@@ -86,7 +88,7 @@ impl TypeTransformer for RemoveDuplicates {
                     }
                     Entry::Occupied(e) => {
                         let reference_ident = e.get();
-                        if !matches!(&type_.variant, TypeVariant::Reference(ti) if &ti.type_ == reference_ident)
+                        if !matches!(&type_, Type::SimpleType(TypeDescriptor {variant: SimpleTypeVariant::Reference(ti), .. }) | Type::ComplexType(TypeDescriptor {variant: ComplexTypeVariant::Reference(ti), .. }) if &ti.type_ == reference_ident)
                         {
                             idents.insert(ident.clone(), reference_ident.clone());
                         }
@@ -104,7 +106,16 @@ impl TypeTransformer for RemoveDuplicates {
                 );
 
                 let ty = types.get_mut(&ident).unwrap();
-                ty.variant = TypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                match ty {
+                    Type::SimpleType(ty) => {
+                        ty.variant =
+                            SimpleTypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                    }
+                    Type::ComplexType(ty) => {
+                        ty.variant =
+                            ComplexTypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                    }
+                }
             }
         }
 

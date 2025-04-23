@@ -7,7 +7,8 @@ use crate::schema::xs::{
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::{Ident, TypeEq, TypeVariant, Types};
+use crate::types::type_::ComplexTypeVariant;
+use crate::types::{Ident, TypeEq, Types};
 
 use super::{AttributesInfo, Base, ElementsInfo};
 
@@ -104,48 +105,46 @@ impl TypeEq for GroupInfo {
 
 impl ComplexInfo {
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::Choice`], `false` otherwise.
+    /// is a [`ComplexTypeVariant::Choice`], `false` otherwise.
     #[must_use]
     pub fn has_complex_choice_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
+                .and_then(|ident| types.get_resolved_complex_type(ident))
                 .map(|ty| &ty.variant),
-            Some(TypeVariant::Choice(_))
+            Some(ComplexTypeVariant::Choice(_))
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::All`], [`TypeVariant::Choice`] or [`TypeVariant::Sequence`],
+    /// is a [`ComplexTypeVariant::All`], [`ComplexTypeVariant::Choice`] or [`ComplexTypeVariant::Sequence`],
     /// `false` otherwise.
     #[must_use]
     pub fn has_complex_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
+                .and_then(|ident| types.get_resolved_complex_type(ident))
                 .map(|ty| &ty.variant),
-            Some(TypeVariant::All(_) | TypeVariant::Choice(_) | TypeVariant::Sequence(_))
+            Some(
+                ComplexTypeVariant::All(_)
+                    | ComplexTypeVariant::Choice(_)
+                    | ComplexTypeVariant::Sequence(_)
+            )
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::BuildIn`], [`TypeVariant::Union`] or [`TypeVariant::Enumeration`],
+    /// is a [`ComplexTypeVariant::BuildIn`], [`ComplexTypeVariant::Union`] or [`ComplexTypeVariant::Enumeration`],
     /// `false` otherwise.
     #[must_use]
     pub fn has_simple_content(&self, types: &Types) -> bool {
         matches!(
             self.content
                 .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
-            Some(
-                TypeVariant::Reference(_)
-                    | TypeVariant::BuildIn(_)
-                    | TypeVariant::Union(_)
-                    | TypeVariant::Enumeration(_)
-            )
+                .and_then(|ident| types.get_resolved_simple_type(ident)),
+            Some(_)
         )
     }
 }

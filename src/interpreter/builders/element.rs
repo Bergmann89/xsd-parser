@@ -6,8 +6,8 @@ use super::Update;
 use crate::schema::xs::{ElementSubstitutionGroupType, ElementType};
 use crate::schema::Namespace;
 use crate::types::{
-    DynamicInfo, ElementInfo, ElementMode, Ident, IdentType, ReferenceInfo, Type, TypeVariant,
-    VecHelper,
+    ComplexType, ComplexTypeVariant, DynamicInfo, ElementInfo, ElementMode, Ident, IdentType,
+    ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -15,7 +15,7 @@ use super::super::{Error, SchemaInterpreter};
 #[derive(Debug)]
 pub(crate) struct ElementBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
-    variant: Option<TypeVariant>,
+    variant: Option<ComplexTypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
@@ -31,10 +31,10 @@ macro_rules! init_any {
         init_any!($builder, $variant, Default::default(), true)
     };
     ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
+        $builder.variant = Some(ComplexTypeVariant::$variant($value));
         $builder.fixed = $fixed;
 
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
+        let ComplexTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
         };
 
@@ -50,7 +50,11 @@ macro_rules! get_or_init_type {
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
+            Some(
+                ComplexTypeVariant::All(si)
+                | ComplexTypeVariant::Choice(si)
+                | ComplexTypeVariant::Sequence(si),
+            ) => si,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -69,10 +73,10 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
     }
 
     pub(crate) fn finish(self) -> Result<Type, Error> {
-        println!("ElementBuilder::finish");
-        let variant = self.variant.ok_or(Error::NoType)?;
-
-        Ok(Type::new(variant))
+        self.variant
+            .map(ComplexType::new)
+            .map(Type::ComplexType)
+            .ok_or(Error::NoType)
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -136,7 +140,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
         if ty.abstract_ {
             let type_ = match self.variant.take() {
                 None => None,
-                Some(TypeVariant::Reference(ti)) => Some(ti.type_),
+                Some(ComplexTypeVariant::Reference(ti)) => Some(ti.type_),
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
@@ -147,16 +151,37 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
         if let Some(substitution_group) = &ty.substitution_group {
             self.walk_substitution_groups(substitution_group, |builder, base_ident| {
                 let ident = builder.state.current_ident().unwrap().clone();
-                let base_ty = builder.get_element_mut(base_ident)?;
+                let mut base_ty = builder.get_element_mut(base_ident)?;
 
-                if let TypeVariant::Reference(ti) = &mut base_ty.variant {
-                    base_ty.variant = TypeVariant::Dynamic(DynamicInfo {
+                if let Type::ComplexType(TypeDescriptor {
+                    display_name,
+                    variant: ComplexTypeVariant::Reference(ti),
+                    ..
+                })
+                | Type::SimpleType(TypeDescriptor {
+                    display_name,
+                    variant: SimpleTypeVariant::Reference(ti),
+                    ..
+                }) = &mut base_ty
+                {
+                    let dyn_info = DynamicInfo {
                         type_: Some(ti.type_.clone()),
                         derived_types: vec![ti.type_.clone()],
+                    };
+
+                    let display_name = display_name.take();
+
+                    *base_ty = Type::ComplexType(TypeDescriptor {
+                        display_name,
+                        variant: ComplexTypeVariant::Dynamic(dyn_info),
                     });
                 }
 
-                let TypeVariant::Dynamic(ai) = &mut base_ty.variant else {
+                let Type::ComplexType(TypeDescriptor {
+                    variant: ComplexTypeVariant::Dynamic(ai),
+                    ..
+                }) = &mut base_ty
+                else {
                     return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
 

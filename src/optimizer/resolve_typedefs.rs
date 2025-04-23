@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, TypeVariant, Types};
+use crate::types::{Base, ComplexTypeVariant, SimpleTypeVariant, Types};
 
 use super::{Error, TypeTransformer};
 
@@ -46,30 +46,23 @@ impl TypeTransformer for ResolveTypedefs {
 
         let mut replaced_references = HashMap::new();
 
-        for type_ in types.values_mut() {
+        for (_, type_) in types.simple_types_iter_mut() {
             match &mut type_.variant {
-                TypeVariant::Reference(x) if x.is_single() => {
+                SimpleTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
                         .entry(x.type_.clone())
                         .or_insert_with(|| new_type.clone());
                     x.type_ = new_type;
                 }
-                TypeVariant::Union(x) => {
+                SimpleTypeVariant::Union(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.types {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                TypeVariant::Dynamic(x) => {
-                    x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
-
-                    for x in &mut x.derived_types {
-                        *x = typedefs.resolve(x).clone();
-                    }
-                }
-                TypeVariant::Enumeration(x) => {
+                SimpleTypeVariant::Enumeration(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.variants {
@@ -78,7 +71,27 @@ impl TypeTransformer for ResolveTypedefs {
                         }
                     }
                 }
-                TypeVariant::ComplexType(x) => {
+                _ => (),
+            }
+        }
+
+        for (_, type_) in types.complex_types_iter_mut() {
+            match &mut type_.variant {
+                ComplexTypeVariant::Reference(x) if x.is_single() => {
+                    let new_type = typedefs.resolve(&x.type_).clone();
+                    replaced_references
+                        .entry(x.type_.clone())
+                        .or_insert_with(|| new_type.clone());
+                    x.type_ = new_type;
+                }
+                ComplexTypeVariant::Dynamic(x) => {
+                    x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
+
+                    for x in &mut x.derived_types {
+                        *x = typedefs.resolve(x).clone();
+                    }
+                }
+                ComplexTypeVariant::ComplexType(x) => {
                     resolve_base!(&mut x.base);
 
                     if let Some(ident) = &mut x.content {
@@ -89,7 +102,9 @@ impl TypeTransformer for ResolveTypedefs {
                         attrib.type_ = typedefs.resolve(&attrib.type_).clone();
                     }
                 }
-                TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
+                ComplexTypeVariant::All(x)
+                | ComplexTypeVariant::Choice(x)
+                | ComplexTypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
                         element.type_ = typedefs.resolve(&element.type_).clone();
                     }
@@ -98,8 +113,8 @@ impl TypeTransformer for ResolveTypedefs {
             }
         }
 
-        for type_ in types.values_mut() {
-            let TypeVariant::Dynamic(di) = &mut type_.variant else {
+        for (_, type_) in types.complex_types_iter_mut() {
+            let ComplexTypeVariant::Dynamic(di) = &mut type_.variant else {
                 continue;
             };
 

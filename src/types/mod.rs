@@ -15,6 +15,8 @@ use std::ops::DerefMut;
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 
+pub use type_::{ComplexType, ComplexTypeVariant, SimpleType, SimpleTypeVariant, TypeDescriptor};
+
 pub use self::custom::CustomType;
 pub use self::helper::{VecHelper, WithIdent};
 pub use self::ident::{Ident, IdentType};
@@ -25,7 +27,7 @@ pub use self::info::{
 };
 pub use self::name::Name;
 pub use self::name_builder::{NameBuilder, NameFallback};
-pub use self::type_::{BuildInInfo, Type, TypeEq, TypeVariant};
+pub use self::type_::{BuildInInfo, Type, TypeEq};
 
 use crate::schema::{Namespace, NamespaceId};
 
@@ -56,6 +58,76 @@ pub struct Module {
 }
 
 impl Types {
+    pub fn get_simple_type(&self, ident: &Ident) -> Option<&TypeDescriptor<SimpleTypeVariant>> {
+        self.types.get(ident).and_then(|t| match t {
+            Type::SimpleType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
+    }
+
+    pub fn get_simple_type_mut(
+        &mut self,
+        ident: &Ident,
+    ) -> Option<&mut TypeDescriptor<SimpleTypeVariant>> {
+        self.types.get_mut(ident).and_then(|t| match t {
+            Type::SimpleType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
+    }
+
+    pub fn get_complex_type(&self, ident: &Ident) -> Option<&TypeDescriptor<ComplexTypeVariant>> {
+        self.types.get(ident).and_then(|t| match t {
+            Type::ComplexType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
+    }
+
+    pub fn get_complex_type_mut(
+        &mut self,
+        ident: &Ident,
+    ) -> Option<&mut TypeDescriptor<ComplexTypeVariant>> {
+        self.types.get_mut(ident).and_then(|t| match t {
+            Type::ComplexType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
+    }
+
+    pub fn simple_types_iter(
+        &self,
+    ) -> impl Iterator<Item = (&Ident, &TypeDescriptor<SimpleTypeVariant>)> {
+        self.types.iter().filter_map(|(ident, t)| match t {
+            Type::SimpleType(type_descriptor) => Some((ident, type_descriptor)),
+            _ => None,
+        })
+    }
+
+    pub fn simple_types_iter_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&Ident, &mut TypeDescriptor<SimpleTypeVariant>)> {
+        self.types.iter_mut().filter_map(|(ident, t)| match t {
+            Type::SimpleType(type_descriptor) => Some((ident, type_descriptor)),
+            _ => None,
+        })
+    }
+
+    pub fn complex_types_iter(
+        &self,
+    ) -> impl Iterator<Item = (&Ident, &TypeDescriptor<ComplexTypeVariant>)> {
+        self.types.iter().filter_map(|(ident, t)| match t {
+            Type::ComplexType(type_descriptor) => Some((ident, type_descriptor)),
+            _ => None,
+        })
+    }
+
+    pub fn complex_types_iter_mut(
+        &mut self,
+    ) -> impl Iterator<Item = (&Ident, &mut TypeDescriptor<ComplexTypeVariant>)> {
+        self.types.iter_mut().filter_map(|(ident, t)| match t {
+            Type::ComplexType(type_descriptor) => Some((ident, type_descriptor)),
+            _ => None,
+        })
+    }
+
     /// Create a new [`NameBuilder`] instance, that can be used to build type named.
     pub fn name_builder(&mut self) -> NameBuilder {
         NameBuilder::new(self.next_name_id.clone())
@@ -83,6 +155,32 @@ impl Types {
         self.get_resolved(ident).map(|(_ident, ty)| ty)
     }
 
+    #[must_use]
+    pub fn get_resolved_complex_type<'a>(
+        &'a self,
+        ident: &'a Ident,
+    ) -> Option<&'a TypeDescriptor<ComplexTypeVariant>> {
+        self.get_resolved(ident)
+            .map(|(_ident, ty)| ty)
+            .and_then(|a| match a {
+                Type::ComplexType(type_descriptor) => Some(type_descriptor),
+                _ => None,
+            })
+    }
+
+    #[must_use]
+    pub fn get_resolved_simple_type<'a>(
+        &'a self,
+        ident: &'a Ident,
+    ) -> Option<&'a TypeDescriptor<SimpleTypeVariant>> {
+        self.get_resolved(ident)
+            .map(|(_ident, ty)| ty)
+            .and_then(|a| match a {
+                Type::SimpleType(type_descriptor) => Some(type_descriptor),
+                _ => None,
+            })
+    }
+
     /// Get the type ident of the passed `ident` with all single type references resolved.
     ///
     /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
@@ -90,24 +188,6 @@ impl Types {
     #[must_use]
     pub fn get_resolved_ident<'a>(&'a self, ident: &'a Ident) -> Option<&'a Ident> {
         self.get_resolved(ident).map(|(ident, _ty)| ident)
-    }
-
-    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
-    ///
-    /// This is a shorthand for `self.get(ident).map(|ty| &type.variant)`.
-    #[inline]
-    #[must_use]
-    pub fn get_variant(&self, ident: &Ident) -> Option<&TypeVariant> {
-        self.get(ident).map(|ty| &ty.variant)
-    }
-
-    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
-    ///
-    /// This is a shorthand for `self.get_mut(ident).map(|ty| &type.variant)`.
-    #[inline]
-    #[must_use]
-    pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut TypeVariant> {
-        self.get_mut(ident).map(|ty| &mut ty.variant)
     }
 }
 
@@ -145,8 +225,15 @@ fn get_resolved_impl<'a>(
 
     let ty = types.get(ident)?;
 
-    match &ty.variant {
-        TypeVariant::Reference(x) if x.is_single() => {
+    match ty {
+        Type::SimpleType(TypeDescriptor {
+            variant: SimpleTypeVariant::Reference(x),
+            ..
+        })
+        | Type::ComplexType(TypeDescriptor {
+            variant: ComplexTypeVariant::Reference(x),
+            ..
+        }) if x.is_single() => {
             visited.push(ident);
 
             let ret = match get_resolved_impl(types, &x.type_, visited) {

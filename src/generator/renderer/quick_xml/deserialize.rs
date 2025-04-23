@@ -20,7 +20,7 @@ use crate::{
         Context,
     },
     schema::{xs::Use, MaxOccurs},
-    types::{ComplexInfo, ElementMode, Ident, TypeVariant, Types},
+    types::{ComplexInfo, ComplexTypeVariant, ElementMode, Ident, Types},
 };
 
 /// Implements a [`Renderer`] that renders the code for the `quick_xml` deserialization.
@@ -2194,15 +2194,15 @@ impl ComplexTypeElement<'_> {
                 return false;
             }
 
-            match types.get_variant(ident) {
-                Some(TypeVariant::All(si) | TypeVariant::Choice(si)) => {
+            match types.get_complex_type(ident).map(|x| &x.variant) {
+                Some(ComplexTypeVariant::All(si) | ComplexTypeVariant::Choice(si)) => {
                     if si.any.is_some() {
                         return true;
                     }
 
                     si.elements.iter().any(|f| walk(types, visit, &f.type_))
                 }
-                Some(TypeVariant::Sequence(si)) => {
+                Some(ComplexTypeVariant::Sequence(si)) => {
                     if si.any.is_some() {
                         return true;
                     }
@@ -2213,7 +2213,7 @@ impl ComplexTypeElement<'_> {
 
                     false
                 }
-                Some(TypeVariant::ComplexType(ComplexInfo {
+                Some(ComplexTypeVariant::ComplexType(ComplexInfo {
                     content: Some(content),
                     ..
                 })) => walk(types, visit, content),

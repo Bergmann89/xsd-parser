@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::types::{ReferenceInfo, TypeVariant, Types};
+use crate::types::{type_::SimpleTypeVariant, ReferenceInfo, Types};
 
 use super::TypeTransformer;
 
@@ -36,8 +36,8 @@ impl TypeTransformer for RemoveDuplicateUnionVariants {
 
         let typedefs = crate::optimizer::TypedefMap::new(types);
 
-        for type_ in types.types.values_mut() {
-            if let TypeVariant::Union(x) = &mut type_.variant {
+        for (_, type_) in types.simple_types_iter_mut() {
+            if let SimpleTypeVariant::Union(x) = &mut type_.variant {
                 let mut i = 0;
                 let mut types_ = HashSet::new();
 
@@ -84,12 +84,13 @@ impl TypeTransformer for RemoveEmptyUnions {
     fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_unions");
 
-        for type_ in types.types.values_mut() {
-            if let TypeVariant::Union(x) = &type_.variant {
+        for (_, type_) in types.simple_types_iter_mut() {
+            if let SimpleTypeVariant::Union(x) = &type_.variant {
                 if x.types.len() <= 1 {
                     let base = x.types.first().map(|x| &x.type_).or(x.base.as_ident());
                     if let Some(base) = base {
-                        type_.variant = TypeVariant::Reference(ReferenceInfo::new(base.clone()));
+                        type_.variant =
+                            SimpleTypeVariant::Reference(ReferenceInfo::new(base.clone()));
                     }
                 }
             }

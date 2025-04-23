@@ -1,7 +1,9 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::schema::xs::Use;
-use crate::types::{ComplexInfo, Ident, TypeVariant, Types};
+use crate::types::{
+    ComplexInfo, ComplexType, ComplexTypeVariant, Ident, SimpleType, SimpleTypeVariant, Type, Types,
+};
 
 use super::misc::{Occurs, TypeRef};
 
@@ -33,13 +35,25 @@ impl<'a> Walk<'a> {
 
         let mut ret = false;
 
-        match self.types.get_variant(current) {
-            Some(TypeVariant::Reference(x)) => {
+        match self.types.get(current) {
+            Some(
+                Type::ComplexType(ComplexType {
+                    variant: ComplexTypeVariant::Reference(x),
+                    ..
+                })
+                | Type::SimpleType(SimpleType {
+                    variant: SimpleTypeVariant::Reference(x),
+                    ..
+                }),
+            ) => {
                 let occurs = Occurs::from_occurs(x.min_occurs, x.max_occurs);
 
                 ret = occurs.is_direct() && self.is_loop(origin, &x.type_);
             }
-            Some(TypeVariant::Union(x)) => {
+            Some(Type::SimpleType(SimpleType {
+                variant: SimpleTypeVariant::Union(x),
+                ..
+            })) => {
                 for var in x.types.iter() {
                     if self.is_loop(origin, &var.type_) {
                         ret = true;
@@ -47,7 +61,10 @@ impl<'a> Walk<'a> {
                     }
                 }
             }
-            Some(TypeVariant::Enumeration(x)) => {
+            Some(Type::SimpleType(SimpleType {
+                variant: SimpleTypeVariant::Enumeration(x),
+                ..
+            })) => {
                 for var in x.variants.iter() {
                     if let Some(type_) = &var.type_ {
                         if var.use_ != Use::Prohibited && self.is_loop(origin, type_) {
@@ -57,17 +74,27 @@ impl<'a> Walk<'a> {
                     }
                 }
             }
-            Some(TypeVariant::ComplexType(ComplexInfo {
-                content: Some(content),
-                min_occurs,
-                max_occurs,
+            Some(Type::ComplexType(ComplexType {
+                variant:
+                    ComplexTypeVariant::ComplexType(ComplexInfo {
+                        content: Some(content),
+                        min_occurs,
+                        max_occurs,
+                        ..
+                    }),
                 ..
             })) => {
                 let occurs = Occurs::from_occurs(*min_occurs, *max_occurs);
 
                 ret = occurs.is_direct() && self.is_loop(origin, content);
             }
-            Some(TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x)) => {
+            Some(Type::ComplexType(ComplexType {
+                variant:
+                    ComplexTypeVariant::All(x)
+                    | ComplexTypeVariant::Choice(x)
+                    | ComplexTypeVariant::Sequence(x),
+                ..
+            })) => {
                 for f in x.elements.iter() {
                     let already_boxed = self
                         .cache

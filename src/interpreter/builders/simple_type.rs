@@ -6,8 +6,8 @@ use tracing::instrument;
 use crate::schema::xs::{Facet, FacetType, List, Restriction, SimpleBaseType, Union, Use};
 use crate::schema::MaxOccurs;
 use crate::types::{
-    Base, Ident, IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo,
-    VecHelper,
+    Base, Ident, IdentType, Name, ReferenceInfo, SimpleType, SimpleTypeVariant, Type,
+    UnionTypeInfo, VariantInfo, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -15,7 +15,7 @@ use super::super::{Error, SchemaInterpreter};
 #[derive(Debug)]
 pub(crate) struct SimpleTypeBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
-    pub variant: Option<TypeVariant>,
+    pub variant: Option<SimpleTypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     pub fixed: bool,
@@ -35,10 +35,10 @@ enum UpdateMode {
 /// Initialize the type of a `$builder` to any type `$variant`.
 macro_rules! init_any {
     ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
+        $builder.variant = Some(SimpleTypeVariant::$variant($value));
         $builder.fixed = $fixed;
 
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
+        let SimpleTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
         };
 
@@ -54,7 +54,7 @@ macro_rules! get_or_init_any {
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::$variant(ret)) => ret,
+            Some(SimpleTypeVariant::$variant(ret)) => ret,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -73,9 +73,10 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
     }
 
     pub(crate) fn finish(self) -> Result<Type, Error> {
-        let variant = self.variant.ok_or(Error::NoType)?;
-
-        Ok(Type::new(variant))
+        self.variant
+            .map(SimpleType::new)
+            .map(Type::SimpleType)
+            .ok_or(Error::NoType)
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -120,10 +121,9 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
 
         if let Some(base) = base {
             match &mut self.variant {
-                Some(TypeVariant::Reference(_)) => (),
-                Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
+                Some(SimpleTypeVariant::Reference(_)) => (),
+                Some(SimpleTypeVariant::Union(e)) => e.base = Base::Extension(base),
+                Some(SimpleTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
                 e => unreachable!("Unexpected type: {e:#?}"),
             }
         }
@@ -234,8 +234,8 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
 
         let mut base = base.clone();
 
-        if let TypeVariant::Enumeration(ei) = &mut base {
-            ei.variants.clear()
+        if let SimpleTypeVariant::Enumeration(ei) = &mut base {
+            ei.variants.clear();
         }
 
         self.variant = Some(base);
