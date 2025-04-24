@@ -1,0 +1,12 @@
+[package]
+name = "read_write"
+version = "0.1.0"
+edition = "2024"
+
+[build-dependencies]
+helpers = { path = "../helpers" }
+xsd-parser = { path = "../../" }
+
+[dependencies]
+xsd-parser = { path = "../../" }
+

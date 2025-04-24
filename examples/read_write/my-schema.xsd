@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	attributeFormDefault="unqualified">
+
+	<xs:complexType name="Document">
+		<xs:sequence maxOccurs="unbounded">
+			<xs:element name="info" type="xs:string" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required" />
+		<xs:attribute name="count" type="xs:unsignedInt" use="optional" />
+	</xs:complexType>
+
+	<xs:element name="document"	type="Document" />
+</xs:schema>
