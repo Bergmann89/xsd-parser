@@ -16,10 +16,10 @@ use crate::types::{
     IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
-use super::{Error, SchemaInterpreter};
+use super::super::{Error, SchemaInterpreter};
 
 #[derive(Debug)]
-pub(super) struct VariantBuilder<'a, 'schema, 'state> {
+pub(crate) struct ComplexTypeBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
     variant: Option<TypeVariant>,
 
@@ -117,8 +117,8 @@ macro_rules! get_or_init_type {
 
 /* TypeBuilder */
 
-impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
-    pub(super) fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
+impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
+    pub fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
         Self {
             variant: None,
             fixed: false,
@@ -129,14 +129,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
     }
 
-    pub(super) fn finish(self) -> Result<Type, Error> {
+    pub fn finish(self) -> Result<Type, Error> {
         let variant = self.variant.ok_or(Error::NoType)?;
 
         Ok(Type::new(variant))
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
+    pub fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
         use crate::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
@@ -557,7 +557,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .extend(true, ty.name.clone())
-                    .auto_extend(true, false, self.state);
+                    .auto_extend2(true, false, self.state);
                 let type_name = if type_name.has_extension() {
                     type_name.with_id(false)
                 } else {
@@ -682,7 +682,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                             .state
                             .name_builder()
                             .or(name)
-                            .auto_extend(true, true, self.state)
+                            .auto_extend2(true, true, self.state)
                             .finish();
                         let ns = self.state.current_ns();
 
@@ -769,7 +769,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .or(&x.name)
-                    .auto_extend(false, true, builder.owner.state)
+                    .auto_extend2(false, true, builder.owner.state)
                     .finish();
                 let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
                 ui.types.push(UnionTypeInfo::new(type_));
@@ -926,12 +926,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
-            builder: &mut VariantBuilder<'x, 'y, 'z>,
+            builder: &mut ComplexTypeBuilder<'x, 'y, 'z>,
             groups: &ElementSubstitutionGroupType,
             f: &mut F,
         ) -> Result<(), Error>
         where
-            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
+            F: FnMut(&mut ComplexTypeBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
         {
             for head in &groups.0 {
                 let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
@@ -954,7 +954,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
     where
-        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut ComplexTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
         match (self.type_mode, self.content_mode) {
             (TypeMode::Simple, _) => f(self)?,
@@ -977,7 +977,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     ci.content = Some(content_ident.clone());
                 }
 
-                let mut builder = VariantBuilder::new(&mut *self.owner);
+                let mut builder = ComplexTypeBuilder::new(&mut *self.owner);
                 builder.variant = Some(content);
                 builder.type_mode = TypeMode::Simple;
                 builder.content_mode = ContentMode::Simple;
@@ -1016,7 +1016,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         f: F,
     ) -> Result<(), Error>
     where
-        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut ComplexTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
         enum UpdateContentMode {
             Unknown,
@@ -1054,7 +1054,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             ComplexContentType::Sequence => TypeVariant::Sequence(Default::default()),
         });
 
-        let mut builder = VariantBuilder::new(&mut *self.owner);
+        let mut builder = ComplexTypeBuilder::new(&mut *self.owner);
         builder.type_mode = self.type_mode;
         builder.variant = Some(variant);
 
@@ -1154,7 +1154,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .remove_suffix("Content");
         let field_name = name.clone().shared_name("Content").finish();
         let type_name = name
-            .auto_extend(false, true, self.state)
+            .auto_extend2(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
             .shared_name("Content")
@@ -1166,7 +1166,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 }
 
-impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
+impl<'schema, 'state> Deref for ComplexTypeBuilder<'_, 'schema, 'state> {
     type Target = SchemaInterpreter<'schema, 'state>;
 
     fn deref(&self) -> &Self::Target {
@@ -1174,111 +1174,8 @@ impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
     }
 }
 
-impl DerefMut for VariantBuilder<'_, '_, '_> {
+impl DerefMut for ComplexTypeBuilder<'_, '_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.owner
-    }
-}
-
-/* Update */
-
-trait Update<T> {
-    fn update(&mut self, other: &T);
-}
-
-impl<T: Clone> Update<Option<T>> for T {
-    fn update(&mut self, other: &Option<T>) {
-        if let Some(value) = other {
-            *self = value.clone();
-        }
-    }
-}
-
-impl<T: Clone> Update<Option<T>> for Option<T> {
-    fn update(&mut self, other: &Option<T>) {
-        if let Some(value) = other {
-            *self = Some(value.clone());
-        }
-    }
-}
-
-impl Update<GroupType> for ElementInfo {
-    fn update(&mut self, other: &GroupType) {
-        self.min_occurs = other.min_occurs;
-        self.max_occurs = other.max_occurs;
-    }
-}
-
-impl Update<Any> for AnyInfo {
-    fn update(&mut self, other: &Any) {
-        self.min_occurs = Some(other.min_occurs);
-        self.max_occurs = Some(other.max_occurs);
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
-impl Update<AnyAttribute> for AnyAttributeInfo {
-    fn update(&mut self, other: &AnyAttribute) {
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
-impl Update<ElementType> for ElementInfo {
-    fn update(&mut self, other: &ElementType) {
-        self.min_occurs = other.min_occurs;
-        self.max_occurs = other.max_occurs;
-    }
-}
-
-impl Update<AttributeType> for AttributeInfo {
-    fn update(&mut self, other: &AttributeType) {
-        self.use_ = other.use_.clone();
-        self.default.update(&other.default);
-    }
-}
-
-/* CreateOrUpdate */
-
-trait CreateOrUpdate<T> {
-    fn create_or_update(&mut self, other: &T);
-}
-
-impl<T, X> CreateOrUpdate<T> for Option<X>
-where
-    X: Update<T> + Default,
-{
-    fn create_or_update(&mut self, other: &T) {
-        if let Some(x) = self {
-            x.update(other);
-        } else {
-            let mut x = X::default();
-            x.update(other);
-            *self = Some(x);
-        }
-    }
-}
-
-/* Patch */
-
-trait Patch<T>: Clone {
-    fn patch(&self, other: &T) -> Cow<'_, Self>;
-}
-
-impl Patch<GroupType> for GroupType {
-    fn patch(&self, other: &GroupType) -> Cow<'_, Self> {
-        let mut ret = self.clone();
-
-        ret.min_occurs = other.min_occurs;
-        ret.max_occurs = other.max_occurs;
-
-        Cow::Owned(ret)
     }
 }

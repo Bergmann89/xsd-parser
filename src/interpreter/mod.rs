@@ -1,10 +1,10 @@
 //! The `interpreter` module contains the schema [`Interpreter`] and all related types.
 
+mod builders;
 mod error;
 mod name_builder;
 mod schema;
 mod state;
-mod variant_builder;
 
 use std::fmt::Debug;
 
@@ -21,7 +21,6 @@ use tracing::instrument;
 
 use self::schema::SchemaInterpreter;
 use self::state::{Node, State};
-use self::variant_builder::VariantBuilder;
 
 /// The [`Interpreter`] is used to interpret the XML schema information.
 ///
