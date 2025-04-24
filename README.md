@@ -55,6 +55,8 @@ fn main() -> Result<(), Error> {
 }
 ```
 
+For more advanced examples, please refer to the `examples` directory.
+
 
 # Features
 
