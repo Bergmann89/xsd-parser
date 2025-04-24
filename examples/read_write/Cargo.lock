@@ -203,14 +203,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "07e28edb80900c19c28f1072f2e8aeca7fa06b23cd4169cefe1af5aa3260783f"
 
 [[package]]
-name = "helpers"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "quote",
-]
-
-[[package]]
 name = "icu_collections"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -481,7 +473,6 @@ dependencies = [
 name = "read_write"
 version = "0.1.0"
 dependencies = [
- "helpers",
  "xsd-parser",
 ]
 

@@ -16,7 +16,3 @@ It integrates `xsd-parser` in the build phase (`build.rs`) of the application,
 to generate Rust code and use it at run time.
 
 
-# helpers
-
-Only helpers, not any real example.
-
