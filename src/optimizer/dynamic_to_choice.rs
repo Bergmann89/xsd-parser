@@ -66,9 +66,8 @@ impl TypeTransformer for ConvertDynamicToChoice {
                 crate::unreachable!();
             };
 
-            let x = match variant {
-                ComplexTypeVariant::Dynamic(x) => x,
-                _ => crate::unreachable!(),
+            let ComplexTypeVariant::Dynamic(x) = variant else {
+                crate::unreachable!();
             };
 
             let mut si = GroupInfo::default();

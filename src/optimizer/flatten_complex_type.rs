@@ -260,7 +260,7 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::{
-        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, ComplexTypeVariant, Types, TypeDescriptor}
+        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ComplexTypeVariant, ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeDescriptor, Types}
     };
     
 

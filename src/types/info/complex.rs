@@ -140,12 +140,10 @@ impl ComplexInfo {
     /// `false` otherwise.
     #[must_use]
     pub fn has_simple_content(&self, types: &Types) -> bool {
-        matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_simple_type(ident)),
-            Some(_)
-        )
+        self.content
+            .as_ref()
+            .and_then(|ident| types.get_resolved_simple_type(ident))
+            .is_some()
     }
 }
 
