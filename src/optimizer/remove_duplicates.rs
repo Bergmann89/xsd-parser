@@ -40,6 +40,8 @@ use super::{Error, TypeTransformer};
 pub struct RemoveDuplicates;
 
 impl TypeTransformer for RemoveDuplicates {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         use std::collections::hash_map::Entry;
 

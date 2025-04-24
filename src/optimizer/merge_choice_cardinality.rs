@@ -13,6 +13,8 @@ use super::{Error,  TypeTransformer};
 pub struct MergeChoiceCardinalities;
 
 impl TypeTransformer for MergeChoiceCardinalities {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("merge_choice_cardinalities");
 

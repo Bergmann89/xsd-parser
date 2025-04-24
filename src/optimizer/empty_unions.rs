@@ -29,6 +29,8 @@ use super::TypeTransformer;
 pub struct RemoveDuplicateUnionVariants;
 
 impl TypeTransformer for RemoveDuplicateUnionVariants {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_duplicate_union_variants");
 
@@ -77,6 +79,8 @@ impl TypeTransformer for RemoveDuplicateUnionVariants {
 pub struct RemoveEmptyUnions;
 
 impl TypeTransformer for RemoveEmptyUnions {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_unions");
 

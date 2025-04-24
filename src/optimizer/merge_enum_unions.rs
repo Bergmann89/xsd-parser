@@ -11,6 +11,8 @@ use super::{Error, TypeTransformer};
 pub struct MergeEnumUnions;
 
 impl TypeTransformer for MergeEnumUnions {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("merge_enum_unions");
 

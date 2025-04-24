@@ -27,6 +27,8 @@ use super::{Error, TypeTransformer};
 pub struct ResolveTypedefs;
 
 impl TypeTransformer for ResolveTypedefs {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("resolve_typedefs");
 

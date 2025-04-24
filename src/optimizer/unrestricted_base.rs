@@ -1,5 +1,3 @@
-use std::ops::DerefMut;
-
 use crate::types::{ReferenceInfo, TypeVariant, Types};
 
 use super::{Error, TypeTransformer};
@@ -33,12 +31,14 @@ use super::{Error, TypeTransformer};
 pub struct UseUnrestrictedBaseType;
 
 impl TypeTransformer for UseUnrestrictedBaseType {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("use_unrestricted_base_type");
 
         let bases = crate::optimizer::BaseMap::new(types);
 
-        for (ident, type_) in types.deref_mut() {
+        for (ident, type_) in types.iter_mut() {
             match &type_.variant {
                 TypeVariant::ComplexType(_)
                 | TypeVariant::Enumeration(_)

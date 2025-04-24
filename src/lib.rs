@@ -32,11 +32,6 @@ pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
 pub use optimizer::Optimizer;
-use optimizer::{
-    ConvertDynamicToChoice, FlattenComplexTypes, FlattenUnions, MergeChoiceCardinalities,
-    MergeEnumUnions, RemoveDuplicateUnionVariants, RemoveDuplicates, RemoveEmptyEnumVariants,
-    RemoveEmptyEnums, RemoveEmptyUnions, ResolveTypedefs, TypeTransformer, UseUnrestrictedBaseType,
-};
 pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
@@ -52,6 +47,11 @@ use self::generator::renderer::{
     QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
 };
 use self::misc::TypesPrinter;
+use self::optimizer::{
+    ConvertDynamicToChoice, FlattenComplexTypes, FlattenUnions, MergeChoiceCardinalities,
+    MergeEnumUnions, RemoveDuplicateUnionVariants, RemoveDuplicates, RemoveEmptyEnumVariants,
+    RemoveEmptyEnums, RemoveEmptyUnions, ResolveTypedefs, UseUnrestrictedBaseType,
+};
 use self::parser::resolver::{FileResolver, ManyResolver};
 use self::schema::Schemas;
 use self::types::{IdentType, Types};
@@ -183,33 +183,30 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(types))]
 pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
-    tracing::info!("Optimize Types");
-
-    let mut optimizer = Optimizer::new(types);
-
     use OptimizerFlags as F;
+
+    tracing::info!("Optimize Types");
 
     let fa = |flag: F| config.flags.contains(flag);
 
-    optimizer
-        .apply_transformer_if(RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
-        .apply_transformer_if(RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
+    let types = Optimizer::new(types)
+        .apply_transformer_if(&RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
+        .apply_transformer_if(&RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
         .apply_transformer_if(
-            RemoveDuplicateUnionVariants,
+            &RemoveDuplicateUnionVariants,
             fa(F::REMOVE_DUPLICATE_UNION_VARIANTS),
         )?
-        .apply_transformer_if(RemoveEmptyUnions, fa(F::REMOVE_EMPTY_UNIONS))?
-        .apply_transformer_if(UseUnrestrictedBaseType, fa(F::USE_UNRESTRICTED_BASE_TYPE))?
-        .apply_transformer_if(ConvertDynamicToChoice, fa(F::CONVERT_DYNAMIC_TO_CHOICE))?
-        .apply_transformer_if(FlattenComplexTypes, fa(F::FLATTEN_COMPLEX_TYPES))?
-        .apply_transformer_if(FlattenUnions, fa(F::FLATTEN_UNIONS))?
-        .apply_transformer_if(MergeEnumUnions, fa(F::MERGE_ENUM_UNIONS))?
-        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
-        .apply_transformer_if(RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
-        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
-        .apply_transformer_if(MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?;
-
-    let types = optimizer.finish();
+        .apply_transformer_if(&RemoveEmptyUnions, fa(F::REMOVE_EMPTY_UNIONS))?
+        .apply_transformer_if(&UseUnrestrictedBaseType, fa(F::USE_UNRESTRICTED_BASE_TYPE))?
+        .apply_transformer_if(&ConvertDynamicToChoice, fa(F::CONVERT_DYNAMIC_TO_CHOICE))?
+        .apply_transformer_if(&FlattenComplexTypes, fa(F::FLATTEN_COMPLEX_TYPES))?
+        .apply_transformer_if(&FlattenUnions, fa(F::FLATTEN_UNIONS))?
+        .apply_transformer_if(&MergeEnumUnions, fa(F::MERGE_ENUM_UNIONS))?
+        .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(&RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
+        .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(&MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?
+        .finish();
 
     if let Some(output) = config.debug_output {
         let printer = TypesPrinter::new(&types);

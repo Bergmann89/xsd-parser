@@ -5,13 +5,32 @@ use crate::{
 
 use super::{Error,  TypeTransformer};
 
-/// This will flatten all complex types.
+/// This will flatten the nested groups (`xs::all`, `xs::choice` or `xs::sequence`)
+/// of the complex types identified by the filter to one type instead of rendering
+/// nested structures.
 ///
-/// For details see [`flatten_complex_type`](Self::flatten_complex_type).
+/// # Examples
+///
+/// Consider the following XML schema.
+/// ```xml
+#[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
+/// ```
+///
+/// Without this optimization this will result in the following code:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected0/flatten_complex_types.rs")]
+/// ```
+///
+/// With this optimization the following code is generated:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected1/flatten_complex_types.rs")]
+/// ```
 #[derive(Debug)]
 pub struct FlattenComplexTypes;
 
 impl TypeTransformer for FlattenComplexTypes {
+    type Error = super::Error;
+
     fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("flatten_complex_types");
 
@@ -29,7 +48,7 @@ impl TypeTransformer for FlattenComplexTypes {
             .collect::<Vec<_>>();
 
         for ident in idents {
-            self.flatten_complex_type(types, ident)?;
+            Self::flatten_complex_type(types, ident)?;
         }
 
         Ok(())
@@ -37,32 +56,7 @@ impl TypeTransformer for FlattenComplexTypes {
 }
 
 impl FlattenComplexTypes {
-    /// This will flatten the nested groups (`xs::all`, `xs::choice` or `xs::sequence`)
-    /// of the complex type identified by `ident` to one type instead of rendering
-    /// nested structures.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the passed `ident` could not be found, the referenced
-    /// type is not complex type or the complex type has no content.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema.
-    /// ```xml
-    #[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
-    /// ```
-    ///
-    /// Without this optimization this will result in the following code:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/flatten_complex_types.rs")]
-    /// ```
-    ///
-    /// With this optimization the following code is generated:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/flatten_complex_types.rs")]
-    /// ```
-    pub fn flatten_complex_type(&self, types: &mut Types, ident: Ident) -> Result<(), Error> {
+    fn flatten_complex_type( types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
         let Some(ty) = types.get(&ident) else {
@@ -266,7 +260,7 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::{
-        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformerExt}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types}
+        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types}
     };
 
     macro_rules! make_type {
@@ -368,7 +362,7 @@ mod tests {
             }
         );
 
-        let types = FlattenComplexTypes.transform_owned(types).unwrap();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
@@ -417,7 +411,7 @@ mod tests {
             }
         );
 
-        let types = FlattenComplexTypes.transform_owned(types).unwrap();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Sequence("content"));
 
@@ -478,7 +472,7 @@ mod tests {
             }
         );
 
-        let types = FlattenComplexTypes.transform_owned(types).unwrap();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
@@ -543,7 +537,7 @@ mod tests {
             }
         );
 
-        let types = FlattenComplexTypes.transform_owned(types).unwrap();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
