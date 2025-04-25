@@ -18,12 +18,12 @@ use super::super::{Error, SchemaInterpreter};
 #[derive(Debug)]
 pub(crate) struct SimpleTypeBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
-    variant: Option<TypeVariant>,
+    pub variant: Option<TypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
-    fixed: bool,
+    pub fixed: bool,
 
-    owner: &'a mut SchemaInterpreter<'schema, 'state>,
+    pub owner: &'a mut SchemaInterpreter<'schema, 'state>,
 }
 
 /* any type */

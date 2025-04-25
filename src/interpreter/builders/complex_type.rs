@@ -29,9 +29,6 @@ pub(crate) struct ComplexTypeBuilder<'a, 'schema, 'state> {
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
 
-    /// Mode of the constructed type
-    type_mode: TypeMode,
-
     /// Mode of the content of the constructed type
     content_mode: ContentMode,
 
@@ -40,13 +37,6 @@ pub(crate) struct ComplexTypeBuilder<'a, 'schema, 'state> {
     is_simple_content_unique: bool,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
-}
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-enum TypeMode {
-    Unknown,
-    Simple,
-    Complex,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -123,7 +113,6 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
             type_: None,
             variant: None,
             fixed: false,
-            type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
             is_simple_content_unique: false,
             owner,
@@ -140,7 +129,6 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
     pub(crate) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
         use crate::schema::xs::ComplexBaseTypeContent as C;
 
-        self.type_mode = TypeMode::Complex;
         self.content_mode = ContentMode::Complex;
 
         get_or_init_any!(self, ComplexType);
@@ -672,35 +660,24 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
         let mut simple_base_ident = None;
-        let base = match (self.type_mode, self.content_mode) {
-            (TypeMode::Simple, ContentMode::Simple) => {
-                self.fixed = false;
+        let base = match self.content_mode {
+            ContentMode::Simple => match self.owner.get_simple_type_variant(base) {
+                Ok(ty) => {
+                    self.fixed = false;
 
-                simple_base_ident = Some(base.clone());
+                    simple_base_ident = Some(base.clone());
 
-                self.owner.get_simple_type_variant(base)?
-            }
-            (TypeMode::Complex, ContentMode::Simple) => {
-                match self.owner.get_simple_type_variant(base) {
-                    Ok(ty) => {
-                        self.fixed = false;
-
-                        simple_base_ident = Some(base.clone());
-
-                        ty
-                    }
-                    Err(Error::UnknownType(_)) => {
-                        self.fixed = true;
-
-                        self.owner.get_complex_type_variant(base)?
-                    }
-                    Err(error) => Err(error)?,
+                    ty
                 }
-            }
-            (TypeMode::Complex, ContentMode::Complex) => {
-                self.owner.get_complex_type_variant(base)?
-            }
-            (_, _) => crate::unreachable!("Unset or invalid combination!"),
+                Err(Error::UnknownType(_)) => {
+                    self.fixed = true;
+
+                    self.owner.get_complex_type_variant(base)?
+                }
+                Err(error) => Err(error)?,
+            },
+            ContentMode::Complex => self.owner.get_complex_type_variant(base)?,
+            _ => crate::unreachable!("Unset or invalid combination!"),
         };
 
         tracing::debug!("{base:#?}");
@@ -749,16 +726,15 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
             (_, _) => (),
         }
 
-        match (simple_base_ident, self.type_mode, self.content_mode) {
-            (Some(_), TypeMode::Simple, _) => self.variant = Some(base),
-            (Some(base_ident), TypeMode::Complex, ContentMode::Simple) => {
+        match (simple_base_ident, self.content_mode) {
+            (Some(base_ident), ContentMode::Simple) => {
                 let ci = get_or_init_any!(self, ComplexType);
                 ci.content.get_or_insert(base_ident);
             }
-            (None, TypeMode::Complex, ContentMode::Simple | ContentMode::Complex) => {
+            (None, ContentMode::Simple | ContentMode::Complex) => {
                 self.variant = Some(base);
             }
-            (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
+            (_, _) => crate::unreachable!("Unset or invalid combination!"),
         }
 
         tracing::debug!("{:#?}", self.variant);
@@ -803,11 +779,10 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
     where
-        F: FnOnce(&mut ComplexTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut SimpleTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
-        match (self.type_mode, self.content_mode) {
-            (TypeMode::Simple, _) => f(self)?,
-            (TypeMode::Complex, ContentMode::Simple) => {
+        match self.content_mode {
+            ContentMode::Simple => {
                 let ci = get_or_init_any!(self, ComplexType);
 
                 let Some(mut content_ident) = ci.content.clone() else {
@@ -826,10 +801,8 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     ci.content = Some(content_ident.clone());
                 }
 
-                let mut builder = ComplexTypeBuilder::new(&mut *self.owner);
+                let mut builder = SimpleTypeBuilder::new(&mut *self.owner);
                 builder.variant = Some(content);
-                builder.type_mode = TypeMode::Simple;
-                builder.content_mode = ContentMode::Simple;
 
                 f(&mut builder)?;
 
@@ -845,10 +818,10 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     }
                 }
             }
-            (TypeMode::Complex, ContentMode::Complex) => {
+            ContentMode::Complex => {
                 crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
             }
-            (_, _) => crate::unreachable!("Unset or invalid combination!"),
+            _ => crate::unreachable!("Unset or invalid combination!"),
         }
 
         Ok(())
@@ -904,7 +877,6 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
         });
 
         let mut builder = ComplexTypeBuilder::new(&mut *self.owner);
-        builder.type_mode = self.type_mode;
         builder.variant = Some(variant);
 
         f(&mut builder)?;
