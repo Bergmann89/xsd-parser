@@ -29,49 +29,8 @@ pub use self::unrestricted_base::UseUnrestrictedBaseType;
 
 use self::misc::{BaseMap, TypedefMap};
 
-/// The [`Optimizer`] is a structure that can be used to reduce the size and the
-/// complexity of a [`Types`] instance.
-///
-/// The optimizer contains different optimizations that could be applied to a
-/// [`Types`] instance. Optimizations are usually used to reduce the size or the
-/// complexity of the different types.
-#[must_use]
-#[derive(Debug)]
-pub struct Optimizer {
-    types: Types,
-}
-
-impl Optimizer {
-    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance.
-    ///
-    /// # Errors
-    /// Returns an error if the transformation fails.
-    pub fn apply_transformer<T: TypeTransformer<Error = Error>>(
-        mut self,
-        transformer: &T,
-    ) -> Result<Self, Error> {
-        transformer.transform(&mut self.types)?;
-        Ok(self)
-    }
-
-    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance if the given condition is true. Otherwise, it does nothing.
-    ///
-    /// # Errors
-    /// Returns an error if the transformation fails.
-    pub fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
-        mut self,
-        transformer: &T,
-        condition: bool,
-    ) -> Result<Self, Error> {
-        if condition {
-            transformer.transform(&mut self.types)?;
-        }
-        Ok(self)
-    }
-}
-
 /// The [`TypeTransformer`] trait is used to implement modules that in different ways manipulate the types in a [`Types`] instance. Generally, it's used for transformations that reduce the size or complexity of the types, making them more compatible with tools further down the line.
-pub trait TypeTransformer {
+pub(crate) trait TypeTransformer {
     /// The error type that is returned by the [`TypeTransformer::transform`] method.
     type Error: std::fmt::Debug;
 
@@ -80,6 +39,49 @@ pub trait TypeTransformer {
     /// # Errors
     /// If the transformation fails, an error of type [`Self::Error`] is returned which should contain more information about the failure. Since this is entirely transformer specific, you should refer to the documentation of the specific transformer for more information.
     fn transform(&self, types: &mut Types) -> Result<(), Error>;
+}
+
+pub(crate) trait TypesTransformerTypesExt: Sized {
+    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance.
+    ///
+    /// # Errors
+    /// Returns an error if the transformation fails.
+    fn apply_transformer<T: TypeTransformer<Error = Error>>(
+        self,
+        transformer: &T,
+    ) -> Result<Self, Error>;
+
+    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance if the given condition is true. Otherwise, it does nothing.
+    ///
+    /// # Errors
+    /// Returns an error if the transformation fails.
+    fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
+        self,
+        transformer: &T,
+        condition: bool,
+    ) -> Result<Self, Error>;
+}
+
+impl TypesTransformerTypesExt for Types {
+    fn apply_transformer<T: TypeTransformer<Error = Error>>(
+        mut self,
+        transformer: &T,
+    ) -> Result<Self, Error> {
+        transformer.transform(&mut self)?;
+        Ok(self)
+    }
+
+    fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
+        self,
+        transformer: &T,
+        condition: bool,
+    ) -> Result<Self, Error> {
+        if condition {
+            self.apply_transformer(transformer)
+        } else {
+            Ok(self)
+        }
+    }
 }
 
 /// Error that is raised by the [`Optimizer`].
@@ -115,17 +117,4 @@ pub enum Error {
     /// Is raised if the content type of a complex type could not be resolved.
     #[error("Complex type {0} is missing a content type!")]
     MissingContentType(Ident),
-}
-
-impl Optimizer {
-    /// Create a new [`Optimizer`] instance from the passed `types`.
-    pub fn new(types: Types) -> Self {
-        Self { types }
-    }
-
-    /// Finish the optimization and return the resulting [`Types`].
-    #[must_use]
-    pub fn finish(self) -> Types {
-        self.types
-    }
 }

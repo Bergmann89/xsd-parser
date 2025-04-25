@@ -31,7 +31,7 @@ pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
-pub use optimizer::Optimizer;
+use optimizer::TypesTransformerTypesExt;
 pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
@@ -189,7 +189,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
 
     let fa = |flag: F| config.flags.contains(flag);
 
-    let types = Optimizer::new(types)
+    let types = types
         .apply_transformer_if(&RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
         .apply_transformer_if(&RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
         .apply_transformer_if(
@@ -205,8 +205,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
         .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
         .apply_transformer_if(&RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
         .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
-        .apply_transformer_if(&MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?
-        .finish();
+        .apply_transformer_if(&MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?;
 
     if let Some(output) = config.debug_output {
         let printer = TypesPrinter::new(&types);
