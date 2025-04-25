@@ -31,7 +31,6 @@ pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
-use optimizer::TypesTransformerTypesExt;
 pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
@@ -190,22 +189,22 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
     let fa = |flag: F| config.flags.contains(flag);
 
     let types = types
-        .apply_transformer_if(&RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
-        .apply_transformer_if(&RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
+        .apply_transformer_if(RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
+        .apply_transformer_if(RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
         .apply_transformer_if(
-            &RemoveDuplicateUnionVariants,
+            RemoveDuplicateUnionVariants,
             fa(F::REMOVE_DUPLICATE_UNION_VARIANTS),
         )?
-        .apply_transformer_if(&RemoveEmptyUnions, fa(F::REMOVE_EMPTY_UNIONS))?
-        .apply_transformer_if(&UseUnrestrictedBaseType, fa(F::USE_UNRESTRICTED_BASE_TYPE))?
-        .apply_transformer_if(&ConvertDynamicToChoice, fa(F::CONVERT_DYNAMIC_TO_CHOICE))?
-        .apply_transformer_if(&FlattenComplexTypes, fa(F::FLATTEN_COMPLEX_TYPES))?
-        .apply_transformer_if(&FlattenUnions, fa(F::FLATTEN_UNIONS))?
-        .apply_transformer_if(&MergeEnumUnions, fa(F::MERGE_ENUM_UNIONS))?
-        .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
-        .apply_transformer_if(&RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
-        .apply_transformer_if(&ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
-        .apply_transformer_if(&MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?;
+        .apply_transformer_if(RemoveEmptyUnions, fa(F::REMOVE_EMPTY_UNIONS))?
+        .apply_transformer_if(UseUnrestrictedBaseType, fa(F::USE_UNRESTRICTED_BASE_TYPE))?
+        .apply_transformer_if(ConvertDynamicToChoice, fa(F::CONVERT_DYNAMIC_TO_CHOICE))?
+        .apply_transformer_if(FlattenComplexTypes, fa(F::FLATTEN_COMPLEX_TYPES))?
+        .apply_transformer_if(FlattenUnions, fa(F::FLATTEN_UNIONS))?
+        .apply_transformer_if(MergeEnumUnions, fa(F::MERGE_ENUM_UNIONS))?
+        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
+        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?;
 
     if let Some(output) = config.debug_output {
         let printer = TypesPrinter::new(&types);

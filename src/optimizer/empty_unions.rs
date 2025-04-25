@@ -31,7 +31,7 @@ pub struct RemoveDuplicateUnionVariants;
 impl TypeTransformer for RemoveDuplicateUnionVariants {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
+    fn transform(self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_duplicate_union_variants");
 
         let typedefs = crate::optimizer::TypedefMap::new(types);
@@ -81,7 +81,7 @@ pub struct RemoveEmptyUnions;
 impl TypeTransformer for RemoveEmptyUnions {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
+    fn transform(self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_unions");
 
         for type_ in types.types.values_mut() {

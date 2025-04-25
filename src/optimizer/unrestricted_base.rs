@@ -33,7 +33,7 @@ pub struct UseUnrestrictedBaseType;
 impl TypeTransformer for UseUnrestrictedBaseType {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("use_unrestricted_base_type");
 
         let bases = crate::optimizer::BaseMap::new(types);

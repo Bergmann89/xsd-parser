@@ -16,7 +16,7 @@ pub struct FlattenUnions;
 impl TypeTransformer for FlattenUnions {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("flatten_unions");
 
         let idents = types

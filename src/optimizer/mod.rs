@@ -38,42 +38,21 @@ pub(crate) trait TypeTransformer {
     ///
     /// # Errors
     /// If the transformation fails, an error of type [`Self::Error`] is returned which should contain more information about the failure. Since this is entirely transformer specific, you should refer to the documentation of the specific transformer for more information.
-    fn transform(&self, types: &mut Types) -> Result<(), Error>;
+    fn transform(self, types: &mut Types) -> Result<(), Error>;
 }
 
-pub(crate) trait TypesTransformerTypesExt: Sized {
-    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance.
-    ///
-    /// # Errors
-    /// Returns an error if the transformation fails.
-    fn apply_transformer<T: TypeTransformer<Error = Error>>(
-        self,
-        transformer: &T,
-    ) -> Result<Self, Error>;
-
-    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance if the given condition is true. Otherwise, it does nothing.
-    ///
-    /// # Errors
-    /// Returns an error if the transformation fails.
-    fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
-        self,
-        transformer: &T,
-        condition: bool,
-    ) -> Result<Self, Error>;
-}
-
-impl TypesTransformerTypesExt for Types {
-    fn apply_transformer<T: TypeTransformer<Error = Error>>(
+impl Types {
+    pub fn apply_transformer<T: TypeTransformer<Error = Error>>(
         mut self,
-        transformer: &T,
+        transformer: T,
     ) -> Result<Self, Error> {
         transformer.transform(&mut self)?;
         Ok(self)
     }
 
-    fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
+    pub fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
         self,
-        transformer: &T,
+        transformer: T,
         condition: bool,
     ) -> Result<Self, Error> {
         if condition {

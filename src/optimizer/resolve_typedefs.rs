@@ -29,7 +29,7 @@ pub struct ResolveTypedefs;
 impl TypeTransformer for ResolveTypedefs {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("resolve_typedefs");
 
         let typedefs = crate::optimizer::TypedefMap::new(types);

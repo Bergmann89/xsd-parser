@@ -26,7 +26,7 @@ pub struct RemoveEmptyEnumVariants;
 impl TypeTransformer for RemoveEmptyEnumVariants {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
+    fn transform(self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_enum_variants");
 
         for type_ in types.types.values_mut() {
@@ -69,7 +69,7 @@ pub struct RemoveEmptyEnums;
 impl TypeTransformer for RemoveEmptyEnums {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
+    fn transform(self, types: &mut Types) -> Result<(), super::Error> {
         tracing::debug!("remove_empty_enums");
 
         for type_ in types.types.values_mut() {

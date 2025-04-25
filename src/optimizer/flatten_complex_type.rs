@@ -31,7 +31,7 @@ pub struct FlattenComplexTypes;
 impl TypeTransformer for FlattenComplexTypes {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("flatten_complex_types");
 
         let idents = 

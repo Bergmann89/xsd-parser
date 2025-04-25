@@ -29,7 +29,7 @@ pub struct ConvertDynamicToChoice;
 impl TypeTransformer for ConvertDynamicToChoice {
     type Error = super::Error;
 
-    fn transform(&self, types: &mut Types) -> Result<(), super::Error> {
+    fn transform(self, types: &mut Types) -> Result<(), super::Error> {
         use std::collections::btree_map::Entry;
 
         tracing::debug!("convert_dynamic_to_choice");
