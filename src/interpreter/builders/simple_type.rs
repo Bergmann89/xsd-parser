@@ -192,43 +192,39 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);
 
-        self.simple_type_builder(|builder| {
-            let ei = get_or_init_any!(builder, Enumeration);
-            let var = ei.variants.find_or_insert(ident, VariantInfo::new);
-            var.use_ = Use::Required;
+        let ei = get_or_init_any!(self, Enumeration);
+        let var = ei.variants.find_or_insert(ident, VariantInfo::new);
+        var.use_ = Use::Required;
 
-            Ok(())
-        })
+        Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
-        self.simple_type_builder(|builder| {
-            let ui = get_or_init_any!(builder, Union);
+        let ui = get_or_init_any!(self, Union);
 
-            if let Some(types) = &ty.member_types {
-                for type_ in &types.0 {
-                    let type_ = builder.owner.parse_qname(type_)?;
-                    ui.types.push(UnionTypeInfo::new(type_));
-                }
-            }
-
-            let ns = builder.owner.state.current_ns();
-
-            for x in &ty.simple_type {
-                let name = builder
-                    .owner
-                    .state
-                    .name_builder()
-                    .or(&x.name)
-                    .auto_extend2(false, true, builder.owner.state)
-                    .finish();
-                let type_ = builder.owner.create_simple_type(ns, Some(name), None, x)?;
+        if let Some(types) = &ty.member_types {
+            for type_ in &types.0 {
+                let type_ = self.owner.parse_qname(type_)?;
                 ui.types.push(UnionTypeInfo::new(type_));
             }
+        }
 
-            Ok(())
-        })
+        let ns = self.owner.state.current_ns();
+
+        for x in &ty.simple_type {
+            let name = self
+                .owner
+                .state
+                .name_builder()
+                .or(&x.name)
+                .auto_extend2(false, true, self.owner.state)
+                .finish();
+            let type_ = self.owner.create_simple_type(ns, Some(name), None, x)?;
+            ui.types.push(UnionTypeInfo::new(type_));
+        }
+
+        Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -260,17 +256,15 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         }
 
         if let Some(type_) = type_ {
-            self.simple_type_builder(|builder| {
-                let ti = get_or_init_any!(builder, Reference, ReferenceInfo::new(type_.clone()));
-                ti.type_ = type_;
-                ti.min_occurs = 0;
-                ti.max_occurs = MaxOccurs::Unbounded;
+            let ti = get_or_init_any!(self, Reference, ReferenceInfo::new(type_.clone()));
+            ti.type_ = type_;
+            ti.min_occurs = 0;
+            ti.max_occurs = MaxOccurs::Unbounded;
 
-                Ok(())
-            })?;
+            Ok(())
+        } else {
+            Ok(())
         }
-
-        Ok(())
     }
 
     fn copy_base_type(&mut self, base: &Ident, _mode: UpdateMode) -> Result<(), Error> {
@@ -291,15 +285,6 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         self.variant = Some(base);
 
         tracing::debug!("{:#?}", self.variant);
-
-        Ok(())
-    }
-
-    fn simple_type_builder<F>(&mut self, f: F) -> Result<(), Error>
-    where
-        F: FnOnce(&mut SimpleTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
-    {
-        f(self)?;
 
         Ok(())
     }
