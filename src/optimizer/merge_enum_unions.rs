@@ -1,5 +1,5 @@
 use crate::types::{
-    type_::SimpleTypeVariant, EnumerationInfo, Ident, Types, UnionInfo, UnionTypeInfo, VariantInfo,
+    EnumerationInfo, Ident, SimpleTypeVariant, Types, UnionInfo, UnionTypeInfo, VariantInfo,
     VecHelper,
 };
 

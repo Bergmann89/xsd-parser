@@ -1,4 +1,4 @@
-use crate::types::{type_::SimpleTypeVariant, Ident, Types, UnionInfo, UnionTypeInfo};
+use crate::types::{Ident, SimpleTypeVariant, Types, UnionInfo, UnionTypeInfo};
 
 use super::{Error, TypeTransformer};
 

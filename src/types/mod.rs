@@ -15,8 +15,6 @@ use std::ops::DerefMut;
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 
-pub use type_::{ComplexType, ComplexTypeVariant, SimpleType, SimpleTypeVariant, TypeDescriptor};
-
 pub use self::custom::CustomType;
 pub use self::helper::{VecHelper, WithIdent};
 pub use self::ident::{Ident, IdentType};
@@ -27,7 +25,10 @@ pub use self::info::{
 };
 pub use self::name::Name;
 pub use self::name_builder::{NameBuilder, NameFallback};
-pub use self::type_::{BuildInInfo, Type, TypeEq};
+pub use self::type_::{
+    BuildInInfo, ComplexType, ComplexTypeVariant, SimpleType, SimpleTypeVariant, Type,
+    TypeDescriptor, TypeEq, TypeVariant,
+};
 
 use crate::schema::{Namespace, NamespaceId};
 

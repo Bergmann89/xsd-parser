@@ -6,8 +6,7 @@ use std::io::Error as IoError;
 use anyhow::Error as AnyError;
 use thiserror::Error;
 
-use crate::types::type_::{ComplexTypeVariant, SimpleTypeVariant};
-use crate::types::{ElementMode, Ident, Type, Types};
+use crate::types::{ComplexTypeVariant, ElementMode, Ident, SimpleTypeVariant, Type, Types};
 use crate::{GeneratorError, InterpreterError, OptimizerError, ParserError};
 
 /// Trait that adds namespace information to a type.

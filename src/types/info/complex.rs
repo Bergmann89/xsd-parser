@@ -7,8 +7,7 @@ use crate::schema::xs::{
     QnameListType,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::type_::ComplexTypeVariant;
-use crate::types::{Ident, TypeEq, Types};
+use crate::types::{ComplexTypeVariant, Ident, TypeEq, Types};
 
 use super::{AttributesInfo, Base, ElementsInfo};
 

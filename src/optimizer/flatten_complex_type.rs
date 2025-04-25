@@ -1,6 +1,6 @@
 use crate::{
     schema::{MaxOccurs, MinOccurs},
-    types::{type_::{ComplexTypeVariant, TypeDescriptor}, ElementInfo, ElementMode, GroupInfo, Ident, Type, Types},
+    types::{ComplexTypeVariant, TypeDescriptor, ElementInfo, ElementMode, GroupInfo, Ident, Type, Types},
 };
 
 use super::{Error,  TypeTransformer};

@@ -1,6 +1,6 @@
 use crate::types::{
-    type_::{ComplexTypeVariant, TypeDescriptor},
-    ComplexInfo, ElementInfo, ElementMode, GroupInfo, Ident, Type, Types, VecHelper,
+    ComplexInfo, ComplexTypeVariant, ElementInfo, ElementMode, GroupInfo, Ident, Type,
+    TypeDescriptor, Types, VecHelper,
 };
 
 use super::TypeTransformer;

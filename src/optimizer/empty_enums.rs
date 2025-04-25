@@ -1,4 +1,4 @@
-use crate::types::{type_::SimpleTypeVariant, Name, ReferenceInfo, Types};
+use crate::types::{Name, ReferenceInfo, SimpleTypeVariant, Types};
 
 use super::TypeTransformer;
 

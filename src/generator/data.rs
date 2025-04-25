@@ -8,7 +8,7 @@ use crate::{
     code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, ComplexTypeVariant, DynamicInfo, ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, Types, UnionInfo, UnionTypeInfo, VariantInfo
+        TypeVariant, AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, ComplexTypeVariant, DynamicInfo, ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, Types, UnionInfo, UnionTypeInfo, VariantInfo
     },
 };
 
@@ -241,6 +241,7 @@ impl<'types> DynamicType<'types> {
                     .collect::<Result<Vec<_>, _>>()
             })
             .transpose()?;
+        println!("HERE: {:?}", info.derived_types);
         let derived_types = info
             .derived_types
             .iter()
@@ -1293,6 +1294,7 @@ impl<'a, 'types> Request<'a, 'types> {
         ident: &Ident,
     ) -> Result<TokenStream, Error> {
         let types = self.types;
+        println!("A");
         let ty = types
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -1453,11 +1455,11 @@ fn make_derived_type_data<'types>(
     let s_name = ident.name.to_string();
     let b_name = Literal::byte_string(s_name.as_bytes());
 
-    let complex_ty = req
+    let ty = req
         .types
-        .get_complex_type(ident)
+        .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-    let base_ident = if let ComplexTypeVariant::Dynamic(di) = &complex_ty.variant {
+    let base_ident = if let TypeVariant::ComplexType(ComplexTypeVariant::Dynamic(di)) = &ty.variant() {
         di.type_.clone()
     } else {
         None

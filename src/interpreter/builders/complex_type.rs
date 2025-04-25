@@ -10,10 +10,9 @@ use crate::schema::xs::{
     ElementType, ExtensionType, Facet, GroupType, RestrictionType, SimpleContent,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::type_::TypeVariant;
 use crate::types::{
     AnyInfo, AttributeInfo, Base, ComplexType, ComplexTypeVariant, ElementInfo, ElementMode, Ident,
-    IdentType, Name, SimpleType, SimpleTypeVariant, Type, VecHelper,
+    IdentType, Name, SimpleType, SimpleTypeVariant, Type, TypeVariant, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};

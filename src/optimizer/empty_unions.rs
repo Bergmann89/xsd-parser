@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use crate::types::{type_::SimpleTypeVariant, ReferenceInfo, Types};
+use crate::types::{ReferenceInfo, SimpleTypeVariant, Types};
 
 use super::TypeTransformer;
 
