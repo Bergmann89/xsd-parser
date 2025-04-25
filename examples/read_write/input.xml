@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document name="foo" count="42">
+    <info>message 1</info>
+    <info>message 2</info>
+</document>
+
