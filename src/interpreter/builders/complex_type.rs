@@ -1,6 +1,5 @@
 use std::collections::btree_map::Entry;
 use std::ops::{Deref, DerefMut};
-use std::str::from_utf8;
 
 use tracing::instrument;
 
@@ -8,13 +7,12 @@ use super::{CreateOrUpdate, Patch, Update};
 use crate::interpreter::builders::SimpleTypeBuilder;
 use crate::schema::xs::{
     Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
-    RestrictionType, SimpleContent, Union, Use,
+    ElementType, ExtensionType, Facet, GroupType, RestrictionType, SimpleContent,
 };
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident, IdentType, Name, ReferenceInfo,
-    Type, TypeVariant, UnionTypeInfo, VariantInfo, VecHelper,
+    AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident, IdentType, Name, Type,
+    TypeVariant, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -562,100 +560,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
-        match ty {
-            Facet::Enumeration(x) => self.apply_enumeration(x)?,
-            x => tracing::warn!("Unknown facet: {x:#?}"),
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
-        let name = Name::from(ty.value.trim().to_owned());
-        let ident = Ident::new(name)
-            .with_ns(self.state.current_ns())
-            .with_type(IdentType::Enumeration);
-
-        self.simple_content_builder(|builder| {
-            let ei = get_or_init_any!(builder, Enumeration);
-            let var = ei.variants.find_or_insert(ident, VariantInfo::new);
-            var.use_ = Use::Required;
-
-            Ok(())
-        })
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
-        self.simple_content_builder(|builder| {
-            let ui = get_or_init_any!(builder, Union);
-
-            if let Some(types) = &ty.member_types {
-                for type_ in &types.0 {
-                    let type_ = builder.owner.parse_qname(type_)?;
-                    ui.types.push(UnionTypeInfo::new(type_));
-                }
-            }
-
-            let ns = builder.owner.state.current_ns();
-
-            for x in &ty.simple_type {
-                let name = builder
-                    .owner
-                    .state
-                    .name_builder()
-                    .or(&x.name)
-                    .auto_extend2(false, true, builder.owner.state)
-                    .finish();
-                let type_ = builder.owner.create_simple_type(ns, Some(name), None, x)?;
-                ui.types.push(UnionTypeInfo::new(type_));
-            }
-
-            Ok(())
-        })
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_list(&mut self, ty: &List) -> Result<(), Error> {
-        let mut type_ = None;
-
-        if let Some(s) = &ty.item_type {
-            type_ = Some(self.owner.parse_qname(s)?);
-        }
-
-        if let Some(x) = &ty.simple_type {
-            let last_named_type = self.state.last_named_type(false).map(ToOwned::to_owned);
-            let name = self
-                .state
-                .name_builder()
-                .or(&x.name)
-                .or_else(|| from_utf8(ty.item_type.as_ref()?.local_name()).ok())
-                .or_else(|| {
-                    let s = last_named_type?;
-                    let s = s.as_str();
-                    let s = s.strip_suffix("Type").unwrap_or(s);
-                    let s = format!("{s}Item");
-
-                    Some(Name::from(s))
-                })
-                .finish();
-            let ns = self.owner.state.current_ns();
-            type_ = Some(self.owner.create_simple_type(ns, Some(name), None, x)?);
-        }
-
-        if let Some(type_) = type_ {
-            self.simple_content_builder(|builder| {
-                let ti = get_or_init_any!(builder, Reference, ReferenceInfo::new(type_.clone()));
-                ti.type_ = type_;
-                ti.min_occurs = 0;
-                ti.max_occurs = MaxOccurs::Unbounded;
-
-                Ok(())
-            })?;
-        }
-
-        Ok(())
+        self.simple_content_builder(|builder| builder.apply_facet(ty))
     }
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
@@ -740,41 +645,6 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
         tracing::debug!("{:#?}", self.variant);
 
         Ok(())
-    }
-
-    fn walk_substitution_groups<F>(
-        &mut self,
-        groups: &ElementSubstitutionGroupType,
-        mut f: F,
-    ) -> Result<(), Error>
-    where
-        F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
-    {
-        fn inner<'x, 'y, 'z, F>(
-            builder: &mut ComplexTypeBuilder<'x, 'y, 'z>,
-            groups: &ElementSubstitutionGroupType,
-            f: &mut F,
-        ) -> Result<(), Error>
-        where
-            F: FnMut(&mut ComplexTypeBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
-        {
-            for head in &groups.0 {
-                let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
-
-                f(builder, &ident)?;
-
-                if let Some(groups) = builder
-                    .find_element(ident)
-                    .and_then(|x| x.substitution_group.as_ref())
-                {
-                    inner(builder, groups, f)?;
-                }
-            }
-
-            Ok(())
-        }
-
-        inner(self, groups, &mut f)
     }
 
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>

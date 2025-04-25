@@ -3,11 +3,11 @@ use std::ops::{Deref, DerefMut};
 use tracing::instrument;
 
 use super::Update;
-use crate::schema::xs::{ElementSubstitutionGroupType, ElementType, GroupType};
+use crate::schema::xs::{ElementSubstitutionGroupType, ElementType};
 use crate::schema::Namespace;
 use crate::types::{
-    DynamicInfo, ElementInfo, ElementMode, Ident, IdentType, Name, ReferenceInfo, Type,
-    TypeVariant, VecHelper,
+    DynamicInfo, ElementInfo, ElementMode, Ident, IdentType, ReferenceInfo, Type, TypeVariant,
+    VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -254,27 +254,6 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
         }
 
         inner(self, groups, &mut f)
-    }
-
-    fn make_field_name_and_type(&mut self, ty: &GroupType) -> (Name, Ident) {
-        let name = self
-            .state
-            .name_builder()
-            .generate_id()
-            .or(ty.name.clone())
-            .remove_suffix("Type")
-            .remove_suffix("Content");
-        let field_name = name.clone().shared_name("Content").finish();
-        let type_name = name
-            .auto_extend2(false, true, self.state)
-            .remove_suffix("Type")
-            .remove_suffix("Content")
-            .shared_name("Content")
-            .with_id(true)
-            .finish();
-        let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
-
-        (field_name, type_)
     }
 }
 

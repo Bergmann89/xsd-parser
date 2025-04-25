@@ -3,10 +3,7 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
-use crate::schema::xs::{
-    ExtensionType, Facet, FacetType, GroupType, List, Restriction, RestrictionType, SimpleBaseType,
-    Union, Use,
-};
+use crate::schema::xs::{Facet, FacetType, List, Restriction, SimpleBaseType, Union, Use};
 use crate::schema::MaxOccurs;
 use crate::types::{
     Base, Ident, IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo,
@@ -135,48 +132,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
-        use crate::schema::xs::ExtensionTypeContent as C;
-
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
-                C::All(_)
-                | C::AnyAttribute(_)
-                | C::Attribute(_)
-                | C::AttributeGroup(_)
-                | C::Choice(_)
-                | C::Group(_)
-                | C::Sequence(_) => unreachable!(),
-            }
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
-        use crate::schema::xs::RestrictionTypeContent as C;
-
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
-                C::SimpleType(x) => self.apply_simple_type(x)?,
-                C::Facet(x) => self.apply_facet(x)?,
-                C::AnyAttribute(_)
-                | C::All(_)
-                | C::Attribute(_)
-                | C::AttributeGroup(_)
-                | C::Choice(_)
-                | C::Group(_)
-                | C::Sequence(_) => unreachable!(),
-            }
-        }
-
-        Ok(())
-    }
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
+    pub fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
         match ty {
             Facet::Enumeration(x) => self.apply_enumeration(x)?,
             x => tracing::warn!("Unknown facet: {x:#?}"),
@@ -186,7 +142,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
+    pub fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
         let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
@@ -200,7 +156,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
+    pub fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
         let ui = get_or_init_any!(self, Union);
 
         if let Some(types) = &ty.member_types {
@@ -287,27 +243,6 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         tracing::debug!("{:#?}", self.variant);
 
         Ok(())
-    }
-
-    fn make_field_name_and_type(&mut self, ty: &GroupType) -> (Name, Ident) {
-        let name = self
-            .state
-            .name_builder()
-            .generate_id()
-            .or(ty.name.clone())
-            .remove_suffix("Type")
-            .remove_suffix("Content");
-        let field_name = name.clone().shared_name("Content").finish();
-        let type_name = name
-            .auto_extend2(false, true, self.state)
-            .remove_suffix("Type")
-            .remove_suffix("Content")
-            .shared_name("Content")
-            .with_id(true)
-            .finish();
-        let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
-
-        (field_name, type_)
     }
 }
 
