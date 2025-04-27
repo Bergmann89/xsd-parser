@@ -30,7 +30,7 @@ pub use self::unrestricted_base::UseUnrestrictedBaseType;
 use self::misc::{BaseMap, TypedefMap};
 
 /// The [`TypeTransformer`] trait is used to implement modules that in different ways manipulate the types in a [`Types`] instance. Generally, it's used for transformations that reduce the size or complexity of the types, making them more compatible with tools further down the line.
-pub(crate) trait TypeTransformer {
+pub trait TypeTransformer {
     /// The error type that is returned by the [`TypeTransformer::transform`] method.
     type Error: std::fmt::Debug;
 
@@ -42,19 +42,28 @@ pub(crate) trait TypeTransformer {
 }
 
 impl Types {
+    /// Applies the given [`TypeTransformer`] to the types in this [`Types`] instance.
+    ///
+    /// # Errors
+    /// If the transformation fails, its error is returned.
     pub fn apply_transformer<T: TypeTransformer<Error = Error>>(
         mut self,
         transformer: T,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, T::Error> {
         transformer.transform(&mut self)?;
         Ok(self)
     }
 
+    /// Applies the given [`TypeTransformer`] to the types in this [`Types`] instance if the condition is true.
+    /// Otherwise, it returns the types unchanged.
+    ///
+    /// # Errors
+    /// If the transformation fails, its error is returned.
     pub fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
         self,
         transformer: T,
         condition: bool,
-    ) -> Result<Self, Error> {
+    ) -> Result<Self, T::Error> {
         if condition {
             self.apply_transformer(transformer)
         } else {

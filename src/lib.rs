@@ -31,6 +31,11 @@ pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
+pub use optimizer::{
+    ConvertDynamicToChoice, FlattenComplexTypes, FlattenUnions, MergeChoiceCardinalities,
+    MergeEnumUnions, RemoveDuplicateUnionVariants, RemoveDuplicates, RemoveEmptyEnumVariants,
+    RemoveEmptyEnums, RemoveEmptyUnions, ResolveTypedefs, TypeTransformer, UseUnrestrictedBaseType,
+};
 pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
@@ -46,11 +51,6 @@ use self::generator::renderer::{
     QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
 };
 use self::misc::TypesPrinter;
-use self::optimizer::{
-    ConvertDynamicToChoice, FlattenComplexTypes, FlattenUnions, MergeChoiceCardinalities,
-    MergeEnumUnions, RemoveDuplicateUnionVariants, RemoveDuplicates, RemoveEmptyEnumVariants,
-    RemoveEmptyEnums, RemoveEmptyUnions, ResolveTypedefs, UseUnrestrictedBaseType,
-};
 use self::parser::resolver::{FileResolver, ManyResolver};
 use self::schema::Schemas;
 use self::types::{IdentType, Types};
