@@ -3,7 +3,7 @@ use crate::{
     types::{Ident, TypeVariant, Types},
 };
 
-use super::{Error,  TypeTransformer};
+use super::{Error, TypeTransformer};
 
 /// This merge the cardinality of all elements of a choice with the content of the choice for
 /// all choice types.
@@ -18,8 +18,7 @@ impl TypeTransformer for MergeChoiceCardinalities {
     fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("merge_choice_cardinalities");
 
-        let idents = 
-            types
+        let idents = types
             .iter()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_choice_content(types)) {
@@ -64,11 +63,7 @@ impl MergeChoiceCardinalities {
     /// ```rust
     #[doc = include_str!("../../tests/optimizer/expected1/merge_choice_cardinalities.rs")]
     /// ```
-    pub fn merge_choice_cardinality(
-        & self,
-        types: &mut Types,
-        ident: Ident,
-    ) -> Result<(), Error> {
+    pub fn merge_choice_cardinality(&self, types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("merge_choice_cardinality(ident={ident:?})");
 
         let Some(ty) = types.get_variant(&ident) else {

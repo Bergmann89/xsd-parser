@@ -3,7 +3,7 @@ use crate::{
     types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant, Types},
 };
 
-use super::{Error,  TypeTransformer};
+use super::{Error, TypeTransformer};
 
 /// This will flatten the nested groups (`xs::all`, `xs::choice` or `xs::sequence`)
 /// of the complex types identified by the filter to one type instead of rendering
@@ -34,8 +34,7 @@ impl TypeTransformer for FlattenComplexTypes {
     fn transform(self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("flatten_complex_types");
 
-        let idents = 
-            types
+        let idents = types
             .iter()
             .filter_map(|(ident, type_)| {
                 if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
@@ -56,7 +55,7 @@ impl TypeTransformer for FlattenComplexTypes {
 }
 
 impl FlattenComplexTypes {
-    fn flatten_complex_type( types: &mut Types, ident: Ident) -> Result<(), Error> {
+    fn flatten_complex_type(types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
         let Some(ty) = types.get(&ident) else {
@@ -260,7 +259,9 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::{
-        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer}, schema::MaxOccurs, types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types}
+        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer},
+        schema::MaxOccurs,
+        types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types},
     };
 
     macro_rules! make_type {
