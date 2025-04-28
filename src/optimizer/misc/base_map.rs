@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, Ident, TypeVariant, Types};
+use crate::types::{
+    Base, ComplexTypeVariant, Ident, SimpleTypeVariant, Type, TypeDescriptor, Types,
+};
 
 #[derive(Debug)]
 pub(crate) struct BaseMap(HashMap<Ident, Base>);
@@ -10,27 +12,42 @@ impl BaseMap {
         let mut ret = HashMap::new();
 
         for (ident, type_) in &types.types {
-            match &type_.variant {
-                TypeVariant::Enumeration(ei) => {
+            match type_ {
+                Type::SimpleType(TypeDescriptor {
+                    variant: SimpleTypeVariant::Enumeration(ei),
+                    ..
+                }) => {
                     if matches!(
-                        ei.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::Enumeration(_))
+                        ei.base
+                            .as_ident()
+                            .and_then(|base| types.get_simple_type(base).map(|a| &a.variant)),
+                        Some(SimpleTypeVariant::Enumeration(_))
                     ) {
                         ret.insert(ident.clone(), ei.base.clone());
                     }
                 }
-                TypeVariant::Union(ei) => {
+                Type::SimpleType(TypeDescriptor {
+                    variant: SimpleTypeVariant::Union(ei),
+                    ..
+                }) => {
                     if matches!(
-                        ei.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::Union(_))
+                        ei.base
+                            .as_ident()
+                            .and_then(|base| types.get_simple_type(base).map(|a| &a.variant)),
+                        Some(SimpleTypeVariant::Union(_))
                     ) {
                         ret.insert(ident.clone(), ei.base.clone());
                     }
                 }
-                TypeVariant::ComplexType(ci) => {
+                Type::ComplexType(TypeDescriptor {
+                    variant: ComplexTypeVariant::ComplexType(ci),
+                    ..
+                }) => {
                     if matches!(
-                        ci.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::ComplexType(_))
+                        ci.base
+                            .as_ident()
+                            .and_then(|base| types.get_complex_type(base).map(|a| &a.variant)),
+                        Some(ComplexTypeVariant::ComplexType(_))
                     ) {
                         ret.insert(ident.clone(), ci.base.clone());
                     }

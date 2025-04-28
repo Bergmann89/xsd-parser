@@ -1,43 +1,50 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use crate::types::{ReferenceInfo, Type, TypeEq, TypeVariant, Types};
+use crate::types::{
+    ComplexTypeVariant, ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, TypeEq, Types,
+};
 
-use super::Optimizer;
+use super::{Error, TypeTransformer};
 
-impl Optimizer {
-    /// If two types are completely equal this optimization will generate the
-    /// first type complete and just a type definition for the second one.
-    ///
-    /// <div class="warning">
-    /// *Caution*
-    ///
-    /// Be careful with this optimization. This will compare each known
-    /// type with each other type and check if the types are identical or not.
-    /// This would result in a type reference for two types, even if the types
-    /// itself are not logically related to each other.
-    ///
-    /// Furthermore this may result in typedef loops. The code generator should
-    /// be able to deal with them (using a Box), but it is still risky to use it.
-    /// </div>
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema.
-    /// ```xml
-    #[doc = include_str!("../../tests/optimizer/duplicate.xsd")]
-    /// ```
-    ///
-    /// Without this optimization this will result in the following code:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/remove_duplicates.rs")]
-    /// ```
-    ///
-    /// With this optimization the following code is generated:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/remove_duplicates.rs")]
-    /// ```
-    pub fn remove_duplicates(mut self) -> Self {
+/// If two types are completely equal this optimization will generate the
+/// first type complete and just a type definition for the second one.
+///
+/// <div class="warning">
+/// *Caution*
+///
+/// Be careful with this optimization. This will compare each known
+/// type with each other type and check if the types are identical or not.
+/// This would result in a type reference for two types, even if the types
+/// itself are not logically related to each other.
+///
+/// Furthermore this may result in typedef loops. The code generator should
+/// be able to deal with them (using a Box), but it is still risky to use it.
+/// </div>
+///
+/// # Examples
+///
+/// Consider the following XML schema.
+/// ```xml
+#[doc = include_str!("../../tests/optimizer/duplicate.xsd")]
+/// ```
+///
+/// Without this optimization this will result in the following code:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected0/remove_duplicates.rs")]
+/// ```
+///
+/// With this optimization the following code is generated:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected1/remove_duplicates.rs")]
+/// ```
+#[derive(Debug)]
+pub struct RemoveDuplicates;
+
+impl TypeTransformer for RemoveDuplicates {
+    type Error = super::Error;
+
+    fn transform(&self, types: &mut Types) -> Result<(), Error> {
         use std::collections::hash_map::Entry;
 
         struct Value<'a> {
@@ -68,13 +75,11 @@ impl Optimizer {
 
             tracing::trace!("remove_duplicates new iteration");
 
-            let types = &self.types;
-
             #[allow(clippy::mutable_key_type)]
             let mut map = HashMap::new();
             let mut idents = HashMap::new();
 
-            for (ident, type_) in self.types.iter() {
+            for (ident, type_) in types.iter() {
                 match map.entry(Value { type_, types }) {
                     Entry::Vacant(e) => {
                         if let Some(ident) = types.get_resolved_ident(ident) {
@@ -83,7 +88,7 @@ impl Optimizer {
                     }
                     Entry::Occupied(e) => {
                         let reference_ident = e.get();
-                        if !matches!(&type_.variant, TypeVariant::Reference(ti) if &ti.type_ == reference_ident)
+                        if !matches!(&type_, Type::SimpleType(TypeDescriptor {variant: SimpleTypeVariant::Reference(ti), .. }) | Type::ComplexType(TypeDescriptor {variant: ComplexTypeVariant::Reference(ti), .. }) if &ti.type_ == reference_ident)
                         {
                             idents.insert(ident.clone(), reference_ident.clone());
                         }
@@ -93,7 +98,6 @@ impl Optimizer {
 
             if !idents.is_empty() {
                 changed = true;
-                self.typedefs = None;
             }
 
             for (ident, referenced_type) in idents {
@@ -101,11 +105,20 @@ impl Optimizer {
                     "Create reference for duplicate type: {ident} => {referenced_type}"
                 );
 
-                let ty = self.types.get_mut(&ident).unwrap();
-                ty.variant = TypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                let ty = types.get_mut(&ident).unwrap();
+                match ty {
+                    Type::SimpleType(ty) => {
+                        ty.variant =
+                            SimpleTypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                    }
+                    Type::ComplexType(ty) => {
+                        ty.variant =
+                            ComplexTypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                    }
+                }
             }
         }
 
-        self
+        Ok(())
     }
 }

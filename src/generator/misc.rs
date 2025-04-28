@@ -7,7 +7,9 @@ use quote::quote;
 
 use crate::code::IdentPath;
 use crate::schema::{MaxOccurs, MinOccurs};
-use crate::types::{DynamicInfo, Ident, Type, TypeVariant, Types};
+use crate::types::{
+    ComplexTypeVariant, DynamicInfo, Ident, SimpleTypeVariant, Type, TypeDescriptor, Types,
+};
 
 bitflags! {
     /// Different flags that control what code the [`Generator`](super::Generator)
@@ -340,8 +342,8 @@ impl TraitInfos {
     pub(super) fn new(types: &Types) -> Self {
         let mut ret = Self(BTreeMap::new());
 
-        for (base_ident, ty) in types.iter() {
-            let TypeVariant::Dynamic(ai) = &ty.variant else {
+        for (base_ident, variant) in types.complex_types_iter() {
+            let ComplexTypeVariant::Dynamic(ai) = variant else {
                 continue;
             };
 
@@ -352,25 +354,40 @@ impl TraitInfos {
                     .traits_all
                     .insert(base_ident.clone());
 
-                match types.get_variant(type_ident) {
-                    Some(TypeVariant::Dynamic(DynamicInfo {
-                        type_: Some(type_ident),
+                let Some(derived_type) = types.get(type_ident) else {
+                    continue;
+                };
+
+                match derived_type {
+                    Type::SimpleType(TypeDescriptor {
+                        variant: SimpleTypeVariant::Reference(ri),
                         ..
-                    })) => {
-                        ret.0
-                            .entry(type_ident.clone())
-                            .or_default()
-                            .traits_all
-                            .insert(base_ident.clone());
-                    }
-                    Some(TypeVariant::Reference(ri)) if ri.is_single() => {
+                    })
+                    | Type::ComplexType(TypeDescriptor {
+                        variant: ComplexTypeVariant::Reference(ri),
+                        ..
+                    }) if ri.is_single() => {
                         ret.0
                             .entry(ri.type_.clone())
                             .or_default()
                             .traits_all
                             .insert(base_ident.clone());
                     }
-                    _ => (),
+                    Type::ComplexType(TypeDescriptor {
+                        variant:
+                            ComplexTypeVariant::Dynamic(DynamicInfo {
+                                type_: Some(type_ident),
+                                ..
+                            }),
+                        ..
+                    }) => {
+                        ret.0
+                            .entry(type_ident.clone())
+                            .or_default()
+                            .traits_all
+                            .insert(base_ident.clone());
+                    }
+                    _ => {}
                 }
             }
         }

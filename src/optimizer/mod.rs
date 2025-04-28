@@ -16,6 +16,17 @@ use thiserror::Error;
 
 use crate::types::{Ident, Types};
 
+pub use self::dynamic_to_choice::ConvertDynamicToChoice;
+pub use self::empty_enums::{RemoveEmptyEnumVariants, RemoveEmptyEnums};
+pub use self::empty_unions::{RemoveDuplicateUnionVariants, RemoveEmptyUnions};
+pub use self::flatten_complex_type::FlattenComplexTypes;
+pub use self::flatten_unions::FlattenUnions;
+pub use self::merge_choice_cardinality::MergeChoiceCardinalities;
+pub use self::merge_enum_unions::MergeEnumUnions;
+pub use self::remove_duplicates::RemoveDuplicates;
+pub use self::resolve_typedefs::ResolveTypedefs;
+pub use self::unrestricted_base::UseUnrestrictedBaseType;
+
 use self::misc::{BaseMap, TypedefMap};
 
 /// The [`Optimizer`] is a structure that can be used to reduce the size and the
@@ -28,8 +39,47 @@ use self::misc::{BaseMap, TypedefMap};
 #[derive(Debug)]
 pub struct Optimizer {
     types: Types,
-    bases: Option<BaseMap>,
-    typedefs: Option<TypedefMap>,
+}
+
+impl Optimizer {
+    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance.
+    ///
+    /// # Errors
+    /// Returns an error if the transformation fails.
+    pub fn apply_transformer<T: TypeTransformer<Error = Error>>(
+        mut self,
+        transformer: &T,
+    ) -> Result<Self, Error> {
+        transformer.transform(&mut self.types)?;
+        Ok(self)
+    }
+
+    /// Applies the given [`TypeTransformer`] to the internal [`Types`] instance if the given condition is true. Otherwise, it does nothing.
+    ///
+    /// # Errors
+    /// Returns an error if the transformation fails.
+    pub fn apply_transformer_if<T: TypeTransformer<Error = Error>>(
+        mut self,
+        transformer: &T,
+        condition: bool,
+    ) -> Result<Self, Error> {
+        if condition {
+            transformer.transform(&mut self.types)?;
+        }
+        Ok(self)
+    }
+}
+
+/// The [`TypeTransformer`] trait is used to implement modules that in different ways manipulate the types in a [`Types`] instance. Generally, it's used for transformations that reduce the size or complexity of the types, making them more compatible with tools further down the line.
+pub trait TypeTransformer {
+    /// The error type that is returned by the [`TypeTransformer::transform`] method.
+    type Error: std::fmt::Debug;
+
+    /// Transforms the types in the given [`Types`] instance according to the specific transformer.
+    ///
+    /// # Errors
+    /// If the transformation fails, an error of type [`Self::Error`] is returned which should contain more information about the failure. Since this is entirely transformer specific, you should refer to the documentation of the specific transformer for more information.
+    fn transform(&self, types: &mut Types) -> Result<(), Error>;
 }
 
 /// Error that is raised by the [`Optimizer`].
@@ -67,37 +117,10 @@ pub enum Error {
     MissingContentType(Ident),
 }
 
-macro_rules! get_bases {
-    ($this:expr) => {{
-        if $this.bases.is_none() {
-            $this.bases = Some(crate::optimizer::BaseMap::new(&$this.types));
-        }
-
-        $this.bases.as_ref().unwrap()
-    }};
-}
-
-macro_rules! get_typedefs {
-    ($this:expr) => {{
-        if $this.typedefs.is_none() {
-            $this.typedefs = Some(crate::optimizer::TypedefMap::new(&$this.types));
-        }
-
-        $this.typedefs.as_ref().unwrap()
-    }};
-}
-
-pub(super) use get_bases;
-pub(super) use get_typedefs;
-
 impl Optimizer {
     /// Create a new [`Optimizer`] instance from the passed `types`.
     pub fn new(types: Types) -> Self {
-        Self {
-            types,
-            bases: None,
-            typedefs: None,
-        }
+        Self { types }
     }
 
     /// Finish the optimization and return the resulting [`Types`].

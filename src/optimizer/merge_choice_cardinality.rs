@@ -1,11 +1,45 @@
 use crate::{
     schema::MaxOccurs,
-    types::{Ident, TypeVariant},
+    types::{ComplexTypeVariant, Ident, Types},
 };
 
-use super::{Error, Optimizer};
+use super::{Error,  TypeTransformer};
 
-impl Optimizer {
+/// This merge the cardinality of all elements of a choice with the content of the choice for
+/// all choice types.
+///
+/// For details see [`merge_choice_cardinality`](Self::merge_choice_cardinality).
+#[derive(Debug)]
+pub struct MergeChoiceCardinalities;
+
+impl TypeTransformer for MergeChoiceCardinalities {
+    type Error = super::Error;
+
+    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+        tracing::debug!("merge_choice_cardinalities");
+
+        let idents = 
+            types
+            .complex_types_iter()
+            .filter_map(|(ident, variant)| {
+                if matches!(&variant, ComplexTypeVariant::ComplexType(ci) if ci.has_complex_choice_content(types)) {
+                    Some(ident)
+                } else {
+                    None
+                }
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for ident in idents {
+            self.merge_choice_cardinality(types, ident)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl MergeChoiceCardinalities {
     /// This will merge the cardinality of each element of the complex choice
     /// type identified by `ident` with the cardinality of the types content.
     ///
@@ -30,14 +64,18 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../tests/optimizer/expected1/merge_choice_cardinalities.rs")]
     /// ```
-    pub fn merge_choice_cardinality(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn merge_choice_cardinality(
+        & self,
+        types: &mut Types,
+        ident: Ident,
+    ) -> Result<(), Error> {
         tracing::debug!("merge_choice_cardinality(ident={ident:?})");
 
-        let Some(ty) = self.types.get_variant(&ident) else {
+        let Some(ty) = types.get_complex_type(&ident).map(|a| &a.variant) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::ComplexType(ci) = ty else {
+        let ComplexTypeVariant::ComplexType(ci) = ty else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -45,7 +83,7 @@ impl Optimizer {
             return Err(Error::MissingContentType(ident));
         };
 
-        let Some(TypeVariant::Choice(ci)) = self.types.get_variant_mut(&content_ident) else {
+        let Some(ComplexTypeVariant::Choice(ci)) = types.get_complex_type_mut(&content_ident).map(|a| &mut a.variant) else {
             return Err(Error::ExpectedComplexChoice(ident));
         };
 
@@ -60,40 +98,13 @@ impl Optimizer {
             element.max_occurs = MaxOccurs::Bounded(1);
         }
 
-        let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) else {
+        let Some(ComplexTypeVariant::ComplexType(ci)) = types.get_complex_type_mut(&ident).map(|a| &mut a.variant) else {
             unreachable!();
         };
 
         ci.min_occurs = min.min(ci.min_occurs);
         ci.max_occurs = max.max(ci.max_occurs);
 
-        Ok(self)
-    }
-
-    /// This merge the cardinality of all elements of a choice with the content of the choice for
-    /// all choice types.
-    ///
-    /// For details see [`merge_choice_cardinality`](Self::merge_choice_cardinality).
-    pub fn merge_choice_cardinalities(mut self) -> Self {
-        tracing::debug!("merge_choice_cardinalities");
-
-        let idents = self
-            .types
-            .iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
-                    Some(ident)
-                } else {
-                    None
-                }
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-
-        for ident in idents {
-            self = self.merge_choice_cardinality(ident).unwrap();
-        }
-
-        self
+        Ok(())
     }
 }

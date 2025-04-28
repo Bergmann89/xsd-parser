@@ -8,9 +8,7 @@ use crate::{
     code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
-        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, TypeVariant, Types,
-        UnionInfo, UnionTypeInfo, VariantInfo,
+        TypeVariant, AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, ComplexTypeVariant, DynamicInfo, ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, Types, UnionInfo, UnionTypeInfo, VariantInfo
     },
 };
 
@@ -49,24 +47,53 @@ pub enum TypeData<'types> {
 }
 
 impl<'types> TypeData<'types> {
-    pub(super) fn new(
-        ty: &'types Type,
+    pub(super) fn new_simple(
+        tyv: &'types SimpleTypeVariant,
         ident: &Ident,
         config: &Config<'types>,
         state: &mut State<'types>,
     ) -> Result<Self, Error> {
         let req = Request::new(ident, config, state);
 
-        Ok(match &ty.variant {
-            TypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
-            TypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
-            TypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
-            TypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
-            TypeVariant::Enumeration(x) => Self::Enumeration(EnumerationType::new(x, req)?),
-            TypeVariant::All(x) => Self::Complex(ComplexType::new_all(x, req)?),
-            TypeVariant::Choice(x) => Self::Complex(ComplexType::new_choice(x, req)?),
-            TypeVariant::Sequence(x) => Self::Complex(ComplexType::new_sequence(x, req)?),
-            TypeVariant::ComplexType(x) => Self::Complex(ComplexType::new_complex(x, req)?),
+        Ok(match &tyv {
+            SimpleTypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
+            SimpleTypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
+            SimpleTypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
+            SimpleTypeVariant::Enumeration(x) => {
+                Self::Enumeration(EnumerationType::new(x, req)?)
+            }
+        })
+    }
+
+    pub(super) fn new(
+        ty: &'types Type,
+        ident: &Ident,
+        config: &Config<'types>,
+        state: &mut State<'types>,
+    ) -> Result<Self, Error> {
+
+        Ok(match ty {
+            Type::SimpleType(td) => Self::new_simple(td, ident, config, state)?,
+            Type::ComplexType(td) => {
+                if let ComplexTypeVariant::SimpleType(x) = &td.variant {
+                    return Self::new_simple(x, ident, config, state);
+                }
+
+                let req = Request::new(ident, config, state);
+
+                match &td.variant {
+                ComplexTypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
+                ComplexTypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
+                ComplexTypeVariant::All(x) => Self::Complex(ComplexType::new_all(x, req)?),
+                ComplexTypeVariant::Choice(x) => Self::Complex(ComplexType::new_choice(x, req)?),
+                ComplexTypeVariant::Sequence(x) => {
+                    Self::Complex(ComplexType::new_sequence(x, req)?)
+                }
+                ComplexTypeVariant::ComplexType(x) => {
+                    Self::Complex(ComplexType::new_complex(x, req)?)
+                }
+                ComplexTypeVariant::SimpleType(_) => unreachable!()
+            }},
         })
     }
 }
@@ -214,6 +241,7 @@ impl<'types> DynamicType<'types> {
                     .collect::<Result<Vec<_>, _>>()
             })
             .transpose()?;
+        println!("HERE: {:?}", info.derived_types);
         let derived_types = info
             .derived_types
             .iter()
@@ -658,39 +686,39 @@ impl<'types> ComplexType<'types> {
     }
 
     fn new_complex(info: &'types ComplexInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
-        let (type_mode, elements, any_element) = match info.content.as_ref().and_then(|ident| {
+        let (type_mode, elements, any_element) = info.content.as_ref().and_then(|ident| {
             req.types
                 .get_resolved_type(ident)
-                .map(|ty| (&ty.variant, ident))
-        }) {
-            None => (TypeMode::Sequence, &[][..], None),
-            Some((TypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
-            Some((TypeVariant::Choice(si), _)) => {
-                (TypeMode::Choice, &si.elements[..], si.any.as_ref())
+                .map(|ty| (ty, ident))
+        }).map(|a| match a { 
+            (Type::ComplexType(TypeDescriptor { variant: ComplexTypeVariant::All(si), ..}), _) => Ok((TypeMode::All, &si.elements[..], si.any.as_ref())),
+            (Type::ComplexType(TypeDescriptor { variant:ComplexTypeVariant::Choice(si), ..}), _) => {
+                Ok((TypeMode::Choice, &si.elements[..], si.any.as_ref()))
             }
-            Some((TypeVariant::Sequence(si), _)) => {
-                (TypeMode::Sequence, &si.elements[..], si.any.as_ref())
+            (Type::ComplexType(TypeDescriptor { variant:ComplexTypeVariant::Sequence(si), ..}), _) => {
+                Ok((TypeMode::Sequence, &si.elements[..], si.any.as_ref()))
             }
-            Some((
-                TypeVariant::BuildIn(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Enumeration(_)
-                | TypeVariant::Reference(_),
+            (Type::SimpleType(TypeDescriptor { variant:
+                SimpleTypeVariant::BuildIn(_)
+                | SimpleTypeVariant::Union(_)
+                | SimpleTypeVariant::Enumeration(_)
+                | SimpleTypeVariant::Reference(_),
+                 ..}),
                 ident,
-            )) => {
+            ) => {
                 let content_ref = req.get_or_create_type_ref(ident.clone())?;
                 let target_type = content_ref.to_ident_path();
 
-                (TypeMode::Simple { target_type }, &[][..], None)
+                Ok((TypeMode::Simple { target_type }, &[][..], None))
             }
-            Some((x, _)) => {
+            (x, _) => {
                 let ident = &req.current_type_ref().type_ident;
 
                 tracing::warn!("Complex type has unexpected content: ident={ident}, info={info:#?}, content={x:#?}!");
 
-                (TypeMode::Sequence, &[][..], None)
+                Ok((TypeMode::Sequence, &[][..], None))
             }
-        };
+        }).unwrap_or(Ok((TypeMode::Sequence, &[][..], None)))?;
 
         Self::new(
             req,
@@ -1008,7 +1036,7 @@ impl ComplexTypeBase {
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
         ret.trait_impls = req.make_trait_impls()?;
 
-        if let Some(TypeVariant::ComplexType(ci)) = req.types.get_variant(req.ident) {
+        if let Some(ComplexTypeVariant::ComplexType(ci)) = req.types.get_complex_type(req.ident).map(|a| &a.variant) {
             ret.is_complex = true;
             ret.is_dynamic = ci.is_dynamic;
         }
@@ -1266,6 +1294,7 @@ impl<'a, 'types> Request<'a, 'types> {
         ident: &Ident,
     ) -> Result<TokenStream, Error> {
         let types = self.types;
+        println!("A");
         let ty = types
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -1279,41 +1308,51 @@ impl<'a, 'types> Request<'a, 'types> {
             };
         }
 
+        let ty = match ty {
+            Type::SimpleType(type_descriptor) => type_descriptor,
+            Type::ComplexType(_) => {
+                return Err(Error::InvalidDefaultValue(
+                    ident.clone(),
+                    default.to_owned(),
+                ))
+            },
+        };
+
         match &ty.variant {
-            TypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
-            TypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
-            TypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
-            TypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
-            TypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
-            TypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
+            SimpleTypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
+            SimpleTypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
+            SimpleTypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
+            SimpleTypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
+            SimpleTypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
+            SimpleTypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
 
-            TypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
-            TypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
-            TypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
-            TypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
-            TypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
-            TypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
+            SimpleTypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
+            SimpleTypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
+            SimpleTypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
+            SimpleTypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
+            SimpleTypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
+            SimpleTypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
 
-            TypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
-            TypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
+            SimpleTypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
+            SimpleTypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
 
-            TypeVariant::BuildIn(BuildInInfo::Bool) => {
+            SimpleTypeVariant::BuildIn(BuildInInfo::Bool) => {
                 match default.to_ascii_lowercase().as_str() {
                     "true" | "yes" | "1" => return Ok(quote!(true)),
                     "false" | "no" | "0" => return Ok(quote!(false)),
                     _ => (),
                 }
             }
-            TypeVariant::BuildIn(BuildInInfo::String) => {
+            SimpleTypeVariant::BuildIn(BuildInInfo::String) => {
                 return Ok(quote!(String::from(#default)));
             }
-            TypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
+            SimpleTypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
                 if let Some(x) = x.default(default) {
                     return Ok(x);
                 }
             }
 
-            TypeVariant::Enumeration(ei) => {
+            SimpleTypeVariant::Enumeration(ei) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
@@ -1336,7 +1375,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            TypeVariant::Union(ui) => {
+            SimpleTypeVariant::Union(ui) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
@@ -1352,7 +1391,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            TypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
+            SimpleTypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
                 Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
                 Occurs::DynamicList if default.is_empty() => {
                     let module_path = ModulePath::from_namespace(current_ns, types);
@@ -1362,8 +1401,6 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
                 _ => (),
             },
-
-            _ => (),
         }
 
         Err(Error::InvalidDefaultValue(
@@ -1384,14 +1421,14 @@ impl<'types> Deref for Request<'_, 'types> {
 /* Helper */
 
 fn is_dynamic(ident: &Ident, types: &Types) -> bool {
-    let Some(ty) = types.get(ident) else {
+    let Some(ty) = types.get_complex_type(ident) else {
         return false;
     };
 
     match &ty.variant {
-        TypeVariant::Dynamic(_) => true,
-        TypeVariant::ComplexType(ci) => ci.is_dynamic,
-        TypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+        ComplexTypeVariant::Dynamic(_) => true,
+        ComplexTypeVariant::ComplexType(ci) => ci.is_dynamic,
+        ComplexTypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
         _ => false,
     }
 }
@@ -1422,7 +1459,7 @@ fn make_derived_type_data<'types>(
         .types
         .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-    let base_ident = if let TypeVariant::Dynamic(di) = &ty.variant {
+    let base_ident = if let TypeVariant::ComplexType(ComplexTypeVariant::Dynamic(di)) = &ty.variant() {
         di.type_.clone()
     } else {
         None

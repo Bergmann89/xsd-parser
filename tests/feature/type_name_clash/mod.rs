@@ -37,12 +37,12 @@ fn generate_default() {
     let ty1 = types
         .get_mut(&ident_1)
         .expect("Failed to resolve `tns:fooType`");
-    ty1.display_name = Some("Bar".into());
+    *ty1.display_name_mut() = Some("Bar".into());
 
     let ty2 = types
         .get_mut(&ident_2)
         .expect("Failed to resolve `tns:FooType`");
-    ty2.display_name = Some("Baz".into());
+    *ty2.display_name_mut() = Some("Baz".into());
 
     let code = exec_generator(config.generator, &schemas, &types).expect("Generator failed");
     let code = code.to_string();

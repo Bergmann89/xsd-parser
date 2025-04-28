@@ -1,33 +1,38 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, TypeVariant};
+use crate::types::{Base, ComplexTypeVariant, SimpleTypeVariant, Types};
 
-use super::{get_typedefs, Optimizer};
+use super::{Error, TypeTransformer};
 
-impl Optimizer {
-    /// This will resolve all simple type definitions and use the target type
-    /// directly.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema.
-    /// ```xml
-    #[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
-    /// ```
-    ///
-    /// Without this optimization this will result in the following code:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/resolve_typedefs.rs")]
-    /// ```
-    ///
-    /// With this optimization the following code is generated:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/resolve_typedefs.rs")]
-    /// ```
-    pub fn resolve_typedefs(mut self) -> Self {
+/// This will resolve all simple type definitions and use the target type
+/// directly.
+///
+/// # Examples
+///
+/// Consider the following XML schema.
+/// ```xml
+#[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
+/// ```
+///
+/// Without this optimization this will result in the following code:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected0/resolve_typedefs.rs")]
+/// ```
+///
+/// With this optimization the following code is generated:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected1/resolve_typedefs.rs")]
+/// ```
+#[derive(Debug)]
+pub struct ResolveTypedefs;
+
+impl TypeTransformer for ResolveTypedefs {
+    type Error = super::Error;
+
+    fn transform(&self, types: &mut Types) -> Result<(), Error> {
         tracing::debug!("resolve_typedefs");
 
-        let typedefs = get_typedefs!(self);
+        let typedefs = crate::optimizer::TypedefMap::new(types);
 
         macro_rules! resolve_base {
             ($base:expr) => {
@@ -41,30 +46,23 @@ impl Optimizer {
 
         let mut replaced_references = HashMap::new();
 
-        for type_ in self.types.values_mut() {
-            match &mut type_.variant {
-                TypeVariant::Reference(x) if x.is_single() => {
+        for (_, variant) in types.simple_types_iter_mut() {
+            match variant {
+                SimpleTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
                         .entry(x.type_.clone())
                         .or_insert_with(|| new_type.clone());
                     x.type_ = new_type;
                 }
-                TypeVariant::Union(x) => {
+                SimpleTypeVariant::Union(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.types {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                TypeVariant::Dynamic(x) => {
-                    x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
-
-                    for x in &mut x.derived_types {
-                        *x = typedefs.resolve(x).clone();
-                    }
-                }
-                TypeVariant::Enumeration(x) => {
+                SimpleTypeVariant::Enumeration(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.variants {
@@ -73,7 +71,27 @@ impl Optimizer {
                         }
                     }
                 }
-                TypeVariant::ComplexType(x) => {
+                _ => (),
+            }
+        }
+
+        for (_, variant) in types.complex_types_iter_mut() {
+            match variant {
+                ComplexTypeVariant::Reference(x) if x.is_single() => {
+                    let new_type = typedefs.resolve(&x.type_).clone();
+                    replaced_references
+                        .entry(x.type_.clone())
+                        .or_insert_with(|| new_type.clone());
+                    x.type_ = new_type;
+                }
+                ComplexTypeVariant::Dynamic(x) => {
+                    x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
+
+                    for x in &mut x.derived_types {
+                        *x = typedefs.resolve(x).clone();
+                    }
+                }
+                ComplexTypeVariant::ComplexType(x) => {
                     resolve_base!(&mut x.base);
 
                     if let Some(ident) = &mut x.content {
@@ -84,7 +102,9 @@ impl Optimizer {
                         attrib.type_ = typedefs.resolve(&attrib.type_).clone();
                     }
                 }
-                TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
+                ComplexTypeVariant::All(x)
+                | ComplexTypeVariant::Choice(x)
+                | ComplexTypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
                         element.type_ = typedefs.resolve(&element.type_).clone();
                     }
@@ -93,8 +113,8 @@ impl Optimizer {
             }
         }
 
-        for type_ in self.types.values_mut() {
-            let TypeVariant::Dynamic(di) = &mut type_.variant else {
+        for (_, variant) in types.complex_types_iter_mut() {
+            let ComplexTypeVariant::Dynamic(di) = variant else {
                 continue;
             };
 
@@ -105,6 +125,6 @@ impl Optimizer {
             }
         }
 
-        self
+        Ok(())
     }
 }

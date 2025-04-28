@@ -1,13 +1,45 @@
-use crate::types::{Ident, TypeVariant, UnionInfo, UnionTypeInfo};
+use crate::types::{Ident, SimpleTypeVariant, Types, UnionInfo, UnionTypeInfo};
 
-use super::{Error, Optimizer};
+use super::{Error, TypeTransformer};
 
 struct FlattenUnionInfo {
     count: usize,
     info: UnionInfo,
 }
 
-impl Optimizer {
+/// This will flatten all union types.
+///
+/// For details see [`flatten_union`](Self::flatten_union).
+#[derive(Debug)]
+pub struct FlattenUnions;
+
+impl TypeTransformer for FlattenUnions {
+    type Error = super::Error;
+
+    fn transform(&self, types: &mut Types) -> Result<(), Error> {
+        tracing::debug!("flatten_unions");
+
+        let idents = types
+            .simple_types_iter()
+            .filter_map(|(ident, variant)| {
+                if matches!(&variant, SimpleTypeVariant::Union(_)) {
+                    Some(ident)
+                } else {
+                    None
+                }
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for ident in idents {
+            self.flatten_union(types, ident).unwrap();
+        }
+
+        Ok(())
+    }
+}
+
+impl FlattenUnions {
     /// This will flatten the union identified by `ident` to one single union.
     ///
     /// # Errors
@@ -31,14 +63,14 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../tests/optimizer/expected1/flatten_unions.rs")]
     /// ```
-    pub fn flatten_union(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn flatten_union(&self, types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_union(ident={ident:?})");
 
-        let Some(ty) = self.types.get(&ident) else {
+        let Some(ty) = types.get_simple_type(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::Union(ui) = &ty.variant else {
+        let SimpleTypeVariant::Union(ui) = &ty.variant else {
             return Err(Error::ExpectedUnion(ident));
         };
 
@@ -47,63 +79,37 @@ impl Optimizer {
             info: UnionInfo::default(),
         };
 
-        self.flatten_union_impl(&ident, None, &mut info);
+        Self::flatten_union_impl(types, &ident, None, &mut info);
 
         if info.count > 1 {
             info.info.base = ui.base.clone();
 
-            let ty = self.types.get_mut(&ident).unwrap();
-            ty.variant = TypeVariant::Union(info.info);
+            let ty = types.get_simple_type_mut(&ident).unwrap();
+            ty.variant = SimpleTypeVariant::Union(info.info);
         }
 
-        Ok(self)
-    }
-
-    /// This will flatten all union types.
-    ///
-    /// For details see [`flatten_union`](Self::flatten_union).
-    pub fn flatten_unions(mut self) -> Self {
-        tracing::debug!("flatten_unions");
-
-        let idents = self
-            .types
-            .iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::Union(_)) {
-                    Some(ident)
-                } else {
-                    None
-                }
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-
-        for ident in idents {
-            self = self.flatten_union(ident).unwrap();
-        }
-
-        self
+        Ok(())
     }
 
     fn flatten_union_impl(
-        &self,
+        types: &Types,
         ident: &Ident,
         display_name: Option<&str>,
         next: &mut FlattenUnionInfo,
     ) {
-        let Some(type_) = self.types.get(ident) else {
+        let Some(type_) = types.get_simple_type(ident) else {
             return;
         };
 
         match &type_.variant {
-            TypeVariant::Union(x) => {
+            SimpleTypeVariant::Union(x) => {
                 next.count += 1;
                 for t in &*x.types {
-                    self.flatten_union_impl(&t.type_, t.display_name.as_deref(), next);
+                    Self::flatten_union_impl(types, &t.type_, t.display_name.as_deref(), next);
                 }
             }
-            TypeVariant::Reference(x) if x.is_single() => {
-                self.flatten_union_impl(&x.type_, display_name, next);
+            SimpleTypeVariant::Reference(x) if x.is_single() => {
+                Self::flatten_union_impl(types, &x.type_, display_name, next);
             }
             _ => {
                 let mut ui = UnionTypeInfo::new(ident.clone());

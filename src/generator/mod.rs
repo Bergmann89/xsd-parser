@@ -20,7 +20,7 @@ use tracing::instrument;
 
 use crate::code::{format_module_ident, format_type_ident, IdentPath, Module};
 use crate::schema::NamespaceId;
-use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
+use crate::types::{ComplexTypeVariant, Ident, IdentType, Name, SimpleTypeVariant, Type, Types};
 
 pub use self::context::Context;
 pub use self::data::{
@@ -499,13 +499,15 @@ impl<'types> State<'types> {
                 .get(&ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
             let name = make_type_name(&config.postfixes, ty, &ident);
-            let (module_ident, type_ident) = if let TypeVariant::BuildIn(x) = &ty.variant {
+            let (module_ident, type_ident) = if let Some(SimpleTypeVariant::BuildIn(x)) =
+                ty.simple_type_ref().map(|a| &a.variant)
+            {
                 (None, format_ident!("{x}"))
             } else {
                 let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
                 let module_ident =
                     format_module(config.types, use_modules.then_some(ident.ns).flatten())?;
-                let type_ident = format_type_ident(&name, ty.display_name.as_deref());
+                let type_ident = format_type_ident(&name, ty.display_name());
 
                 (module_ident, type_ident)
             };
@@ -540,14 +542,18 @@ fn get_boxed_elements<'a>(
     types: &'a Types,
     cache: &BTreeMap<Ident, TypeRef>,
 ) -> HashSet<Ident> {
-    if let TypeVariant::ComplexType(ci) = &ty.variant {
+    if let Some(ComplexTypeVariant::ComplexType(ci)) = ty.complex_type_ref().map(|a| &a.variant) {
         if let Some(type_) = ci.content.as_ref().and_then(|ident| types.get(ident)) {
             ty = type_;
         }
     }
 
-    match &ty.variant {
-        TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si) => si
+    match ty.complex_type_ref().map(|a| &a.variant) {
+        Some(
+            ComplexTypeVariant::All(si)
+            | ComplexTypeVariant::Choice(si)
+            | ComplexTypeVariant::Sequence(si),
+        ) => si
             .elements
             .iter()
             .filter_map(|f| {
@@ -563,7 +569,7 @@ fn get_boxed_elements<'a>(
 }
 
 fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
-    if let TypeVariant::Reference(ti) = &ty.variant {
+    if let Some(ti) = ty.reference_type() {
         if ident.name.is_generated() && ti.type_.name.is_named() {
             if ti.min_occurs > 1 {
                 return Name::new_generated(format!("{}List", ti.type_.name.to_type_name()));

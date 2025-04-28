@@ -20,7 +20,7 @@ use xsd_parser::config::{
 };
 use xsd_parser::generate;
 use xsd_parser::generator::GeneratorFlags;
-use xsd_parser::types::{BuildInInfo, CustomType, IdentType, Type};
+use xsd_parser::types::{BuildInInfo, CustomType, IdentType, SimpleType, Type};
 
 fn main() -> Result<(), Error> {
     // Initialize the logging framework. Log output can be controlled using the
@@ -72,13 +72,15 @@ fn main() -> Result<(), Error> {
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
-            Type::from(BuildInInfo::Custom(
+            Type::SimpleType(SimpleType::from(BuildInInfo::Custom(
                 CustomType::new("MaxOccurs").with_default(max_occurs_default),
-            )),
+            ))),
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
-            Type::from(BuildInInfo::Custom(CustomType::new("QName"))),
+            Type::SimpleType(SimpleType::from(BuildInInfo::Custom(CustomType::new(
+                "QName",
+            )))),
         ),
     ];
 
