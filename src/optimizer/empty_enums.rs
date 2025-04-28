@@ -44,7 +44,7 @@ impl TypeTransformer for RemoveEmptyEnumVariants {
 /// if the enum does not have any variant.
 ///
 /// This optimization is usually used in combination with
-/// [`remove_empty_enum_variants`](Self::remove_empty_enum_variants).
+/// [`RemoveEmptyEnumVariants`].
 ///
 /// # Examples
 ///
@@ -58,7 +58,7 @@ impl TypeTransformer for RemoveEmptyEnumVariants {
 #[doc = include_str!("../../tests/optimizer/expected0/remove_empty_enums.rs")]
 /// ```
 ///
-/// With this optimization (and the [`remove_empty_enum_variants`](Self::remove_empty_enum_variants))
+/// With this optimization (and the [`RemoveEmptyEnumVariants`])
 /// the following code is generated:
 /// ```rust
 #[doc = include_str!("../../tests/optimizer/expected1/remove_empty_enums.rs")]

@@ -1,4 +1,4 @@
-//! The `optimizer` module contains the type information [`Optimizer`] and all related types.
+//! The `optimizer` module contains the [`TypeTransformer`] trait and all built-in implementations.
 
 mod dynamic_to_choice;
 mod empty_enums;
@@ -72,7 +72,7 @@ impl Types {
     }
 }
 
-/// Error that is raised by the [`Optimizer`].
+/// Error that is raised by the provided [`TypeTransformer`]s.
 #[derive(Error, Debug)]
 pub enum Error {
     /// Unknown type identifier.

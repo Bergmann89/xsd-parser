@@ -263,7 +263,7 @@ bitflags! {
 }
 
 bitflags! {
-    /// Flags to control the [`Optimizer`](crate::Optimizer).
+    /// Flags to control the optimization process.
     #[derive(Debug, Clone)]
     pub struct OptimizerFlags: u32 {
         /// Whether to remove empty enum variants or not.

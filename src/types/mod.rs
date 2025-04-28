@@ -33,7 +33,7 @@ use crate::schema::{Namespace, NamespaceId};
 ///
 /// It is created by the [`Interpreter`](crate::interpreter::Interpreter) by reading
 /// the data of a specific [`Schemas`](crate::schema::Schemas). The types of this
-/// structure can be optimized further using the [`Optimizer`](crate::optimizer::Optimizer).
+/// structure can be optimized further using the [`TypeTransformers`](crate::optimizer::TypeTransformer).
 #[derive(Default, Debug)]
 pub struct Types {
     /// Map of the different types.

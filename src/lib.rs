@@ -62,7 +62,7 @@ use self::types::{IdentType, Types};
 /// the passed configuration.
 ///
 /// If you need more detailed control over the generation process or only a part
-/// of it, use the [`Parser`], [`Interpreter`], [`Optimizer`] or [`Generator`]
+/// of it, use the [`Parser`], [`Interpreter`], [`TypeTransformer`] or [`Generator`]
 /// directly.
 ///
 /// # Errors
@@ -175,7 +175,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
     Ok(types)
 }
 
-/// Executes the [`Optimizer`] with the passed `config` and `types`.
+/// Executes various [`TypeTransformer`]s with the passed `config` and `types`.
 ///
 /// # Errors
 ///
