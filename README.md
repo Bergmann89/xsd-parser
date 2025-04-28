@@ -18,7 +18,7 @@ The core idea of this library is to break down the code generation process into 
    The `Interpreter` uses the `Schemas` object to extract type information by applying extensions and restrictions defined in the schema. This results in a simplified `Types` structure that represents language-agnostic types.
 
 3. **Optimizing Types:**
-   The `Optimizer` refines the `Types` structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
+   The various `TypeTransformers` refines the `Types` structure by applying various optimizations. This step is optional but may be necessary to handle specific features (e.g., `serde` support) when generating valid code.
 
 4. **Generating Code:**
    Finally, the `Generator` converts the optimized `Types` information into Rust code by using so called `Renderer`s. As the resolvers, renderers can be implemented by the user to extend code generator.

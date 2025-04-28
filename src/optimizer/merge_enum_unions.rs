@@ -1,10 +1,42 @@
 use crate::types::{
-    EnumerationInfo, Ident, TypeVariant, UnionInfo, UnionTypeInfo, VariantInfo, VecHelper,
+    EnumerationInfo, Ident, TypeVariant, Types, UnionInfo, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
-use super::{Error, Optimizer};
+use super::{Error, TypeTransformer};
 
-impl Optimizer {
+/// This will flatten all enumeration and union types.
+///
+/// For details see [`merge_enum_union`](Self::merge_enum_union).
+#[derive(Debug)]
+pub struct MergeEnumUnions;
+
+impl TypeTransformer for MergeEnumUnions {
+    type Error = super::Error;
+
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
+        tracing::debug!("merge_enum_unions");
+
+        let idents = types
+            .iter()
+            .filter_map(|(ident, type_)| {
+                if matches!(&type_.variant, TypeVariant::Union(_)) {
+                    Some(ident)
+                } else {
+                    None
+                }
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for ident in idents {
+            Self::merge_enum_union(types, ident)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl MergeEnumUnions {
     /// This will flatten the union identified by `ident` to one single union.
     ///
     /// This will merge the nested union and enum types of the union identified
@@ -31,10 +63,10 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../tests/optimizer/expected1/merge_enum_unions.rs")]
     /// ```
-    pub fn merge_enum_union(mut self, ident: Ident) -> Result<Self, Error> {
+    pub fn merge_enum_union(types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("merge_enum_union(ident={ident:?})");
 
-        let Some(variant) = self.types.get_variant(&ident) else {
+        let Some(variant) = types.get_variant(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
@@ -44,56 +76,30 @@ impl Optimizer {
 
         let mut next = None;
 
-        self.merge_enum_union_impl(&ident, None, &mut next);
+        Self::merge_enum_union_impl(types, &ident, None, &mut next);
 
         if let Some(next) = next {
-            let ty = self.types.get_mut(&ident).unwrap();
+            let ty = types.get_mut(&ident).unwrap();
             ty.variant = next;
         }
 
-        Ok(self)
-    }
-
-    /// This will flatten all enumeration and union types.
-    ///
-    /// For details see [`merge_enum_union`](Self::merge_enum_union).
-    pub fn merge_enum_unions(mut self) -> Self {
-        tracing::debug!("merge_enum_unions");
-
-        let idents = self
-            .types
-            .iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::Union(_)) {
-                    Some(ident)
-                } else {
-                    None
-                }
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-
-        for ident in idents {
-            self = self.merge_enum_union(ident).unwrap();
-        }
-
-        self
+        Ok(())
     }
 
     fn merge_enum_union_impl(
-        &self,
+        types: &Types,
         ident: &Ident,
         display_name: Option<&str>,
         next: &mut Option<TypeVariant>,
     ) {
-        let Some(type_) = self.types.get_variant(ident) else {
+        let Some(type_) = types.get_variant(ident) else {
             return;
         };
 
         match type_ {
             TypeVariant::Union(x) => {
                 for t in &*x.types {
-                    self.merge_enum_union_impl(&t.type_, t.display_name.as_deref(), next);
+                    Self::merge_enum_union_impl(types, &t.type_, t.display_name.as_deref(), next);
                 }
             }
             TypeVariant::Enumeration(x) => {
@@ -127,7 +133,7 @@ impl Optimizer {
                 }
             }
             TypeVariant::Reference(x) if x.is_single() => {
-                self.merge_enum_union_impl(&x.type_, display_name, next);
+                Self::merge_enum_union_impl(types, &x.type_, display_name, next);
             }
             _ => {
                 if next.is_none() {

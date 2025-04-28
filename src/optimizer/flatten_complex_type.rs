@@ -1,40 +1,64 @@
 use crate::{
     schema::{MaxOccurs, MinOccurs},
-    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant},
+    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant, Types},
 };
 
-use super::{Error, Optimizer};
+use super::{Error, TypeTransformer};
 
-impl Optimizer {
-    /// This will flatten the nested groups (`xs::all`, `xs::choice` or `xs::sequence`)
-    /// of the complex type identified by `ident` to one type instead of rendering
-    /// nested structures.
-    ///
-    /// # Errors
-    ///
-    /// Returns an error if the passed `ident` could not be found, the referenced
-    /// type is not complex type or the complex type has no content.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema.
-    /// ```xml
-    #[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
-    /// ```
-    ///
-    /// Without this optimization this will result in the following code:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected0/flatten_complex_types.rs")]
-    /// ```
-    ///
-    /// With this optimization the following code is generated:
-    /// ```rust
-    #[doc = include_str!("../../tests/optimizer/expected1/flatten_complex_types.rs")]
-    /// ```
-    pub fn flatten_complex_type(mut self, ident: Ident) -> Result<Self, Error> {
+/// This will flatten the nested groups (`xs::all`, `xs::choice` or `xs::sequence`)
+/// of the complex types identified by the filter to one type instead of rendering
+/// nested structures.
+///
+/// # Examples
+///
+/// Consider the following XML schema.
+/// ```xml
+#[doc = include_str!("../../tests/optimizer/complex_flatten.xsd")]
+/// ```
+///
+/// Without this optimization this will result in the following code:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected0/flatten_complex_types.rs")]
+/// ```
+///
+/// With this optimization the following code is generated:
+/// ```rust
+#[doc = include_str!("../../tests/optimizer/expected1/flatten_complex_types.rs")]
+/// ```
+#[derive(Debug)]
+pub struct FlattenComplexTypes;
+
+impl TypeTransformer for FlattenComplexTypes {
+    type Error = super::Error;
+
+    fn transform(self, types: &mut Types) -> Result<(), Error> {
+        tracing::debug!("flatten_complex_types");
+
+        let idents = types
+            .iter()
+            .filter_map(|(ident, type_)| {
+                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(types)) {
+                    Some(ident)
+                } else {
+                    None
+                }
+            })
+            .cloned()
+            .collect::<Vec<_>>();
+
+        for ident in idents {
+            Self::flatten_complex_type(types, ident)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl FlattenComplexTypes {
+    fn flatten_complex_type(types: &mut Types, ident: Ident) -> Result<(), Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
-        let Some(ty) = self.types.get(&ident) else {
+        let Some(ty) = types.get(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
@@ -48,7 +72,7 @@ impl Optimizer {
 
         let mut ctx = Context::default();
 
-        self.flatten_complex_type_impl(&content_ident, 1, MaxOccurs::Bounded(1), &mut ctx);
+        Self::flatten_complex_type_impl(types, &content_ident, 1, MaxOccurs::Bounded(1), &mut ctx);
 
         if ctx.count > 1 {
             let variant = match ctx.mode {
@@ -58,51 +82,25 @@ impl Optimizer {
             };
             let type_ = Type::new(variant);
 
-            self.types.insert(content_ident, type_);
+            types.insert(content_ident, type_);
 
-            if let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
+            if let Some(TypeVariant::ComplexType(ci)) = types.get_variant_mut(&ident) {
                 ci.min_occurs *= ctx.occurs.min;
                 ci.max_occurs *= ctx.occurs.max;
             }
         }
 
-        Ok(self)
-    }
-
-    /// This will flatten all complex types.
-    ///
-    /// For details see [`flatten_complex_type`](Self::flatten_complex_type).
-    pub fn flatten_complex_types(mut self) -> Self {
-        tracing::debug!("flatten_complex_types");
-
-        let idents = self
-            .types
-            .iter()
-            .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(&self.types)) {
-                    Some(ident)
-                } else {
-                    None
-                }
-            })
-            .cloned()
-            .collect::<Vec<_>>();
-
-        for ident in idents {
-            self = self.flatten_complex_type(ident).unwrap();
-        }
-
-        self
+        Ok(())
     }
 
     fn flatten_complex_type_impl(
-        &self,
+        types: &Types,
         ident: &Ident,
         min: MinOccurs,
         max: MaxOccurs,
         ctx: &mut Context,
     ) {
-        let Some(type_) = self.types.get(ident) else {
+        let Some(type_) = types.get(ident) else {
             return;
         };
 
@@ -122,7 +120,8 @@ impl Optimizer {
                 si
             }
             TypeVariant::Reference(ti) if ti.is_single() => {
-                self.flatten_complex_type_impl(
+                Self::flatten_complex_type_impl(
+                    types,
                     &ti.type_,
                     min * ti.min_occurs,
                     max * ti.max_occurs,
@@ -147,7 +146,8 @@ impl Optimizer {
                     ctx.add_element(element);
                 }
                 ElementMode::Group => {
-                    self.flatten_complex_type_impl(
+                    Self::flatten_complex_type_impl(
+                        types,
                         &x.type_,
                         min * x.min_occurs,
                         max * x.max_occurs,
@@ -259,9 +259,9 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::{
+        optimizer::{flatten_complex_type::FlattenComplexTypes, TypeTransformer},
         schema::MaxOccurs,
         types::{ElementInfo, ElementMode, ElementsInfo, Ident, Type, TypeVariant, Types},
-        Optimizer,
     };
 
     macro_rules! make_type {
@@ -363,7 +363,7 @@ mod tests {
             }
         );
 
-        let types = Optimizer::new(types).flatten_complex_types().finish();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
@@ -412,7 +412,7 @@ mod tests {
             }
         );
 
-        let types = Optimizer::new(types).flatten_complex_types().finish();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Sequence("content"));
 
@@ -473,7 +473,7 @@ mod tests {
             }
         );
 
-        let types = Optimizer::new(types).flatten_complex_types().finish();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
@@ -538,7 +538,7 @@ mod tests {
             }
         );
 
-        let types = Optimizer::new(types).flatten_complex_types().finish();
+        FlattenComplexTypes.transform(&mut types).unwrap();
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 

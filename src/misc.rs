@@ -7,7 +7,7 @@ use anyhow::Error as AnyError;
 use thiserror::Error;
 
 use crate::types::{ElementMode, Ident, Type, TypeVariant, Types};
-use crate::{GeneratorError, InterpreterError, ParserError};
+use crate::{GeneratorError, InterpreterError, OptimizerError, ParserError};
 
 /// Trait that adds namespace information to a type.
 pub trait WithNamespace {
@@ -51,6 +51,10 @@ pub enum Error {
     /// Interpreter error.
     #[error("Interpreter error: {0}")]
     InterpreterError(#[from] InterpreterError),
+
+    /// Optimizer error.
+    #[error("Optimizer error: {0}")]
+    OptimizerError(#[from] OptimizerError),
 
     /// Generator error.
     #[error("Generator error: {0}")]

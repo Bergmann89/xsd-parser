@@ -22,13 +22,20 @@ pub type InterpreterError = interpreter::Error;
 /// Type alias for [`parser::Error`].
 pub type ParserError<E> = parser::Error<E>;
 
+/// Type alias for [`optimizer::Error`].
+pub type OptimizerError = optimizer::Error;
+
 use std::fs::write;
 
 pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
 pub use misc::{AsAny, Error, WithNamespace};
-pub use optimizer::Optimizer;
+pub use optimizer::{
+    ConvertDynamicToChoice, FlattenComplexTypes, FlattenUnions, MergeChoiceCardinalities,
+    MergeEnumUnions, RemoveDuplicateUnionVariants, RemoveDuplicates, RemoveEmptyEnumVariants,
+    RemoveEmptyEnums, RemoveEmptyUnions, ResolveTypedefs, TypeTransformer, UseUnrestrictedBaseType,
+};
 pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
@@ -55,7 +62,7 @@ use self::types::{IdentType, Types};
 /// the passed configuration.
 ///
 /// If you need more detailed control over the generation process or only a part
-/// of it, use the [`Parser`], [`Interpreter`], [`Optimizer`] or [`Generator`]
+/// of it, use the [`Parser`], [`Interpreter`], [`TypeTransformer`] or [`Generator`]
 /// directly.
 ///
 /// # Errors
@@ -168,43 +175,36 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
     Ok(types)
 }
 
-/// Executes the [`Optimizer`] with the passed `config` and `types`.
+/// Executes various [`TypeTransformer`]s with the passed `config` and `types`.
 ///
 /// # Errors
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(types))]
 pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
+    use OptimizerFlags as F;
+
     tracing::info!("Optimize Types");
 
-    let mut optimizer = Optimizer::new(types);
+    let fa = |flag: F| config.flags.contains(flag);
 
-    macro_rules! exec {
-        ($flag:ident, $method:ident) => {
-            if config.flags.contains(OptimizerFlags::$flag) {
-                optimizer = optimizer.$method();
-            }
-        };
-    }
-
-    exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
-    exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
-    exec!(
-        REMOVE_DUPLICATE_UNION_VARIANTS,
-        remove_duplicate_union_variants
-    );
-    exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
-    exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
-    exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
-    exec!(FLATTEN_COMPLEX_TYPES, flatten_complex_types);
-    exec!(FLATTEN_UNIONS, flatten_unions);
-    exec!(MERGE_ENUM_UNIONS, merge_enum_unions);
-    exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
-    exec!(REMOVE_DUPLICATES, remove_duplicates);
-    exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
-    exec!(MERGE_CHOICE_CARDINALITIES, merge_choice_cardinalities);
-
-    let types = optimizer.finish();
+    let types = types
+        .apply_transformer_if(RemoveEmptyEnumVariants, fa(F::REMOVE_EMPTY_ENUM_VARIANTS))?
+        .apply_transformer_if(RemoveEmptyEnums, fa(F::REMOVE_EMPTY_ENUMS))?
+        .apply_transformer_if(
+            RemoveDuplicateUnionVariants,
+            fa(F::REMOVE_DUPLICATE_UNION_VARIANTS),
+        )?
+        .apply_transformer_if(RemoveEmptyUnions, fa(F::REMOVE_EMPTY_UNIONS))?
+        .apply_transformer_if(UseUnrestrictedBaseType, fa(F::USE_UNRESTRICTED_BASE_TYPE))?
+        .apply_transformer_if(ConvertDynamicToChoice, fa(F::CONVERT_DYNAMIC_TO_CHOICE))?
+        .apply_transformer_if(FlattenComplexTypes, fa(F::FLATTEN_COMPLEX_TYPES))?
+        .apply_transformer_if(FlattenUnions, fa(F::FLATTEN_UNIONS))?
+        .apply_transformer_if(MergeEnumUnions, fa(F::MERGE_ENUM_UNIONS))?
+        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(RemoveDuplicates, fa(F::REMOVE_DUPLICATES))?
+        .apply_transformer_if(ResolveTypedefs, fa(F::RESOLVE_TYPEDEFS))?
+        .apply_transformer_if(MergeChoiceCardinalities, fa(F::MERGE_CHOICE_CARDINALITIES))?;
 
     if let Some(output) = config.debug_output {
         let printer = TypesPrinter::new(&types);
