@@ -19,10 +19,10 @@ pub struct BmecatElementType {
 #[derive(Debug)]
 pub enum BmecatElementTypeContent {
     Header(HeaderElementType),
-    TnewCatalog(TnewCatalogElementType),
-    TupdateProducts(TupdateProductsElementType),
-    TupdatePrices(TupdatePricesElementType),
-    TnewProductdata(TnewProductdataElementType),
+    TNewCatalog(TNewCatalogElementType),
+    TUpdateProducts(TUpdateProductsElementType),
+    TUpdatePrices(TUpdatePricesElementType),
+    TNewProductdata(TNewProductdataElementType),
 }
 impl WithSerializer for BmecatElementType {
     type Serializer<'x> = quick_xml_serialize::BmecatElementTypeSerializer<'x>;
@@ -109,94 +109,94 @@ impl WithDeserializer for HeaderElementType {
     type Deserializer = quick_xml_deserialize::HeaderElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TnewCatalogElementType {
-    pub product: Vec<TnewCatalogProductElementType>,
+pub struct TNewCatalogElementType {
+    pub product: Vec<TNewCatalogProductElementType>,
 }
-impl WithSerializer for TnewCatalogElementType {
-    type Serializer<'x> = quick_xml_serialize::TnewCatalogElementTypeSerializer<'x>;
+impl WithSerializer for TNewCatalogElementType {
+    type Serializer<'x> = quick_xml_serialize::TNewCatalogElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::TnewCatalogElementTypeSerializer {
+        Ok(quick_xml_serialize::TNewCatalogElementTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::TnewCatalogElementTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::TNewCatalogElementTypeSerializerState::Init__),
             name: name.unwrap_or("T_NEW_CATALOG"),
             is_root,
         })
     }
 }
-impl WithDeserializer for TnewCatalogElementType {
-    type Deserializer = quick_xml_deserialize::TnewCatalogElementTypeDeserializer;
+impl WithDeserializer for TNewCatalogElementType {
+    type Deserializer = quick_xml_deserialize::TNewCatalogElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TupdateProductsElementType {
+pub struct TUpdateProductsElementType {
     pub prev_version: i32,
-    pub product: Vec<TupdateProductsProductElementType>,
+    pub product: Vec<TUpdateProductsProductElementType>,
 }
-impl WithSerializer for TupdateProductsElementType {
-    type Serializer<'x> = quick_xml_serialize::TupdateProductsElementTypeSerializer<'x>;
+impl WithSerializer for TUpdateProductsElementType {
+    type Serializer<'x> = quick_xml_serialize::TUpdateProductsElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::TupdateProductsElementTypeSerializer {
+        Ok(quick_xml_serialize::TUpdateProductsElementTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::TupdateProductsElementTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::TUpdateProductsElementTypeSerializerState::Init__),
             name: name.unwrap_or("T_UPDATE_PRODUCTS"),
             is_root,
         })
     }
 }
-impl WithDeserializer for TupdateProductsElementType {
-    type Deserializer = quick_xml_deserialize::TupdateProductsElementTypeDeserializer;
+impl WithDeserializer for TUpdateProductsElementType {
+    type Deserializer = quick_xml_deserialize::TUpdateProductsElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TupdatePricesElementType {
+pub struct TUpdatePricesElementType {
     pub prev_version: i32,
-    pub product: Vec<TupdatePricesProductElementType>,
+    pub product: Vec<TUpdatePricesProductElementType>,
 }
-impl WithSerializer for TupdatePricesElementType {
-    type Serializer<'x> = quick_xml_serialize::TupdatePricesElementTypeSerializer<'x>;
+impl WithSerializer for TUpdatePricesElementType {
+    type Serializer<'x> = quick_xml_serialize::TUpdatePricesElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::TupdatePricesElementTypeSerializer {
+        Ok(quick_xml_serialize::TUpdatePricesElementTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::TupdatePricesElementTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::TUpdatePricesElementTypeSerializerState::Init__),
             name: name.unwrap_or("T_UPDATE_PRICES"),
             is_root,
         })
     }
 }
-impl WithDeserializer for TupdatePricesElementType {
-    type Deserializer = quick_xml_deserialize::TupdatePricesElementTypeDeserializer;
+impl WithDeserializer for TUpdatePricesElementType {
+    type Deserializer = quick_xml_deserialize::TUpdatePricesElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TnewProductdataElementType {
-    pub product: Vec<TnewProductdataProductElementType>,
+pub struct TNewProductdataElementType {
+    pub product: Vec<TNewProductdataProductElementType>,
 }
-impl WithSerializer for TnewProductdataElementType {
-    type Serializer<'x> = quick_xml_serialize::TnewProductdataElementTypeSerializer<'x>;
+impl WithSerializer for TNewProductdataElementType {
+    type Serializer<'x> = quick_xml_serialize::TNewProductdataElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::TnewProductdataElementTypeSerializer {
+        Ok(quick_xml_serialize::TNewProductdataElementTypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::TnewProductdataElementTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::TNewProductdataElementTypeSerializerState::Init__),
             name: name.unwrap_or("T_NEW_PRODUCTDATA"),
             is_root,
         })
     }
 }
-impl WithDeserializer for TnewProductdataElementType {
-    type Deserializer = quick_xml_deserialize::TnewProductdataElementTypeDeserializer;
+impl WithDeserializer for TNewProductdataElementType {
+    type Deserializer = quick_xml_deserialize::TNewProductdataElementTypeDeserializer;
 }
 #[derive(Debug)]
 pub struct CatalogElementType {
@@ -298,8 +298,8 @@ impl WithDeserializer for UdxHeaderType {
     type Deserializer = quick_xml_deserialize::UdxHeaderTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TnewCatalogProductElementType {
-    pub mode: TnewCatalogProductmodeType,
+pub struct TNewCatalogProductElementType {
+    pub mode: TNewCatalogProductmodeType,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -309,24 +309,24 @@ pub struct TnewCatalogProductElementType {
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
-impl TnewCatalogProductElementType {
+impl TNewCatalogProductElementType {
     #[must_use]
-    pub fn default_mode() -> TnewCatalogProductmodeType {
-        TnewCatalogProductmodeType::New
+    pub fn default_mode() -> TNewCatalogProductmodeType {
+        TNewCatalogProductmodeType::New
     }
 }
-impl WithSerializer for TnewCatalogProductElementType {
-    type Serializer<'x> = quick_xml_serialize::TnewCatalogProductElementTypeSerializer<'x>;
+impl WithSerializer for TNewCatalogProductElementType {
+    type Serializer<'x> = quick_xml_serialize::TNewCatalogProductElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
-            quick_xml_serialize::TnewCatalogProductElementTypeSerializer {
+            quick_xml_serialize::TNewCatalogProductElementTypeSerializer {
                 value: self,
                 state: Box::new(
-                    quick_xml_serialize::TnewCatalogProductElementTypeSerializerState::Init__,
+                    quick_xml_serialize::TNewCatalogProductElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("TNewCatalogProduct"),
                 is_root,
@@ -334,12 +334,12 @@ impl WithSerializer for TnewCatalogProductElementType {
         )
     }
 }
-impl WithDeserializer for TnewCatalogProductElementType {
-    type Deserializer = quick_xml_deserialize::TnewCatalogProductElementTypeDeserializer;
+impl WithDeserializer for TNewCatalogProductElementType {
+    type Deserializer = quick_xml_deserialize::TNewCatalogProductElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TupdateProductsProductElementType {
-    pub mode: TupdateProductsProductmodeType,
+pub struct TUpdateProductsProductElementType {
+    pub mode: TUpdateProductsProductmodeType,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -349,18 +349,18 @@ pub struct TupdateProductsProductElementType {
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
-impl WithSerializer for TupdateProductsProductElementType {
-    type Serializer<'x> = quick_xml_serialize::TupdateProductsProductElementTypeSerializer<'x>;
+impl WithSerializer for TUpdateProductsProductElementType {
+    type Serializer<'x> = quick_xml_serialize::TUpdateProductsProductElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
-            quick_xml_serialize::TupdateProductsProductElementTypeSerializer {
+            quick_xml_serialize::TUpdateProductsProductElementTypeSerializer {
                 value: self,
                 state: Box::new(
-                    quick_xml_serialize::TupdateProductsProductElementTypeSerializerState::Init__,
+                    quick_xml_serialize::TUpdateProductsProductElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("TUpdateProductsProduct"),
                 is_root,
@@ -368,34 +368,34 @@ impl WithSerializer for TupdateProductsProductElementType {
         )
     }
 }
-impl WithDeserializer for TupdateProductsProductElementType {
-    type Deserializer = quick_xml_deserialize::TupdateProductsProductElementTypeDeserializer;
+impl WithDeserializer for TUpdateProductsProductElementType {
+    type Deserializer = quick_xml_deserialize::TUpdateProductsProductElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TupdatePricesProductElementType {
-    pub mode: TupdatePricesProductmodeType,
+pub struct TUpdatePricesProductElementType {
+    pub mode: TUpdatePricesProductmodeType,
     pub supplier_pid: String,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub user_defined_extensions: Option<UdxProductType>,
 }
-impl TupdatePricesProductElementType {
+impl TUpdatePricesProductElementType {
     #[must_use]
-    pub fn default_mode() -> TupdatePricesProductmodeType {
-        TupdatePricesProductmodeType::Update
+    pub fn default_mode() -> TUpdatePricesProductmodeType {
+        TUpdatePricesProductmodeType::Update
     }
 }
-impl WithSerializer for TupdatePricesProductElementType {
-    type Serializer<'x> = quick_xml_serialize::TupdatePricesProductElementTypeSerializer<'x>;
+impl WithSerializer for TUpdatePricesProductElementType {
+    type Serializer<'x> = quick_xml_serialize::TUpdatePricesProductElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
-            quick_xml_serialize::TupdatePricesProductElementTypeSerializer {
+            quick_xml_serialize::TUpdatePricesProductElementTypeSerializer {
                 value: self,
                 state: Box::new(
-                    quick_xml_serialize::TupdatePricesProductElementTypeSerializerState::Init__,
+                    quick_xml_serialize::TUpdatePricesProductElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("TUpdatePricesProduct"),
                 is_root,
@@ -403,36 +403,36 @@ impl WithSerializer for TupdatePricesProductElementType {
         )
     }
 }
-impl WithDeserializer for TupdatePricesProductElementType {
-    type Deserializer = quick_xml_deserialize::TupdatePricesProductElementTypeDeserializer;
+impl WithDeserializer for TUpdatePricesProductElementType {
+    type Deserializer = quick_xml_deserialize::TUpdatePricesProductElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TnewProductdataProductElementType {
-    pub mode: TnewProductdataProductmodeType,
+pub struct TNewProductdataProductElementType {
+    pub mode: TNewProductdataProductmodeType,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
     pub user_defined_extensions: Option<UdxProductdataType>,
     pub product_reference: Vec<ProductReferenceElementType>,
 }
-impl TnewProductdataProductElementType {
+impl TNewProductdataProductElementType {
     #[must_use]
-    pub fn default_mode() -> TnewProductdataProductmodeType {
-        TnewProductdataProductmodeType::New
+    pub fn default_mode() -> TNewProductdataProductmodeType {
+        TNewProductdataProductmodeType::New
     }
 }
-impl WithSerializer for TnewProductdataProductElementType {
-    type Serializer<'x> = quick_xml_serialize::TnewProductdataProductElementTypeSerializer<'x>;
+impl WithSerializer for TNewProductdataProductElementType {
+    type Serializer<'x> = quick_xml_serialize::TNewProductdataProductElementTypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         Ok(
-            quick_xml_serialize::TnewProductdataProductElementTypeSerializer {
+            quick_xml_serialize::TNewProductdataProductElementTypeSerializer {
                 value: self,
                 state: Box::new(
-                    quick_xml_serialize::TnewProductdataProductElementTypeSerializerState::Init__,
+                    quick_xml_serialize::TNewProductdataProductElementTypeSerializerState::Init__,
                 ),
                 name: name.unwrap_or("TNewProductdataProduct"),
                 is_root,
@@ -440,8 +440,8 @@ impl WithSerializer for TnewProductdataProductElementType {
         )
     }
 }
-impl WithDeserializer for TnewProductdataProductElementType {
-    type Deserializer = quick_xml_deserialize::TnewProductdataProductElementTypeDeserializer;
+impl WithDeserializer for TNewProductdataProductElementType {
+    type Deserializer = quick_xml_deserialize::TNewProductdataProductElementTypeDeserializer;
 }
 #[derive(Debug)]
 pub struct LanguageElementType {
@@ -1313,17 +1313,17 @@ impl DeserializeBytes for TypeBmEcatEtimVersionType {
     }
 }
 #[derive(Debug)]
-pub enum TnewCatalogProductmodeType {
+pub enum TNewCatalogProductmodeType {
     New,
 }
-impl SerializeBytes for TnewCatalogProductmodeType {
+impl SerializeBytes for TNewCatalogProductmodeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
     }
 }
-impl DeserializeBytes for TnewCatalogProductmodeType {
+impl DeserializeBytes for TNewCatalogProductmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1562,12 +1562,12 @@ impl WithDeserializer for ProductLogisticDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductLogisticDetailsElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum TupdateProductsProductmodeType {
+pub enum TUpdateProductsProductmodeType {
     Delete,
     New,
     Update,
 }
-impl SerializeBytes for TupdateProductsProductmodeType {
+impl SerializeBytes for TUpdateProductsProductmodeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Delete => Ok(Some(Cow::Borrowed("delete"))),
@@ -1576,7 +1576,7 @@ impl SerializeBytes for TupdateProductsProductmodeType {
         }
     }
 }
-impl DeserializeBytes for TupdateProductsProductmodeType {
+impl DeserializeBytes for TUpdateProductsProductmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1590,17 +1590,17 @@ impl DeserializeBytes for TupdateProductsProductmodeType {
     }
 }
 #[derive(Debug)]
-pub enum TupdatePricesProductmodeType {
+pub enum TUpdatePricesProductmodeType {
     Update,
 }
-impl SerializeBytes for TupdatePricesProductmodeType {
+impl SerializeBytes for TUpdatePricesProductmodeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Update => Ok(Some(Cow::Borrowed("update"))),
         }
     }
 }
-impl DeserializeBytes for TupdatePricesProductmodeType {
+impl DeserializeBytes for TUpdatePricesProductmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1612,17 +1612,17 @@ impl DeserializeBytes for TupdatePricesProductmodeType {
     }
 }
 #[derive(Debug)]
-pub enum TnewProductdataProductmodeType {
+pub enum TNewProductdataProductmodeType {
     New,
 }
-impl SerializeBytes for TnewProductdataProductmodeType {
+impl SerializeBytes for TNewProductdataProductmodeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
     }
 }
-impl DeserializeBytes for TnewProductdataProductmodeType {
+impl DeserializeBytes for TNewProductdataProductmodeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -5357,21 +5357,21 @@ pub mod quick_xml_deserialize {
             Option<super::HeaderElementType>,
             Option<<super::HeaderElementType as WithDeserializer>::Deserializer>,
         ),
-        TnewCatalog(
-            Option<super::TnewCatalogElementType>,
-            Option<<super::TnewCatalogElementType as WithDeserializer>::Deserializer>,
+        TNewCatalog(
+            Option<super::TNewCatalogElementType>,
+            Option<<super::TNewCatalogElementType as WithDeserializer>::Deserializer>,
         ),
-        TupdateProducts(
-            Option<super::TupdateProductsElementType>,
-            Option<<super::TupdateProductsElementType as WithDeserializer>::Deserializer>,
+        TUpdateProducts(
+            Option<super::TUpdateProductsElementType>,
+            Option<<super::TUpdateProductsElementType as WithDeserializer>::Deserializer>,
         ),
-        TupdatePrices(
-            Option<super::TupdatePricesElementType>,
-            Option<<super::TupdatePricesElementType as WithDeserializer>::Deserializer>,
+        TUpdatePrices(
+            Option<super::TUpdatePricesElementType>,
+            Option<<super::TUpdatePricesElementType as WithDeserializer>::Deserializer>,
         ),
-        TnewProductdata(
-            Option<super::TnewProductdataElementType>,
-            Option<<super::TnewProductdataElementType as WithDeserializer>::Deserializer>,
+        TNewProductdata(
+            Option<super::TNewProductdataElementType>,
+            Option<<super::TNewProductdataElementType as WithDeserializer>::Deserializer>,
         ),
         Done__(super::BmecatElementTypeContent),
         Unknown__,
@@ -5406,7 +5406,7 @@ pub mod quick_xml_deserialize {
                 Some(b"T_NEW_CATALOG")
             ) {
                 let output =
-                    <super::TnewCatalogElementType as WithDeserializer>::Deserializer::init(
+                    <super::TNewCatalogElementType as WithDeserializer>::Deserializer::init(
                         reader, event,
                     )?;
                 return self.handle_t_new_catalog(
@@ -5421,7 +5421,7 @@ pub mod quick_xml_deserialize {
                 Some(b"T_UPDATE_PRODUCTS")
             ) {
                 let output =
-                    <super::TupdateProductsElementType as WithDeserializer>::Deserializer::init(
+                    <super::TUpdateProductsElementType as WithDeserializer>::Deserializer::init(
                         reader, event,
                     )?;
                 return self.handle_t_update_products(
@@ -5436,7 +5436,7 @@ pub mod quick_xml_deserialize {
                 Some(b"T_UPDATE_PRICES")
             ) {
                 let output =
-                    <super::TupdatePricesElementType as WithDeserializer>::Deserializer::init(
+                    <super::TUpdatePricesElementType as WithDeserializer>::Deserializer::init(
                         reader, event,
                     )?;
                 return self.handle_t_update_prices(
@@ -5451,7 +5451,7 @@ pub mod quick_xml_deserialize {
                 Some(b"T_NEW_PRODUCTDATA")
             ) {
                 let output =
-                    <super::TnewProductdataElementType as WithDeserializer>::Deserializer::init(
+                    <super::TNewProductdataElementType as WithDeserializer>::Deserializer::init(
                         reader, event,
                     )?;
                 return self.handle_t_new_productdata(
@@ -5485,41 +5485,41 @@ pub mod quick_xml_deserialize {
                         || ErrorKind::MissingElement("HEADER".into()),
                     )?))
                 }
-                S::TnewCatalog(mut values, deserializer) => {
+                S::TNewCatalog(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
                         Self::store_t_new_catalog(&mut values, value)?;
                     }
-                    Ok(super::BmecatElementTypeContent::TnewCatalog(
+                    Ok(super::BmecatElementTypeContent::TNewCatalog(
                         values.ok_or_else(|| ErrorKind::MissingElement("T_NEW_CATALOG".into()))?,
                     ))
                 }
-                S::TupdateProducts(mut values, deserializer) => {
+                S::TUpdateProducts(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
                         Self::store_t_update_products(&mut values, value)?;
                     }
-                    Ok(super::BmecatElementTypeContent::TupdateProducts(
+                    Ok(super::BmecatElementTypeContent::TUpdateProducts(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("T_UPDATE_PRODUCTS".into()))?,
                     ))
                 }
-                S::TupdatePrices(mut values, deserializer) => {
+                S::TUpdatePrices(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
                         Self::store_t_update_prices(&mut values, value)?;
                     }
-                    Ok(super::BmecatElementTypeContent::TupdatePrices(
+                    Ok(super::BmecatElementTypeContent::TUpdatePrices(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("T_UPDATE_PRICES".into()))?,
                     ))
                 }
-                S::TnewProductdata(mut values, deserializer) => {
+                S::TNewProductdata(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
                         Self::store_t_new_productdata(&mut values, value)?;
                     }
-                    Ok(super::BmecatElementTypeContent::TnewProductdata(
+                    Ok(super::BmecatElementTypeContent::TNewProductdata(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("T_NEW_PRODUCTDATA".into()))?,
                     ))
@@ -5541,8 +5541,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_t_new_catalog(
-            values: &mut Option<super::TnewCatalogElementType>,
-            value: super::TnewCatalogElementType,
+            values: &mut Option<super::TNewCatalogElementType>,
+            value: super::TNewCatalogElementType,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -5553,8 +5553,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_t_update_products(
-            values: &mut Option<super::TupdateProductsElementType>,
-            value: super::TupdateProductsElementType,
+            values: &mut Option<super::TUpdateProductsElementType>,
+            value: super::TUpdateProductsElementType,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -5565,8 +5565,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_t_update_prices(
-            values: &mut Option<super::TupdatePricesElementType>,
-            value: super::TupdatePricesElementType,
+            values: &mut Option<super::TUpdatePricesElementType>,
+            value: super::TUpdatePricesElementType,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -5577,8 +5577,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_t_new_productdata(
-            values: &mut Option<super::TnewProductdataElementType>,
-            value: super::TnewProductdataElementType,
+            values: &mut Option<super::TNewProductdataElementType>,
+            value: super::TNewProductdataElementType,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -5648,8 +5648,8 @@ pub mod quick_xml_deserialize {
         fn handle_t_new_catalog<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::TnewCatalogElementType>,
-            output: DeserializerOutput<'de, super::TnewCatalogElementType>,
+            mut values: Option<super::TNewCatalogElementType>,
+            output: DeserializerOutput<'de, super::TNewCatalogElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5663,10 +5663,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => BmecatElementTypeContentDeserializerState::Init__,
-                    Some(BmecatElementTypeContentDeserializerState::TnewCatalog(
+                    Some(BmecatElementTypeContentDeserializerState::TNewCatalog(
                         _,
                         Some(deserializer),
-                    )) => BmecatElementTypeContentDeserializerState::TnewCatalog(
+                    )) => BmecatElementTypeContentDeserializerState::TNewCatalog(
                         values,
                         Some(deserializer),
                     ),
@@ -5676,7 +5676,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(BmecatElementTypeContentDeserializerState::TnewCatalog(
+                Some(BmecatElementTypeContentDeserializerState::TNewCatalog(
                     _,
                     Some(deserializer),
                 )) => {
@@ -5691,13 +5691,13 @@ pub mod quick_xml_deserialize {
                     Self::store_t_new_catalog(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        BmecatElementTypeContentDeserializerState::TnewCatalog(values, None),
+                        BmecatElementTypeContentDeserializerState::TNewCatalog(values, None),
                     )?;
                     *self.state = BmecatElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = BmecatElementTypeContentDeserializerState::TnewCatalog(
+                    *self.state = BmecatElementTypeContentDeserializerState::TNewCatalog(
                         values,
                         Some(deserializer),
                     );
@@ -5708,8 +5708,8 @@ pub mod quick_xml_deserialize {
         fn handle_t_update_products<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::TupdateProductsElementType>,
-            output: DeserializerOutput<'de, super::TupdateProductsElementType>,
+            mut values: Option<super::TUpdateProductsElementType>,
+            output: DeserializerOutput<'de, super::TUpdateProductsElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5723,10 +5723,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => BmecatElementTypeContentDeserializerState::Init__,
-                    Some(BmecatElementTypeContentDeserializerState::TupdateProducts(
+                    Some(BmecatElementTypeContentDeserializerState::TUpdateProducts(
                         _,
                         Some(deserializer),
-                    )) => BmecatElementTypeContentDeserializerState::TupdateProducts(
+                    )) => BmecatElementTypeContentDeserializerState::TUpdateProducts(
                         values,
                         Some(deserializer),
                     ),
@@ -5736,7 +5736,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(BmecatElementTypeContentDeserializerState::TupdateProducts(
+                Some(BmecatElementTypeContentDeserializerState::TUpdateProducts(
                     _,
                     Some(deserializer),
                 )) => {
@@ -5751,13 +5751,13 @@ pub mod quick_xml_deserialize {
                     Self::store_t_update_products(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        BmecatElementTypeContentDeserializerState::TupdateProducts(values, None),
+                        BmecatElementTypeContentDeserializerState::TUpdateProducts(values, None),
                     )?;
                     *self.state = BmecatElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = BmecatElementTypeContentDeserializerState::TupdateProducts(
+                    *self.state = BmecatElementTypeContentDeserializerState::TUpdateProducts(
                         values,
                         Some(deserializer),
                     );
@@ -5768,8 +5768,8 @@ pub mod quick_xml_deserialize {
         fn handle_t_update_prices<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::TupdatePricesElementType>,
-            output: DeserializerOutput<'de, super::TupdatePricesElementType>,
+            mut values: Option<super::TUpdatePricesElementType>,
+            output: DeserializerOutput<'de, super::TUpdatePricesElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5783,10 +5783,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => BmecatElementTypeContentDeserializerState::Init__,
-                    Some(BmecatElementTypeContentDeserializerState::TupdatePrices(
+                    Some(BmecatElementTypeContentDeserializerState::TUpdatePrices(
                         _,
                         Some(deserializer),
-                    )) => BmecatElementTypeContentDeserializerState::TupdatePrices(
+                    )) => BmecatElementTypeContentDeserializerState::TUpdatePrices(
                         values,
                         Some(deserializer),
                     ),
@@ -5796,7 +5796,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(BmecatElementTypeContentDeserializerState::TupdatePrices(
+                Some(BmecatElementTypeContentDeserializerState::TUpdatePrices(
                     _,
                     Some(deserializer),
                 )) => {
@@ -5811,13 +5811,13 @@ pub mod quick_xml_deserialize {
                     Self::store_t_update_prices(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        BmecatElementTypeContentDeserializerState::TupdatePrices(values, None),
+                        BmecatElementTypeContentDeserializerState::TUpdatePrices(values, None),
                     )?;
                     *self.state = BmecatElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = BmecatElementTypeContentDeserializerState::TupdatePrices(
+                    *self.state = BmecatElementTypeContentDeserializerState::TUpdatePrices(
                         values,
                         Some(deserializer),
                     );
@@ -5828,8 +5828,8 @@ pub mod quick_xml_deserialize {
         fn handle_t_new_productdata<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::TnewProductdataElementType>,
-            output: DeserializerOutput<'de, super::TnewProductdataElementType>,
+            mut values: Option<super::TNewProductdataElementType>,
+            output: DeserializerOutput<'de, super::TNewProductdataElementType>,
             fallback: &mut Option<BmecatElementTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5843,10 +5843,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => BmecatElementTypeContentDeserializerState::Init__,
-                    Some(BmecatElementTypeContentDeserializerState::TnewProductdata(
+                    Some(BmecatElementTypeContentDeserializerState::TNewProductdata(
                         _,
                         Some(deserializer),
-                    )) => BmecatElementTypeContentDeserializerState::TnewProductdata(
+                    )) => BmecatElementTypeContentDeserializerState::TNewProductdata(
                         values,
                         Some(deserializer),
                     ),
@@ -5856,7 +5856,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(BmecatElementTypeContentDeserializerState::TnewProductdata(
+                Some(BmecatElementTypeContentDeserializerState::TNewProductdata(
                     _,
                     Some(deserializer),
                 )) => {
@@ -5871,13 +5871,13 @@ pub mod quick_xml_deserialize {
                     Self::store_t_new_productdata(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        BmecatElementTypeContentDeserializerState::TnewProductdata(values, None),
+                        BmecatElementTypeContentDeserializerState::TNewProductdata(values, None),
                     )?;
                     *self.state = BmecatElementTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = BmecatElementTypeContentDeserializerState::TnewProductdata(
+                    *self.state = BmecatElementTypeContentDeserializerState::TNewProductdata(
                         values,
                         Some(deserializer),
                     );
@@ -5933,7 +5933,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TnewCatalog(values, Some(deserializer)), event) => {
+                    (S::TNewCatalog(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -5942,7 +5942,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TupdateProducts(values, Some(deserializer)), event) => {
+                    (S::TUpdateProducts(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_t_update_products(
                             reader,
@@ -5956,7 +5956,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TupdatePrices(values, Some(deserializer)), event) => {
+                    (S::TUpdatePrices(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -5965,7 +5965,7 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TnewProductdata(values, Some(deserializer)), event) => {
+                    (S::TNewProductdata(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_t_new_productdata(
                             reader,
@@ -6006,8 +6006,8 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TnewCatalog(values, None), event) => {
-                        let output = < super :: TnewCatalogElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    (S::TNewCatalog(values, None), event) => {
+                        let output = < super :: TNewCatalogElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6015,8 +6015,8 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TupdateProducts(values, None), event) => {
-                        let output = < super :: TupdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    (S::TUpdateProducts(values, None), event) => {
+                        let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         match self.handle_t_update_products(
                             reader,
                             values,
@@ -6029,8 +6029,8 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TupdatePrices(values, None), event) => {
-                        let output = < super :: TupdatePricesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    (S::TUpdatePrices(values, None), event) => {
+                        let output = < super :: TUpdatePricesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6038,8 +6038,8 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::TnewProductdata(values, None), event) => {
-                        let output = < super :: TnewProductdataElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    (S::TNewProductdata(values, None), event) => {
+                        let output = < super :: TNewProductdataElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         match self.handle_t_new_productdata(
                             reader,
                             values,
@@ -6714,18 +6714,18 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TnewCatalogElementTypeDeserializer {
-        product: Vec<super::TnewCatalogProductElementType>,
-        state: Box<TnewCatalogElementTypeDeserializerState>,
+    pub struct TNewCatalogElementTypeDeserializer {
+        product: Vec<super::TNewCatalogProductElementType>,
+        state: Box<TNewCatalogElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TnewCatalogElementTypeDeserializerState {
+    enum TNewCatalogElementTypeDeserializerState {
         Init__,
-        Product(Option<<super::TnewCatalogProductElementType as WithDeserializer>::Deserializer>),
+        Product(Option<<super::TNewCatalogProductElementType as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl TnewCatalogElementTypeDeserializer {
+    impl TNewCatalogElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -6736,18 +6736,18 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 product: Vec::new(),
-                state: Box::new(TnewCatalogElementTypeDeserializerState::Init__),
+                state: Box::new(TNewCatalogElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TnewCatalogElementTypeDeserializerState,
+            state: TNewCatalogElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TnewCatalogElementTypeDeserializerState as S;
+            use TNewCatalogElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
                     self.store_product(deserializer.finish(reader)?)?
@@ -6758,7 +6758,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_product(
             &mut self,
-            value: super::TnewCatalogProductElementType,
+            value: super::TNewCatalogProductElementType,
         ) -> Result<(), Error> {
             self.product.push(value);
             Ok(())
@@ -6766,8 +6766,8 @@ pub mod quick_xml_deserialize {
         fn handle_product<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TnewCatalogProductElementType>,
-            fallback: &mut Option<TnewCatalogElementTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::TNewCatalogProductElementType>,
+            fallback: &mut Option<TNewCatalogElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -6779,11 +6779,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.product.len() < 1usize {
-                    *self.state = TnewCatalogElementTypeDeserializerState::Product(None);
+                    *self.state = TNewCatalogElementTypeDeserializerState::Product(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
-                    fallback.get_or_insert(TnewCatalogElementTypeDeserializerState::Product(None));
-                    *self.state = TnewCatalogElementTypeDeserializerState::Done__;
+                    fallback.get_or_insert(TNewCatalogElementTypeDeserializerState::Product(None));
+                    *self.state = TNewCatalogElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -6794,7 +6794,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product(data)?;
-                    *self.state = TnewCatalogElementTypeDeserializerState::Product(None);
+                    *self.state = TNewCatalogElementTypeDeserializerState::Product(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -6802,19 +6802,19 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogElementTypeDeserializerState::Product(Some(
+                                TNewCatalogElementTypeDeserializerState::Product(Some(
                                     deserializer,
                                 )),
                             );
                             if self.product.len().saturating_add(1) < 1usize {
                                 *self.state =
-                                    TnewCatalogElementTypeDeserializerState::Product(None);
+                                    TNewCatalogElementTypeDeserializerState::Product(None);
                             } else {
-                                *self.state = TnewCatalogElementTypeDeserializerState::Done__;
+                                *self.state = TNewCatalogElementTypeDeserializerState::Done__;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = TnewCatalogElementTypeDeserializerState::Product(Some(
+                            *self.state = TNewCatalogElementTypeDeserializerState::Product(Some(
                                 deserializer,
                             ));
                         }
@@ -6824,11 +6824,11 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TnewCatalogElementType> for TnewCatalogElementTypeDeserializer {
+    impl<'de> Deserializer<'de, super::TNewCatalogElementType> for TNewCatalogElementTypeDeserializer {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewCatalogElementType>
+        ) -> DeserializerResult<'de, super::TNewCatalogElementType>
         where
             R: DeserializeReader,
         {
@@ -6838,11 +6838,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewCatalogElementType>
+        ) -> DeserializerResult<'de, super::TNewCatalogElementType>
         where
             R: DeserializeReader,
         {
-            use TnewCatalogElementTypeDeserializerState as S;
+            use TNewCatalogElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -6873,13 +6873,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = TnewCatalogElementTypeDeserializerState::Product(None);
+                        *self.state = TNewCatalogElementTypeDeserializerState::Product(None);
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
                         {
-                            let output = < super :: TnewCatalogProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = < super :: TNewCatalogProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                             match self.handle_product(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -6914,36 +6914,36 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TnewCatalogElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TNewCatalogElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TnewCatalogElementTypeDeserializerState::Unknown__,
+                TNewCatalogElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TnewCatalogElementType {
+            Ok(super::TNewCatalogElementType {
                 product: self.product,
             })
         }
     }
     #[derive(Debug)]
-    pub struct TupdateProductsElementTypeDeserializer {
+    pub struct TUpdateProductsElementTypeDeserializer {
         prev_version: i32,
-        product: Vec<super::TupdateProductsProductElementType>,
-        state: Box<TupdateProductsElementTypeDeserializerState>,
+        product: Vec<super::TUpdateProductsProductElementType>,
+        state: Box<TUpdateProductsElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TupdateProductsElementTypeDeserializerState {
+    enum TUpdateProductsElementTypeDeserializerState {
         Init__,
         Product(
-            Option<<super::TupdateProductsProductElementType as WithDeserializer>::Deserializer>,
+            Option<<super::TUpdateProductsProductElementType as WithDeserializer>::Deserializer>,
         ),
         Done__,
         Unknown__,
     }
-    impl TupdateProductsElementTypeDeserializer {
+    impl TUpdateProductsElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -6965,18 +6965,18 @@ pub mod quick_xml_deserialize {
                     reader.map_error(ErrorKind::MissingAttribute("prev_version".into()))
                 })?,
                 product: Vec::new(),
-                state: Box::new(TupdateProductsElementTypeDeserializerState::Init__),
+                state: Box::new(TUpdateProductsElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TupdateProductsElementTypeDeserializerState,
+            state: TUpdateProductsElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TupdateProductsElementTypeDeserializerState as S;
+            use TUpdateProductsElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
                     self.store_product(deserializer.finish(reader)?)?
@@ -6987,7 +6987,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_product(
             &mut self,
-            value: super::TupdateProductsProductElementType,
+            value: super::TUpdateProductsProductElementType,
         ) -> Result<(), Error> {
             self.product.push(value);
             Ok(())
@@ -6995,8 +6995,8 @@ pub mod quick_xml_deserialize {
         fn handle_product<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TupdateProductsProductElementType>,
-            fallback: &mut Option<TupdateProductsElementTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::TUpdateProductsProductElementType>,
+            fallback: &mut Option<TUpdateProductsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7008,12 +7008,12 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.product.len() < 1usize {
-                    *self.state = TupdateProductsElementTypeDeserializerState::Product(None);
+                    *self.state = TUpdateProductsElementTypeDeserializerState::Product(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback
-                        .get_or_insert(TupdateProductsElementTypeDeserializerState::Product(None));
-                    *self.state = TupdateProductsElementTypeDeserializerState::Done__;
+                        .get_or_insert(TUpdateProductsElementTypeDeserializerState::Product(None));
+                    *self.state = TUpdateProductsElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -7024,7 +7024,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product(data)?;
-                    *self.state = TupdateProductsElementTypeDeserializerState::Product(None);
+                    *self.state = TUpdateProductsElementTypeDeserializerState::Product(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -7032,19 +7032,19 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdateProductsElementTypeDeserializerState::Product(Some(
+                                TUpdateProductsElementTypeDeserializerState::Product(Some(
                                     deserializer,
                                 )),
                             );
                             if self.product.len().saturating_add(1) < 1usize {
                                 *self.state =
-                                    TupdateProductsElementTypeDeserializerState::Product(None);
+                                    TUpdateProductsElementTypeDeserializerState::Product(None);
                             } else {
-                                *self.state = TupdateProductsElementTypeDeserializerState::Done__;
+                                *self.state = TUpdateProductsElementTypeDeserializerState::Done__;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = TupdateProductsElementTypeDeserializerState::Product(
+                            *self.state = TUpdateProductsElementTypeDeserializerState::Product(
                                 Some(deserializer),
                             );
                         }
@@ -7054,13 +7054,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TupdateProductsElementType>
-        for TupdateProductsElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TUpdateProductsElementType>
+        for TUpdateProductsElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdateProductsElementType>
+        ) -> DeserializerResult<'de, super::TUpdateProductsElementType>
         where
             R: DeserializeReader,
         {
@@ -7070,11 +7070,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdateProductsElementType>
+        ) -> DeserializerResult<'de, super::TUpdateProductsElementType>
         where
             R: DeserializeReader,
         {
-            use TupdateProductsElementTypeDeserializerState as S;
+            use TUpdateProductsElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -7105,13 +7105,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = TupdateProductsElementTypeDeserializerState::Product(None);
+                        *self.state = TUpdateProductsElementTypeDeserializerState::Product(None);
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
                         {
-                            let output = < super :: TupdateProductsProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = < super :: TUpdateProductsProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                             match self.handle_product(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -7146,35 +7146,35 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TupdateProductsElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdateProductsElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TupdateProductsElementTypeDeserializerState::Unknown__,
+                TUpdateProductsElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TupdateProductsElementType {
+            Ok(super::TUpdateProductsElementType {
                 prev_version: self.prev_version,
                 product: self.product,
             })
         }
     }
     #[derive(Debug)]
-    pub struct TupdatePricesElementTypeDeserializer {
+    pub struct TUpdatePricesElementTypeDeserializer {
         prev_version: i32,
-        product: Vec<super::TupdatePricesProductElementType>,
-        state: Box<TupdatePricesElementTypeDeserializerState>,
+        product: Vec<super::TUpdatePricesProductElementType>,
+        state: Box<TUpdatePricesElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TupdatePricesElementTypeDeserializerState {
+    enum TUpdatePricesElementTypeDeserializerState {
         Init__,
-        Product(Option<<super::TupdatePricesProductElementType as WithDeserializer>::Deserializer>),
+        Product(Option<<super::TUpdatePricesProductElementType as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl TupdatePricesElementTypeDeserializer {
+    impl TUpdatePricesElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -7196,18 +7196,18 @@ pub mod quick_xml_deserialize {
                     reader.map_error(ErrorKind::MissingAttribute("prev_version".into()))
                 })?,
                 product: Vec::new(),
-                state: Box::new(TupdatePricesElementTypeDeserializerState::Init__),
+                state: Box::new(TUpdatePricesElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TupdatePricesElementTypeDeserializerState,
+            state: TUpdatePricesElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TupdatePricesElementTypeDeserializerState as S;
+            use TUpdatePricesElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
                     self.store_product(deserializer.finish(reader)?)?
@@ -7218,7 +7218,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_product(
             &mut self,
-            value: super::TupdatePricesProductElementType,
+            value: super::TUpdatePricesProductElementType,
         ) -> Result<(), Error> {
             self.product.push(value);
             Ok(())
@@ -7226,8 +7226,8 @@ pub mod quick_xml_deserialize {
         fn handle_product<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TupdatePricesProductElementType>,
-            fallback: &mut Option<TupdatePricesElementTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::TUpdatePricesProductElementType>,
+            fallback: &mut Option<TUpdatePricesElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7239,12 +7239,12 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.product.len() < 1usize {
-                    *self.state = TupdatePricesElementTypeDeserializerState::Product(None);
+                    *self.state = TUpdatePricesElementTypeDeserializerState::Product(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback
-                        .get_or_insert(TupdatePricesElementTypeDeserializerState::Product(None));
-                    *self.state = TupdatePricesElementTypeDeserializerState::Done__;
+                        .get_or_insert(TUpdatePricesElementTypeDeserializerState::Product(None));
+                    *self.state = TUpdatePricesElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -7255,7 +7255,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product(data)?;
-                    *self.state = TupdatePricesElementTypeDeserializerState::Product(None);
+                    *self.state = TUpdatePricesElementTypeDeserializerState::Product(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -7263,19 +7263,19 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdatePricesElementTypeDeserializerState::Product(Some(
+                                TUpdatePricesElementTypeDeserializerState::Product(Some(
                                     deserializer,
                                 )),
                             );
                             if self.product.len().saturating_add(1) < 1usize {
                                 *self.state =
-                                    TupdatePricesElementTypeDeserializerState::Product(None);
+                                    TUpdatePricesElementTypeDeserializerState::Product(None);
                             } else {
-                                *self.state = TupdatePricesElementTypeDeserializerState::Done__;
+                                *self.state = TUpdatePricesElementTypeDeserializerState::Done__;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = TupdatePricesElementTypeDeserializerState::Product(Some(
+                            *self.state = TUpdatePricesElementTypeDeserializerState::Product(Some(
                                 deserializer,
                             ));
                         }
@@ -7285,13 +7285,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TupdatePricesElementType>
-        for TupdatePricesElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TUpdatePricesElementType>
+        for TUpdatePricesElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdatePricesElementType>
+        ) -> DeserializerResult<'de, super::TUpdatePricesElementType>
         where
             R: DeserializeReader,
         {
@@ -7301,11 +7301,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdatePricesElementType>
+        ) -> DeserializerResult<'de, super::TUpdatePricesElementType>
         where
             R: DeserializeReader,
         {
-            use TupdatePricesElementTypeDeserializerState as S;
+            use TUpdatePricesElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -7336,13 +7336,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = TupdatePricesElementTypeDeserializerState::Product(None);
+                        *self.state = TUpdatePricesElementTypeDeserializerState::Product(None);
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
                         {
-                            let output = < super :: TupdatePricesProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = < super :: TUpdatePricesProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                             match self.handle_product(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -7377,36 +7377,36 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TupdatePricesElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdatePricesElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TupdatePricesElementTypeDeserializerState::Unknown__,
+                TUpdatePricesElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TupdatePricesElementType {
+            Ok(super::TUpdatePricesElementType {
                 prev_version: self.prev_version,
                 product: self.product,
             })
         }
     }
     #[derive(Debug)]
-    pub struct TnewProductdataElementTypeDeserializer {
-        product: Vec<super::TnewProductdataProductElementType>,
-        state: Box<TnewProductdataElementTypeDeserializerState>,
+    pub struct TNewProductdataElementTypeDeserializer {
+        product: Vec<super::TNewProductdataProductElementType>,
+        state: Box<TNewProductdataElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TnewProductdataElementTypeDeserializerState {
+    enum TNewProductdataElementTypeDeserializerState {
         Init__,
         Product(
-            Option<<super::TnewProductdataProductElementType as WithDeserializer>::Deserializer>,
+            Option<<super::TNewProductdataProductElementType as WithDeserializer>::Deserializer>,
         ),
         Done__,
         Unknown__,
     }
-    impl TnewProductdataElementTypeDeserializer {
+    impl TNewProductdataElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -7417,18 +7417,18 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 product: Vec::new(),
-                state: Box::new(TnewProductdataElementTypeDeserializerState::Init__),
+                state: Box::new(TNewProductdataElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TnewProductdataElementTypeDeserializerState,
+            state: TNewProductdataElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TnewProductdataElementTypeDeserializerState as S;
+            use TNewProductdataElementTypeDeserializerState as S;
             match state {
                 S::Product(Some(deserializer)) => {
                     self.store_product(deserializer.finish(reader)?)?
@@ -7439,7 +7439,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_product(
             &mut self,
-            value: super::TnewProductdataProductElementType,
+            value: super::TNewProductdataProductElementType,
         ) -> Result<(), Error> {
             self.product.push(value);
             Ok(())
@@ -7447,8 +7447,8 @@ pub mod quick_xml_deserialize {
         fn handle_product<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TnewProductdataProductElementType>,
-            fallback: &mut Option<TnewProductdataElementTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::TNewProductdataProductElementType>,
+            fallback: &mut Option<TNewProductdataElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7460,12 +7460,12 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.product.len() < 1usize {
-                    *self.state = TnewProductdataElementTypeDeserializerState::Product(None);
+                    *self.state = TNewProductdataElementTypeDeserializerState::Product(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback
-                        .get_or_insert(TnewProductdataElementTypeDeserializerState::Product(None));
-                    *self.state = TnewProductdataElementTypeDeserializerState::Done__;
+                        .get_or_insert(TNewProductdataElementTypeDeserializerState::Product(None));
+                    *self.state = TNewProductdataElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -7476,7 +7476,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product(data)?;
-                    *self.state = TnewProductdataElementTypeDeserializerState::Product(None);
+                    *self.state = TNewProductdataElementTypeDeserializerState::Product(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -7484,19 +7484,19 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewProductdataElementTypeDeserializerState::Product(Some(
+                                TNewProductdataElementTypeDeserializerState::Product(Some(
                                     deserializer,
                                 )),
                             );
                             if self.product.len().saturating_add(1) < 1usize {
                                 *self.state =
-                                    TnewProductdataElementTypeDeserializerState::Product(None);
+                                    TNewProductdataElementTypeDeserializerState::Product(None);
                             } else {
-                                *self.state = TnewProductdataElementTypeDeserializerState::Done__;
+                                *self.state = TNewProductdataElementTypeDeserializerState::Done__;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = TnewProductdataElementTypeDeserializerState::Product(
+                            *self.state = TNewProductdataElementTypeDeserializerState::Product(
                                 Some(deserializer),
                             );
                         }
@@ -7506,13 +7506,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TnewProductdataElementType>
-        for TnewProductdataElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TNewProductdataElementType>
+        for TNewProductdataElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewProductdataElementType>
+        ) -> DeserializerResult<'de, super::TNewProductdataElementType>
         where
             R: DeserializeReader,
         {
@@ -7522,11 +7522,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewProductdataElementType>
+        ) -> DeserializerResult<'de, super::TNewProductdataElementType>
         where
             R: DeserializeReader,
         {
-            use TnewProductdataElementTypeDeserializerState as S;
+            use TNewProductdataElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -7557,13 +7557,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = TnewProductdataElementTypeDeserializerState::Product(None);
+                        *self.state = TNewProductdataElementTypeDeserializerState::Product(None);
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
                         {
-                            let output = < super :: TnewProductdataProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = < super :: TNewProductdataProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                             match self.handle_product(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -7598,16 +7598,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TnewProductdataElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TNewProductdataElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TnewProductdataElementTypeDeserializerState::Unknown__,
+                TNewProductdataElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TnewProductdataElementType {
+            Ok(super::TNewProductdataElementType {
                 product: self.product,
             })
         }
@@ -9569,8 +9569,8 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TnewCatalogProductElementTypeDeserializer {
-        mode: super::TnewCatalogProductmodeType,
+    pub struct TNewCatalogProductElementTypeDeserializer {
+        mode: super::TNewCatalogProductmodeType,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
@@ -9579,10 +9579,10 @@ pub mod quick_xml_deserialize {
         user_defined_extensions: Option<super::UdxProductType>,
         product_reference: Vec<super::ProductReferenceElementType>,
         product_logistic_details: Option<super::ProductLogisticDetailsElementType>,
-        state: Box<TnewCatalogProductElementTypeDeserializerState>,
+        state: Box<TNewCatalogProductElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TnewCatalogProductElementTypeDeserializerState {
+    enum TNewCatalogProductElementTypeDeserializerState {
         Init__,
         SupplierPid(Option<<String as WithDeserializer>::Deserializer>),
         ProductDetails(
@@ -9607,12 +9607,12 @@ pub mod quick_xml_deserialize {
         Done__,
         Unknown__,
     }
-    impl TnewCatalogProductElementTypeDeserializer {
+    impl TNewCatalogProductElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TnewCatalogProductmodeType> = None;
+            let mut mode: Option<super::TNewCatalogProductmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -9625,7 +9625,7 @@ pub mod quick_xml_deserialize {
                 }
             }
             Ok(Self {
-                mode: mode.unwrap_or_else(super::TnewCatalogProductElementType::default_mode),
+                mode: mode.unwrap_or_else(super::TNewCatalogProductElementType::default_mode),
                 supplier_pid: None,
                 product_details: None,
                 product_features: Vec::new(),
@@ -9634,18 +9634,18 @@ pub mod quick_xml_deserialize {
                 user_defined_extensions: None,
                 product_reference: Vec::new(),
                 product_logistic_details: None,
-                state: Box::new(TnewCatalogProductElementTypeDeserializerState::Init__),
+                state: Box::new(TNewCatalogProductElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TnewCatalogProductElementTypeDeserializerState,
+            state: TNewCatalogProductElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TnewCatalogProductElementTypeDeserializerState as S;
+            use TNewCatalogProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
                     self.store_supplier_pid(deserializer.finish(reader)?)?
@@ -9757,7 +9757,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9770,13 +9770,13 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.supplier_pid.is_some() {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::SupplierPid(None),
+                        TNewCatalogProductElementTypeDeserializerState::SupplierPid(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = TnewCatalogProductElementTypeDeserializerState::SupplierPid(None);
+                    *self.state = TNewCatalogProductElementTypeDeserializerState::SupplierPid(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9788,7 +9788,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_supplier_pid(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9796,18 +9796,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::SupplierPid(Some(
+                                TNewCatalogProductElementTypeDeserializerState::SupplierPid(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductDetails(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::SupplierPid(Some(
+                                TNewCatalogProductElementTypeDeserializerState::SupplierPid(Some(
                                     deserializer,
                                 ));
                         }
@@ -9820,7 +9820,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductDetailsElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9833,14 +9833,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_details.is_some() {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::ProductDetails(None),
+                        TNewCatalogProductElementTypeDeserializerState::ProductDetails(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9852,7 +9852,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_details(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9860,18 +9860,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::ProductDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductFeatures(
+                                TNewCatalogProductElementTypeDeserializerState::ProductFeatures(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 );
                         }
@@ -9884,7 +9884,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductFeaturesElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9897,14 +9897,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_features.len() < 1usize {
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::ProductFeatures(None),
+                        TNewCatalogProductElementTypeDeserializerState::ProductFeatures(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -9916,7 +9916,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_features(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9924,22 +9924,22 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::ProductFeatures(
+                                TNewCatalogProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 ),
                             );
                             if self.product_features.len().saturating_add(1) < 1usize {
                                 *self.state =
-                                    TnewCatalogProductElementTypeDeserializerState::ProductFeatures(
+                                    TNewCatalogProductElementTypeDeserializerState::ProductFeatures(
                                         None,
                                     );
                             } else {
-                                * self . state = TnewCatalogProductElementTypeDeserializerState :: ProductOrderDetails (None) ;
+                                * self . state = TNewCatalogProductElementTypeDeserializerState :: ProductOrderDetails (None) ;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductFeatures(
+                                TNewCatalogProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 );
                         }
@@ -9952,7 +9952,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductOrderDetailsElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9965,14 +9965,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_order_details.is_some() {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None),
+                        TNewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductOrderDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9984,7 +9984,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_order_details(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9992,18 +9992,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::ProductOrderDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductOrderDetails(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductOrderDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductOrderDetails(
                                     Some(deserializer),
                                 );
                         }
@@ -10016,7 +10016,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10029,14 +10029,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_price_details.len() < 1usize {
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None),
+                        TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None);
+                        TNewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -10048,7 +10048,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_price_details(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -10056,19 +10056,19 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
                                     Some(deserializer),
                                 ),
                             );
                             if self.product_price_details.len().saturating_add(1) < 1usize {
-                                * self . state = TnewCatalogProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
+                                * self . state = TNewCatalogProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
                             } else {
-                                * self . state = TnewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
+                                * self . state = TNewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
+                                TNewCatalogProductElementTypeDeserializerState::ProductPriceDetails(
                                     Some(deserializer),
                                 );
                         }
@@ -10081,7 +10081,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxProductType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10094,14 +10094,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.user_defined_extensions.is_some() {
                     fallback.get_or_insert(
-                        TnewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None),
+                        TNewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None),
                     );
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductReference(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductReference(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None);
+                        TNewCatalogProductElementTypeDeserializerState::UserDefinedExtensions(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -10113,21 +10113,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_user_defined_extensions(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductReference(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TnewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
+                            fallback . get_or_insert (TNewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductReference(
+                                TNewCatalogProductElementTypeDeserializerState::ProductReference(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TnewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
+                            * self . state = TNewCatalogProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -10138,7 +10138,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductReferenceElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10150,10 +10150,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TnewCatalogProductElementTypeDeserializerState::ProductReference(None),
+                    TNewCatalogProductElementTypeDeserializerState::ProductReference(None),
                 );
                 *self.state =
-                    TnewCatalogProductElementTypeDeserializerState::ProductLogisticDetails(None);
+                    TNewCatalogProductElementTypeDeserializerState::ProductLogisticDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10164,7 +10164,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_reference(data)?;
                     *self.state =
-                        TnewCatalogProductElementTypeDeserializerState::ProductReference(None);
+                        TNewCatalogProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -10172,18 +10172,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewCatalogProductElementTypeDeserializerState::ProductReference(
+                                TNewCatalogProductElementTypeDeserializerState::ProductReference(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductReference(
+                                TNewCatalogProductElementTypeDeserializerState::ProductReference(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewCatalogProductElementTypeDeserializerState::ProductReference(
+                                TNewCatalogProductElementTypeDeserializerState::ProductReference(
                                     Some(deserializer),
                                 );
                         }
@@ -10196,7 +10196,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductLogisticDetailsElementType>,
-            fallback: &mut Option<TnewCatalogProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10208,9 +10208,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TnewCatalogProductElementTypeDeserializerState::ProductLogisticDetails(None),
+                    TNewCatalogProductElementTypeDeserializerState::ProductLogisticDetails(None),
                 );
-                *self.state = TnewCatalogProductElementTypeDeserializerState::Done__;
+                *self.state = TNewCatalogProductElementTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10220,18 +10220,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product_logistic_details(data)?;
-                    *self.state = TnewCatalogProductElementTypeDeserializerState::Done__;
+                    *self.state = TNewCatalogProductElementTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TnewCatalogProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer))) ;
-                            *self.state = TnewCatalogProductElementTypeDeserializerState::Done__;
+                            fallback . get_or_insert (TNewCatalogProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer))) ;
+                            *self.state = TNewCatalogProductElementTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TnewCatalogProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer)) ;
+                            * self . state = TNewCatalogProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -10239,13 +10239,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TnewCatalogProductElementType>
-        for TnewCatalogProductElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TNewCatalogProductElementType>
+        for TNewCatalogProductElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewCatalogProductElementType>
+        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType>
         where
             R: DeserializeReader,
         {
@@ -10255,11 +10255,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewCatalogProductElementType>
+        ) -> DeserializerResult<'de, super::TNewCatalogProductElementType>
         where
             R: DeserializeReader,
         {
-            use TnewCatalogProductElementTypeDeserializerState as S;
+            use TNewCatalogProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -10375,7 +10375,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
                         *self.state =
-                            TnewCatalogProductElementTypeDeserializerState::SupplierPid(None);
+                            TNewCatalogProductElementTypeDeserializerState::SupplierPid(None);
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10592,16 +10592,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TnewCatalogProductElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TNewCatalogProductElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TnewCatalogProductElementTypeDeserializerState::Unknown__,
+                TNewCatalogProductElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TnewCatalogProductElementType {
+            Ok(super::TNewCatalogProductElementType {
                 mode: self.mode,
                 supplier_pid: self
                     .supplier_pid
@@ -10623,8 +10623,8 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TupdateProductsProductElementTypeDeserializer {
-        mode: super::TupdateProductsProductmodeType,
+    pub struct TUpdateProductsProductElementTypeDeserializer {
+        mode: super::TUpdateProductsProductmodeType,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
@@ -10633,10 +10633,10 @@ pub mod quick_xml_deserialize {
         user_defined_extensions: Option<super::UdxProductType>,
         product_reference: Vec<super::ProductReferenceElementType>,
         product_logistic_details: Option<super::ProductLogisticDetailsElementType>,
-        state: Box<TupdateProductsProductElementTypeDeserializerState>,
+        state: Box<TUpdateProductsProductElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TupdateProductsProductElementTypeDeserializerState {
+    enum TUpdateProductsProductElementTypeDeserializerState {
         Init__,
         SupplierPid(Option<<String as WithDeserializer>::Deserializer>),
         ProductDetails(
@@ -10661,12 +10661,12 @@ pub mod quick_xml_deserialize {
         Done__,
         Unknown__,
     }
-    impl TupdateProductsProductElementTypeDeserializer {
+    impl TUpdateProductsProductElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TupdateProductsProductmodeType> = None;
+            let mut mode: Option<super::TUpdateProductsProductmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -10689,18 +10689,18 @@ pub mod quick_xml_deserialize {
                 user_defined_extensions: None,
                 product_reference: Vec::new(),
                 product_logistic_details: None,
-                state: Box::new(TupdateProductsProductElementTypeDeserializerState::Init__),
+                state: Box::new(TUpdateProductsProductElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TupdateProductsProductElementTypeDeserializerState,
+            state: TUpdateProductsProductElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TupdateProductsProductElementTypeDeserializerState as S;
+            use TUpdateProductsProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
                     self.store_supplier_pid(deserializer.finish(reader)?)?
@@ -10812,7 +10812,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10825,14 +10825,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.supplier_pid.is_some() {
                     fallback.get_or_insert(
-                        TupdateProductsProductElementTypeDeserializerState::SupplierPid(None),
+                        TUpdateProductsProductElementTypeDeserializerState::SupplierPid(None),
                     );
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductDetails(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::SupplierPid(None);
+                        TUpdateProductsProductElementTypeDeserializerState::SupplierPid(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -10844,7 +10844,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_supplier_pid(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductDetails(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -10852,18 +10852,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdateProductsProductElementTypeDeserializerState::SupplierPid(
+                                TUpdateProductsProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::ProductDetails(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductDetails(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::SupplierPid(
+                                TUpdateProductsProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 );
                         }
@@ -10876,7 +10876,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductDetailsElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10889,14 +10889,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_details.is_some() {
                     fallback.get_or_insert(
-                        TupdateProductsProductElementTypeDeserializerState::ProductDetails(None),
+                        TUpdateProductsProductElementTypeDeserializerState::ProductDetails(None),
                     );
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductDetails(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -10908,7 +10908,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_details(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -10916,18 +10916,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdateProductsProductElementTypeDeserializerState::ProductDetails(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::ProductFeatures(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::ProductDetails(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 );
                         }
@@ -10940,7 +10940,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductFeaturesElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -10952,10 +10952,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TupdateProductsProductElementTypeDeserializerState::ProductFeatures(None),
+                    TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(None),
                 );
                 *self.state =
-                    TupdateProductsProductElementTypeDeserializerState::ProductOrderDetails(None);
+                    TUpdateProductsProductElementTypeDeserializerState::ProductOrderDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -10966,7 +10966,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_features(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -10974,18 +10974,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdateProductsProductElementTypeDeserializerState::ProductFeatures(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::ProductFeatures(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::ProductFeatures(
+                                TUpdateProductsProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 );
                         }
@@ -10998,7 +10998,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductOrderDetailsElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11011,18 +11011,18 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_order_details.is_some() {
                     fallback.get_or_insert(
-                        TupdateProductsProductElementTypeDeserializerState::ProductOrderDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductOrderDetails(
                             None,
                         ),
                     );
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
                             None,
                         );
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductOrderDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductOrderDetails(
                             None,
                         );
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -11036,7 +11036,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_order_details(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
                             None,
                         );
                     ElementHandlerOutput::from_event(event, allow_any)
@@ -11045,11 +11045,11 @@ pub mod quick_xml_deserialize {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdateProductsProductElementTypeDeserializerState :: ProductOrderDetails (Some (deserializer))) ;
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
+                            fallback . get_or_insert (TUpdateProductsProductElementTypeDeserializerState :: ProductOrderDetails (Some (deserializer))) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductOrderDetails (Some (deserializer)) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductOrderDetails (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11060,7 +11060,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11073,18 +11073,18 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_price_details.len() < 1usize {
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
                             None,
                         );
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(
-                        TupdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
                             None,
                         ),
                     );
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::UserDefinedExtensions(
+                        TUpdateProductsProductElementTypeDeserializerState::UserDefinedExtensions(
                             None,
                         );
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
@@ -11098,7 +11098,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_price_details(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
+                        TUpdateProductsProductElementTypeDeserializerState::ProductPriceDetails(
                             None,
                         );
                     ElementHandlerOutput::from_event(event, allow_any)
@@ -11107,15 +11107,15 @@ pub mod quick_xml_deserialize {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer))) ;
+                            fallback . get_or_insert (TUpdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer))) ;
                             if self.product_price_details.len().saturating_add(1) < 1usize {
-                                * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
+                                * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
                             } else {
-                                * self . state = TupdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
+                                * self . state = TUpdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer)) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11126,7 +11126,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxProductType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11138,10 +11138,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TupdateProductsProductElementTypeDeserializerState::UserDefinedExtensions(None),
+                    TUpdateProductsProductElementTypeDeserializerState::UserDefinedExtensions(None),
                 );
                 *self.state =
-                    TupdateProductsProductElementTypeDeserializerState::ProductReference(None);
+                    TUpdateProductsProductElementTypeDeserializerState::ProductReference(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11152,18 +11152,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_user_defined_extensions(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductReference(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductReference (None) ;
+                            fallback . get_or_insert (TUpdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductReference (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11174,7 +11174,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductReferenceElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11186,10 +11186,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TupdateProductsProductElementTypeDeserializerState::ProductReference(None),
+                    TUpdateProductsProductElementTypeDeserializerState::ProductReference(None),
                 );
                 *self.state =
-                    TupdateProductsProductElementTypeDeserializerState::ProductLogisticDetails(
+                    TUpdateProductsProductElementTypeDeserializerState::ProductLogisticDetails(
                         None,
                     );
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
@@ -11202,18 +11202,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_reference(data)?;
                     *self.state =
-                        TupdateProductsProductElementTypeDeserializerState::ProductReference(None);
+                        TUpdateProductsProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdateProductsProductElementTypeDeserializerState :: ProductReference (Some (deserializer))) ;
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductReference (None) ;
+                            fallback . get_or_insert (TUpdateProductsProductElementTypeDeserializerState :: ProductReference (Some (deserializer))) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductReference (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductReference (Some (deserializer)) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductReference (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11224,7 +11224,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductLogisticDetailsElementType>,
-            fallback: &mut Option<TupdateProductsProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11236,11 +11236,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TupdateProductsProductElementTypeDeserializerState::ProductLogisticDetails(
+                    TUpdateProductsProductElementTypeDeserializerState::ProductLogisticDetails(
                         None,
                     ),
                 );
-                *self.state = TupdateProductsProductElementTypeDeserializerState::Done__;
+                *self.state = TUpdateProductsProductElementTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11250,19 +11250,19 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_product_logistic_details(data)?;
-                    *self.state = TupdateProductsProductElementTypeDeserializerState::Done__;
+                    *self.state = TUpdateProductsProductElementTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdateProductsProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer))) ;
+                            fallback . get_or_insert (TUpdateProductsProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer))) ;
                             *self.state =
-                                TupdateProductsProductElementTypeDeserializerState::Done__;
+                                TUpdateProductsProductElementTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdateProductsProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer)) ;
+                            * self . state = TUpdateProductsProductElementTypeDeserializerState :: ProductLogisticDetails (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11270,13 +11270,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TupdateProductsProductElementType>
-        for TupdateProductsProductElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TUpdateProductsProductElementType>
+        for TUpdateProductsProductElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdateProductsProductElementType>
+        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType>
         where
             R: DeserializeReader,
         {
@@ -11286,11 +11286,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdateProductsProductElementType>
+        ) -> DeserializerResult<'de, super::TUpdateProductsProductElementType>
         where
             R: DeserializeReader,
         {
-            use TupdateProductsProductElementTypeDeserializerState as S;
+            use TUpdateProductsProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -11406,7 +11406,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
                         *self.state =
-                            TupdateProductsProductElementTypeDeserializerState::SupplierPid(None);
+                            TUpdateProductsProductElementTypeDeserializerState::SupplierPid(None);
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11626,16 +11626,16 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             mut self,
             reader: &R,
-        ) -> Result<super::TupdateProductsProductElementType, Error>
+        ) -> Result<super::TUpdateProductsProductElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TupdateProductsProductElementTypeDeserializerState::Unknown__,
+                TUpdateProductsProductElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TupdateProductsProductElementType {
+            Ok(super::TUpdateProductsProductElementType {
                 mode: self.mode,
                 supplier_pid: self
                     .supplier_pid
@@ -11655,15 +11655,15 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TupdatePricesProductElementTypeDeserializer {
-        mode: super::TupdatePricesProductmodeType,
+    pub struct TUpdatePricesProductElementTypeDeserializer {
+        mode: super::TUpdatePricesProductmodeType,
         supplier_pid: Option<String>,
         product_price_details: Vec<super::ProductPriceDetailsElementType>,
         user_defined_extensions: Option<super::UdxProductType>,
-        state: Box<TupdatePricesProductElementTypeDeserializerState>,
+        state: Box<TUpdatePricesProductElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TupdatePricesProductElementTypeDeserializerState {
+    enum TUpdatePricesProductElementTypeDeserializerState {
         Init__,
         SupplierPid(Option<<String as WithDeserializer>::Deserializer>),
         ProductPriceDetails(
@@ -11673,12 +11673,12 @@ pub mod quick_xml_deserialize {
         Done__,
         Unknown__,
     }
-    impl TupdatePricesProductElementTypeDeserializer {
+    impl TUpdatePricesProductElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TupdatePricesProductmodeType> = None;
+            let mut mode: Option<super::TUpdatePricesProductmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -11691,22 +11691,22 @@ pub mod quick_xml_deserialize {
                 }
             }
             Ok(Self {
-                mode: mode.unwrap_or_else(super::TupdatePricesProductElementType::default_mode),
+                mode: mode.unwrap_or_else(super::TUpdatePricesProductElementType::default_mode),
                 supplier_pid: None,
                 product_price_details: Vec::new(),
                 user_defined_extensions: None,
-                state: Box::new(TupdatePricesProductElementTypeDeserializerState::Init__),
+                state: Box::new(TUpdatePricesProductElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TupdatePricesProductElementTypeDeserializerState,
+            state: TUpdatePricesProductElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TupdatePricesProductElementTypeDeserializerState as S;
+            use TUpdatePricesProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
                     self.store_supplier_pid(deserializer.finish(reader)?)?
@@ -11753,7 +11753,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<TupdatePricesProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11766,14 +11766,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.supplier_pid.is_some() {
                     fallback.get_or_insert(
-                        TupdatePricesProductElementTypeDeserializerState::SupplierPid(None),
+                        TUpdatePricesProductElementTypeDeserializerState::SupplierPid(None),
                     );
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TUpdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::SupplierPid(None);
+                        TUpdatePricesProductElementTypeDeserializerState::SupplierPid(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -11785,7 +11785,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_supplier_pid(data)?;
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TUpdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -11793,15 +11793,15 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TupdatePricesProductElementTypeDeserializerState::SupplierPid(
+                                TUpdatePricesProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 ),
                             );
-                            * self . state = TupdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
+                            * self . state = TUpdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TupdatePricesProductElementTypeDeserializerState::SupplierPid(
+                                TUpdatePricesProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 );
                         }
@@ -11814,7 +11814,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductPriceDetailsElementType>,
-            fallback: &mut Option<TupdatePricesProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11827,14 +11827,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_price_details.len() < 1usize {
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TUpdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(
-                        TupdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None),
+                        TUpdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None),
                     );
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::UserDefinedExtensions(
+                        TUpdatePricesProductElementTypeDeserializerState::UserDefinedExtensions(
                             None,
                         );
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
@@ -11848,22 +11848,22 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_price_details(data)?;
                     *self.state =
-                        TupdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
+                        TUpdatePricesProductElementTypeDeserializerState::ProductPriceDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer))) ;
+                            fallback . get_or_insert (TUpdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer))) ;
                             if self.product_price_details.len().saturating_add(1) < 1usize {
-                                * self . state = TupdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
+                                * self . state = TUpdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (None) ;
                             } else {
-                                * self . state = TupdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
+                                * self . state = TUpdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (None) ;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer)) ;
+                            * self . state = TUpdatePricesProductElementTypeDeserializerState :: ProductPriceDetails (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11874,7 +11874,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxProductType>,
-            fallback: &mut Option<TupdatePricesProductElementTypeDeserializerState>,
+            fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -11886,9 +11886,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TupdatePricesProductElementTypeDeserializerState::UserDefinedExtensions(None),
+                    TUpdatePricesProductElementTypeDeserializerState::UserDefinedExtensions(None),
                 );
-                *self.state = TupdatePricesProductElementTypeDeserializerState::Done__;
+                *self.state = TUpdatePricesProductElementTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -11898,18 +11898,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_user_defined_extensions(data)?;
-                    *self.state = TupdatePricesProductElementTypeDeserializerState::Done__;
+                    *self.state = TUpdatePricesProductElementTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TupdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
-                            *self.state = TupdatePricesProductElementTypeDeserializerState::Done__;
+                            fallback . get_or_insert (TUpdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
+                            *self.state = TUpdatePricesProductElementTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TupdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
+                            * self . state = TUpdatePricesProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -11917,13 +11917,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TupdatePricesProductElementType>
-        for TupdatePricesProductElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TUpdatePricesProductElementType>
+        for TUpdatePricesProductElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdatePricesProductElementType>
+        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType>
         where
             R: DeserializeReader,
         {
@@ -11933,11 +11933,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TupdatePricesProductElementType>
+        ) -> DeserializerResult<'de, super::TUpdatePricesProductElementType>
         where
             R: DeserializeReader,
         {
-            use TupdatePricesProductElementTypeDeserializerState as S;
+            use TUpdatePricesProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -11993,7 +11993,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
                         *self.state =
-                            TupdatePricesProductElementTypeDeserializerState::SupplierPid(None);
+                            TUpdatePricesProductElementTypeDeserializerState::SupplierPid(None);
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12094,16 +12094,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TupdatePricesProductElementType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TUpdatePricesProductElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TupdatePricesProductElementTypeDeserializerState::Unknown__,
+                TUpdatePricesProductElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TupdatePricesProductElementType {
+            Ok(super::TUpdatePricesProductElementType {
                 mode: self.mode,
                 supplier_pid: self
                     .supplier_pid
@@ -12114,17 +12114,17 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TnewProductdataProductElementTypeDeserializer {
-        mode: super::TnewProductdataProductmodeType,
+    pub struct TNewProductdataProductElementTypeDeserializer {
+        mode: super::TNewProductdataProductmodeType,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
         user_defined_extensions: Option<super::UdxProductdataType>,
         product_reference: Vec<super::ProductReferenceElementType>,
-        state: Box<TnewProductdataProductElementTypeDeserializerState>,
+        state: Box<TNewProductdataProductElementTypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum TnewProductdataProductElementTypeDeserializerState {
+    enum TNewProductdataProductElementTypeDeserializerState {
         Init__,
         SupplierPid(Option<<String as WithDeserializer>::Deserializer>),
         ProductDetails(
@@ -12142,12 +12142,12 @@ pub mod quick_xml_deserialize {
         Done__,
         Unknown__,
     }
-    impl TnewProductdataProductElementTypeDeserializer {
+    impl TNewProductdataProductElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TnewProductdataProductmodeType> = None;
+            let mut mode: Option<super::TNewProductdataProductmodeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -12160,24 +12160,24 @@ pub mod quick_xml_deserialize {
                 }
             }
             Ok(Self {
-                mode: mode.unwrap_or_else(super::TnewProductdataProductElementType::default_mode),
+                mode: mode.unwrap_or_else(super::TNewProductdataProductElementType::default_mode),
                 supplier_pid: None,
                 product_details: None,
                 product_features: Vec::new(),
                 user_defined_extensions: None,
                 product_reference: Vec::new(),
-                state: Box::new(TnewProductdataProductElementTypeDeserializerState::Init__),
+                state: Box::new(TNewProductdataProductElementTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TnewProductdataProductElementTypeDeserializerState,
+            state: TNewProductdataProductElementTypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use TnewProductdataProductElementTypeDeserializerState as S;
+            use TNewProductdataProductElementTypeDeserializerState as S;
             match state {
                 S::SupplierPid(Some(deserializer)) => {
                     self.store_supplier_pid(deserializer.finish(reader)?)?
@@ -12249,7 +12249,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<TnewProductdataProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewProductdataProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -12262,14 +12262,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.supplier_pid.is_some() {
                     fallback.get_or_insert(
-                        TnewProductdataProductElementTypeDeserializerState::SupplierPid(None),
+                        TNewProductdataProductElementTypeDeserializerState::SupplierPid(None),
                     );
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::SupplierPid(None);
+                        TNewProductdataProductElementTypeDeserializerState::SupplierPid(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -12281,7 +12281,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_supplier_pid(data)?;
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -12289,18 +12289,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewProductdataProductElementTypeDeserializerState::SupplierPid(
+                                TNewProductdataProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::ProductDetails(
+                                TNewProductdataProductElementTypeDeserializerState::ProductDetails(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::SupplierPid(
+                                TNewProductdataProductElementTypeDeserializerState::SupplierPid(
                                     Some(deserializer),
                                 );
                         }
@@ -12313,7 +12313,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductDetailsElementType>,
-            fallback: &mut Option<TnewProductdataProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewProductdataProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -12326,14 +12326,14 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.product_details.is_some() {
                     fallback.get_or_insert(
-                        TnewProductdataProductElementTypeDeserializerState::ProductDetails(None),
+                        TNewProductdataProductElementTypeDeserializerState::ProductDetails(None),
                     );
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductDetails(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductDetails(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -12345,7 +12345,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_details(data)?;
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -12353,18 +12353,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewProductdataProductElementTypeDeserializerState::ProductDetails(
+                                TNewProductdataProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::ProductFeatures(
+                                TNewProductdataProductElementTypeDeserializerState::ProductFeatures(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::ProductDetails(
+                                TNewProductdataProductElementTypeDeserializerState::ProductDetails(
                                     Some(deserializer),
                                 );
                         }
@@ -12377,7 +12377,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductFeaturesElementType>,
-            fallback: &mut Option<TnewProductdataProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewProductdataProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -12389,10 +12389,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TnewProductdataProductElementTypeDeserializerState::ProductFeatures(None),
+                    TNewProductdataProductElementTypeDeserializerState::ProductFeatures(None),
                 );
                 *self.state =
-                    TnewProductdataProductElementTypeDeserializerState::UserDefinedExtensions(None);
+                    TNewProductdataProductElementTypeDeserializerState::UserDefinedExtensions(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -12403,7 +12403,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_features(data)?;
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductFeatures(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -12411,18 +12411,18 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                TnewProductdataProductElementTypeDeserializerState::ProductFeatures(
+                                TNewProductdataProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 ),
                             );
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::ProductFeatures(
+                                TNewProductdataProductElementTypeDeserializerState::ProductFeatures(
                                     None,
                                 );
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                TnewProductdataProductElementTypeDeserializerState::ProductFeatures(
+                                TNewProductdataProductElementTypeDeserializerState::ProductFeatures(
                                     Some(deserializer),
                                 );
                         }
@@ -12435,7 +12435,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxProductdataType>,
-            fallback: &mut Option<TnewProductdataProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewProductdataProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -12447,10 +12447,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TnewProductdataProductElementTypeDeserializerState::UserDefinedExtensions(None),
+                    TNewProductdataProductElementTypeDeserializerState::UserDefinedExtensions(None),
                 );
                 *self.state =
-                    TnewProductdataProductElementTypeDeserializerState::ProductReference(None);
+                    TNewProductdataProductElementTypeDeserializerState::ProductReference(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -12461,18 +12461,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_user_defined_extensions(data)?;
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductReference(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TnewProductdataProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
-                            * self . state = TnewProductdataProductElementTypeDeserializerState :: ProductReference (None) ;
+                            fallback . get_or_insert (TNewProductdataProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer))) ;
+                            * self . state = TNewProductdataProductElementTypeDeserializerState :: ProductReference (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TnewProductdataProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
+                            * self . state = TNewProductdataProductElementTypeDeserializerState :: UserDefinedExtensions (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -12483,7 +12483,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::ProductReferenceElementType>,
-            fallback: &mut Option<TnewProductdataProductElementTypeDeserializerState>,
+            fallback: &mut Option<TNewProductdataProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -12495,9 +12495,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    TnewProductdataProductElementTypeDeserializerState::ProductReference(None),
+                    TNewProductdataProductElementTypeDeserializerState::ProductReference(None),
                 );
-                *self.state = TnewProductdataProductElementTypeDeserializerState::Done__;
+                *self.state = TNewProductdataProductElementTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -12508,18 +12508,18 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_product_reference(data)?;
                     *self.state =
-                        TnewProductdataProductElementTypeDeserializerState::ProductReference(None);
+                        TNewProductdataProductElementTypeDeserializerState::ProductReference(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback . get_or_insert (TnewProductdataProductElementTypeDeserializerState :: ProductReference (Some (deserializer))) ;
-                            * self . state = TnewProductdataProductElementTypeDeserializerState :: ProductReference (None) ;
+                            fallback . get_or_insert (TNewProductdataProductElementTypeDeserializerState :: ProductReference (Some (deserializer))) ;
+                            * self . state = TNewProductdataProductElementTypeDeserializerState :: ProductReference (None) ;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            * self . state = TnewProductdataProductElementTypeDeserializerState :: ProductReference (Some (deserializer)) ;
+                            * self . state = TNewProductdataProductElementTypeDeserializerState :: ProductReference (Some (deserializer)) ;
                         }
                     }
                     ret
@@ -12527,13 +12527,13 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::TnewProductdataProductElementType>
-        for TnewProductdataProductElementTypeDeserializer
+    impl<'de> Deserializer<'de, super::TNewProductdataProductElementType>
+        for TNewProductdataProductElementTypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewProductdataProductElementType>
+        ) -> DeserializerResult<'de, super::TNewProductdataProductElementType>
         where
             R: DeserializeReader,
         {
@@ -12543,11 +12543,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TnewProductdataProductElementType>
+        ) -> DeserializerResult<'de, super::TNewProductdataProductElementType>
         where
             R: DeserializeReader,
         {
-            use TnewProductdataProductElementTypeDeserializerState as S;
+            use TNewProductdataProductElementTypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -12627,7 +12627,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
                         *self.state =
-                            TnewProductdataProductElementTypeDeserializerState::SupplierPid(None);
+                            TNewProductdataProductElementTypeDeserializerState::SupplierPid(None);
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12766,16 +12766,16 @@ pub mod quick_xml_deserialize {
         fn finish<R>(
             mut self,
             reader: &R,
-        ) -> Result<super::TnewProductdataProductElementType, Error>
+        ) -> Result<super::TNewProductdataProductElementType, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TnewProductdataProductElementTypeDeserializerState::Unknown__,
+                TNewProductdataProductElementTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TnewProductdataProductElementType {
+            Ok(super::TNewProductdataProductElementType {
                 mode: self.mode,
                 supplier_pid: self
                     .supplier_pid
@@ -42583,10 +42583,10 @@ pub mod quick_xml_serialize {
     pub(super) enum BmecatElementTypeContentSerializerState<'ser> {
         Init__,
         Header(<super::HeaderElementType as WithSerializer>::Serializer<'ser>),
-        TnewCatalog(<super::TnewCatalogElementType as WithSerializer>::Serializer<'ser>),
-        TupdateProducts(<super::TupdateProductsElementType as WithSerializer>::Serializer<'ser>),
-        TupdatePrices(<super::TupdatePricesElementType as WithSerializer>::Serializer<'ser>),
-        TnewProductdata(<super::TnewProductdataElementType as WithSerializer>::Serializer<'ser>),
+        TNewCatalog(<super::TNewCatalogElementType as WithSerializer>::Serializer<'ser>),
+        TUpdateProducts(<super::TUpdateProductsElementType as WithSerializer>::Serializer<'ser>),
+        TUpdatePrices(<super::TUpdatePricesElementType as WithSerializer>::Serializer<'ser>),
+        TNewProductdata(<super::TNewProductdataElementType as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -42600,23 +42600,23 @@ pub mod quick_xml_serialize {
                                 WithSerializer::serializer(x, Some("HEADER"), false)?,
                             )
                         }
-                        super::BmecatElementTypeContent::TnewCatalog(x) => {
-                            *self.state = BmecatElementTypeContentSerializerState::TnewCatalog(
+                        super::BmecatElementTypeContent::TNewCatalog(x) => {
+                            *self.state = BmecatElementTypeContentSerializerState::TNewCatalog(
                                 WithSerializer::serializer(x, Some("T_NEW_CATALOG"), false)?,
                             )
                         }
-                        super::BmecatElementTypeContent::TupdateProducts(x) => {
-                            *self.state = BmecatElementTypeContentSerializerState::TupdateProducts(
+                        super::BmecatElementTypeContent::TUpdateProducts(x) => {
+                            *self.state = BmecatElementTypeContentSerializerState::TUpdateProducts(
                                 WithSerializer::serializer(x, Some("T_UPDATE_PRODUCTS"), false)?,
                             )
                         }
-                        super::BmecatElementTypeContent::TupdatePrices(x) => {
-                            *self.state = BmecatElementTypeContentSerializerState::TupdatePrices(
+                        super::BmecatElementTypeContent::TUpdatePrices(x) => {
+                            *self.state = BmecatElementTypeContentSerializerState::TUpdatePrices(
                                 WithSerializer::serializer(x, Some("T_UPDATE_PRICES"), false)?,
                             )
                         }
-                        super::BmecatElementTypeContent::TnewProductdata(x) => {
-                            *self.state = BmecatElementTypeContentSerializerState::TnewProductdata(
+                        super::BmecatElementTypeContent::TNewProductdata(x) => {
+                            *self.state = BmecatElementTypeContentSerializerState::TNewProductdata(
                                 WithSerializer::serializer(x, Some("T_NEW_PRODUCTDATA"), false)?,
                             )
                         }
@@ -42627,25 +42627,25 @@ pub mod quick_xml_serialize {
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
-                    BmecatElementTypeContentSerializerState::TnewCatalog(x) => {
+                    BmecatElementTypeContentSerializerState::TNewCatalog(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
-                    BmecatElementTypeContentSerializerState::TupdateProducts(x) => {
+                    BmecatElementTypeContentSerializerState::TUpdateProducts(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
-                    BmecatElementTypeContentSerializerState::TupdatePrices(x) => {
+                    BmecatElementTypeContentSerializerState::TUpdatePrices(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
                         }
                     }
-                    BmecatElementTypeContentSerializerState::TnewProductdata(x) => {
+                    BmecatElementTypeContentSerializerState::TNewProductdata(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = BmecatElementTypeContentSerializerState::Done__,
@@ -42782,246 +42782,246 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct TnewCatalogElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TnewCatalogElementType,
-        pub(super) state: Box<TnewCatalogElementTypeSerializerState<'ser>>,
+    pub struct TNewCatalogElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TNewCatalogElementType,
+        pub(super) state: Box<TNewCatalogElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TnewCatalogElementTypeSerializerState<'ser> {
+    pub(super) enum TNewCatalogElementTypeSerializerState<'ser> {
         Init__,
         Product(
             IterSerializer<
                 'ser,
-                &'ser [super::TnewCatalogProductElementType],
-                super::TnewCatalogProductElementType,
+                &'ser [super::TNewCatalogProductElementType],
+                super::TNewCatalogProductElementType,
             >,
         ),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TnewCatalogElementTypeSerializer<'ser> {
+    impl<'ser> TNewCatalogElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TnewCatalogElementTypeSerializerState::Init__ => {
-                        *self.state = TnewCatalogElementTypeSerializerState::Product(
+                    TNewCatalogElementTypeSerializerState::Init__ => {
+                        *self.state = TNewCatalogElementTypeSerializerState::Product(
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TnewCatalogElementTypeSerializerState::Product(x) => {
+                    TNewCatalogElementTypeSerializerState::Product(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = TnewCatalogElementTypeSerializerState::End__,
+                            None => *self.state = TNewCatalogElementTypeSerializerState::End__,
                         }
                     }
-                    TnewCatalogElementTypeSerializerState::End__ => {
-                        *self.state = TnewCatalogElementTypeSerializerState::Done__;
+                    TNewCatalogElementTypeSerializerState::End__ => {
+                        *self.state = TNewCatalogElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TnewCatalogElementTypeSerializerState::Done__ => return Ok(None),
-                    TnewCatalogElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TNewCatalogElementTypeSerializerState::Done__ => return Ok(None),
+                    TNewCatalogElementTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TnewCatalogElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TNewCatalogElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TnewCatalogElementTypeSerializerState::Done__;
+                    *self.state = TNewCatalogElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TupdateProductsElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TupdateProductsElementType,
-        pub(super) state: Box<TupdateProductsElementTypeSerializerState<'ser>>,
+    pub struct TUpdateProductsElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TUpdateProductsElementType,
+        pub(super) state: Box<TUpdateProductsElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TupdateProductsElementTypeSerializerState<'ser> {
+    pub(super) enum TUpdateProductsElementTypeSerializerState<'ser> {
         Init__,
         Product(
             IterSerializer<
                 'ser,
-                &'ser [super::TupdateProductsProductElementType],
-                super::TupdateProductsProductElementType,
+                &'ser [super::TUpdateProductsProductElementType],
+                super::TUpdateProductsProductElementType,
             >,
         ),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TupdateProductsElementTypeSerializer<'ser> {
+    impl<'ser> TUpdateProductsElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TupdateProductsElementTypeSerializerState::Init__ => {
-                        *self.state = TupdateProductsElementTypeSerializerState::Product(
+                    TUpdateProductsElementTypeSerializerState::Init__ => {
+                        *self.state = TUpdateProductsElementTypeSerializerState::Product(
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib(&mut bytes, "prev_version", &self.value.prev_version)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TupdateProductsElementTypeSerializerState::Product(x) => {
+                    TUpdateProductsElementTypeSerializerState::Product(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = TupdateProductsElementTypeSerializerState::End__,
+                            None => *self.state = TUpdateProductsElementTypeSerializerState::End__,
                         }
                     }
-                    TupdateProductsElementTypeSerializerState::End__ => {
-                        *self.state = TupdateProductsElementTypeSerializerState::Done__;
+                    TUpdateProductsElementTypeSerializerState::End__ => {
+                        *self.state = TUpdateProductsElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TupdateProductsElementTypeSerializerState::Done__ => return Ok(None),
-                    TupdateProductsElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TUpdateProductsElementTypeSerializerState::Done__ => return Ok(None),
+                    TUpdateProductsElementTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TupdateProductsElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TUpdateProductsElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TupdateProductsElementTypeSerializerState::Done__;
+                    *self.state = TUpdateProductsElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TupdatePricesElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TupdatePricesElementType,
-        pub(super) state: Box<TupdatePricesElementTypeSerializerState<'ser>>,
+    pub struct TUpdatePricesElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TUpdatePricesElementType,
+        pub(super) state: Box<TUpdatePricesElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TupdatePricesElementTypeSerializerState<'ser> {
+    pub(super) enum TUpdatePricesElementTypeSerializerState<'ser> {
         Init__,
         Product(
             IterSerializer<
                 'ser,
-                &'ser [super::TupdatePricesProductElementType],
-                super::TupdatePricesProductElementType,
+                &'ser [super::TUpdatePricesProductElementType],
+                super::TUpdatePricesProductElementType,
             >,
         ),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TupdatePricesElementTypeSerializer<'ser> {
+    impl<'ser> TUpdatePricesElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TupdatePricesElementTypeSerializerState::Init__ => {
-                        *self.state = TupdatePricesElementTypeSerializerState::Product(
+                    TUpdatePricesElementTypeSerializerState::Init__ => {
+                        *self.state = TUpdatePricesElementTypeSerializerState::Product(
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib(&mut bytes, "prev_version", &self.value.prev_version)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TupdatePricesElementTypeSerializerState::Product(x) => {
+                    TUpdatePricesElementTypeSerializerState::Product(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = TupdatePricesElementTypeSerializerState::End__,
+                            None => *self.state = TUpdatePricesElementTypeSerializerState::End__,
                         }
                     }
-                    TupdatePricesElementTypeSerializerState::End__ => {
-                        *self.state = TupdatePricesElementTypeSerializerState::Done__;
+                    TUpdatePricesElementTypeSerializerState::End__ => {
+                        *self.state = TUpdatePricesElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TupdatePricesElementTypeSerializerState::Done__ => return Ok(None),
-                    TupdatePricesElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TUpdatePricesElementTypeSerializerState::Done__ => return Ok(None),
+                    TUpdatePricesElementTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TupdatePricesElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TUpdatePricesElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TupdatePricesElementTypeSerializerState::Done__;
+                    *self.state = TUpdatePricesElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TnewProductdataElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TnewProductdataElementType,
-        pub(super) state: Box<TnewProductdataElementTypeSerializerState<'ser>>,
+    pub struct TNewProductdataElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TNewProductdataElementType,
+        pub(super) state: Box<TNewProductdataElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TnewProductdataElementTypeSerializerState<'ser> {
+    pub(super) enum TNewProductdataElementTypeSerializerState<'ser> {
         Init__,
         Product(
             IterSerializer<
                 'ser,
-                &'ser [super::TnewProductdataProductElementType],
-                super::TnewProductdataProductElementType,
+                &'ser [super::TNewProductdataProductElementType],
+                super::TNewProductdataProductElementType,
             >,
         ),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TnewProductdataElementTypeSerializer<'ser> {
+    impl<'ser> TNewProductdataElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TnewProductdataElementTypeSerializerState::Init__ => {
-                        *self.state = TnewProductdataElementTypeSerializerState::Product(
+                    TNewProductdataElementTypeSerializerState::Init__ => {
+                        *self.state = TNewProductdataElementTypeSerializerState::Product(
                             IterSerializer::new(&self.value.product[..], Some("PRODUCT"), false),
                         );
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TnewProductdataElementTypeSerializerState::Product(x) => {
+                    TNewProductdataElementTypeSerializerState::Product(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = TnewProductdataElementTypeSerializerState::End__,
+                            None => *self.state = TNewProductdataElementTypeSerializerState::End__,
                         }
                     }
-                    TnewProductdataElementTypeSerializerState::End__ => {
-                        *self.state = TnewProductdataElementTypeSerializerState::Done__;
+                    TNewProductdataElementTypeSerializerState::End__ => {
+                        *self.state = TNewProductdataElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TnewProductdataElementTypeSerializerState::Done__ => return Ok(None),
-                    TnewProductdataElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TNewProductdataElementTypeSerializerState::Done__ => return Ok(None),
+                    TNewProductdataElementTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TnewProductdataElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TNewProductdataElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TnewProductdataElementTypeSerializerState::Done__;
+                    *self.state = TNewProductdataElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -43419,14 +43419,14 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct TnewCatalogProductElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TnewCatalogProductElementType,
-        pub(super) state: Box<TnewCatalogProductElementTypeSerializerState<'ser>>,
+    pub struct TNewCatalogProductElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TNewCatalogProductElementType,
+        pub(super) state: Box<TNewCatalogProductElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TnewCatalogProductElementTypeSerializerState<'ser> {
+    pub(super) enum TNewCatalogProductElementTypeSerializerState<'ser> {
         Init__,
         SupplierPid(<String as WithSerializer>::Serializer<'ser>),
         ProductDetails(<super::ProductDetailsElementType as WithSerializer>::Serializer<'ser>),
@@ -43466,12 +43466,12 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TnewCatalogProductElementTypeSerializer<'ser> {
+    impl<'ser> TNewCatalogProductElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TnewCatalogProductElementTypeSerializerState::Init__ => {
-                        *self.state = TnewCatalogProductElementTypeSerializerState::SupplierPid(
+                    TNewCatalogProductElementTypeSerializerState::Init__ => {
+                        *self.state = TNewCatalogProductElementTypeSerializerState::SupplierPid(
                             WithSerializer::serializer(
                                 &self.value.supplier_pid,
                                 Some("SUPPLIER_PID"),
@@ -43482,12 +43482,12 @@ pub mod quick_xml_serialize {
                         write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TnewCatalogProductElementTypeSerializerState::SupplierPid(x) => {
+                    TNewCatalogProductElementTypeSerializerState::SupplierPid(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    TnewCatalogProductElementTypeSerializerState::ProductDetails(
+                                    TNewCatalogProductElementTypeSerializerState::ProductDetails(
                                         WithSerializer::serializer(
                                             &self.value.product_details,
                                             Some("PRODUCT_DETAILS"),
@@ -43497,12 +43497,12 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::ProductDetails(x) => {
+                    TNewCatalogProductElementTypeSerializerState::ProductDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    TnewCatalogProductElementTypeSerializerState::ProductFeatures(
+                                    TNewCatalogProductElementTypeSerializerState::ProductFeatures(
                                         IterSerializer::new(
                                             &self.value.product_features[..],
                                             Some("PRODUCT_FEATURES"),
@@ -43512,11 +43512,11 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::ProductFeatures(x) => {
+                    TNewCatalogProductElementTypeSerializerState::ProductFeatures(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
-                                TnewCatalogProductElementTypeSerializerState::ProductOrderDetails(
+                                TNewCatalogProductElementTypeSerializerState::ProductOrderDetails(
                                     WithSerializer::serializer(
                                         &self.value.product_order_details,
                                         Some("PRODUCT_ORDER_DETAILS"),
@@ -43525,11 +43525,11 @@ pub mod quick_xml_serialize {
                                 ),
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::ProductOrderDetails(x) => {
+                    TNewCatalogProductElementTypeSerializerState::ProductOrderDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
-                                TnewCatalogProductElementTypeSerializerState::ProductPriceDetails(
+                                TNewCatalogProductElementTypeSerializerState::ProductPriceDetails(
                                     IterSerializer::new(
                                         &self.value.product_price_details[..],
                                         Some("PRODUCT_PRICE_DETAILS"),
@@ -43538,11 +43538,11 @@ pub mod quick_xml_serialize {
                                 ),
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::ProductPriceDetails(x) => {
+                    TNewCatalogProductElementTypeSerializerState::ProductPriceDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
-                                TnewCatalogProductElementTypeSerializerState::UserDefinedExtensions(
+                                TNewCatalogProductElementTypeSerializerState::UserDefinedExtensions(
                                     WithSerializer::serializer(
                                         &self.value.user_defined_extensions,
                                         Some("USER_DEFINED_EXTENSIONS"),
@@ -43551,12 +43551,12 @@ pub mod quick_xml_serialize {
                                 ),
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::UserDefinedExtensions(x) => {
+                    TNewCatalogProductElementTypeSerializerState::UserDefinedExtensions(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    TnewCatalogProductElementTypeSerializerState::ProductReference(
+                                    TNewCatalogProductElementTypeSerializerState::ProductReference(
                                         IterSerializer::new(
                                             &self.value.product_reference[..],
                                             Some("PRODUCT_REFERENCE"),
@@ -43566,14 +43566,14 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::ProductReference(x) => match x
+                    TNewCatalogProductElementTypeSerializerState::ProductReference(x) => match x
                         .next()
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state =
-                                TnewCatalogProductElementTypeSerializerState::ProductLogisticDetails(
+                                TNewCatalogProductElementTypeSerializerState::ProductLogisticDetails(
                                     IterSerializer::new(
                                         self.value.product_logistic_details.as_ref(),
                                         Some("PRODUCT_LOGISTIC_DETAILS"),
@@ -43582,46 +43582,46 @@ pub mod quick_xml_serialize {
                                 )
                         }
                     },
-                    TnewCatalogProductElementTypeSerializerState::ProductLogisticDetails(x) => {
+                    TNewCatalogProductElementTypeSerializerState::ProductLogisticDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = TnewCatalogProductElementTypeSerializerState::End__
+                                *self.state = TNewCatalogProductElementTypeSerializerState::End__
                             }
                         }
                     }
-                    TnewCatalogProductElementTypeSerializerState::End__ => {
-                        *self.state = TnewCatalogProductElementTypeSerializerState::Done__;
+                    TNewCatalogProductElementTypeSerializerState::End__ => {
+                        *self.state = TNewCatalogProductElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TnewCatalogProductElementTypeSerializerState::Done__ => return Ok(None),
-                    TnewCatalogProductElementTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TNewCatalogProductElementTypeSerializerState::Done__ => return Ok(None),
+                    TNewCatalogProductElementTypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TnewCatalogProductElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TNewCatalogProductElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TnewCatalogProductElementTypeSerializerState::Done__;
+                    *self.state = TNewCatalogProductElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TupdateProductsProductElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TupdateProductsProductElementType,
-        pub(super) state: Box<TupdateProductsProductElementTypeSerializerState<'ser>>,
+    pub struct TUpdateProductsProductElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TUpdateProductsProductElementType,
+        pub(super) state: Box<TUpdateProductsProductElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TupdateProductsProductElementTypeSerializerState<'ser> {
+    pub(super) enum TUpdateProductsProductElementTypeSerializerState<'ser> {
         Init__,
         SupplierPid(<String as WithSerializer>::Serializer<'ser>),
         ProductDetails(<super::ProductDetailsElementType as WithSerializer>::Serializer<'ser>),
@@ -43663,35 +43663,35 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TupdateProductsProductElementTypeSerializer<'ser> {
+    impl<'ser> TUpdateProductsProductElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TupdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TupdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TupdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TupdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TupdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TupdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TupdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TupdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TupdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TupdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdateProductsProductElementTypeSerializerState :: End__ , } TupdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TupdateProductsProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TupdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TupdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdateProductsProductElementTypeSerializerState :: Init__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdateProductsProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductDetails (WithSerializer :: serializer (& self . value . product_details , Some ("PRODUCT_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (IterSerializer :: new (& self . value . product_features [..] , Some ("PRODUCT_FEATURES") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductFeatures (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (WithSerializer :: serializer (& self . value . product_order_details , Some ("PRODUCT_ORDER_DETAILS") , false) ?) , } TUpdateProductsProductElementTypeSerializerState :: ProductOrderDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductReference (IterSerializer :: new (& self . value . product_reference [..] , Some ("PRODUCT_REFERENCE") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductReference (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (IterSerializer :: new (self . value . product_logistic_details . as_ref () , Some ("PRODUCT_LOGISTIC_DETAILS") , false)) , } TUpdateProductsProductElementTypeSerializerState :: ProductLogisticDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdateProductsProductElementTypeSerializerState :: End__ , } TUpdateProductsProductElementTypeSerializerState :: End__ => { * self . state = TUpdateProductsProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdateProductsProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdateProductsProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for TupdateProductsProductElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TUpdateProductsProductElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TupdateProductsProductElementTypeSerializerState::Done__;
+                    *self.state = TUpdateProductsProductElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TupdatePricesProductElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TupdatePricesProductElementType,
-        pub(super) state: Box<TupdatePricesProductElementTypeSerializerState<'ser>>,
+    pub struct TUpdatePricesProductElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TUpdatePricesProductElementType,
+        pub(super) state: Box<TUpdatePricesProductElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TupdatePricesProductElementTypeSerializerState<'ser> {
+    pub(super) enum TUpdatePricesProductElementTypeSerializerState<'ser> {
         Init__,
         SupplierPid(<String as WithSerializer>::Serializer<'ser>),
         ProductPriceDetails(
@@ -43708,35 +43708,35 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TupdatePricesProductElementTypeSerializer<'ser> {
+    impl<'ser> TUpdatePricesProductElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
-                match & mut * self . state { TupdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TupdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TupdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TupdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TupdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TupdatePricesProductElementTypeSerializerState :: End__ , } TupdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TupdatePricesProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TupdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TupdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                match & mut * self . state { TUpdatePricesProductElementTypeSerializerState :: Init__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: SupplierPid (WithSerializer :: serializer (& self . value . supplier_pid , Some ("SUPPLIER_PID") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; write_attrib (& mut bytes , "mode" , & self . value . mode) ? ; return Ok (Some (Event :: Start (bytes))) } TUpdatePricesProductElementTypeSerializerState :: SupplierPid (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (IterSerializer :: new (& self . value . product_price_details [..] , Some ("PRODUCT_PRICE_DETAILS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: ProductPriceDetails (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (IterSerializer :: new (self . value . user_defined_extensions . as_ref () , Some ("USER_DEFINED_EXTENSIONS") , false)) , } TUpdatePricesProductElementTypeSerializerState :: UserDefinedExtensions (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = TUpdatePricesProductElementTypeSerializerState :: End__ , } TUpdatePricesProductElementTypeSerializerState :: End__ => { * self . state = TUpdatePricesProductElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } TUpdatePricesProductElementTypeSerializerState :: Done__ => return Ok (None) , TUpdatePricesProductElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
             }
         }
     }
-    impl<'ser> Iterator for TupdatePricesProductElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TUpdatePricesProductElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TupdatePricesProductElementTypeSerializerState::Done__;
+                    *self.state = TUpdatePricesProductElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct TnewProductdataProductElementTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TnewProductdataProductElementType,
-        pub(super) state: Box<TnewProductdataProductElementTypeSerializerState<'ser>>,
+    pub struct TNewProductdataProductElementTypeSerializer<'ser> {
+        pub(super) value: &'ser super::TNewProductdataProductElementType,
+        pub(super) state: Box<TNewProductdataProductElementTypeSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TnewProductdataProductElementTypeSerializerState<'ser> {
+    pub(super) enum TNewProductdataProductElementTypeSerializerState<'ser> {
         Init__,
         SupplierPid(<String as WithSerializer>::Serializer<'ser>),
         ProductDetails(<super::ProductDetailsElementType as WithSerializer>::Serializer<'ser>),
@@ -43765,12 +43765,12 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TnewProductdataProductElementTypeSerializer<'ser> {
+    impl<'ser> TNewProductdataProductElementTypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TnewProductdataProductElementTypeSerializerState::Init__ => {
-                        *self.state = TnewProductdataProductElementTypeSerializerState::SupplierPid(
+                    TNewProductdataProductElementTypeSerializerState::Init__ => {
+                        *self.state = TNewProductdataProductElementTypeSerializerState::SupplierPid(
                             WithSerializer::serializer(
                                 &self.value.supplier_pid,
                                 Some("SUPPLIER_PID"),
@@ -43781,12 +43781,12 @@ pub mod quick_xml_serialize {
                         write_attrib(&mut bytes, "mode", &self.value.mode)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TnewProductdataProductElementTypeSerializerState::SupplierPid(x) => {
+                    TNewProductdataProductElementTypeSerializerState::SupplierPid(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    TnewProductdataProductElementTypeSerializerState::ProductDetails(
+                                    TNewProductdataProductElementTypeSerializerState::ProductDetails(
                                         WithSerializer::serializer(
                                             &self.value.product_details,
                                             Some("PRODUCT_DETAILS"),
@@ -43796,11 +43796,11 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    TnewProductdataProductElementTypeSerializerState::ProductDetails(x) => {
+                    TNewProductdataProductElementTypeSerializerState::ProductDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
-                                TnewProductdataProductElementTypeSerializerState::ProductFeatures(
+                                TNewProductdataProductElementTypeSerializerState::ProductFeatures(
                                     IterSerializer::new(
                                         &self.value.product_features[..],
                                         Some("PRODUCT_FEATURES"),
@@ -43809,13 +43809,13 @@ pub mod quick_xml_serialize {
                                 ),
                         }
                     }
-                    TnewProductdataProductElementTypeSerializerState::ProductFeatures(x) => match x
+                    TNewProductdataProductElementTypeSerializerState::ProductFeatures(x) => match x
                         .next()
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state =
-                            TnewProductdataProductElementTypeSerializerState::UserDefinedExtensions(
+                            TNewProductdataProductElementTypeSerializerState::UserDefinedExtensions(
                                 IterSerializer::new(
                                     self.value.user_defined_extensions.as_ref(),
                                     Some("USER_DEFINED_EXTENSIONS"),
@@ -43823,11 +43823,11 @@ pub mod quick_xml_serialize {
                                 ),
                             ),
                     },
-                    TnewProductdataProductElementTypeSerializerState::UserDefinedExtensions(x) => {
+                    TNewProductdataProductElementTypeSerializerState::UserDefinedExtensions(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state =
-                                TnewProductdataProductElementTypeSerializerState::ProductReference(
+                                TNewProductdataProductElementTypeSerializerState::ProductReference(
                                     IterSerializer::new(
                                         &self.value.product_reference[..],
                                         Some("PRODUCT_REFERENCE"),
@@ -43836,35 +43836,35 @@ pub mod quick_xml_serialize {
                                 ),
                         }
                     }
-                    TnewProductdataProductElementTypeSerializerState::ProductReference(x) => {
+                    TNewProductdataProductElementTypeSerializerState::ProductReference(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    TnewProductdataProductElementTypeSerializerState::End__
+                                    TNewProductdataProductElementTypeSerializerState::End__
                             }
                         }
                     }
-                    TnewProductdataProductElementTypeSerializerState::End__ => {
-                        *self.state = TnewProductdataProductElementTypeSerializerState::Done__;
+                    TNewProductdataProductElementTypeSerializerState::End__ => {
+                        *self.state = TNewProductdataProductElementTypeSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TnewProductdataProductElementTypeSerializerState::Done__ => return Ok(None),
-                    TnewProductdataProductElementTypeSerializerState::Phantom__(_) => {
+                    TNewProductdataProductElementTypeSerializerState::Done__ => return Ok(None),
+                    TNewProductdataProductElementTypeSerializerState::Phantom__(_) => {
                         unreachable!()
                     }
                 }
             }
         }
     }
-    impl<'ser> Iterator for TnewProductdataProductElementTypeSerializer<'ser> {
+    impl<'ser> Iterator for TNewProductdataProductElementTypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TnewProductdataProductElementTypeSerializerState::Done__;
+                    *self.state = TNewProductdataProductElementTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

@@ -7,9 +7,9 @@ pub struct BmecatElementType {
 #[derive(Debug)]
 pub enum BmecatElementTypeContent {
     Header(HeaderElementType),
-    TnewCatalog(TnewCatalogElementType),
-    TupdateProducts(TupdateProductsElementType),
-    TupdatePrices(TupdatePricesElementType),
+    TNewCatalog(TNewCatalogElementType),
+    TUpdateProducts(TUpdateProductsElementType),
+    TUpdatePrices(TUpdatePricesElementType),
 }
 #[derive(Debug)]
 pub enum TypeBmEcatVersionType {
@@ -25,18 +25,18 @@ pub struct HeaderElementType {
     pub user_defined_extensions: UdxHeaderType,
 }
 #[derive(Debug)]
-pub struct TnewCatalogElementType {
-    pub product: Vec<TnewCatalogProductElementType>,
+pub struct TNewCatalogElementType {
+    pub product: Vec<TNewCatalogProductElementType>,
 }
 #[derive(Debug)]
-pub struct TupdateProductsElementType {
+pub struct TUpdateProductsElementType {
     pub prev_version: i32,
-    pub product: Vec<TupdateProductsProductElementType>,
+    pub product: Vec<TUpdateProductsProductElementType>,
 }
 #[derive(Debug)]
-pub struct TupdatePricesElementType {
+pub struct TUpdatePricesElementType {
     pub prev_version: i32,
-    pub product: Vec<TupdatePricesProductElementType>,
+    pub product: Vec<TUpdatePricesProductElementType>,
 }
 #[derive(Debug)]
 pub struct CatalogElementType {
@@ -66,8 +66,8 @@ pub struct UdxHeaderType {
     pub udx_edxf_version: String,
 }
 #[derive(Debug)]
-pub struct TnewCatalogProductElementType {
-    pub mode: TnewCatalogProductmodeType,
+pub struct TNewCatalogProductElementType {
+    pub mode: TNewCatalogProductmodeType,
     pub supplier_pid: SupplierPidElementType,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -79,8 +79,8 @@ pub struct TnewCatalogProductElementType {
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
 #[derive(Debug)]
-pub struct TupdateProductsProductElementType {
-    pub mode: TupdateProductsProductmodeType,
+pub struct TUpdateProductsProductElementType {
+    pub mode: TUpdateProductsProductmodeType,
     pub supplier_pid: SupplierPidElementType,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -92,8 +92,8 @@ pub struct TupdateProductsProductElementType {
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
 #[derive(Debug)]
-pub struct TupdatePricesProductElementType {
-    pub mode: TupdatePricesProductmodeType,
+pub struct TUpdatePricesProductElementType {
+    pub mode: TUpdatePricesProductmodeType,
     pub supplier_pid: SupplierPidElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub user_defined_extensions: Option<UdxProductType>,
@@ -298,7 +298,7 @@ pub struct MimeInfoElementType {
     pub mime: Vec<MimeElementType>,
 }
 #[derive(Debug)]
-pub enum TnewCatalogProductmodeType {
+pub enum TNewCatalogProductmodeType {
     New,
 }
 #[derive(Debug)]
@@ -381,13 +381,13 @@ pub struct ProductLogisticDetailsElementType {
     pub country_of_origin: Vec<String>,
 }
 #[derive(Debug)]
-pub enum TupdateProductsProductmodeType {
+pub enum TUpdateProductsProductmodeType {
     Delete,
     New,
     Update,
 }
 #[derive(Debug)]
-pub enum TupdatePricesProductmodeType {
+pub enum TUpdatePricesProductmodeType {
     Update,
 }
 #[derive(Debug)]

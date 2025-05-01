@@ -676,7 +676,7 @@ pub struct TransformType {
 }
 #[derive(Debug)]
 pub enum TransformTypeContent {
-    Xpath(String),
+    XPath(String),
 }
 impl WithSerializer for TransformType {
     type Serializer<'x> = quick_xml_serialize::TransformTypeSerializer<'x>;
@@ -9357,7 +9357,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub enum TransformTypeContentDeserializerState {
         Init__,
-        Xpath(
+        XPath(
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
         ),
@@ -9402,12 +9402,12 @@ pub mod quick_xml_deserialize {
             use TransformTypeContentDeserializerState as S;
             match state {
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Xpath(mut values, deserializer) => {
+                S::XPath(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
                         Self::store_x_path(&mut values, value)?;
                     }
-                    Ok(super::TransformTypeContent::Xpath(values.ok_or_else(
+                    Ok(super::TransformTypeContent::XPath(values.ok_or_else(
                         || ErrorKind::MissingElement("XPath".into()),
                     )?))
                 }
@@ -9442,8 +9442,8 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => TransformTypeContentDeserializerState::Init__,
-                    Some(TransformTypeContentDeserializerState::Xpath(_, Some(deserializer))) => {
-                        TransformTypeContentDeserializerState::Xpath(values, Some(deserializer))
+                    Some(TransformTypeContentDeserializerState::XPath(_, Some(deserializer))) => {
+                        TransformTypeContentDeserializerState::XPath(values, Some(deserializer))
                     }
                     _ => unreachable!(),
                 };
@@ -9451,7 +9451,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(TransformTypeContentDeserializerState::Xpath(_, Some(deserializer))) => {
+                Some(TransformTypeContentDeserializerState::XPath(_, Some(deserializer))) => {
                     let data = deserializer.finish(reader)?;
                     Self::store_x_path(&mut values, data)?;
                 }
@@ -9463,14 +9463,14 @@ pub mod quick_xml_deserialize {
                     Self::store_x_path(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        TransformTypeContentDeserializerState::Xpath(values, None),
+                        TransformTypeContentDeserializerState::XPath(values, None),
                     )?;
                     *self.state = TransformTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     *self.state =
-                        TransformTypeContentDeserializerState::Xpath(values, Some(deserializer));
+                        TransformTypeContentDeserializerState::XPath(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
@@ -9512,7 +9512,7 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
                 event = match (state, event) {
-                    (S::Xpath(values, Some(deserializer)), event) => {
+                    (S::XPath(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_x_path(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -9536,7 +9536,7 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Xpath(values, None), event) => {
+                    (S::XPath(values, None), event) => {
                         let output =
                             <String as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_x_path(reader, values, output, &mut fallback)? {
@@ -12523,7 +12523,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum TransformTypeContentSerializerState<'ser> {
         Init__,
-        Xpath(<String as WithSerializer>::Serializer<'ser>),
+        XPath(<String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -12532,13 +12532,13 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     TransformTypeContentSerializerState::Init__ => match self.value {
-                        super::TransformTypeContent::Xpath(x) => {
-                            *self.state = TransformTypeContentSerializerState::Xpath(
+                        super::TransformTypeContent::XPath(x) => {
+                            *self.state = TransformTypeContentSerializerState::XPath(
                                 WithSerializer::serializer(x, Some("ds:XPath"), false)?,
                             )
                         }
                     },
-                    TransformTypeContentSerializerState::Xpath(x) => match x.next().transpose()? {
+                    TransformTypeContentSerializerState::XPath(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = TransformTypeContentSerializerState::Done__,
                     },

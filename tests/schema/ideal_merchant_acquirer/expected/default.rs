@@ -159,7 +159,7 @@ pub struct TransformType {
 }
 #[derive(Debug)]
 pub enum TransformTypeContent {
-    Xpath(String),
+    XPath(String),
 }
 #[derive(Debug)]
 pub struct DsaKeyValueContent48Type {
