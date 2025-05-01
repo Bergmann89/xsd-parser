@@ -24,6 +24,7 @@ pub type ParserError<E> = parser::Error<E>;
 
 use std::fs::write;
 
+pub use code::{Module, SubModules};
 pub use config::Config;
 pub use generator::Generator;
 pub use interpreter::Interpreter;
@@ -33,6 +34,7 @@ pub use parser::Parser;
 
 use macros::{assert_eq, unreachable};
 use proc_macro2::TokenStream;
+use quote::ToTokens;
 use tracing::instrument;
 
 use self::config::{
@@ -63,12 +65,31 @@ use self::types::{IdentType, Types};
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace")]
 pub fn generate(config: Config) -> Result<TokenStream, Error> {
+    let module = generate_modules(config)?;
+    let code = module.to_token_stream();
+
+    Ok(code)
+}
+
+/// Generates rust code split into different modules from a XML schema using the
+/// passed `config`.
+///
+/// Like [`generate`] but instead of returning the whole code as token stream it
+/// returns a [`Module`], holding the code for itself and his sub-modules.
+/// Call [`Module::write_to_files()`] or [`Module::write_to_files_with()`] to
+/// actually create the source code files recursively.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
+#[instrument(err, level = "trace")]
+pub fn generate_modules(config: Config) -> Result<Module, Error> {
     let schemas = exec_parser(config.parser)?;
     let types = exec_interpreter(config.interpreter, &schemas)?;
     let types = exec_optimizer(config.optimizer, types)?;
-    let code = exec_generator(config.generator, &schemas, &types)?;
+    let module = exec_generator_module(config.generator, &schemas, &types)?;
 
-    Ok(code)
+    Ok(module)
 }
 
 /// Executes the [`Parser`] with the passed `config`.
@@ -216,7 +237,8 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
     Ok(types)
 }
 
-/// Executes the [`Generator`] with the passed `config`, `schema` and `types`.
+/// Executes the [`Generator`] with the passed `config`, `schema` and `types` to
+/// generate the whole code as token stream.
 ///
 /// # Errors
 ///
@@ -227,7 +249,25 @@ pub fn exec_generator(
     schemas: &Schemas,
     types: &Types,
 ) -> Result<TokenStream, Error> {
-    tracing::info!("Generate Code");
+    let module = exec_generator_module(config, schemas, types)?;
+    let code = module.to_token_stream();
+
+    Ok(code)
+}
+
+/// Executes the [`Generator`] with the passed `config`, `schema` and `types` to
+/// generate a [`Module`] for further processing.
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
+#[instrument(err, level = "trace", skip(schemas, types))]
+pub fn exec_generator_module(
+    config: GeneratorConfig,
+    schemas: &Schemas,
+    types: &Types,
+) -> Result<Module, Error> {
+    tracing::info!("Generate Module");
 
     let mut generator = Generator::new(types)
         .flags(config.flags)
@@ -287,7 +327,7 @@ pub fn exec_generator(
         }
     }
 
-    let code = generator.finish();
+    let module = generator.into_module();
 
-    Ok(code)
+    Ok(module)
 }

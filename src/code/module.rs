@@ -1,5 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::fs::{create_dir_all, write};
+use std::io::Error as IoError;
 use std::mem::replace;
+use std::path::Path;
 use std::str::FromStr;
 
 use proc_macro2::{Ident as Ident2, TokenStream};
@@ -21,6 +24,43 @@ pub struct Module {
 
     /// A map of sub-modules contained inside this module.
     pub modules: BTreeMap<String, Module>,
+}
+
+/// Defines how the sub modules of the [`Module`] will be generated when calling
+/// [`Module::to_code()`].
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SubModules {
+    /// No code is generated for any sub-module.
+    None,
+
+    /// The sub-modules are references as separate files.
+    ///
+    /// This will generate something like this:
+    ///
+    /// ```rust,ignore
+    /// pub mod sub_module;
+    /// pub mod another_module;
+    ///
+    /// // Actual module code
+    /// ```
+    Files,
+
+    /// The sub-modules are generated as inline modules.
+    ///
+    /// This will generate something like this:
+    ///
+    /// ```rust,ignore
+    /// // Actual module code
+    ///
+    /// pub mod sub_module {
+    ///     // Sub-Module Code
+    /// }
+    ///
+    /// pub mod another_module {
+    ///     // Sub-Module Code
+    /// }
+    /// ```
+    Inline,
 }
 
 impl Module {
@@ -70,15 +110,31 @@ impl Module {
     {
         self.modules.entry(ident.into()).or_default()
     }
-}
 
-impl ToTokens for Module {
-    fn to_tokens(&self, tokens: &mut TokenStream) {
+    /// Write the module to the passed `token` stream.
+    ///
+    /// This method writes the current module to the passed `token` stream. The
+    /// `sub_modules` parameter defines how the sub-modules of this module will
+    /// be rendered.
+    pub fn to_code(&self, tokens: &mut TokenStream, sub_modules: SubModules) {
         let Self {
             code,
             usings,
             modules,
         } = self;
+
+        if sub_modules == SubModules::Files {
+            let modules = modules.iter().map(|(ident, _module)| {
+                let name = format_ident!("{ident}");
+
+                quote!(pub mod #name;)
+            });
+
+            tokens.extend(quote! {
+                #( #modules )*
+            });
+        }
+
         let usings = render_usings(usings.iter());
 
         tokens.extend(quote! {
@@ -86,15 +142,88 @@ impl ToTokens for Module {
             #code
         });
 
-        for (ident, module) in modules {
-            let name = format_ident!("{ident}");
+        if sub_modules == SubModules::Inline {
+            for (ident, module) in modules {
+                let name = format_ident!("{ident}");
 
-            tokens.extend(quote! {
-                pub mod #name {
-                    #module
-                }
-            });
+                tokens.extend(quote! {
+                    pub mod #name {
+                        #module
+                    }
+                });
+            }
         }
+    }
+
+    /// Write the code of the current module to the passed `directory`.
+    ///
+    /// This will split up the current module into it's sub modules and
+    /// writes them to the passed `directory`. Each sub-module is written to
+    /// it's own module file.
+    ///
+    /// # Errors
+    /// Returns an [`IoError`] if writing a module to a file failed.
+    pub fn write_to_files<P>(&self, directory: P) -> Result<(), IoError>
+    where
+        P: AsRef<Path>,
+    {
+        let directory = directory.as_ref();
+
+        self.write_to_files_with(|module: &Module, path: &Path| {
+            let filename = if module.modules.is_empty() {
+                directory.join(path).with_extension("rs")
+            } else {
+                directory.join(path).join("mod.rs")
+            };
+            create_dir_all(filename.parent().unwrap())?;
+
+            let mut code = TokenStream::new();
+            module.to_code(&mut code, SubModules::Files);
+
+            let code = code.to_string();
+            write(filename, code)?;
+
+            Ok(())
+        })
+    }
+
+    /// Write the code of the different sub-modules by using the passed
+    /// function `f`.
+    ///
+    /// This will split up the current module into it's sub modules and
+    /// passes the generated code for each module to the passed function `f`.
+    ///
+    /// # Errors
+    /// Forwards the error raised by `f`.
+    pub fn write_to_files_with<F, E>(&self, mut f: F) -> Result<(), E>
+    where
+        F: FnMut(&Module, &Path) -> Result<(), E>,
+    {
+        self.write_to_files_with_impl("", &mut f)
+    }
+
+    fn write_to_files_with_impl<P, F, E>(&self, path: P, f: &mut F) -> Result<(), E>
+    where
+        P: AsRef<Path>,
+        F: FnMut(&Module, &Path) -> Result<(), E>,
+    {
+        let path = path.as_ref();
+
+        f(self, path)?;
+
+        for (ident, module) in &self.modules {
+            let path = path.join(ident);
+
+            module.write_to_files_with_impl(path, f)?;
+        }
+
+        Ok(())
+    }
+}
+
+impl ToTokens for Module {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        self.to_code(tokens, SubModules::Inline);
     }
 }
 

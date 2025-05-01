@@ -435,6 +435,12 @@ impl<'types> GeneratorFixed<'types> {
     /// This will return the generated code as [`TokenStream`].
     #[instrument(level = "trace", skip(self))]
     pub fn finish(self) -> TokenStream {
+        self.into_module().to_token_stream()
+    }
+
+    /// Finish the code generation and return the generated [`Module`] structure.
+    #[instrument(level = "trace", skip(self))]
+    pub fn into_module(self) -> Module {
         let Self {
             config,
             mut module,
@@ -446,7 +452,7 @@ impl<'types> GeneratorFixed<'types> {
             renderer.finish(&config, &mut module);
         }
 
-        module.to_token_stream()
+        module
     }
 
     #[instrument(err, level = "trace", skip(self))]
