@@ -99,7 +99,7 @@ pub struct UnionType<'types> {
     pub variants: Vec<UnionTypeVariant<'types>>,
 
     /// List of traits that needs to be implemented by this type.
-    pub trait_impls: Vec<IdentPath>,
+    pub trait_impls: Vec<TokenStream>,
 }
 
 /// Type variant used in [`UnionType`].
@@ -253,7 +253,7 @@ pub struct ReferenceType<'types> {
     pub target_type: IdentPath,
 
     /// List of traits that needs to be implemented by this type.
-    pub trait_impls: Vec<IdentPath>,
+    pub trait_impls: Vec<TokenStream>,
 }
 
 impl<'types> ReferenceType<'types> {
@@ -295,7 +295,7 @@ pub struct EnumerationType<'types> {
     pub variants: Vec<EnumerationTypeVariant<'types>>,
 
     /// List of traits that needs to be implemented by this type.
-    pub trait_impls: Vec<IdentPath>,
+    pub trait_impls: Vec<TokenStream>,
 }
 
 /// Represents a enumeration variant used by [`EnumerationType`].
@@ -421,7 +421,7 @@ pub struct ComplexTypeBase {
     pub type_ident: Ident2,
 
     /// List of traits that needs to be implemented by this type.
-    pub trait_impls: Vec<IdentPath>,
+    pub trait_impls: Vec<TokenStream>,
 
     /// Name of the XML tag of the type (if the type represents an element in the XML).
     pub tag_name: Option<String>,
@@ -1239,8 +1239,10 @@ impl<'a, 'types> Request<'a, 'types> {
         self.state.get_or_create_type_ref(self.config, ident)
     }
 
-    fn make_trait_impls(&mut self) -> Result<Vec<IdentPath>, Error> {
+    fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
         let ident = self.ident.clone();
+        let current_ns = self.current_module();
+        let module_path = ModulePath::from_namespace(current_ns, self.types);
 
         self.get_trait_infos()
             .get(&ident)
@@ -1253,8 +1255,9 @@ impl<'a, 'types> Request<'a, 'types> {
                 let type_ref = self.get_or_create_type_ref(ident.clone())?;
                 let ident = format_ident!("{}Trait", type_ref.type_ident);
                 let trait_type = type_ref.to_ident_path().with_ident(ident);
+                let trait_ident = trait_type.relative_to(&module_path);
 
-                Ok(trait_type)
+                Ok(trait_ident)
             })
             .collect::<Result<Vec<_>, _>>()
     }

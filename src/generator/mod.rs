@@ -336,7 +336,7 @@ impl<'types> Generator<'types> {
                 } else {
                     smallvec![
                         IdentPath::from_str("serde::Serialize").unwrap(),
-                        IdentPath::from_str("serde::DeserializeOwned").unwrap()
+                        IdentPath::from_str("serde::de::DeserializeOwned").unwrap()
                     ]
                 };
 

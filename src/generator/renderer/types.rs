@@ -5,7 +5,6 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 
 use crate::{
-    code::IdentPath,
     config::{SerdeSupport, TypedefMode},
     generator::{
         data::{
@@ -483,11 +482,9 @@ where
 
 fn render_trait_impls<'a>(
     type_ident: &'a Ident2,
-    trait_data: &'a [IdentPath],
+    trait_idents: &'a [TokenStream],
 ) -> impl Iterator<Item = TokenStream> + 'a {
-    trait_data.iter().map(move |trait_ident| {
-        let trait_ident = trait_ident.ident();
-
+    trait_idents.iter().map(move |trait_ident| {
         quote! {
             impl #trait_ident for #type_ident { }
         }
