@@ -566,7 +566,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let type_name = type_name.finish();
 
                 let ns = self.state.current_ns();
-                let type_ = self.create_element(ns, Some(type_name), ty)?;
+                let type_ = if let Some(type_) = &ty.type_ {
+                    self.parse_qname(type_)?
+                } else {
+                    self.create_element(ns, Some(type_name), ty)?
+                };
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(field_ident, |ident| {

@@ -560,7 +560,7 @@ impl WithDeserializer for WildcardType {
 #[derive(Debug)]
 pub enum SimpleDerivationSetType {
     All,
-    SimpleDerivationSet163(SimpleDerivationSet163Type),
+    SimpleDerivationSet165(SimpleDerivationSet165Type),
 }
 impl DeserializeBytes for SimpleDerivationSetType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
@@ -569,8 +569,8 @@ impl DeserializeBytes for SimpleDerivationSetType {
     {
         match bytes {
             b"#all" => Ok(Self::All),
-            x => Ok(Self::SimpleDerivationSet163(
-                SimpleDerivationSet163Type::deserialize_bytes(reader, x)?,
+            x => Ok(Self::SimpleDerivationSet165(
+                SimpleDerivationSet165Type::deserialize_bytes(reader, x)?,
             )),
         }
     }
@@ -902,8 +902,8 @@ impl DeserializeBytes for ProcessContentsType {
     }
 }
 #[derive(Debug, Default)]
-pub struct SimpleDerivationSet163Type(pub Vec<SimpleDerivationSet163ItemType>);
-impl DeserializeBytes for SimpleDerivationSet163Type {
+pub struct SimpleDerivationSet165Type(pub Vec<SimpleDerivationSet165ItemType>);
+impl DeserializeBytes for SimpleDerivationSet165Type {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -911,7 +911,7 @@ impl DeserializeBytes for SimpleDerivationSet163Type {
         Ok(Self(
             bytes
                 .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
-                .map(|bytes| SimpleDerivationSet163ItemType::deserialize_bytes(reader, bytes))
+                .map(|bytes| SimpleDerivationSet165ItemType::deserialize_bytes(reader, bytes))
                 .collect::<Result<Vec<_>, _>>()?,
         ))
     }
@@ -1081,13 +1081,13 @@ impl DeserializeBytes for BasicNamespaceListItemType {
     }
 }
 #[derive(Debug)]
-pub enum SimpleDerivationSet163ItemType {
+pub enum SimpleDerivationSet165ItemType {
     List,
     Union,
     Restriction,
     Extension,
 }
-impl DeserializeBytes for SimpleDerivationSet163ItemType {
+impl DeserializeBytes for SimpleDerivationSet165ItemType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,

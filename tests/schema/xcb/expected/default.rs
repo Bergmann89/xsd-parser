@@ -221,7 +221,7 @@ pub enum DocTypeContent {
     Description(String),
     Example(String),
     Field(FieldType),
-    Error(PacketStructType),
+    Error(ErrorType),
     See(SeeType),
 }
 #[derive(Debug)]
@@ -315,6 +315,11 @@ pub enum CaseexprTypeContent {
 #[derive(Debug)]
 pub struct FieldType {
     pub name: Option<String>,
+    pub content: String,
+}
+#[derive(Debug)]
+pub struct ErrorType {
+    pub type_: Option<String>,
     pub content: String,
 }
 #[derive(Debug)]
