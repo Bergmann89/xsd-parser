@@ -360,7 +360,7 @@ pub enum DocTypeContent {
     #[serde(rename = "field")]
     Field(FieldType),
     #[serde(rename = "error")]
-    Error(PacketStructType),
+    Error(ErrorType),
     #[serde(rename = "see")]
     See(SeeType),
 }
@@ -506,6 +506,13 @@ pub enum CaseexprTypeContent {
 pub struct FieldType {
     #[serde(default, rename = "name")]
     pub name: Option<String>,
+    #[serde(rename = "$value")]
+    pub content: String,
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ErrorType {
+    #[serde(default, rename = "type")]
+    pub type_: Option<String>,
     #[serde(rename = "$value")]
     pub content: String,
 }

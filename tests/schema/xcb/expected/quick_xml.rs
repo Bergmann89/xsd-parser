@@ -741,7 +741,7 @@ pub enum DocTypeContent {
     Description(String),
     Example(String),
     Field(FieldType),
-    Error(PacketStructType),
+    Error(ErrorType),
     See(SeeType),
 }
 impl WithSerializer for DocType {
@@ -1113,6 +1113,29 @@ impl WithSerializer for FieldType {
 }
 impl WithDeserializer for FieldType {
     type Deserializer = quick_xml_deserialize::FieldTypeDeserializer;
+}
+#[derive(Debug)]
+pub struct ErrorType {
+    pub type_: Option<String>,
+    pub content: String,
+}
+impl WithSerializer for ErrorType {
+    type Serializer<'x> = quick_xml_serialize::ErrorTypeSerializer<'x>;
+    fn serializer<'ser>(
+        &'ser self,
+        name: Option<&'ser str>,
+        is_root: bool,
+    ) -> Result<Self::Serializer<'ser>, Error> {
+        Ok(quick_xml_serialize::ErrorTypeSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::ErrorTypeSerializerState::Init__),
+            name: name.unwrap_or("Error"),
+            is_root,
+        })
+    }
+}
+impl WithDeserializer for ErrorType {
+    type Deserializer = quick_xml_deserialize::ErrorTypeDeserializer;
 }
 #[derive(Debug)]
 pub struct SeeType {
@@ -7080,8 +7103,6 @@ pub mod quick_xml_deserialize {
                             }
                         } else {
                             *self.state = S::Done__;
-                            allow_any_element = true;
-                            fallback.get_or_insert(S::Doc(None));
                             event
                         }
                     }
@@ -12595,8 +12616,8 @@ pub mod quick_xml_deserialize {
             Option<<super::FieldType as WithDeserializer>::Deserializer>,
         ),
         Error(
-            Option<super::PacketStructType>,
-            Option<<super::PacketStructType as WithDeserializer>::Deserializer>,
+            Option<super::ErrorType>,
+            Option<<super::ErrorType as WithDeserializer>::Deserializer>,
         ),
         See(
             Option<super::SeeType>,
@@ -12639,9 +12660,8 @@ pub mod quick_xml_deserialize {
                 return self.handle_field(reader, Default::default(), output, &mut *fallback);
             }
             if x.name().local_name().as_ref() == b"error" {
-                let output = <super::PacketStructType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
+                let output =
+                    <super::ErrorType as WithDeserializer>::Deserializer::init(reader, event)?;
                 return self.handle_error(reader, Default::default(), output, &mut *fallback);
             }
             if x.name().local_name().as_ref() == b"see" {
@@ -12762,8 +12782,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_error(
-            values: &mut Option<super::PacketStructType>,
-            value: super::PacketStructType,
+            values: &mut Option<super::ErrorType>,
+            value: super::ErrorType,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -12990,8 +13010,8 @@ pub mod quick_xml_deserialize {
         fn handle_error<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::PacketStructType>,
-            output: DeserializerOutput<'de, super::PacketStructType>,
+            mut values: Option<super::ErrorType>,
+            output: DeserializerOutput<'de, super::ErrorType>,
             fallback: &mut Option<DocTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -13233,10 +13253,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Error(values, None), event) => {
-                        let output =
-                            <super::PacketStructType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <super::ErrorType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         match self.handle_error(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -18754,6 +18773,145 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
+    pub struct ErrorTypeDeserializer {
+        type_: Option<String>,
+        content: Option<String>,
+        state: Box<ErrorTypeDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum ErrorTypeDeserializerState {
+        Init__,
+        Content__(<String as WithDeserializer>::Deserializer),
+        Unknown__,
+    }
+    impl ErrorTypeDeserializer {
+        fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
+        where
+            R: DeserializeReader,
+        {
+            let mut type_: Option<String> = None;
+            for attrib in filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                if attrib.key.local_name().as_ref() == b"type" {
+                    reader.read_attrib(&mut type_, b"type", &attrib.value)?;
+                } else {
+                    reader.raise_unexpected_attrib(attrib)?;
+                }
+            }
+            Ok(Self {
+                type_: type_,
+                content: None,
+                state: Box::new(ErrorTypeDeserializerState::Init__),
+            })
+        }
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: ErrorTypeDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            if let ErrorTypeDeserializerState::Content__(deserializer) = state {
+                self.store_content(deserializer.finish(reader)?)?;
+            }
+            Ok(())
+        }
+        fn store_content(&mut self, value: String) -> Result<(), Error> {
+            if self.content.is_some() {
+                Err(ErrorKind::DuplicateContent)?;
+            }
+            self.content = Some(value);
+            Ok(())
+        }
+        fn handle_content<'de, R>(
+            mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+        ) -> DeserializerResult<'de, super::ErrorType>
+        where
+            R: DeserializeReader,
+        {
+            use ErrorTypeDeserializerState as S;
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            match artifact {
+                DeserializerArtifact::None => Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::None,
+                    event,
+                    allow_any,
+                }),
+                DeserializerArtifact::Data(data) => {
+                    self.store_content(data)?;
+                    let data = self.finish(reader)?;
+                    Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::Data(data),
+                        event,
+                        allow_any,
+                    })
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state = S::Content__(deserializer);
+                    Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::Deserializer(self),
+                        event,
+                        allow_any,
+                    })
+                }
+            }
+        }
+    }
+    impl<'de> Deserializer<'de, super::ErrorType> for ErrorTypeDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::ErrorType>
+        where
+            R: DeserializeReader,
+        {
+            let (Event::Start(x) | Event::Empty(x)) = &event else {
+                return Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::None,
+                    event: DeserializerEvent::Break(event),
+                    allow_any: false,
+                });
+            };
+            Self::from_bytes_start(reader, x)?.next(reader, event)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::ErrorType>
+        where
+            R: DeserializeReader,
+        {
+            use ErrorTypeDeserializerState as S;
+            match replace(&mut *self.state, S::Unknown__) {
+                S::Init__ => {
+                    let output = ContentDeserializer::init(reader, event)?;
+                    self.handle_content(reader, output)
+                }
+                S::Content__(deserializer) => {
+                    let output = deserializer.next(reader, event)?;
+                    self.handle_content(reader, output)
+                }
+                S::Unknown__ => unreachable!(),
+            }
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::ErrorType, Error>
+        where
+            R: DeserializeReader,
+        {
+            let state = replace(&mut *self.state, ErrorTypeDeserializerState::Unknown__);
+            self.finish_state(reader, state)?;
+            Ok(super::ErrorType {
+                type_: self.type_,
+                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
+            })
+        }
+    }
+    #[derive(Debug)]
     pub struct SeeTypeDeserializer {
         name: Option<String>,
         type_: Option<String>,
@@ -21011,7 +21169,7 @@ pub mod quick_xml_serialize {
         Description(<String as WithSerializer>::Serializer<'ser>),
         Example(<String as WithSerializer>::Serializer<'ser>),
         Field(<super::FieldType as WithSerializer>::Serializer<'ser>),
-        Error(<super::PacketStructType as WithSerializer>::Serializer<'ser>),
+        Error(<super::ErrorType as WithSerializer>::Serializer<'ser>),
         See(<super::SeeType as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
@@ -22051,6 +22209,60 @@ pub mod quick_xml_serialize {
                 Ok(None) => None,
                 Err(error) => {
                     *self.state = FieldTypeSerializerState::Done__;
+                    Some(Err(error))
+                }
+            }
+        }
+    }
+    #[derive(Debug)]
+    pub struct ErrorTypeSerializer<'ser> {
+        pub(super) value: &'ser super::ErrorType,
+        pub(super) state: Box<ErrorTypeSerializerState<'ser>>,
+        pub(super) name: &'ser str,
+        pub(super) is_root: bool,
+    }
+    #[derive(Debug)]
+    pub(super) enum ErrorTypeSerializerState<'ser> {
+        Init__,
+        Content__(<String as WithSerializer>::Serializer<'ser>),
+        End__,
+        Done__,
+        Phantom__(&'ser ()),
+    }
+    impl<'ser> ErrorTypeSerializer<'ser> {
+        fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
+            loop {
+                match &mut *self.state {
+                    ErrorTypeSerializerState::Init__ => {
+                        *self.state = ErrorTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
+                        let mut bytes = BytesStart::new(self.name);
+                        write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
+                        return Ok(Some(Event::Start(bytes)));
+                    }
+                    ErrorTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = ErrorTypeSerializerState::End__,
+                    },
+                    ErrorTypeSerializerState::End__ => {
+                        *self.state = ErrorTypeSerializerState::Done__;
+                        return Ok(Some(Event::End(BytesEnd::new(self.name))));
+                    }
+                    ErrorTypeSerializerState::Done__ => return Ok(None),
+                    ErrorTypeSerializerState::Phantom__(_) => unreachable!(),
+                }
+            }
+        }
+    }
+    impl<'ser> Iterator for ErrorTypeSerializer<'ser> {
+        type Item = Result<Event<'ser>, Error>;
+        fn next(&mut self) -> Option<Self::Item> {
+            match self.next_event() {
+                Ok(Some(event)) => Some(Ok(event)),
+                Ok(None) => None,
+                Err(error) => {
+                    *self.state = ErrorTypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
