@@ -91,15 +91,30 @@ impl Name {
     /// Unifies the passed string `s`.
     #[must_use]
     pub fn unify(s: &str) -> String {
-        s.replace(|c: char| c != '_' && !c.is_alphanumeric(), "_")
-            .to_screaming_snake_case()
-            .to_pascal_case()
+        let mut done = true;
+        let s = s.replace(
+            |c: char| {
+                let replace = !c.is_alphanumeric();
+                if c != '_' && !replace {
+                    done = false;
+                }
+
+                c != '_' && replace
+            },
+            "_",
+        );
+
+        if done {
+            s
+        } else {
+            s.to_screaming_snake_case().to_pascal_case()
+        }
     }
 
     /// Formats the passed string `s` as type name.
     #[must_use]
     pub fn format_type_name(s: &str) -> String {
-        let name = Name::unify(s).to_pascal_case();
+        let name = Name::unify(s);
 
         if name.starts_with(char::is_numeric) {
             format!("_{name}")
@@ -203,3 +218,16 @@ const KEYWORDS: &[(&str, &str)] = &[
     ("while", "while_"),
     ("yield", "yield_"),
 ];
+
+#[cfg(test)]
+mod tests {
+    use super::Name;
+
+    #[test]
+    fn unify() {
+        assert_eq!("_", Name::unify("+"));
+        assert_eq!("FuuBarBaz", Name::unify("Fuu_BAR_BAZ"));
+        assert_eq!("FuuBarBaz", Name::unify("fuu_bar_baz"));
+        assert_eq!("FuuBarBaz", Name::unify("fuu+Bar-BAZ"));
+    }
+}
