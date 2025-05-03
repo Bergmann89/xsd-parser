@@ -18,4 +18,4 @@ use super::{MaxOccurs, QName};
 
 pub type Use = AttributeUseType;
 
-include!("./xs_generated.rs");
+include!("./xs_generated_new.rs");

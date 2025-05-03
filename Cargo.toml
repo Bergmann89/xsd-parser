@@ -20,6 +20,9 @@ web-resolver = [ "reqwest" ]
 # Helper feature to automatically update all code expectations of the tests
 update-expectations = [ ]
 
+[profile.dev]
+opt-level = "z"
+
 [dependencies]
 anyhow = "1.0"
 bitflags = "2.7"
@@ -37,11 +40,17 @@ tokio = { version = "1.41", optional = true }
 tracing = "0.1"
 url = "2.5"
 
+psm = "0.1"
+stacker = "0.1"
+byte-unit = "5.1"
+
 [dev-dependencies]
 clap = { version = "4.5", features = ["derive"] }
 serde-xml-rs = "0.6"
 text-diff = "0.4"
 tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }
+
+num-format = "0.4"
 
 [build-dependencies]
 base64 = "0.22"

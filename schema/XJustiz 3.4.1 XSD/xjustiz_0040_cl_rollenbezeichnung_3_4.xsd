@@ -1,0 +1,2812 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://www.xjustiz.de"
+           xmlns:xoev-code="http://xoev.de/schemata/code/1_0"
+           targetNamespace="http://www.xjustiz.de"
+           version="3.4.1"
+           elementFormDefault="unqualified"
+           attributeFormDefault="unqualified">
+   <xs:annotation>
+      <xs:appinfo>
+         <standard>
+            <nameLang>Strukturierte Fachdaten für die Kommunikation im elektronischen Rechtsverkehr</nameLang>
+            <nameKurz>XJustiz</nameKurz>
+            <nameTechnisch>xjustiz</nameTechnisch>
+            <kennung>urn:xoev-de:blk-ag-it-standards:standard:xjustiz</kennung>
+            <beschreibung>XJustiz ist der bundesweit einheitliche Standard für den Austausch strukturierter elektronischer Informationen mit der Justiz.</beschreibung>
+         </standard>
+         <versionStandard>
+            <version>3.4.1</version>
+            <beschreibung>XJustiz beschreibt ein standardisiertes Datenaustauschformat für die elektronische Kommunikation innerhalb und mit der Justizverwaltung.</beschreibung>
+            <versionXOEVProfil>1.7.2</versionXOEVProfil>
+            <versionXOEVHandbuch>2.3.1</versionXOEVHandbuch>
+            <versionXGenerator>3.0.1</versionXGenerator>
+            <versionModellierungswerkzeug>19.0 SP3</versionModellierungswerkzeug>
+            <nameModellierungswerkzeug>MagicDraw</nameModellierungswerkzeug>
+         </versionStandard>
+      </xs:appinfo>
+   </xs:annotation>
+   <xs:import schemaLocation="xoev-code.xsd"
+              namespace="http://xoev.de/schemata/code/1_0"/>
+   <xs:complexType name="Code.GDS.Rollenbezeichnung">
+      <xs:annotation>
+         <xs:appinfo>
+            <codeliste>
+               <nameLang>GDS.Rollenbezeichnung</nameLang>
+               <nameKurz>GDS.Rollenbezeichnung</nameKurz>
+               <nameTechnisch>gds.rollenbezeichnung</nameTechnisch>
+               <kennung>urn:xoev-de:xjustiz:codeliste:gds.rollenbezeichnung</kennung>
+               <beschreibung>Codeliste der verschiedenen Rollenbezeichnungen.</beschreibung>
+               <herausgebernameLang>BLK-AG IT-Standards in der Justiz</herausgebernameLang>
+               <herausgebernameKurz>AG IT-Standards</herausgebernameKurz>
+            </codeliste>
+            <versionCodeliste>
+               <version>3.4</version>
+               <versionCodelistenHandbuch>1.1</versionCodelistenHandbuch>
+            </versionCodeliste>
+            <codelistenspalten>
+               <code>
+                  <spaltennameLang>Schlüssel</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>true</codeSpalte>
+                  <verwendung>required</verwendung>
+                  <empfohleneCodeSpalte>true</empfohleneCodeSpalte>
+               </code>
+               <wert>
+                  <spaltennameLang>Wert</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>false</codeSpalte>
+                  <verwendung>required</verwendung>
+                  <empfohleneCodeSpalte>false</empfohleneCodeSpalte>
+               </wert>
+               <fachmodul>
+                  <spaltennameLang>Aufgeführte Fachmodule nutzen ausschließlich die für sie gekennzeichneten Werte</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>false</codeSpalte>
+                  <verwendung>optional</verwendung>
+                  <empfohleneCodeSpalte>false</empfohleneCodeSpalte>
+               </fachmodul>
+            </codelistenspalten>
+            <genutzteCodeSpalte>code</genutzteCodeSpalte>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:complexContent>
+         <xs:restriction base="xoev-code:Code">
+            <xs:sequence>
+               <xs:element name="code" type="tns:gds.rollenbezeichnung"/>
+            </xs:sequence>
+            <xs:attribute name="listURI"
+                          type="xs:anyURI"
+                          use="optional"
+                          fixed="urn:xoev-de:xjustiz:codeliste:gds.rollenbezeichnung"/>
+            <xs:attribute name="listVersionID"
+                          type="xs:normalizedString"
+                          use="optional"
+                          fixed="3.4"/>
+         </xs:restriction>
+      </xs:complexContent>
+   </xs:complexType>
+   <xs:simpleType name="gds.rollenbezeichnung">
+      <xs:annotation>
+         <xs:appinfo>
+            <codeliste>
+               <nameLang>GDS.Rollenbezeichnung</nameLang>
+               <nameKurz>GDS.Rollenbezeichnung</nameKurz>
+               <nameTechnisch>gds.rollenbezeichnung</nameTechnisch>
+               <kennung>urn:xoev-de:xjustiz:codeliste:gds.rollenbezeichnung</kennung>
+               <beschreibung>Codeliste der verschiedenen Rollenbezeichnungen.</beschreibung>
+               <herausgebernameLang>BLK-AG IT-Standards in der Justiz</herausgebernameLang>
+               <herausgebernameKurz>AG IT-Standards</herausgebernameKurz>
+            </codeliste>
+            <versionCodeliste>
+               <version>3.4</version>
+               <versionCodelistenHandbuch>1.1</versionCodelistenHandbuch>
+            </versionCodeliste>
+            <codelistenspalten>
+               <code>
+                  <spaltennameLang>Schlüssel</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>true</codeSpalte>
+                  <verwendung>required</verwendung>
+                  <empfohleneCodeSpalte>true</empfohleneCodeSpalte>
+               </code>
+               <wert>
+                  <spaltennameLang>Wert</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>false</codeSpalte>
+                  <verwendung>required</verwendung>
+                  <empfohleneCodeSpalte>false</empfohleneCodeSpalte>
+               </wert>
+               <fachmodul>
+                  <spaltennameLang>Aufgeführte Fachmodule nutzen ausschließlich die für sie gekennzeichneten Werte</spaltennameLang>
+                  <datentyp>string</datentyp>
+                  <codeSpalte>false</codeSpalte>
+                  <verwendung>optional</verwendung>
+                  <empfohleneCodeSpalte>false</empfohleneCodeSpalte>
+               </fachmodul>
+            </codelistenspalten>
+         </xs:appinfo>
+      </xs:annotation>
+      <xs:restriction base="xs:token">
+         <xs:enumeration value="001">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Abwesenheitspfleger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="002">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Aliasidentität</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="003">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Angehörige(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="004">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Angeklagte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="005">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Angeschuldigte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="006">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Annehmende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="007">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussberufungsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="008">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussberufungskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="009">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussbeschwerdeführer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="010">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussbeschwerdegegner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="011">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussrechtsbeschwerdeführer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="012">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussrechtsbeschwerdegegner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="013">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussrevisionsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="014">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anschlussrevisionskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="015">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Antragsgegner(in)</wert>
+                  <fachmodul>INSO,VAG,ZSSR,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="016">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Antragsteller(in)</wert>
+                  <fachmodul>INSO,VAG,ZSSR,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="017">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anzeigeerstatter(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="018">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anzunehmende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="019">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Arrestgläubiger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="020">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Arrestschuldner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="021">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Aufsichtsbehörde</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="022">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ausschlagende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="023">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beamter (Beamtin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="024">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Behörde</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="025">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beigeladene(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="026">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beistand</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="027">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bekannte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="028">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beklagte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="029">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Berufungsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="030">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Berufungskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="031">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beschuldigte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="032">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beschwerdeführer(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="033">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beschwerdegegner(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="034">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Besucher(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="036">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betreibende(r) Gläubige(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="037">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betreuer(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="038">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betreute(r)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="039">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betreuungsbehörde</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="040">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betroffene(r)</wert>
+                  <fachmodul>EHUG,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="041">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="042">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bewährungshelfer(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="043">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Beweisanwalt (-anwältin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="044">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bruder (Schwester)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="045">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bundeswehrdisziplinaranwalt (-anwältin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="046">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bußgeldempfänger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="047">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Cousin(e)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="048">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Dienstvorgesetzte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="049">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>director</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="050">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Dolmetscher(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="051">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Dritte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="052">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Drittschuldner(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="053">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Drittwiderbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="054">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Drittwiderkläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="056">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ehemann (Ehefrau)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="057">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Eigentümer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="058">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Eingetragene(r) Lebenspartner(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="059">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Einleitungsbehörde</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="060">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Eltern</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="061">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Elternteil</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="062">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Enkel(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="063">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erbe (Erbin)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="064">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erbe (Erbin) (ausschlagend)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="065">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erbe (Erbin) (vorverstorben)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="066">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erblasser(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="067">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ergänzungspfleger(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="068">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erinnerungsführer(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="069">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erinnerungsgegner(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="070">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ersatzbetreuer(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="071">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ersteher(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="072">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erwerber(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="073">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erziehungsberechtigte(r)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="074">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Ehegatte (Ehegattin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="075">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Beklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="076">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Beteiligte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="077">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Gläubiger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="078">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Kläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="079">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Soldat(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="080">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gegenvormund</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="081">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Generalbundesanwalt (-anwältin)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="082">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gericht</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="083">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gerichtsvollzieher(in)</wert>
+                  <fachmodul>ZPO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="084">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Geschädigte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="085">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Geschäftsführende(r) Gesellschafter(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="086">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Geschäftsführer(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="087">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesetzliche(r) Erbe (Erbin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="088">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesetzliche(r) Vertreter(in)</wert>
+                  <fachmodul>EHUG,INSO,ZSSR,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="089">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gläubiger(in)</wert>
+                  <fachmodul>EZOLL,INSO,ZPO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="090">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Großeltern</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="092">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Großvater (Großmutter)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="093">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Hauptbevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="094">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Hoferbe (Hoferbin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="095">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Inhaber(in) der Firma</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="096">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Insolvenzverwalter(in)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="097">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Jugendamt</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="098">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kammer</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="099">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kammermitglied</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="100">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kind</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="101">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kläger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="102">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kontrollbetreuer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="103">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Korrespondenzanwalt (-anwältin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="104">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kostenschuldner(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="105">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Landwirtschaftsrichter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="106">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Lebenspartner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="107">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Liquidator(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="108">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Minderjährige(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="109">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitvormund</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="110">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mündel</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="112">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachbesserungsgläubiger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="113">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachlasspfleger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="114">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachlassverwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="115">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nebenkläger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="116">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Neffe (Nichte)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="117">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nicht verwandt</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="118">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Onkel (Tante)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="119">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Opfer</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="120">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pächter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="121">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pflegeeltern</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="123">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pfleger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="124">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pfleger(in) für das Sammelvermögen</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="125">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pfleger(in) für die Leibesfrucht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="126">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pflegevater (Pflegemutter) des Mündels</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="127">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pflegling</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="128">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pflichtverteidiger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="129">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Polizei</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="130">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Privatbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="131">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Privatkläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="132">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Prozessbevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO,ZSSR,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="133">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Prozesskostenhilfe-Anwalt (-Anwältin)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="134">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Prozesskostenhilfe-Korrespondenzanwalt (-anwältin)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="135">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsanwalt (-anwältin)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="136">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsbeistand</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="137">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsbeschwerdeführer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="138">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsbeschwerdegegner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="139">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Revisionsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="140">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Revisionskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="141">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sachbearbeiter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="142">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sachverständige(r)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="143">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Schuldner(in)</wert>
+                  <fachmodul>EZOLL,INSO,VSTR,ZPO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="144">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Schwager (Schwägerin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="146">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Schwiegersohn (Schwiegertochter)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="148">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Schwiegervater (Schwiegermutter)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="149">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sohn (Tochter)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="150">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Soldat(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="151">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonstige(r) Beteiligte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="152">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonstige(r) Vertreter(in)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="153">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Staatsanwaltschaft</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="154">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Stiefeltern</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="156">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Stiefvater (Stiefmutter)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="161">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Terminsbevollmächtigte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="162">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Testamentsvollstrecker(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="163">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Testator(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="164">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Übernehmer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="165">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Unterbevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="166">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ur-Enkel(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="167">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vater (Mutter)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="168">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Veräußerer (Veräußerin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="169">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfahrensbevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="170">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfahrenskostenhilfe-Anwalt(-Anwältin)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="171">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfahrenskostenhilfe-Korrespondenzanwalt (-anwältin)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="172">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfahrenspfleger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="173">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfahrensvertreter(in) (§787 ZPO)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="174">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfügungsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="175">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfügungskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="176">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verkehrsanwalt (-anwältin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="177">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verlobte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="178">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vermächtnisnehmer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="179">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vermieter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="180">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verpächter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="181">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Versorgungsträger(in)</wert>
+                  <fachmodul>VAG</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="182">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verteidiger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="183">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) der Interessen des Ausgleichsfonds</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="184">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) der Staatskasse</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="185">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) des Bundesinteresses beim Bundesverwaltungsgericht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="186">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) des öffentlichen Interesses</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="187">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verurteilte(r)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="188">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verwalter(in) der Wohnungseigentümergemeinschaft</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="189">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verwaltungsbehörde</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="190">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vollstreckungsgläubiger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="191">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vollstreckungsschuldner(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="192">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorläufige(r) Betreuer(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="193">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vormund</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="194">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorstand</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="195">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorsorgebevollmächtigte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="196">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Wahlverteidiger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="197">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Widerbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="198">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Widerkläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="199">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Wiederaufnahmebeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="200">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Wiederaufnahmekläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="201">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zahlungs- und Auflagenempfänger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="202">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zeuge (Zeugin)</wert>
+                  <fachmodul>INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="203">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zeugenbeistand</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="204">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zulassungsantragsgegner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="205">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zulassungsantragsteller(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="206">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zustellungsbevollmächtigte(r)</wert>
+                  <fachmodul>EHUG,INSO,STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="207">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zustellungsvertreter(in) (§6 ZVG)</wert>
+                  <fachmodul>EHUG</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="208">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notar(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="209">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Auskunftsempfänger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="210">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Melder(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="211">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verwahrstelle</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="212">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Aussteller(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="213">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Berechtigte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="214">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Berechtigte(r) an einem Recht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="215">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Einreicher(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="216">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erbbauberechtigte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="217">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Finanzamt</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="218">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Grundbuchvertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="219">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Insolvenzgericht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="220">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitteilungsempfänger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="221">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nacherbe (Nacherbin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="222">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechnungsempfänger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="223">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Veranlasser(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="224">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Versteigerungsabteilung</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="225">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertretungsberechtigte(r)</wert>
+                  <fachmodul>EHUG</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="226">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zweitschuldner(in)</wert>
+                  <fachmodul>INSO,KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="227">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in)</wert>
+                  <fachmodul>EHUG,INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="228">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Arbeitgeber(in)</wert>
+                  <fachmodul>EZOLL,ZPO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="229">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>RV-Träger(in)</wert>
+                  <fachmodul>EZOLL,ZPO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="230">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vollstreckungsstelle</wert>
+                  <fachmodul>EZOLL</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="231">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Abkömmling</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="232">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kreditnehmer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="233">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Neu vorzutragende(r) Eigentümer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="234">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notariatsverwalter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="235">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notarvertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="236">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Partei kraft Amtes</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="237">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sequester</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="238">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Treuhänder(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="239">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zustimmende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="240">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gläubigervertreter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="241">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Schuldnervertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="242">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zahlungsempfänger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="243">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anteilsinhaber(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="244">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Antragsteller(in) -Eröffnung</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="245">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Debitor(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="246">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesellschafter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="247">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Handlungsbevollmächtigte(r)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="248">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied einer Gesamt-Anteilsinhaberschaft</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="249">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied einer Gläubigergemeinschaft</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="250">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitreeder(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="251">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Partner(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="252">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Persönlich haftende(r) Gesellschafter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="253">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Prozesspfleger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="254">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sachwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="255">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Treuhänder(in) (Wohlverhaltensperiode)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="256">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vermögensträger(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="257">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorläufige(r) Insolvenzverwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="258">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorläufige(r) Treuhänder(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="259">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sondersachwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="260">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonderinsolvenzverwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="261">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorläufige(r) Sachwalter(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="262">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Abwickler(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="263">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Übernehmender Rechtsträger</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="264">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Aufsichtsrat (-rätin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="265">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Besondere(r) Vertreter(in) nach § 30 BGB</wert>
+                  <fachmodul>EHUG</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="266">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betriebsleiter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="267">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Empfangsberechtigte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="268">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Geschäftsführende(r) Direktor(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="269">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Geschäftsleiter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="271">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gründer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="272">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gründungsprüfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="273">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Hauptniederlassung</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="274">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Inhaber(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="275">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kommanditist(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="276">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Konkursverwalter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="277">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied des Leitungsorgans</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="278">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied EWIV</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="279">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachgründungsprüfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="280">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachtragsabwickler(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="281">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachtragsliquidator(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="282">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notgeschäftsführer(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="283">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notliquidator(in)</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="284">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Notvorstand</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="285">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Prokurist(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="287">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsträger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="288">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Registergericht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="289">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sacheinlagenprüfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="290">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Ständige(r) Vertreter(in) für die Zweigniederlassung</wert>
+                  <fachmodul>INSO</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="291">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Übertragender Rechtsträger</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="292">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vergleichsverwalter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="293">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verwaltungsrat (-rätin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="294">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vorstandsvorsitzende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="295">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zweigniederlassung</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="296">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) des Klägers/der Klägerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="297">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) des/der Beklagten</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="298">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bewährungshilfe</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="299">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gerichtshilfe</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="300">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Justizvollzug</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="301">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Pseudoname</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="302">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesetzliche(r) Vertreter(in) des Gläubigers/der Gläubigerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="303">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesetzliche(r) Vertreter(in) des Schuldners/der Schuldnerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="304">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bevollmächtigte(r) des Gläubigers/der Gläubigerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="305">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bevollmächtigte(r) des Schuldners/der Schuldnerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="306">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Fahrzeughalter(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="307">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Frühere(r) Lebenspartner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="308">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sicherungsverwalter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="309">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Zwangsverwalter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="310">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mieter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="311">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bürge (Bürgin)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="312">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Meistbietende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="313">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Abschlussprüfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="314">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Antragstellervertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="315">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Aufsichtsratsvorsitzende(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="316">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Berufskammer</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="317">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Betroffenenvertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="318">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bürgermeister(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="319">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Eingliederungsbeteiligte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="320">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Formwechselnder Rechtsträger</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="321">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gewerbeamt</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="322">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Inhaber(in) (nicht eingetragen)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="323">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kostenempfänger(in)</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="324">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nachlassgericht</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="325">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonderprüfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="326">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonstige(r) gerichtlich bestellte(r) Vertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="327">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonstige(r) gesetzliche(r) Vertreter(in) BGB</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="328">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sonstige(r) organschaftliche(r) Vertreter(in) HRB</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="329">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Standardkostenschuldner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="330">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Übernahmeschuldner(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="331">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Unternehmensvertragsbeteiligte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="332">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vertreter(in) des persönlich haftenden Gesellschafters</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="333">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Werkleiter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="334">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mehrfachsitz</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="335">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied VR</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="336">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als Abwicklerin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="337">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als ges. Vertreterin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="338">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als Kommanditistin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="339">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als Liquidatorin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="340">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als Mitglied e. EWIV</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="341">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. BGB-Gesellschaft als phG</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="342">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. Erbengemeinschaft als ges. Vertreterin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="343">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. Erbengemeinschaft als Inhaberin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="344">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. Erbengemeinschaft als Kommanditistin</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="345">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied e. Erbengemeinschaft als Mitglied e. EWIV</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="346">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nebensitz</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="347">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Gesamthandsgemeinschaft</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="348">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Mitglied einer Gesamthandsgemeinschaft</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="349">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Leitungsperson i.S.v. § 30 Abs. 1 Nr. 1 bis 5 OWiG</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="350">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Einziehungsbeteiligter</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="351">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Antragsgegnervertreter(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="352">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verbraucher(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="353">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vielmelder(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="354">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Vollmachtgeber(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="355">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nebenbeteiligte(r) § 444 StPO</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="356">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfallsbeteiligte(r) § 442 StPO a.F.</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="357">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Verfolgte(r) § 34 IRG</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="358">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Rechtsnachfolger(in)</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="359">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Statuswechselnde(r) Rechtsträger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="360">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Haftangehörige</wert>
+                  <fachmodul>STRAF</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="361">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Restrukturierungsbeauftragte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="362">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Sanierungsmoderator(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="363">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Abschriftenempfänger(in)</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="364">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kostenbeamte(r)</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="365">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Urkundsbeamte(r) der Geschäftsstelle</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="366">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Anordnungsbefugte(r)</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="367">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Erstschuldner(in)</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="368">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Kasse</wert>
+                  <fachmodul>KASSE</fachmodul>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="369">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Arrestbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="370">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Arrestkläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="371">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Bezirksrevisor(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="372">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Nebenintervenient(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="373">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Restitutionsbeklagte(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="374">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Restitutionskläger(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="375">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Streithelfer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="376">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Streitverkündete(r)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+         <xs:enumeration value="377">
+            <xs:annotation>
+               <xs:appinfo>
+                  <wert>Übersetzer(in)</wert>
+               </xs:appinfo>
+            </xs:annotation>
+         </xs:enumeration>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

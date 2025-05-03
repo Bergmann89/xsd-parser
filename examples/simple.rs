@@ -10,12 +10,16 @@
 
 #![allow(missing_docs)]
 
-use std::fs::write;
+use std::env::current_dir;
+use std::fs::{read_dir, write};
 use std::path::PathBuf;
+use std::thread::Builder;
 
 use anyhow::Error;
 use clap::Parser;
+use num_format::{Locale, ToFormattedString};
 use tracing_subscriber::{fmt, EnvFilter};
+use xsd_parser::measure_stack_usage;
 use xsd_parser::{
     config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema},
     generate, Config,
@@ -41,10 +45,8 @@ fn main() -> Result<(), Error> {
 
     // Canonicalize all input files, to ensure that the files exists and that
     // the path is valid. Store it in a vector for further processing.
-    let inputs = args
-        .inputs
-        .into_iter()
-        .map(|p| p.canonicalize())
+    let inputs = read_dir(current_dir()?.join("schema/XJustiz 3.4.1 XSD"))?
+        .map(|p| p.map(|p| p.path()))
         .collect::<Result<Vec<_>, _>>()?;
 
     // Create a default configuration for the generator. This configuration is
@@ -94,7 +96,25 @@ fn main() -> Result<(), Error> {
     }
 
     // Executes the actual code generation process.
-    let code = generate(config)?.to_string();
+    let code = Builder::new()
+        .stack_size(3 * 1024 * 1024)
+        .spawn(move || {
+            xsd_parser::print_stack_info!();
+
+            let mut code = String::new();
+            let used_stack = measure_stack_usage(|| {
+                code = generate(config).unwrap().to_string();
+            });
+
+            tracing::info!(
+                "Used stack: {} bytes",
+                used_stack.to_formatted_string(&Locale::de)
+            );
+
+            code
+        })?
+        .join()
+        .unwrap();
 
     // Writes the generated code to the requested output file.
     write(&args.output, code)?;

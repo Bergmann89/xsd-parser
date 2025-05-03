@@ -23,6 +23,8 @@ pub type InterpreterError = interpreter::Error;
 pub type ParserError<E> = parser::Error<E>;
 
 use std::fs::write;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::usize;
 
 pub use config::Config;
 pub use generator::Generator;
@@ -291,4 +293,77 @@ pub fn exec_generator(
     let code = generator.finish();
 
     Ok(code)
+}
+
+thread_local! {
+    /// FUU
+    pub static MIN_REMAINING_STACK: AtomicUsize = AtomicUsize::new(usize::MAX);
+}
+
+/// Measure stack usage
+#[macro_export]
+macro_rules! print_stack_info {
+    () => {{
+        let sz = stacker::remaining_stack().unwrap();
+
+        $crate::MIN_REMAINING_STACK.with(|x| x.fetch_min(sz, std::sync::atomic::Ordering::Relaxed));
+
+        /*
+        let sz = byte_unit::Byte::from_u64(sz as u64);
+
+        tracing::info!(
+            "Remaining Stack Size: {:.2}; {:.2}; {}",
+            sz.get_adjusted_unit(byte_unit::Unit::MiB),
+            sz.get_adjusted_unit(byte_unit::Unit::KiB),
+            sz.get_adjusted_unit(byte_unit::Unit::B)
+        )
+        */
+    }};
+}
+
+/// Measure stack usage
+#[allow(clippy::cast_ptr_alignment)]
+pub fn measure_stack_usage<F>(f: F) -> usize
+where
+    F: FnOnce(),
+{
+    /*
+    let sz = stacker::remaining_stack().unwrap();
+    let stack_ptr = psm::stack_pointer();
+    let base_ptr = unsafe { stack_ptr.byte_sub(sz) };
+
+    unsafe {
+        std::ptr::write_bytes(base_ptr, 0xAA, sz);
+    }
+    */
+
+    f();
+
+    /*
+    let mut ret = sz;
+    let mut ptr = base_ptr;
+
+    unsafe {
+        while ptr <= stack_ptr {
+            if *ptr.cast::<u32>() != 0xAAAA_AAAA {
+                break;
+            }
+
+            ret -= 4;
+            ptr = ptr.byte_add(4);
+        }
+
+        while *ptr != 0xAA {
+            ret += 1;
+            ptr = ptr.byte_sub(1);
+        }
+    }
+
+    ret
+    */
+
+    let max = dbg!(stacker::remaining_stack().unwrap());
+    let min = dbg!(MIN_REMAINING_STACK.with(|x| x.load(Ordering::Relaxed)));
+
+    max - min
 }

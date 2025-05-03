@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:xoev-lc="http://xoev.de/latinchars/1_1/datatypes"
+           targetNamespace="http://xoev.de/latinchars/1_1/datatypes"
+           version="1.1.1"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified">
+   <xs:annotation>
+      <xs:documentation>Diese Schema-Datei ist Bestandteil des von der KoSIT in XÖV herausgebenen Standards "Lateinische Zeichen in Unicode".</xs:documentation>
+   </xs:annotation>
+   <xs:simpleType name="String.Latin">
+      <xs:annotation>
+         <xs:appinfo>
+            <datentyp>
+               <nameLang>XÖV-Datentyp String.Latin</nameLang>
+               <nameKurz>String.Latin</nameKurz>
+               <nameTechnisch>String.Latin</nameTechnisch>
+               <kennung>urn:xoev-de:kosit:xoev:datentyp:string.latin</kennung>
+               <externeWebsite>http://www.xoev.de/de/stringlatin</externeWebsite>
+            </datentyp>
+            <versionDatentyp>
+               <version>1.1.1</version>
+               <lizenz>Creative Commons Namensnennung - Keine Bearbeitung 4.0 International</lizenz>
+               <bezugsort>http://www.xoev.de/de/bibliothek</bezugsort>
+               <aenderungZurVorversion>Die Versionshistorie des XÖV-Datentyps String.Latin kann in der Dokumentation des zugrundeliegenden Standards eingesehen werden (Lateinische Zeichen in Unicode, http://www.xoev.de/de/einheitlicherzeichensatz).</aenderungZurVorversion>
+            </versionDatentyp>
+         </xs:appinfo>
+         <xs:documentation>Einschränkung auf lateinischen Zeichen.</xs:documentation>
+      </xs:annotation>
+      <xs:restriction base="xs:string">
+         <xs:pattern value="(([&#x9;-&#xa;&#xd;&#x20;-&#x7e;&#xa1;-&#xac;&#xae;-&#x107;&#x10a;-&#x11b;&#x11e;-&#x123;&#x126;-&#x131;&#x134;-&#x15b;&#x15e;-&#x16b;&#x16e;-&#x17e;&#x18f;&#x1a0;-&#x1a1;&#x1af;-&#x1b0;&#x1b7;&#x1cd;-&#x1d4;&#x1de;-&#x1df;&#x1e4;-&#x1f0;&#x1f4;-&#x1f5;&#x1fa;-&#x1ff;&#x218;-&#x21b;&#x21e;-&#x21f;&#x22a;-&#x22b;&#x22e;-&#x233;&#x259;&#x292;&#x1e02;-&#x1e03;&#x1e0a;-&#x1e0b;&#x1e10;-&#x1e11;&#x1e1e;-&#x1e21;&#x1e24;-&#x1e27;&#x1e30;-&#x1e31;&#x1e40;-&#x1e41;&#x1e44;-&#x1e45;&#x1e56;-&#x1e57;&#x1e60;-&#x1e63;&#x1e6a;-&#x1e6b;&#x1e80;-&#x1e85;&#x1e8c;-&#x1e93;&#x1e9e;&#x1ea0;-&#x1ea7;&#x1eaa;-&#x1eac;&#x1eae;-&#x1ec1;&#x1ec4;-&#x1ed3;&#x1ed6;-&#x1edd;&#x1ee4;-&#x1ef9;&#x20ac;])|(&#x4d;&#x302;|&#x4e;&#x302;|&#x6d;&#x302;|&#x6e;&#x302;|&#x44;&#x302;|&#x64;&#x302;|&#x4a;&#x30c;|&#x4c;&#x302;|&#x6c;&#x302;))*"/>
+      </xs:restriction>
+   </xs:simpleType>
+</xs:schema>

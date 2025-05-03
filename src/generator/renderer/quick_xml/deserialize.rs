@@ -260,6 +260,8 @@ impl DynamicType<'_> {
                 where
                     R: DeserializeReader
                 {
+                    #xsd_parser::print_stack_info!();
+
                     match #deref_self self {
                         #( #variants_next )*
                     }
@@ -687,6 +689,8 @@ impl ComplexTypeBase {
                 where
                     R: DeserializeReader,
                 {
+                    #xsd_parser::print_stack_info!();
+
                     #fn_next
                 }
 
