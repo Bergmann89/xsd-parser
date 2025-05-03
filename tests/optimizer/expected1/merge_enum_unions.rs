@@ -3,8 +3,8 @@ pub enum MyUnionType {
     Var1,
     Var2,
     I32(i32),
-    MyBaseUnion1(MyBaseUnion1Type),
+    UnsignedIntList(UnsignedIntList),
 }
 #[derive(Default)]
-pub struct MyBaseUnion1Type(pub Vec<UnsignedIntType>);
+pub struct UnsignedIntList(pub Vec<UnsignedIntType>);
 pub type UnsignedIntType = u32;

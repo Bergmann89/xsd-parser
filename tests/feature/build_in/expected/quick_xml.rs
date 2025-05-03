@@ -142,7 +142,7 @@ impl DeserializeBytes for NmtokensType {
 }
 pub type NotationType = String;
 pub type NameType = String;
-pub type QnameType = String;
+pub type QNameType = String;
 #[derive(Debug)]
 pub struct AnyType;
 impl WithSerializer for AnyType {
@@ -173,11 +173,11 @@ pub type DecimalType = f64;
 pub type DoubleType = f64;
 pub type DurationType = String;
 pub type FloatType = f32;
-pub type GdayType = String;
-pub type GmonthType = String;
-pub type GmonthDayType = String;
-pub type GyearType = String;
-pub type GyearMonthType = String;
+pub type GDayType = String;
+pub type GMonthType = String;
+pub type GMonthDayType = String;
+pub type GYearType = String;
+pub type GYearMonthType = String;
 pub type HexBinaryType = String;
 pub type IntType = i32;
 pub type IntegerType = i32;

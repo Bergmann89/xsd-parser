@@ -221,5 +221,5 @@ pub struct TransformType {
 #[derive(Debug, Serialize, Deserialize)]
 pub enum TransformTypeContent {
     #[serde(rename = "XPath")]
-    Xpath(String),
+    XPath(String),
 }

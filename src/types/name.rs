@@ -55,7 +55,7 @@ impl Name {
     /// Returns `true` if this is a [`Name::Generated`], `false` otherwise.
     #[must_use]
     pub fn is_generated(&self) -> bool {
-        matches!(self, Self::Generated { .. })
+        matches!(self, Self::Generated(_))
     }
 
     /// Returns the value of [`Name::Named`] or [`Name::Generated`].
@@ -99,7 +99,7 @@ impl Name {
     /// Formats the passed string `s` as type name.
     #[must_use]
     pub fn format_type_name(s: &str) -> String {
-        let name = Name::unify(s).to_pascal_case();
+        let name = Name::unify(s);
 
         if name.starts_with(char::is_numeric) {
             format!("_{name}")
