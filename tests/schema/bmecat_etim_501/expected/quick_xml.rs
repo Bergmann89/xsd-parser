@@ -5165,7 +5165,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::BmecatElementTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl BmecatElementTypeDeserializer {
@@ -5314,17 +5313,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -26939,7 +26931,6 @@ pub mod quick_xml_deserialize {
         Content__(
             <super::UdxEdxfDiscountGroupElementTypeContent as WithDeserializer>::Deserializer,
         ),
-        Done__,
         Unknown__,
     }
     impl UdxEdxfDiscountGroupElementTypeDeserializer {
@@ -27087,17 +27078,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -37589,7 +37573,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::UdxEdxfSurchargeElementTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl UdxEdxfSurchargeElementTypeDeserializer {
@@ -37730,17 +37713,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -39251,7 +39227,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::UdxEdxfFeatureMcElementTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl UdxEdxfFeatureMcElementTypeDeserializer {
@@ -39397,17 +39372,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -40435,7 +40403,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     enum UdxEdxfProductCharacteristicElementTypeDeserializerState {
-        Init__ , Next__ , Content__ (< super :: UdxEdxfProductCharacteristicElementTypeContent as WithDeserializer > :: Deserializer) , Done__ , Unknown__ , }
+        Init__ , Next__ , Content__ (< super :: UdxEdxfProductCharacteristicElementTypeContent as WithDeserializer > :: Deserializer) , Unknown__ , }
     impl UdxEdxfProductCharacteristicElementTypeDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
@@ -40579,17 +40547,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
