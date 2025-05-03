@@ -20,6 +20,8 @@ fn config() -> Config {
             "BMECAT",
         )]);
 
+    config.generator.type_postfix.type_ = "".into();
+    config.generator.type_postfix.element = "Element".into();
     config.generator.type_postfix.element_type = "ElementType".into();
 
     config
@@ -48,9 +50,9 @@ macro_rules! define_test_read_quick_xml {
         #[test]
         #[cfg(not(feature = "update-expectations"))]
         fn $name() {
-            use quick_xml::Bmecat;
+            use quick_xml::BmecatElement;
 
-            crate::utils::quick_xml_read_test::<Bmecat, _>(
+            crate::utils::quick_xml_read_test::<BmecatElement, _>(
                 std::path::Path::new("tests/schema/bmecat_etim_501/example").join($file),
             );
         }

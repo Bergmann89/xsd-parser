@@ -40,7 +40,7 @@ pub enum RequestTypeContent {
     Exprfield(ExprfieldType),
     Valueparam(ValueparamType),
     Switch(SwitchexprType),
-    Reply(RequestReplyType),
+    Reply(ReplyType),
     Doc(DocType),
 }
 #[derive(Debug)]
@@ -107,7 +107,7 @@ pub struct EnumType {
 }
 #[derive(Debug)]
 pub struct EnumTypeContent {
-    pub item: EnumItemType,
+    pub item: ItemType,
     pub doc: Option<DocType>,
 }
 #[derive(Debug)]
@@ -198,11 +198,11 @@ pub enum SwitchexprTypeContent {
     Fd(AnyType),
 }
 #[derive(Debug)]
-pub struct RequestReplyType {
-    pub content: Vec<RequestReplyTypeContent>,
+pub struct ReplyType {
+    pub content: Vec<ReplyTypeContent>,
 }
 #[derive(Debug)]
-pub enum RequestReplyTypeContent {
+pub enum ReplyTypeContent {
     Pad(PadType),
     Field(VarType),
     List(ListType),
@@ -225,12 +225,12 @@ pub enum DocTypeContent {
     See(SeeType),
 }
 #[derive(Debug)]
-pub struct EnumItemType {
+pub struct ItemType {
     pub name: String,
-    pub content: EnumItemTypeContent,
+    pub content: ItemTypeContent,
 }
 #[derive(Debug)]
-pub enum EnumItemTypeContent {
+pub enum ItemTypeContent {
     Value(DecOrHexIntegerType),
     Bit(i32),
 }

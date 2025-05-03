@@ -19,7 +19,7 @@ use smallvec::{smallvec, SmallVec};
 use tracing::instrument;
 
 use crate::code::{format_module_ident, format_type_ident, IdentPath, Module};
-use crate::schema::NamespaceId;
+use crate::schema::{MaxOccurs, NamespaceId};
 use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
 
 pub use self::context::Context;
@@ -571,10 +571,12 @@ fn get_boxed_elements<'a>(
 fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
     if let TypeVariant::Reference(ti) = &ty.variant {
         if ident.name.is_generated() && ti.type_.name.is_named() {
-            if ti.min_occurs > 1 {
-                return Name::new_generated(format!("{}List", ti.type_.name.to_type_name()));
+            let s = ti.type_.name.to_type_name();
+
+            if ti.max_occurs > MaxOccurs::Bounded(1) {
+                return Name::new_generated(format!("{s}List"));
             } else if ti.min_occurs == 0 {
-                return Name::new_generated(format!("{}Opt", ti.type_.name.to_type_name()));
+                return Name::new_generated(format!("{s}Opt"));
             }
         }
     }

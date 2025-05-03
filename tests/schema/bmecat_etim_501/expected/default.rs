@@ -1,7 +1,7 @@
-pub type Bmecat = BmecatElementType;
+pub type BmecatElement = BmecatElementType;
 #[derive(Debug)]
 pub struct BmecatElementType {
-    pub version: TypeBmEcatVersionType,
+    pub version: TypeBmEcatVersion,
     pub content: Vec<BmecatElementTypeContent>,
 }
 #[derive(Debug)]
@@ -13,7 +13,7 @@ pub enum BmecatElementTypeContent {
     TNewProductdata(TNewProductdataElementType),
 }
 #[derive(Debug)]
-pub enum TypeBmEcatVersionType {
+pub enum TypeBmEcatVersion {
     _2005,
 }
 #[derive(Debug)]
@@ -22,7 +22,7 @@ pub struct HeaderElementType {
     pub catalog: CatalogElementType,
     pub buyer: BuyerElementType,
     pub supplier: SupplierElementType,
-    pub user_defined_extensions: UdxHeaderType,
+    pub user_defined_extensions: UdxHeader,
 }
 #[derive(Debug)]
 pub struct TNewCatalogElementType {
@@ -47,85 +47,85 @@ pub struct CatalogElementType {
     pub language: Vec<LanguageElementType>,
     pub catalog_id: String,
     pub catalog_version: String,
-    pub catalog_name: Vec<DtMlstringType>,
+    pub catalog_name: Vec<DtMlstring>,
     pub datetime: CatalogDatetimeElementType,
     pub territory: Vec<String>,
-    pub currency: Option<DtCurrenciesType>,
-    pub mime_root: Vec<DtMlstringType>,
+    pub currency: Option<DtCurrencies>,
+    pub mime_root: Vec<DtMlstring>,
 }
 #[derive(Debug)]
 pub struct BuyerElementType {
-    pub buyer_id: Vec<TypePartyIdType>,
+    pub buyer_id: Vec<TypePartyId>,
     pub buyer_name: String,
 }
 #[derive(Debug)]
 pub struct SupplierElementType {
-    pub supplier_id: Vec<TypePartyIdType>,
+    pub supplier_id: Vec<TypePartyId>,
     pub supplier_name: String,
     pub address: Option<SupplierAddressElementType>,
     pub mime_info: Option<MimeInfoElementType>,
 }
 #[derive(Debug)]
-pub struct UdxHeaderType {
-    pub udx_edxf_version: TypeBmEcatEtimVersionType,
+pub struct UdxHeader {
+    pub udx_edxf_version: TypeBmEcatEtimVersion,
 }
 #[derive(Debug)]
 pub struct TNewCatalogProductElementType {
-    pub mode: TNewCatalogProductmodeType,
+    pub mode: TNewCatalogMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
     pub product_order_details: ProductOrderDetailsElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
-    pub user_defined_extensions: UdxProductType,
+    pub user_defined_extensions: UdxProduct,
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
 #[derive(Debug)]
 pub struct TUpdateProductsProductElementType {
-    pub mode: TUpdateProductsProductmodeType,
+    pub mode: TUpdateProductsMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
     pub product_order_details: ProductOrderDetailsElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
-    pub user_defined_extensions: Option<UdxProductType>,
+    pub user_defined_extensions: Option<UdxProduct>,
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
 #[derive(Debug)]
 pub struct TUpdatePricesProductElementType {
-    pub mode: TUpdatePricesProductmodeType,
+    pub mode: TUpdatePricesMode,
     pub supplier_pid: String,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
-    pub user_defined_extensions: Option<UdxProductType>,
+    pub user_defined_extensions: Option<UdxProduct>,
 }
 #[derive(Debug)]
 pub struct TNewProductdataProductElementType {
-    pub mode: TNewProductdataProductmodeType,
+    pub mode: TNewProductdataMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
-    pub user_defined_extensions: Option<UdxProductdataType>,
+    pub user_defined_extensions: Option<UdxProductdata>,
     pub product_reference: Vec<ProductReferenceElementType>,
 }
 #[derive(Debug)]
 pub struct LanguageElementType {
     pub default: Option<String>,
-    pub content: DtLangType,
+    pub content: DtLang,
 }
 #[derive(Debug)]
-pub struct DtMlstringType {
-    pub lang: Option<DtLangType>,
+pub struct DtMlstring {
+    pub lang: Option<DtLang>,
     pub content: String,
 }
 #[derive(Debug)]
 pub struct CatalogDatetimeElementType {
-    pub type_: CatalogDatetimetypeType,
+    pub type_: CatalogType,
     pub date: String,
 }
 #[derive(Debug)]
-pub enum DtCurrenciesType {
+pub enum DtCurrencies {
     Adp,
     Aed,
     Afa,
@@ -356,18 +356,18 @@ pub enum DtCurrenciesType {
     Zwl,
 }
 #[derive(Debug)]
-pub struct TypePartyIdType {
+pub struct TypePartyId {
     pub type_: String,
     pub content: String,
 }
 #[derive(Debug)]
 pub struct SupplierAddressElementType {
-    pub type_: SupplierAddresstypeType,
-    pub contact: Vec<DtMlstringType>,
-    pub street: Vec<DtMlstringType>,
-    pub zip: Vec<DtMlstringType>,
-    pub city: Vec<DtMlstringType>,
-    pub country: Vec<DtMlstringType>,
+    pub type_: SupplierType,
+    pub contact: Vec<DtMlstring>,
+    pub street: Vec<DtMlstring>,
+    pub zip: Vec<DtMlstring>,
+    pub city: Vec<DtMlstring>,
+    pub country: Vec<DtMlstring>,
     pub vat_id: Option<String>,
     pub email: String,
     pub url: Option<String>,
@@ -377,40 +377,40 @@ pub struct MimeInfoElementType {
     pub mime: Vec<MimeElementType>,
 }
 #[derive(Debug)]
-pub enum TypeBmEcatEtimVersionType {
+pub enum TypeBmEcatEtimVersion {
     _50,
 }
 #[derive(Debug)]
-pub enum TNewCatalogProductmodeType {
+pub enum TNewCatalogMode {
     New,
 }
 #[derive(Debug)]
 pub struct ProductDetailsElementType {
-    pub description_short: Vec<DtMlstringType>,
-    pub description_long: Vec<DtMlstringType>,
+    pub description_short: Vec<DtMlstring>,
+    pub description_long: Vec<DtMlstring>,
     pub international_pid: Vec<InternationalPidElementType>,
     pub supplier_alt_pid: Option<String>,
     pub buyer_pid: Option<BuyerPidElementType>,
     pub manufacturer_pid: Option<String>,
     pub manufacturer_name: Option<String>,
-    pub manufacturer_type_descr: Vec<DtMlstringType>,
+    pub manufacturer_type_descr: Vec<DtMlstring>,
     pub delivery_time: Option<f64>,
     pub special_treatment_class: Vec<SpecialTreatmentClassElementType>,
-    pub keyword: Vec<DtMlstringType>,
-    pub remarks: Vec<DtMlstringType>,
+    pub keyword: Vec<DtMlstring>,
+    pub remarks: Vec<DtMlstring>,
     pub product_status: Vec<ProductStatusElementType>,
     pub product_type: Option<ProductTypeElementType>,
 }
 #[derive(Debug)]
 pub struct ProductFeaturesElementType {
-    pub reference_feature_system_name: TypeClassificationSystemNameType,
+    pub reference_feature_system_name: TypeClassificationSystemName,
     pub reference_feature_group_id: String,
     pub feature: Vec<FeatureElementType>,
 }
 #[derive(Debug)]
 pub struct ProductOrderDetailsElementType {
-    pub order_unit: DtUnitType,
-    pub content_unit: DtUnitType,
+    pub order_unit: DtUnit,
+    pub content_unit: DtUnit,
     pub no_cu_per_ou: Option<f64>,
     pub price_quantity: Option<f64>,
     pub quantity_min: Option<f32>,
@@ -424,20 +424,20 @@ pub struct ProductPriceDetailsElementType {
     pub price_base: Option<PriceBaseElementType>,
 }
 #[derive(Debug)]
-pub struct UdxProductType {
+pub struct UdxProduct {
     pub udx_edxf_mime_info: Option<UdxEdxfMimeInfoElementType>,
     pub udx_edxf_manufacturer_acronym: Option<String>,
-    pub udx_edxf_description_very_short: Vec<DtMlstringType>,
+    pub udx_edxf_description_very_short: Vec<DtMlstring>,
     pub udx_edxf_brand_name: Option<String>,
-    pub udx_edxf_tender_text: Vec<DtMlstringType>,
+    pub udx_edxf_tender_text: Vec<DtMlstring>,
     pub udx_edxf_valid_from: Option<String>,
     pub udx_edxf_expiration_date: Option<String>,
     pub udx_edxf_discount_group: Option<UdxEdxfDiscountGroupElementType>,
     pub udx_edxf_bonus_group_supplier: Option<String>,
     pub udx_edxf_additional_factors: Option<UdxEdxfAdditionalFactorsElementType>,
     pub udx_edxf_product_to_stock: Option<String>,
-    pub udx_edxf_product_series: Vec<DtMlstringType>,
-    pub udx_edxf_product_variation: Vec<DtMlstringType>,
+    pub udx_edxf_product_series: Vec<DtMlstring>,
+    pub udx_edxf_product_variation: Vec<DtMlstring>,
     pub udx_edxf_predecessor_pid: Vec<String>,
     pub udx_edxf_country_branch_numbers: Option<UdxEdxfCountryBranchNumbersElementType>,
     pub udx_edxf_country_branch_supplier_ids: Option<UdxEdxfCountryBranchSupplierIdsElementType>,
@@ -458,12 +458,12 @@ pub struct UdxProductType {
 }
 #[derive(Debug)]
 pub struct ProductReferenceElementType {
-    pub type_: ProductReferencetypeType,
+    pub type_: ProductReferenceType,
     pub quantity: Option<i32>,
     pub prod_id_to: String,
     pub catalog_id: Option<String>,
     pub catalog_version: Option<String>,
-    pub reference_descr: Vec<DtMlstringType>,
+    pub reference_descr: Vec<DtMlstring>,
 }
 #[derive(Debug)]
 pub struct ProductLogisticDetailsElementType {
@@ -472,30 +472,30 @@ pub struct ProductLogisticDetailsElementType {
     pub country_of_origin: Vec<String>,
 }
 #[derive(Debug)]
-pub enum TUpdateProductsProductmodeType {
+pub enum TUpdateProductsMode {
     Delete,
     New,
     Update,
 }
 #[derive(Debug)]
-pub enum TUpdatePricesProductmodeType {
+pub enum TUpdatePricesMode {
     Update,
 }
 #[derive(Debug)]
-pub enum TNewProductdataProductmodeType {
+pub enum TNewProductdataMode {
     New,
 }
 #[derive(Debug)]
-pub struct UdxProductdataType {
+pub struct UdxProductdata {
     pub udx_edxf_mime_info: Option<UdxEdxfMimeInfoElementType>,
     pub udx_edxf_manufacturer_acronym: Option<String>,
-    pub udx_edxf_description_very_short: Vec<DtMlstringType>,
+    pub udx_edxf_description_very_short: Vec<DtMlstring>,
     pub udx_edxf_brand_name: Option<String>,
-    pub udx_edxf_tender_text: Vec<DtMlstringType>,
+    pub udx_edxf_tender_text: Vec<DtMlstring>,
     pub udx_edxf_valid_from: Option<String>,
     pub udx_edxf_expiration_date: Option<String>,
-    pub udx_edxf_product_series: Vec<DtMlstringType>,
-    pub udx_edxf_product_variation: Vec<DtMlstringType>,
+    pub udx_edxf_product_series: Vec<DtMlstring>,
+    pub udx_edxf_product_variation: Vec<DtMlstring>,
     pub udx_edxf_predecessor_pid: Vec<String>,
     pub udx_edxf_country_branch_numbers: Option<UdxEdxfCountryBranchNumbersElementType>,
     pub udx_edxf_country_branch_supplier_ids: Option<UdxEdxfCountryBranchSupplierIdsElementType>,
@@ -504,7 +504,7 @@ pub struct UdxProductdataType {
     pub udx_edxf_product_characteristics: Option<UdxEdxfProductCharacteristicsElementType>,
 }
 #[derive(Debug)]
-pub enum DtLangType {
+pub enum DtLang {
     Aar,
     Abk,
     Ace,
@@ -967,18 +967,18 @@ pub enum DtLangType {
     Zul,
 }
 #[derive(Debug)]
-pub enum CatalogDatetimetypeType {
+pub enum CatalogType {
     GenerationDate,
 }
 #[derive(Debug)]
-pub enum SupplierAddresstypeType {
+pub enum SupplierType {
     Supplier,
 }
 #[derive(Debug)]
 pub struct MimeElementType {
-    pub mime_source: Vec<DtMlstringType>,
-    pub mime_descr: Vec<DtMlstringType>,
-    pub mime_alt: Vec<DtMlstringType>,
+    pub mime_source: Vec<DtMlstring>,
+    pub mime_descr: Vec<DtMlstring>,
+    pub mime_alt: Vec<DtMlstring>,
 }
 #[derive(Debug)]
 pub struct InternationalPidElementType {
@@ -997,8 +997,8 @@ pub struct SpecialTreatmentClassElementType {
 }
 #[derive(Debug)]
 pub struct ProductStatusElementType {
-    pub lang: Option<DtLangType>,
-    pub type_: ProductStatustypeType,
+    pub lang: Option<DtLang>,
+    pub type_: ProductStatusType,
     pub content: String,
 }
 #[derive(Debug)]
@@ -1009,19 +1009,19 @@ pub enum ProductTypeElementType {
     Service,
 }
 #[derive(Debug)]
-pub enum TypeClassificationSystemNameType {
+pub enum TypeClassificationSystemName {
     String(String),
     Dynamic,
 }
 #[derive(Debug)]
 pub struct FeatureElementType {
-    pub fname: Vec<DtMlstringType>,
-    pub fvalue: Vec<DtMlstringType>,
+    pub fname: Vec<DtMlstring>,
+    pub fvalue: Vec<DtMlstring>,
     pub funit: Option<String>,
-    pub fvalue_details: Vec<DtMlstringType>,
+    pub fvalue_details: Vec<DtMlstring>,
 }
 #[derive(Debug)]
-pub enum DtUnitType {
+pub enum DtUnit {
     Ann,
     Be,
     Bg,
@@ -1076,14 +1076,14 @@ pub enum DtUnitType {
 }
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
-    pub type_: ProductPriceDetailsDatetimetypeType,
+    pub type_: ProductPriceDetailsType,
     pub date: String,
 }
 #[derive(Debug)]
 pub struct ProductPriceElementType {
     pub price_type: String,
     pub price_amount: f64,
-    pub price_currency: Option<DtCurrenciesType>,
+    pub price_currency: Option<DtCurrencies>,
     pub tax: Option<f64>,
     pub price_factor: Option<f64>,
     pub lower_bound: Option<f64>,
@@ -1091,7 +1091,7 @@ pub struct ProductPriceElementType {
 }
 #[derive(Debug)]
 pub struct PriceBaseElementType {
-    pub price_unit: DtUnitType,
+    pub price_unit: DtUnit,
     pub price_unit_factor: Option<f32>,
 }
 #[derive(Debug)]
@@ -1110,7 +1110,7 @@ pub enum UdxEdxfDiscountGroupElementTypeContent {
 #[derive(Debug)]
 pub struct UdxEdxfAdditionalFactorsElementType {
     pub udx_edxf_additional_price_factor: f64,
-    pub udx_edxf_additional_factor_info: Vec<DtMlstringType>,
+    pub udx_edxf_additional_factor_info: Vec<DtMlstring>,
 }
 #[derive(Debug)]
 pub struct UdxEdxfCountryBranchNumbersElementType {
@@ -1152,7 +1152,7 @@ pub struct UdxEdxfReachElementType {
 #[derive(Debug)]
 pub struct UdxEdxfSpecialTreatmentClassDetailsElementType {
     pub udx_edxf_hazardous_substances: Vec<UdxEdxfHazardousSubstancesElementType>,
-    pub udx_edxf_shipping_name: Option<DtMlstringType>,
+    pub udx_edxf_shipping_name: Option<DtMlstring>,
     pub udx_edxf_packing_group: Option<UdxEdxfPackingGroupElementType>,
     pub udx_edxf_transport_category: Option<i32>,
     pub udx_edxf_multiplication_factor: Option<i32>,
@@ -1200,7 +1200,7 @@ pub struct UdxEdxfProductCharacteristicsElementType {
     pub udx_edxf_product_characteristic: Vec<UdxEdxfProductCharacteristicElementType>,
 }
 #[derive(Debug)]
-pub enum ProductReferencetypeType {
+pub enum ProductReferenceType {
     Accessories,
     BaseProduct,
     ConsistsOf,
@@ -1216,7 +1216,7 @@ pub struct CustomsTariffNumberElementType {
     pub customs_number: String,
 }
 #[derive(Debug)]
-pub enum ProductStatustypeType {
+pub enum ProductStatusType {
     Bargain,
     CoreProduct,
     New,
@@ -1227,17 +1227,17 @@ pub enum ProductStatustypeType {
     Others,
 }
 #[derive(Debug)]
-pub enum ProductPriceDetailsDatetimetypeType {
+pub enum ProductPriceDetailsType {
     ValidStartDate,
     ValidEndDate,
 }
 #[derive(Debug)]
 pub struct UdxEdxfMimeElementType {
-    pub udx_edxf_mime_source: Vec<DtMlstringType>,
+    pub udx_edxf_mime_source: Vec<DtMlstring>,
     pub udx_edxf_mime_code: UdxEdxfMimeCodeElementType,
-    pub udx_edxf_mime_filename: Vec<DtMlstringType>,
-    pub udx_edxf_mime_designation: Vec<DtMlstringType>,
-    pub udx_edxf_mime_alt: Vec<DtMlstringType>,
+    pub udx_edxf_mime_filename: Vec<DtMlstring>,
+    pub udx_edxf_mime_designation: Vec<DtMlstring>,
+    pub udx_edxf_mime_alt: Vec<DtMlstring>,
     pub udx_edxf_mime_issue_date: Option<String>,
     pub udx_edxf_mime_expiry_date: Option<String>,
     pub udx_edxf_mime_order: Option<i32>,
@@ -1258,8 +1258,8 @@ pub struct UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementT
 pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_quantity_min: f32,
     pub udx_edxf_quantity_max: Option<f32>,
-    pub udx_edxf_packing_unit_code: DtPunitType,
-    pub udx_edxf_packing_unit_name: Vec<DtMlstringType>,
+    pub udx_edxf_packing_unit_code: DtPunit,
+    pub udx_edxf_packing_unit_name: Vec<DtMlstring>,
     pub udx_edxf_package_break: Option<String>,
     pub udx_edxf_packing_parts: Option<i32>,
     pub udx_edxf_volume: Option<f64>,
@@ -1359,7 +1359,7 @@ pub enum UdxEdxfSurchargeElementTypeContent {
     UdxEdxfMaterialBasisSurchargeCredit(
         UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType,
     ),
-    UdxEdxfMaterialBasisSurchargeTable(DtMlstringType),
+    UdxEdxfMaterialBasisSurchargeTable(DtMlstring),
 }
 #[derive(Debug)]
 pub enum UdxEdxfBimStatusElementType {
@@ -1388,13 +1388,13 @@ pub struct UdxEdxfProductCharacteristicElementType {
 #[derive(Debug)]
 pub enum UdxEdxfProductCharacteristicElementTypeContent {
     UdxEdxfProductCharacteristicCode(String),
-    UdxEdxfProductCharacteristicName(DtMlstringType),
+    UdxEdxfProductCharacteristicName(DtMlstring),
     UdxEdxfProductCharacteristicValueBoolean(String),
     UdxEdxfProductCharacteristicValueNumeric(f32),
     UdxEdxfProductCharacteristicValueRangeFrom(f32),
     UdxEdxfProductCharacteristicValueRangeTo(f32),
-    UdxEdxfProductCharacteristicValueString(DtMlstringType),
-    UdxEdxfProductCharacteristicValueSet(DtMlstringType),
+    UdxEdxfProductCharacteristicValueString(DtMlstring),
+    UdxEdxfProductCharacteristicValueSet(DtMlstring),
     UdxEdxfProductCharacteristicValueSelect(String),
     UdxEdxfProductCharacteristicValueUnitCode(String),
     UdxEdxfProductCharacteristicReferenceGtin(String),
@@ -1468,7 +1468,7 @@ pub enum UdxEdxfMimeCodeElementType {
     Md99,
 }
 #[derive(Debug)]
-pub enum DtPunitType {
+pub enum DtPunit {
     Be,
     Bg,
     Bo,

@@ -20,6 +20,8 @@ fn config() -> Config {
             "BMECAT",
         )]);
 
+    config.generator.type_postfix.type_ = "".into();
+    config.generator.type_postfix.element = "Element".into();
     config.generator.type_postfix.element_type = "ElementType".into();
 
     config
