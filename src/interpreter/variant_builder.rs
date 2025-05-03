@@ -7,8 +7,8 @@ use tracing::instrument;
 
 use crate::schema::xs::{
     Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
-    Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+    ElementType, ExtensionType, Facet, FacetType, GroupType, List, QNameList, Restriction,
+    RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
 };
 use crate::schema::{MaxOccurs, MinOccurs, Namespace};
 use crate::types::{
@@ -921,17 +921,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         Ok(())
     }
 
-    fn walk_substitution_groups<F>(
-        &mut self,
-        groups: &ElementSubstitutionGroupType,
-        mut f: F,
-    ) -> Result<(), Error>
+    fn walk_substitution_groups<F>(&mut self, groups: &QNameList, mut f: F) -> Result<(), Error>
     where
         F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
     {
         fn inner<'x, 'y, 'z, F>(
             builder: &mut VariantBuilder<'x, 'y, 'z>,
-            groups: &ElementSubstitutionGroupType,
+            groups: &QNameList,
             f: &mut F,
         ) -> Result<(), Error>
         where
