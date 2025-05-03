@@ -4640,7 +4640,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::IndicatorTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl IndicatorTypeDeserializer {
@@ -4764,17 +4763,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -5650,7 +5642,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::DateTimeTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl DateTimeTypeDeserializer {
@@ -5774,17 +5765,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -38077,7 +38061,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::DateTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl DateTypeDeserializer {
@@ -38199,17 +38182,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,

@@ -230,7 +230,12 @@ pub enum Renderer {
 
     /// Renderer that renders code for the `quick_xml` deserializer of the
     /// different types.
-    QuickXmlDeserialize,
+    QuickXmlDeserialize {
+        /// Whether to box the deserializer or not.
+        ///
+        /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::QuickXmlDeserializeRenderer::boxed_deserializer).
+        boxed_deserializer: bool,
+    },
 }
 
 bitflags! {
@@ -487,19 +492,33 @@ impl Config {
         ])
     }
 
-    /// Enable code generation for [`quick_xml`] deserialization.
+    /// Enable code generation for [`quick_xml`] deserialization with the default settings.
     pub fn with_quick_xml_deserialize(self) -> Self {
+        self.with_quick_xml_deserialize_config(false)
+    }
+
+    /// Enable code generation for [`quick_xml`] deserialization
+    /// with the passed configuration.
+    pub fn with_quick_xml_deserialize_config(self, boxed_deserializer: bool) -> Self {
         self.with_renderers([
             Renderer::Types,
             Renderer::Defaults,
             Renderer::NamespaceConstants,
-            Renderer::QuickXmlDeserialize,
+            Renderer::QuickXmlDeserialize { boxed_deserializer },
         ])
     }
 
-    /// Enable code generation for [`quick_xml`] serialization and deserialization.
+    /// Enable code generation for [`quick_xml`] serialization and deserialization
+    /// with the default settings.
     pub fn with_quick_xml(self) -> Self {
         self.with_quick_xml_serialize().with_quick_xml_deserialize()
+    }
+
+    /// Enable code generation for [`quick_xml`] serialization and deserialization
+    /// with the passed configuration.
+    pub fn with_quick_xml_config(self, boxed_deserializer: bool) -> Self {
+        self.with_quick_xml_serialize()
+            .with_quick_xml_deserialize_config(boxed_deserializer)
     }
 
     /// Set the [`serde`] support.

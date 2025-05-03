@@ -1,4 +1,8 @@
-use std::ops::Deref;
+use std::{
+    any::{Any, TypeId},
+    collections::HashMap,
+    ops::Deref,
+};
 
 use parking_lot::Mutex;
 use proc_macro2::{Ident as Ident2, TokenStream};
@@ -26,6 +30,12 @@ pub struct Context<'a, 'types> {
     module_path: ModulePath,
     serialize_module_path: ModulePath,
     deserialize_module_path: ModulePath,
+
+    values: HashMap<TypeId, Box<dyn Any>>,
+}
+
+pub trait ValueKey: Any {
+    type Type: Any + Clone;
 }
 
 impl<'a, 'types> Context<'a, 'types> {
@@ -56,6 +66,37 @@ impl<'a, 'types> Context<'a, 'types> {
         let root = self.module.get_mut();
 
         Self::main_module(self.module_path.last(), root)
+    }
+
+    /// Set a `value` for the specified key `K`.
+    pub fn set<K>(&mut self, value: K::Type)
+    where
+        K: ValueKey,
+    {
+        self.values.insert(TypeId::of::<K>(), Box::new(value));
+    }
+
+    /// Get the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn get<K>(&self) -> K::Type
+    where
+        K: ValueKey,
+    {
+        self.values
+            .get(&TypeId::of::<K>())
+            .unwrap()
+            .downcast_ref::<K::Type>()
+            .unwrap()
+            .clone()
+    }
+
+    /// Removes any values for the specified key `K`.
+    pub fn unset<K>(&mut self)
+    where
+        K: ValueKey,
+    {
+        self.values.remove(&TypeId::of::<K>());
     }
 
     pub(crate) fn resolve_type_for_serialize_module(&self, ident: &IdentPath) -> TokenStream {
@@ -121,6 +162,8 @@ impl<'a, 'types> Context<'a, 'types> {
             module_path,
             serialize_module_path,
             deserialize_module_path,
+
+            values: HashMap::new(),
         }
     }
 

@@ -1183,7 +1183,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::XcbTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl XcbTypeDeserializer {
@@ -1345,17 +1344,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -2721,7 +2713,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::RequestTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl RequestTypeDeserializer {
@@ -2879,17 +2870,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -3955,7 +3939,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::EventTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl EventTypeDeserializer {
@@ -4111,17 +4094,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -4875,7 +4851,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::PacketStructTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl PacketStructTypeDeserializer {
@@ -5021,17 +4996,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -5590,7 +5558,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::StructTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl StructTypeDeserializer {
@@ -5734,17 +5701,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -6683,7 +6643,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::EnumTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl EnumTypeDeserializer {
@@ -6819,17 +6778,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -7440,7 +7392,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::ListTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl ListTypeDeserializer {
@@ -7586,17 +7537,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -8604,7 +8548,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::ExprfieldTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl ExprfieldTypeDeserializer {
@@ -8752,17 +8695,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -9808,7 +9744,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::SwitchexprTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl SwitchexprTypeDeserializer {
@@ -9952,17 +9887,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -11414,7 +11342,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::RequestReplyTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl RequestReplyTypeDeserializer {
@@ -11552,17 +11479,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -12435,7 +12355,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::DocTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl DocTypeDeserializer {
@@ -12564,17 +12483,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -13310,7 +13222,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::EnumItemTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl EnumItemTypeDeserializer {
@@ -13441,17 +13352,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -13796,7 +13700,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::OpTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl OpTypeDeserializer {
@@ -13936,17 +13839,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -14882,7 +14778,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::UnopTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl UnopTypeDeserializer {
@@ -15022,17 +14917,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -17058,7 +16946,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::CaseexprTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl CaseexprTypeDeserializer {
@@ -17196,17 +17083,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,

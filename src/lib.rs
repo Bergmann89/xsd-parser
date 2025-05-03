@@ -308,8 +308,9 @@ pub fn exec_generator_module(
             Renderer::QuickXmlSerialize => {
                 generator = generator.with_renderer(QuickXmlSerializeRenderer);
             }
-            Renderer::QuickXmlDeserialize => {
-                generator = generator.with_renderer(QuickXmlDeserializeRenderer);
+            Renderer::QuickXmlDeserialize { boxed_deserializer } => {
+                generator =
+                    generator.with_renderer(QuickXmlDeserializeRenderer { boxed_deserializer });
             }
         }
     }
