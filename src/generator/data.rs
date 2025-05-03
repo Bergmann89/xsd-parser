@@ -352,6 +352,8 @@ impl VariantInfo {
 
                 let variant_ident = if let Some(display_name) = self.display_name.as_deref() {
                     format_ident!("{display_name}")
+                } else if let (Some(type_ref), true) = (type_ref, self.ident.name.is_generated()) {
+                    type_ref.type_ident.clone()
                 } else if self.ident.name.as_str().is_empty() {
                     *unknown += 1;
 
@@ -1330,8 +1332,15 @@ impl<'a, 'types> Request<'a, 'types> {
 
                     if let Some(target_ident) = &var.type_ {
                         if let Ok(default) = self.get_default(current_ns, default, target_ident) {
-                            let variant_ident =
-                                format_variant_ident(&var.ident.name, var.display_name.as_deref());
+                            let variant_ident = match self.state.cache.get(target_ident) {
+                                Some(type_ref) if var.ident.name.is_generated() => {
+                                    type_ref.type_ident.clone()
+                                }
+                                _ => format_variant_ident(
+                                    &var.ident.name,
+                                    var.display_name.as_deref(),
+                                ),
+                            };
 
                             return Ok(quote!(#target_type :: #variant_ident(#default)));
                         }
@@ -1345,8 +1354,12 @@ impl<'a, 'types> Request<'a, 'types> {
 
                 for ty in &*ui.types {
                     if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
-                        let variant_ident =
-                            format_variant_ident(&ty.type_.name, ty.display_name.as_deref());
+                        let variant_ident = match self.state.cache.get(&ty.type_) {
+                            Some(type_ref) if ty.type_.name.is_generated() => {
+                                type_ref.type_ident.clone()
+                            }
+                            _ => format_variant_ident(&ty.type_.name, ty.display_name.as_deref()),
+                        };
 
                         return Ok(quote! {
                             #target_type :: #variant_ident ( #code )

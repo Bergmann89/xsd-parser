@@ -55,7 +55,7 @@ impl Name {
     /// Returns `true` if this is a [`Name::Generated`], `false` otherwise.
     #[must_use]
     pub fn is_generated(&self) -> bool {
-        matches!(self, Self::Generated { .. })
+        matches!(self, Self::Generated(_))
     }
 
     /// Returns the value of [`Name::Named`] or [`Name::Generated`].

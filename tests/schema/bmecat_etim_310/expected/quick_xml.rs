@@ -10,10 +10,10 @@ pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSc
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_DEFAULT: Namespace =
     Namespace::new_const(b"http://www.etim-international.com/bmecat/31");
-pub type Bmecat = BmecatElementType;
+pub type BmecatElement = BmecatElementType;
 #[derive(Debug)]
 pub struct BmecatElementType {
-    pub version: TypeBmEcatVersionType,
+    pub version: TypeBmEcatVersion,
     pub content: Vec<BmecatElementTypeContent>,
 }
 #[derive(Debug)]
@@ -60,11 +60,11 @@ impl WithDeserializer for BmecatElementTypeContent {
     type Deserializer = quick_xml_deserialize::BmecatElementTypeContentDeserializer;
 }
 #[derive(Debug)]
-pub enum TypeBmEcatVersionType {
+pub enum TypeBmEcatVersion {
     _12,
     _2005,
 }
-impl SerializeBytes for TypeBmEcatVersionType {
+impl SerializeBytes for TypeBmEcatVersion {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::_12 => Ok(Some(Cow::Borrowed("1.2"))),
@@ -72,7 +72,7 @@ impl SerializeBytes for TypeBmEcatVersionType {
         }
     }
 }
-impl DeserializeBytes for TypeBmEcatVersionType {
+impl DeserializeBytes for TypeBmEcatVersion {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -90,7 +90,7 @@ pub struct HeaderElementType {
     pub catalog: CatalogElementType,
     pub buyer: BuyerElementType,
     pub supplier: SupplierElementType,
-    pub user_defined_extensions: UdxHeaderType,
+    pub user_defined_extensions: UdxHeader,
 }
 impl WithSerializer for HeaderElementType {
     type Serializer<'x> = quick_xml_serialize::HeaderElementTypeSerializer<'x>;
@@ -183,11 +183,11 @@ pub struct CatalogElementType {
     pub language: Vec<LanguageElementType>,
     pub catalog_id: String,
     pub catalog_version: String,
-    pub catalog_name: Vec<DtMlstringType>,
+    pub catalog_name: Vec<DtMlstring>,
     pub datetime: CatalogDatetimeElementType,
     pub territory: Vec<String>,
-    pub currency: Option<DtCurrenciesType>,
-    pub mime_root: Vec<DtMlstringType>,
+    pub currency: Option<DtCurrencies>,
+    pub mime_root: Vec<DtMlstring>,
 }
 impl WithSerializer for CatalogElementType {
     type Serializer<'x> = quick_xml_serialize::CatalogElementTypeSerializer<'x>;
@@ -209,7 +209,7 @@ impl WithDeserializer for CatalogElementType {
 }
 #[derive(Debug)]
 pub struct BuyerElementType {
-    pub buyer_id: Option<TypePartyIdType>,
+    pub buyer_id: Option<TypePartyId>,
     pub buyer_name: String,
 }
 impl WithSerializer for BuyerElementType {
@@ -232,7 +232,7 @@ impl WithDeserializer for BuyerElementType {
 }
 #[derive(Debug)]
 pub struct SupplierElementType {
-    pub supplier_id: Vec<TypePartyIdType>,
+    pub supplier_id: Vec<TypePartyId>,
     pub supplier_name: String,
     pub address: Option<SupplierAddressElementType>,
     pub mime_info: Option<MimeInfoElementType>,
@@ -256,44 +256,44 @@ impl WithDeserializer for SupplierElementType {
     type Deserializer = quick_xml_deserialize::SupplierElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct UdxHeaderType {
+pub struct UdxHeader {
     pub udx_edxf_version: String,
 }
-impl WithSerializer for UdxHeaderType {
-    type Serializer<'x> = quick_xml_serialize::UdxHeaderTypeSerializer<'x>;
+impl WithSerializer for UdxHeader {
+    type Serializer<'x> = quick_xml_serialize::UdxHeaderSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::UdxHeaderTypeSerializer {
+        Ok(quick_xml_serialize::UdxHeaderSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::UdxHeaderTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::UdxHeaderSerializerState::Init__),
             name: name.unwrap_or("udxHEADER"),
             is_root,
         })
     }
 }
-impl WithDeserializer for UdxHeaderType {
-    type Deserializer = quick_xml_deserialize::UdxHeaderTypeDeserializer;
+impl WithDeserializer for UdxHeader {
+    type Deserializer = quick_xml_deserialize::UdxHeaderDeserializer;
 }
 #[derive(Debug)]
 pub struct TNewCatalogProductElementType {
-    pub mode: TNewCatalogProductmodeType,
+    pub mode: TNewCatalogMode,
     pub supplier_pid: SupplierPidElementType,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
     pub product_order_details: ProductOrderDetailsElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub mime_info: Option<MimeInfoElementType>,
-    pub user_defined_extensions: UdxProductType,
+    pub user_defined_extensions: UdxProduct,
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
 impl TNewCatalogProductElementType {
     #[must_use]
-    pub fn default_mode() -> TNewCatalogProductmodeType {
-        TNewCatalogProductmodeType::New
+    pub fn default_mode() -> TNewCatalogMode {
+        TNewCatalogMode::New
     }
 }
 impl WithSerializer for TNewCatalogProductElementType {
@@ -320,14 +320,14 @@ impl WithDeserializer for TNewCatalogProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdateProductsProductElementType {
-    pub mode: TUpdateProductsProductmodeType,
+    pub mode: TUpdateProductsMode,
     pub supplier_pid: SupplierPidElementType,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
     pub product_order_details: ProductOrderDetailsElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub mime_info: Option<MimeInfoElementType>,
-    pub user_defined_extensions: Option<UdxProductType>,
+    pub user_defined_extensions: Option<UdxProduct>,
     pub product_reference: Vec<ProductReferenceElementType>,
     pub product_logistic_details: Option<ProductLogisticDetailsElementType>,
 }
@@ -355,15 +355,15 @@ impl WithDeserializer for TUpdateProductsProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdatePricesProductElementType {
-    pub mode: TUpdatePricesProductmodeType,
+    pub mode: TUpdatePricesMode,
     pub supplier_pid: SupplierPidElementType,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
-    pub user_defined_extensions: Option<UdxProductType>,
+    pub user_defined_extensions: Option<UdxProduct>,
 }
 impl TUpdatePricesProductElementType {
     #[must_use]
-    pub fn default_mode() -> TUpdatePricesProductmodeType {
-        TUpdatePricesProductmodeType::Update
+    pub fn default_mode() -> TUpdatePricesMode {
+        TUpdatePricesMode::Update
     }
 }
 impl WithSerializer for TUpdatePricesProductElementType {
@@ -391,7 +391,7 @@ impl WithDeserializer for TUpdatePricesProductElementType {
 #[derive(Debug)]
 pub struct LanguageElementType {
     pub default: Option<String>,
-    pub content: DtLangType,
+    pub content: DtLang,
 }
 impl WithSerializer for LanguageElementType {
     type Serializer<'x> = quick_xml_serialize::LanguageElementTypeSerializer<'x>;
@@ -412,31 +412,31 @@ impl WithDeserializer for LanguageElementType {
     type Deserializer = quick_xml_deserialize::LanguageElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct DtMlstringType {
-    pub lang: Option<DtLangType>,
+pub struct DtMlstring {
+    pub lang: Option<DtLang>,
     pub content: String,
 }
-impl WithSerializer for DtMlstringType {
-    type Serializer<'x> = quick_xml_serialize::DtMlstringTypeSerializer<'x>;
+impl WithSerializer for DtMlstring {
+    type Serializer<'x> = quick_xml_serialize::DtMlstringSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::DtMlstringTypeSerializer {
+        Ok(quick_xml_serialize::DtMlstringSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::DtMlstringTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::DtMlstringSerializerState::Init__),
             name: name.unwrap_or("dtMLSTRING"),
             is_root,
         })
     }
 }
-impl WithDeserializer for DtMlstringType {
-    type Deserializer = quick_xml_deserialize::DtMlstringTypeDeserializer;
+impl WithDeserializer for DtMlstring {
+    type Deserializer = quick_xml_deserialize::DtMlstringDeserializer;
 }
 #[derive(Debug)]
 pub struct CatalogDatetimeElementType {
-    pub type_: CatalogDatetimetypeType,
+    pub type_: CatalogType,
     pub date: String,
     pub time: Option<String>,
     pub timezone: Option<String>,
@@ -460,7 +460,7 @@ impl WithDeserializer for CatalogDatetimeElementType {
     type Deserializer = quick_xml_deserialize::CatalogDatetimeElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum DtCurrenciesType {
+pub enum DtCurrencies {
     Adp,
     Aed,
     Afa,
@@ -620,7 +620,7 @@ pub enum DtCurrenciesType {
     Zrz,
     Zwd,
 }
-impl SerializeBytes for DtCurrenciesType {
+impl SerializeBytes for DtCurrencies {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Adp => Ok(Some(Cow::Borrowed("ADP"))),
@@ -784,7 +784,7 @@ impl SerializeBytes for DtCurrenciesType {
         }
     }
 }
-impl DeserializeBytes for DtCurrenciesType {
+impl DeserializeBytes for DtCurrencies {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -953,36 +953,36 @@ impl DeserializeBytes for DtCurrenciesType {
     }
 }
 #[derive(Debug)]
-pub struct TypePartyIdType {
+pub struct TypePartyId {
     pub type_: Option<String>,
     pub content: String,
 }
-impl WithSerializer for TypePartyIdType {
-    type Serializer<'x> = quick_xml_serialize::TypePartyIdTypeSerializer<'x>;
+impl WithSerializer for TypePartyId {
+    type Serializer<'x> = quick_xml_serialize::TypePartyIdSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::TypePartyIdTypeSerializer {
+        Ok(quick_xml_serialize::TypePartyIdSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::TypePartyIdTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::TypePartyIdSerializerState::Init__),
             name: name.unwrap_or("typePARTY_ID"),
             is_root,
         })
     }
 }
-impl WithDeserializer for TypePartyIdType {
-    type Deserializer = quick_xml_deserialize::TypePartyIdTypeDeserializer;
+impl WithDeserializer for TypePartyId {
+    type Deserializer = quick_xml_deserialize::TypePartyIdDeserializer;
 }
 #[derive(Debug)]
 pub struct SupplierAddressElementType {
-    pub type_: SupplierAddresstypeType,
-    pub contact: Vec<DtMlstringType>,
-    pub street: Vec<DtMlstringType>,
-    pub zip: Vec<DtMlstringType>,
-    pub city: Vec<DtMlstringType>,
-    pub country: Vec<DtMlstringType>,
+    pub type_: SupplierType,
+    pub contact: Vec<DtMlstring>,
+    pub street: Vec<DtMlstring>,
+    pub zip: Vec<DtMlstring>,
+    pub city: Vec<DtMlstring>,
+    pub country: Vec<DtMlstring>,
     pub vat_id: Option<String>,
     pub email: String,
     pub url: Option<String>,
@@ -1028,17 +1028,17 @@ impl WithDeserializer for MimeInfoElementType {
     type Deserializer = quick_xml_deserialize::MimeInfoElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum TNewCatalogProductmodeType {
+pub enum TNewCatalogMode {
     New,
 }
-impl SerializeBytes for TNewCatalogProductmodeType {
+impl SerializeBytes for TNewCatalogMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
     }
 }
-impl DeserializeBytes for TNewCatalogProductmodeType {
+impl DeserializeBytes for TNewCatalogMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1074,16 +1074,16 @@ impl WithDeserializer for SupplierPidElementType {
 }
 #[derive(Debug)]
 pub struct ProductDetailsElementType {
-    pub description_short: Vec<DtMlstringType>,
-    pub description_long: Vec<DtMlstringType>,
+    pub description_short: Vec<DtMlstring>,
+    pub description_long: Vec<DtMlstring>,
     pub international_pid: Vec<InternationalPidElementType>,
     pub supplier_alt_pid: Option<String>,
     pub buyer_pid: Vec<BuyerPidElementType>,
     pub manufacturer_pid: Option<String>,
     pub manufacturer_name: Option<String>,
-    pub manufacturer_type_descr: Vec<DtMlstringType>,
+    pub manufacturer_type_descr: Vec<DtMlstring>,
     pub special_treatment_class: Vec<SpecialTreatmentClassElementType>,
-    pub keyword: Vec<DtMlstringType>,
+    pub keyword: Vec<DtMlstring>,
     pub remarks: Vec<RemarksElementType>,
     pub product_status: Vec<ProductStatusElementType>,
 }
@@ -1108,7 +1108,7 @@ impl WithDeserializer for ProductDetailsElementType {
 #[derive(Debug)]
 pub struct ProductFeaturesElementType {
     pub reference_feature_system_name: String,
-    pub reference_feature_group_id: TypeClassificationGroupIdType,
+    pub reference_feature_group_id: TypeClassificationGroupId,
     pub feature: Vec<FeatureElementType>,
 }
 impl WithSerializer for ProductFeaturesElementType {
@@ -1131,8 +1131,8 @@ impl WithDeserializer for ProductFeaturesElementType {
 }
 #[derive(Debug)]
 pub struct ProductOrderDetailsElementType {
-    pub order_unit: DtPunitType,
-    pub content_unit: DtPunitType,
+    pub order_unit: DtPunit,
+    pub content_unit: DtPunit,
     pub no_cu_per_ou: Option<f64>,
     pub price_quantity: Option<f64>,
     pub quantity_min: Option<f32>,
@@ -1189,11 +1189,11 @@ impl WithDeserializer for ProductPriceDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductPriceDetailsElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct UdxProductType {
+pub struct UdxProduct {
     pub udx_edxf_manufacturer_acronym: Option<String>,
-    pub udx_edxf_description_very_short: Vec<DtMlstringType>,
+    pub udx_edxf_description_very_short: Vec<DtMlstring>,
     pub udx_edxf_brand_name: Option<String>,
-    pub udx_edxf_tender_text: Vec<DtMlstringType>,
+    pub udx_edxf_tender_text: Vec<DtMlstring>,
     pub udx_edxf_valid_from: Option<String>,
     pub udx_edxf_expiration_date: Option<String>,
     pub udx_edxf_discount_group: Option<UdxEdxfDiscountGroupElementType>,
@@ -1202,8 +1202,8 @@ pub struct UdxProductType {
     pub udx_edxf_declaration: Vec<UdxEdxfDeclarationElementType>,
     pub udx_edxf_additional_factors: Option<UdxEdxfAdditionalFactorsElementType>,
     pub udx_edxf_product_to_stock: Option<String>,
-    pub udx_edxf_product_series: Vec<DtMlstringType>,
-    pub udx_edxf_product_variation: Vec<DtMlstringType>,
+    pub udx_edxf_product_series: Vec<DtMlstring>,
+    pub udx_edxf_product_variation: Vec<DtMlstring>,
     pub udx_edxf_at_reverse_charge_info: Option<String>,
     pub udx_edxf_country_branch_numbers: Option<UdxEdxfCountryBranchNumbersElementType>,
     pub udx_edxf_country_branch_supplier_ids: Option<UdxEdxfCountryBranchSupplierIdsElementType>,
@@ -1212,27 +1212,27 @@ pub struct UdxProductType {
     pub udx_edxf_reach: Option<UdxEdxfReachElementType>,
     pub udx_edxf_surcharge_list: Option<UdxEdxfSurchargeListElementType>,
 }
-impl WithSerializer for UdxProductType {
-    type Serializer<'x> = quick_xml_serialize::UdxProductTypeSerializer<'x>;
+impl WithSerializer for UdxProduct {
+    type Serializer<'x> = quick_xml_serialize::UdxProductSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(quick_xml_serialize::UdxProductTypeSerializer {
+        Ok(quick_xml_serialize::UdxProductSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::UdxProductTypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::UdxProductSerializerState::Init__),
             name: name.unwrap_or("udxPRODUCT"),
             is_root,
         })
     }
 }
-impl WithDeserializer for UdxProductType {
-    type Deserializer = quick_xml_deserialize::UdxProductTypeDeserializer;
+impl WithDeserializer for UdxProduct {
+    type Deserializer = quick_xml_deserialize::UdxProductDeserializer;
 }
 #[derive(Debug)]
 pub struct ProductReferenceElementType {
-    pub type_: ProductReferencetypeType,
+    pub type_: ProductReferenceType,
     pub quantity: Option<i32>,
     pub prod_id_to: String,
     pub catalog_id: Option<String>,
@@ -1287,12 +1287,12 @@ impl WithDeserializer for ProductLogisticDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductLogisticDetailsElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum TUpdateProductsProductmodeType {
+pub enum TUpdateProductsMode {
     Delete,
     New,
     Update,
 }
-impl SerializeBytes for TUpdateProductsProductmodeType {
+impl SerializeBytes for TUpdateProductsMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Delete => Ok(Some(Cow::Borrowed("delete"))),
@@ -1301,7 +1301,7 @@ impl SerializeBytes for TUpdateProductsProductmodeType {
         }
     }
 }
-impl DeserializeBytes for TUpdateProductsProductmodeType {
+impl DeserializeBytes for TUpdateProductsMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1315,17 +1315,17 @@ impl DeserializeBytes for TUpdateProductsProductmodeType {
     }
 }
 #[derive(Debug)]
-pub enum TUpdatePricesProductmodeType {
+pub enum TUpdatePricesMode {
     Update,
 }
-impl SerializeBytes for TUpdatePricesProductmodeType {
+impl SerializeBytes for TUpdatePricesMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Update => Ok(Some(Cow::Borrowed("update"))),
         }
     }
 }
-impl DeserializeBytes for TUpdatePricesProductmodeType {
+impl DeserializeBytes for TUpdatePricesMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1337,7 +1337,7 @@ impl DeserializeBytes for TUpdatePricesProductmodeType {
     }
 }
 #[derive(Debug)]
-pub enum DtLangType {
+pub enum DtLang {
     Aar,
     Abk,
     Ace,
@@ -1798,7 +1798,7 @@ pub enum DtLangType {
     Znd,
     Zul,
 }
-impl SerializeBytes for DtLangType {
+impl SerializeBytes for DtLang {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Aar => Ok(Some(Cow::Borrowed("aar"))),
@@ -2263,7 +2263,7 @@ impl SerializeBytes for DtLangType {
         }
     }
 }
-impl DeserializeBytes for DtLangType {
+impl DeserializeBytes for DtLang {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -2733,17 +2733,17 @@ impl DeserializeBytes for DtLangType {
     }
 }
 #[derive(Debug)]
-pub enum CatalogDatetimetypeType {
+pub enum CatalogType {
     GenerationDate,
 }
-impl SerializeBytes for CatalogDatetimetypeType {
+impl SerializeBytes for CatalogType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::GenerationDate => Ok(Some(Cow::Borrowed("generation_date"))),
         }
     }
 }
-impl DeserializeBytes for CatalogDatetimetypeType {
+impl DeserializeBytes for CatalogType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -2755,17 +2755,17 @@ impl DeserializeBytes for CatalogDatetimetypeType {
     }
 }
 #[derive(Debug)]
-pub enum SupplierAddresstypeType {
+pub enum SupplierType {
     Supplier,
 }
-impl SerializeBytes for SupplierAddresstypeType {
+impl SerializeBytes for SupplierType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Supplier => Ok(Some(Cow::Borrowed("supplier"))),
         }
     }
 }
-impl DeserializeBytes for SupplierAddresstypeType {
+impl DeserializeBytes for SupplierType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -2779,9 +2779,9 @@ impl DeserializeBytes for SupplierAddresstypeType {
 #[derive(Debug)]
 pub struct MimeElementType {
     pub mime_type: String,
-    pub mime_source: Vec<DtMlstringType>,
-    pub mime_descr: Vec<DtMlstringType>,
-    pub mime_alt: Vec<DtMlstringType>,
+    pub mime_source: Vec<DtMlstring>,
+    pub mime_descr: Vec<DtMlstring>,
+    pub mime_alt: Vec<DtMlstring>,
     pub mime_purpose: MimePurposeElementType,
 }
 impl WithSerializer for MimeElementType {
@@ -2879,7 +2879,7 @@ impl WithDeserializer for SpecialTreatmentClassElementType {
 }
 #[derive(Debug)]
 pub struct RemarksElementType {
-    pub lang: Option<DtLangType>,
+    pub lang: Option<DtLang>,
     pub type_: Option<String>,
     pub content: String,
 }
@@ -2903,8 +2903,8 @@ impl WithDeserializer for RemarksElementType {
 }
 #[derive(Debug)]
 pub struct ProductStatusElementType {
-    pub lang: Option<DtLangType>,
-    pub type_: ProductStatustypeType,
+    pub lang: Option<DtLang>,
+    pub type_: ProductStatusType,
     pub content: String,
 }
 impl WithSerializer for ProductStatusElementType {
@@ -2926,38 +2926,34 @@ impl WithDeserializer for ProductStatusElementType {
     type Deserializer = quick_xml_deserialize::ProductStatusElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct TypeClassificationGroupIdType {
-    pub type_: Option<TypeClassificationGroupIdtypeType>,
+pub struct TypeClassificationGroupId {
+    pub type_: Option<TypeClassificationGroupIdType>,
     pub content: String,
 }
-impl WithSerializer for TypeClassificationGroupIdType {
-    type Serializer<'x> = quick_xml_serialize::TypeClassificationGroupIdTypeSerializer<'x>;
+impl WithSerializer for TypeClassificationGroupId {
+    type Serializer<'x> = quick_xml_serialize::TypeClassificationGroupIdSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
-        Ok(
-            quick_xml_serialize::TypeClassificationGroupIdTypeSerializer {
-                value: self,
-                state: Box::new(
-                    quick_xml_serialize::TypeClassificationGroupIdTypeSerializerState::Init__,
-                ),
-                name: name.unwrap_or("typeCLASSIFICATION_GROUP_ID"),
-                is_root,
-            },
-        )
+        Ok(quick_xml_serialize::TypeClassificationGroupIdSerializer {
+            value: self,
+            state: Box::new(quick_xml_serialize::TypeClassificationGroupIdSerializerState::Init__),
+            name: name.unwrap_or("typeCLASSIFICATION_GROUP_ID"),
+            is_root,
+        })
     }
 }
-impl WithDeserializer for TypeClassificationGroupIdType {
-    type Deserializer = quick_xml_deserialize::TypeClassificationGroupIdTypeDeserializer;
+impl WithDeserializer for TypeClassificationGroupId {
+    type Deserializer = quick_xml_deserialize::TypeClassificationGroupIdDeserializer;
 }
 #[derive(Debug)]
 pub struct FeatureElementType {
-    pub fname: Vec<DtMlstringType>,
-    pub fvalue: Vec<DtMlstringType>,
+    pub fname: Vec<DtMlstring>,
+    pub fvalue: Vec<DtMlstring>,
     pub funit: Option<String>,
-    pub fvalue_details: Vec<DtMlstringType>,
+    pub fvalue_details: Vec<DtMlstring>,
 }
 impl WithSerializer for FeatureElementType {
     type Serializer<'x> = quick_xml_serialize::FeatureElementTypeSerializer<'x>;
@@ -2978,7 +2974,7 @@ impl WithDeserializer for FeatureElementType {
     type Deserializer = quick_xml_deserialize::FeatureElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum DtPunitType {
+pub enum DtPunit {
     Be,
     Bg,
     Bo,
@@ -3016,7 +3012,7 @@ pub enum DtPunitType {
     Z2,
     Z3,
 }
-impl SerializeBytes for DtPunitType {
+impl SerializeBytes for DtPunit {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Be => Ok(Some(Cow::Borrowed("BE"))),
@@ -3058,7 +3054,7 @@ impl SerializeBytes for DtPunitType {
         }
     }
 }
-impl DeserializeBytes for DtPunitType {
+impl DeserializeBytes for DtPunit {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3106,7 +3102,7 @@ impl DeserializeBytes for DtPunitType {
 }
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
-    pub type_: ProductPriceDetailsDatetimetypeType,
+    pub type_: ProductPriceDetailsType,
     pub date: String,
     pub time: Option<String>,
     pub timezone: Option<String>,
@@ -3128,7 +3124,7 @@ impl WithDeserializer for ProductPriceDetailsDatetimeElementType {
 pub struct ProductPriceElementType {
     pub price_type: String,
     pub price_amount: f64,
-    pub price_currency: Option<DtCurrenciesType>,
+    pub price_currency: Option<DtCurrencies>,
     pub tax: Option<f64>,
     pub price_factor: Option<f64>,
     pub lower_bound: Option<f64>,
@@ -3229,7 +3225,7 @@ impl WithDeserializer for UdxEdxfDeclarationElementType {
 #[derive(Debug)]
 pub struct UdxEdxfAdditionalFactorsElementType {
     pub udx_edxf_additional_price_factor: f64,
-    pub udx_edxf_additional_factor_info: DtMlstringType,
+    pub udx_edxf_additional_factor_info: DtMlstring,
 }
 impl WithSerializer for UdxEdxfAdditionalFactorsElementType {
     type Serializer<'x> = quick_xml_serialize::UdxEdxfAdditionalFactorsElementTypeSerializer<'x>;
@@ -3386,7 +3382,7 @@ impl WithDeserializer for UdxEdxfSurchargeListElementType {
     type Deserializer = quick_xml_deserialize::UdxEdxfSurchargeListElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum ProductReferencetypeType {
+pub enum ProductReferenceType {
     Accessories,
     BaseProduct,
     ConsistsOf,
@@ -3398,7 +3394,7 @@ pub enum ProductReferencetypeType {
     Sparepart,
     Others,
 }
-impl SerializeBytes for ProductReferencetypeType {
+impl SerializeBytes for ProductReferenceType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Accessories => Ok(Some(Cow::Borrowed("accessories"))),
@@ -3414,7 +3410,7 @@ impl SerializeBytes for ProductReferencetypeType {
         }
     }
 }
-impl DeserializeBytes for ProductReferencetypeType {
+impl DeserializeBytes for ProductReferenceType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3504,7 +3500,7 @@ impl DeserializeBytes for MimePurposeElementType {
     }
 }
 #[derive(Debug)]
-pub enum ProductStatustypeType {
+pub enum ProductStatusType {
     Bargain,
     CoreProduct,
     New,
@@ -3514,7 +3510,7 @@ pub enum ProductStatustypeType {
     Used,
     Others,
 }
-impl SerializeBytes for ProductStatustypeType {
+impl SerializeBytes for ProductStatusType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Bargain => Ok(Some(Cow::Borrowed("bargain"))),
@@ -3528,7 +3524,7 @@ impl SerializeBytes for ProductStatustypeType {
         }
     }
 }
-impl DeserializeBytes for ProductStatustypeType {
+impl DeserializeBytes for ProductStatusType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3547,11 +3543,11 @@ impl DeserializeBytes for ProductStatustypeType {
     }
 }
 #[derive(Debug)]
-pub enum TypeClassificationGroupIdtypeType {
+pub enum TypeClassificationGroupIdType {
     Flat,
     Hierarchy,
 }
-impl SerializeBytes for TypeClassificationGroupIdtypeType {
+impl SerializeBytes for TypeClassificationGroupIdType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Flat => Ok(Some(Cow::Borrowed("flat"))),
@@ -3559,7 +3555,7 @@ impl SerializeBytes for TypeClassificationGroupIdtypeType {
         }
     }
 }
-impl DeserializeBytes for TypeClassificationGroupIdtypeType {
+impl DeserializeBytes for TypeClassificationGroupIdType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3572,11 +3568,11 @@ impl DeserializeBytes for TypeClassificationGroupIdtypeType {
     }
 }
 #[derive(Debug)]
-pub enum ProductPriceDetailsDatetimetypeType {
+pub enum ProductPriceDetailsType {
     ValidStartDate,
     ValidEndDate,
 }
-impl SerializeBytes for ProductPriceDetailsDatetimetypeType {
+impl SerializeBytes for ProductPriceDetailsType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::ValidStartDate => Ok(Some(Cow::Borrowed("valid_start_date"))),
@@ -3584,7 +3580,7 @@ impl SerializeBytes for ProductPriceDetailsDatetimetypeType {
         }
     }
 }
-impl DeserializeBytes for ProductPriceDetailsDatetimetypeType {
+impl DeserializeBytes for ProductPriceDetailsType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3638,8 +3634,8 @@ impl WithDeserializer for UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSup
 pub struct UdxEdxfPackingUnitElementType {
     pub udx_edxf_quantity_min: f32,
     pub udx_edxf_quantity_max: Option<f32>,
-    pub udx_edxf_packing_unit_code: DtPunitType,
-    pub udx_edxf_packing_unit_name: Vec<DtMlstringType>,
+    pub udx_edxf_packing_unit_code: DtPunit,
+    pub udx_edxf_packing_unit_name: Vec<DtMlstring>,
     pub udx_edxf_package_break: Option<String>,
     pub udx_edxf_volume: Option<f64>,
     pub udx_edxf_weight: Option<f64>,
@@ -3688,7 +3684,7 @@ pub enum UdxEdxfSurchargeElementTypeContent {
     UdxEdxfMaterialBasisSurchargeThreshold(f64),
     UdxEdxfMaterialBasisSurchargeShutter(i32),
     UdxEdxfMaterialBasisSurchargeCredit(i32),
-    UdxEdxfMaterialBasisSurchargeTable(DtMlstringType),
+    UdxEdxfMaterialBasisSurchargeTable(DtMlstring),
 }
 impl WithSerializer for UdxEdxfSurchargeElementType {
     type Serializer<'x> = quick_xml_serialize::UdxEdxfSurchargeElementTypeSerializer<'x>;
@@ -3741,7 +3737,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct BmecatElementTypeDeserializer {
-        version: super::TypeBmEcatVersionType,
+        version: super::TypeBmEcatVersion,
         content: Vec<super::BmecatElementTypeContent>,
         state: Box<BmecatElementTypeDeserializerState>,
     }
@@ -3757,7 +3753,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut version: Option<super::TypeBmEcatVersionType> = None;
+            let mut version: Option<super::TypeBmEcatVersion> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -4531,7 +4527,7 @@ pub mod quick_xml_deserialize {
         catalog: Option<super::CatalogElementType>,
         buyer: Option<super::BuyerElementType>,
         supplier: Option<super::SupplierElementType>,
-        user_defined_extensions: Option<super::UdxHeaderType>,
+        user_defined_extensions: Option<super::UdxHeader>,
         state: Box<HeaderElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -4541,7 +4537,7 @@ pub mod quick_xml_deserialize {
         Catalog(Option<<super::CatalogElementType as WithDeserializer>::Deserializer>),
         Buyer(Option<<super::BuyerElementType as WithDeserializer>::Deserializer>),
         Supplier(Option<<super::SupplierElementType as WithDeserializer>::Deserializer>),
-        UserDefinedExtensions(Option<<super::UdxHeaderType as WithDeserializer>::Deserializer>),
+        UserDefinedExtensions(Option<<super::UdxHeader as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -4626,10 +4622,7 @@ pub mod quick_xml_deserialize {
             self.supplier = Some(value);
             Ok(())
         }
-        fn store_user_defined_extensions(
-            &mut self,
-            value: super::UdxHeaderType,
-        ) -> Result<(), Error> {
+        fn store_user_defined_extensions(&mut self, value: super::UdxHeader) -> Result<(), Error> {
             if self.user_defined_extensions.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"USER_DEFINED_EXTENSIONS",
@@ -4848,7 +4841,7 @@ pub mod quick_xml_deserialize {
         fn handle_user_defined_extensions<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::UdxHeaderType>,
+            output: DeserializerOutput<'de, super::UdxHeader>,
             fallback: &mut Option<HeaderElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5094,7 +5087,7 @@ pub mod quick_xml_deserialize {
                             b"USER_DEFINED_EXTENSIONS",
                         ) {
                             let output =
-                                <super::UdxHeaderType as WithDeserializer>::Deserializer::init(
+                                <super::UdxHeader as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_user_defined_extensions(
@@ -5845,11 +5838,11 @@ pub mod quick_xml_deserialize {
         language: Vec<super::LanguageElementType>,
         catalog_id: Option<String>,
         catalog_version: Option<String>,
-        catalog_name: Vec<super::DtMlstringType>,
+        catalog_name: Vec<super::DtMlstring>,
         datetime: Option<super::CatalogDatetimeElementType>,
         territory: Vec<String>,
-        currency: Option<super::DtCurrenciesType>,
-        mime_root: Vec<super::DtMlstringType>,
+        currency: Option<super::DtCurrencies>,
+        mime_root: Vec<super::DtMlstring>,
         state: Box<CatalogElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -5858,11 +5851,11 @@ pub mod quick_xml_deserialize {
         Language(Option<<super::LanguageElementType as WithDeserializer>::Deserializer>),
         CatalogId(Option<<String as WithDeserializer>::Deserializer>),
         CatalogVersion(Option<<String as WithDeserializer>::Deserializer>),
-        CatalogName(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        CatalogName(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Datetime(Option<<super::CatalogDatetimeElementType as WithDeserializer>::Deserializer>),
         Territory(Option<<String as WithDeserializer>::Deserializer>),
-        Currency(Option<<super::DtCurrenciesType as WithDeserializer>::Deserializer>),
-        MimeRoot(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        Currency(Option<<super::DtCurrencies as WithDeserializer>::Deserializer>),
+        MimeRoot(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -5947,7 +5940,7 @@ pub mod quick_xml_deserialize {
             self.catalog_version = Some(value);
             Ok(())
         }
-        fn store_catalog_name(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_catalog_name(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.catalog_name.push(value);
             Ok(())
         }
@@ -5967,7 +5960,7 @@ pub mod quick_xml_deserialize {
             self.territory.push(value);
             Ok(())
         }
-        fn store_currency(&mut self, value: super::DtCurrenciesType) -> Result<(), Error> {
+        fn store_currency(&mut self, value: super::DtCurrencies) -> Result<(), Error> {
             if self.currency.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"CURRENCY",
@@ -5976,7 +5969,7 @@ pub mod quick_xml_deserialize {
             self.currency = Some(value);
             Ok(())
         }
-        fn store_mime_root(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_mime_root(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.mime_root.push(value);
             Ok(())
         }
@@ -6147,7 +6140,7 @@ pub mod quick_xml_deserialize {
         fn handle_catalog_name<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6306,7 +6299,7 @@ pub mod quick_xml_deserialize {
         fn handle_currency<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtCurrenciesType>,
+            output: DeserializerOutput<'de, super::DtCurrencies>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6353,7 +6346,7 @@ pub mod quick_xml_deserialize {
         fn handle_mime_root<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<CatalogElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6606,7 +6599,7 @@ pub mod quick_xml_deserialize {
                             b"CATALOG_NAME",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_catalog_name(reader, output, &mut fallback)? {
@@ -6673,7 +6666,7 @@ pub mod quick_xml_deserialize {
                             b"CURRENCY",
                         ) {
                             let output =
-                                <super::DtCurrenciesType as WithDeserializer>::Deserializer::init(
+                                <super::DtCurrencies as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_currency(reader, output, &mut fallback)? {
@@ -6697,7 +6690,7 @@ pub mod quick_xml_deserialize {
                             b"MIME_ROOT",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_mime_root(reader, output, &mut fallback)? {
@@ -6763,14 +6756,14 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct BuyerElementTypeDeserializer {
-        buyer_id: Option<super::TypePartyIdType>,
+        buyer_id: Option<super::TypePartyId>,
         buyer_name: Option<String>,
         state: Box<BuyerElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum BuyerElementTypeDeserializerState {
         Init__,
-        BuyerId(Option<<super::TypePartyIdType as WithDeserializer>::Deserializer>),
+        BuyerId(Option<<super::TypePartyId as WithDeserializer>::Deserializer>),
         BuyerName(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
@@ -6810,7 +6803,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_buyer_id(&mut self, value: super::TypePartyIdType) -> Result<(), Error> {
+        fn store_buyer_id(&mut self, value: super::TypePartyId) -> Result<(), Error> {
             if self.buyer_id.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"BUYER_ID",
@@ -6831,7 +6824,7 @@ pub mod quick_xml_deserialize {
         fn handle_buyer_id<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TypePartyIdType>,
+            output: DeserializerOutput<'de, super::TypePartyId>,
             fallback: &mut Option<BuyerElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6999,7 +6992,7 @@ pub mod quick_xml_deserialize {
                             b"BUYER_ID",
                         ) {
                             let output =
-                                <super::TypePartyIdType as WithDeserializer>::Deserializer::init(
+                                <super::TypePartyId as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_buyer_id(reader, output, &mut fallback)? {
@@ -7077,7 +7070,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SupplierElementTypeDeserializer {
-        supplier_id: Vec<super::TypePartyIdType>,
+        supplier_id: Vec<super::TypePartyId>,
         supplier_name: Option<String>,
         address: Option<super::SupplierAddressElementType>,
         mime_info: Option<super::MimeInfoElementType>,
@@ -7086,7 +7079,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum SupplierElementTypeDeserializerState {
         Init__,
-        SupplierId(Option<<super::TypePartyIdType as WithDeserializer>::Deserializer>),
+        SupplierId(Option<<super::TypePartyId as WithDeserializer>::Deserializer>),
         SupplierName(Option<<String as WithDeserializer>::Deserializer>),
         Address(Option<<super::SupplierAddressElementType as WithDeserializer>::Deserializer>),
         MimeInfo(Option<<super::MimeInfoElementType as WithDeserializer>::Deserializer>),
@@ -7136,7 +7129,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_supplier_id(&mut self, value: super::TypePartyIdType) -> Result<(), Error> {
+        fn store_supplier_id(&mut self, value: super::TypePartyId) -> Result<(), Error> {
             self.supplier_id.push(value);
             Ok(())
         }
@@ -7170,7 +7163,7 @@ pub mod quick_xml_deserialize {
         fn handle_supplier_id<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TypePartyIdType>,
+            output: DeserializerOutput<'de, super::TypePartyId>,
             fallback: &mut Option<SupplierElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -7467,7 +7460,7 @@ pub mod quick_xml_deserialize {
                             b"SUPPLIER_ID",
                         ) {
                             let output =
-                                <super::TypePartyIdType as WithDeserializer>::Deserializer::init(
+                                <super::TypePartyId as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_supplier_id(reader, output, &mut fallback)? {
@@ -7585,18 +7578,18 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct UdxHeaderTypeDeserializer {
+    pub struct UdxHeaderDeserializer {
         udx_edxf_version: Option<String>,
-        state: Box<UdxHeaderTypeDeserializerState>,
+        state: Box<UdxHeaderDeserializerState>,
     }
     #[derive(Debug)]
-    enum UdxHeaderTypeDeserializerState {
+    enum UdxHeaderDeserializerState {
         Init__,
         UdxEdxfVersion(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl UdxHeaderTypeDeserializer {
+    impl UdxHeaderDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -7607,18 +7600,18 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 udx_edxf_version: None,
-                state: Box::new(UdxHeaderTypeDeserializerState::Init__),
+                state: Box::new(UdxHeaderDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: UdxHeaderTypeDeserializerState,
+            state: UdxHeaderDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use UdxHeaderTypeDeserializerState as S;
+            use UdxHeaderDeserializerState as S;
             match state {
                 S::UdxEdxfVersion(Some(deserializer)) => {
                     self.store_udx_edxf_version(deserializer.finish(reader)?)?
@@ -7640,7 +7633,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxHeaderTypeDeserializerState>,
+            fallback: &mut Option<UdxHeaderDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7652,11 +7645,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.udx_edxf_version.is_some() {
-                    fallback.get_or_insert(UdxHeaderTypeDeserializerState::UdxEdxfVersion(None));
-                    *self.state = UdxHeaderTypeDeserializerState::Done__;
+                    fallback.get_or_insert(UdxHeaderDeserializerState::UdxEdxfVersion(None));
+                    *self.state = UdxHeaderDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = UdxHeaderTypeDeserializerState::UdxEdxfVersion(None);
+                    *self.state = UdxHeaderDeserializerState::UdxEdxfVersion(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -7667,21 +7660,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_version(data)?;
-                    *self.state = UdxHeaderTypeDeserializerState::Done__;
+                    *self.state = UdxHeaderDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(UdxHeaderTypeDeserializerState::UdxEdxfVersion(
+                            fallback.get_or_insert(UdxHeaderDeserializerState::UdxEdxfVersion(
                                 Some(deserializer),
                             ));
-                            *self.state = UdxHeaderTypeDeserializerState::Done__;
+                            *self.state = UdxHeaderDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                UdxHeaderTypeDeserializerState::UdxEdxfVersion(Some(deserializer));
+                                UdxHeaderDeserializerState::UdxEdxfVersion(Some(deserializer));
                         }
                     }
                     ret
@@ -7689,8 +7682,8 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::UdxHeaderType> for UdxHeaderTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxHeaderType>
+    impl<'de> Deserializer<'de, super::UdxHeader> for UdxHeaderDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxHeader>
         where
             R: DeserializeReader,
         {
@@ -7700,11 +7693,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxHeaderType>
+        ) -> DeserializerResult<'de, super::UdxHeader>
         where
             R: DeserializeReader,
         {
-            use UdxHeaderTypeDeserializerState as S;
+            use UdxHeaderDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -7735,7 +7728,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = UdxHeaderTypeDeserializerState::UdxEdxfVersion(None);
+                        *self.state = UdxHeaderDeserializerState::UdxEdxfVersion(None);
                         event
                     }
                     (S::UdxEdxfVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7780,13 +7773,13 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxHeaderType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::UdxHeader, Error>
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, UdxHeaderTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state, UdxHeaderDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
-            Ok(super::UdxHeaderType {
+            Ok(super::UdxHeader {
                 udx_edxf_version: self
                     .udx_edxf_version
                     .ok_or_else(|| ErrorKind::MissingElement("UDX.EDXF.VERSION".into()))?,
@@ -7795,14 +7788,14 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TNewCatalogProductElementTypeDeserializer {
-        mode: super::TNewCatalogProductmodeType,
+        mode: super::TNewCatalogMode,
         supplier_pid: Option<super::SupplierPidElementType>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
         product_order_details: Option<super::ProductOrderDetailsElementType>,
         product_price_details: Vec<super::ProductPriceDetailsElementType>,
         mime_info: Option<super::MimeInfoElementType>,
-        user_defined_extensions: Option<super::UdxProductType>,
+        user_defined_extensions: Option<super::UdxProduct>,
         product_reference: Vec<super::ProductReferenceElementType>,
         product_logistic_details: Option<super::ProductLogisticDetailsElementType>,
         state: Box<TNewCatalogProductElementTypeDeserializerState>,
@@ -7824,7 +7817,7 @@ pub mod quick_xml_deserialize {
             Option<<super::ProductPriceDetailsElementType as WithDeserializer>::Deserializer>,
         ),
         MimeInfo(Option<<super::MimeInfoElementType as WithDeserializer>::Deserializer>),
-        UserDefinedExtensions(Option<<super::UdxProductType as WithDeserializer>::Deserializer>),
+        UserDefinedExtensions(Option<<super::UdxProduct as WithDeserializer>::Deserializer>),
         ProductReference(
             Option<<super::ProductReferenceElementType as WithDeserializer>::Deserializer>,
         ),
@@ -7839,7 +7832,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TNewCatalogProductmodeType> = None;
+            let mut mode: Option<super::TNewCatalogMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -7965,10 +7958,7 @@ pub mod quick_xml_deserialize {
             self.mime_info = Some(value);
             Ok(())
         }
-        fn store_user_defined_extensions(
-            &mut self,
-            value: super::UdxProductType,
-        ) -> Result<(), Error> {
+        fn store_user_defined_extensions(&mut self, value: super::UdxProduct) -> Result<(), Error> {
             if self.user_defined_extensions.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"USER_DEFINED_EXTENSIONS",
@@ -8377,7 +8367,7 @@ pub mod quick_xml_deserialize {
         fn handle_user_defined_extensions<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::UdxProductType>,
+            output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TNewCatalogProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -8831,7 +8821,7 @@ pub mod quick_xml_deserialize {
                             b"USER_DEFINED_EXTENSIONS",
                         ) {
                             let output =
-                                <super::UdxProductType as WithDeserializer>::Deserializer::init(
+                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_user_defined_extensions(
@@ -8954,14 +8944,14 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TUpdateProductsProductElementTypeDeserializer {
-        mode: super::TUpdateProductsProductmodeType,
+        mode: super::TUpdateProductsMode,
         supplier_pid: Option<super::SupplierPidElementType>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
         product_order_details: Option<super::ProductOrderDetailsElementType>,
         product_price_details: Vec<super::ProductPriceDetailsElementType>,
         mime_info: Option<super::MimeInfoElementType>,
-        user_defined_extensions: Option<super::UdxProductType>,
+        user_defined_extensions: Option<super::UdxProduct>,
         product_reference: Vec<super::ProductReferenceElementType>,
         product_logistic_details: Option<super::ProductLogisticDetailsElementType>,
         state: Box<TUpdateProductsProductElementTypeDeserializerState>,
@@ -8983,7 +8973,7 @@ pub mod quick_xml_deserialize {
             Option<<super::ProductPriceDetailsElementType as WithDeserializer>::Deserializer>,
         ),
         MimeInfo(Option<<super::MimeInfoElementType as WithDeserializer>::Deserializer>),
-        UserDefinedExtensions(Option<<super::UdxProductType as WithDeserializer>::Deserializer>),
+        UserDefinedExtensions(Option<<super::UdxProduct as WithDeserializer>::Deserializer>),
         ProductReference(
             Option<<super::ProductReferenceElementType as WithDeserializer>::Deserializer>,
         ),
@@ -8998,7 +8988,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TUpdateProductsProductmodeType> = None;
+            let mut mode: Option<super::TUpdateProductsMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -9125,10 +9115,7 @@ pub mod quick_xml_deserialize {
             self.mime_info = Some(value);
             Ok(())
         }
-        fn store_user_defined_extensions(
-            &mut self,
-            value: super::UdxProductType,
-        ) -> Result<(), Error> {
+        fn store_user_defined_extensions(&mut self, value: super::UdxProduct) -> Result<(), Error> {
             if self.user_defined_extensions.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"USER_DEFINED_EXTENSIONS",
@@ -9531,7 +9518,7 @@ pub mod quick_xml_deserialize {
         fn handle_user_defined_extensions<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::UdxProductType>,
+            output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TUpdateProductsProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -9971,7 +9958,7 @@ pub mod quick_xml_deserialize {
                             b"USER_DEFINED_EXTENSIONS",
                         ) {
                             let output =
-                                <super::UdxProductType as WithDeserializer>::Deserializer::init(
+                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_user_defined_extensions(
@@ -10095,10 +10082,10 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TUpdatePricesProductElementTypeDeserializer {
-        mode: super::TUpdatePricesProductmodeType,
+        mode: super::TUpdatePricesMode,
         supplier_pid: Option<super::SupplierPidElementType>,
         product_price_details: Vec<super::ProductPriceDetailsElementType>,
-        user_defined_extensions: Option<super::UdxProductType>,
+        user_defined_extensions: Option<super::UdxProduct>,
         state: Box<TUpdatePricesProductElementTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -10108,7 +10095,7 @@ pub mod quick_xml_deserialize {
         ProductPriceDetails(
             Option<<super::ProductPriceDetailsElementType as WithDeserializer>::Deserializer>,
         ),
-        UserDefinedExtensions(Option<<super::UdxProductType as WithDeserializer>::Deserializer>),
+        UserDefinedExtensions(Option<<super::UdxProduct as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -10117,7 +10104,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TUpdatePricesProductmodeType> = None;
+            let mut mode: Option<super::TUpdatePricesMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -10179,10 +10166,7 @@ pub mod quick_xml_deserialize {
             self.product_price_details.push(value);
             Ok(())
         }
-        fn store_user_defined_extensions(
-            &mut self,
-            value: super::UdxProductType,
-        ) -> Result<(), Error> {
+        fn store_user_defined_extensions(&mut self, value: super::UdxProduct) -> Result<(), Error> {
             if self.user_defined_extensions.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"USER_DEFINED_EXTENSIONS",
@@ -10315,7 +10299,7 @@ pub mod quick_xml_deserialize {
         fn handle_user_defined_extensions<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::UdxProductType>,
+            output: DeserializerOutput<'de, super::UdxProduct>,
             fallback: &mut Option<TUpdatePricesProductElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -10494,7 +10478,7 @@ pub mod quick_xml_deserialize {
                             b"USER_DEFINED_EXTENSIONS",
                         ) {
                             let output =
-                                <super::UdxProductType as WithDeserializer>::Deserializer::init(
+                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_user_defined_extensions(
@@ -10557,13 +10541,13 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct LanguageElementTypeDeserializer {
         default: Option<String>,
-        content: Option<super::DtLangType>,
+        content: Option<super::DtLang>,
         state: Box<LanguageElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum LanguageElementTypeDeserializerState {
         Init__,
-        Content__(<super::DtLangType as WithDeserializer>::Deserializer),
+        Content__(<super::DtLang as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl LanguageElementTypeDeserializer {
@@ -10602,7 +10586,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_content(&mut self, value: super::DtLangType) -> Result<(), Error> {
+        fn store_content(&mut self, value: super::DtLang) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
             }
@@ -10612,7 +10596,7 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de, R>(
             mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtLangType>,
+            output: DeserializerOutput<'de, super::DtLang>,
         ) -> DeserializerResult<'de, super::LanguageElementType>
         where
             R: DeserializeReader,
@@ -10703,23 +10687,23 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct DtMlstringTypeDeserializer {
-        lang: Option<super::DtLangType>,
+    pub struct DtMlstringDeserializer {
+        lang: Option<super::DtLang>,
         content: Option<String>,
-        state: Box<DtMlstringTypeDeserializerState>,
+        state: Box<DtMlstringDeserializerState>,
     }
     #[derive(Debug)]
-    enum DtMlstringTypeDeserializerState {
+    enum DtMlstringDeserializerState {
         Init__,
         Content__(<String as WithDeserializer>::Deserializer),
         Unknown__,
     }
-    impl DtMlstringTypeDeserializer {
+    impl DtMlstringDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut lang: Option<super::DtLangType> = None;
+            let mut lang: Option<super::DtLang> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -10734,18 +10718,18 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 lang: lang,
                 content: None,
-                state: Box::new(DtMlstringTypeDeserializerState::Init__),
+                state: Box::new(DtMlstringDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: DtMlstringTypeDeserializerState,
+            state: DtMlstringDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            if let DtMlstringTypeDeserializerState::Content__(deserializer) = state {
+            if let DtMlstringDeserializerState::Content__(deserializer) = state {
                 self.store_content(deserializer.finish(reader)?)?;
             }
             Ok(())
@@ -10761,11 +10745,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::DtMlstringType>
+        ) -> DeserializerResult<'de, super::DtMlstring>
         where
             R: DeserializeReader,
         {
-            use DtMlstringTypeDeserializerState as S;
+            use DtMlstringDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -10797,8 +10781,8 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::DtMlstringType> for DtMlstringTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::DtMlstringType>
+    impl<'de> Deserializer<'de, super::DtMlstring> for DtMlstringDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::DtMlstring>
         where
             R: DeserializeReader,
         {
@@ -10815,11 +10799,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DtMlstringType>
+        ) -> DeserializerResult<'de, super::DtMlstring>
         where
             R: DeserializeReader,
         {
-            use DtMlstringTypeDeserializerState as S;
+            use DtMlstringDeserializerState as S;
             match replace(&mut *self.state, S::Unknown__) {
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
@@ -10832,13 +10816,13 @@ pub mod quick_xml_deserialize {
                 S::Unknown__ => unreachable!(),
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DtMlstringType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::DtMlstring, Error>
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, DtMlstringTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state, DtMlstringDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
-            Ok(super::DtMlstringType {
+            Ok(super::DtMlstring {
                 lang: self.lang,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
@@ -10846,7 +10830,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct CatalogDatetimeElementTypeDeserializer {
-        type_: super::CatalogDatetimetypeType,
+        type_: super::CatalogType,
         date: Option<String>,
         time: Option<String>,
         timezone: Option<String>,
@@ -10866,7 +10850,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::CatalogDatetimetypeType> = None;
+            let mut type_: Option<super::CatalogType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -11262,18 +11246,18 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TypePartyIdTypeDeserializer {
+    pub struct TypePartyIdDeserializer {
         type_: Option<String>,
         content: Option<String>,
-        state: Box<TypePartyIdTypeDeserializerState>,
+        state: Box<TypePartyIdDeserializerState>,
     }
     #[derive(Debug)]
-    enum TypePartyIdTypeDeserializerState {
+    enum TypePartyIdDeserializerState {
         Init__,
         Content__(<String as WithDeserializer>::Deserializer),
         Unknown__,
     }
-    impl TypePartyIdTypeDeserializer {
+    impl TypePartyIdDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -11293,18 +11277,18 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 type_: type_,
                 content: None,
-                state: Box::new(TypePartyIdTypeDeserializerState::Init__),
+                state: Box::new(TypePartyIdDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TypePartyIdTypeDeserializerState,
+            state: TypePartyIdDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            if let TypePartyIdTypeDeserializerState::Content__(deserializer) = state {
+            if let TypePartyIdDeserializerState::Content__(deserializer) = state {
                 self.store_content(deserializer.finish(reader)?)?;
             }
             Ok(())
@@ -11320,11 +11304,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::TypePartyIdType>
+        ) -> DeserializerResult<'de, super::TypePartyId>
         where
             R: DeserializeReader,
         {
-            use TypePartyIdTypeDeserializerState as S;
+            use TypePartyIdDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -11356,8 +11340,8 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::TypePartyIdType> for TypePartyIdTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TypePartyIdType>
+    impl<'de> Deserializer<'de, super::TypePartyId> for TypePartyIdDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::TypePartyId>
         where
             R: DeserializeReader,
         {
@@ -11374,11 +11358,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypePartyIdType>
+        ) -> DeserializerResult<'de, super::TypePartyId>
         where
             R: DeserializeReader,
         {
-            use TypePartyIdTypeDeserializerState as S;
+            use TypePartyIdDeserializerState as S;
             match replace(&mut *self.state, S::Unknown__) {
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
@@ -11391,16 +11375,13 @@ pub mod quick_xml_deserialize {
                 S::Unknown__ => unreachable!(),
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TypePartyIdType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TypePartyId, Error>
         where
             R: DeserializeReader,
         {
-            let state = replace(
-                &mut *self.state,
-                TypePartyIdTypeDeserializerState::Unknown__,
-            );
+            let state = replace(&mut *self.state, TypePartyIdDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
-            Ok(super::TypePartyIdType {
+            Ok(super::TypePartyId {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
@@ -11408,12 +11389,12 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SupplierAddressElementTypeDeserializer {
-        type_: super::SupplierAddresstypeType,
-        contact: Vec<super::DtMlstringType>,
-        street: Vec<super::DtMlstringType>,
-        zip: Vec<super::DtMlstringType>,
-        city: Vec<super::DtMlstringType>,
-        country: Vec<super::DtMlstringType>,
+        type_: super::SupplierType,
+        contact: Vec<super::DtMlstring>,
+        street: Vec<super::DtMlstring>,
+        zip: Vec<super::DtMlstring>,
+        city: Vec<super::DtMlstring>,
+        country: Vec<super::DtMlstring>,
         vat_id: Option<String>,
         email: Option<String>,
         url: Option<String>,
@@ -11422,11 +11403,11 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum SupplierAddressElementTypeDeserializerState {
         Init__,
-        Contact(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        Street(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        Zip(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        City(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        Country(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        Contact(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        Street(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        Zip(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        City(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        Country(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         VatId(Option<<String as WithDeserializer>::Deserializer>),
         Email(Option<<String as WithDeserializer>::Deserializer>),
         Url(Option<<String as WithDeserializer>::Deserializer>),
@@ -11438,7 +11419,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::SupplierAddresstypeType> = None;
+            let mut type_: Option<super::SupplierType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -11490,23 +11471,23 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_contact(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_contact(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.contact.push(value);
             Ok(())
         }
-        fn store_street(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_street(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.street.push(value);
             Ok(())
         }
-        fn store_zip(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_zip(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.zip.push(value);
             Ok(())
         }
-        fn store_city(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_city(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.city.push(value);
             Ok(())
         }
-        fn store_country(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_country(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.country.push(value);
             Ok(())
         }
@@ -11538,7 +11519,7 @@ pub mod quick_xml_deserialize {
         fn handle_contact<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -11589,7 +11570,7 @@ pub mod quick_xml_deserialize {
         fn handle_street<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -11639,7 +11620,7 @@ pub mod quick_xml_deserialize {
         fn handle_zip<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -11689,7 +11670,7 @@ pub mod quick_xml_deserialize {
         fn handle_city<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -11739,7 +11720,7 @@ pub mod quick_xml_deserialize {
         fn handle_country<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<SupplierAddressElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -12086,7 +12067,7 @@ pub mod quick_xml_deserialize {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"CONTACT")
                         {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_contact(reader, output, &mut fallback)? {
@@ -12107,7 +12088,7 @@ pub mod quick_xml_deserialize {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"STREET")
                         {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_street(reader, output, &mut fallback)? {
@@ -12127,7 +12108,7 @@ pub mod quick_xml_deserialize {
                     (S::Zip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"ZIP") {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_zip(reader, output, &mut fallback)? {
@@ -12147,7 +12128,7 @@ pub mod quick_xml_deserialize {
                     (S::City(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"CITY") {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_city(reader, output, &mut fallback)? {
@@ -12168,7 +12149,7 @@ pub mod quick_xml_deserialize {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"COUNTRY")
                         {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_country(reader, output, &mut fallback)? {
@@ -12640,16 +12621,16 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductDetailsElementTypeDeserializer {
-        description_short: Vec<super::DtMlstringType>,
-        description_long: Vec<super::DtMlstringType>,
+        description_short: Vec<super::DtMlstring>,
+        description_long: Vec<super::DtMlstring>,
         international_pid: Vec<super::InternationalPidElementType>,
         supplier_alt_pid: Option<String>,
         buyer_pid: Vec<super::BuyerPidElementType>,
         manufacturer_pid: Option<String>,
         manufacturer_name: Option<String>,
-        manufacturer_type_descr: Vec<super::DtMlstringType>,
+        manufacturer_type_descr: Vec<super::DtMlstring>,
         special_treatment_class: Vec<super::SpecialTreatmentClassElementType>,
-        keyword: Vec<super::DtMlstringType>,
+        keyword: Vec<super::DtMlstring>,
         remarks: Vec<super::RemarksElementType>,
         product_status: Vec<super::ProductStatusElementType>,
         state: Box<ProductDetailsElementTypeDeserializerState>,
@@ -12657,8 +12638,8 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum ProductDetailsElementTypeDeserializerState {
         Init__,
-        DescriptionShort(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        DescriptionLong(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        DescriptionShort(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        DescriptionLong(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         InternationalPid(
             Option<<super::InternationalPidElementType as WithDeserializer>::Deserializer>,
         ),
@@ -12666,11 +12647,11 @@ pub mod quick_xml_deserialize {
         BuyerPid(Option<<super::BuyerPidElementType as WithDeserializer>::Deserializer>),
         ManufacturerPid(Option<<String as WithDeserializer>::Deserializer>),
         ManufacturerName(Option<<String as WithDeserializer>::Deserializer>),
-        ManufacturerTypeDescr(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        ManufacturerTypeDescr(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         SpecialTreatmentClass(
             Option<<super::SpecialTreatmentClassElementType as WithDeserializer>::Deserializer>,
         ),
-        Keyword(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        Keyword(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Remarks(Option<<super::RemarksElementType as WithDeserializer>::Deserializer>),
         ProductStatus(Option<<super::ProductStatusElementType as WithDeserializer>::Deserializer>),
         Done__,
@@ -12751,11 +12732,11 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_description_short(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_description_short(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.description_short.push(value);
             Ok(())
         }
-        fn store_description_long(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_description_long(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.description_long.push(value);
             Ok(())
         }
@@ -12797,10 +12778,7 @@ pub mod quick_xml_deserialize {
             self.manufacturer_name = Some(value);
             Ok(())
         }
-        fn store_manufacturer_type_descr(
-            &mut self,
-            value: super::DtMlstringType,
-        ) -> Result<(), Error> {
+        fn store_manufacturer_type_descr(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.manufacturer_type_descr.push(value);
             Ok(())
         }
@@ -12811,7 +12789,7 @@ pub mod quick_xml_deserialize {
             self.special_treatment_class.push(value);
             Ok(())
         }
-        fn store_keyword(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_keyword(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.keyword.push(value);
             Ok(())
         }
@@ -12829,7 +12807,7 @@ pub mod quick_xml_deserialize {
         fn handle_description_short<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -12899,7 +12877,7 @@ pub mod quick_xml_deserialize {
         fn handle_description_long<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -13226,7 +13204,7 @@ pub mod quick_xml_deserialize {
         fn handle_manufacturer_type_descr<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -13341,7 +13319,7 @@ pub mod quick_xml_deserialize {
         fn handle_keyword<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<ProductDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -13686,7 +13664,7 @@ pub mod quick_xml_deserialize {
                             b"DESCRIPTION_SHORT",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_description_short(reader, output, &mut fallback)? {
@@ -13710,7 +13688,7 @@ pub mod quick_xml_deserialize {
                             b"DESCRIPTION_LONG",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_description_long(reader, output, &mut fallback)? {
@@ -13845,7 +13823,7 @@ pub mod quick_xml_deserialize {
                             b"MANUFACTURER_TYPE_DESCR",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_manufacturer_type_descr(
@@ -13898,7 +13876,7 @@ pub mod quick_xml_deserialize {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"KEYWORD")
                         {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_keyword(reader, output, &mut fallback)? {
@@ -14002,7 +13980,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct ProductFeaturesElementTypeDeserializer {
         reference_feature_system_name: Option<String>,
-        reference_feature_group_id: Option<super::TypeClassificationGroupIdType>,
+        reference_feature_group_id: Option<super::TypeClassificationGroupId>,
         feature: Vec<super::FeatureElementType>,
         state: Box<ProductFeaturesElementTypeDeserializerState>,
     }
@@ -14011,7 +13989,7 @@ pub mod quick_xml_deserialize {
         Init__,
         ReferenceFeatureSystemName(Option<<String as WithDeserializer>::Deserializer>),
         ReferenceFeatureGroupId(
-            Option<<super::TypeClassificationGroupIdType as WithDeserializer>::Deserializer>,
+            Option<<super::TypeClassificationGroupId as WithDeserializer>::Deserializer>,
         ),
         Feature(Option<<super::FeatureElementType as WithDeserializer>::Deserializer>),
         Done__,
@@ -14067,7 +14045,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_reference_feature_group_id(
             &mut self,
-            value: super::TypeClassificationGroupIdType,
+            value: super::TypeClassificationGroupId,
         ) -> Result<(), Error> {
             if self.reference_feature_group_id.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -14142,7 +14120,7 @@ pub mod quick_xml_deserialize {
         fn handle_reference_feature_group_id<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::TypeClassificationGroupIdType>,
+            output: DeserializerOutput<'de, super::TypeClassificationGroupId>,
             fallback: &mut Option<ProductFeaturesElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -14381,7 +14359,7 @@ pub mod quick_xml_deserialize {
                             Some(&super::NS_DEFAULT),
                             b"REFERENCE_FEATURE_GROUP_ID",
                         ) {
-                            let output = < super :: TypeClassificationGroupIdType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = < super :: TypeClassificationGroupId as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                             match self.handle_reference_feature_group_id(
                                 reader,
                                 output,
@@ -14460,8 +14438,8 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductOrderDetailsElementTypeDeserializer {
-        order_unit: Option<super::DtPunitType>,
-        content_unit: Option<super::DtPunitType>,
+        order_unit: Option<super::DtPunit>,
+        content_unit: Option<super::DtPunit>,
         no_cu_per_ou: Option<f64>,
         price_quantity: Option<f64>,
         quantity_min: Option<f32>,
@@ -14471,8 +14449,8 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     enum ProductOrderDetailsElementTypeDeserializerState {
         Init__,
-        OrderUnit(Option<<super::DtPunitType as WithDeserializer>::Deserializer>),
-        ContentUnit(Option<<super::DtPunitType as WithDeserializer>::Deserializer>),
+        OrderUnit(Option<<super::DtPunit as WithDeserializer>::Deserializer>),
+        ContentUnit(Option<<super::DtPunit as WithDeserializer>::Deserializer>),
         NoCuPerOu(Option<<f64 as WithDeserializer>::Deserializer>),
         PriceQuantity(Option<<f64 as WithDeserializer>::Deserializer>),
         QuantityMin(Option<<f32 as WithDeserializer>::Deserializer>),
@@ -14531,7 +14509,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_order_unit(&mut self, value: super::DtPunitType) -> Result<(), Error> {
+        fn store_order_unit(&mut self, value: super::DtPunit) -> Result<(), Error> {
             if self.order_unit.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"ORDER_UNIT",
@@ -14540,7 +14518,7 @@ pub mod quick_xml_deserialize {
             self.order_unit = Some(value);
             Ok(())
         }
-        fn store_content_unit(&mut self, value: super::DtPunitType) -> Result<(), Error> {
+        fn store_content_unit(&mut self, value: super::DtPunit) -> Result<(), Error> {
             if self.content_unit.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"CONTENT_UNIT",
@@ -14588,7 +14566,7 @@ pub mod quick_xml_deserialize {
         fn handle_order_unit<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtPunitType>,
+            output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -14649,7 +14627,7 @@ pub mod quick_xml_deserialize {
         fn handle_content_unit<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtPunitType>,
+            output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<ProductOrderDetailsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -15051,10 +15029,9 @@ pub mod quick_xml_deserialize {
                             Some(&super::NS_DEFAULT),
                             b"ORDER_UNIT",
                         ) {
-                            let output =
-                                <super::DtPunitType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = <super::DtPunit as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             match self.handle_order_unit(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -15075,10 +15052,9 @@ pub mod quick_xml_deserialize {
                             Some(&super::NS_DEFAULT),
                             b"CONTENT_UNIT",
                         ) {
-                            let output =
-                                <super::DtPunitType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = <super::DtPunit as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             match self.handle_content_unit(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -15681,11 +15657,11 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct UdxProductTypeDeserializer {
+    pub struct UdxProductDeserializer {
         udx_edxf_manufacturer_acronym: Option<String>,
-        udx_edxf_description_very_short: Vec<super::DtMlstringType>,
+        udx_edxf_description_very_short: Vec<super::DtMlstring>,
         udx_edxf_brand_name: Option<String>,
-        udx_edxf_tender_text: Vec<super::DtMlstringType>,
+        udx_edxf_tender_text: Vec<super::DtMlstring>,
         udx_edxf_valid_from: Option<String>,
         udx_edxf_expiration_date: Option<String>,
         udx_edxf_discount_group: Option<super::UdxEdxfDiscountGroupElementType>,
@@ -15694,8 +15670,8 @@ pub mod quick_xml_deserialize {
         udx_edxf_declaration: Vec<super::UdxEdxfDeclarationElementType>,
         udx_edxf_additional_factors: Option<super::UdxEdxfAdditionalFactorsElementType>,
         udx_edxf_product_to_stock: Option<String>,
-        udx_edxf_product_series: Vec<super::DtMlstringType>,
-        udx_edxf_product_variation: Vec<super::DtMlstringType>,
+        udx_edxf_product_series: Vec<super::DtMlstring>,
+        udx_edxf_product_variation: Vec<super::DtMlstring>,
         udx_edxf_at_reverse_charge_info: Option<String>,
         udx_edxf_country_branch_numbers: Option<super::UdxEdxfCountryBranchNumbersElementType>,
         udx_edxf_country_branch_supplier_ids:
@@ -15704,12 +15680,12 @@ pub mod quick_xml_deserialize {
         udx_edxf_product_logistic_details: Option<super::UdxEdxfProductLogisticDetailsElementType>,
         udx_edxf_reach: Option<super::UdxEdxfReachElementType>,
         udx_edxf_surcharge_list: Option<super::UdxEdxfSurchargeListElementType>,
-        state: Box<UdxProductTypeDeserializerState>,
+        state: Box<UdxProductDeserializerState>,
     }
     #[derive(Debug)]
-    enum UdxProductTypeDeserializerState {
-        Init__ , UdxEdxfManufacturerAcronym (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDescriptionVeryShort (Option << super :: DtMlstringType as WithDeserializer > :: Deserializer >) , UdxEdxfBrandName (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfTenderText (Option << super :: DtMlstringType as WithDeserializer > :: Deserializer >) , UdxEdxfValidFrom (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfExpirationDate (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDiscountGroup (Option << super :: UdxEdxfDiscountGroupElementType as WithDeserializer > :: Deserializer >) , UdxEdxfBonusGroupSupplier (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfPkwiu (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDeclaration (Option << super :: UdxEdxfDeclarationElementType as WithDeserializer > :: Deserializer >) , UdxEdxfAdditionalFactors (Option << super :: UdxEdxfAdditionalFactorsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductToStock (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfProductSeries (Option << super :: DtMlstringType as WithDeserializer > :: Deserializer >) , UdxEdxfProductVariation (Option << super :: DtMlstringType as WithDeserializer > :: Deserializer >) , UdxEdxfAtReverseChargeInfo (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchNumbers (Option << super :: UdxEdxfCountryBranchNumbersElementType as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchSupplierIds (Option << super :: UdxEdxfCountryBranchSupplierIdsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfPackingUnits (Option << super :: UdxEdxfPackingUnitsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductLogisticDetails (Option << super :: UdxEdxfProductLogisticDetailsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfReach (Option << super :: UdxEdxfReachElementType as WithDeserializer > :: Deserializer >) , UdxEdxfSurchargeList (Option << super :: UdxEdxfSurchargeListElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
-    impl UdxProductTypeDeserializer {
+    enum UdxProductDeserializerState {
+        Init__ , UdxEdxfManufacturerAcronym (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDescriptionVeryShort (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfBrandName (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfTenderText (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfValidFrom (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfExpirationDate (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDiscountGroup (Option << super :: UdxEdxfDiscountGroupElementType as WithDeserializer > :: Deserializer >) , UdxEdxfBonusGroupSupplier (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfPkwiu (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfDeclaration (Option << super :: UdxEdxfDeclarationElementType as WithDeserializer > :: Deserializer >) , UdxEdxfAdditionalFactors (Option << super :: UdxEdxfAdditionalFactorsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductToStock (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfProductSeries (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfProductVariation (Option << super :: DtMlstring as WithDeserializer > :: Deserializer >) , UdxEdxfAtReverseChargeInfo (Option << String as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchNumbers (Option << super :: UdxEdxfCountryBranchNumbersElementType as WithDeserializer > :: Deserializer >) , UdxEdxfCountryBranchSupplierIds (Option << super :: UdxEdxfCountryBranchSupplierIdsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfPackingUnits (Option << super :: UdxEdxfPackingUnitsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfProductLogisticDetails (Option << super :: UdxEdxfProductLogisticDetailsElementType as WithDeserializer > :: Deserializer >) , UdxEdxfReach (Option << super :: UdxEdxfReachElementType as WithDeserializer > :: Deserializer >) , UdxEdxfSurchargeList (Option << super :: UdxEdxfSurchargeListElementType as WithDeserializer > :: Deserializer >) , Done__ , Unknown__ , }
+    impl UdxProductDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
@@ -15740,18 +15716,18 @@ pub mod quick_xml_deserialize {
                 udx_edxf_product_logistic_details: None,
                 udx_edxf_reach: None,
                 udx_edxf_surcharge_list: None,
-                state: Box::new(UdxProductTypeDeserializerState::Init__),
+                state: Box::new(UdxProductDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: UdxProductTypeDeserializerState,
+            state: UdxProductDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use UdxProductTypeDeserializerState as S;
+            use UdxProductDeserializerState as S;
             match state {
                 S::UdxEdxfManufacturerAcronym(Some(deserializer)) => {
                     self.store_udx_edxf_manufacturer_acronym(deserializer.finish(reader)?)?
@@ -15831,7 +15807,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_udx_edxf_description_very_short(
             &mut self,
-            value: super::DtMlstringType,
+            value: super::DtMlstring,
         ) -> Result<(), Error> {
             self.udx_edxf_description_very_short.push(value);
             Ok(())
@@ -15845,10 +15821,7 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_brand_name = Some(value);
             Ok(())
         }
-        fn store_udx_edxf_tender_text(
-            &mut self,
-            value: super::DtMlstringType,
-        ) -> Result<(), Error> {
+        fn store_udx_edxf_tender_text(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.udx_edxf_tender_text.push(value);
             Ok(())
         }
@@ -15928,16 +15901,13 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_product_to_stock = Some(value);
             Ok(())
         }
-        fn store_udx_edxf_product_series(
-            &mut self,
-            value: super::DtMlstringType,
-        ) -> Result<(), Error> {
+        fn store_udx_edxf_product_series(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.udx_edxf_product_series.push(value);
             Ok(())
         }
         fn store_udx_edxf_product_variation(
             &mut self,
-            value: super::DtMlstringType,
+            value: super::DtMlstring,
         ) -> Result<(), Error> {
             self.udx_edxf_product_variation.push(value);
             Ok(())
@@ -16027,7 +15997,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16038,10 +16008,10 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfManufacturerAcronym(None),
-                );
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfManufacturerAcronym(
+                    None,
+                ));
+                *self.state = UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16051,8 +16021,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_manufacturer_acronym(data)?;
-                    *self.state =
-                        UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16060,18 +16029,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfManufacturerAcronym(Some(
+                                UdxProductDeserializerState::UdxEdxfManufacturerAcronym(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None);
+                                UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfManufacturerAcronym(Some(
-                                    deserializer,
-                                ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfManufacturerAcronym(
+                                Some(deserializer),
+                            );
                         }
                     }
                     ret
@@ -16081,8 +16049,8 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_description_very_short<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16093,10 +16061,10 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None),
-                );
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfBrandName(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(
+                    None,
+                ));
+                *self.state = UdxProductDeserializerState::UdxEdxfBrandName(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16106,8 +16074,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_description_very_short(data)?;
-                    *self.state =
-                        UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16115,18 +16082,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(Some(
+                                UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(None);
+                                UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfDescriptionVeryShort(Some(
-                                    deserializer,
-                                ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfDescriptionVeryShort(
+                                Some(deserializer),
+                            );
                         }
                     }
                     ret
@@ -16137,7 +16103,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16148,8 +16114,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfBrandName(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfBrandName(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfTenderText(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16159,24 +16125,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_brand_name(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfTenderText(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfBrandName(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(None);
+                            fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfBrandName(
+                                Some(deserializer),
+                            ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfTenderText(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfBrandName(Some(
-                                deserializer,
-                            ));
+                            *self.state =
+                                UdxProductDeserializerState::UdxEdxfBrandName(Some(deserializer));
                         }
                     }
                     ret
@@ -16186,8 +16149,8 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_tender_text<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16198,8 +16161,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfTenderText(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfValidFrom(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfTenderText(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfValidFrom(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16209,24 +16172,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_tender_text(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfTenderText(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfTenderText(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(None);
+                            fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfTenderText(
+                                Some(deserializer),
+                            ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfTenderText(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfTenderText(Some(
-                                deserializer,
-                            ));
+                            *self.state =
+                                UdxProductDeserializerState::UdxEdxfTenderText(Some(deserializer));
                         }
                     }
                     ret
@@ -16237,7 +16197,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16248,8 +16208,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfValidFrom(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfExpirationDate(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfValidFrom(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfExpirationDate(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16259,25 +16219,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_valid_from(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfExpirationDate(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfExpirationDate(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfValidFrom(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfExpirationDate(None);
+                            fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfValidFrom(
+                                Some(deserializer),
+                            ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfExpirationDate(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfValidFrom(Some(
-                                deserializer,
-                            ));
+                            *self.state =
+                                UdxProductDeserializerState::UdxEdxfValidFrom(Some(deserializer));
                         }
                     }
                     ret
@@ -16288,7 +16244,108 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfExpirationDate(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfDiscountGroup(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_udx_edxf_expiration_date(data)?;
+                    *self.state = UdxProductDeserializerState::UdxEdxfDiscountGroup(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(
+                                UdxProductDeserializerState::UdxEdxfExpirationDate(Some(
+                                    deserializer,
+                                )),
+                            );
+                            *self.state = UdxProductDeserializerState::UdxEdxfDiscountGroup(None);
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = UdxProductDeserializerState::UdxEdxfExpirationDate(Some(
+                                deserializer,
+                            ));
+                        }
+                    }
+                    ret
+                }
+            })
+        }
+        fn handle_udx_edxf_discount_group<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::UdxEdxfDiscountGroupElementType>,
+            fallback: &mut Option<UdxProductDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfDiscountGroup(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(None);
+                return Ok(ElementHandlerOutput::from_event(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_udx_edxf_discount_group(data)?;
+                    *self.state = UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(None);
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(
+                                UdxProductDeserializerState::UdxEdxfDiscountGroup(Some(
+                                    deserializer,
+                                )),
+                            );
+                            *self.state =
+                                UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(None);
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = UdxProductDeserializerState::UdxEdxfDiscountGroup(Some(
+                                deserializer,
+                            ));
+                        }
+                    }
+                    ret
+                }
+            })
+        }
+        fn handle_udx_edxf_bonus_group_supplier<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, String>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16300,112 +16357,8 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback
-                    .get_or_insert(UdxProductTypeDeserializerState::UdxEdxfExpirationDate(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
-            }
-            if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
-            }
-            Ok(match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    self.store_udx_edxf_expiration_date(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfExpirationDate(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfExpirationDate(
-                                Some(deserializer),
-                            );
-                        }
-                    }
-                    ret
-                }
-            })
-        }
-        fn handle_udx_edxf_discount_group<'de, R>(
-            &mut self,
-            reader: &R,
-            output: DeserializerOutput<'de, super::UdxEdxfDiscountGroupElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(None);
-                return Ok(ElementHandlerOutput::from_event(event, allow_any));
-            }
-            if let Some(fallback) = fallback.take() {
-                self.finish_state(reader, fallback)?;
-            }
-            Ok(match artifact {
-                DeserializerArtifact::None => unreachable!(),
-                DeserializerArtifact::Data(data) => {
-                    self.store_udx_edxf_discount_group(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(None);
-                    ElementHandlerOutput::from_event(event, allow_any)
-                }
-                DeserializerArtifact::Deserializer(deserializer) => {
-                    let ret = ElementHandlerOutput::from_event(event, allow_any);
-                    match &ret {
-                        ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(Some(
-                                    deserializer,
-                                )),
-                            );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(None);
-                        }
-                        ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfDiscountGroup(
-                                Some(deserializer),
-                            );
-                        }
-                    }
-                    ret
-                }
-            })
-        }
-        fn handle_udx_edxf_bonus_group_supplier<'de, R>(
-            &mut self,
-            reader: &R,
-            output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
-        ) -> Result<ElementHandlerOutput<'de>, Error>
-        where
-            R: DeserializeReader,
-        {
-            let DeserializerOutput {
-                artifact,
-                event,
-                allow_any,
-            } = output;
-            if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(
-                    None,
-                ));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfPkwiu(None);
+                    .get_or_insert(UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfPkwiu(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16415,7 +16368,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_bonus_group_supplier(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfPkwiu(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfPkwiu(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16423,17 +16376,16 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(Some(
+                                UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfPkwiu(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfPkwiu(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfBonusGroupSupplier(Some(
-                                    deserializer,
-                                ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfBonusGroupSupplier(
+                                Some(deserializer),
+                            );
                         }
                     }
                     ret
@@ -16444,7 +16396,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16455,8 +16407,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfPkwiu(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfPkwiu(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfDeclaration(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16466,21 +16418,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_pkwiu(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfDeclaration(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfPkwiu(
+                            fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfPkwiu(
                                 Some(deserializer),
                             ));
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfDeclaration(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfPkwiu(Some(deserializer));
+                                UdxProductDeserializerState::UdxEdxfPkwiu(Some(deserializer));
                         }
                     }
                     ret
@@ -16491,7 +16443,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfDeclarationElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16502,8 +16454,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfDeclaration(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfAdditionalFactors(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfDeclaration(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfAdditionalFactors(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16513,7 +16465,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_declaration(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfDeclaration(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16521,16 +16473,13 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfDeclaration(Some(
-                                    deserializer,
-                                )),
+                                UdxProductDeserializerState::UdxEdxfDeclaration(Some(deserializer)),
                             );
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfDeclaration(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfDeclaration(
-                                Some(deserializer),
-                            );
+                            *self.state =
+                                UdxProductDeserializerState::UdxEdxfDeclaration(Some(deserializer));
                         }
                     }
                     ret
@@ -16541,7 +16490,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfAdditionalFactorsElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16552,10 +16501,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfAdditionalFactors(
-                    None,
-                ));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfProductToStock(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfAdditionalFactors(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfProductToStock(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16565,7 +16512,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_additional_factors(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfProductToStock(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfProductToStock(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16573,15 +16520,14 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfAdditionalFactors(Some(
+                                UdxProductDeserializerState::UdxEdxfAdditionalFactors(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductToStock(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductToStock(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfAdditionalFactors(
+                            *self.state = UdxProductDeserializerState::UdxEdxfAdditionalFactors(
                                 Some(deserializer),
                             );
                         }
@@ -16594,7 +16540,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16605,9 +16551,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback
-                    .get_or_insert(UdxProductTypeDeserializerState::UdxEdxfProductToStock(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfProductSeries(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfProductToStock(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16617,7 +16562,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_product_to_stock(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfProductSeries(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16625,17 +16570,16 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfProductToStock(Some(
+                                UdxProductDeserializerState::UdxEdxfProductToStock(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductSeries(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfProductToStock(
-                                Some(deserializer),
-                            );
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductToStock(Some(
+                                deserializer,
+                            ));
                         }
                     }
                     ret
@@ -16645,8 +16589,8 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_product_series<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16657,8 +16601,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfProductSeries(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfProductVariation(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfProductSeries(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfProductVariation(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16668,7 +16612,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_product_series(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfProductSeries(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16676,17 +16620,16 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfProductSeries(Some(
+                                UdxProductDeserializerState::UdxEdxfProductSeries(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductSeries(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfProductSeries(
-                                Some(deserializer),
-                            );
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductSeries(Some(
+                                deserializer,
+                            ));
                         }
                     }
                     ret
@@ -16696,8 +16639,8 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_product_variation<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16708,10 +16651,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfProductVariation(
-                    None,
-                ));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfAtReverseChargeInfo(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfProductVariation(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfAtReverseChargeInfo(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16721,7 +16662,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_product_variation(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfProductVariation(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfProductVariation(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16729,15 +16670,15 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfProductVariation(Some(
+                                UdxProductDeserializerState::UdxEdxfProductVariation(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductVariation(None);
+                                UdxProductDeserializerState::UdxEdxfProductVariation(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfProductVariation(
+                            *self.state = UdxProductDeserializerState::UdxEdxfProductVariation(
                                 Some(deserializer),
                             );
                         }
@@ -16750,7 +16691,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16761,10 +16702,10 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfAtReverseChargeInfo(None),
-                );
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfAtReverseChargeInfo(
+                    None,
+                ));
+                *self.state = UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16774,8 +16715,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_at_reverse_charge_info(data)?;
-                    *self.state =
-                        UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16783,18 +16723,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfAtReverseChargeInfo(Some(
+                                UdxProductDeserializerState::UdxEdxfAtReverseChargeInfo(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(None);
+                                UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfAtReverseChargeInfo(Some(
-                                    deserializer,
-                                ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfAtReverseChargeInfo(
+                                Some(deserializer),
+                            );
                         }
                     }
                     ret
@@ -16805,7 +16744,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfCountryBranchNumbersElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16816,11 +16755,10 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(None),
-                );
-                *self.state =
-                    UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(
+                    None,
+                ));
+                *self.state = UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16831,7 +16769,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_country_branch_numbers(data)?;
                     *self.state =
-                        UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(None);
+                        UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16839,20 +16777,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(Some(
+                                UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(
-                                    None,
-                                );
+                                UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchNumbers(Some(
-                                    deserializer,
-                                ));
+                            *self.state = UdxProductDeserializerState::UdxEdxfCountryBranchNumbers(
+                                Some(deserializer),
+                            );
                         }
                     }
                     ret
@@ -16863,7 +16798,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfCountryBranchSupplierIdsElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16875,9 +16810,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(None),
+                    UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(None),
                 );
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfPackingUnits(None);
+                *self.state = UdxProductDeserializerState::UdxEdxfPackingUnits(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16887,7 +16822,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_country_branch_supplier_ids(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfPackingUnits(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfPackingUnits(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16895,18 +16830,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(
-                                    Some(deserializer),
-                                ),
+                                UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(Some(
+                                    deserializer,
+                                )),
                             );
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfPackingUnits(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfPackingUnits(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfCountryBranchSupplierIds(
-                                    Some(deserializer),
-                                );
+                                UdxProductDeserializerState::UdxEdxfCountryBranchSupplierIds(Some(
+                                    deserializer,
+                                ));
                         }
                     }
                     ret
@@ -16917,7 +16851,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfPackingUnitsElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16928,8 +16862,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfPackingUnits(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfPackingUnits(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfProductLogisticDetails(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16939,8 +16873,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_packing_units(data)?;
-                    *self.state =
-                        UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfProductLogisticDetails(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -16948,19 +16881,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfPackingUnits(Some(
+                                UdxProductDeserializerState::UdxEdxfPackingUnits(Some(
                                     deserializer,
                                 )),
                             );
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(
-                                    None,
-                                );
+                                UdxProductDeserializerState::UdxEdxfProductLogisticDetails(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfPackingUnits(
-                                Some(deserializer),
-                            );
+                            *self.state = UdxProductDeserializerState::UdxEdxfPackingUnits(Some(
+                                deserializer,
+                            ));
                         }
                     }
                     ret
@@ -16971,7 +16902,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfProductLogisticDetailsElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -16982,10 +16913,10 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(
-                    UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(None),
-                );
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfReach(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfProductLogisticDetails(
+                    None,
+                ));
+                *self.state = UdxProductDeserializerState::UdxEdxfReach(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -16995,7 +16926,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_product_logistic_details(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfReach(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfReach(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -17003,17 +16934,17 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(
-                                    Some(deserializer),
-                                ),
+                                UdxProductDeserializerState::UdxEdxfProductLogisticDetails(Some(
+                                    deserializer,
+                                )),
                             );
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfReach(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfReach(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfProductLogisticDetails(
-                                    Some(deserializer),
-                                );
+                                UdxProductDeserializerState::UdxEdxfProductLogisticDetails(Some(
+                                    deserializer,
+                                ));
                         }
                     }
                     ret
@@ -17024,7 +16955,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfReachElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -17035,8 +16966,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfReach(None));
-                *self.state = UdxProductTypeDeserializerState::UdxEdxfSurchargeList(None);
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfReach(None));
+                *self.state = UdxProductDeserializerState::UdxEdxfSurchargeList(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -17046,22 +16977,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_reach(data)?;
-                    *self.state = UdxProductTypeDeserializerState::UdxEdxfSurchargeList(None);
+                    *self.state = UdxProductDeserializerState::UdxEdxfSurchargeList(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfReach(
+                            fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfReach(
                                 Some(deserializer),
                             ));
-                            *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfSurchargeList(None);
+                            *self.state = UdxProductDeserializerState::UdxEdxfSurchargeList(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                UdxProductTypeDeserializerState::UdxEdxfReach(Some(deserializer));
+                                UdxProductDeserializerState::UdxEdxfReach(Some(deserializer));
                         }
                     }
                     ret
@@ -17072,7 +17002,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, super::UdxEdxfSurchargeListElementType>,
-            fallback: &mut Option<UdxProductTypeDeserializerState>,
+            fallback: &mut Option<UdxProductDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -17083,8 +17013,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(UdxProductTypeDeserializerState::UdxEdxfSurchargeList(None));
-                *self.state = UdxProductTypeDeserializerState::Done__;
+                fallback.get_or_insert(UdxProductDeserializerState::UdxEdxfSurchargeList(None));
+                *self.state = UdxProductDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -17094,7 +17024,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_udx_edxf_surcharge_list(data)?;
-                    *self.state = UdxProductTypeDeserializerState::Done__;
+                    *self.state = UdxProductDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -17102,16 +17032,16 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                UdxProductTypeDeserializerState::UdxEdxfSurchargeList(Some(
+                                UdxProductDeserializerState::UdxEdxfSurchargeList(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state = UdxProductTypeDeserializerState::Done__;
+                            *self.state = UdxProductDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = UdxProductTypeDeserializerState::UdxEdxfSurchargeList(
-                                Some(deserializer),
-                            );
+                            *self.state = UdxProductDeserializerState::UdxEdxfSurchargeList(Some(
+                                deserializer,
+                            ));
                         }
                     }
                     ret
@@ -17119,8 +17049,8 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::UdxProductType> for UdxProductTypeDeserializer {
-        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxProductType>
+    impl<'de> Deserializer<'de, super::UdxProduct> for UdxProductDeserializer {
+        fn init<R>(reader: &R, event: Event<'de>) -> DeserializerResult<'de, super::UdxProduct>
         where
             R: DeserializeReader,
         {
@@ -17130,11 +17060,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::UdxProductType>
+        ) -> DeserializerResult<'de, super::UdxProduct>
         where
             R: DeserializeReader,
         {
-            use UdxProductTypeDeserializerState as S;
+            use UdxProductDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -17445,8 +17375,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state =
-                            UdxProductTypeDeserializerState::UdxEdxfManufacturerAcronym(None);
+                        *self.state = UdxProductDeserializerState::UdxEdxfManufacturerAcronym(None);
                         event
                     }
                     (
@@ -17488,7 +17417,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_description_very_short(
@@ -17538,7 +17467,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.TENDER_TEXT",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
@@ -17773,7 +17702,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.PRODUCT_SERIES",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_product_series(
@@ -17804,7 +17733,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.PRODUCT_VARIATION",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_product_variation(
@@ -18032,13 +17961,13 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::UdxProductType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::UdxProduct, Error>
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, UdxProductTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state, UdxProductDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
-            Ok(super::UdxProductType {
+            Ok(super::UdxProduct {
                 udx_edxf_manufacturer_acronym: self.udx_edxf_manufacturer_acronym,
                 udx_edxf_description_very_short: self.udx_edxf_description_very_short,
                 udx_edxf_brand_name: self.udx_edxf_brand_name,
@@ -18065,7 +17994,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductReferenceElementTypeDeserializer {
-        type_: super::ProductReferencetypeType,
+        type_: super::ProductReferenceType,
         quantity: Option<i32>,
         prod_id_to: Option<String>,
         catalog_id: Option<String>,
@@ -18086,7 +18015,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::ProductReferencetypeType> = None;
+            let mut type_: Option<super::ProductReferenceType> = None;
             let mut quantity: Option<i32> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -18942,9 +18871,9 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct MimeElementTypeDeserializer {
         mime_type: Option<String>,
-        mime_source: Vec<super::DtMlstringType>,
-        mime_descr: Vec<super::DtMlstringType>,
-        mime_alt: Vec<super::DtMlstringType>,
+        mime_source: Vec<super::DtMlstring>,
+        mime_descr: Vec<super::DtMlstring>,
+        mime_alt: Vec<super::DtMlstring>,
         mime_purpose: Option<super::MimePurposeElementType>,
         state: Box<MimeElementTypeDeserializerState>,
     }
@@ -18952,9 +18881,9 @@ pub mod quick_xml_deserialize {
     enum MimeElementTypeDeserializerState {
         Init__,
         MimeType(Option<<String as WithDeserializer>::Deserializer>),
-        MimeSource(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        MimeDescr(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        MimeAlt(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        MimeSource(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        MimeDescr(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        MimeAlt(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         MimePurpose(Option<<super::MimePurposeElementType as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
@@ -19015,15 +18944,15 @@ pub mod quick_xml_deserialize {
             self.mime_type = Some(value);
             Ok(())
         }
-        fn store_mime_source(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_mime_source(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.mime_source.push(value);
             Ok(())
         }
-        fn store_mime_descr(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_mime_descr(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.mime_descr.push(value);
             Ok(())
         }
-        fn store_mime_alt(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_mime_alt(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.mime_alt.push(value);
             Ok(())
         }
@@ -19094,7 +19023,7 @@ pub mod quick_xml_deserialize {
         fn handle_mime_source<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -19150,7 +19079,7 @@ pub mod quick_xml_deserialize {
         fn handle_mime_descr<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -19197,7 +19126,7 @@ pub mod quick_xml_deserialize {
         fn handle_mime_alt<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<MimeElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -19420,7 +19349,7 @@ pub mod quick_xml_deserialize {
                             b"MIME_SOURCE",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_mime_source(reader, output, &mut fallback)? {
@@ -19444,7 +19373,7 @@ pub mod quick_xml_deserialize {
                             b"MIME_DESCR",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_mime_descr(reader, output, &mut fallback)? {
@@ -19468,7 +19397,7 @@ pub mod quick_xml_deserialize {
                             b"MIME_ALT",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_mime_alt(reader, output, &mut fallback)? {
@@ -20001,7 +19930,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RemarksElementTypeDeserializer {
-        lang: Option<super::DtLangType>,
+        lang: Option<super::DtLang>,
         type_: Option<String>,
         content: Option<String>,
         state: Box<RemarksElementTypeDeserializerState>,
@@ -20017,7 +19946,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut lang: Option<super::DtLangType> = None;
+            let mut lang: Option<super::DtLang> = None;
             let mut type_: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -20158,8 +20087,8 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductStatusElementTypeDeserializer {
-        lang: Option<super::DtLangType>,
-        type_: super::ProductStatustypeType,
+        lang: Option<super::DtLang>,
+        type_: super::ProductStatusType,
         content: Option<String>,
         state: Box<ProductStatusElementTypeDeserializerState>,
     }
@@ -20174,8 +20103,8 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut lang: Option<super::DtLangType> = None;
-            let mut type_: Option<super::ProductStatustypeType> = None;
+            let mut lang: Option<super::DtLang> = None;
+            let mut type_: Option<super::ProductStatusType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -20317,23 +20246,23 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct TypeClassificationGroupIdTypeDeserializer {
-        type_: Option<super::TypeClassificationGroupIdtypeType>,
+    pub struct TypeClassificationGroupIdDeserializer {
+        type_: Option<super::TypeClassificationGroupIdType>,
         content: Option<String>,
-        state: Box<TypeClassificationGroupIdTypeDeserializerState>,
+        state: Box<TypeClassificationGroupIdDeserializerState>,
     }
     #[derive(Debug)]
-    enum TypeClassificationGroupIdTypeDeserializerState {
+    enum TypeClassificationGroupIdDeserializerState {
         Init__,
         Content__(<String as WithDeserializer>::Deserializer),
         Unknown__,
     }
-    impl TypeClassificationGroupIdTypeDeserializer {
+    impl TypeClassificationGroupIdDeserializer {
         fn from_bytes_start<R>(reader: &R, bytes_start: &BytesStart<'_>) -> Result<Self, Error>
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::TypeClassificationGroupIdtypeType> = None;
+            let mut type_: Option<super::TypeClassificationGroupIdType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -20348,18 +20277,18 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 type_: type_,
                 content: None,
-                state: Box::new(TypeClassificationGroupIdTypeDeserializerState::Init__),
+                state: Box::new(TypeClassificationGroupIdDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: TypeClassificationGroupIdTypeDeserializerState,
+            state: TypeClassificationGroupIdDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            if let TypeClassificationGroupIdTypeDeserializerState::Content__(deserializer) = state {
+            if let TypeClassificationGroupIdDeserializerState::Content__(deserializer) = state {
                 self.store_content(deserializer.finish(reader)?)?;
             }
             Ok(())
@@ -20375,11 +20304,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupIdType>
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
         where
             R: DeserializeReader,
         {
-            use TypeClassificationGroupIdTypeDeserializerState as S;
+            use TypeClassificationGroupIdDeserializerState as S;
             let DeserializerOutput {
                 artifact,
                 event,
@@ -20411,13 +20340,13 @@ pub mod quick_xml_deserialize {
             }
         }
     }
-    impl<'de> Deserializer<'de, super::TypeClassificationGroupIdType>
-        for TypeClassificationGroupIdTypeDeserializer
+    impl<'de> Deserializer<'de, super::TypeClassificationGroupId>
+        for TypeClassificationGroupIdDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupIdType>
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
         where
             R: DeserializeReader,
         {
@@ -20434,11 +20363,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::TypeClassificationGroupIdType>
+        ) -> DeserializerResult<'de, super::TypeClassificationGroupId>
         where
             R: DeserializeReader,
         {
-            use TypeClassificationGroupIdTypeDeserializerState as S;
+            use TypeClassificationGroupIdDeserializerState as S;
             match replace(&mut *self.state, S::Unknown__) {
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
@@ -20451,16 +20380,16 @@ pub mod quick_xml_deserialize {
                 S::Unknown__ => unreachable!(),
             }
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::TypeClassificationGroupIdType, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::TypeClassificationGroupId, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                TypeClassificationGroupIdTypeDeserializerState::Unknown__,
+                TypeClassificationGroupIdDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::TypeClassificationGroupIdType {
+            Ok(super::TypeClassificationGroupId {
                 type_: self.type_,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
@@ -20468,19 +20397,19 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct FeatureElementTypeDeserializer {
-        fname: Vec<super::DtMlstringType>,
-        fvalue: Vec<super::DtMlstringType>,
+        fname: Vec<super::DtMlstring>,
+        fvalue: Vec<super::DtMlstring>,
         funit: Option<String>,
-        fvalue_details: Vec<super::DtMlstringType>,
+        fvalue_details: Vec<super::DtMlstring>,
         state: Box<FeatureElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FeatureElementTypeDeserializerState {
         Init__,
-        Fname(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
-        Fvalue(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        Fname(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
+        Fvalue(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Funit(Option<<String as WithDeserializer>::Deserializer>),
-        FvalueDetails(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        FvalueDetails(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -20521,11 +20450,11 @@ pub mod quick_xml_deserialize {
             }
             Ok(())
         }
-        fn store_fname(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_fname(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.fname.push(value);
             Ok(())
         }
-        fn store_fvalue(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_fvalue(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.fvalue.push(value);
             Ok(())
         }
@@ -20538,14 +20467,14 @@ pub mod quick_xml_deserialize {
             self.funit = Some(value);
             Ok(())
         }
-        fn store_fvalue_details(&mut self, value: super::DtMlstringType) -> Result<(), Error> {
+        fn store_fvalue_details(&mut self, value: super::DtMlstring) -> Result<(), Error> {
             self.fvalue_details.push(value);
             Ok(())
         }
         fn handle_fname<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -20601,7 +20530,7 @@ pub mod quick_xml_deserialize {
         fn handle_fvalue<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -20704,7 +20633,7 @@ pub mod quick_xml_deserialize {
         fn handle_fvalue_details<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<FeatureElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -20843,7 +20772,7 @@ pub mod quick_xml_deserialize {
                     (S::Fname(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FNAME") {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_fname(reader, output, &mut fallback)? {
@@ -20864,7 +20793,7 @@ pub mod quick_xml_deserialize {
                         if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FVALUE")
                         {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_fvalue(reader, output, &mut fallback)? {
@@ -20906,7 +20835,7 @@ pub mod quick_xml_deserialize {
                             b"FVALUE_DETAILS",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_fvalue_details(reader, output, &mut fallback)? {
@@ -20962,7 +20891,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductPriceDetailsDatetimeElementTypeDeserializer {
-        type_: super::ProductPriceDetailsDatetimetypeType,
+        type_: super::ProductPriceDetailsType,
         date: Option<String>,
         time: Option<String>,
         timezone: Option<String>,
@@ -20982,7 +20911,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::ProductPriceDetailsDatetimetypeType> = None;
+            let mut type_: Option<super::ProductPriceDetailsType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -21403,7 +21332,7 @@ pub mod quick_xml_deserialize {
     pub struct ProductPriceElementTypeDeserializer {
         price_type: String,
         price_amount: Option<f64>,
-        price_currency: Option<super::DtCurrenciesType>,
+        price_currency: Option<super::DtCurrencies>,
         tax: Option<f64>,
         price_factor: Option<f64>,
         lower_bound: Option<f64>,
@@ -21414,7 +21343,7 @@ pub mod quick_xml_deserialize {
     enum ProductPriceElementTypeDeserializerState {
         Init__,
         PriceAmount(Option<<f64 as WithDeserializer>::Deserializer>),
-        PriceCurrency(Option<<super::DtCurrenciesType as WithDeserializer>::Deserializer>),
+        PriceCurrency(Option<<super::DtCurrencies as WithDeserializer>::Deserializer>),
         Tax(Option<<f64 as WithDeserializer>::Deserializer>),
         PriceFactor(Option<<f64 as WithDeserializer>::Deserializer>),
         LowerBound(Option<<f64 as WithDeserializer>::Deserializer>),
@@ -21491,7 +21420,7 @@ pub mod quick_xml_deserialize {
             self.price_amount = Some(value);
             Ok(())
         }
-        fn store_price_currency(&mut self, value: super::DtCurrenciesType) -> Result<(), Error> {
+        fn store_price_currency(&mut self, value: super::DtCurrencies) -> Result<(), Error> {
             if self.price_currency.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"PRICE_CURRENCY",
@@ -21589,7 +21518,7 @@ pub mod quick_xml_deserialize {
         fn handle_price_currency<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtCurrenciesType>,
+            output: DeserializerOutput<'de, super::DtCurrencies>,
             fallback: &mut Option<ProductPriceElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -21981,7 +21910,7 @@ pub mod quick_xml_deserialize {
                             b"PRICE_CURRENCY",
                         ) {
                             let output =
-                                <super::DtCurrenciesType as WithDeserializer>::Deserializer::init(
+                                <super::DtCurrencies as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_price_currency(reader, output, &mut fallback)? {
@@ -22804,16 +22733,14 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct UdxEdxfAdditionalFactorsElementTypeDeserializer {
         udx_edxf_additional_price_factor: Option<f64>,
-        udx_edxf_additional_factor_info: Option<super::DtMlstringType>,
+        udx_edxf_additional_factor_info: Option<super::DtMlstring>,
         state: Box<UdxEdxfAdditionalFactorsElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum UdxEdxfAdditionalFactorsElementTypeDeserializerState {
         Init__,
         UdxEdxfAdditionalPriceFactor(Option<<f64 as WithDeserializer>::Deserializer>),
-        UdxEdxfAdditionalFactorInfo(
-            Option<<super::DtMlstringType as WithDeserializer>::Deserializer>,
-        ),
+        UdxEdxfAdditionalFactorInfo(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -22863,7 +22790,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_udx_edxf_additional_factor_info(
             &mut self,
-            value: super::DtMlstringType,
+            value: super::DtMlstring,
         ) -> Result<(), Error> {
             if self.udx_edxf_additional_factor_info.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -22925,7 +22852,7 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_additional_factor_info<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfAdditionalFactorsElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -23086,7 +23013,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.ADDITIONAL_FACTOR_INFO",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_additional_factor_info(
@@ -25292,8 +25219,8 @@ pub mod quick_xml_deserialize {
     pub struct UdxEdxfPackingUnitElementTypeDeserializer {
         udx_edxf_quantity_min: Option<f32>,
         udx_edxf_quantity_max: Option<f32>,
-        udx_edxf_packing_unit_code: Option<super::DtPunitType>,
-        udx_edxf_packing_unit_name: Vec<super::DtMlstringType>,
+        udx_edxf_packing_unit_code: Option<super::DtPunit>,
+        udx_edxf_packing_unit_name: Vec<super::DtMlstring>,
         udx_edxf_package_break: Option<String>,
         udx_edxf_volume: Option<f64>,
         udx_edxf_weight: Option<f64>,
@@ -25310,8 +25237,8 @@ pub mod quick_xml_deserialize {
         Init__,
         UdxEdxfQuantityMin(Option<<f32 as WithDeserializer>::Deserializer>),
         UdxEdxfQuantityMax(Option<<f32 as WithDeserializer>::Deserializer>),
-        UdxEdxfPackingUnitCode(Option<<super::DtPunitType as WithDeserializer>::Deserializer>),
-        UdxEdxfPackingUnitName(Option<<super::DtMlstringType as WithDeserializer>::Deserializer>),
+        UdxEdxfPackingUnitCode(Option<<super::DtPunit as WithDeserializer>::Deserializer>),
+        UdxEdxfPackingUnitName(Option<<super::DtMlstring as WithDeserializer>::Deserializer>),
         UdxEdxfPackageBreak(Option<<String as WithDeserializer>::Deserializer>),
         UdxEdxfVolume(Option<<f64 as WithDeserializer>::Deserializer>),
         UdxEdxfWeight(Option<<f64 as WithDeserializer>::Deserializer>),
@@ -25421,10 +25348,7 @@ pub mod quick_xml_deserialize {
             self.udx_edxf_quantity_max = Some(value);
             Ok(())
         }
-        fn store_udx_edxf_packing_unit_code(
-            &mut self,
-            value: super::DtPunitType,
-        ) -> Result<(), Error> {
+        fn store_udx_edxf_packing_unit_code(&mut self, value: super::DtPunit) -> Result<(), Error> {
             if self.udx_edxf_packing_unit_code.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"UDX.EDXF.PACKING_UNIT_CODE",
@@ -25435,7 +25359,7 @@ pub mod quick_xml_deserialize {
         }
         fn store_udx_edxf_packing_unit_name(
             &mut self,
-            value: super::DtMlstringType,
+            value: super::DtMlstring,
         ) -> Result<(), Error> {
             self.udx_edxf_packing_unit_name.push(value);
             Ok(())
@@ -25645,7 +25569,7 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_packing_unit_code<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtPunitType>,
+            output: DeserializerOutput<'de, super::DtPunit>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -25707,7 +25631,7 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_packing_unit_name<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfPackingUnitElementTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -26519,10 +26443,9 @@ pub mod quick_xml_deserialize {
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_UNIT_CODE",
                         ) {
-                            let output =
-                                <super::DtPunitType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = <super::DtPunit as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             match self.handle_udx_edxf_packing_unit_code(
                                 reader,
                                 output,
@@ -26551,7 +26474,7 @@ pub mod quick_xml_deserialize {
                             b"UDX.EDXF.PACKING_UNIT_NAME",
                         ) {
                             let output =
-                                <super::DtMlstringType as WithDeserializer>::Deserializer::init(
+                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
                                     reader, event,
                                 )?;
                             match self.handle_udx_edxf_packing_unit_name(
@@ -27031,8 +26954,8 @@ pub mod quick_xml_deserialize {
             Option<<i32 as WithDeserializer>::Deserializer>,
         ),
         UdxEdxfMaterialBasisSurchargeTable(
-            Option<super::DtMlstringType>,
-            Option<<super::DtMlstringType as WithDeserializer>::Deserializer>,
+            Option<super::DtMlstring>,
+            Option<<super::DtMlstring as WithDeserializer>::Deserializer>,
         ),
         Done__(super::UdxEdxfSurchargeElementTypeContent),
         Unknown__,
@@ -27178,7 +27101,7 @@ pub mod quick_xml_deserialize {
                 Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
             ) {
                 let output =
-                    <super::DtMlstringType as WithDeserializer>::Deserializer::init(reader, event)?;
+                    <super::DtMlstring as WithDeserializer>::Deserializer::init(reader, event)?;
                 return self.handle_udx_edxf_material_basis_surcharge_table(
                     reader,
                     Default::default(),
@@ -27448,8 +27371,8 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_udx_edxf_material_basis_surcharge_table(
-            values: &mut Option<super::DtMlstringType>,
-            value: super::DtMlstringType,
+            values: &mut Option<super::DtMlstring>,
+            value: super::DtMlstring,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
@@ -27927,8 +27850,8 @@ pub mod quick_xml_deserialize {
         fn handle_udx_edxf_material_basis_surcharge_table<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::DtMlstringType>,
-            output: DeserializerOutput<'de, super::DtMlstringType>,
+            mut values: Option<super::DtMlstring>,
+            output: DeserializerOutput<'de, super::DtMlstring>,
             fallback: &mut Option<UdxEdxfSurchargeElementTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -28318,10 +28241,9 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeTable(values, None), event) => {
-                        let output =
-                            <super::DtMlstringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_table(
                             reader,
                             values,
@@ -28524,7 +28446,7 @@ pub mod quick_xml_serialize {
         Catalog(<super::CatalogElementType as WithSerializer>::Serializer<'ser>),
         Buyer(<super::BuyerElementType as WithSerializer>::Serializer<'ser>),
         Supplier(<super::SupplierElementType as WithSerializer>::Serializer<'ser>),
-        UserDefinedExtensions(<super::UdxHeaderType as WithSerializer>::Serializer<'ser>),
+        UserDefinedExtensions(<super::UdxHeader as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -28821,13 +28743,11 @@ pub mod quick_xml_serialize {
         ),
         CatalogId(<String as WithSerializer>::Serializer<'ser>),
         CatalogVersion(<String as WithSerializer>::Serializer<'ser>),
-        CatalogName(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        CatalogName(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         Datetime(<super::CatalogDatetimeElementType as WithSerializer>::Serializer<'ser>),
         Territory(IterSerializer<'ser, &'ser [String], String>),
-        Currency(
-            IterSerializer<'ser, Option<&'ser super::DtCurrenciesType>, super::DtCurrenciesType>,
-        ),
-        MimeRoot(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        Currency(IterSerializer<'ser, Option<&'ser super::DtCurrencies>, super::DtCurrencies>),
+        MimeRoot(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -28970,7 +28890,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum BuyerElementTypeSerializerState<'ser> {
         Init__,
-        BuyerId(IterSerializer<'ser, Option<&'ser super::TypePartyIdType>, super::TypePartyIdType>),
+        BuyerId(IterSerializer<'ser, Option<&'ser super::TypePartyId>, super::TypePartyId>),
         BuyerName(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
@@ -29039,7 +28959,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum SupplierElementTypeSerializerState<'ser> {
         Init__,
-        SupplierId(IterSerializer<'ser, &'ser [super::TypePartyIdType], super::TypePartyIdType>),
+        SupplierId(IterSerializer<'ser, &'ser [super::TypePartyId], super::TypePartyId>),
         SupplierName(<String as WithSerializer>::Serializer<'ser>),
         Address(
             IterSerializer<
@@ -29142,59 +29062,56 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct UdxHeaderTypeSerializer<'ser> {
-        pub(super) value: &'ser super::UdxHeaderType,
-        pub(super) state: Box<UdxHeaderTypeSerializerState<'ser>>,
+    pub struct UdxHeaderSerializer<'ser> {
+        pub(super) value: &'ser super::UdxHeader,
+        pub(super) state: Box<UdxHeaderSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum UdxHeaderTypeSerializerState<'ser> {
+    pub(super) enum UdxHeaderSerializerState<'ser> {
         Init__,
         UdxEdxfVersion(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> UdxHeaderTypeSerializer<'ser> {
+    impl<'ser> UdxHeaderSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    UdxHeaderTypeSerializerState::Init__ => {
-                        *self.state = UdxHeaderTypeSerializerState::UdxEdxfVersion(
-                            WithSerializer::serializer(
+                    UdxHeaderSerializerState::Init__ => {
+                        *self.state =
+                            UdxHeaderSerializerState::UdxEdxfVersion(WithSerializer::serializer(
                                 &self.value.udx_edxf_version,
                                 Some("UDX.EDXF.VERSION"),
                                 false,
-                            )?,
-                        );
+                            )?);
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    UdxHeaderTypeSerializerState::UdxEdxfVersion(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => *self.state = UdxHeaderTypeSerializerState::End__,
-                        }
-                    }
-                    UdxHeaderTypeSerializerState::End__ => {
-                        *self.state = UdxHeaderTypeSerializerState::Done__;
+                    UdxHeaderSerializerState::UdxEdxfVersion(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => *self.state = UdxHeaderSerializerState::End__,
+                    },
+                    UdxHeaderSerializerState::End__ => {
+                        *self.state = UdxHeaderSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    UdxHeaderTypeSerializerState::Done__ => return Ok(None),
-                    UdxHeaderTypeSerializerState::Phantom__(_) => unreachable!(),
+                    UdxHeaderSerializerState::Done__ => return Ok(None),
+                    UdxHeaderSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for UdxHeaderTypeSerializer<'ser> {
+    impl<'ser> Iterator for UdxHeaderSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = UdxHeaderTypeSerializerState::Done__;
+                    *self.state = UdxHeaderSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -29236,7 +29153,7 @@ pub mod quick_xml_serialize {
                 super::MimeInfoElementType,
             >,
         ),
-        UserDefinedExtensions(<super::UdxProductType as WithSerializer>::Serializer<'ser>),
+        UserDefinedExtensions(<super::UdxProduct as WithSerializer>::Serializer<'ser>),
         ProductReference(
             IterSerializer<
                 'ser,
@@ -29453,7 +29370,7 @@ pub mod quick_xml_serialize {
             >,
         ),
         UserDefinedExtensions(
-            IterSerializer<'ser, Option<&'ser super::UdxProductType>, super::UdxProductType>,
+            IterSerializer<'ser, Option<&'ser super::UdxProduct>, super::UdxProduct>,
         ),
         ProductReference(
             IterSerializer<
@@ -29512,7 +29429,7 @@ pub mod quick_xml_serialize {
             >,
         ),
         UserDefinedExtensions(
-            IterSerializer<'ser, Option<&'ser super::UdxProductType>, super::UdxProductType>,
+            IterSerializer<'ser, Option<&'ser super::UdxProduct>, super::UdxProduct>,
         ),
         End__,
         Done__,
@@ -29548,7 +29465,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum LanguageElementTypeSerializerState<'ser> {
         Init__,
-        Content__(<super::DtLangType as WithSerializer>::Serializer<'ser>),
+        Content__(<super::DtLang as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -29595,54 +29512,54 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct DtMlstringTypeSerializer<'ser> {
-        pub(super) value: &'ser super::DtMlstringType,
-        pub(super) state: Box<DtMlstringTypeSerializerState<'ser>>,
+    pub struct DtMlstringSerializer<'ser> {
+        pub(super) value: &'ser super::DtMlstring,
+        pub(super) state: Box<DtMlstringSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum DtMlstringTypeSerializerState<'ser> {
+    pub(super) enum DtMlstringSerializerState<'ser> {
         Init__,
         Content__(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> DtMlstringTypeSerializer<'ser> {
+    impl<'ser> DtMlstringSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    DtMlstringTypeSerializerState::Init__ => {
-                        *self.state = DtMlstringTypeSerializerState::Content__(
+                    DtMlstringSerializerState::Init__ => {
+                        *self.state = DtMlstringSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    DtMlstringTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    DtMlstringSerializerState::Content__(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => *self.state = DtMlstringTypeSerializerState::End__,
+                        None => *self.state = DtMlstringSerializerState::End__,
                     },
-                    DtMlstringTypeSerializerState::End__ => {
-                        *self.state = DtMlstringTypeSerializerState::Done__;
+                    DtMlstringSerializerState::End__ => {
+                        *self.state = DtMlstringSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    DtMlstringTypeSerializerState::Done__ => return Ok(None),
-                    DtMlstringTypeSerializerState::Phantom__(_) => unreachable!(),
+                    DtMlstringSerializerState::Done__ => return Ok(None),
+                    DtMlstringSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for DtMlstringTypeSerializer<'ser> {
+    impl<'ser> Iterator for DtMlstringSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = DtMlstringTypeSerializerState::Done__;
+                    *self.state = DtMlstringSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -29732,54 +29649,54 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct TypePartyIdTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TypePartyIdType,
-        pub(super) state: Box<TypePartyIdTypeSerializerState<'ser>>,
+    pub struct TypePartyIdSerializer<'ser> {
+        pub(super) value: &'ser super::TypePartyId,
+        pub(super) state: Box<TypePartyIdSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TypePartyIdTypeSerializerState<'ser> {
+    pub(super) enum TypePartyIdSerializerState<'ser> {
         Init__,
         Content__(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TypePartyIdTypeSerializer<'ser> {
+    impl<'ser> TypePartyIdSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TypePartyIdTypeSerializerState::Init__ => {
-                        *self.state = TypePartyIdTypeSerializerState::Content__(
+                    TypePartyIdSerializerState::Init__ => {
+                        *self.state = TypePartyIdSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TypePartyIdTypeSerializerState::Content__(x) => match x.next().transpose()? {
+                    TypePartyIdSerializerState::Content__(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => *self.state = TypePartyIdTypeSerializerState::End__,
+                        None => *self.state = TypePartyIdSerializerState::End__,
                     },
-                    TypePartyIdTypeSerializerState::End__ => {
-                        *self.state = TypePartyIdTypeSerializerState::Done__;
+                    TypePartyIdSerializerState::End__ => {
+                        *self.state = TypePartyIdSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TypePartyIdTypeSerializerState::Done__ => return Ok(None),
-                    TypePartyIdTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TypePartyIdSerializerState::Done__ => return Ok(None),
+                    TypePartyIdSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TypePartyIdTypeSerializer<'ser> {
+    impl<'ser> Iterator for TypePartyIdSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TypePartyIdTypeSerializerState::Done__;
+                    *self.state = TypePartyIdSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -29795,11 +29712,11 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum SupplierAddressElementTypeSerializerState<'ser> {
         Init__,
-        Contact(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        Street(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        Zip(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        City(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        Country(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        Contact(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        Street(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        Zip(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        City(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        Country(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         VatId(IterSerializer<'ser, Option<&'ser String>, String>),
         Email(<String as WithSerializer>::Serializer<'ser>),
         Url(IterSerializer<'ser, Option<&'ser String>, String>),
@@ -30051,10 +29968,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ProductDetailsElementTypeSerializerState<'ser> {
         Init__,
-        DescriptionShort(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
-        DescriptionLong(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        DescriptionShort(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        DescriptionLong(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         InternationalPid(
             IterSerializer<
                 'ser,
@@ -30068,9 +29983,7 @@ pub mod quick_xml_serialize {
         ),
         ManufacturerPid(IterSerializer<'ser, Option<&'ser String>, String>),
         ManufacturerName(IterSerializer<'ser, Option<&'ser String>, String>),
-        ManufacturerTypeDescr(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
+        ManufacturerTypeDescr(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         SpecialTreatmentClass(
             IterSerializer<
                 'ser,
@@ -30078,7 +29991,7 @@ pub mod quick_xml_serialize {
                 super::SpecialTreatmentClassElementType,
             >,
         ),
-        Keyword(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        Keyword(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         Remarks(IterSerializer<'ser, &'ser [super::RemarksElementType], super::RemarksElementType>),
         ProductStatus(
             IterSerializer<
@@ -30309,7 +30222,7 @@ pub mod quick_xml_serialize {
         Init__,
         ReferenceFeatureSystemName(<String as WithSerializer>::Serializer<'ser>),
         ReferenceFeatureGroupId(
-            <super::TypeClassificationGroupIdType as WithSerializer>::Serializer<'ser>,
+            <super::TypeClassificationGroupId as WithSerializer>::Serializer<'ser>,
         ),
         Feature(IterSerializer<'ser, &'ser [super::FeatureElementType], super::FeatureElementType>),
         End__,
@@ -30398,8 +30311,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum ProductOrderDetailsElementTypeSerializerState<'ser> {
         Init__,
-        OrderUnit(<super::DtPunitType as WithSerializer>::Serializer<'ser>),
-        ContentUnit(<super::DtPunitType as WithSerializer>::Serializer<'ser>),
+        OrderUnit(<super::DtPunit as WithSerializer>::Serializer<'ser>),
+        ContentUnit(<super::DtPunit as WithSerializer>::Serializer<'ser>),
         NoCuPerOu(IterSerializer<'ser, Option<&'ser f64>, f64>),
         PriceQuantity(IterSerializer<'ser, Option<&'ser f64>, f64>),
         QuantityMin(IterSerializer<'ser, Option<&'ser f32>, f32>),
@@ -30629,23 +30542,21 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct UdxProductTypeSerializer<'ser> {
-        pub(super) value: &'ser super::UdxProductType,
-        pub(super) state: Box<UdxProductTypeSerializerState<'ser>>,
+    pub struct UdxProductSerializer<'ser> {
+        pub(super) value: &'ser super::UdxProduct,
+        pub(super) state: Box<UdxProductSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum UdxProductTypeSerializerState<'ser> {
+    pub(super) enum UdxProductSerializerState<'ser> {
         Init__,
         UdxEdxfManufacturerAcronym(IterSerializer<'ser, Option<&'ser String>, String>),
         UdxEdxfDescriptionVeryShort(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
+            IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>,
         ),
         UdxEdxfBrandName(IterSerializer<'ser, Option<&'ser String>, String>),
-        UdxEdxfTenderText(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
+        UdxEdxfTenderText(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         UdxEdxfValidFrom(IterSerializer<'ser, Option<&'ser String>, String>),
         UdxEdxfExpirationDate(IterSerializer<'ser, Option<&'ser String>, String>),
         UdxEdxfDiscountGroup(
@@ -30672,12 +30583,8 @@ pub mod quick_xml_serialize {
             >,
         ),
         UdxEdxfProductToStock(IterSerializer<'ser, Option<&'ser String>, String>),
-        UdxEdxfProductSeries(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
-        UdxEdxfProductVariation(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
+        UdxEdxfProductSeries(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        UdxEdxfProductVariation(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         UdxEdxfAtReverseChargeInfo(IterSerializer<'ser, Option<&'ser String>, String>),
         UdxEdxfCountryBranchNumbers(
             IterSerializer<
@@ -30725,12 +30632,12 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> UdxProductTypeSerializer<'ser> {
+    impl<'ser> UdxProductSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    UdxProductTypeSerializerState::Init__ => {
-                        *self.state = UdxProductTypeSerializerState::UdxEdxfManufacturerAcronym(
+                    UdxProductSerializerState::Init__ => {
+                        *self.state = UdxProductSerializerState::UdxEdxfManufacturerAcronym(
                             IterSerializer::new(
                                 self.value.udx_edxf_manufacturer_acronym.as_ref(),
                                 Some("UDX.EDXF.MANUFACTURER_ACRONYM"),
@@ -30740,26 +30647,25 @@ pub mod quick_xml_serialize {
                         let bytes = BytesStart::new(self.name);
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    UdxProductTypeSerializerState::UdxEdxfManufacturerAcronym(x) => {
+                    UdxProductSerializerState::UdxEdxfManufacturerAcronym(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfDescriptionVeryShort(
-                                        IterSerializer::new(
-                                            &self.value.udx_edxf_description_very_short[..],
-                                            Some("UDX.EDXF.DESCRIPTION_VERY_SHORT"),
-                                            false,
-                                        ),
-                                    )
+                                *self.state = UdxProductSerializerState::UdxEdxfDescriptionVeryShort(
+                                    IterSerializer::new(
+                                        &self.value.udx_edxf_description_very_short[..],
+                                        Some("UDX.EDXF.DESCRIPTION_VERY_SHORT"),
+                                        false,
+                                    ),
+                                )
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfDescriptionVeryShort(x) => {
+                    UdxProductSerializerState::UdxEdxfDescriptionVeryShort(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfBrandName(
+                                *self.state = UdxProductSerializerState::UdxEdxfBrandName(
                                     IterSerializer::new(
                                         self.value.udx_edxf_brand_name.as_ref(),
                                         Some("UDX.EDXF.BRAND_NAME"),
@@ -30769,25 +30675,22 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfBrandName(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfTenderText(
-                                    IterSerializer::new(
-                                        &self.value.udx_edxf_tender_text[..],
-                                        Some("UDX.EDXF.TENDER_TEXT"),
-                                        false,
-                                    ),
-                                )
-                            }
+                    UdxProductSerializerState::UdxEdxfBrandName(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state =
+                                UdxProductSerializerState::UdxEdxfTenderText(IterSerializer::new(
+                                    &self.value.udx_edxf_tender_text[..],
+                                    Some("UDX.EDXF.TENDER_TEXT"),
+                                    false,
+                                ))
                         }
-                    }
-                    UdxProductTypeSerializerState::UdxEdxfTenderText(x) => {
+                    },
+                    UdxProductSerializerState::UdxEdxfTenderText(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfValidFrom(
+                                *self.state = UdxProductSerializerState::UdxEdxfValidFrom(
                                     IterSerializer::new(
                                         self.value.udx_edxf_valid_from.as_ref(),
                                         Some("UDX.EDXF.VALID_FROM"),
@@ -30797,25 +30700,23 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfValidFrom(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfExpirationDate(
-                                    IterSerializer::new(
-                                        self.value.udx_edxf_expiration_date.as_ref(),
-                                        Some("UDX.EDXF.EXPIRATION_DATE"),
-                                        false,
-                                    ),
-                                )
-                            }
+                    UdxProductSerializerState::UdxEdxfValidFrom(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state = UdxProductSerializerState::UdxEdxfExpirationDate(
+                                IterSerializer::new(
+                                    self.value.udx_edxf_expiration_date.as_ref(),
+                                    Some("UDX.EDXF.EXPIRATION_DATE"),
+                                    false,
+                                ),
+                            )
                         }
-                    }
-                    UdxProductTypeSerializerState::UdxEdxfExpirationDate(x) => {
+                    },
+                    UdxProductSerializerState::UdxEdxfExpirationDate(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfDiscountGroup(
+                                *self.state = UdxProductSerializerState::UdxEdxfDiscountGroup(
                                     IterSerializer::new(
                                         self.value.udx_edxf_discount_group.as_ref(),
                                         Some("UDX.EDXF.DISCOUNT_GROUP"),
@@ -30825,67 +30726,63 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfDiscountGroup(x) => {
+                    UdxProductSerializerState::UdxEdxfDiscountGroup(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfBonusGroupSupplier(
-                                        IterSerializer::new(
-                                            self.value.udx_edxf_bonus_group_supplier.as_ref(),
-                                            Some("UDX.EDXF.BONUS_GROUP_SUPPLIER"),
-                                            false,
-                                        ),
-                                    )
-                            }
-                        }
-                    }
-                    UdxProductTypeSerializerState::UdxEdxfBonusGroupSupplier(x) => {
-                        match x.next().transpose()? {
-                            Some(event) => return Ok(Some(event)),
-                            None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfPkwiu(
+                                *self.state = UdxProductSerializerState::UdxEdxfBonusGroupSupplier(
                                     IterSerializer::new(
-                                        self.value.udx_edxf_pkwiu.as_ref(),
-                                        Some("UDX.EDXF.PKWIU"),
+                                        self.value.udx_edxf_bonus_group_supplier.as_ref(),
+                                        Some("UDX.EDXF.BONUS_GROUP_SUPPLIER"),
                                         false,
                                     ),
                                 )
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfPkwiu(x) => match x.next().transpose()? {
-                        Some(event) => return Ok(Some(event)),
-                        None => {
-                            *self.state = UdxProductTypeSerializerState::UdxEdxfDeclaration(
-                                IterSerializer::new(
-                                    &self.value.udx_edxf_declaration[..],
-                                    Some("UDX.EDXF.DECLARATION"),
-                                    false,
-                                ),
-                            )
-                        }
-                    },
-                    UdxProductTypeSerializerState::UdxEdxfDeclaration(x) => {
+                    UdxProductSerializerState::UdxEdxfBonusGroupSupplier(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfAdditionalFactors(
-                                        IterSerializer::new(
-                                            self.value.udx_edxf_additional_factors.as_ref(),
-                                            Some("UDX.EDXF.ADDITIONAL_FACTORS"),
-                                            false,
-                                        ),
-                                    )
+                                    UdxProductSerializerState::UdxEdxfPkwiu(IterSerializer::new(
+                                        self.value.udx_edxf_pkwiu.as_ref(),
+                                        Some("UDX.EDXF.PKWIU"),
+                                        false,
+                                    ))
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfAdditionalFactors(x) => {
+                    UdxProductSerializerState::UdxEdxfPkwiu(x) => match x.next().transpose()? {
+                        Some(event) => return Ok(Some(event)),
+                        None => {
+                            *self.state =
+                                UdxProductSerializerState::UdxEdxfDeclaration(IterSerializer::new(
+                                    &self.value.udx_edxf_declaration[..],
+                                    Some("UDX.EDXF.DECLARATION"),
+                                    false,
+                                ))
+                        }
+                    },
+                    UdxProductSerializerState::UdxEdxfDeclaration(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfProductToStock(
+                                *self.state = UdxProductSerializerState::UdxEdxfAdditionalFactors(
+                                    IterSerializer::new(
+                                        self.value.udx_edxf_additional_factors.as_ref(),
+                                        Some("UDX.EDXF.ADDITIONAL_FACTORS"),
+                                        false,
+                                    ),
+                                )
+                            }
+                        }
+                    }
+                    UdxProductSerializerState::UdxEdxfAdditionalFactors(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => {
+                                *self.state = UdxProductSerializerState::UdxEdxfProductToStock(
                                     IterSerializer::new(
                                         self.value.udx_edxf_product_to_stock.as_ref(),
                                         Some("UDX.EDXF.PRODUCT_TO_STOCK"),
@@ -30895,11 +30792,11 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfProductToStock(x) => {
+                    UdxProductSerializerState::UdxEdxfProductToStock(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfProductSeries(
+                                *self.state = UdxProductSerializerState::UdxEdxfProductSeries(
                                     IterSerializer::new(
                                         &self.value.udx_edxf_product_series[..],
                                         Some("UDX.EDXF.PRODUCT_SERIES"),
@@ -30909,11 +30806,11 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfProductSeries(x) => {
+                    UdxProductSerializerState::UdxEdxfProductSeries(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfProductVariation(
+                                *self.state = UdxProductSerializerState::UdxEdxfProductVariation(
                                     IterSerializer::new(
                                         &self.value.udx_edxf_product_variation[..],
                                         Some("UDX.EDXF.PRODUCT_VARIATION"),
@@ -30923,57 +30820,54 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfProductVariation(x) => {
+                    UdxProductSerializerState::UdxEdxfProductVariation(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfAtReverseChargeInfo(
-                                        IterSerializer::new(
-                                            self.value.udx_edxf_at_reverse_charge_info.as_ref(),
-                                            Some("UDX.EDXF.AT.REVERSE_CHARGE_INFO"),
-                                            false,
-                                        ),
-                                    )
+                                *self.state = UdxProductSerializerState::UdxEdxfAtReverseChargeInfo(
+                                    IterSerializer::new(
+                                        self.value.udx_edxf_at_reverse_charge_info.as_ref(),
+                                        Some("UDX.EDXF.AT.REVERSE_CHARGE_INFO"),
+                                        false,
+                                    ),
+                                )
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfAtReverseChargeInfo(x) => {
+                    UdxProductSerializerState::UdxEdxfAtReverseChargeInfo(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfCountryBranchNumbers(
-                                        IterSerializer::new(
-                                            self.value.udx_edxf_country_branch_numbers.as_ref(),
-                                            Some("UDX.EDXF.COUNTRY_BRANCH_NUMBERS"),
-                                            false,
-                                        ),
-                                    )
+                                *self.state = UdxProductSerializerState::UdxEdxfCountryBranchNumbers(
+                                    IterSerializer::new(
+                                        self.value.udx_edxf_country_branch_numbers.as_ref(),
+                                        Some("UDX.EDXF.COUNTRY_BRANCH_NUMBERS"),
+                                        false,
+                                    ),
+                                )
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfCountryBranchNumbers(x) => match x
+                    UdxProductSerializerState::UdxEdxfCountryBranchNumbers(x) => match x
                         .next()
                         .transpose()?
                     {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state =
-                                UdxProductTypeSerializerState::UdxEdxfCountryBranchSupplierIds(
-                                    IterSerializer::new(
-                                        self.value.udx_edxf_country_branch_supplier_ids.as_ref(),
-                                        Some("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS"),
-                                        false,
-                                    ),
-                                )
+                            *self.state = UdxProductSerializerState::UdxEdxfCountryBranchSupplierIds(
+                                IterSerializer::new(
+                                    self.value.udx_edxf_country_branch_supplier_ids.as_ref(),
+                                    Some("UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS"),
+                                    false,
+                                ),
+                            )
                         }
                     },
-                    UdxProductTypeSerializerState::UdxEdxfCountryBranchSupplierIds(x) => {
+                    UdxProductSerializerState::UdxEdxfCountryBranchSupplierIds(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfPackingUnits(
+                                *self.state = UdxProductSerializerState::UdxEdxfPackingUnits(
                                     IterSerializer::new(
                                         self.value.udx_edxf_packing_units.as_ref(),
                                         Some("UDX.EDXF.PACKING_UNITS"),
@@ -30983,12 +30877,12 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfPackingUnits(x) => {
+                    UdxProductSerializerState::UdxEdxfPackingUnits(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
                                 *self.state =
-                                    UdxProductTypeSerializerState::UdxEdxfProductLogisticDetails(
+                                    UdxProductSerializerState::UdxEdxfProductLogisticDetails(
                                         IterSerializer::new(
                                             self.value.udx_edxf_product_logistic_details.as_ref(),
                                             Some("UDX.EDXF.PRODUCT_LOGISTIC_DETAILS"),
@@ -30998,24 +30892,23 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfProductLogisticDetails(x) => {
+                    UdxProductSerializerState::UdxEdxfProductLogisticDetails(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = UdxProductTypeSerializerState::UdxEdxfReach(
-                                    IterSerializer::new(
+                                *self.state =
+                                    UdxProductSerializerState::UdxEdxfReach(IterSerializer::new(
                                         self.value.udx_edxf_reach.as_ref(),
                                         Some("UDX.EDXF.REACH"),
                                         false,
-                                    ),
-                                )
+                                    ))
                             }
                         }
                     }
-                    UdxProductTypeSerializerState::UdxEdxfReach(x) => match x.next().transpose()? {
+                    UdxProductSerializerState::UdxEdxfReach(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = UdxProductTypeSerializerState::UdxEdxfSurchargeList(
+                            *self.state = UdxProductSerializerState::UdxEdxfSurchargeList(
                                 IterSerializer::new(
                                     self.value.udx_edxf_surcharge_list.as_ref(),
                                     Some("UDX.EDXF.SURCHARGE_LIST"),
@@ -31024,30 +30917,30 @@ pub mod quick_xml_serialize {
                             )
                         }
                     },
-                    UdxProductTypeSerializerState::UdxEdxfSurchargeList(x) => {
+                    UdxProductSerializerState::UdxEdxfSurchargeList(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = UdxProductTypeSerializerState::End__,
+                            None => *self.state = UdxProductSerializerState::End__,
                         }
                     }
-                    UdxProductTypeSerializerState::End__ => {
-                        *self.state = UdxProductTypeSerializerState::Done__;
+                    UdxProductSerializerState::End__ => {
+                        *self.state = UdxProductSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    UdxProductTypeSerializerState::Done__ => return Ok(None),
-                    UdxProductTypeSerializerState::Phantom__(_) => unreachable!(),
+                    UdxProductSerializerState::Done__ => return Ok(None),
+                    UdxProductSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for UdxProductTypeSerializer<'ser> {
+    impl<'ser> Iterator for UdxProductSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = UdxProductTypeSerializerState::Done__;
+                    *self.state = UdxProductSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -31255,9 +31148,9 @@ pub mod quick_xml_serialize {
     pub(super) enum MimeElementTypeSerializerState<'ser> {
         Init__,
         MimeType(<String as WithSerializer>::Serializer<'ser>),
-        MimeSource(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        MimeDescr(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        MimeAlt(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        MimeSource(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        MimeDescr(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        MimeAlt(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         MimePurpose(<super::MimePurposeElementType as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
@@ -31634,57 +31527,56 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct TypeClassificationGroupIdTypeSerializer<'ser> {
-        pub(super) value: &'ser super::TypeClassificationGroupIdType,
-        pub(super) state: Box<TypeClassificationGroupIdTypeSerializerState<'ser>>,
+    pub struct TypeClassificationGroupIdSerializer<'ser> {
+        pub(super) value: &'ser super::TypeClassificationGroupId,
+        pub(super) state: Box<TypeClassificationGroupIdSerializerState<'ser>>,
         pub(super) name: &'ser str,
         pub(super) is_root: bool,
     }
     #[derive(Debug)]
-    pub(super) enum TypeClassificationGroupIdTypeSerializerState<'ser> {
+    pub(super) enum TypeClassificationGroupIdSerializerState<'ser> {
         Init__,
         Content__(<String as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> TypeClassificationGroupIdTypeSerializer<'ser> {
+    impl<'ser> TypeClassificationGroupIdSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    TypeClassificationGroupIdTypeSerializerState::Init__ => {
-                        *self.state = TypeClassificationGroupIdTypeSerializerState::Content__(
+                    TypeClassificationGroupIdSerializerState::Init__ => {
+                        *self.state = TypeClassificationGroupIdSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib_opt(&mut bytes, "type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    TypeClassificationGroupIdTypeSerializerState::Content__(x) => match x
-                        .next()
-                        .transpose()?
-                    {
-                        Some(event) => return Ok(Some(event)),
-                        None => *self.state = TypeClassificationGroupIdTypeSerializerState::End__,
-                    },
-                    TypeClassificationGroupIdTypeSerializerState::End__ => {
-                        *self.state = TypeClassificationGroupIdTypeSerializerState::Done__;
+                    TypeClassificationGroupIdSerializerState::Content__(x) => {
+                        match x.next().transpose()? {
+                            Some(event) => return Ok(Some(event)),
+                            None => *self.state = TypeClassificationGroupIdSerializerState::End__,
+                        }
+                    }
+                    TypeClassificationGroupIdSerializerState::End__ => {
+                        *self.state = TypeClassificationGroupIdSerializerState::Done__;
                         return Ok(Some(Event::End(BytesEnd::new(self.name))));
                     }
-                    TypeClassificationGroupIdTypeSerializerState::Done__ => return Ok(None),
-                    TypeClassificationGroupIdTypeSerializerState::Phantom__(_) => unreachable!(),
+                    TypeClassificationGroupIdSerializerState::Done__ => return Ok(None),
+                    TypeClassificationGroupIdSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for TypeClassificationGroupIdTypeSerializer<'ser> {
+    impl<'ser> Iterator for TypeClassificationGroupIdSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = TypeClassificationGroupIdTypeSerializerState::Done__;
+                    *self.state = TypeClassificationGroupIdSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -31700,10 +31592,10 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum FeatureElementTypeSerializerState<'ser> {
         Init__,
-        Fname(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
-        Fvalue(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        Fname(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
+        Fvalue(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         Funit(IterSerializer<'ser, Option<&'ser String>, String>),
-        FvalueDetails(IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>),
+        FvalueDetails(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -31885,9 +31777,7 @@ pub mod quick_xml_serialize {
     pub(super) enum ProductPriceElementTypeSerializerState<'ser> {
         Init__,
         PriceAmount(<f64 as WithSerializer>::Serializer<'ser>),
-        PriceCurrency(
-            IterSerializer<'ser, Option<&'ser super::DtCurrenciesType>, super::DtCurrenciesType>,
-        ),
+        PriceCurrency(IterSerializer<'ser, Option<&'ser super::DtCurrencies>, super::DtCurrencies>),
         Tax(IterSerializer<'ser, Option<&'ser f64>, f64>),
         PriceFactor(IterSerializer<'ser, Option<&'ser f64>, f64>),
         LowerBound(IterSerializer<'ser, Option<&'ser f64>, f64>),
@@ -32170,7 +32060,7 @@ pub mod quick_xml_serialize {
     pub(super) enum UdxEdxfAdditionalFactorsElementTypeSerializerState<'ser> {
         Init__,
         UdxEdxfAdditionalPriceFactor(<f64 as WithSerializer>::Serializer<'ser>),
-        UdxEdxfAdditionalFactorInfo(<super::DtMlstringType as WithSerializer>::Serializer<'ser>),
+        UdxEdxfAdditionalFactorInfo(<super::DtMlstring as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -32673,10 +32563,8 @@ pub mod quick_xml_serialize {
         Init__,
         UdxEdxfQuantityMin(<f32 as WithSerializer>::Serializer<'ser>),
         UdxEdxfQuantityMax(IterSerializer<'ser, Option<&'ser f32>, f32>),
-        UdxEdxfPackingUnitCode(<super::DtPunitType as WithSerializer>::Serializer<'ser>),
-        UdxEdxfPackingUnitName(
-            IterSerializer<'ser, &'ser [super::DtMlstringType], super::DtMlstringType>,
-        ),
+        UdxEdxfPackingUnitCode(<super::DtPunit as WithSerializer>::Serializer<'ser>),
+        UdxEdxfPackingUnitName(IterSerializer<'ser, &'ser [super::DtMlstring], super::DtMlstring>),
         UdxEdxfPackageBreak(IterSerializer<'ser, Option<&'ser String>, String>),
         UdxEdxfVolume(IterSerializer<'ser, Option<&'ser f64>, f64>),
         UdxEdxfWeight(IterSerializer<'ser, Option<&'ser f64>, f64>),
@@ -32789,9 +32677,7 @@ pub mod quick_xml_serialize {
         UdxEdxfMaterialBasisSurchargeThreshold(<f64 as WithSerializer>::Serializer<'ser>),
         UdxEdxfMaterialBasisSurchargeShutter(<i32 as WithSerializer>::Serializer<'ser>),
         UdxEdxfMaterialBasisSurchargeCredit(<i32 as WithSerializer>::Serializer<'ser>),
-        UdxEdxfMaterialBasisSurchargeTable(
-            <super::DtMlstringType as WithSerializer>::Serializer<'ser>,
-        ),
+        UdxEdxfMaterialBasisSurchargeTable(<super::DtMlstring as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }

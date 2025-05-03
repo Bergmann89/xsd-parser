@@ -9,8 +9,8 @@ pub enum MyEnumType {
 }
 pub enum MyBaseUnionType {
     I32(i32),
-    MyBaseUnion1(MyBaseUnion1Type),
+    MyBaseUnion1(UnsignedIntList),
 }
 #[derive(Default)]
-pub struct MyBaseUnion1Type(pub Vec<UnsignedIntType>);
+pub struct UnsignedIntList(pub Vec<UnsignedIntType>);
 pub type UnsignedIntType = u32;

@@ -12,6 +12,7 @@ pub struct NameBuilder {
     id: Arc<AtomicUsize>,
     my_id: Option<usize>,
     with_id: bool,
+    generated: bool,
 
     name: Option<String>,
     extension: Option<String>,
@@ -26,6 +27,7 @@ impl NameBuilder {
             id,
             my_id: None,
             with_id: true,
+            generated: false,
             name: None,
             extension: None,
         }
@@ -38,11 +40,10 @@ impl NameBuilder {
             id,
             my_id,
             with_id,
+            mut generated,
             name,
             extension,
         } = self;
-
-        let mut generated = false;
 
         let mut ret = String::new();
         if let Some(s) = extension {
@@ -51,7 +52,11 @@ impl NameBuilder {
         }
 
         if let Some(s) = name {
-            ret.push_str(&s);
+            if ret.is_empty() {
+                ret.push_str(&s);
+            } else {
+                ret.push_str(&Name::unify(&s));
+            }
         }
 
         if ret.is_empty() {
@@ -133,9 +138,12 @@ impl NameBuilder {
         F: FnOnce() -> T,
         T: NameFallback,
     {
-        self.name = self.name.or_else(|| fallback().resolve());
-        if self.name.is_some() {
-            self.with_id = false;
+        if self.name.is_none() {
+            if let Some((generated, name)) = fallback().resolve() {
+                self.name = Some(name);
+                self.with_id = false;
+                self.generated = generated;
+            }
         }
 
         self
@@ -194,41 +202,75 @@ impl NameBuilder {
 /// [`NameBuilder::or_else`]
 pub trait NameFallback {
     /// Create the fallback value.
-    fn resolve(self) -> Option<String>;
+    fn resolve(self) -> Option<(bool, String)>;
 }
 
 impl NameFallback for Name {
-    fn resolve(self) -> Option<String> {
-        Some(self.as_str().to_owned())
-    }
-}
-
-impl NameFallback for &String {
-    fn resolve(self) -> Option<String> {
-        Some(self.to_owned())
+    #[inline]
+    fn resolve(self) -> Option<(bool, String)> {
+        (&self).resolve()
     }
 }
 
 impl NameFallback for &Name {
-    fn resolve(self) -> Option<String> {
-        Some(self.as_str().to_owned())
+    #[inline]
+    fn resolve(self) -> Option<(bool, String)> {
+        Some((self.is_generated(), self.as_str().to_owned()))
     }
 }
 
-impl<X> NameFallback for Option<X>
-where
-    X: Display,
-{
-    fn resolve(self) -> Option<String> {
-        self.map(|x| format!("{x}"))
+impl NameFallback for Option<&Name> {
+    #[inline]
+    fn resolve(self) -> Option<(bool, String)> {
+        self.and_then(NameFallback::resolve)
     }
 }
 
-impl<X> NameFallback for &Option<X>
-where
-    X: Display,
-{
-    fn resolve(self) -> Option<String> {
-        self.as_ref().map(|x| format!("{x}"))
+impl NameFallback for Option<Name> {
+    #[inline]
+    fn resolve(self) -> Option<(bool, String)> {
+        self.as_ref().resolve()
+    }
+}
+
+impl NameFallback for &Option<Name> {
+    fn resolve(self) -> Option<(bool, String)> {
+        self.as_ref().resolve()
+    }
+}
+
+impl NameFallback for &String {
+    fn resolve(self) -> Option<(bool, String)> {
+        Some((false, self.to_owned()))
+    }
+}
+
+impl NameFallback for Option<&String> {
+    fn resolve(self) -> Option<(bool, String)> {
+        self.and_then(NameFallback::resolve)
+    }
+}
+
+impl NameFallback for Option<String> {
+    fn resolve(self) -> Option<(bool, String)> {
+        self.as_ref().resolve()
+    }
+}
+
+impl NameFallback for &Option<String> {
+    fn resolve(self) -> Option<(bool, String)> {
+        self.as_ref().resolve()
+    }
+}
+
+impl NameFallback for &str {
+    fn resolve(self) -> Option<(bool, String)> {
+        Some((false, self.to_owned()))
+    }
+}
+
+impl NameFallback for Option<&str> {
+    fn resolve(self) -> Option<(bool, String)> {
+        self.and_then(NameFallback::resolve)
     }
 }
