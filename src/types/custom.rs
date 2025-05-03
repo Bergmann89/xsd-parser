@@ -85,7 +85,7 @@ impl Hash for CustomType {
 ///
 /// You can add a custom default implementation to your custom type using
 /// [`CustomType::with_default`].
-pub trait CustomDefaultImpl: 'static {
+pub trait CustomDefaultImpl: Send + Sync + 'static {
     /// Try to convert the passed string `s` that contains the default value from
     /// the XML schema to actual default code. If the value could not be converted
     /// to code `None` is returned.
@@ -97,7 +97,7 @@ pub trait CustomDefaultImpl: 'static {
 
 impl<X> CustomDefaultImpl for X
 where
-    X: Fn(&str) -> Option<TokenStream> + Clone + 'static,
+    X: Fn(&str) -> Option<TokenStream> + Clone + Send + Sync + 'static,
 {
     fn exec(&self, s: &str) -> Option<TokenStream> {
         (*self)(s)
