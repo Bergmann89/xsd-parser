@@ -175,6 +175,15 @@ pub enum Generate {
 }
 
 /// Identifier that is used inside the config.
+///
+/// Each element in a XML schema is uniquely identified by the following three
+/// values:
+///     - The namespace of the element (or no namespace at all).
+///     - The name of the element.
+///     - The type of element.
+///
+/// This struct is used to bundle these three information to a unique identifier
+/// for an element.
 #[derive(Debug, Clone)]
 pub struct IdentTriple {
     /// Namespace where the type is defined in.

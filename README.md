@@ -55,7 +55,7 @@ fn main() -> Result<(), Error> {
 }
 ```
 
-For more advanced examples, please refer to the `examples` directory.
+For more advanced examples, please refer to the [`examples`](./examples/README.md) directory.
 
 
 # Features
