@@ -392,7 +392,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .extend(true, ty.name.clone())
-                    .auto_extend2(true, false, self.state);
+                    .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
                     type_name.with_id(false)
                 } else {
@@ -517,7 +517,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                             .state
                             .name_builder()
                             .or(name)
-                            .auto_extend2(true, true, self.state)
+                            .auto_extend(true, true, self.state)
                             .finish();
                         let ns = self.state.current_ns();
 
@@ -845,7 +845,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
             .remove_suffix("Content");
         let field_name = name.clone().shared_name("Content").finish();
         let type_name = name
-            .auto_extend2(false, true, self.state)
+            .auto_extend(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
             .shared_name("Content")

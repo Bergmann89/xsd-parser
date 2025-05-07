@@ -104,7 +104,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
             .map(|base| {
                 let base = self.parse_qname(base)?;
 
-                self.copy_base_type(&base, UpdateMode::Restriction)?;
+                self.copy_base_type(&base)?;
 
                 Ok(base)
             })
@@ -174,7 +174,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
                 .state
                 .name_builder()
                 .or(&x.name)
-                .auto_extend2(false, true, self.owner.state)
+                .auto_extend(false, true, self.owner.state)
                 .finish();
             let type_ = self.owner.create_simple_type(ns, Some(name), None, x)?;
             ui.types.push(UnionTypeInfo::new(type_));
@@ -223,7 +223,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         }
     }
 
-    fn copy_base_type(&mut self, base: &Ident, _mode: UpdateMode) -> Result<(), Error> {
+    fn copy_base_type(&mut self, base: &Ident) -> Result<(), Error> {
         let base = {
             self.fixed = false;
 
@@ -235,7 +235,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         let mut base = base.clone();
 
         if let TypeVariant::Enumeration(ei) = &mut base {
-            ei.variants.clear()
+            ei.variants.clear();
         }
 
         self.variant = Some(base);

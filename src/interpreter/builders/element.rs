@@ -69,7 +69,6 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
     }
 
     pub(crate) fn finish(self) -> Result<Type, Error> {
-        println!("ElementBuilder::finish");
         let variant = self.variant.ok_or(Error::NoType)?;
 
         Ok(Type::new(variant))
@@ -198,7 +197,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
                     .state
                     .name_builder()
                     .extend(true, ty.name.clone())
-                    .auto_extend2(true, false, self.state);
+                    .auto_extend(true, false, self.state);
                 let type_name = if type_name.has_extension() {
                     type_name.with_id(false)
                 } else {

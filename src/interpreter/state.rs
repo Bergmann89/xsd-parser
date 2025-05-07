@@ -52,7 +52,7 @@ impl<'a> State<'a> {
 
     pub(super) fn make_content_name(&mut self) -> Name {
         self.name_builder()
-            .auto_extend2(false, true, self)
+            .auto_extend(false, true, self)
             .remove_suffix("Type")
             .remove_suffix("Content")
             .shared_name("Content")

@@ -18,9 +18,6 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
     variant: Option<TypeVariant>,
 
-    /// `true` if `type_` is fixed and can not be changed anymore
-    fixed: bool,
-
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
 }
 
@@ -28,9 +25,8 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
 
 /// Initialize the type of a `$builder` to any type `$variant`.
 macro_rules! init_any {
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
+    ($builder:expr, $variant:ident, $value:expr) => {{
         $builder.variant = Some(TypeVariant::$variant($value));
-        $builder.fixed = $fixed;
 
         let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
@@ -47,10 +43,9 @@ macro_rules! get_or_init_any {
     };
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
+            None => init_any!($builder, $variant, $default),
             Some(TypeVariant::$variant(ret)) => ret,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            _ => init_any!($builder, $variant, $default),
         }
     };
 }
@@ -62,13 +57,11 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
         Self {
             type_: None,
             variant: None,
-            fixed: false,
             owner,
         }
     }
 
     pub(crate) fn finish(self) -> Result<Type, Error> {
-        println!("AttributeTypeBuilder::finish");
         self.type_
             .or_else(|| self.variant.map(Type::new))
             .ok_or(Error::NoType)
@@ -78,7 +71,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
     pub(crate) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
+            init_any!(self, Reference, ReferenceInfo::new(type_));
         } else if let Some(x) = &ty.simple_type {
             let mut builder = SimpleTypeBuilder::new(self.owner);
             builder.apply_simple_type(x)?;
@@ -136,7 +129,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                             .state
                             .name_builder()
                             .or(name)
-                            .auto_extend2(true, true, self.state)
+                            .auto_extend(true, true, self.state)
                             .finish();
                         let ns = self.state.current_ns();
 
