@@ -5,7 +5,7 @@ use tracing::instrument;
 use super::Update;
 use crate::schema::xs::AttributeType;
 use crate::types::{
-    AttributeInfo, Ident, IdentType, Name, ReferenceInfo, Type, TypeVariant, VecHelper,
+    AttributeInfo, ComplexInfo, Ident, IdentType, Name, ReferenceInfo, Type, TypeVariant, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -19,35 +19,6 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
     variant: Option<TypeVariant>,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
-}
-
-/* any type */
-
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident, $value:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
-
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the type `$variant` of a `$builder` or set the type variant if unset.
-macro_rules! get_or_init_any {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_any!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default),
-            Some(TypeVariant::$variant(ret)) => ret,
-            _ => init_any!($builder, $variant, $default),
-        }
-    };
 }
 
 /* TypeBuilder */
@@ -67,11 +38,27 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
             .ok_or(Error::NoType)
     }
 
+    fn get_or_init_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => ci,
+            a @ None => {
+                *a = Some(TypeVariant::ComplexType(Default::default()));
+
+                match a {
+                    Some(TypeVariant::ComplexType(si)) => si,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+        }
+    }
+
     #[instrument(err, level = "trace", skip(self))]
     pub(crate) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_));
+
+            self.variant = Some(TypeVariant::Reference(ReferenceInfo::new(type_)));
         } else if let Some(x) = &ty.simple_type {
             let mut builder = SimpleTypeBuilder::new(self.owner);
             builder.apply_simple_type(x)?;
@@ -96,7 +83,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -112,7 +99,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -141,7 +128,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| {
                         AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))

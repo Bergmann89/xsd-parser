@@ -11,8 +11,8 @@ use crate::schema::xs::{
 };
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AnyInfo, AttributeInfo, Base, ElementInfo, ElementMode, Ident, IdentType, Name, Type,
-    TypeVariant, VecHelper,
+    AnyInfo, AttributeInfo, Base, ComplexInfo, ElementInfo, ElementMode, GroupInfo, Ident,
+    IdentType, Name, Type, TypeVariant, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -57,52 +57,6 @@ enum ComplexContentType {
     Sequence,
 }
 
-/* any type */
-
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
-        $builder.fixed = $fixed;
-
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the type `$variant` of a `$builder` or set the type variant if unset.
-macro_rules! get_or_init_any {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_any!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::$variant(ret)) => ret,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
-/// Get the `SimpleInfo` from any possible type or initialize the required variant.
-macro_rules! get_or_init_type {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_type!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
 /* TypeBuilder */
 
 impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
@@ -123,19 +77,64 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
             .ok_or(Error::NoType)
     }
 
+    fn get_or_init_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => ci,
+            a if !self.fixed | a.is_none() => {
+                *a = Some(TypeVariant::ComplexType(Default::default()));
+                self.fixed = true;
+
+                match a {
+                    Some(TypeVariant::ComplexType(si)) => si,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => unreachable!(
+                "The a.is_none() branch should have been handled by the previous branch"
+            ),
+        }
+    }
+
+    fn get_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => ci,
+            a => unreachable!("Expected the type to be a complex type, but it is {:?}", a),
+        }
+    }
+
+    fn get_or_init_sequence(&mut self) -> &mut GroupInfo {
+        match &mut self.variant {
+            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
+            a if !self.fixed | a.is_none() => {
+                *a = Some(TypeVariant::Sequence(Default::default()));
+                self.fixed = true;
+
+                match a {
+                    Some(TypeVariant::Sequence(si)) => si,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => unreachable!(
+                "The a.is_none() branch should have been handled by the previous branch"
+            ),
+        }
+    }
+
     #[instrument(err, level = "trace", skip(self))]
     pub(crate) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
         use crate::schema::xs::ComplexBaseTypeContent as C;
 
         self.content_mode = ContentMode::Complex;
 
-        get_or_init_any!(self, ComplexType);
+        self.get_or_init_complex();
 
         for c in &ty.content {
             match c {
                 C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
                 C::ComplexContent(x) => {
-                    let ci = get_or_init_any!(self, ComplexType);
+                    let ci = self.get_or_init_complex();
                     ci.is_dynamic = ty.abstract_;
                     self.apply_complex_content(x)?;
                 }
@@ -174,7 +173,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
     fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
         use crate::schema::xs::ComplexContentContent as C;
 
-        get_or_init_any!(self, ComplexType);
+        self.get_or_init_complex();
 
         for c in &ty.content {
             match c {
@@ -230,7 +229,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Extension)?;
         self.apply_extension(ty)?;
 
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.base = Base::Extension(base);
 
         Ok(())
@@ -243,7 +242,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Restriction)?;
         self.apply_restriction(ty)?;
 
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.base = Base::Restriction(base);
 
         Ok(())
@@ -376,7 +375,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Element);
 
-                let ci = get_or_init_type!(self, Sequence);
+                let ci = self.get_or_init_sequence();
                 let element = ci.elements.find_or_insert(ident, |ident| {
                     ElementInfo::new(ident, type_, ElementMode::Element)
                 });
@@ -403,7 +402,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                 let ns = self.state.current_ns();
                 let type_ = self.create_element(ns, Some(type_name), ty)?;
 
-                let ci = get_or_init_type!(self, Sequence);
+                let ci = self.get_or_init_sequence();
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
                     ElementInfo::new(ident, type_, ElementMode::Element)
                 });
@@ -484,7 +483,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -500,7 +499,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -529,7 +528,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| {
                         AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))
@@ -544,7 +543,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any(&mut self, ty: &Any) -> Result<(), Error> {
-        let si = get_or_init_type!(self, Sequence);
+        let si = self.get_or_init_sequence();
         si.any.create_or_update(ty);
 
         Ok(())
@@ -552,7 +551,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any_attribute(&mut self, ty: &AnyAttribute) -> Result<(), Error> {
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.any_attribute.create_or_update(ty);
 
         Ok(())
@@ -633,7 +632,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
 
         match (simple_base_ident, self.content_mode) {
             (Some(base_ident), ContentMode::Simple) => {
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.content.get_or_insert(base_ident);
             }
             (None, ContentMode::Simple | ContentMode::Complex) => {
@@ -653,13 +652,17 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
     {
         match self.content_mode {
             ContentMode::Simple => {
-                let ci = get_or_init_any!(self, ComplexType);
+                let mut content_ident = {
+                    let ci = self.get_or_init_complex();
 
-                let Some(mut content_ident) = ci.content.clone() else {
-                    crate::unreachable!(
-                        "Complex type does not have a simple content identifier: {:?}",
-                        &self.variant
-                    );
+                    let Some(content_ident) = ci.content.clone() else {
+                        crate::unreachable!(
+                            "Complex type does not have a simple content identifier: {:?}",
+                            &self.variant
+                        );
+                    };
+
+                    content_ident
                 };
 
                 let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
@@ -668,6 +671,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
                     let content_name = self.owner.state.make_content_name();
                     content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
 
+                    let ci = self.get_complex();
                     ci.content = Some(content_ident.clone());
                 }
 
@@ -823,7 +827,7 @@ impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
             None => {
                 self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
 
                 ci.content = Some(type_ident);
                 ci.min_occurs = ci.min_occurs.min(min_occurs);
