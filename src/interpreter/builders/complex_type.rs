@@ -1,33 +1,31 @@
-use std::borrow::Cow;
 use std::collections::btree_map::Entry;
 use std::ops::{Deref, DerefMut};
-use std::str::from_utf8;
 
 use tracing::instrument;
 
+use super::{CreateOrUpdate, Patch, Update};
+use crate::interpreter::builders::SimpleTypeBuilder;
 use crate::schema::xs::{
     Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementSubstitutionGroupType, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
-    Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+    ElementType, ExtensionType, Facet, GroupType, RestrictionType, SimpleContent,
 };
-use crate::schema::{MaxOccurs, MinOccurs, Namespace};
+use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode, Ident,
-    IdentType, Name, ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo, VecHelper,
+    AnyInfo, AttributeInfo, Base, ComplexInfo, ElementInfo, ElementMode, GroupInfo, Ident,
+    IdentType, Name, Type, TypeVariant, VecHelper,
 };
 
-use super::{Error, SchemaInterpreter};
+use super::super::{Error, SchemaInterpreter};
 
 #[derive(Debug)]
-pub(super) struct VariantBuilder<'a, 'schema, 'state> {
+pub(crate) struct ComplexTypeBuilder<'a, 'schema, 'state> {
+    type_: Option<Type>,
+
     /// Type variant that is constructed by the builder
     variant: Option<TypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
-
-    /// Mode of the constructed type
-    type_mode: TypeMode,
 
     /// Mode of the content of the constructed type
     content_mode: ContentMode,
@@ -37,13 +35,6 @@ pub(super) struct VariantBuilder<'a, 'schema, 'state> {
     is_simple_content_unique: bool,
 
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
-}
-
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-enum TypeMode {
-    Unknown,
-    Simple,
-    Complex,
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -66,245 +57,84 @@ enum ComplexContentType {
     Sequence,
 }
 
-/* any type */
-
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident) => {
-        init_any!($builder, $variant, Default::default(), true)
-    };
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
-        $builder.fixed = $fixed;
-
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the type `$variant` of a `$builder` or set the type variant if unset.
-macro_rules! get_or_init_any {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_any!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::$variant(ret)) => ret,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
-/// Get the `SimpleInfo` from any possible type or initialize the required variant.
-macro_rules! get_or_init_type {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_type!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
 /* TypeBuilder */
 
-impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
-    pub(super) fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
+impl<'a, 'schema, 'state> ComplexTypeBuilder<'a, 'schema, 'state> {
+    pub(crate) fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
         Self {
+            type_: None,
             variant: None,
             fixed: false,
-            type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
             is_simple_content_unique: false,
             owner,
         }
     }
 
-    pub(super) fn finish(self) -> Result<Type, Error> {
-        let variant = self.variant.ok_or(Error::NoType)?;
-
-        Ok(Type::new(variant))
+    pub(crate) fn finish(self) -> Result<Type, Error> {
+        self.type_
+            .or_else(|| self.variant.map(Type::new))
+            .ok_or(Error::NoType)
     }
 
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
-        use crate::schema::xs::ElementTypeContent as C;
+    fn get_or_init_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => ci,
+            a if !self.fixed | a.is_none() => {
+                *a = Some(TypeVariant::ComplexType(Default::default()));
+                self.fixed = true;
 
-        if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_qname(type_)?;
-
-            init_any!(self, Reference, ReferenceInfo::new(type_), true);
-        } else if !ty.content.is_empty() {
-            let ident = self
-                .state
-                .current_ident()
-                .unwrap()
-                .clone()
-                .with_type(IdentType::ElementType);
-
-            let mut has_content = false;
-            let type_ = self.create_type(ident, |builder| {
-                for c in &ty.content {
-                    match c {
-                        C::Annotation(_)
-                        | C::Key(_)
-                        | C::Alternative(_)
-                        | C::Unique(_)
-                        | C::Keyref(_) => {}
-                        C::SimpleType(x) => {
-                            has_content = true;
-                            builder.apply_simple_type(x)?;
-                        }
-                        C::ComplexType(x) => {
-                            has_content = true;
-                            builder.apply_complex_type(x)?;
-                        }
-                    }
+                match a {
+                    Some(TypeVariant::ComplexType(si)) => si,
+                    _ => crate::unreachable!(),
                 }
-
-                Ok(())
-            });
-
-            if has_content {
-                init_any!(self, Reference, ReferenceInfo::new(type_?), true);
             }
-        } else {
-            let xs = self
-                .schemas
-                .resolve_namespace(&Some(Namespace::XS))
-                .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
-            let ident = Ident::ANY_TYPE.with_ns(Some(xs));
-
-            init_any!(self, Reference, ReferenceInfo::new(ident), true);
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => unreachable!(
+                "The a.is_none() branch should have been handled by the previous branch"
+            ),
         }
+    }
 
-        if ty.abstract_ {
-            let type_ = match self.variant.take() {
-                None => None,
-                Some(TypeVariant::Reference(ti)) => Some(ti.type_),
-                e => crate::unreachable!("Unexpected type: {:?}", e),
-            };
-
-            let ai = init_any!(self, Dynamic);
-            ai.type_ = type_;
+    fn get_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(TypeVariant::ComplexType(ci)) => ci,
+            a => unreachable!("Expected the type to be a complex type, but it is {:?}", a),
         }
+    }
 
-        if let Some(substitution_group) = &ty.substitution_group {
-            self.walk_substitution_groups(substitution_group, |builder, base_ident| {
-                let ident = builder.state.current_ident().unwrap().clone();
-                let base_ty = builder.get_element_mut(base_ident)?;
+    fn get_or_init_sequence(&mut self) -> &mut GroupInfo {
+        match &mut self.variant {
+            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
+            a if !self.fixed | a.is_none() => {
+                *a = Some(TypeVariant::Sequence(Default::default()));
+                self.fixed = true;
 
-                if let TypeVariant::Reference(ti) = &mut base_ty.variant {
-                    base_ty.variant = TypeVariant::Dynamic(DynamicInfo {
-                        type_: Some(ti.type_.clone()),
-                        derived_types: vec![ti.type_.clone()],
-                    });
+                match a {
+                    Some(TypeVariant::Sequence(si)) => si,
+                    _ => crate::unreachable!(),
                 }
-
-                let TypeVariant::Dynamic(ai) = &mut base_ty.variant else {
-                    return Err(Error::ExpectedDynamicElement(base_ident.clone()));
-                };
-
-                ai.derived_types.push(ident);
-
-                Ok(())
-            })?;
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
-        if let Some(type_) = &ty.type_ {
-            let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
-        } else if let Some(x) = &ty.simple_type {
-            self.apply_simple_type(x)?;
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_simple_type(&mut self, ty: &SimpleBaseType) -> Result<(), Error> {
-        use crate::schema::xs::SimpleBaseTypeContent as C;
-
-        self.type_mode = TypeMode::Simple;
-        self.content_mode = ContentMode::Simple;
-
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) => (),
-                C::Restriction(x) => self.apply_simple_type_restriction(x)?,
-                C::Union(x) => self.apply_union(x)?,
-                C::List(x) => self.apply_list(x)?,
             }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => unreachable!(
+                "The a.is_none() branch should have been handled by the previous branch"
+            ),
         }
-
-        Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_type_restriction(&mut self, ty: &Restriction) -> Result<(), Error> {
-        use crate::schema::xs::RestrictionContent as C;
-
-        let base = ty
-            .base
-            .as_ref()
-            .map(|base| {
-                let base = self.parse_qname(base)?;
-
-                self.copy_base_type(&base, UpdateMode::Restriction)?;
-
-                Ok(base)
-            })
-            .transpose()?;
-
-        for c in &ty.content {
-            match c {
-                C::Annotation(_) => (),
-                C::SimpleType(x) => self.apply_simple_type(x)?,
-                C::Facet(x) => self.apply_facet(x)?,
-            }
-        }
-
-        if let Some(base) = base {
-            match &mut self.variant {
-                Some(TypeVariant::Reference(_)) => (),
-                Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
-                e => unreachable!("Unexpected type: {e:#?}"),
-            }
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
+    pub(crate) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
         use crate::schema::xs::ComplexBaseTypeContent as C;
 
-        self.type_mode = TypeMode::Complex;
         self.content_mode = ContentMode::Complex;
 
-        get_or_init_any!(self, ComplexType);
+        self.get_or_init_complex();
 
         for c in &ty.content {
             match c {
                 C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
                 C::ComplexContent(x) => {
-                    let ci = get_or_init_any!(self, ComplexType);
+                    let ci = self.get_or_init_complex();
                     ci.is_dynamic = ty.abstract_;
                     self.apply_complex_content(x)?;
                 }
@@ -343,7 +173,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
         use crate::schema::xs::ComplexContentContent as C;
 
-        get_or_init_any!(self, ComplexType);
+        self.get_or_init_complex();
 
         for c in &ty.content {
             match c {
@@ -399,7 +229,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Extension)?;
         self.apply_extension(ty)?;
 
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.base = Base::Extension(base);
 
         Ok(())
@@ -412,7 +242,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.copy_base_type(&base, UpdateMode::Restriction)?;
         self.apply_restriction(ty)?;
 
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.base = Base::Restriction(base);
 
         Ok(())
@@ -453,7 +283,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 C::Facet(x) => self.apply_facet(x)?,
                 C::Group(x) => self.apply_group_ref(x)?,
                 C::Sequence(x) => self.apply_sequence(x)?,
-                C::SimpleType(x) => self.apply_simple_type(x)?,
+                C::SimpleType(x) => {
+                    let mut builder = SimpleTypeBuilder::new(self.owner);
+                    builder.apply_simple_type(x)?;
+                    self.type_ = Some(builder.finish()?);
+                }
             }
         }
 
@@ -541,7 +375,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Element);
 
-                let ci = get_or_init_type!(self, Sequence);
+                let ci = self.get_or_init_sequence();
                 let element = ci.elements.find_or_insert(ident, |ident| {
                     ElementInfo::new(ident, type_, ElementMode::Element)
                 });
@@ -568,7 +402,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ns = self.state.current_ns();
                 let type_ = self.create_element(ns, Some(type_name), ty)?;
 
-                let ci = get_or_init_type!(self, Sequence);
+                let ci = self.get_or_init_sequence();
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
                     ElementInfo::new(ident, type_, ElementMode::Element)
                 });
@@ -649,7 +483,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -665,7 +499,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -686,7 +520,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                             .finish();
                         let ns = self.state.current_ns();
 
-                        self.create_simple_type(ns, Some(type_name), x)
+                        self.create_simple_type(ns, Some(type_name), None, x)
                     })
                     .transpose()?;
                 let name = Name::from(name.clone());
@@ -694,7 +528,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| {
                         AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))
@@ -709,7 +543,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any(&mut self, ty: &Any) -> Result<(), Error> {
-        let si = get_or_init_type!(self, Sequence);
+        let si = self.get_or_init_sequence();
         si.any.create_or_update(ty);
 
         Ok(())
@@ -717,7 +551,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any_attribute(&mut self, ty: &AnyAttribute) -> Result<(), Error> {
-        let ci = get_or_init_any!(self, ComplexType);
+        let ci = self.get_or_init_complex();
         ci.any_attribute.create_or_update(ty);
 
         Ok(())
@@ -725,133 +559,29 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
-        match ty {
-            Facet::Enumeration(x) => self.apply_enumeration(x)?,
-            x => tracing::warn!("Unknown facet: {x:#?}"),
-        }
-
-        Ok(())
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
-        let name = Name::from(ty.value.trim().to_owned());
-        let ident = Ident::new(name)
-            .with_ns(self.state.current_ns())
-            .with_type(IdentType::Enumeration);
-
-        self.simple_content_builder(|builder| {
-            let ei = get_or_init_any!(builder, Enumeration);
-            let var = ei.variants.find_or_insert(ident, VariantInfo::new);
-            var.use_ = Use::Required;
-
-            Ok(())
-        })
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
-        self.simple_content_builder(|builder| {
-            let ui = get_or_init_any!(builder, Union);
-
-            if let Some(types) = &ty.member_types {
-                for type_ in &types.0 {
-                    let type_ = builder.owner.parse_qname(type_)?;
-                    ui.types.push(UnionTypeInfo::new(type_));
-                }
-            }
-
-            let ns = builder.owner.state.current_ns();
-
-            for x in &ty.simple_type {
-                let name = builder
-                    .owner
-                    .state
-                    .name_builder()
-                    .or(&x.name)
-                    .auto_extend(false, true, builder.owner.state)
-                    .finish();
-                let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
-                ui.types.push(UnionTypeInfo::new(type_));
-            }
-
-            Ok(())
-        })
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_list(&mut self, ty: &List) -> Result<(), Error> {
-        let mut type_ = None;
-
-        if let Some(s) = &ty.item_type {
-            type_ = Some(self.owner.parse_qname(s)?);
-        }
-
-        if let Some(x) = &ty.simple_type {
-            let last_named_type = self.state.last_named_type(false).map(ToOwned::to_owned);
-            let name = self
-                .state
-                .name_builder()
-                .or(&x.name)
-                .or_else(|| from_utf8(ty.item_type.as_ref()?.local_name()).ok())
-                .or_else(|| {
-                    let s = last_named_type?;
-                    let s = s.as_str();
-                    let s = s.strip_suffix("Type").unwrap_or(s);
-                    let s = format!("{s}Item");
-
-                    Some(Name::from(s))
-                })
-                .finish();
-            let ns = self.owner.state.current_ns();
-            type_ = Some(self.owner.create_simple_type(ns, Some(name), x)?);
-        }
-
-        if let Some(type_) = type_ {
-            self.simple_content_builder(|builder| {
-                let ti = get_or_init_any!(builder, Reference, ReferenceInfo::new(type_.clone()));
-                ti.type_ = type_;
-                ti.min_occurs = 0;
-                ti.max_occurs = MaxOccurs::Unbounded;
-
-                Ok(())
-            })?;
-        }
-
-        Ok(())
+        self.simple_content_builder(|builder| builder.apply_facet(ty))
     }
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {
         let mut simple_base_ident = None;
-        let base = match (self.type_mode, self.content_mode) {
-            (TypeMode::Simple, ContentMode::Simple) => {
-                self.fixed = false;
+        let base = match self.content_mode {
+            ContentMode::Simple => match self.owner.get_simple_type_variant(base) {
+                Ok(ty) => {
+                    self.fixed = false;
 
-                simple_base_ident = Some(base.clone());
+                    simple_base_ident = Some(base.clone());
 
-                self.owner.get_simple_type_variant(base)?
-            }
-            (TypeMode::Complex, ContentMode::Simple) => {
-                match self.owner.get_simple_type_variant(base) {
-                    Ok(ty) => {
-                        self.fixed = false;
-
-                        simple_base_ident = Some(base.clone());
-
-                        ty
-                    }
-                    Err(Error::UnknownType(_)) => {
-                        self.fixed = true;
-
-                        self.owner.get_complex_type_variant(base)?
-                    }
-                    Err(error) => Err(error)?,
+                    ty
                 }
-            }
-            (TypeMode::Complex, ContentMode::Complex) => {
-                self.owner.get_complex_type_variant(base)?
-            }
-            (_, _) => crate::unreachable!("Unset or invalid combination!"),
+                Err(Error::UnknownType(_)) => {
+                    self.fixed = true;
+
+                    self.owner.get_complex_type_variant(base)?
+                }
+                Err(error) => Err(error)?,
+            },
+            ContentMode::Complex => self.owner.get_complex_type_variant(base)?,
+            _ => crate::unreachable!("Unset or invalid combination!"),
         };
 
         tracing::debug!("{base:#?}");
@@ -900,16 +630,15 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             (_, _) => (),
         }
 
-        match (simple_base_ident, self.type_mode, self.content_mode) {
-            (Some(_), TypeMode::Simple, _) => self.variant = Some(base),
-            (Some(base_ident), TypeMode::Complex, ContentMode::Simple) => {
-                let ci = get_or_init_any!(self, ComplexType);
+        match (simple_base_ident, self.content_mode) {
+            (Some(base_ident), ContentMode::Simple) => {
+                let ci = self.get_or_init_complex();
                 ci.content.get_or_insert(base_ident);
             }
-            (None, TypeMode::Complex, ContentMode::Simple | ContentMode::Complex) => {
+            (None, ContentMode::Simple | ContentMode::Complex) => {
                 self.variant = Some(base);
             }
-            (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
+            (_, _) => crate::unreachable!("Unset or invalid combination!"),
         }
 
         tracing::debug!("{:#?}", self.variant);
@@ -917,55 +646,23 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         Ok(())
     }
 
-    fn walk_substitution_groups<F>(
-        &mut self,
-        groups: &ElementSubstitutionGroupType,
-        mut f: F,
-    ) -> Result<(), Error>
-    where
-        F: FnMut(&mut Self, &Ident) -> Result<(), Error>,
-    {
-        fn inner<'x, 'y, 'z, F>(
-            builder: &mut VariantBuilder<'x, 'y, 'z>,
-            groups: &ElementSubstitutionGroupType,
-            f: &mut F,
-        ) -> Result<(), Error>
-        where
-            F: FnMut(&mut VariantBuilder<'x, 'y, 'z>, &Ident) -> Result<(), Error>,
-        {
-            for head in &groups.0 {
-                let ident = builder.parse_qname(head)?.with_type(IdentType::Element);
-
-                f(builder, &ident)?;
-
-                if let Some(groups) = builder
-                    .find_element(ident)
-                    .and_then(|x| x.substitution_group.as_ref())
-                {
-                    inner(builder, groups, f)?;
-                }
-            }
-
-            Ok(())
-        }
-
-        inner(self, groups, &mut f)
-    }
-
     fn simple_content_builder<F>(&mut self, f: F) -> Result<(), Error>
     where
-        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut SimpleTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
-        match (self.type_mode, self.content_mode) {
-            (TypeMode::Simple, _) => f(self)?,
-            (TypeMode::Complex, ContentMode::Simple) => {
-                let ci = get_or_init_any!(self, ComplexType);
+        match self.content_mode {
+            ContentMode::Simple => {
+                let mut content_ident = {
+                    let ci = self.get_or_init_complex();
 
-                let Some(mut content_ident) = ci.content.clone() else {
-                    crate::unreachable!(
-                        "Complex type does not have a simple content identifier: {:?}",
-                        &self.variant
-                    );
+                    let Some(content_ident) = ci.content.clone() else {
+                        crate::unreachable!(
+                            "Complex type does not have a simple content identifier: {:?}",
+                            &self.variant
+                        );
+                    };
+
+                    content_ident
                 };
 
                 let content = self.owner.get_simple_type_variant(&content_ident)?.clone();
@@ -974,13 +671,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let content_name = self.owner.state.make_content_name();
                     content_ident = Ident::new(content_name).with_ns(self.owner.state.current_ns());
 
+                    let ci = self.get_complex();
                     ci.content = Some(content_ident.clone());
                 }
 
-                let mut builder = VariantBuilder::new(&mut *self.owner);
+                let mut builder = SimpleTypeBuilder::new(&mut *self.owner);
                 builder.variant = Some(content);
-                builder.type_mode = TypeMode::Simple;
-                builder.content_mode = ContentMode::Simple;
 
                 f(&mut builder)?;
 
@@ -996,10 +692,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     }
                 }
             }
-            (TypeMode::Complex, ContentMode::Complex) => {
+            ContentMode::Complex => {
                 crate::unreachable!("Complex type with complex content tried to access simple content builder: {:?}", &self.variant);
             }
-            (_, _) => crate::unreachable!("Unset or invalid combination!"),
+            _ => crate::unreachable!("Unset or invalid combination!"),
         }
 
         Ok(())
@@ -1016,7 +712,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         f: F,
     ) -> Result<(), Error>
     where
-        F: FnOnce(&mut VariantBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
+        F: FnOnce(&mut ComplexTypeBuilder<'_, 'schema, 'state>) -> Result<(), Error>,
     {
         enum UpdateContentMode {
             Unknown,
@@ -1054,8 +750,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             ComplexContentType::Sequence => TypeVariant::Sequence(Default::default()),
         });
 
-        let mut builder = VariantBuilder::new(&mut *self.owner);
-        builder.type_mode = self.type_mode;
+        let mut builder = ComplexTypeBuilder::new(&mut *self.owner);
         builder.variant = Some(variant);
 
         f(&mut builder)?;
@@ -1132,7 +827,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             None => {
                 self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
 
                 ci.content = Some(type_ident);
                 ci.min_occurs = ci.min_occurs.min(min_occurs);
@@ -1166,7 +861,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 }
 
-impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
+impl<'schema, 'state> Deref for ComplexTypeBuilder<'_, 'schema, 'state> {
     type Target = SchemaInterpreter<'schema, 'state>;
 
     fn deref(&self) -> &Self::Target {
@@ -1174,111 +869,8 @@ impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
     }
 }
 
-impl DerefMut for VariantBuilder<'_, '_, '_> {
+impl DerefMut for ComplexTypeBuilder<'_, '_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.owner
-    }
-}
-
-/* Update */
-
-trait Update<T> {
-    fn update(&mut self, other: &T);
-}
-
-impl<T: Clone> Update<Option<T>> for T {
-    fn update(&mut self, other: &Option<T>) {
-        if let Some(value) = other {
-            *self = value.clone();
-        }
-    }
-}
-
-impl<T: Clone> Update<Option<T>> for Option<T> {
-    fn update(&mut self, other: &Option<T>) {
-        if let Some(value) = other {
-            *self = Some(value.clone());
-        }
-    }
-}
-
-impl Update<GroupType> for ElementInfo {
-    fn update(&mut self, other: &GroupType) {
-        self.min_occurs = other.min_occurs;
-        self.max_occurs = other.max_occurs;
-    }
-}
-
-impl Update<Any> for AnyInfo {
-    fn update(&mut self, other: &Any) {
-        self.min_occurs = Some(other.min_occurs);
-        self.max_occurs = Some(other.max_occurs);
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
-impl Update<AnyAttribute> for AnyAttributeInfo {
-    fn update(&mut self, other: &AnyAttribute) {
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
-impl Update<ElementType> for ElementInfo {
-    fn update(&mut self, other: &ElementType) {
-        self.min_occurs = other.min_occurs;
-        self.max_occurs = other.max_occurs;
-    }
-}
-
-impl Update<AttributeType> for AttributeInfo {
-    fn update(&mut self, other: &AttributeType) {
-        self.use_ = other.use_.clone();
-        self.default.update(&other.default);
-    }
-}
-
-/* CreateOrUpdate */
-
-trait CreateOrUpdate<T> {
-    fn create_or_update(&mut self, other: &T);
-}
-
-impl<T, X> CreateOrUpdate<T> for Option<X>
-where
-    X: Update<T> + Default,
-{
-    fn create_or_update(&mut self, other: &T) {
-        if let Some(x) = self {
-            x.update(other);
-        } else {
-            let mut x = X::default();
-            x.update(other);
-            *self = Some(x);
-        }
-    }
-}
-
-/* Patch */
-
-trait Patch<T>: Clone {
-    fn patch(&self, other: &T) -> Cow<'_, Self>;
-}
-
-impl Patch<GroupType> for GroupType {
-    fn patch(&self, other: &GroupType) -> Cow<'_, Self> {
-        let mut ret = self.clone();
-
-        ret.min_occurs = other.min_occurs;
-        ret.max_occurs = other.max_occurs;
-
-        Cow::Owned(ret)
     }
 }

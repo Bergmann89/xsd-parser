@@ -10,19 +10,19 @@ use crate::schema::xs::{
 use crate::schema::{Namespace, NamespaceId, QName, Schemas};
 use crate::types::{Ident, IdentType, Name, Type, TypeVariant};
 
-use super::{Error, Node, State, VariantBuilder};
+use super::{builders, Error, Node, State};
 
 #[derive(Debug)]
-pub(super) struct SchemaInterpreter<'schema, 'state> {
-    pub(super) state: &'state mut State<'schema>,
-    pub(super) schema: &'schema Schema,
-    pub(super) schemas: &'schema Schemas,
+pub(crate) struct SchemaInterpreter<'schema, 'state> {
+    pub state: &'state mut State<'schema>,
+    pub schema: &'schema Schema,
+    pub schemas: &'schema Schemas,
 }
 
 impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
     #[allow(clippy::unnecessary_literal_unwrap)]
     #[instrument(level = "trace", skip(state, schema, schemas))]
-    pub(super) fn process(
+    pub fn process(
         state: &'state mut State<'schema>,
         schema: &'schema Schema,
         schemas: &'schema Schemas,
@@ -66,10 +66,10 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                     this.create_attribute(target_namespace, None, x)?;
                 }
                 SchemaContent::SimpleType(x) => {
-                    this.create_simple_type(target_namespace, None, x)?;
+                    this.create_simple_type(target_namespace, None, None, x)?;
                 }
                 SchemaContent::ComplexType(x) => {
-                    this.create_complex_type(target_namespace, None, x)?;
+                    this.create_complex_type(target_namespace, None, None, x)?;
                 }
             }
         }
@@ -82,7 +82,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
 
 impl SchemaInterpreter<'_, '_> {
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_element_mut(&mut self, ident: &Ident) -> Result<&mut Type, Error> {
+    pub(crate) fn get_element_mut(&mut self, ident: &Ident) -> Result<&mut Type, Error> {
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_element(ident.clone())
@@ -96,12 +96,12 @@ impl SchemaInterpreter<'_, '_> {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_simple_type_variant(&mut self, ident: &Ident) -> Result<&TypeVariant, Error> {
+    pub(crate) fn get_simple_type_variant(&mut self, ident: &Ident) -> Result<&TypeVariant, Error> {
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_simple_type(ident.ns, None, ty)?;
+            let new_ident = self.create_simple_type(ident.ns, None, None, ty)?;
 
             crate::assert_eq!(ident, &new_ident);
         }
@@ -125,7 +125,7 @@ impl SchemaInterpreter<'_, '_> {
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_complex_type_variant(
+    pub(crate) fn get_complex_type_variant(
         &mut self,
         ident: &Ident,
     ) -> Result<&TypeVariant, Error> {
@@ -133,7 +133,7 @@ impl SchemaInterpreter<'_, '_> {
             let ty = self
                 .find_complex_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_complex_type(ident.ns, None, ty)?;
+            let new_ident = self.create_complex_type(ident.ns, None, None, ty)?;
 
             crate::assert_eq!(ident, &new_ident);
         }
@@ -161,7 +161,7 @@ impl SchemaInterpreter<'_, '_> {
 
 impl SchemaInterpreter<'_, '_> {
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn create_element(
+    pub(crate) fn create_element(
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
@@ -173,11 +173,17 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type(ident, |builder| builder.apply_element(ty))
+        self.create_type(ident.clone(), move |owner| {
+            let mut builder = builders::ElementBuilder::new(owner);
+            builder.apply_element(ty)?;
+            let type_ = builder.finish()?;
+
+            Ok(type_)
+        })
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn create_attribute(
+    pub(crate) fn create_attribute(
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
@@ -189,44 +195,64 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Attribute,
         };
 
-        self.create_type(ident.clone(), |builder| builder.apply_attribute(ty))
+        self.create_type(ident.clone(), move |owner| {
+            let mut builder = builders::AttributeTypeBuilder::new(owner);
+            builder.apply_attribute(ty)?;
+            let type_ = builder.finish()?;
+
+            Ok(type_)
+        })
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn create_simple_type(
+    pub(crate) fn create_simple_type(
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
+        ident_type: Option<IdentType>,
         ty: &SimpleBaseType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
-            type_: IdentType::Type,
+            type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type(ident, |builder| builder.apply_simple_type(ty))
+        self.create_type(ident.clone(), move |owner| {
+            let mut builder = builders::SimpleTypeBuilder::new(owner);
+            builder.apply_simple_type(ty)?;
+            let type_ = builder.finish()?;
+
+            Ok(type_)
+        })
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn create_complex_type(
+    pub(crate) fn create_complex_type(
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
+        ident_type: Option<IdentType>,
         ty: &ComplexBaseType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
             name: self.state.name_builder().or(name).or(&ty.name).finish(),
-            type_: IdentType::Type,
+            type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type(ident, |builder| builder.apply_complex_type(ty))
+        self.create_type(ident.clone(), move |owner| {
+            let mut builder = builders::ComplexTypeBuilder::new(owner);
+            builder.apply_complex_type(ty)?;
+            let type_ = builder.finish()?;
+
+            Ok(type_)
+        })
     }
 
-    pub(super) fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
+    pub(super) fn create_type<F>(&mut self, ident: Ident, f: F) -> Result<Ident, Error>
     where
-        F: FnMut(&mut VariantBuilder<'_, '_, '_>) -> Result<(), Error>,
+        F: FnOnce(&mut SchemaInterpreter<'_, '_>) -> Result<Type, Error>,
     {
         if self.state.types.types.contains_key(&ident)
             || self
@@ -240,8 +266,7 @@ impl SchemaInterpreter<'_, '_> {
 
         self.state.type_stack.push(Some(ident));
 
-        let mut builder = VariantBuilder::new(self);
-        let type_ = f(&mut builder).and_then(|()| builder.finish());
+        let type_ = f(self);
 
         let ident = self.state.type_stack.pop().unwrap().unwrap();
 
