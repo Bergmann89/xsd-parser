@@ -9,22 +9,33 @@ use super::{
     UnionInfo,
 };
 
+/// The form of a simple type.
 pub type SimpleType = TypeDescriptor<SimpleTypeVariant>;
+
+/// The form of a complex type.
 pub type ComplexType = TypeDescriptor<ComplexTypeVariant>;
 
+/// Either a [`SimpleType`] or a [`ComplexType`].
 #[derive(Debug, Clone)]
+#[allow(clippy::large_enum_variant)]
 pub enum Type {
+    /// A simple type.
     SimpleType(SimpleType),
+    /// A complex type.
     ComplexType(ComplexType),
 }
 
 impl Type {
+    /// Returns a reference to the display name of this type.
+    #[must_use]
     pub fn display_name(&self) -> Option<&str> {
         match self {
             Type::SimpleType(TypeDescriptor { display_name, .. })
             | Type::ComplexType(TypeDescriptor { display_name, .. }) => display_name.as_deref(),
         }
     }
+
+    /// Returns a mutable reference to the display name of this type.
     pub fn display_name_mut(&mut self) -> &mut Option<String> {
         match self {
             Type::SimpleType(TypeDescriptor { display_name, .. })
@@ -32,6 +43,8 @@ impl Type {
         }
     }
 
+    /// Returns a reference to the variant of this type.
+    #[must_use]
     pub fn variant(&self) -> TypeVariant<&SimpleTypeVariant, &ComplexTypeVariant> {
         match self {
             Type::SimpleType(type_descriptor) => TypeVariant::SimpleType(&type_descriptor.variant),
@@ -41,6 +54,7 @@ impl Type {
         }
     }
 
+    /// Returns a mutable reference to the variant of this type.
     pub fn variant_mut(&mut self) -> TypeVariant<&mut SimpleTypeVariant, &mut ComplexTypeVariant> {
         match self {
             Type::SimpleType(type_descriptor) => {
@@ -52,6 +66,8 @@ impl Type {
         }
     }
 
+    /// Returns the simple type if this type is a simple type.
+    #[must_use]
     pub fn simple_type_ref(&self) -> Option<&SimpleType> {
         match self {
             Type::SimpleType(type_descriptor) => Some(type_descriptor),
@@ -59,6 +75,8 @@ impl Type {
         }
     }
 
+    /// Returns the complex type if this type is a complex type.
+    #[must_use]
     pub fn complex_type_ref(&self) -> Option<&ComplexType> {
         match self {
             Type::ComplexType(type_descriptor) => Some(type_descriptor),
@@ -66,6 +84,8 @@ impl Type {
         }
     }
 
+    /// Returns the reference info if this type is a reference.
+    #[must_use]
     pub fn reference_type(&self) -> Option<&ReferenceInfo> {
         match self {
             Type::SimpleType(TypeDescriptor {
@@ -91,13 +111,18 @@ pub struct TypeDescriptor<T> {
     pub variant: T,
 }
 
+/// Represents either a simple or complex type variant, with generics for dereferenced variants.
 #[derive(Debug, Clone)]
 pub enum TypeVariant<S, C> {
+    /// Represents a simple type variant.
     SimpleType(S),
+    /// Represents a complex type variant.
     ComplexType(C),
 }
 
 impl TypeVariant<SimpleTypeVariant, ComplexTypeVariant> {
+    /// Converts the variant into a [`ComplexTypeVariant`].
+    #[must_use]
     pub fn into_complex_type_variant(self) -> ComplexTypeVariant {
         match self {
             TypeVariant::SimpleType(variant) => ComplexTypeVariant::SimpleType(variant),
@@ -109,6 +134,7 @@ impl TypeVariant<SimpleTypeVariant, ComplexTypeVariant> {
 impl<S: Deref<Target = SimpleTypeVariant>, C: Deref<Target = ComplexTypeVariant>>
     TypeVariant<S, C>
 {
+    /// Clones the variant in a generic way.
     pub fn cloned(&self) -> TypeVariant<SimpleTypeVariant, ComplexTypeVariant> {
         match self {
             TypeVariant::SimpleType(variant) => TypeVariant::SimpleType((**variant).clone()),

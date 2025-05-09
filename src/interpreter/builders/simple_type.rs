@@ -6,8 +6,8 @@ use tracing::instrument;
 use crate::schema::xs::{Facet, FacetType, List, Restriction, SimpleBaseType, Union, Use};
 use crate::schema::MaxOccurs;
 use crate::types::{
-    Base, Ident, IdentType, Name, ReferenceInfo, SimpleType, SimpleTypeVariant, Type,
-    UnionTypeInfo, VariantInfo, VecHelper,
+    Base, EnumerationInfo, Ident, IdentType, Name, ReferenceInfo, SimpleType, SimpleTypeVariant,
+    Type, UnionInfo, UnionTypeInfo, VariantInfo, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -32,35 +32,6 @@ enum UpdateMode {
     Restriction,
 }
 
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(SimpleTypeVariant::$variant($value));
-        $builder.fixed = $fixed;
-
-        let SimpleTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the type `$variant` of a `$builder` or set the type variant if unset.
-macro_rules! get_or_init_any {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_any!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(SimpleTypeVariant::$variant(ret)) => ret,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
 /* TypeBuilder */
 
 impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
@@ -77,6 +48,58 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
             .map(SimpleType::new)
             .map(Type::SimpleType)
             .ok_or(Error::NoType)
+    }
+
+    fn get_or_init_enumeration(
+        variant: &mut Option<SimpleTypeVariant>,
+        fixed: bool,
+    ) -> &mut EnumerationInfo {
+        match variant {
+            Some(SimpleTypeVariant::Enumeration(ei)) => ei,
+            a if !fixed || a.is_none() => {
+                *a = Some(SimpleTypeVariant::Enumeration(Default::default()));
+                match a {
+                    Some(SimpleTypeVariant::Enumeration(ei)) => ei,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => crate::unreachable!("Cant be reached"),
+        }
+    }
+
+    fn get_or_init_union(variant: &mut Option<SimpleTypeVariant>, fixed: bool) -> &mut UnionInfo {
+        match variant {
+            Some(SimpleTypeVariant::Union(ei)) => ei,
+            a if !fixed || a.is_none() => {
+                *a = Some(SimpleTypeVariant::Union(Default::default()));
+                match a {
+                    Some(SimpleTypeVariant::Union(ei)) => ei,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => crate::unreachable!("Cant be reached"),
+        }
+    }
+
+    fn get_or_init_reference(
+        variant: &mut Option<SimpleTypeVariant>,
+        fixed: bool,
+        ei: ReferenceInfo,
+    ) -> &mut ReferenceInfo {
+        match variant {
+            Some(SimpleTypeVariant::Reference(ei)) => ei,
+            a if !fixed || a.is_none() => {
+                *a = Some(SimpleTypeVariant::Reference(ei));
+                match a {
+                    Some(SimpleTypeVariant::Reference(ei)) => ei,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+            None => crate::unreachable!("Cant be reached"),
+        }
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -105,7 +128,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
             .map(|base| {
                 let base = self.parse_qname(base)?;
 
-                self.copy_base_type(&base, UpdateMode::Restriction)?;
+                self.copy_base_type(&base)?;
 
                 Ok(base)
             })
@@ -148,7 +171,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);
 
-        let ei = get_or_init_any!(self, Enumeration);
+        let ei = Self::get_or_init_enumeration(&mut self.variant, self.fixed);
         let var = ei.variants.find_or_insert(ident, VariantInfo::new);
         var.use_ = Use::Required;
 
@@ -157,7 +180,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     pub fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
-        let ui = get_or_init_any!(self, Union);
+        let ui = Self::get_or_init_union(&mut self.variant, self.fixed);
 
         if let Some(types) = &ty.member_types {
             for type_ in &types.0 {
@@ -174,7 +197,7 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
                 .state
                 .name_builder()
                 .or(&x.name)
-                .auto_extend2(false, true, self.owner.state)
+                .auto_extend(false, true, self.owner.state)
                 .finish();
             let type_ = self.owner.create_simple_type(ns, Some(name), None, x)?;
             ui.types.push(UnionTypeInfo::new(type_));
@@ -212,7 +235,11 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         }
 
         if let Some(type_) = type_ {
-            let ti = get_or_init_any!(self, Reference, ReferenceInfo::new(type_.clone()));
+            let ti = Self::get_or_init_reference(
+                &mut self.variant,
+                self.fixed,
+                ReferenceInfo::new(type_.clone()),
+            );
             ti.type_ = type_;
             ti.min_occurs = 0;
             ti.max_occurs = MaxOccurs::Unbounded;
@@ -223,12 +250,10 @@ impl<'a, 'schema, 'state> SimpleTypeBuilder<'a, 'schema, 'state> {
         }
     }
 
-    fn copy_base_type(&mut self, base: &Ident, _mode: UpdateMode) -> Result<(), Error> {
-        let base = {
-            self.fixed = false;
+    fn copy_base_type(&mut self, base: &Ident) -> Result<(), Error> {
+        self.fixed = false;
 
-            self.owner.get_simple_type_variant(base)?
-        };
+        let base = self.owner.get_simple_type_variant(base)?;
 
         tracing::debug!("{base:#?}");
 

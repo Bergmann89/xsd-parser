@@ -13,7 +13,7 @@ use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
 use crate::types::{
     AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, ComplexType, ComplexTypeVariant,
-    GroupInfo, Ident, Module, Name, ReferenceInfo, SimpleType, SimpleTypeVariant, Type, Types,
+    GroupInfo, Ident, Module, Name, ReferenceInfo, SimpleType, Type, Types,
 };
 
 pub use error::Error;

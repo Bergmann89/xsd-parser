@@ -172,13 +172,13 @@ impl<'a> TypesPrinter<'a> {
         }
     }
 
-    #[allow(clippy::too_many_lines)]
+    #[allow(clippy::too_many_lines, clippy::unused_self)]
     fn print_simple_type(
         &self,
         f: &mut Formatter<'_>,
         s: &mut State,
         ident: &Ident,
-        display_name: &Option<String>,
+        display_name: Option<&str>,
         variant: &SimpleTypeVariant,
     ) -> FmtResult {
         macro_rules! indentln {
@@ -256,7 +256,7 @@ impl<'a> TypesPrinter<'a> {
         f: &mut Formatter<'_>,
         s: &mut State,
         ident: &Ident,
-        display_name: &Option<String>,
+        display_name: Option<&str>,
         variant: &ComplexTypeVariant,
     ) -> FmtResult {
         macro_rules! indent {
@@ -446,10 +446,10 @@ impl<'a> TypesPrinter<'a> {
 
         match &ty {
             Type::SimpleType(ty) => {
-                self.print_simple_type(f, s, ident, &ty.display_name, &ty.variant)?
+                self.print_simple_type(f, s, ident, ty.display_name.as_deref(), &ty.variant)?;
             }
             Type::ComplexType(ty) => {
-                self.print_complex_type(f, s, ident, &ty.display_name, &ty.variant)?
+                self.print_complex_type(f, s, ident, ty.display_name.as_deref(), &ty.variant)?;
             }
         }
 

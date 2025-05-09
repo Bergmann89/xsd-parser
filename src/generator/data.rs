@@ -690,7 +690,7 @@ impl<'types> ComplexType<'types> {
             req.types
                 .get_resolved_type(ident)
                 .map(|ty| (ty, ident))
-        }).map(|a| match a { 
+        }).map_or( Ok((TypeMode::Sequence, &[][..], None)),|a| match a { 
             (Type::ComplexType(TypeDescriptor { variant: ComplexTypeVariant::All(si), ..}), _) => Ok((TypeMode::All, &si.elements[..], si.any.as_ref())),
             (Type::ComplexType(TypeDescriptor { variant:ComplexTypeVariant::Choice(si), ..}), _) => {
                 Ok((TypeMode::Choice, &si.elements[..], si.any.as_ref()))
@@ -718,7 +718,7 @@ impl<'types> ComplexType<'types> {
 
                 Ok((TypeMode::Sequence, &[][..], None))
             }
-        }).unwrap_or(Ok((TypeMode::Sequence, &[][..], None)))?;
+        })?;
 
         Self::new(
             req,

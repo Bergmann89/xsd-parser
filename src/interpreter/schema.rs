@@ -1,4 +1,3 @@
-use std::ops::DerefMut;
 use std::str::from_utf8;
 
 use tracing::instrument;
@@ -158,7 +157,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type_new(ident.clone(), move |owner| {
+        self.create_type(ident.clone(), move |owner| {
             let mut builder = builders::ElementBuilder::new(owner);
             builder.apply_element(ty)?;
             let type_ = builder.finish()?;
@@ -180,7 +179,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Attribute,
         };
 
-        self.create_type_new(ident.clone(), move |owner| {
+        self.create_type(ident.clone(), move |owner| {
             let mut builder = builders::AttributeTypeBuilder::new(owner);
             builder.apply_attribute(ty)?;
             let type_ = builder.finish()?;
@@ -203,7 +202,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type_new(ident.clone(), move |owner| {
+        self.create_type(ident.clone(), move |owner| {
             let mut builder = builders::SimpleTypeBuilder::new(owner);
             builder.apply_simple_type(ty)?;
             let type_ = builder.finish()?;
@@ -226,7 +225,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: ident_type.unwrap_or(IdentType::Type),
         };
 
-        self.create_type_new(ident.clone(), move |owner| {
+        self.create_type(ident.clone(), move |owner| {
             let mut builder = builders::ComplexTypeBuilder::new(owner);
             builder.apply_complex_type(ty)?;
             let type_ = builder.finish()?;
@@ -235,7 +234,7 @@ impl SchemaInterpreter<'_, '_> {
         })
     }
 
-    pub(super) fn create_type_new<F>(&mut self, ident: Ident, f: F) -> Result<Ident, Error>
+    pub(super) fn create_type<F>(&mut self, ident: Ident, f: F) -> Result<Ident, Error>
     where
         F: FnOnce(&mut SchemaInterpreter<'_, '_>) -> Result<Type, Error>,
     {

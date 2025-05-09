@@ -2,12 +2,11 @@ use std::ops::{Deref, DerefMut};
 
 use tracing::instrument;
 
-use super::Update;
 use crate::schema::xs::{ElementSubstitutionGroupType, ElementType};
 use crate::schema::Namespace;
 use crate::types::{
-    ComplexType, ComplexTypeVariant, DynamicInfo, ElementInfo, ElementMode, Ident, IdentType,
-    ReferenceInfo, SimpleTypeVariant, Type, TypeDescriptor, VecHelper,
+    ComplexType, ComplexTypeVariant, DynamicInfo, Ident, IdentType, ReferenceInfo,
+    SimpleTypeVariant, Type, TypeDescriptor,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -17,57 +16,22 @@ pub(crate) struct ElementBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
     variant: Option<ComplexTypeVariant>,
 
-    /// `true` if `type_` is fixed and can not be changed anymore
-    fixed: bool,
-
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
 }
 
-/* any type */
-
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident) => {
-        init_any!($builder, $variant, Default::default(), true)
-    };
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(ComplexTypeVariant::$variant($value));
-        $builder.fixed = $fixed;
-
-        let ComplexTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the `SimpleInfo` from any possible type or initialize the required variant.
-macro_rules! get_or_init_type {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_type!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(
-                ComplexTypeVariant::All(si)
-                | ComplexTypeVariant::Choice(si)
-                | ComplexTypeVariant::Sequence(si),
-            ) => si,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
-}
-
 /* TypeBuilder */
+
+impl ElementBuilder<'_, '_, '_> {
+    fn init_any(&mut self, variant: ComplexTypeVariant) -> &mut ComplexTypeVariant {
+        self.variant = Some(variant);
+        self.variant.as_mut().unwrap()
+    }
+}
 
 impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
     pub(crate) fn new(owner: &'a mut SchemaInterpreter<'schema, 'state>) -> Self {
         Self {
             variant: None,
-            fixed: false,
             owner,
         }
     }
@@ -86,7 +50,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
 
-            init_any!(self, Reference, ReferenceInfo::new(type_), true);
+            self.init_any(ComplexTypeVariant::Reference(ReferenceInfo::new(type_)));
         } else if !ty.content.is_empty() {
             let ident = self
                 .state
@@ -125,7 +89,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
             }
 
             if let Some(type_) = type_ {
-                init_any!(self, Reference, ReferenceInfo::new(type_), true);
+                self.init_any(ComplexTypeVariant::Reference(ReferenceInfo::new(type_)));
             }
         } else {
             let xs = self
@@ -134,7 +98,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
                 .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
             let ident = Ident::ANY_TYPE.with_ns(Some(xs));
 
-            init_any!(self, Reference, ReferenceInfo::new(ident), true);
+            self.init_any(ComplexTypeVariant::Reference(ReferenceInfo::new(ident)));
         }
 
         if ty.abstract_ {
@@ -144,14 +108,18 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
-            let ai = init_any!(self, Dynamic);
+            let ComplexTypeVariant::Dynamic(ai) =
+                self.init_any(ComplexTypeVariant::Dynamic(Default::default()))
+            else {
+                crate::unreachable!();
+            };
             ai.type_ = type_;
         }
 
         if let Some(substitution_group) = &ty.substitution_group {
             self.walk_substitution_groups(substitution_group, |builder, base_ident| {
                 let ident = builder.state.current_ident().unwrap().clone();
-                let mut base_ty = builder.get_element_mut(base_ident)?;
+                let base_ty = builder.get_element_mut(base_ident)?;
 
                 if let Type::ComplexType(TypeDescriptor {
                     display_name,
@@ -162,7 +130,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
                     display_name,
                     variant: SimpleTypeVariant::Reference(ti),
                     ..
-                }) = &mut base_ty
+                }) = base_ty
                 {
                     let dyn_info = DynamicInfo {
                         type_: Some(ti.type_.clone()),
@@ -180,7 +148,7 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
                 let Type::ComplexType(TypeDescriptor {
                     variant: ComplexTypeVariant::Dynamic(ai),
                     ..
-                }) = &mut base_ty
+                }) = base_ty
                 else {
                     return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
@@ -189,58 +157,6 @@ impl<'a, 'schema, 'state> ElementBuilder<'a, 'schema, 'state> {
 
                 Ok(())
             })?;
-        }
-
-        Ok(())
-    }
-    #[instrument(err, level = "trace", skip(self))]
-    fn apply_element_ref(&mut self, ty: &ElementType) -> Result<(), Error> {
-        match ty {
-            ElementType {
-                ref_: Some(ref_),
-                name,
-                ..
-            } => {
-                let type_ = self.parse_qname(ref_)?.with_type(IdentType::Element);
-                let name = self.state.name_builder().or(name).or(&type_.name).finish();
-                let ident = Ident::new(name)
-                    .with_ns(type_.ns)
-                    .with_type(IdentType::Element);
-
-                let ci = get_or_init_type!(self, Sequence);
-                let element = ci.elements.find_or_insert(ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
-                });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
-                element.update(ty);
-            }
-            ty => {
-                let field_name = self.state.name_builder().or(&ty.name).finish();
-                let field_ident = Ident::new(field_name)
-                    .with_ns(self.state.current_ns())
-                    .with_type(IdentType::Element);
-                let type_name = self
-                    .state
-                    .name_builder()
-                    .extend(true, ty.name.clone())
-                    .auto_extend2(true, false, self.state);
-                let type_name = if type_name.has_extension() {
-                    type_name.with_id(false)
-                } else {
-                    type_name.shared_name("Temp")
-                };
-                let type_name = type_name.finish();
-
-                let ns = self.state.current_ns();
-                let type_ = self.create_element(ns, Some(type_name), ty)?;
-
-                let ci = get_or_init_type!(self, Sequence);
-                let element = ci.elements.find_or_insert(field_ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
-                });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
-                element.update(ty);
-            }
         }
 
         Ok(())

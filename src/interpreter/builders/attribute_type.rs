@@ -5,8 +5,8 @@ use tracing::instrument;
 use super::Update;
 use crate::schema::xs::AttributeType;
 use crate::types::{
-    AttributeInfo, ComplexType, ComplexTypeVariant, Ident, IdentType, Name, ReferenceInfo, Type,
-    VecHelper,
+    AttributeInfo, ComplexInfo, ComplexType, ComplexTypeVariant, Ident, IdentType, Name,
+    ReferenceInfo, Type, VecHelper,
 };
 
 use super::super::{Error, SchemaInterpreter};
@@ -19,41 +19,7 @@ pub(crate) struct AttributeTypeBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
     variant: Option<ComplexTypeVariant>,
 
-    /// `true` if `type_` is fixed and can not be changed anymore
-    fixed: bool,
-
     owner: &'a mut SchemaInterpreter<'schema, 'state>,
-}
-
-/* any type */
-
-/// Initialize the type of a `$builder` to any type `$variant`.
-macro_rules! init_any {
-    ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(ComplexTypeVariant::$variant($value));
-        $builder.fixed = $fixed;
-
-        let ComplexTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
-            crate::unreachable!();
-        };
-
-        ret
-    }};
-}
-
-/// Get the type `$variant` of a `$builder` or set the type variant if unset.
-macro_rules! get_or_init_any {
-    ($builder:expr, $variant:ident) => {
-        get_or_init_any!($builder, $variant, Default::default())
-    };
-    ($builder:expr, $variant:ident, $default:expr) => {
-        match &mut $builder.variant {
-            None => init_any!($builder, $variant, $default, true),
-            Some(ComplexTypeVariant::$variant(ret)) => ret,
-            _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
-            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
-        }
-    };
 }
 
 /* TypeBuilder */
@@ -63,7 +29,6 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
         Self {
             type_: None,
             variant: None,
-            fixed: false,
             owner,
         }
     }
@@ -74,11 +39,27 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
             .ok_or(Error::NoType)
     }
 
+    fn get_or_init_complex(&mut self) -> &mut ComplexInfo {
+        match &mut self.variant {
+            Some(ComplexTypeVariant::ComplexType(ci)) => ci,
+            a @ None => {
+                *a = Some(ComplexTypeVariant::ComplexType(Default::default()));
+
+                match a {
+                    Some(ComplexTypeVariant::ComplexType(si)) => si,
+                    _ => crate::unreachable!(),
+                }
+            }
+            Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+        }
+    }
+
     #[instrument(err, level = "trace", skip(self))]
     pub(crate) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
+
+            self.variant = Some(ComplexTypeVariant::Reference(ReferenceInfo::new(type_)));
         } else if let Some(x) = &ty.simple_type {
             let mut builder = SimpleTypeBuilder::new(self.owner);
             builder.apply_simple_type(x)?;
@@ -103,7 +84,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -119,7 +100,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
                     .update(ty);
@@ -136,7 +117,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                             .state
                             .name_builder()
                             .or(name)
-                            .auto_extend2(true, true, self.state)
+                            .auto_extend(true, true, self.state)
                             .finish();
                         let ns = self.state.current_ns();
 
@@ -148,7 +129,7 @@ impl<'a, 'schema, 'state> AttributeTypeBuilder<'a, 'schema, 'state> {
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
 
-                let ci = get_or_init_any!(self, ComplexType);
+                let ci = self.get_or_init_complex();
                 ci.attributes
                     .find_or_insert(ident, |ident| {
                         AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))

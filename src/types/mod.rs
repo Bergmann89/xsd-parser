@@ -59,6 +59,8 @@ pub struct Module {
 }
 
 impl Types {
+    /// Returns the simple type with the given identifier.
+    #[must_use]
     pub fn get_simple_type(&self, ident: &Ident) -> Option<&TypeDescriptor<SimpleTypeVariant>> {
         self.types.get(ident).and_then(|t| match t {
             Type::SimpleType(type_descriptor) => Some(type_descriptor),
@@ -66,6 +68,8 @@ impl Types {
         })
     }
 
+    /// Returns the mutable simple type with the given identifier.
+    #[must_use]
     pub fn get_simple_type_mut(
         &mut self,
         ident: &Ident,
@@ -76,6 +80,8 @@ impl Types {
         })
     }
 
+    /// Returns the complex type with the given identifier.
+    #[must_use]
     pub fn get_complex_type(&self, ident: &Ident) -> Option<&TypeDescriptor<ComplexTypeVariant>> {
         self.types.get(ident).and_then(|t| match t {
             Type::ComplexType(type_descriptor) => Some(type_descriptor),
@@ -83,6 +89,8 @@ impl Types {
         })
     }
 
+    /// Returns the mutable complex type with the given identifier.
+    #[must_use]
     pub fn get_complex_type_mut(
         &mut self,
         ident: &Ident,
@@ -93,6 +101,7 @@ impl Types {
         })
     }
 
+    /// Returns an iterator over all simple types.
     pub fn simple_types_iter(&self) -> impl Iterator<Item = (&Ident, &SimpleTypeVariant)> {
         self.types.iter().filter_map(|(ident, t)| match t {
             Type::SimpleType(type_descriptor) => Some((ident, &type_descriptor.variant)),
@@ -104,6 +113,7 @@ impl Types {
         })
     }
 
+    /// Returns an iterator over all mutable simple types.
     pub fn simple_types_iter_mut(
         &mut self,
     ) -> impl Iterator<Item = (&Ident, &mut SimpleTypeVariant)> {
@@ -113,6 +123,7 @@ impl Types {
         })
     }
 
+    /// Returns an iterator over all complex types.
     pub fn complex_types_iter(&self) -> impl Iterator<Item = (&Ident, &ComplexTypeVariant)> {
         self.types.iter().filter_map(|(ident, t)| match t {
             Type::ComplexType(type_descriptor) => Some((ident, &type_descriptor.variant)),
@@ -120,6 +131,7 @@ impl Types {
         })
     }
 
+    /// Returns an iterator over all mutable complex types.
     pub fn complex_types_iter_mut(
         &mut self,
     ) -> impl Iterator<Item = (&Ident, &mut ComplexTypeVariant)> {
@@ -156,30 +168,32 @@ impl Types {
         self.get_resolved(ident).map(|(_ident, ty)| ty)
     }
 
+    /// Get the complex type of the passed `ident` with all single type references resolved.
+    ///
+    /// Simple utility over [`get_resolved_type`](Self::get_resolved_type) to return only complex types.
     #[must_use]
     pub fn get_resolved_complex_type<'a>(
         &'a self,
         ident: &'a Ident,
     ) -> Option<&'a TypeDescriptor<ComplexTypeVariant>> {
-        self.get_resolved(ident)
-            .map(|(_ident, ty)| ty)
-            .and_then(|a| match a {
-                Type::ComplexType(type_descriptor) => Some(type_descriptor),
-                _ => None,
-            })
+        self.get_resolved_type(ident).and_then(|a| match a {
+            Type::ComplexType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
     }
 
+    /// Get the simple type of the passed `ident` with all single type references resolved.
+    ///
+    /// Simple utility over [`get_resolved_type`](Self::get_resolved_type) to return only simple types.
     #[must_use]
     pub fn get_resolved_simple_type<'a>(
         &'a self,
         ident: &'a Ident,
     ) -> Option<&'a TypeDescriptor<SimpleTypeVariant>> {
-        self.get_resolved(ident)
-            .map(|(_ident, ty)| ty)
-            .and_then(|a| match a {
-                Type::SimpleType(type_descriptor) => Some(type_descriptor),
-                _ => None,
-            })
+        self.get_resolved_type(ident).and_then(|a| match a {
+            Type::SimpleType(type_descriptor) => Some(type_descriptor),
+            _ => None,
+        })
     }
 
     /// Get the type ident of the passed `ident` with all single type references resolved.

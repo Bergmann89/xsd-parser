@@ -3,7 +3,7 @@ use crate::types::NameBuilder;
 use super::state::State;
 
 impl NameBuilder {
-    pub(super) fn auto_extend2(
+    pub(super) fn auto_extend(
         self,
         stop_at_group: bool,
         replace: bool,
