@@ -100,14 +100,12 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ident: &Ident,
     ) -> Result<&mut SimpleTypeVariant, Error> {
-        println!("get_simple_type_variant: {ident}");
         if !self.state.types.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            println!("get_simple_type_variant type: {ty:#?}");
+
             let new_ident = self.create_simple_type(ident.ns, None, None, ty)?;
-            println!("get_simple_type_variant new_ident: {new_ident}");
 
             crate::assert_eq!(ident, &new_ident);
         }

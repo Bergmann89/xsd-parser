@@ -241,8 +241,8 @@ impl<'types> DynamicType<'types> {
                     .collect::<Result<Vec<_>, _>>()
             })
             .transpose()?;
-        println!("HERE: {:?}", info.derived_types);
-        let derived_types = info
+
+            let derived_types = info
             .derived_types
             .iter()
             .map(|ident| make_derived_type_data(&mut req, ident))
@@ -1294,7 +1294,7 @@ impl<'a, 'types> Request<'a, 'types> {
         ident: &Ident,
     ) -> Result<TokenStream, Error> {
         let types = self.types;
-        println!("A");
+
         let ty = types
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
