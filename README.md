@@ -69,6 +69,22 @@ This library provides the following features:
 - **`quick_xml` Support:** Direct serialization/deserialization support using [`quick_xml`](https://docs.rs/quick-xml), avoiding `serde` limitations and leveraging asynchronous features.
 
 
+# Changelog
+
+Below you can find a short list of the most important changes for each released version.
+
+## Version 1.1
+
+- Implemented feature to generated boxed `quick_xml` deserializers to reduce stack usage during deserialization
+- Improved naming of the generated types
+- Implemented feature to split generated code into multiple module files
+- Improved and implemented advanced examples
+- General bug fixes and improvements
+
+## Version 1.0
+
+- First official release of `xsd-parser`
+
 # Planned Features
 
 - **Schema-Based Validation:** Generate validators directly from schemas to validate XML data during reading or writing.
