@@ -1,6 +1,6 @@
 [package]
 name = "xsd-parser"
-version = "1.0.0"
+version = "1.1.0"
 authors = [
     "Bergmann89 <info@bergmann89.de>",
 ]
