@@ -17,6 +17,7 @@ mod extension_base_two_files;
 mod extension_simple_content;
 mod list;
 mod no_prefix;
+mod num_big_int;
 mod numeric_fields;
 mod ref_to_attribute;
 mod sequence;

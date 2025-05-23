@@ -1,8 +1,5 @@
 use xsd_parser::{
-    config::{
-        Generate, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
-        Resolver,
-    },
+    config::{Generate, GeneratorFlags, IdentTriple, OptimizerFlags, ParserFlags, Resolver},
     types::IdentType,
     Config,
 };
@@ -15,8 +12,6 @@ fn generate_quick_xml() {
 
     config.parser.flags = ParserFlags::all();
     config.parser.resolver = vec![Resolver::File];
-
-    config.interpreter.flags = InterpreterFlags::all();
 
     config.optimizer.flags = OptimizerFlags::all();
 

@@ -8,14 +8,15 @@ mod variant_builder;
 
 use std::fmt::Debug;
 
+use quote::quote;
 use tracing::instrument;
 
 use crate::config::Namespace;
 use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, GroupInfo, Ident, Module, Name,
-    ReferenceInfo, Type, TypeVariant, Types,
+    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, CustomInfo, GroupInfo, Ident, Module,
+    Name, ReferenceInfo, Type, TypeVariant, Types,
 };
 
 pub use error::Error;
@@ -263,6 +264,66 @@ impl<'a> Interpreter<'a> {
 
         Ok(self)
     }
+
+    /// Add type definitions for numeric XML types (like `xs:int`) that
+    /// uses `num::BigInt` and `num::BigUint` instead of build-in integer types.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`Error`] if the operation was not successful.
+    pub fn with_num_big_int(mut self) -> Result<Self, Error> {
+        let xs = self
+            .schemas
+            .resolve_namespace(&Some(Namespace::XS))
+            .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+
+        macro_rules! add {
+            ($ns:ident, $src:expr, $dst:literal) => {{
+                self.state.add_type(
+                    Ident::type_($src).with_ns(Some($ns)),
+                    ReferenceInfo::new(Ident::type_($dst)),
+                    true,
+                )?;
+            }};
+        }
+
+        let big_int = CustomInfo::new("BigInt")
+            .include_from("num::BigInt")
+            .with_default(|s: &str| {
+                let code = quote! {
+                    use core::str::FromStr;
+
+                    num::BigInt::from_str(#s).unwrap()
+                };
+
+                Some(code)
+            });
+
+        let big_uint = CustomInfo::new("BigUint")
+            .include_from("num::BigUint")
+            .with_default(|s: &str| {
+                let code = quote! {
+                    use core::str::FromStr;
+
+                    num::BigUint::from_str(#s).unwrap()
+                };
+
+                Some(code)
+            });
+
+        self.state.add_type(Ident::type_("BigInt"), big_int, true)?;
+        self.state
+            .add_type(Ident::type_("BigUint"), big_uint, true)?;
+
+        add!(xs, "integer", "BigInt");
+        add!(xs, "positiveInteger", "BigUint");
+        add!(xs, "nonNegativeInteger", "BigUint");
+        add!(xs, "negativeInteger", "BigInt");
+        add!(xs, "nonPositiveInteger", "BigInt");
+
+        Ok(self)
+    }
+
     /// Finishes the interpretation of the [`Schemas`] structure and returns
     /// the [`Types`] structure with the generated type information.
     ///

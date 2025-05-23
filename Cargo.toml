@@ -39,6 +39,7 @@ url = "2.5"
 
 [dev-dependencies]
 clap = { version = "4.5", features = ["derive"] }
+num = "0.4"
 serde-xml-rs = "0.6"
 text-diff = "0.4"
 tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }

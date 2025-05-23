@@ -173,6 +173,10 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
         interpreter = interpreter.with_xs_any_type()?;
     }
 
+    if config.flags.contains(InterpreterFlags::WITH_NUM_BIG_INT) {
+        interpreter = interpreter.with_num_big_int()?;
+    }
+
     for (ident, ty) in config.types {
         let ident = ident.resolve(schemas)?;
         interpreter = interpreter.with_type(ident, ty)?;

@@ -273,6 +273,11 @@ bitflags! {
         ///
         /// See [`with_xs_any_type`](crate::Interpreter::with_xs_any_type) for details.
         const WITH_XS_ANY_TYPE = 1 << 2;
+
+        /// Whether to use `num::BigInt` and `num::BigUint` instead of build-in integer types.
+        ///
+        /// See [`with_num_big_int`](crate::Interpreter::with_num_big_int) for details.
+        const WITH_NUM_BIG_INT = 1 << 3;
     }
 }
 
