@@ -2,6 +2,7 @@
 
 pub mod attribute;
 pub mod complex;
+pub mod custom;
 pub mod dynamic;
 pub mod element;
 pub mod enumeration;
@@ -13,6 +14,7 @@ use std::hash::Hasher;
 
 pub use attribute::{AttributeInfo, AttributesInfo};
 pub use complex::{AnyAttributeInfo, AnyInfo, ComplexInfo, GroupInfo};
+pub use custom::{CustomDefaultImpl, CustomInfo};
 pub use dynamic::DynamicInfo;
 pub use element::{ElementInfo, ElementMode, ElementsInfo};
 pub use enumeration::{EnumerationInfo, VariantInfo};

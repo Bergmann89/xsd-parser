@@ -1,6 +1,5 @@
 //! The `types` module contains all type information related types.
 
-pub mod custom;
 pub mod ident;
 pub mod info;
 pub mod name;
@@ -15,13 +14,12 @@ use std::ops::DerefMut;
 use std::sync::atomic::AtomicUsize;
 use std::sync::Arc;
 
-pub use self::custom::CustomType;
 pub use self::helper::{VecHelper, WithIdent};
 pub use self::ident::{Ident, IdentType};
 pub use self::info::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, AttributesInfo, Base, ComplexInfo, DynamicInfo,
-    ElementInfo, ElementMode, ElementsInfo, EnumerationInfo, GroupInfo, ReferenceInfo, UnionInfo,
-    UnionTypeInfo, UnionTypesInfo, VariantInfo,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, AttributesInfo, Base, ComplexInfo, CustomInfo,
+    DynamicInfo, ElementInfo, ElementMode, ElementsInfo, EnumerationInfo, GroupInfo, ReferenceInfo,
+    UnionInfo, UnionTypeInfo, UnionTypesInfo, VariantInfo,
 };
 pub use self::name::Name;
 pub use self::name_builder::{NameBuilder, NameFallback};

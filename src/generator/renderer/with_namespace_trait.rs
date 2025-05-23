@@ -16,7 +16,7 @@ pub struct WithNamespaceTraitRenderer;
 impl Renderer for WithNamespaceTraitRenderer {
     fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
         match ty {
-            TypeData::BuildIn(_) => (),
+            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
             TypeData::Union(x) => x.render_with_namespace_trait(ctx),
             TypeData::Dynamic(x) => x.render_with_namespace_trait(ctx),
             TypeData::Reference(x) => x.render_with_namespace_trait(ctx),

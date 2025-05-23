@@ -505,15 +505,17 @@ impl<'types> State<'types> {
                 .get(&ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
             let name = make_type_name(&config.postfixes, ty, &ident);
-            let (module_ident, type_ident) = if let TypeVariant::BuildIn(x) = &ty.variant {
-                (None, format_ident!("{x}"))
-            } else {
-                let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
-                let module_ident =
-                    format_module(config.types, use_modules.then_some(ident.ns).flatten())?;
-                let type_ident = format_type_ident(&name, ty.display_name.as_deref());
+            let (module_ident, type_ident) = match &ty.variant {
+                TypeVariant::BuildIn(x) => (None, format_ident!("{x}")),
+                TypeVariant::Custom(x) => (None, format_ident!("{}", x.name())),
+                _ => {
+                    let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
+                    let module_ident =
+                        format_module(config.types, use_modules.then_some(ident.ns).flatten())?;
+                    let type_ident = format_type_ident(&name, ty.display_name.as_deref());
 
-                (module_ident, type_ident)
+                    (module_ident, type_ident)
+                }
             };
 
             tracing::debug!("Queue new type generation: {ident}");

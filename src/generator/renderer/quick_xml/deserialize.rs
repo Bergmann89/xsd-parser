@@ -45,7 +45,7 @@ impl Renderer for QuickXmlDeserializeRenderer {
         ctx.set::<BoxedDeserializer>(self.boxed_deserializer);
 
         match ty {
-            TypeData::BuildIn(_) => (),
+            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
             TypeData::Union(x) => x.render_deserializer(ctx),
             TypeData::Dynamic(x) => x.render_deserializer(ctx),
             TypeData::Reference(x) => x.render_deserializer(ctx),

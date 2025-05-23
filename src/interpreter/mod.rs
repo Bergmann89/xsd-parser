@@ -8,6 +8,8 @@ mod variant_builder;
 
 use std::fmt::Debug;
 
+use tracing::instrument;
+
 use crate::config::Namespace;
 use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
@@ -17,7 +19,6 @@ use crate::types::{
 };
 
 pub use error::Error;
-use tracing::instrument;
 
 use self::schema::SchemaInterpreter;
 use self::state::{Node, State};
@@ -262,7 +263,6 @@ impl<'a> Interpreter<'a> {
 
         Ok(self)
     }
-
     /// Finishes the interpretation of the [`Schemas`] structure and returns
     /// the [`Types`] structure with the generated type information.
     ///
