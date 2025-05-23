@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use xsd_parser::{
-    config::{IdentTriple, InterpreterFlags, OptimizerFlags, Schema},
+    config::{IdentTriple, OptimizerFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser,
     types::IdentType,
     Config,
@@ -15,7 +15,6 @@ fn generate_default() {
     let ident_2 = IdentTriple::from((IdentType::Type, "tns:FooType"));
 
     let mut config = Config::test_default()
-        .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all())
         .with_generate([ident_1.clone(), ident_2.clone()]);
 
