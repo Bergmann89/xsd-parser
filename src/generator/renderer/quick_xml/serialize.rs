@@ -37,7 +37,7 @@ impl Renderer for QuickXmlSerializeRenderer {
 
     fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
         match ty {
-            TypeData::BuildIn(_) => (),
+            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
             TypeData::Union(x) => x.render_serializer(ctx),
             TypeData::Dynamic(x) => x.render_serializer(ctx),
             TypeData::Reference(x) => x.render_serializer(ctx),

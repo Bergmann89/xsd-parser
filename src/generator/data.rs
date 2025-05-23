@@ -8,9 +8,9 @@ use crate::{
     code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
     schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, DynamicInfo,
-        ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, TypeVariant, Types,
-        UnionInfo, UnionTypeInfo, VariantInfo,
+        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, CustomInfo,
+        DynamicInfo, ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type,
+        TypeVariant, Types, UnionInfo, UnionTypeInfo, VariantInfo,
     },
 };
 
@@ -30,6 +30,9 @@ use super::{
 pub enum TypeData<'types> {
     /// Corresponds to [`TypeVariant::BuildIn`].
     BuildIn(BuildInType<'types>),
+
+    /// Corresponds to [`TypeVariant::Custom`].
+    Custom(CustomType<'types>),
 
     /// Corresponds to [`TypeVariant::Union`].
     Union(UnionType<'types>),
@@ -59,6 +62,7 @@ impl<'types> TypeData<'types> {
 
         Ok(match &ty.variant {
             TypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
+            TypeVariant::Custom(x) => Self::Custom(CustomType::new(x)),
             TypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
             TypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
             TypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
@@ -81,6 +85,20 @@ pub struct BuildInType<'types> {
 
 impl<'types> BuildInType<'types> {
     fn new(info: &'types BuildInInfo) -> Self {
+        Self { info }
+    }
+}
+
+/// Contains additional information for the rendering process
+/// of a [`TypeVariant::Custom`] type.
+#[derive(Debug)]
+pub struct CustomType<'types> {
+    /// Reference to the original type information.
+    pub info: &'types CustomInfo,
+}
+
+impl<'types> CustomType<'types> {
+    fn new(info: &'types CustomInfo) -> Self {
         Self { info }
     }
 }
@@ -1312,7 +1330,8 @@ impl<'a, 'types> Request<'a, 'types> {
             TypeVariant::BuildIn(BuildInInfo::String) => {
                 return Ok(quote!(String::from(#default)));
             }
-            TypeVariant::BuildIn(BuildInInfo::Custom(x)) => {
+
+            TypeVariant::Custom(x) => {
                 if let Some(x) = x.default(default) {
                     return Ok(x);
                 }

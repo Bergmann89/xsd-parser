@@ -52,7 +52,7 @@ impl ComplexTypeStruct<'_> {
         let attribute_defaults = self
             .attributes
             .iter()
-            .filter_map(ComplexTypeAttribute::render_default_fn)
+            .filter_map(|attrib| attrib.render_default_fn(ctx))
             .inspect(|_| has_attributes = true);
 
         let impl_ = quote! {
@@ -68,14 +68,14 @@ impl ComplexTypeStruct<'_> {
 }
 
 impl ComplexTypeAttribute<'_> {
-    fn render_default_fn(&self) -> Option<TokenStream> {
+    fn render_default_fn(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let default = self.default_value.as_ref()?;
-        let target_type = self.target_type.ident();
+        let target_ident = ctx.resolve_type_for_module(&self.target_type);
         let default_fn_ident = format_ident!("default_{}", self.ident);
 
         Some(quote! {
             #[must_use]
-            pub fn #default_fn_ident() -> #target_type {
+            pub fn #default_fn_ident() -> #target_ident {
                 #default
             }
         })

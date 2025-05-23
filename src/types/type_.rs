@@ -5,7 +5,7 @@ use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
 use super::{
-    ComplexInfo, CustomType, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
+    ComplexInfo, CustomInfo, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, Types,
     UnionInfo,
 };
 
@@ -27,6 +27,9 @@ pub enum TypeVariant {
 
     /// Represents a build-in type
     BuildIn(BuildInInfo),
+
+    /// Represents a user defined type
+    Custom(CustomInfo),
 
     /// References an other type
     Reference(ReferenceInfo),
@@ -120,8 +123,6 @@ pub enum BuildInInfo {
 
     Bool,
     String,
-
-    Custom(CustomType),
 }
 
 /* Type */
@@ -136,8 +137,10 @@ macro_rules! impl_from {
     };
 }
 
-impl_from!(Reference, ReferenceInfo);
+impl_from!(Union, UnionInfo);
 impl_from!(BuildIn, BuildInInfo);
+impl_from!(Custom, CustomInfo);
+impl_from!(Reference, ReferenceInfo);
 impl_from!(Enumeration, EnumerationInfo);
 impl_from!(Dynamic, DynamicInfo);
 impl_from!(ComplexType, ComplexInfo);
@@ -176,6 +179,7 @@ impl TypeEq for Type {
 
         match &self.variant {
             Union(x) => x.type_hash(hasher, types),
+            Custom(x) => x.hash(hasher),
             BuildIn(x) => x.hash(hasher),
             Reference(x) => x.type_hash(hasher, types),
             Enumeration(x) => x.type_hash(hasher, types),
@@ -236,8 +240,6 @@ impl BuildInInfo {
 
             Self::Bool => "bool",
             Self::String => "String",
-
-            Self::Custom(x) => x.name(),
         }
     }
 }

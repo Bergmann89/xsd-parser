@@ -9,7 +9,7 @@ use crate::{
     generator::{
         data::{
             ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement,
-            ComplexTypeEnum, ComplexTypeStruct, DynamicType, EnumerationType,
+            ComplexTypeEnum, ComplexTypeStruct, CustomType, DynamicType, EnumerationType,
             EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
         },
         misc::Occurs,
@@ -28,12 +28,25 @@ impl Renderer for TypesRenderer {
     fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
         match ty {
             TypeData::BuildIn(_) => (),
+            TypeData::Custom(x) => x.render_types(ctx),
             TypeData::Union(x) => x.render_types(ctx),
             TypeData::Dynamic(x) => x.render_types(ctx),
             TypeData::Reference(x) => x.render_types(ctx),
             TypeData::Enumeration(x) => x.render_types(ctx),
             TypeData::Complex(x) => x.render_types(ctx),
         }
+    }
+}
+
+/* CustomType */
+
+impl CustomType<'_> {
+    pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
+        let Some(include) = self.info.include() else {
+            return;
+        };
+
+        ctx.module().usings([include]);
     }
 }
 

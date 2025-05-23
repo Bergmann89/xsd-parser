@@ -206,6 +206,16 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
+            TypeVariant::Custom(x) => {
+                writeln!(f, "{}: Custom", ident)?;
+
+                s.level += 1;
+
+                indentln!("display_name={:?}", &ty.display_name);
+                indentln!("type={x:?}");
+
+                s.level -= 1;
+            }
             TypeVariant::Union(x) => {
                 writeln!(f, "{}: Union", ident)?;
 

@@ -118,6 +118,7 @@ impl SchemaInterpreter<'_, '_> {
             Some(
                 ty @ (TypeVariant::Enumeration(_)
                 | TypeVariant::BuildIn(_)
+                | TypeVariant::Custom(_)
                 | TypeVariant::Union(_)
                 | TypeVariant::Reference(_)),
             ) => Ok(ty),
@@ -143,6 +144,7 @@ impl SchemaInterpreter<'_, '_> {
             | Some(
                 TypeVariant::Enumeration(_)
                 | TypeVariant::BuildIn(_)
+                | TypeVariant::Custom(_)
                 | TypeVariant::Union(_)
                 | TypeVariant::Reference(_),
             ) => Err(Error::UnknownType(ident.clone())),

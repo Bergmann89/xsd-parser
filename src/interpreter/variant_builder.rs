@@ -280,7 +280,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         if let Some(base) = base {
             match &mut self.variant {
-                Some(TypeVariant::Reference(_)) => (),
+                Some(TypeVariant::BuildIn(_) | TypeVariant::Reference(_)) => (),
                 Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
                 Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
                 Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
