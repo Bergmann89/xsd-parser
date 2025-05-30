@@ -205,6 +205,25 @@ where
         self.add_schema_from_url(url)
     }
 
+    /// Add multiple XML schemas from the passed paths iterator.
+    ///
+    /// # Errors
+    ///
+    /// Will return an suitable error if the parser could not read the data from
+    /// any file, or parse the schema content.
+    #[instrument(err, level = "trace", skip(self))]
+    pub fn add_schema_from_files<I>(mut self, paths: I) -> Result<Self, Error<TResolver::Error>>
+    where
+        I: IntoIterator + Debug,
+        I::Item: AsRef<Path> + Debug,
+    {
+        for path in paths {
+            self = self.add_schema_from_file(path)?;
+        }
+
+        Ok(self)
+    }
+
     /// Add a new XML schema from the passed file `url`.
     ///
     /// This will parse the XML schema represented by the provided url and

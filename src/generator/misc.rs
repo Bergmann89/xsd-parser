@@ -252,17 +252,30 @@ impl SerdeSupport {
     }
 }
 
+/// Defines the occurrence (how often the field is used) of a field in a specific type.
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
 pub enum Occurs {
+    /// The field is not used at all.
     #[default]
     None,
+
+    /// The field is used exactly one time.
     Single,
+
+    /// The field is used optional (zero or exactly one time).
     Optional,
+
+    /// The field is used as a dynamic list.
     DynamicList,
+
+    /// The field is used as a list with a fixed size.
     StaticList(usize),
 }
 
 impl Occurs {
+    /// Create the [`Occurs`] value from the [`MinOccurs`] and [`MaxOccurs`] from
+    /// the XSD schema.
+    #[must_use]
     pub fn from_occurs(min: MinOccurs, max: MaxOccurs) -> Self {
         match (min, max) {
             (0, MaxOccurs::Bounded(0)) => Self::None,
@@ -273,6 +286,15 @@ impl Occurs {
         }
     }
 
+    /// Wrapped the passed type `ident` into a suitable rust type depending on
+    /// the occurrence and the need of indirection (boxing).
+    ///
+    /// # Examples
+    /// - `Occurs::Single` will return the type as is, or as `Box<T>`
+    /// - `Occurs::Optional` will return the type as `Option<T>`
+    /// - `Occurs::DynamicList` will return the type as `Vec<T>`
+    /// - `Occurs::StaticList` will return the type as array `[T; SIZE]`
+    #[must_use]
     pub fn make_type(self, ident: &TokenStream, need_indirection: bool) -> Option<TokenStream> {
         match self {
             Self::None => None,
@@ -286,19 +308,29 @@ impl Occurs {
         }
     }
 
+    /// Returns `true` if not `Occurs::None`
+    #[must_use]
     pub fn is_some(&self) -> bool {
         *self != Self::None
     }
 
+    /// Returns `true` if [`make_type`](Self::make_type) would generate a static type
+    /// (a type without memory indirection), like `T`, `Option<T>` or `[T; SIZE]`.
+    #[must_use]
     pub fn is_direct(&self) -> bool {
         matches!(self, Self::Single | Self::Optional | Self::StaticList(_))
     }
 }
 
+/// Defines which additional traits should be implemented by the generated traits
+/// of dynamic types.
 #[derive(Default, Debug)]
 pub enum DynTypeTraits {
+    /// The traits will be detected automatically.
     #[default]
     Auto,
+
+    /// List of trait identifiers that will be implemented.
     Custom(Vec<IdentPath>),
 }
 

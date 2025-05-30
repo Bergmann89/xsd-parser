@@ -25,15 +25,15 @@ use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
 pub use self::context::Context;
 pub use self::data::{
     BuildInType, ComplexType, ComplexTypeAttribute, ComplexTypeBase, ComplexTypeContent,
-    ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, DerivedType, DynamicType,
+    ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, CustomType, DerivedType, DynamicType,
     EnumerationType, EnumerationTypeVariant, ReferenceType, StructMode, TypeData, UnionType,
     UnionTypeVariant,
 };
 pub use self::error::Error;
-pub use self::misc::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
+pub use self::misc::{BoxFlags, DynTypeTraits, GeneratorFlags, Occurs, SerdeSupport, TypedefMode};
 
 use self::helper::Walk;
-use self::misc::{DynTypeTraits, PendingType, TraitInfos, TypeRef};
+use self::misc::{PendingType, TraitInfos, TypeRef};
 
 /// Type that is used to generate rust code from a [`Types`] object.
 #[must_use]
@@ -314,6 +314,10 @@ impl<'types> Generator<'types> {
     }
 
     /// Will convert the generator into a [`GeneratorFixed`].
+    ///
+    /// You need to call this method if the general configuration of the generator
+    /// is finished. The resulting [`GeneratorFixed`] type will only provide methods
+    /// to render code for specific types.
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
         let Self {
             mut config,
