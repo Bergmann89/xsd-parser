@@ -23,14 +23,16 @@ update-expectations = [ ]
 [dependencies]
 anyhow = "1.0"
 bitflags = "2.7"
+encoding_rs = "0.8"
 futures = "0.3"
+indexmap = "2.9"
 Inflector = "0.11"
 parking_lot = "0.12"
 proc-macro2 = "1.0"
-quick-xml = { version = "0.37", features = ["serialize", "async-tokio"] }
+quick-xml = { version = "0.37", features = [ "async-tokio", "encoding", "serialize" ] }
 quote = "1.0"
-reqwest = { version = "0.12", features = ["blocking"], optional = true }
-serde = { version = "1.0", features = ["derive"] }
+reqwest = { version = "0.12", features = [ "blocking" ], optional = true }
+serde = { version = "1.0", features = [ "derive" ] }
 smallvec = "1.13"
 thiserror = "2.0.0"
 tokio = { version = "1.41", optional = true }
@@ -38,11 +40,11 @@ tracing = "0.1"
 url = "2.5"
 
 [dev-dependencies]
-clap = { version = "4.5", features = ["derive"] }
+clap = { version = "4.5", features = [ "derive" ] }
 num = "0.4"
 serde-xml-rs = "0.6"
 text-diff = "0.4"
-tracing-subscriber = { version = "0.3", features = ["std", "env-filter", "json", "tracing-log"] }
+tracing-subscriber = { version = "0.3", features = [ "std", "env-filter", "json", "tracing-log" ] }
 
 [build-dependencies]
 base64 = "0.22"
