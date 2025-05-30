@@ -11,10 +11,16 @@ mod fut;
 #[cfg(feature = "async")]
 use std::future::Future;
 
+use std::borrow::Cow;
+use std::cell::RefCell;
+use std::mem::take;
+
 use quick_xml::{
     events::Event,
-    name::{LocalName, PrefixIter, QName, ResolveResult},
+    name::{LocalName, PrefixDeclaration, PrefixIter, QName, ResolveResult},
 };
+
+use crate::xml::NamespacesShared;
 
 pub use self::error_reader::ErrorReader;
 pub use self::io_reader::IoReader;
@@ -30,9 +36,8 @@ pub trait XmlReader: Sized {
     /// Resolves a qname in the current context of the XML file.
     fn resolve<'n>(&self, name: QName<'n>, attribute: bool) -> (ResolveResult<'_>, LocalName<'n>);
 
-    /// Returns an iterator the walks over all known namespace prefixes for the
-    /// current context of the XML file.
-    fn prefixes(&self) -> PrefixIter<'_>;
+    /// Returns a map that contains all namespaces in the current context.
+    fn namespaces(&self) -> NamespacesShared<'static>;
 
     /// Returns the current position (byte offset) in the current XML file.
     fn current_position(&self) -> u64;
@@ -145,5 +150,88 @@ pub trait XmlReaderAsync<'a>: XmlReader {
     /// tags asynchronously.
     fn skip_current_async(&mut self) -> SkipCurrent<'a, '_, Self> {
         SkipCurrent::new(self)
+    }
+}
+
+#[derive(Default, Debug)]
+struct NamespacesBuilder(RefCell<NamespacesBuilderState>);
+
+#[derive(Debug)]
+struct NamespacesBuilderState {
+    level: usize,
+    pending: bool,
+    elements: Vec<(usize, Option<NamespacesShared<'static>>)>,
+}
+
+impl NamespacesBuilder {
+    fn get_or_create(&self, prefixes: PrefixIter<'_>) -> NamespacesShared<'static> {
+        let mut state = self.0.borrow_mut();
+
+        state
+            .elements
+            .last_mut()
+            .map(|(_, x)| {
+                let prefixes = prefixes.map(|(decl, ns)| {
+                    let key = match decl {
+                        PrefixDeclaration::Default => Cow::Owned(Vec::new()),
+                        PrefixDeclaration::Named(x) => Cow::Owned(x.into()),
+                    };
+                    let value = Cow::Owned(ns.0.into());
+
+                    (key, value)
+                });
+
+                x.get_or_insert_with(|| NamespacesShared::new(prefixes.collect()))
+                    .clone()
+            })
+            .unwrap_or_default()
+    }
+
+    fn handle_event(&self, event: &Event<'_>) {
+        let mut state = self.0.borrow_mut();
+
+        if take(&mut state.pending) {
+            state.level = state.level.saturating_sub(1);
+
+            loop {
+                if matches!(state.elements.last(), Some((last_level, _)) if *last_level > state.level)
+                {
+                    state.elements.pop();
+                } else {
+                    break;
+                }
+            }
+        }
+
+        match event {
+            Event::Start(start) | Event::Empty(start) => {
+                state.level += 1;
+                state.pending = matches!(event, Event::Empty(_));
+
+                for a in start.attributes().with_checks(false).flatten() {
+                    if a.key.0.starts_with(b"xmlns") {
+                        let level = state.level;
+
+                        state.elements.push((level, None));
+
+                        break;
+                    }
+                }
+            }
+            Event::End(_) => {
+                state.pending = true;
+            }
+            _ => (),
+        }
+    }
+}
+
+impl Default for NamespacesBuilderState {
+    fn default() -> Self {
+        Self {
+            level: 0,
+            pending: false,
+            elements: vec![(0, None)],
+        }
     }
 }

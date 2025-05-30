@@ -418,7 +418,7 @@ impl Display for TypesPrinter<'_> {
 pub(crate) fn format_utf8_slice(bytes: &[u8], f: &mut Formatter<'_>) -> FmtResult {
     for byte in bytes {
         if byte.is_ascii_control() {
-            write!(f, r"\x{byte:02x}")?;
+            write!(f, r"\x{byte:02X}")?;
         } else {
             write!(f, "{}", *byte as char)?;
         }

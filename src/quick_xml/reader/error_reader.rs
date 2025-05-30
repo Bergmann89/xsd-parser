@@ -1,9 +1,12 @@
 use quick_xml::{
     events::Event,
-    name::{LocalName, PrefixIter, QName, ResolveResult},
+    name::{LocalName, QName, ResolveResult},
 };
 
-use crate::quick_xml::{error::ErrorInfo, Error};
+use crate::{
+    quick_xml::{error::ErrorInfo, Error},
+    xml::NamespacesShared,
+};
 
 use super::{XmlReader, XmlReaderSync};
 
@@ -44,8 +47,8 @@ where
         self.inner.resolve(name, attribute)
     }
 
-    fn prefixes(&self) -> PrefixIter<'_> {
-        self.inner.prefixes()
+    fn namespaces(&self) -> NamespacesShared<'static> {
+        self.inner.namespaces()
     }
 
     fn current_position(&self) -> u64 {

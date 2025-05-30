@@ -2,15 +2,21 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 
 use quick_xml::{
     events::Event,
-    name::{LocalName, PrefixIter, QName, ResolveResult},
+    name::{LocalName, QName, ResolveResult},
     NsReader,
 };
 
-use super::super::{Error, XmlReader, XmlReaderSync};
+use crate::xml::NamespacesShared;
+
+use super::{
+    super::{Error, XmlReader, XmlReaderSync},
+    NamespacesBuilder,
+};
 
 /// Implements a [`XmlReader`] for string slices.
 pub struct SliceReader<'a> {
     inner: NsReader<&'a [u8]>,
+    namespaces: NamespacesBuilder,
 }
 
 impl<'a> SliceReader<'a> {
@@ -18,8 +24,9 @@ impl<'a> SliceReader<'a> {
     #[must_use]
     pub fn new(s: &'a str) -> Self {
         let inner = NsReader::from_str(s);
+        let namespaces = NamespacesBuilder::default();
 
-        Self { inner }
+        Self { inner, namespaces }
     }
 }
 
@@ -28,8 +35,10 @@ impl XmlReader for SliceReader<'_> {
         self.inner.resolve(name, attribute)
     }
 
-    fn prefixes(&self) -> PrefixIter<'_> {
-        self.inner.prefixes()
+    fn namespaces(&self) -> NamespacesShared<'static> {
+        let prefixes = self.inner.prefixes();
+
+        self.namespaces.get_or_create(prefixes)
     }
 
     fn current_position(&self) -> u64 {
@@ -43,9 +52,14 @@ impl XmlReader for SliceReader<'_> {
 
 impl<'a> XmlReaderSync<'a> for SliceReader<'a> {
     fn read_event(&mut self) -> Result<Event<'a>, Error> {
-        self.inner
+        let event = self
+            .inner
             .read_event()
-            .map_err(|error| self.map_error(error))
+            .map_err(|error| self.map_error(error))?;
+
+        self.namespaces.handle_event(&event);
+
+        Ok(event)
     }
 }
 
@@ -57,11 +71,7 @@ impl<'a> super::super::XmlReaderAsync<'a> for SliceReader<'a> {
         Self: 'x;
 
     fn read_event_async(&mut self) -> Self::ReadEventFut<'_> {
-        std::future::ready(
-            self.inner
-                .read_event()
-                .map_err(|error| self.map_error(error)),
-        )
+        std::future::ready(self.read_event())
     }
 }
 
