@@ -1012,11 +1012,15 @@ impl<'types> ComplexType<'types> {
 }
 
 impl ComplexTypeBase {
-    pub(super) fn element_tag(&self) -> Option<&String> {
+    /// Returns the name of the element tag, if type is represented by a XML element.
+    #[must_use]
+    pub fn element_tag(&self) -> Option<&String> {
         self.is_complex.then_some(self.tag_name.as_ref()).flatten()
     }
 
-    pub(crate) fn represents_element(&self) -> bool {
+    /// Returns `true` if this type represents an element, `false` otherwise.
+    #[must_use]
+    pub fn represents_element(&self) -> bool {
         self.is_complex && self.tag_name.is_some() && !self.is_dynamic
     }
 
@@ -1069,15 +1073,21 @@ impl Deref for ComplexTypeEnum<'_> {
 }
 
 impl ComplexTypeStruct<'_> {
-    pub(super) fn is_unit_struct(&self) -> bool {
+    /// Returns `true` if this struct is a unit struct, `false` otherwise.
+    #[must_use]
+    pub fn is_unit_struct(&self) -> bool {
         matches!(&self.mode, StructMode::Empty { .. }) && !self.has_attributes()
     }
 
-    pub(super) fn has_attributes(&self) -> bool {
+    /// Returns `true` if this struct has attributes, `false` otherwise.
+    #[must_use]
+    pub fn has_attributes(&self) -> bool {
         !self.attributes.is_empty()
     }
 
-    pub(super) fn has_content(&self) -> bool {
+    /// Returns `true` if this struct has a content field, `false` otherwise.
+    #[must_use]
+    pub fn has_content(&self) -> bool {
         match &self.mode {
             StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } => {
                 !elements.is_empty()
@@ -1087,7 +1097,9 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
-    pub(super) fn elements(&self) -> &[ComplexTypeElement<'_>] {
+    /// Returns the elements (fields) of this struct.
+    #[must_use]
+    pub fn elements(&self) -> &[ComplexTypeElement<'_>] {
         if let StructMode::All { elements, .. } | StructMode::Sequence { elements, .. } = &self.mode
         {
             elements
@@ -1096,7 +1108,9 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
-    pub(super) fn any_element(&self) -> Option<&AnyInfo> {
+    /// Returns the [`AnyInfo`] if this struct has one.
+    #[must_use]
+    pub fn any_element(&self) -> Option<&AnyInfo> {
         if let StructMode::All { any_element, .. } | StructMode::Sequence { any_element, .. } =
             &self.mode
         {
@@ -1106,7 +1120,9 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
-    pub(super) fn content(&self) -> Option<&ComplexTypeContent> {
+    /// Returns the content type if this struct has one.
+    #[must_use]
+    pub fn content(&self) -> Option<&ComplexTypeContent> {
         if let StructMode::Content { content, .. } = &self.mode {
             Some(content)
         } else {
