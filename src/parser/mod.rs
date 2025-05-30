@@ -11,7 +11,7 @@ use std::path::Path;
 
 use quick_xml::{
     events::Event,
-    name::{LocalName, PrefixIter, QName, ResolveResult},
+    name::{LocalName, QName, ResolveResult},
 };
 use resolver::{FileResolver, NoOpResolver, ResolveRequest, Resolver};
 use tracing::instrument;
@@ -22,6 +22,7 @@ use crate::quick_xml::{
 };
 use crate::schema::xs::{Import, Include, Schema, SchemaContent};
 use crate::schema::{Namespace, NamespacePrefix, Schemas};
+use crate::xml::NamespacesShared;
 
 pub use self::error::Error;
 
@@ -345,8 +346,8 @@ where
         self.inner.resolve(name, attribute)
     }
 
-    fn prefixes(&self) -> PrefixIter<'_> {
-        self.inner.prefixes()
+    fn namespaces(&self) -> NamespacesShared<'static> {
+        self.inner.namespaces()
     }
 
     fn current_position(&self) -> u64 {

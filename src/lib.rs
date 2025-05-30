@@ -10,6 +10,7 @@ pub mod parser;
 pub mod quick_xml;
 pub mod schema;
 pub mod types;
+pub mod xml;
 
 mod macros;
 mod misc;

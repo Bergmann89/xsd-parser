@@ -3,19 +3,23 @@ use std::io::BufRead;
 
 use quick_xml::{
     events::Event,
-    name::{LocalName, PrefixIter, QName, ResolveResult},
+    name::{LocalName, QName, ResolveResult},
     NsReader,
 };
 
 #[cfg(feature = "async")]
 use tokio::io::AsyncBufRead;
 
+use crate::xml::NamespacesShared;
+
 use super::super::{Error, XmlReader, XmlReaderSync};
+use super::NamespacesBuilder;
 
 /// Implements an [`XmlReader`] for any kind of [`BufRead`].
 pub struct IoReader<R> {
     inner: NsReader<R>,
     buffer: Vec<u8>,
+    namespaces: NamespacesBuilder,
 }
 
 impl<R> IoReader<R> {
@@ -23,8 +27,13 @@ impl<R> IoReader<R> {
     pub fn new(reader: R) -> Self {
         let inner = NsReader::from_reader(reader);
         let buffer = Vec::new();
+        let namespaces = NamespacesBuilder::default();
 
-        Self { inner, buffer }
+        Self {
+            inner,
+            buffer,
+            namespaces,
+        }
     }
 }
 
@@ -33,8 +42,10 @@ impl<R> XmlReader for IoReader<R> {
         self.inner.resolve(name, attribute)
     }
 
-    fn prefixes(&self) -> PrefixIter<'_> {
-        self.inner.prefixes()
+    fn namespaces(&self) -> NamespacesShared<'static> {
+        let prefixes = self.inner.prefixes();
+
+        self.namespaces.get_or_create(prefixes)
     }
 
     fn current_position(&self) -> u64 {
@@ -51,10 +62,15 @@ where
     R: BufRead,
 {
     fn read_event(&mut self) -> Result<Event<'static>, Error> {
-        self.inner
+        let event = self
+            .inner
             .read_event_into(&mut self.buffer)
             .map(Event::into_owned)
-            .map_err(|error| self.map_error(error))
+            .map_err(|error| self.map_error(error))?;
+
+        self.namespaces.handle_event(&event);
+
+        Ok(event)
     }
 }
 
@@ -71,7 +87,11 @@ where
     fn read_event_async(&mut self) -> Self::ReadEventFut<'_> {
         Box::pin(async move {
             match self.inner.read_event_into_async(&mut self.buffer).await {
-                Ok(event) => Ok(event.into_owned()),
+                Ok(event) => {
+                    self.namespaces.handle_event(&event);
+
+                    Ok(event.into_owned())
+                }
                 Err(error) => Err(self.map_error(error)),
             }
         })

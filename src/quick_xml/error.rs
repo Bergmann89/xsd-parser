@@ -3,8 +3,12 @@ use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::mem::take;
 use std::str::Utf8Error;
 
-use quick_xml::events::attributes::AttrError;
-use quick_xml::{events::Event, Error as XmlError};
+use quick_xml::{
+    encoding::EncodingError,
+    escape::EscapeError,
+    events::{attributes::AttrError, Event},
+    Error as XmlError,
+};
 use thiserror::Error;
 
 use crate::misc::RawByteStr;
@@ -27,15 +31,43 @@ pub struct Error {
 pub enum Kind {
     /// Error forwarded from the [`quick_xml`] crate.
     #[error("XML Error: message={0}")]
-    XmlError(#[from] XmlError),
+    XmlError(
+        #[from]
+        #[source]
+        XmlError,
+    ),
 
     /// Attribute error forwarded from the [`quick_xml`] crate.
     #[error("Attribute Error: message={0}")]
-    AttrError(#[from] AttrError),
+    AttrError(
+        #[from]
+        #[source]
+        AttrError,
+    ),
 
     /// Invalid UTF-8 string.
     #[error("UTF-8 Error: message={0}")]
-    InvalidUtf8(#[from] Utf8Error),
+    InvalidUtf8(
+        #[from]
+        #[source]
+        Utf8Error,
+    ),
+
+    /// Escape Error
+    #[error("Escape Error: message={0}")]
+    EscapeError(
+        #[from]
+        #[source]
+        EscapeError,
+    ),
+
+    /// Encoding Error
+    #[error("Encoding Error: message={0}")]
+    EncodingError(
+        #[from]
+        #[source]
+        EncodingError,
+    ),
 
     /// Duplicate attribute.
     ///
