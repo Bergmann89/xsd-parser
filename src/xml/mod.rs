@@ -7,7 +7,7 @@ mod element;
 mod namespaces;
 mod value;
 
-pub use attributes::Attributes;
-pub use element::{Element, Elements};
+pub use attributes::{AnyAttributes, Attributes};
+pub use element::{AnyElement, AnyElements, Element, Elements};
 pub use namespaces::{Namespaces, NamespacesShared};
 pub use value::Value;

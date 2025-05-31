@@ -816,7 +816,8 @@ impl<'types> ComplexType<'types> {
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && attributes.is_empty()
-            && req.check_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
+            && req.check_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT)
+            && (any_attribute.is_none() || req.any_attribute_type.is_none());
 
         let attributes = attributes
             .iter()
@@ -847,7 +848,8 @@ impl<'types> ComplexType<'types> {
 
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
-        let has_content = occurs.is_some() && !elements.is_empty();
+        let has_any = any_element.is_some() && req.any_type.is_some();
+        let has_content = occurs.is_some() && (has_any || !elements.is_empty());
 
         let content_type = has_content.then(|| {
             let type_ = ComplexTypeEnum {
@@ -951,7 +953,8 @@ impl<'types> ComplexType<'types> {
 
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
-        let has_content = occurs.is_some() && !elements.is_empty();
+        let has_any = any_element.is_some() && req.any_type.is_some();
+        let has_content = occurs.is_some() && (has_any || !elements.is_empty());
 
         let content_type = has_content.then(|| {
             let mode = match type_mode {

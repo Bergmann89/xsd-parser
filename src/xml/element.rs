@@ -38,7 +38,13 @@ pub struct Element<'a> {
 }
 
 /// Represents a list of unstructured XML elements.
-pub type Elements = Vec<Element<'static>>;
+pub type Elements<'a> = Vec<Element<'a>>;
+
+/// Helper type for an element with static lifetime
+pub type AnyElement = Element<'static>;
+
+/// Helper type for elements with static lifetime
+pub type AnyElements = Elements<'static>;
 
 impl Element<'_> {
     /// Create a new [`Element`] instance.

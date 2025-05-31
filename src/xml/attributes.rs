@@ -19,6 +19,9 @@ use crate::quick_xml::Error;
 #[derive(Default, Debug, Clone)]
 pub struct Attributes<'a>(IndexMap<Key<'a>, Value<'a>>);
 
+/// Helper type for attributes with static lifetime
+pub type AnyAttributes = Attributes<'static>;
+
 impl<'a> Attributes<'a> {
     /// Insert a new attribute into the list.
     ///

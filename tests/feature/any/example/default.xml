@@ -1,4 +1,4 @@
-<tns:Foo xmlns:tns="http://example.com">
+<tns:Foo xmlns:tns="http://example.com" any="fuu">
   <AnyElement />
   <tns:Name>abcd</tns:Name>
   <AnyElement />

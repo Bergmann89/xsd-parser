@@ -1,13 +1,30 @@
-use xsd_parser::{generator::SerdeSupport, types::IdentType, Config};
+use xsd_parser::{config::GeneratorFlags, generator::SerdeSupport, types::IdentType, Config};
 
 use crate::utils::{generate_test, ConfigEx};
+
+fn serde_config() -> Config {
+    let mut config = Config::test_default()
+        .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
+        .with_generate([(IdentType::Element, "tns:Foo")]);
+
+    config.generator.any_type = Some("xsd_parser::xml::AnyElement".into());
+    config.generator.any_attribute_type = Some("xsd_parser::xml::AnyAttributes".into());
+
+    config
+}
+
+fn config() -> Config {
+    let mut config = serde_config();
+
+    config
+}
 
 #[test]
 fn generate_default() {
     generate_test(
         "tests/feature/any/schema.xsd",
         "tests/feature/any/expected/default.rs",
-        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
+        config(),
     );
 }
 
@@ -16,9 +33,7 @@ fn generate_quick_xml() {
     generate_test(
         "tests/feature/any/schema.xsd",
         "tests/feature/any/expected/quick_xml.rs",
-        Config::test_default()
-            .with_quick_xml()
-            .with_generate([(IdentType::Element, "tns:Foo")]),
+        config().with_quick_xml(),
     );
 }
 
@@ -27,9 +42,7 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/feature/any/schema.xsd",
         "tests/feature/any/expected/serde_xml_rs.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
-            .with_generate([(IdentType::Element, "tns:Foo")]),
+        serde_config().with_serde_support(SerdeSupport::SerdeXmlRs),
     );
 }
 
@@ -38,9 +51,7 @@ fn generate_serde_quick_xml() {
     generate_test(
         "tests/feature/any/schema.xsd",
         "tests/feature/any/expected/serde_quick_xml.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
-            .with_generate([(IdentType::Element, "tns:Foo")]),
+        serde_config().with_serde_support(SerdeSupport::QuickXml),
     );
 }
 
@@ -60,7 +71,9 @@ fn write_quick_xml() {
     use quick_xml::Foo;
 
     let obj = Foo {
+        any_attributes: Default::default(),
         name: "abcd".into(),
+        any_elements: Default::default(),
     };
 
     crate::utils::quick_xml_write_test(&obj, "tns:Foo", "tests/feature/any/example/serialize.xml");

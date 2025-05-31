@@ -15,7 +15,7 @@ use crate::{
         misc::Occurs,
         DynTypeTraits,
     },
-    schema::xs::Use,
+    schema::{xs::Use, MaxOccurs},
 };
 
 use super::{Context, Renderer, TypeData};
@@ -268,10 +268,29 @@ impl ComplexTypeEnum<'_> {
 
         let variants = self.elements.iter().map(|x| x.render_variant(ctx));
 
+        let any = self
+            .any_element
+            .zip(ctx.any_type.as_ref())
+            .map(|(info, ty)| {
+                let min = dbg!(info.min_occurs.unwrap_or(1));
+                let max = dbg!(info.max_occurs.unwrap_or(MaxOccurs::Bounded(1)));
+                let occurs = Occurs::from_occurs(min, max);
+
+                ctx.add_usings([ty.to_token_stream()]);
+
+                let ty = ty.ident().to_token_stream();
+                let ty = occurs.make_type(&ty, false);
+
+                quote! {
+                    AnyElement(#ty),
+                }
+            });
+
         let code = quote! {
             #derive
             pub enum #type_ident {
                 #( #variants )*
+                #any
             }
 
             #( #trait_impls )*
@@ -294,13 +313,46 @@ impl ComplexTypeStruct<'_> {
         let fields = self.elements().iter().map(|x| x.render_field(ctx));
         let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
 
+        let any = self
+            .any_element()
+            .zip(ctx.any_type.as_ref())
+            .map(|(info, ty)| {
+                let min = dbg!(info.min_occurs.unwrap_or(1));
+                let max = dbg!(info.max_occurs.unwrap_or(MaxOccurs::Bounded(1)));
+                let occurs = Occurs::from_occurs(min, max);
+
+                ctx.add_usings([ty.to_token_stream()]);
+
+                let ty = ty.ident().to_token_stream();
+                let ty = occurs.make_type(&ty, false);
+
+                quote! {
+                    pub any_elements: #ty,
+                }
+            });
+
+        let any_attributes =
+            self.any_attribute
+                .zip(ctx.any_attribute_type.as_ref())
+                .map(|(_info, ty)| {
+                    ctx.add_usings([ty.to_token_stream()]);
+
+                    let ty = ty.ident();
+
+                    quote! {
+                        pub any_attributes: #ty,
+                    }
+                });
+
         let struct_data = if self.is_unit_struct() {
             quote!(;)
         } else {
             quote! {
                 {
                     #( #attributes )*
+                    #any_attributes
                     #( #fields )*
+                    #any
                     #content
                 }
             }

@@ -1,6 +1,6 @@
 use thiserror::Error;
 
-use crate::schema::NamespaceId;
+use crate::{code::InvalidIdentPath, schema::NamespaceId};
 
 use super::Ident;
 
@@ -31,6 +31,10 @@ pub enum Error {
     /// Invalid identifier.
     ///
     /// Is raised if the user passed a invalid identifier.
-    #[error("Invalid identifier: {0}!")]
-    InvalidIdentifier(String),
+    #[error("{0}")]
+    InvalidIdentifier(
+        #[from]
+        #[source]
+        InvalidIdentPath,
+    ),
 }
