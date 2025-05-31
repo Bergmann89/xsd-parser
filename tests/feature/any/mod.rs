@@ -58,16 +58,20 @@ fn generate_serde_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
+    /*
     use quick_xml::Foo;
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>("tests/feature/any/example/default.xml");
 
     assert_eq!(obj.name, "abcd");
+    */
+    unimplemented!()
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
+    /*
     use quick_xml::Foo;
 
     let obj = Foo {
@@ -77,6 +81,8 @@ fn write_quick_xml() {
     };
 
     crate::utils::quick_xml_write_test(&obj, "tns:Foo", "tests/feature/any/example/serialize.xml");
+    */
+    unimplemented!()
 }
 
 #[test]

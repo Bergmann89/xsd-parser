@@ -80,15 +80,20 @@ impl WithDeserializer for ChoiceTypeContent {
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
-    use xsd_parser::quick_xml::{
-        BytesStart, DeserializeReader, Deserializer, DeserializerArtifact, DeserializerEvent,
-        DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error, ErrorKind, Event,
-        RawByteStr, WithDeserializer,
+    use xsd_parser::{
+        quick_xml::{
+            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
+            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
+            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+        },
+        xml::{AnyAttributes, AnyElement},
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
+        any_attributes: AnyAttributes,
         name: Option<String>,
         choice: Option<super::ChoiceType>,
+        any_element: Vec<AnyElement>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -104,9 +109,16 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attributes = AnyAttributes::default();
+            for attrib in filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                any_attributes.push(attrib)?;
+            }
             Ok(Self {
+                any_attributes,
                 name: None,
                 choice: None,
+                any_elements: Vec::new(),
                 state: Box::new(FooTypeDeserializerState::Init__),
             })
         }
@@ -301,7 +313,6 @@ pub mod quick_xml_deserialize {
                         });
                     }
                     (S::Init__, event) => {
-                        allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
                         *self.state = FooTypeDeserializerState::Name(None);
                         event
@@ -321,8 +332,6 @@ pub mod quick_xml_deserialize {
                             }
                         } else {
                             *self.state = S::Choice(None);
-                            allow_any_element = true;
-                            fallback.get_or_insert(S::Name(None));
                             event
                         }
                     }
@@ -350,7 +359,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Done__, event) => {
                         fallback.get_or_insert(S::Done__);
-                        break (DeserializerEvent::Continue(event), true);
+                        break (DeserializerEvent::Continue(event), allow_any_element);
                     }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
@@ -375,17 +384,20 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType {
+                any_attributes: self.any_attributes,
                 name: self
                     .name
                     .ok_or_else(|| ErrorKind::MissingElement("Name".into()))?,
                 choice: self
                     .choice
                     .ok_or_else(|| ErrorKind::MissingElement("Choice".into()))?,
+                content: self.any_element,
             })
         }
     }
     #[derive(Debug)]
     pub struct ChoiceTypeDeserializer {
+        any_attributes: AnyAttributes,
         content: Option<super::ChoiceTypeContent>,
         state: Box<ChoiceTypeDeserializerState>,
     }
@@ -401,7 +413,13 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attributes = AnyAttributes::default();
+            for attrib in filter_xmlns_attributes(bytes_start) {
+                let attrib = attrib?;
+                any_attributes.push(attrib)?;
+            }
             Ok(Self {
+                any_attributes,
                 content: None,
                 state: Box::new(ChoiceTypeDeserializerState::Init__),
             })
@@ -530,6 +548,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, ChoiceTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ChoiceType {
+                any_attributes: self.any_attributes,
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
         }
@@ -562,7 +581,7 @@ pub mod quick_xml_deserialize {
                 *self.state = fallback
                     .take()
                     .unwrap_or(ChoiceTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
+                return Ok(ElementHandlerOutput::return_to_parent(event, false));
             };
             if matches!(
                 reader.resolve_local_name(x.name(), &super::NS_TNS),
@@ -574,7 +593,7 @@ pub mod quick_xml_deserialize {
             *self.state = fallback
                 .take()
                 .unwrap_or(ChoiceTypeContentDeserializerState::Init__);
-            Ok(ElementHandlerOutput::return_to_parent(event, true))
+            Ok(ElementHandlerOutput::return_to_parent(event, false))
         }
         fn finish_state<R>(
             reader: &R,

@@ -18,7 +18,7 @@ use crate::{
         },
         misc::Occurs,
         renderer::Renderer,
-        Context,
+        ComplexTypeAny, ComplexTypeAnyAttribute, Context,
     },
     schema::{xs::Use, MaxOccurs},
     types::{ComplexInfo, ElementMode, Ident, TypeVariant, Types},
@@ -798,7 +798,7 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element.is_some();
+        let allow_any = self.allow_any;
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -883,7 +883,7 @@ impl ComplexTypeEnum<'_> {
             },
         );
 
-        let attrib_loop = self.any_attribute.is_none().then(|| {
+        let attrib_loop = self.allow_any_attribute.not().then(|| {
             ctx.add_quick_xml_deserialize_usings([
                 quote!(#xsd_parser::quick_xml::filter_xmlns_attributes),
             ]);
@@ -1101,17 +1101,24 @@ impl ComplexTypeStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_decl(ctx));
+        let any_attributes = self
+            .any_attribute
+            .as_ref()
+            .map(|x| x.deserializer_struct_field_decl(ctx));
         let elements = self
             .elements()
             .iter()
             .map(|x| x.deserializer_struct_field_decl(ctx));
+        let any_elements = self.any().map(|x| x.deserializer_struct_field_decl(ctx));
         let content = self.content().map(|x| x.deserializer_field_decl(ctx));
 
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
                 #( #attributes )*
+                #any_attributes
                 #( #elements )*
+                #any_elements
                 #content
                 state: Box<#deserializer_state_ident>,
             }
@@ -1262,7 +1269,7 @@ impl ComplexTypeStruct<'_> {
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element().is_some();
+        let allow_any = self.allow_any();
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -1320,12 +1327,17 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
         let boxed_deserializer = ctx.get::<BoxedDeserializer>();
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let attrib_var = self.attributes.iter().map(|x| x.deserializer_var_decl(ctx));
+        let any_attrib_var = self
+            .any_attribute
+            .as_ref()
+            .map(|x| x.deserializer_var_decl(ctx));
         let attrib_match = self
             .attributes
             .iter()
@@ -1335,19 +1347,33 @@ impl ComplexTypeStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_init(ctx, &self.type_ident));
+        let any_attrib_init = self
+            .any_attribute
+            .as_ref()
+            .map(|_| ComplexTypeAnyAttribute::deserializer_struct_field_init());
         let element_init = self
             .elements()
             .iter()
             .map(ComplexTypeElement::deserializer_struct_field_init);
+        let any_elements_init = self
+            .any()
+            .map(ComplexTypeAny::deserializer_struct_field_init);
         let content_init = self
             .content()
             .map(ComplexTypeContent::deserializer_struct_field_init);
 
-        let raise_unexpected_attrib = self.any_attribute.is_none().then(|| {
-            let body = quote! {
+        let default_attrib_handler = if self.any_attribute.is_some() {
+            Some(quote! {
+                any_attributes.push(attrib)?;
+            })
+        } else if self.allow_any_attribute {
+            None
+        } else {
+            Some(quote! {
                 reader.raise_unexpected_attrib(attrib)?;
-            };
-
+            })
+        };
+        let default_attrib_handler = default_attrib_handler.map(|body| {
             if self.has_attributes() {
                 quote! {
                     else {
@@ -1359,7 +1385,7 @@ impl ComplexTypeStruct<'_> {
             }
         });
 
-        let need_attrib_loop = self.has_attributes() || raise_unexpected_attrib.is_some();
+        let need_attrib_loop = self.has_attributes() || default_attrib_handler.is_some();
         let attrib_loop = need_attrib_loop.then(|| {
             ctx.add_quick_xml_deserialize_usings([
                 quote!(#xsd_parser::quick_xml::filter_xmlns_attributes),
@@ -1370,7 +1396,8 @@ impl ComplexTypeStruct<'_> {
                     let attrib = attrib?;
 
                     #( #attrib_match )*
-                    #raise_unexpected_attrib
+
+                    #default_attrib_handler
                 }
             }
         });
@@ -1386,7 +1413,9 @@ impl ComplexTypeStruct<'_> {
             quote! {
                 Self {
                     #( #attrib_init )*
+                    #any_attrib_init
                     #( #element_init )*
+                    #any_elements_init
                     #content_init
                     state: Box::new(#deserializer_state_ident::Init__),
                 }
@@ -1408,6 +1437,7 @@ impl ComplexTypeStruct<'_> {
                 R: DeserializeReader,
             {
                 #( #attrib_var )*
+                #any_attrib_var
 
                 #attrib_loop
 
@@ -1572,8 +1602,8 @@ impl ComplexTypeStruct<'_> {
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
         match &self.mode {
-            StructMode::Empty { any_element } => {
-                self.render_deserializer_fn_next_empty(ctx, any_element.is_some())
+            StructMode::Empty { allow_any } => {
+                self.render_deserializer_fn_next_empty(ctx, *allow_any)
             }
             StructMode::Content { content } => {
                 if content.is_simple {
@@ -1781,7 +1811,7 @@ impl ComplexTypeStruct<'_> {
     }
 
     fn render_deserializer_fn_next_sequence(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element().is_some();
+        let allow_any = self.allow_any();
         let xsd_parser = &ctx.xsd_parser_crate;
         let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
@@ -1887,10 +1917,15 @@ impl ComplexTypeStruct<'_> {
             .attributes
             .iter()
             .map(ComplexTypeAttribute::deserializer_struct_field_finish);
+        let any_attributes = self
+            .any_attribute
+            .as_ref()
+            .map(|_| ComplexTypeAnyAttribute::deserializer_struct_field_finish());
         let elements = self
             .elements()
             .iter()
             .map(|x| x.deserializer_struct_field_finish(ctx));
+        let any_elements = self.any().map(|x| x.deserializer_struct_field_finish(ctx));
         let content = self
             .content()
             .map(|x| x.deserializer_struct_field_finish(ctx));
@@ -1903,7 +1938,9 @@ impl ComplexTypeStruct<'_> {
 
             Ok(super::#type_ident {
                 #( #attributes )*
+                #any_attributes
                 #( #elements )*
+                #any_elements
                 #content
             })
         }
@@ -3363,6 +3400,114 @@ impl ComplexTypeElement<'_> {
             ) => {
                 #body
             }
+        }
+    }
+}
+
+impl ComplexTypeAny<'_> {
+    fn deserializer_struct_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let Self {
+            occurs,
+            usings,
+            target_type,
+            ..
+        } = self;
+
+        ctx.add_quick_xml_deserialize_usings([usings]);
+
+        let target_type = match occurs {
+            Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
+            Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
+            e => crate::unreachable!("{:?}", e),
+        };
+
+        quote! {
+            any_element: #target_type,
+        }
+    }
+
+    fn deserializer_struct_field_init(&self) -> TokenStream {
+        let occurs = self.occurs;
+
+        match occurs {
+            Occurs::None => quote!(),
+            Occurs::Single | Occurs::Optional => quote!(any_elements: None,),
+            Occurs::DynamicList | Occurs::StaticList(_) => quote!(any_elements: Vec::new(),),
+        }
+    }
+
+    fn deserializer_struct_field_finish(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let xsd_parser = &ctx.xsd_parser_crate;
+
+        let convert = match self.occurs {
+            Occurs::None => crate::unreachable!(),
+            Occurs::Single => {
+                ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::ErrorKind)]);
+
+                quote! {
+                    self.any_element.ok_or_else(|| ErrorKind::MissingAnyElement)?
+                }
+            }
+            Occurs::Optional | Occurs::DynamicList => {
+                quote! { self.any_element }
+            }
+            Occurs::StaticList(sz) => {
+                ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::ErrorKind)]);
+
+                quote! {
+                    self.any_element.try_into().map_err(|vec: Vec<_>| ErrorKind::InsufficientSize {
+                        min: #sz,
+                        max: #sz,
+                        actual: vec.len(),
+                    })?
+                }
+            }
+        };
+
+        quote! {
+            content: #convert,
+        }
+    }
+}
+
+impl ComplexTypeAnyAttribute<'_> {
+    fn deserializer_struct_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let Self {
+            usings,
+            target_type,
+            ..
+        } = self;
+
+        ctx.add_quick_xml_deserialize_usings([usings]);
+
+        quote! {
+            any_attributes: #target_type,
+        }
+    }
+
+    fn deserializer_var_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let Self {
+            usings,
+            target_type,
+            ..
+        } = self;
+
+        ctx.add_quick_xml_deserialize_usings([usings]);
+
+        quote! {
+            let mut any_attributes = #target_type::default();
+        }
+    }
+
+    fn deserializer_struct_field_init() -> TokenStream {
+        quote! {
+            any_attributes,
+        }
+    }
+
+    fn deserializer_struct_field_finish() -> TokenStream {
+        quote! {
+            any_attributes: self.any_attributes,
         }
     }
 }

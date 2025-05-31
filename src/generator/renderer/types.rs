@@ -8,14 +8,14 @@ use crate::{
     config::{SerdeSupport, TypedefMode},
     generator::{
         data::{
-            ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement,
-            ComplexTypeEnum, ComplexTypeStruct, CustomType, DynamicType, EnumerationType,
-            EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
+            ComplexType, ComplexTypeAny, ComplexTypeAttribute, ComplexTypeContent,
+            ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, CustomType, DynamicType,
+            EnumerationType, EnumerationTypeVariant, ReferenceType, UnionType, UnionTypeVariant,
         },
         misc::Occurs,
-        DynTypeTraits,
+        ComplexTypeAnyAttribute, DynTypeTraits,
     },
-    schema::{xs::Use, MaxOccurs},
+    schema::xs::Use,
 };
 
 use super::{Context, Renderer, TypeData};
@@ -268,23 +268,22 @@ impl ComplexTypeEnum<'_> {
 
         let variants = self.elements.iter().map(|x| x.render_variant(ctx));
 
-        let any = self
-            .any_element
-            .zip(ctx.any_type.as_ref())
-            .map(|(info, ty)| {
-                let min = dbg!(info.min_occurs.unwrap_or(1));
-                let max = dbg!(info.max_occurs.unwrap_or(MaxOccurs::Bounded(1)));
-                let occurs = Occurs::from_occurs(min, max);
+        let any = self.any.as_ref().map(|any| {
+            let ComplexTypeAny {
+                occurs,
+                usings,
+                target_type,
+                ..
+            } = any;
 
-                ctx.add_usings([ty.to_token_stream()]);
+            ctx.add_usings([usings]);
 
-                let ty = ty.ident().to_token_stream();
-                let ty = occurs.make_type(&ty, false);
+            let ty = occurs.make_type(target_type, false);
 
-                quote! {
-                    AnyElement(#ty),
-                }
-            });
+            quote! {
+                AnyElement(#ty),
+            }
+        });
 
         let code = quote! {
             #derive
@@ -313,36 +312,36 @@ impl ComplexTypeStruct<'_> {
         let fields = self.elements().iter().map(|x| x.render_field(ctx));
         let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
 
-        let any = self
-            .any_element()
-            .zip(ctx.any_type.as_ref())
-            .map(|(info, ty)| {
-                let min = dbg!(info.min_occurs.unwrap_or(1));
-                let max = dbg!(info.max_occurs.unwrap_or(MaxOccurs::Bounded(1)));
-                let occurs = Occurs::from_occurs(min, max);
+        let any = self.any().map(|any| {
+            let ComplexTypeAny {
+                occurs,
+                usings,
+                target_type,
+                ..
+            } = any;
 
-                ctx.add_usings([ty.to_token_stream()]);
+            ctx.add_usings([usings]);
 
-                let ty = ty.ident().to_token_stream();
-                let ty = occurs.make_type(&ty, false);
+            let ty = occurs.make_type(target_type, false);
 
-                quote! {
-                    pub any_elements: #ty,
-                }
-            });
+            quote! {
+                pub any_elements: #ty,
+            }
+        });
 
-        let any_attributes =
-            self.any_attribute
-                .zip(ctx.any_attribute_type.as_ref())
-                .map(|(_info, ty)| {
-                    ctx.add_usings([ty.to_token_stream()]);
+        let any_attributes = self.any_attribute.as_ref().map(|any_attrib| {
+            let ComplexTypeAnyAttribute {
+                usings,
+                target_type,
+                ..
+            } = any_attrib;
 
-                    let ty = ty.ident();
+            ctx.add_usings([usings]);
 
-                    quote! {
-                        pub any_attributes: #ty,
-                    }
-                });
+            quote! {
+                pub any_attributes: #target_type,
+            }
+        });
 
         let struct_data = if self.is_unit_struct() {
             quote!(;)

@@ -3,6 +3,7 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
 
 use encoding_rs::{Encoding, UTF_8};
+use indexmap::map::Entry;
 use quick_xml::{
     encoding::decode,
     escape::{resolve_predefined_entity, unescape_with},
@@ -12,8 +13,8 @@ use quick_xml::{
 use indexmap::IndexMap;
 use quick_xml::name::QName;
 
-use crate::misc::format_utf8_slice;
-use crate::quick_xml::Error;
+use crate::misc::{format_utf8_slice, RawByteStr};
+use crate::quick_xml::{Error, ErrorKind};
 
 /// Represents a list of unstructured XML attributes.
 #[derive(Default, Debug, Clone)]
@@ -23,6 +24,30 @@ pub struct Attributes<'a>(IndexMap<Key<'a>, Value<'a>>);
 pub type AnyAttributes = Attributes<'static>;
 
 impl<'a> Attributes<'a> {
+    /// Push a attribute to the list of attributes.
+    ///
+    /// This will push a new owned (static lifetime) attribute to the list of
+    /// attributes. If the attribute already exists, an error is raised.
+    ///
+    /// # Errors
+    ///
+    /// Raises a [`DuplicateAttribute`](ErrorKind::DuplicateAttribute) error if
+    /// the passed attribute is already part of the list.
+    pub fn push(&mut self, attrib: Attribute<'_>) -> Result<(), Error> {
+        let key = Key(Cow::Owned(attrib.key.0.to_owned()));
+
+        match self.0.entry(key) {
+            Entry::Vacant(e) => {
+                e.insert(Value(Cow::Owned(attrib.value.into_owned())));
+
+                Ok(())
+            }
+            Entry::Occupied(e) => {
+                Err(ErrorKind::DuplicateAttribute(RawByteStr::from_slice(e.key())).into())
+            }
+        }
+    }
+
     /// Insert a new attribute into the list.
     ///
     /// Returns the value that already exists for the specified `key`.

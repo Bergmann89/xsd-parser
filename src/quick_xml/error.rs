@@ -115,6 +115,18 @@ pub enum Kind {
     #[error("Duplicate content")]
     DuplicateContent,
 
+    /// Missing any element.
+    ///
+    /// The element was expected to have at least one `xs:any` element, but it haven't.
+    #[error("Missing any element")]
+    MissingAnyElement,
+
+    /// Duplicate content.
+    ///
+    /// The `xs:any` element is only expected once.
+    #[error("Duplicate any element")]
+    DuplicateAnyElement,
+
     /// Missing name.
     ///
     /// The serializer is not able to set a default name for the specified value.

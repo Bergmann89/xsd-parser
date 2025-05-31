@@ -24,10 +24,10 @@ use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
 
 pub use self::context::Context;
 pub use self::data::{
-    BuildInType, ComplexType, ComplexTypeAttribute, ComplexTypeBase, ComplexTypeContent,
-    ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, CustomType, DerivedType, DynamicType,
-    EnumerationType, EnumerationTypeVariant, ReferenceType, StructMode, TypeData, UnionType,
-    UnionTypeVariant,
+    BuildInType, ComplexType, ComplexTypeAny, ComplexTypeAnyAttribute, ComplexTypeAttribute,
+    ComplexTypeBase, ComplexTypeContent, ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct,
+    CustomType, DerivedType, DynamicType, EnumerationType, EnumerationTypeVariant, ReferenceType,
+    StructMode, TypeData, UnionType, UnionTypeVariant,
 };
 pub use self::error::Error;
 pub use self::misc::{BoxFlags, DynTypeTraits, GeneratorFlags, Occurs, SerdeSupport, TypedefMode};
