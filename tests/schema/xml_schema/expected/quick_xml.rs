@@ -3,12 +3,14 @@ use xsd_parser::{
         DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, WithDeserializer,
     },
     schema::Namespace,
+    xml::{AnyAttributes, AnyElement},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub type Schema = SchemaElementType;
 #[derive(Debug)]
 pub struct SchemaElementType {
+    pub any_attribute: AnyAttributes,
     pub target_namespace: Option<String>,
     pub version: Option<String>,
     pub final_default: FullDerivationSetType,
@@ -170,6 +172,7 @@ impl DeserializeBytes for XpathDefaultNamespaceType {
 }
 #[derive(Debug)]
 pub struct IncludeElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub schema_location: String,
     pub annotation: Option<AnnotationElementType>,
@@ -179,6 +182,7 @@ impl WithDeserializer for IncludeElementType {
 }
 #[derive(Debug)]
 pub struct ImportElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<String>,
     pub schema_location: Option<String>,
@@ -189,6 +193,7 @@ impl WithDeserializer for ImportElementType {
 }
 #[derive(Debug)]
 pub struct RedefineElementType {
+    pub any_attribute: AnyAttributes,
     pub schema_location: String,
     pub id: Option<String>,
     pub content: Vec<RedefineElementTypeContent>,
@@ -209,6 +214,7 @@ impl WithDeserializer for RedefineElementTypeContent {
 }
 #[derive(Debug)]
 pub struct OverrideElementType {
+    pub any_attribute: AnyAttributes,
     pub schema_location: String,
     pub id: Option<String>,
     pub content: Vec<OverrideElementTypeContent>,
@@ -232,6 +238,7 @@ impl WithDeserializer for OverrideElementTypeContent {
 }
 #[derive(Debug)]
 pub struct AnnotationElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub content: Vec<AnnotationElementTypeContent>,
 }
@@ -248,6 +255,7 @@ impl WithDeserializer for AnnotationElementTypeContent {
 }
 #[derive(Debug)]
 pub struct DefaultOpenContentElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub applies_to_empty: bool,
     pub mode: DefaultOpenContentModeType,
@@ -269,6 +277,7 @@ impl WithDeserializer for DefaultOpenContentElementType {
 }
 #[derive(Debug)]
 pub struct SimpleBaseType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub final_: Option<SimpleDerivationSetType>,
     pub name: Option<String>,
@@ -289,6 +298,7 @@ impl WithDeserializer for SimpleBaseTypeContent {
 }
 #[derive(Debug)]
 pub struct ComplexBaseType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub mixed: Option<bool>,
@@ -331,6 +341,7 @@ impl WithDeserializer for ComplexBaseTypeContent {
 }
 #[derive(Debug)]
 pub struct GroupType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -366,6 +377,7 @@ impl WithDeserializer for GroupTypeContent {
 }
 #[derive(Debug)]
 pub struct AttributeGroupType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -386,6 +398,7 @@ impl WithDeserializer for AttributeGroupTypeContent {
 }
 #[derive(Debug)]
 pub struct ElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -435,6 +448,7 @@ impl WithDeserializer for ElementTypeContent {
 }
 #[derive(Debug)]
 pub struct AttributeType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -459,6 +473,7 @@ impl WithDeserializer for AttributeType {
 }
 #[derive(Debug)]
 pub struct NotationElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: String,
     pub public: Option<String>,
@@ -511,17 +526,35 @@ impl DeserializeBytes for BlockSetItemType {
 #[derive(Debug)]
 pub struct AppinfoElementType {
     pub source: Option<String>,
+    pub any_attribute: AnyAttributes,
+    pub content: Vec<AppinfoElementTypeContent>,
+}
+#[derive(Debug)]
+pub struct AppinfoElementTypeContent {
+    pub any: AnyElement,
 }
 impl WithDeserializer for AppinfoElementType {
     type Deserializer = quick_xml_deserialize::AppinfoElementTypeDeserializer;
+}
+impl WithDeserializer for AppinfoElementTypeContent {
+    type Deserializer = quick_xml_deserialize::AppinfoElementTypeContentDeserializer;
 }
 #[derive(Debug)]
 pub struct DocumentationElementType {
     pub source: Option<String>,
     pub lang: Option<String>,
+    pub any_attribute: AnyAttributes,
+    pub content: Vec<DocumentationElementTypeContent>,
+}
+#[derive(Debug)]
+pub struct DocumentationElementTypeContent {
+    pub any: AnyElement,
 }
 impl WithDeserializer for DocumentationElementType {
     type Deserializer = quick_xml_deserialize::DocumentationElementTypeDeserializer;
+}
+impl WithDeserializer for DocumentationElementTypeContent {
+    type Deserializer = quick_xml_deserialize::DocumentationElementTypeContentDeserializer;
 }
 #[derive(Debug)]
 pub enum DefaultOpenContentModeType {
@@ -542,6 +575,7 @@ impl DeserializeBytes for DefaultOpenContentModeType {
 }
 #[derive(Debug)]
 pub struct WildcardType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
@@ -577,6 +611,7 @@ impl DeserializeBytes for SimpleDerivationSetType {
 }
 #[derive(Debug)]
 pub struct RestrictionElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub base: Option<String>,
     pub content: Vec<RestrictionElementTypeContent>,
@@ -586,6 +621,7 @@ pub enum RestrictionElementTypeContent {
     Annotation(AnnotationElementType),
     SimpleType(SimpleBaseType),
     Facet(Facet),
+    Any(AnyElement),
 }
 impl WithDeserializer for RestrictionElementType {
     type Deserializer = quick_xml_deserialize::RestrictionElementTypeDeserializer;
@@ -595,6 +631,7 @@ impl WithDeserializer for RestrictionElementTypeContent {
 }
 #[derive(Debug)]
 pub struct ListElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub item_type: Option<String>,
     pub annotation: Option<AnnotationElementType>,
@@ -605,6 +642,7 @@ impl WithDeserializer for ListElementType {
 }
 #[derive(Debug)]
 pub struct UnionElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub member_types: Option<EntitiesType>,
     pub annotation: Option<AnnotationElementType>,
@@ -633,6 +671,7 @@ impl DeserializeBytes for DerivationSetType {
 }
 #[derive(Debug)]
 pub struct SimpleContentElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub content: Vec<SimpleContentElementTypeContent>,
 }
@@ -650,6 +689,7 @@ impl WithDeserializer for SimpleContentElementTypeContent {
 }
 #[derive(Debug)]
 pub struct ComplexContentElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub mixed: Option<bool>,
     pub content: Vec<ComplexContentElementTypeContent>,
@@ -668,6 +708,7 @@ impl WithDeserializer for ComplexContentElementTypeContent {
 }
 #[derive(Debug)]
 pub struct OpenContentElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub mode: OpenContentModeType,
     pub annotation: Option<AnnotationElementType>,
@@ -684,6 +725,7 @@ impl WithDeserializer for OpenContentElementType {
 }
 #[derive(Debug)]
 pub struct AnyAttributeElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
@@ -702,6 +744,7 @@ impl WithDeserializer for AnyAttributeElementType {
 }
 #[derive(Debug)]
 pub struct AssertionType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub test: Option<String>,
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
@@ -728,6 +771,7 @@ impl DeserializeBytes for AllNniType {
 }
 #[derive(Debug)]
 pub struct AnyElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
@@ -771,6 +815,7 @@ impl DeserializeBytes for EntitiesType {
 }
 #[derive(Debug)]
 pub struct AltType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub test: Option<String>,
     pub type_: Option<String>,
@@ -791,6 +836,7 @@ impl WithDeserializer for AltTypeContent {
 }
 #[derive(Debug)]
 pub struct KeybaseType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -810,6 +856,7 @@ impl WithDeserializer for KeybaseTypeContent {
 }
 #[derive(Debug)]
 pub struct KeyrefElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub name: Option<String>,
     pub ref_: Option<String>,
@@ -953,6 +1000,7 @@ impl DeserializeBytes for ReducedDerivationControlList {
 }
 #[derive(Debug)]
 pub struct RestrictionType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub base: String,
     pub content: Vec<RestrictionTypeContent>,
@@ -967,6 +1015,7 @@ pub enum RestrictionTypeContent {
     Sequence(GroupType),
     SimpleType(SimpleBaseType),
     Facet(Facet),
+    Any(AnyElement),
     Attribute(AttributeType),
     AttributeGroup(AttributeGroupType),
     AnyAttribute(AnyAttributeElementType),
@@ -980,6 +1029,7 @@ impl WithDeserializer for RestrictionTypeContent {
 }
 #[derive(Debug)]
 pub struct ExtensionType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub base: String,
     pub content: Vec<ExtensionTypeContent>,
@@ -1054,6 +1104,7 @@ impl DeserializeBytes for QnameListType {
 }
 #[derive(Debug)]
 pub struct FieldElementType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub xpath: String,
     pub xpath_default_namespace: Option<XpathDefaultNamespaceType>,
@@ -1103,6 +1154,7 @@ impl DeserializeBytes for SimpleDerivationSetItemType {
 }
 #[derive(Debug)]
 pub struct FacetType {
+    pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub value: String,
     pub fixed: bool,
@@ -1177,6 +1229,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct SchemaElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         target_namespace: Option<String>,
         version: Option<String>,
         final_default: super::FullDerivationSetType,
@@ -1202,6 +1255,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut target_namespace: Option<String> = None;
             let mut version: Option<String> = None;
             let mut final_default: Option<super::FullDerivationSetType> = None;
@@ -1280,9 +1334,12 @@ pub mod quick_xml_deserialize {
                     Some(b"lang")
                 ) {
                     reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 target_namespace: target_namespace,
                 version: version,
                 final_default: final_default
@@ -1443,6 +1500,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::SchemaElementType {
+                any_attribute: self.any_attribute,
                 target_namespace: self.target_namespace,
                 version: self.version,
                 final_default: self.final_default,
@@ -3085,6 +3143,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct IncludeElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         schema_location: String,
         annotation: Option<super::AnnotationElementType>,
@@ -3102,6 +3161,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut schema_location: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -3116,9 +3176,12 @@ pub mod quick_xml_deserialize {
                     Some(b"schemaLocation")
                 ) {
                     reader.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 schema_location: schema_location.ok_or_else(|| {
                     reader.map_error(ErrorKind::MissingAttribute("schemaLocation".into()))
@@ -3302,6 +3365,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::IncludeElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 schema_location: self.schema_location,
                 annotation: self.annotation,
@@ -3310,6 +3374,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ImportElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         namespace: Option<String>,
         schema_location: Option<String>,
@@ -3328,6 +3393,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<String> = None;
             let mut schema_location: Option<String> = None;
@@ -3348,9 +3414,12 @@ pub mod quick_xml_deserialize {
                     Some(b"schemaLocation")
                 ) {
                     reader.read_attrib(&mut schema_location, b"schemaLocation", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 namespace: namespace,
                 schema_location: schema_location,
@@ -3533,6 +3602,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::ImportElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 namespace: self.namespace,
                 schema_location: self.schema_location,
@@ -3542,6 +3612,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RedefineElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         schema_location: String,
         id: Option<String>,
         content: Vec<super::RedefineElementTypeContent>,
@@ -3559,6 +3630,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut schema_location: Option<String> = None;
             let mut id: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -3573,9 +3645,12 @@ pub mod quick_xml_deserialize {
                     Some(b"id")
                 ) {
                     reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 schema_location: schema_location.ok_or_else(|| {
                     reader.map_error(ErrorKind::MissingAttribute("schemaLocation".into()))
                 })?,
@@ -3720,6 +3795,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::RedefineElementType {
+                any_attribute: self.any_attribute,
                 schema_location: self.schema_location,
                 id: self.id,
                 content: self.content,
@@ -4435,6 +4511,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct OverrideElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         schema_location: String,
         id: Option<String>,
         content: Vec<super::OverrideElementTypeContent>,
@@ -4452,6 +4529,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut schema_location: Option<String> = None;
             let mut id: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -4466,9 +4544,12 @@ pub mod quick_xml_deserialize {
                     Some(b"id")
                 ) {
                     reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 schema_location: schema_location.ok_or_else(|| {
                     reader.map_error(ErrorKind::MissingAttribute("schemaLocation".into()))
                 })?,
@@ -4613,6 +4694,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::OverrideElementType {
+                any_attribute: self.any_attribute,
                 schema_location: self.schema_location,
                 id: self.id,
                 content: self.content,
@@ -5670,6 +5752,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AnnotationElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         content: Vec<super::AnnotationElementTypeContent>,
         state: Box<AnnotationElementTypeDeserializerState>,
@@ -5686,6 +5769,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -5694,9 +5778,12 @@ pub mod quick_xml_deserialize {
                     Some(b"id")
                 ) {
                     reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 content: Vec::new(),
                 state: Box::new(AnnotationElementTypeDeserializerState::Init__),
@@ -5841,6 +5928,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::AnnotationElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 content: self.content,
             })
@@ -6208,6 +6296,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct DefaultOpenContentElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         applies_to_empty: bool,
         mode: super::DefaultOpenContentModeType,
@@ -6228,6 +6317,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut applies_to_empty: Option<bool> = None;
             let mut mode: Option<super::DefaultOpenContentModeType> = None;
@@ -6248,9 +6338,12 @@ pub mod quick_xml_deserialize {
                     Some(b"mode")
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 applies_to_empty: applies_to_empty
                     .unwrap_or_else(super::DefaultOpenContentElementType::default_applies_to_empty),
@@ -6542,6 +6635,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::DefaultOpenContentElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 applies_to_empty: self.applies_to_empty,
                 mode: self.mode,
@@ -6554,6 +6648,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SimpleBaseTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         final_: Option<super::SimpleDerivationSetType>,
         name: Option<String>,
@@ -6572,6 +6667,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut final_: Option<super::SimpleDerivationSetType> = None;
             let mut name: Option<String> = None;
@@ -6592,9 +6688,12 @@ pub mod quick_xml_deserialize {
                     Some(b"name")
                 ) {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 final_: final_,
                 name: name,
@@ -6739,6 +6838,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, SimpleBaseTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::SimpleBaseType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 final_: self.final_,
                 name: self.name,
@@ -7306,6 +7406,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ComplexBaseTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         mixed: Option<bool>,
@@ -7328,6 +7429,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut mixed: Option<bool> = None;
@@ -7376,9 +7478,12 @@ pub mod quick_xml_deserialize {
                         b"defaultAttributesApply",
                         &attrib.value,
                     )?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 mixed: mixed,
@@ -7523,6 +7628,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::ComplexBaseType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 mixed: self.mixed,
@@ -9008,6 +9114,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct GroupTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -9028,6 +9135,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -9060,9 +9168,12 @@ pub mod quick_xml_deserialize {
                     Some(b"maxOccurs")
                 ) {
                     reader.read_attrib(&mut max_occurs, b"maxOccurs", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -9203,6 +9314,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, GroupTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::GroupType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -10064,6 +10176,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AttributeGroupTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -10082,6 +10195,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -10102,9 +10216,12 @@ pub mod quick_xml_deserialize {
                     Some(b"ref")
                 ) {
                     reader.read_attrib(&mut ref_, b"ref", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -10248,6 +10365,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::AttributeGroupType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -10852,6 +10970,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -10882,6 +11001,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -10978,9 +11098,12 @@ pub mod quick_xml_deserialize {
                     Some(b"targetNamespace")
                 ) {
                     reader.read_attrib(&mut target_namespace, b"targetNamespace", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -11132,6 +11255,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, ElementTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -12030,6 +12154,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AttributeTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -12057,6 +12182,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -12119,9 +12245,12 @@ pub mod quick_xml_deserialize {
                     Some(b"inheritable")
                 ) {
                     reader.read_attrib(&mut inheritable, b"inheritable", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -12399,6 +12528,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, AttributeTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AttributeType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -12416,6 +12546,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct NotationElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: String,
         public: Option<String>,
@@ -12435,6 +12566,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut public: Option<String> = None;
@@ -12461,9 +12593,12 @@ pub mod quick_xml_deserialize {
                     Some(b"system")
                 ) {
                     reader.read_attrib(&mut system, b"system", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("name".into())))?,
@@ -12651,6 +12786,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::NotationElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 public: self.public,
@@ -12662,11 +12798,15 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct AppinfoElementTypeDeserializer {
         source: Option<String>,
+        any_attribute: super::AnyAttributes,
+        content: Vec<super::AppinfoElementTypeContent>,
         state: Box<AppinfoElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum AppinfoElementTypeDeserializerState {
         Init__,
+        Next__,
+        Content__(<super::AppinfoElementTypeContent as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl AppinfoElementTypeDeserializer {
@@ -12675,6 +12815,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let mut source: Option<String> = None;
+            let mut any_attribute = super::AnyAttributes::default();
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -12682,10 +12823,14 @@ pub mod quick_xml_deserialize {
                     Some(b"source")
                 ) {
                     reader.read_attrib(&mut source, b"source", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
                 source: source,
+                any_attribute: any_attribute,
+                content: Vec::new(),
                 state: Box::new(AppinfoElementTypeDeserializerState::Init__),
             })
         }
@@ -12697,7 +12842,62 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            if let AppinfoElementTypeDeserializerState::Content__(deserializer) = state {
+                self.store_content(deserializer.finish(reader)?)?;
+            }
             Ok(())
+        }
+        fn store_content(&mut self, value: super::AppinfoElementTypeContent) -> Result<(), Error> {
+            self.content.push(value);
+            Ok(())
+        }
+        fn handle_content<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::AppinfoElementTypeContent>,
+            fallback: &mut Option<AppinfoElementTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                *self.state = fallback
+                    .take()
+                    .unwrap_or(AppinfoElementTypeDeserializerState::Next__);
+                return Ok(ElementHandlerOutput::break_(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_content(data)?;
+                    *self.state = AppinfoElementTypeDeserializerState::Next__;
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state =
+                                AppinfoElementTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(AppinfoElementTypeDeserializerState::Content__(
+                                deserializer,
+                            ));
+                            *self.state = AppinfoElementTypeDeserializerState::Next__;
+                        }
+                    }
+                    ret
+                }
+            })
         }
     }
     impl<'de> Deserializer<'de, super::AppinfoElementType> for AppinfoElementTypeDeserializer {
@@ -12718,19 +12918,47 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            if let Event::End(_) = &event {
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: DeserializerEvent::None,
-                    allow_any: false,
-                })
-            } else {
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event: DeserializerEvent::Break(event),
-                    allow_any: true,
-                })
-            }
+            use AppinfoElementTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Content__(deserializer), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_content(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: DeserializerEvent::None,
+                            allow_any: false,
+                        });
+                    }
+                    (state @ (S::Init__ | S::Next__), event) => {
+                        fallback.get_or_insert(state);
+                        let output = < super :: AppinfoElementTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        match self.handle_content(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Unknown__, _) => unreachable!(),
+                }
+            };
+            let artifact = DeserializerArtifact::Deserializer(self);
+            Ok(DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            })
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::AppinfoElementType, Error>
         where
@@ -12743,6 +12971,233 @@ pub mod quick_xml_deserialize {
             self.finish_state(reader, state)?;
             Ok(super::AppinfoElementType {
                 source: self.source,
+                any_attribute: self.any_attribute,
+                content: self.content,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct AppinfoElementTypeContentDeserializer {
+        any: Option<super::AnyElement>,
+        state: Box<AppinfoElementTypeContentDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum AppinfoElementTypeContentDeserializerState {
+        Init__,
+        Any(Option<<super::AnyElement as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl AppinfoElementTypeContentDeserializer {
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: AppinfoElementTypeContentDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use AppinfoElementTypeContentDeserializerState as S;
+            match state {
+                S::Any(Some(deserializer)) => self.store_any(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_any(&mut self, value: super::AnyElement) -> Result<(), Error> {
+            if self.any.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"any163",
+                )))?;
+            }
+            self.any = Some(value);
+            Ok(())
+        }
+        fn handle_any<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::AnyElement>,
+            fallback: &mut Option<AppinfoElementTypeContentDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                if self.any.is_some() {
+                    fallback.get_or_insert(AppinfoElementTypeContentDeserializerState::Any(None));
+                    *self.state = AppinfoElementTypeContentDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = AppinfoElementTypeContentDeserializerState::Any(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_any(data)?;
+                    *self.state = AppinfoElementTypeContentDeserializerState::Done__;
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(
+                                AppinfoElementTypeContentDeserializerState::Any(Some(deserializer)),
+                            );
+                            *self.state = AppinfoElementTypeContentDeserializerState::Done__;
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state =
+                                AppinfoElementTypeContentDeserializerState::Any(Some(deserializer));
+                        }
+                    }
+                    ret
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::AppinfoElementTypeContent>
+        for AppinfoElementTypeContentDeserializer
+    {
+        fn init<R>(
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AppinfoElementTypeContent>
+        where
+            R: DeserializeReader,
+        {
+            let deserializer = Self {
+                any: None,
+                state: Box::new(AppinfoElementTypeContentDeserializerState::Init__),
+            };
+            let mut output = deserializer.next(reader, event)?;
+            output.artifact = match output.artifact {
+                DeserializerArtifact::Deserializer(x)
+                    if matches!(
+                        &*x.state,
+                        AppinfoElementTypeContentDeserializerState::Init__
+                    ) =>
+                {
+                    DeserializerArtifact::None
+                }
+                artifact => artifact,
+            };
+            Ok(output)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::AppinfoElementTypeContent>
+        where
+            R: DeserializeReader,
+        {
+            use AppinfoElementTypeContentDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let mut is_any_retry = false;
+            let mut any_fallback = None;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Any(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_any(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (_, event @ Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: DeserializerEvent::Continue(event),
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = AppinfoElementTypeContentDeserializerState::Any(None);
+                        event
+                    }
+                    (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if is_any_retry {
+                            let output =
+                                <super::AnyElement as WithDeserializer>::Deserializer::init(
+                                    reader, event,
+                                )?;
+                            match self.handle_any(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        } else {
+                            any_fallback.get_or_insert(S::Any(None));
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => {
+                        if let Some(state) = any_fallback.take() {
+                            is_any_retry = true;
+                            *self.state = state;
+                            event
+                        } else {
+                            fallback.get_or_insert(S::Done__);
+                            break (DeserializerEvent::Continue(event), allow_any_element);
+                        }
+                    }
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::AppinfoElementTypeContent, Error>
+        where
+            R: DeserializeReader,
+        {
+            let state = replace(
+                &mut *self.state,
+                AppinfoElementTypeContentDeserializerState::Unknown__,
+            );
+            self.finish_state(reader, state)?;
+            Ok(super::AppinfoElementTypeContent {
+                any: self
+                    .any
+                    .ok_or_else(|| ErrorKind::MissingElement("any163".into()))?,
             })
         }
     }
@@ -12750,11 +13205,15 @@ pub mod quick_xml_deserialize {
     pub struct DocumentationElementTypeDeserializer {
         source: Option<String>,
         lang: Option<String>,
+        any_attribute: super::AnyAttributes,
+        content: Vec<super::DocumentationElementTypeContent>,
         state: Box<DocumentationElementTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum DocumentationElementTypeDeserializerState {
         Init__,
+        Next__,
+        Content__(<super::DocumentationElementTypeContent as WithDeserializer>::Deserializer),
         Unknown__,
     }
     impl DocumentationElementTypeDeserializer {
@@ -12764,6 +13223,7 @@ pub mod quick_xml_deserialize {
         {
             let mut source: Option<String> = None;
             let mut lang: Option<String> = None;
+            let mut any_attribute = super::AnyAttributes::default();
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -12776,11 +13236,15 @@ pub mod quick_xml_deserialize {
                     Some(b"lang")
                 ) {
                     reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
                 source: source,
                 lang: lang,
+                any_attribute: any_attribute,
+                content: Vec::new(),
                 state: Box::new(DocumentationElementTypeDeserializerState::Init__),
             })
         }
@@ -12792,7 +13256,65 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            if let DocumentationElementTypeDeserializerState::Content__(deserializer) = state {
+                self.store_content(deserializer.finish(reader)?)?;
+            }
             Ok(())
+        }
+        fn store_content(
+            &mut self,
+            value: super::DocumentationElementTypeContent,
+        ) -> Result<(), Error> {
+            self.content.push(value);
+            Ok(())
+        }
+        fn handle_content<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::DocumentationElementTypeContent>,
+            fallback: &mut Option<DocumentationElementTypeDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                *self.state = fallback
+                    .take()
+                    .unwrap_or(DocumentationElementTypeDeserializerState::Next__);
+                return Ok(ElementHandlerOutput::break_(event, allow_any));
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_content(data)?;
+                    *self.state = DocumentationElementTypeDeserializerState::Next__;
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state =
+                                DocumentationElementTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(
+                                DocumentationElementTypeDeserializerState::Content__(deserializer),
+                            );
+                            *self.state = DocumentationElementTypeDeserializerState::Next__;
+                        }
+                    }
+                    ret
+                }
+            })
         }
     }
     impl<'de> Deserializer<'de, super::DocumentationElementType>
@@ -12815,19 +13337,47 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            if let Event::End(_) = &event {
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Data(self.finish(reader)?),
-                    event: DeserializerEvent::None,
-                    allow_any: false,
-                })
-            } else {
-                Ok(DeserializerOutput {
-                    artifact: DeserializerArtifact::Deserializer(self),
-                    event: DeserializerEvent::Break(event),
-                    allow_any: true,
-                })
-            }
+            use DocumentationElementTypeDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Content__(deserializer), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_content(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (_, Event::End(_)) => {
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: DeserializerEvent::None,
+                            allow_any: false,
+                        });
+                    }
+                    (state @ (S::Init__ | S::Next__), event) => {
+                        fallback.get_or_insert(state);
+                        let output = < super :: DocumentationElementTypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        match self.handle_content(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
+                    (S::Unknown__, _) => unreachable!(),
+                }
+            };
+            let artifact = DeserializerArtifact::Deserializer(self);
+            Ok(DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            })
         }
         fn finish<R>(mut self, reader: &R) -> Result<super::DocumentationElementType, Error>
         where
@@ -12841,11 +13391,243 @@ pub mod quick_xml_deserialize {
             Ok(super::DocumentationElementType {
                 source: self.source,
                 lang: self.lang,
+                any_attribute: self.any_attribute,
+                content: self.content,
+            })
+        }
+    }
+    #[derive(Debug)]
+    pub struct DocumentationElementTypeContentDeserializer {
+        any: Option<super::AnyElement>,
+        state: Box<DocumentationElementTypeContentDeserializerState>,
+    }
+    #[derive(Debug)]
+    enum DocumentationElementTypeContentDeserializerState {
+        Init__,
+        Any(Option<<super::AnyElement as WithDeserializer>::Deserializer>),
+        Done__,
+        Unknown__,
+    }
+    impl DocumentationElementTypeContentDeserializer {
+        fn finish_state<R>(
+            &mut self,
+            reader: &R,
+            state: DocumentationElementTypeContentDeserializerState,
+        ) -> Result<(), Error>
+        where
+            R: DeserializeReader,
+        {
+            use DocumentationElementTypeContentDeserializerState as S;
+            match state {
+                S::Any(Some(deserializer)) => self.store_any(deserializer.finish(reader)?)?,
+                _ => (),
+            }
+            Ok(())
+        }
+        fn store_any(&mut self, value: super::AnyElement) -> Result<(), Error> {
+            if self.any.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"any165",
+                )))?;
+            }
+            self.any = Some(value);
+            Ok(())
+        }
+        fn handle_any<'de, R>(
+            &mut self,
+            reader: &R,
+            output: DeserializerOutput<'de, super::AnyElement>,
+            fallback: &mut Option<DocumentationElementTypeContentDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                if self.any.is_some() {
+                    fallback
+                        .get_or_insert(DocumentationElementTypeContentDeserializerState::Any(None));
+                    *self.state = DocumentationElementTypeContentDeserializerState::Done__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                } else {
+                    *self.state = DocumentationElementTypeContentDeserializerState::Any(None);
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+            }
+            if let Some(fallback) = fallback.take() {
+                self.finish_state(reader, fallback)?;
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    self.store_any(data)?;
+                    *self.state = DocumentationElementTypeContentDeserializerState::Done__;
+                    ElementHandlerOutput::from_event(event, allow_any)
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Continue { .. } => {
+                            fallback.get_or_insert(
+                                DocumentationElementTypeContentDeserializerState::Any(Some(
+                                    deserializer,
+                                )),
+                            );
+                            *self.state = DocumentationElementTypeContentDeserializerState::Done__;
+                        }
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = DocumentationElementTypeContentDeserializerState::Any(
+                                Some(deserializer),
+                            );
+                        }
+                    }
+                    ret
+                }
+            })
+        }
+    }
+    impl<'de> Deserializer<'de, super::DocumentationElementTypeContent>
+        for DocumentationElementTypeContentDeserializer
+    {
+        fn init<R>(
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DocumentationElementTypeContent>
+        where
+            R: DeserializeReader,
+        {
+            let deserializer = Self {
+                any: None,
+                state: Box::new(DocumentationElementTypeContentDeserializerState::Init__),
+            };
+            let mut output = deserializer.next(reader, event)?;
+            output.artifact = match output.artifact {
+                DeserializerArtifact::Deserializer(x)
+                    if matches!(
+                        &*x.state,
+                        DocumentationElementTypeContentDeserializerState::Init__
+                    ) =>
+                {
+                    DeserializerArtifact::None
+                }
+                artifact => artifact,
+            };
+            Ok(output)
+        }
+        fn next<R>(
+            mut self,
+            reader: &R,
+            event: Event<'de>,
+        ) -> DeserializerResult<'de, super::DocumentationElementTypeContent>
+        where
+            R: DeserializeReader,
+        {
+            use DocumentationElementTypeContentDeserializerState as S;
+            let mut event = event;
+            let mut fallback = None;
+            let mut allow_any_element = false;
+            let mut is_any_retry = false;
+            let mut any_fallback = None;
+            let (event, allow_any) = loop {
+                let state = replace(&mut *self.state, S::Unknown__);
+                event = match (state, event) {
+                    (S::Any(Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_any(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
+                            }
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                        }
+                    }
+                    (_, event @ Event::End(_)) => {
+                        if let Some(fallback) = fallback.take() {
+                            self.finish_state(reader, fallback)?;
+                        }
+                        return Ok(DeserializerOutput {
+                            artifact: DeserializerArtifact::Data(self.finish(reader)?),
+                            event: DeserializerEvent::Continue(event),
+                            allow_any: false,
+                        });
+                    }
+                    (S::Init__, event) => {
+                        fallback.get_or_insert(S::Init__);
+                        *self.state = DocumentationElementTypeContentDeserializerState::Any(None);
+                        event
+                    }
+                    (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        if is_any_retry {
+                            let output =
+                                <super::AnyElement as WithDeserializer>::Deserializer::init(
+                                    reader, event,
+                                )?;
+                            match self.handle_any(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
+                                }
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                            }
+                        } else {
+                            any_fallback.get_or_insert(S::Any(None));
+                            *self.state = S::Done__;
+                            event
+                        }
+                    }
+                    (S::Done__, event) => {
+                        if let Some(state) = any_fallback.take() {
+                            is_any_retry = true;
+                            *self.state = state;
+                            event
+                        } else {
+                            fallback.get_or_insert(S::Done__);
+                            break (DeserializerEvent::Continue(event), allow_any_element);
+                        }
+                    }
+                    (S::Unknown__, _) => unreachable!(),
+                    (state, event) => {
+                        *self.state = state;
+                        break (DeserializerEvent::Break(event), false);
+                    }
+                }
+            };
+            if let Some(fallback) = fallback {
+                *self.state = fallback;
+            }
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::Deserializer(self),
+                event,
+                allow_any,
+            })
+        }
+        fn finish<R>(mut self, reader: &R) -> Result<super::DocumentationElementTypeContent, Error>
+        where
+            R: DeserializeReader,
+        {
+            let state = replace(
+                &mut *self.state,
+                DocumentationElementTypeContentDeserializerState::Unknown__,
+            );
+            self.finish_state(reader, state)?;
+            Ok(super::DocumentationElementTypeContent {
+                any: self
+                    .any
+                    .ok_or_else(|| ErrorKind::MissingElement("any165".into()))?,
             })
         }
     }
     #[derive(Debug)]
     pub struct WildcardTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
@@ -12865,6 +13647,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
@@ -12891,9 +13674,12 @@ pub mod quick_xml_deserialize {
                     Some(b"processContents")
                 ) {
                     reader.read_attrib(&mut process_contents, b"processContents", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 namespace: namespace,
                 not_namespace: not_namespace,
@@ -13072,6 +13858,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, WildcardTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::WildcardType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 namespace: self.namespace,
                 not_namespace: self.not_namespace,
@@ -13082,6 +13869,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RestrictionElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         base: Option<String>,
         content: Vec<super::RestrictionElementTypeContent>,
@@ -13099,6 +13887,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut base: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -13113,9 +13902,12 @@ pub mod quick_xml_deserialize {
                     Some(b"base")
                 ) {
                     reader.read_attrib(&mut base, b"base", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 base: base,
                 content: Vec::new(),
@@ -13261,6 +14053,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::RestrictionElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
                 content: self.content,
@@ -13286,6 +14079,10 @@ pub mod quick_xml_deserialize {
             Option<super::Facet>,
             Option<<super::Facet as WithDeserializer>::Deserializer>,
         ),
+        Any(
+            Option<super::AnyElement>,
+            Option<<super::AnyElement as WithDeserializer>::Deserializer>,
+        ),
         Done__(super::RestrictionElementTypeContent),
         Unknown__,
     }
@@ -13303,8 +14100,9 @@ pub mod quick_xml_deserialize {
                 *self.state = fallback
                     .take()
                     .unwrap_or(RestrictionElementTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
+                return Ok(ElementHandlerOutput::return_to_parent(event, false));
             };
+            let mut allow_any_element = false;
             if matches!(
                 reader.resolve_local_name(x.name(), &super::NS_XS),
                 Some(b"annotation")
@@ -13323,9 +14121,27 @@ pub mod quick_xml_deserialize {
                     <super::SimpleBaseType as WithDeserializer>::Deserializer::init(reader, event)?;
                 return self.handle_simple_type(reader, Default::default(), output, &mut *fallback);
             }
+            if x.name().local_name().as_ref() == b"any181" {
+                let output =
+                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                return self.handle_any(reader, Default::default(), output, &mut *fallback);
+            }
             let event = {
                 let output = <super::Facet as WithDeserializer>::Deserializer::init(reader, event)?;
                 match self.handle_facet(reader, Default::default(), output, &mut *fallback)? {
+                    ElementHandlerOutput::Continue { event, allow_any } => {
+                        allow_any_element = allow_any_element || allow_any;
+                        event
+                    }
+                    output => {
+                        return Ok(output);
+                    }
+                }
+            };
+            let event = {
+                let output =
+                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                match self.handle_any(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, .. } => event,
                     output => {
                         return Ok(output);
@@ -13335,7 +14151,10 @@ pub mod quick_xml_deserialize {
             *self.state = fallback
                 .take()
                 .unwrap_or(RestrictionElementTypeContentDeserializerState::Init__);
-            Ok(ElementHandlerOutput::return_to_parent(event, true))
+            Ok(ElementHandlerOutput::return_to_parent(
+                event,
+                allow_any_element,
+            ))
         }
         fn finish_state<R>(
             reader: &R,
@@ -13374,6 +14193,15 @@ pub mod quick_xml_deserialize {
                         values.ok_or_else(|| ErrorKind::MissingElement("facet".into()))?,
                     ))
                 }
+                S::Any(mut values, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(reader)?;
+                        Self::store_any(&mut values, value)?;
+                    }
+                    Ok(super::RestrictionElementTypeContent::Any(
+                        values.ok_or_else(|| ErrorKind::MissingElement("any181".into()))?,
+                    ))
+                }
                 S::Done__(data) => Ok(data),
                 S::Unknown__ => unreachable!(),
             }
@@ -13409,6 +14237,18 @@ pub mod quick_xml_deserialize {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"facet",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_any(
+            values: &mut Option<super::AnyElement>,
+            value: super::AnyElement,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"any181",
                 )))?;
             }
             *values = Some(value);
@@ -13594,6 +14434,66 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
+        fn handle_any<'de, R>(
+            &mut self,
+            reader: &R,
+            mut values: Option<super::AnyElement>,
+            output: DeserializerOutput<'de, super::AnyElement>,
+            fallback: &mut Option<RestrictionElementTypeContentDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                *self.state = match fallback.take() {
+                    None => RestrictionElementTypeContentDeserializerState::Init__,
+                    Some(RestrictionElementTypeContentDeserializerState::Any(
+                        _,
+                        Some(deserializer),
+                    )) => RestrictionElementTypeContentDeserializerState::Any(
+                        values,
+                        Some(deserializer),
+                    ),
+                    _ => unreachable!(),
+                };
+                return Ok(ElementHandlerOutput::break_(event, allow_any));
+            }
+            match fallback.take() {
+                None => (),
+                Some(RestrictionElementTypeContentDeserializerState::Any(
+                    _,
+                    Some(deserializer),
+                )) => {
+                    let data = deserializer.finish(reader)?;
+                    Self::store_any(&mut values, data)?;
+                }
+                Some(_) => unreachable!(),
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_any(&mut values, data)?;
+                    let data = Self::finish_state(
+                        reader,
+                        RestrictionElementTypeContentDeserializerState::Any(values, None),
+                    )?;
+                    *self.state = RestrictionElementTypeContentDeserializerState::Done__(data);
+                    ElementHandlerOutput::Break { event, allow_any }
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state = RestrictionElementTypeContentDeserializerState::Any(
+                        values,
+                        Some(deserializer),
+                    );
+                    ElementHandlerOutput::from_event_end(event, allow_any)
+                }
+            })
+        }
     }
     impl<'de> Deserializer<'de, super::RestrictionElementTypeContent>
         for RestrictionElementTypeContentDeserializer
@@ -13663,6 +14563,15 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
+                    (S::Any(values, Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_any(reader, values, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
                     (state, event @ Event::End(_)) => {
                         return Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -13712,6 +14621,17 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
+                    (S::Any(values, None), event) => {
+                        let output = <super::AnyElement as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                        match self.handle_any(reader, values, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
                     (s @ S::Done__(_), event) => {
                         *self.state = s;
                         break (DeserializerEvent::Continue(event), false);
@@ -13739,6 +14659,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ListElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         item_type: Option<String>,
         annotation: Option<super::AnnotationElementType>,
@@ -13758,6 +14679,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut item_type: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -13772,9 +14694,12 @@ pub mod quick_xml_deserialize {
                     Some(b"itemType")
                 ) {
                     reader.read_attrib(&mut item_type, b"itemType", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 item_type: item_type,
                 annotation: None,
@@ -14047,6 +14972,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::ListElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 item_type: self.item_type,
                 annotation: self.annotation,
@@ -14056,6 +14982,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct UnionElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         member_types: Option<super::EntitiesType>,
         annotation: Option<super::AnnotationElementType>,
@@ -14075,6 +15002,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut member_types: Option<super::EntitiesType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -14089,9 +15017,12 @@ pub mod quick_xml_deserialize {
                     Some(b"memberTypes")
                 ) {
                     reader.read_attrib(&mut member_types, b"memberTypes", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 member_types: member_types,
                 annotation: None,
@@ -14362,6 +15293,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::UnionElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 member_types: self.member_types,
                 annotation: self.annotation,
@@ -14371,6 +15303,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SimpleContentElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         content: Vec<super::SimpleContentElementTypeContent>,
         state: Box<SimpleContentElementTypeDeserializerState>,
@@ -14387,6 +15320,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -14395,9 +15329,12 @@ pub mod quick_xml_deserialize {
                     Some(b"id")
                 ) {
                     reader.read_attrib(&mut id, b"id", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 content: Vec::new(),
                 state: Box::new(SimpleContentElementTypeDeserializerState::Init__),
@@ -14549,6 +15486,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::SimpleContentElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 content: self.content,
             })
@@ -15028,6 +15966,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ComplexContentElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         mixed: Option<bool>,
         content: Vec<super::ComplexContentElementTypeContent>,
@@ -15045,6 +15984,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut mixed: Option<bool> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -15059,9 +15999,12 @@ pub mod quick_xml_deserialize {
                     Some(b"mixed")
                 ) {
                     reader.read_attrib(&mut mixed, b"mixed", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 mixed: mixed,
                 content: Vec::new(),
@@ -15214,6 +16157,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::ComplexContentElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 mixed: self.mixed,
                 content: self.content,
@@ -15696,6 +16640,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct OpenContentElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         mode: super::OpenContentModeType,
         annotation: Option<super::AnnotationElementType>,
@@ -15715,6 +16660,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut mode: Option<super::OpenContentModeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -15729,9 +16675,12 @@ pub mod quick_xml_deserialize {
                     Some(b"mode")
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 mode: mode.unwrap_or_else(super::OpenContentElementType::default_mode),
                 annotation: None,
@@ -16006,6 +16955,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::OpenContentElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 mode: self.mode,
                 annotation: self.annotation,
@@ -16015,6 +16965,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AnyAttributeElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
@@ -16035,6 +16986,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
@@ -16067,9 +17019,12 @@ pub mod quick_xml_deserialize {
                     Some(b"notQName")
                 ) {
                     reader.read_attrib(&mut not_q_name, b"notQName", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 namespace: namespace,
                 not_namespace: not_namespace,
@@ -16260,6 +17215,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::AnyAttributeElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 namespace: self.namespace,
                 not_namespace: self.not_namespace,
@@ -16271,6 +17227,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AssertionTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         test: Option<String>,
         xpath_default_namespace: Option<super::XpathDefaultNamespaceType>,
@@ -16289,6 +17246,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut test: Option<String> = None;
             let mut xpath_default_namespace: Option<super::XpathDefaultNamespaceType> = None;
@@ -16313,9 +17271,12 @@ pub mod quick_xml_deserialize {
                         b"xpathDefaultNamespace",
                         &attrib.value,
                     )?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 test: test,
                 xpath_default_namespace: xpath_default_namespace,
@@ -16492,6 +17453,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, AssertionTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AssertionType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 test: self.test,
                 xpath_default_namespace: self.xpath_default_namespace,
@@ -16501,6 +17463,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AnyElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
@@ -16523,6 +17486,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
@@ -16567,9 +17531,12 @@ pub mod quick_xml_deserialize {
                     Some(b"maxOccurs")
                 ) {
                     reader.read_attrib(&mut max_occurs, b"maxOccurs", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 namespace: namespace,
                 not_namespace: not_namespace,
@@ -16751,6 +17718,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, AnyElementTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AnyElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 namespace: self.namespace,
                 not_namespace: self.not_namespace,
@@ -16764,6 +17732,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct AltTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         test: Option<String>,
         type_: Option<String>,
@@ -16783,6 +17752,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut test: Option<String> = None;
             let mut type_: Option<String> = None;
@@ -16813,9 +17783,12 @@ pub mod quick_xml_deserialize {
                         b"xpathDefaultNamespace",
                         &attrib.value,
                     )?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 test: test,
                 type_: type_,
@@ -16958,6 +17931,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, AltTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AltType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 test: self.test,
                 type_: self.type_,
@@ -17410,6 +18384,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct KeybaseTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -17428,6 +18403,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -17448,9 +18424,12 @@ pub mod quick_xml_deserialize {
                     Some(b"ref")
                 ) {
                     reader.read_attrib(&mut ref_, b"ref", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -17582,6 +18561,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, KeybaseTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::KeybaseType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -17999,6 +18979,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct KeyrefElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         name: Option<String>,
         ref_: Option<String>,
@@ -18018,6 +18999,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut name: Option<String> = None;
             let mut ref_: Option<String> = None;
@@ -18044,9 +19026,12 @@ pub mod quick_xml_deserialize {
                     Some(b"refer")
                 ) {
                     reader.read_attrib(&mut refer, b"refer", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 name: name,
                 ref_: ref_,
@@ -18182,6 +19167,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::KeyrefElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 name: self.name,
                 ref_: self.ref_,
@@ -20207,6 +21193,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RestrictionTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         base: String,
         content: Vec<super::RestrictionTypeContent>,
@@ -20224,6 +21211,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut base: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -20238,9 +21226,12 @@ pub mod quick_xml_deserialize {
                     Some(b"base")
                 ) {
                     reader.read_attrib(&mut base, b"base", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 base: base
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("base".into())))?,
@@ -20380,6 +21371,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::RestrictionType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
                 content: self.content,
@@ -20425,6 +21417,10 @@ pub mod quick_xml_deserialize {
             Option<super::Facet>,
             Option<<super::Facet as WithDeserializer>::Deserializer>,
         ),
+        Any(
+            Option<super::AnyElement>,
+            Option<<super::AnyElement as WithDeserializer>::Deserializer>,
+        ),
         Attribute(
             Option<super::AttributeType>,
             Option<<super::AttributeType as WithDeserializer>::Deserializer>,
@@ -20458,8 +21454,9 @@ pub mod quick_xml_deserialize {
                 *self.state = fallback
                     .take()
                     .unwrap_or(RestrictionTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
+                return Ok(ElementHandlerOutput::return_to_parent(event, false));
             };
+            let mut allow_any_element = false;
             if matches!(
                 reader.resolve_local_name(x.name(), &super::NS_XS),
                 Some(b"annotation")
@@ -20525,6 +21522,11 @@ pub mod quick_xml_deserialize {
                     <super::SimpleBaseType as WithDeserializer>::Deserializer::init(reader, event)?;
                 return self.handle_simple_type(reader, Default::default(), output, &mut *fallback);
             }
+            if x.name().local_name().as_ref() == b"any54" {
+                let output =
+                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                return self.handle_any(reader, Default::default(), output, &mut *fallback);
+            }
             if matches!(
                 reader.resolve_local_name(x.name(), &super::NS_XS),
                 Some(b"attribute")
@@ -20573,6 +21575,19 @@ pub mod quick_xml_deserialize {
             let event = {
                 let output = <super::Facet as WithDeserializer>::Deserializer::init(reader, event)?;
                 match self.handle_facet(reader, Default::default(), output, &mut *fallback)? {
+                    ElementHandlerOutput::Continue { event, allow_any } => {
+                        allow_any_element = allow_any_element || allow_any;
+                        event
+                    }
+                    output => {
+                        return Ok(output);
+                    }
+                }
+            };
+            let event = {
+                let output =
+                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                match self.handle_any(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, .. } => event,
                     output => {
                         return Ok(output);
@@ -20582,7 +21597,10 @@ pub mod quick_xml_deserialize {
             *self.state = fallback
                 .take()
                 .unwrap_or(RestrictionTypeContentDeserializerState::Init__);
-            Ok(ElementHandlerOutput::return_to_parent(event, true))
+            Ok(ElementHandlerOutput::return_to_parent(
+                event,
+                allow_any_element,
+            ))
         }
         fn finish_state<R>(
             reader: &R,
@@ -20664,6 +21682,15 @@ pub mod quick_xml_deserialize {
                     }
                     Ok(super::RestrictionTypeContent::Facet(values.ok_or_else(
                         || ErrorKind::MissingElement("facet".into()),
+                    )?))
+                }
+                S::Any(mut values, deserializer) => {
+                    if let Some(deserializer) = deserializer {
+                        let value = deserializer.finish(reader)?;
+                        Self::store_any(&mut values, value)?;
+                    }
+                    Ok(super::RestrictionTypeContent::Any(values.ok_or_else(
+                        || ErrorKind::MissingElement("any54".into()),
                     )?))
                 }
                 S::Attribute(mut values, deserializer) => {
@@ -20795,6 +21822,18 @@ pub mod quick_xml_deserialize {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                     b"facet",
+                )))?;
+            }
+            *values = Some(value);
+            Ok(())
+        }
+        fn store_any(
+            values: &mut Option<super::AnyElement>,
+            value: super::AnyElement,
+        ) -> Result<(), Error> {
+            if values.is_some() {
+                Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
+                    b"any54",
                 )))?;
             }
             *values = Some(value);
@@ -21292,6 +22331,57 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
+        fn handle_any<'de, R>(
+            &mut self,
+            reader: &R,
+            mut values: Option<super::AnyElement>,
+            output: DeserializerOutput<'de, super::AnyElement>,
+            fallback: &mut Option<RestrictionTypeContentDeserializerState>,
+        ) -> Result<ElementHandlerOutput<'de>, Error>
+        where
+            R: DeserializeReader,
+        {
+            let DeserializerOutput {
+                artifact,
+                event,
+                allow_any,
+            } = output;
+            if artifact.is_none() {
+                *self.state = match fallback.take() {
+                    None => RestrictionTypeContentDeserializerState::Init__,
+                    Some(RestrictionTypeContentDeserializerState::Any(_, Some(deserializer))) => {
+                        RestrictionTypeContentDeserializerState::Any(values, Some(deserializer))
+                    }
+                    _ => unreachable!(),
+                };
+                return Ok(ElementHandlerOutput::break_(event, allow_any));
+            }
+            match fallback.take() {
+                None => (),
+                Some(RestrictionTypeContentDeserializerState::Any(_, Some(deserializer))) => {
+                    let data = deserializer.finish(reader)?;
+                    Self::store_any(&mut values, data)?;
+                }
+                Some(_) => unreachable!(),
+            }
+            Ok(match artifact {
+                DeserializerArtifact::None => unreachable!(),
+                DeserializerArtifact::Data(data) => {
+                    Self::store_any(&mut values, data)?;
+                    let data = Self::finish_state(
+                        reader,
+                        RestrictionTypeContentDeserializerState::Any(values, None),
+                    )?;
+                    *self.state = RestrictionTypeContentDeserializerState::Done__(data);
+                    ElementHandlerOutput::Break { event, allow_any }
+                }
+                DeserializerArtifact::Deserializer(deserializer) => {
+                    *self.state =
+                        RestrictionTypeContentDeserializerState::Any(values, Some(deserializer));
+                    ElementHandlerOutput::from_event_end(event, allow_any)
+                }
+            })
+        }
         fn handle_attribute<'de, R>(
             &mut self,
             reader: &R,
@@ -21632,6 +22722,15 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
+                    (S::Any(values, Some(deserializer)), event) => {
+                        let output = deserializer.next(reader, event)?;
+                        match self.handle_any(reader, values, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
                     (S::Attribute(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
                         match self.handle_attribute(reader, values, output, &mut fallback)? {
@@ -21770,6 +22869,17 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
+                    (S::Any(values, None), event) => {
+                        let output = <super::AnyElement as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                        match self.handle_any(reader, values, output, &mut fallback)? {
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
+                            ElementHandlerOutput::Continue { event, .. } => event,
+                        }
+                    }
                     (S::Attribute(values, None), event) => {
                         let output =
                             <super::AttributeType as WithDeserializer>::Deserializer::init(
@@ -21842,6 +22952,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ExtensionTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         base: String,
         content: Vec<super::ExtensionTypeContent>,
@@ -21859,6 +22970,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut base: Option<String> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -21873,9 +22985,12 @@ pub mod quick_xml_deserialize {
                     Some(b"base")
                 ) {
                     reader.read_attrib(&mut base, b"base", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 base: base
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("base".into())))?,
@@ -22015,6 +23130,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, ExtensionTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ExtensionType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 base: self.base,
                 content: self.content,
@@ -23243,6 +24359,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct FieldElementTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         xpath: String,
         xpath_default_namespace: Option<super::XpathDefaultNamespaceType>,
@@ -23261,6 +24378,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut xpath: Option<String> = None;
             let mut xpath_default_namespace: Option<super::XpathDefaultNamespaceType> = None;
@@ -23285,9 +24403,12 @@ pub mod quick_xml_deserialize {
                         b"xpathDefaultNamespace",
                         &attrib.value,
                     )?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 xpath: xpath
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("xpath".into())))?,
@@ -23471,6 +24592,7 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::FieldElementType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 xpath: self.xpath,
                 xpath_default_namespace: self.xpath_default_namespace,
@@ -23480,6 +24602,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct FacetTypeDeserializer {
+        any_attribute: super::AnyAttributes,
         id: Option<String>,
         value: String,
         fixed: bool,
@@ -23498,6 +24621,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
+            let mut any_attribute = super::AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut value: Option<String> = None;
             let mut fixed: Option<bool> = None;
@@ -23518,9 +24642,12 @@ pub mod quick_xml_deserialize {
                     Some(b"fixed")
                 ) {
                     reader.read_attrib(&mut fixed, b"fixed", &attrib.value)?;
+                } else {
+                    any_attribute.push(attrib)?;
                 }
             }
             Ok(Self {
+                any_attribute: any_attribute,
                 id: id,
                 value: value
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("value".into())))?,
@@ -23698,6 +24825,7 @@ pub mod quick_xml_deserialize {
             let state = replace(&mut *self.state, FacetTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FacetType {
+                any_attribute: self.any_attribute,
                 id: self.id,
                 value: self.value,
                 fixed: self.fixed,

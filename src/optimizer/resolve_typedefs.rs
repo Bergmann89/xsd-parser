@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::types::{Base, TypeVariant};
+use crate::types::{AttributeType, Base, ElementType, TypeVariant};
 
 use super::{get_typedefs, Optimizer};
 
@@ -81,12 +81,16 @@ impl Optimizer {
                     }
 
                     for attrib in &mut *x.attributes {
-                        attrib.type_ = typedefs.resolve(&attrib.type_).clone();
+                        if let AttributeType::Type(type_) = &mut attrib.type_ {
+                            *type_ = typedefs.resolve(type_).clone();
+                        }
                     }
                 }
                 TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
-                        element.type_ = typedefs.resolve(&element.type_).clone();
+                        if let ElementType::Type(type_) = &mut element.type_ {
+                            *type_ = typedefs.resolve(type_).clone();
+                        }
                     }
                 }
                 _ => (),

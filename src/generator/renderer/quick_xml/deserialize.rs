@@ -21,7 +21,7 @@ use crate::{
         Context,
     },
     schema::{xs::Use, MaxOccurs},
-    types::{ComplexInfo, ElementMode, Ident, TypeVariant, Types},
+    types::{ComplexInfo, ElementInfo, ElementMode, ElementType, Ident, TypeVariant, Types},
 };
 
 /// Implements a [`Renderer`] that renders the code for the `quick_xml` deserialization.
@@ -798,7 +798,7 @@ impl ComplexTypeEnum<'_> {
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element.is_some();
+        let allow_any = self.allow_any;
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -811,6 +811,11 @@ impl ComplexTypeEnum<'_> {
             .elements
             .iter()
             .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, !allow_any))
+            .collect::<Vec<_>>();
+        let any = self
+            .elements
+            .iter()
+            .filter_map(|x| x.deserializer_enum_variant_init_any(ctx))
             .collect::<Vec<_>>();
 
         let x = if elements.is_empty() {
@@ -855,6 +860,7 @@ impl ComplexTypeEnum<'_> {
 
                 #( #elements )*
                 #( #groups )*
+                #( #any )*
 
                 *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
@@ -883,7 +889,7 @@ impl ComplexTypeEnum<'_> {
             },
         );
 
-        let attrib_loop = self.any_attribute.is_none().then(|| {
+        let attrib_loop = self.allow_any_attribute.not().then(|| {
             ctx.add_quick_xml_deserialize_usings([
                 quote!(#xsd_parser::quick_xml::filter_xmlns_attributes),
             ]);
@@ -1262,7 +1268,7 @@ impl ComplexTypeStruct<'_> {
     }
 
     fn render_deserializer_fn_find_suitable(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element().is_some();
+        let allow_any = self.allow_any();
         let xsd_parser = &ctx.xsd_parser_crate;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -1320,17 +1326,21 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
         let boxed_deserializer = ctx.get::<BoxedDeserializer>();
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let mut index = 0;
+        let mut any_attribute = None;
+
         let attrib_var = self.attributes.iter().map(|x| x.deserializer_var_decl(ctx));
         let attrib_match = self
             .attributes
             .iter()
-            .enumerate()
-            .map(|(i, x)| x.deserializer_matcher(ctx, i == 0));
+            .filter_map(|x| x.deserializer_matcher(ctx, &mut index, &mut any_attribute))
+            .collect::<Vec<_>>();
         let attrib_init = self
             .attributes
             .iter()
@@ -1343,12 +1353,13 @@ impl ComplexTypeStruct<'_> {
             .content()
             .map(ComplexTypeContent::deserializer_struct_field_init);
 
-        let raise_unexpected_attrib = self.any_attribute.is_none().then(|| {
-            let body = quote! {
-                reader.raise_unexpected_attrib(attrib)?;
-            };
+        let has_normal_attributes = index > 0;
+        let need_default_handler = !self.allow_any_attribute || any_attribute.is_some();
+        let default_attrib_handler = need_default_handler.then(|| {
+            let body = any_attribute
+                .unwrap_or_else(|| quote! { reader.raise_unexpected_attrib(attrib)?; });
 
-            if self.has_attributes() {
+            if has_normal_attributes {
                 quote! {
                     else {
                         #body
@@ -1359,7 +1370,7 @@ impl ComplexTypeStruct<'_> {
             }
         });
 
-        let need_attrib_loop = self.has_attributes() || raise_unexpected_attrib.is_some();
+        let need_attrib_loop = self.has_attributes() || default_attrib_handler.is_some();
         let attrib_loop = need_attrib_loop.then(|| {
             ctx.add_quick_xml_deserialize_usings([
                 quote!(#xsd_parser::quick_xml::filter_xmlns_attributes),
@@ -1370,7 +1381,8 @@ impl ComplexTypeStruct<'_> {
                     let attrib = attrib?;
 
                     #( #attrib_match )*
-                    #raise_unexpected_attrib
+
+                    #default_attrib_handler
                 }
             }
         });
@@ -1572,8 +1584,8 @@ impl ComplexTypeStruct<'_> {
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
         match &self.mode {
-            StructMode::Empty { any_element } => {
-                self.render_deserializer_fn_next_empty(ctx, any_element.is_some())
+            StructMode::Empty { allow_any } => {
+                self.render_deserializer_fn_next_empty(ctx, *allow_any)
             }
             StructMode::Content { content } => {
                 if content.is_simple {
@@ -1780,8 +1792,9 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_next_sequence(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let allow_any = self.any_element().is_some();
+        let allow_any = self.allow_any();
         let xsd_parser = &ctx.xsd_parser_crate;
         let (event_at, return_end_event) = self.return_end_event(ctx);
         let deserializer_state_ident = &self.deserializer_state_ident;
@@ -1811,16 +1824,43 @@ impl ComplexTypeStruct<'_> {
             quote!(#xsd_parser::quick_xml::DeserializerArtifact),
         ]);
 
+        let any_retry = self.has_any.then(|| {
+            quote! {
+                let mut is_any_retry = false;
+                let mut any_fallback = None;
+            }
+        });
+
         let init_set_any = allow_any.then(|| {
             quote! {
                 allow_any_element = true;
             }
         });
+
         let done_allow_any = if allow_any {
             quote!(true)
         } else {
             quote!(allow_any_element)
         };
+
+        let mut handle_done = quote! {
+            fallback.get_or_insert(S::Done__);
+            break (DeserializerEvent::Continue(event), #done_allow_any);
+        };
+
+        if self.has_any {
+            handle_done = quote! {
+                if let Some(state) = any_fallback.take() {
+                    is_any_retry = true;
+
+                    *self.state = state;
+
+                    event
+                } else {
+                    #handle_done
+                }
+            };
+        }
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1828,6 +1868,7 @@ impl ComplexTypeStruct<'_> {
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
+            #any_retry
 
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
@@ -1856,8 +1897,7 @@ impl ComplexTypeStruct<'_> {
                     },
                     #( #handlers_create )*
                     (S::Done__, event) => {
-                        fallback.get_or_insert(S::Done__);
-                        break (DeserializerEvent::Continue(event), #done_allow_any);
+                        #handle_done
                     },
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
@@ -2245,26 +2285,41 @@ impl ComplexTypeContent {
 }
 
 impl ComplexTypeAttribute<'_> {
-    fn deserializer_matcher(&self, ctx: &Context<'_, '_>, is_first: bool) -> TokenStream {
+    fn deserializer_matcher(
+        &self,
+        ctx: &Context<'_, '_>,
+        index: &mut usize,
+        any_attribute: &mut Option<TokenStream>,
+    ) -> Option<TokenStream> {
         let b_name = &self.b_name;
         let field_ident = &self.ident;
 
-        let else_ = is_first.not().then(|| quote!(else));
+        let else_ = (*index).gt(&0).then(|| quote!(else));
 
-        if let Some(module) = self.info.ident.ns.and_then(|ns| ctx.types.modules.get(&ns)) {
+        if self.info.is_any() {
+            *any_attribute = Some(quote! {
+                #field_ident.push(attrib)?;
+            });
+
+            None
+        } else if let Some(module) = self.info.ident.ns.and_then(|ns| ctx.types.modules.get(&ns)) {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
-            quote! {
+            *index += 1;
+
+            Some(quote! {
                 #else_ if matches!(reader.resolve_local_name(attrib.key, &#ns_name), Some(#b_name)) {
                     reader.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
-            }
+            })
         } else {
-            quote! {
+            *index += 1;
+
+            Some(quote! {
                 #else_ if attrib.key.local_name().as_ref() == #b_name {
                     reader.read_attrib(&mut #field_ident, #b_name, &attrib.value)?;
                 }
-            }
+            })
         }
     }
 
@@ -2272,7 +2327,11 @@ impl ComplexTypeAttribute<'_> {
         let field_ident = &self.ident;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        quote!(let mut #field_ident: Option<#target_type> = None;)
+        if self.info.is_any() {
+            quote!(let mut #field_ident = #target_type::default();)
+        } else {
+            quote!(let mut #field_ident: Option<#target_type> = None;)
+        }
     }
 
     fn deserializer_struct_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -2298,7 +2357,9 @@ impl ComplexTypeAttribute<'_> {
         let field_ident = &self.ident;
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let convert = if self.default_value.is_some() {
+        let convert = if self.info.is_any() {
+            None
+        } else if self.default_value.is_some() {
             let default_fn_ident = format_ident!("default_{field_ident}");
 
             Some(quote! { .unwrap_or_else(super::#type_ident::#default_fn_ident) })
@@ -2343,12 +2404,20 @@ impl ComplexTypeElement<'_> {
         format_ident!("handle_{ident}")
     }
 
-    fn treat_as_group(&self) -> bool {
-        self.info.element_mode == ElementMode::Group || self.target_is_dynamic
+    #[inline]
+    fn treat_as_any(&self) -> bool {
+        self.info.is_any()
     }
 
+    #[inline]
+    fn treat_as_group(&self) -> bool {
+        !self.treat_as_any()
+            && (self.info.element_mode == ElementMode::Group || self.target_is_dynamic)
+    }
+
+    #[inline]
     fn treat_as_element(&self) -> bool {
-        !self.treat_as_group()
+        !self.treat_as_group() && !self.treat_as_group()
     }
 
     fn target_type_allows_any(&self, types: &Types) -> bool {
@@ -2359,23 +2428,30 @@ impl ComplexTypeElement<'_> {
 
             match types.get_variant(ident) {
                 Some(TypeVariant::All(si) | TypeVariant::Choice(si)) => {
-                    if si.any.is_some() {
-                        return true;
-                    }
-
-                    si.elements.iter().any(|f| walk(types, visit, &f.type_))
-                }
-                Some(TypeVariant::Sequence(si)) => {
-                    if si.any.is_some() {
-                        return true;
-                    }
-
-                    if let Some(first) = si.elements.first() {
-                        return walk(types, visit, &first.type_);
+                    for element in &*si.elements {
+                        match &element.type_ {
+                            ElementType::Any(_) => return true,
+                            ElementType::Type(type_) => {
+                                if walk(types, visit, type_) {
+                                    return true;
+                                }
+                            }
+                        }
                     }
 
                     false
                 }
+                Some(TypeVariant::Sequence(si)) => match si.elements.first() {
+                    None => false,
+                    Some(ElementInfo {
+                        type_: ElementType::Any(_),
+                        ..
+                    }) => true,
+                    Some(ElementInfo {
+                        type_: ElementType::Type(type_),
+                        ..
+                    }) => walk(types, visit, type_),
+                },
                 Some(TypeVariant::ComplexType(ComplexInfo {
                     content: Some(content),
                     ..
@@ -2386,7 +2462,10 @@ impl ComplexTypeElement<'_> {
 
         let mut visit = HashSet::new();
 
-        walk(types, &mut visit, &self.info.type_)
+        match &self.info.type_ {
+            ElementType::Any(_) => true,
+            ElementType::Type(type_) => walk(types, &mut visit, type_),
+        }
     }
 
     fn deserializer_init_element(
@@ -2508,6 +2587,32 @@ impl ComplexTypeElement<'_> {
             quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
         self.deserializer_init_group(ctx, handle_any, &call_handler)
+    }
+
+    fn deserializer_enum_variant_init_any(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if !self.treat_as_any() {
+            return None;
+        }
+
+        let xsd_parser = &ctx.xsd_parser_crate;
+        let handler_ident = self.handler_ident();
+        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+
+        ctx.add_quick_xml_deserialize_usings([
+            quote!(#xsd_parser::quick_xml::WithDeserializer),
+            quote!(#xsd_parser::quick_xml::ElementHandlerOutput),
+        ]);
+
+        Some(quote! {
+            let event = {
+                let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
+
+                match self.#handler_ident(reader, Default::default(), output, &mut *fallback)? {
+                    ElementHandlerOutput::Continue { event, .. } => event,
+                    output => { return Ok(output); }
+                }
+            };
+        })
     }
 
     fn deserializer_enum_variant_finish(
@@ -3292,6 +3397,7 @@ impl ComplexTypeElement<'_> {
         }
     }
 
+    #[allow(clippy::too_many_lines)]
     fn deserializer_struct_field_fn_next_sequence_create(
         &self,
         ctx: &Context<'_, '_>,
@@ -3319,6 +3425,9 @@ impl ComplexTypeElement<'_> {
             }
         });
 
+        let need_name_matcher =
+            !self.target_is_dynamic && self.info.element_mode == ElementMode::Element;
+
         let mut body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
             match self.#handler_ident(reader, output, &mut fallback)? {
@@ -3331,9 +3440,19 @@ impl ComplexTypeElement<'_> {
             }
         };
 
-        let need_name_matcher =
-            !self.target_is_dynamic && self.info.element_mode == ElementMode::Element;
-        if need_name_matcher {
+        if self.info.is_any() {
+            body = quote! {
+                if is_any_retry {
+                    #body
+                } else {
+                    any_fallback.get_or_insert(S::#variant_ident(None));
+
+                    *self.state = #next_state;
+
+                    event
+                }
+            };
+        } else if need_name_matcher {
             let ns_name = self
                 .info
                 .ident

@@ -15,8 +15,8 @@ use crate::config::Namespace;
 use crate::schema::xs::ProcessContentsType;
 use crate::schema::{MaxOccurs, Schemas};
 use crate::types::{
-    AnyAttributeInfo, AnyInfo, BuildInInfo, ComplexInfo, CustomInfo, GroupInfo, Ident, Module,
-    Name, ReferenceInfo, Type, TypeVariant, Types,
+    AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, CustomInfo, ElementInfo,
+    GroupInfo, Ident, IdentType, Module, Name, ReferenceInfo, Type, TypeVariant, Types,
 };
 
 pub use error::Error;
@@ -231,35 +231,62 @@ impl<'a> Interpreter<'a> {
             .resolve_namespace(&Some(Namespace::XS))
             .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
 
-        // content type
+        /* content type */
+
+        let any_name = Name::named("any");
+        let any_ident = Ident::new(any_name).with_type(IdentType::Element);
+        let mut any = ElementInfo::any(
+            any_ident,
+            AnyInfo {
+                id: None,
+                namespace: None,
+                not_q_name: None,
+                not_namespace: None,
+                process_contents: ProcessContentsType::Lax,
+            },
+        );
+        any.min_occurs = 0;
+        any.max_occurs = MaxOccurs::Unbounded;
+
+        let mut content_sequence = GroupInfo::default();
+        content_sequence.elements.push_any(any);
+
         let content_name = self.state.name_builder().shared_name("Content").finish();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
-        let content_variant = TypeVariant::Sequence(GroupInfo {
-            any: Some(AnyInfo {
-                min_occurs: Some(0),
-                max_occurs: Some(MaxOccurs::Unbounded),
-                process_contents: Some(ProcessContentsType::Lax),
-                ..Default::default()
-            }),
-            ..Default::default()
-        });
+        let content_variant = TypeVariant::Sequence(content_sequence);
         let content_type = Type::new(content_variant);
+
         self.state
             .add_type(content_ident.clone(), content_type, true)?;
 
-        // xs:anyType
+        /* xs:anyType */
+
         let ident = Ident::type_("anyType").with_ns(Some(xs));
-        let variant = TypeVariant::ComplexType(ComplexInfo {
+
+        let any_attribute_name = Name::named("any_attribute");
+        let any_attribute_ident = Ident::new(any_attribute_name).with_type(IdentType::Attribute);
+        let any_attribute = AttributeInfo::any(
+            any_attribute_ident,
+            AnyAttributeInfo {
+                id: None,
+                namespace: None,
+                not_q_name: None,
+                not_namespace: None,
+                process_contents: ProcessContentsType::Lax,
+            },
+        );
+
+        let mut complex = ComplexInfo {
             content: Some(content_ident),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
-            any_attribute: Some(AnyAttributeInfo {
-                process_contents: Some(ProcessContentsType::Lax),
-                ..Default::default()
-            }),
             ..Default::default()
-        });
+        };
+        complex.attributes.push(any_attribute);
+
+        let variant = TypeVariant::ComplexType(complex);
         let type_ = Type::new(variant);
+
         self.state.add_type(ident, type_, true)?;
 
         Ok(self)

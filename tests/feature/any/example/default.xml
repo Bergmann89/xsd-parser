@@ -1,5 +1,15 @@
-<tns:Foo xmlns:tns="http://example.com">
+<tns:Foo xmlns:tns="http://example.com" any="fuu">
+  <tns:Name>abc</tns:Name>
   <AnyElement />
-  <tns:Name>abcd</tns:Name>
-  <AnyElement />
+  <AnotherElement />
+  <tns:Choice any="bar">
+    <tns:Name>def</tns:Name>
+  </tns:Choice>
+  <tns:Choice>
+    <AnyElement2 />
+  </tns:Choice>
+  <tns:Choice>
+    <AnotherElement2 />
+  </tns:Choice>
+  <LastElement />
 </tns:Foo>

@@ -3,6 +3,9 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use crate::schema::xs::{
+    BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListType,
+};
 use crate::schema::{MaxOccurs, MinOccurs};
 use crate::types::{Ident, TypeEq, Types};
 
@@ -13,7 +16,7 @@ pub struct ElementInfo {
     pub ident: Ident,
 
     /// Type of the element.
-    pub type_: Ident,
+    pub type_: ElementType,
 
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
@@ -26,6 +29,28 @@ pub struct ElementInfo {
 
     /// Name of the element to use inside the generated code.
     pub display_name: Option<String>,
+}
+
+/// Type of a [`ElementInfo`]
+#[derive(Debug, Clone)]
+pub enum ElementType {
+    /// The element is a `xs:any`.
+    Any(AnyInfo),
+
+    /// The element has a specific type.
+    Type(Ident),
+}
+
+/// Contains information about elements that may occur in the XML file that
+/// are not explicitly defined by the schema.
+#[allow(missing_docs)]
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub struct AnyInfo {
+    pub id: Option<String>,
+    pub namespace: Option<NamespaceListType>,
+    pub not_q_name: Option<QnameListType>,
+    pub not_namespace: Option<BasicNamespaceListType>,
+    pub process_contents: ProcessContentsType,
 }
 
 /// Type information that represents a list of [`ElementInfo`] instances.
@@ -51,11 +76,40 @@ impl ElementInfo {
     pub fn new(ident: Ident, type_: Ident, element_mode: ElementMode) -> Self {
         Self {
             ident,
-            type_,
+            type_: ElementType::Type(type_),
             element_mode,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
+        }
+    }
+
+    /// Create a new [`ElementInfo`] instance for an `xs:any` element.
+    #[must_use]
+    pub fn any(ident: Ident, any: AnyInfo) -> Self {
+        Self {
+            ident,
+            type_: ElementType::Any(any),
+            element_mode: ElementMode::Element,
+            min_occurs: 1,
+            max_occurs: MaxOccurs::Bounded(1),
+            display_name: None,
+        }
+    }
+
+    /// Returns `true` if this element represents an `xs:any` element, `false` otherwise.
+    #[must_use]
+    pub fn is_any(&self) -> bool {
+        matches!(&self.type_, ElementType::Any(_))
+    }
+
+    /// Returns the [`AnyInfo`] if this element is a `xs:any`.
+    #[must_use]
+    pub fn as_any(&self) -> Option<&AnyInfo> {
+        if let ElementType::Any(any) = &self.type_ {
+            Some(any)
+        } else {
+            None
         }
     }
 }
@@ -100,6 +154,30 @@ impl TypeEq for ElementInfo {
 
 /* ElementsInfo */
 
+impl ElementsInfo {
+    /// Push a new `xs:any` element to the list.
+    ///
+    /// This will update the names of all `xs:any` elements, if more than
+    /// one element was added.
+    pub fn push_any(&mut self, mut el: ElementInfo) {
+        let mut i = 0;
+        for element in &mut self.0 {
+            if element.is_any() && element.ident.name.is_generated() {
+                element.display_name = Some(format!("any_{i}"));
+                i += 1;
+            }
+        }
+
+        el.display_name = Some(if i > 0 {
+            format!("any_{i}")
+        } else {
+            "any".into()
+        });
+
+        self.0.push(el);
+    }
+}
+
 impl Deref for ElementsInfo {
     type Target = Vec<ElementInfo>;
 
@@ -121,5 +199,41 @@ impl TypeEq for ElementsInfo {
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
+    }
+}
+
+/* ElementType */
+
+impl TypeEq for ElementType {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+        match self {
+            Self::Any(x) => {
+                hasher.write_u8(0);
+                x.hash(hasher);
+            }
+            Self::Type(x) => {
+                hasher.write_u8(1);
+                x.type_hash(hasher, types);
+            }
+        }
+    }
+
+    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+        match (self, other) {
+            (Self::Any(a), Self::Any(b)) => a.eq(b),
+            (Self::Type(a), Self::Type(b)) => a.type_eq(b, types),
+            (_, _) => false,
+        }
+    }
+}
+
+/* AnyInfo */
+
+impl Hash for AnyInfo {
+    fn hash<H: Hasher>(&self, hasher: &mut H) {
+        // HACK: We currently only hash the id, because the types from the `xs`
+        // module do not implement `Hash`.
+
+        self.id.hash(hasher);
     }
 }

@@ -352,7 +352,7 @@ pub struct X509DataType {
 }
 #[derive(Debug)]
 pub struct X509DataTypeContent {
-    pub content_37: X509DataContent37Type,
+    pub content_43: X509DataContent43Type,
 }
 impl WithSerializer for X509DataType {
     type Serializer<'x> = quick_xml_serialize::X509DataTypeSerializer<'x>;
@@ -396,8 +396,8 @@ pub struct PgpDataType {
 }
 #[derive(Debug)]
 pub enum PgpDataTypeContent {
-    Content40(PgpDataContent40Type),
-    Content41(PgpDataContent41Type),
+    Content47(PgpDataContent47Type),
+    Content49(PgpDataContent49Type),
 }
 impl WithSerializer for PgpDataType {
     type Serializer<'x> = quick_xml_serialize::PgpDataTypeSerializer<'x>;
@@ -525,11 +525,11 @@ impl WithDeserializer for DigestMethodType {
 }
 #[derive(Debug)]
 pub struct DsaKeyValueType {
-    pub content_48: Option<DsaKeyValueContent48Type>,
+    pub content_60: Option<DsaKeyValueContent60Type>,
     pub g: Option<String>,
     pub y: String,
     pub j: Option<String>,
-    pub content_49: Option<DsaKeyValueContent49Type>,
+    pub content_61: Option<DsaKeyValueContent61Type>,
 }
 impl WithSerializer for DsaKeyValueType {
     type Serializer<'x> = quick_xml_serialize::DsaKeyValueTypeSerializer<'x>;
@@ -573,19 +573,19 @@ impl WithDeserializer for RsaKeyValueType {
     type Deserializer = quick_xml_deserialize::RsaKeyValueTypeDeserializer;
 }
 #[derive(Debug)]
-pub struct X509DataContent37Type {
-    pub content: X509DataContent37TypeContent,
+pub struct X509DataContent43Type {
+    pub content: X509DataContent43TypeContent,
 }
 #[derive(Debug)]
-pub enum X509DataContent37TypeContent {
+pub enum X509DataContent43TypeContent {
     X509IssuerSerial(X509IssuerSerialType),
     X509Ski(String),
     X509SubjectName(String),
     X509Certificate(String),
     X509Crl(String),
 }
-impl WithSerializer for X509DataContent37Type {
-    type Serializer<'x> = quick_xml_serialize::X509DataContent37TypeSerializer<'x>;
+impl WithSerializer for X509DataContent43Type {
+    type Serializer<'x> = quick_xml_serialize::X509DataContent43TypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -593,14 +593,14 @@ impl WithSerializer for X509DataContent37Type {
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
         let _is_root = is_root;
-        Ok(quick_xml_serialize::X509DataContent37TypeSerializer {
+        Ok(quick_xml_serialize::X509DataContent43TypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::X509DataContent37TypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::X509DataContent43TypeSerializerState::Init__),
         })
     }
 }
-impl WithSerializer for X509DataContent37TypeContent {
-    type Serializer<'x> = quick_xml_serialize::X509DataContent37TypeContentSerializer<'x>;
+impl WithSerializer for X509DataContent43TypeContent {
+    type Serializer<'x> = quick_xml_serialize::X509DataContent43TypeContentSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -609,28 +609,28 @@ impl WithSerializer for X509DataContent37TypeContent {
         let _name = name;
         let _is_root = is_root;
         Ok(
-            quick_xml_serialize::X509DataContent37TypeContentSerializer {
+            quick_xml_serialize::X509DataContent43TypeContentSerializer {
                 value: self,
                 state: Box::new(
-                    quick_xml_serialize::X509DataContent37TypeContentSerializerState::Init__,
+                    quick_xml_serialize::X509DataContent43TypeContentSerializerState::Init__,
                 ),
             },
         )
     }
 }
-impl WithDeserializer for X509DataContent37Type {
-    type Deserializer = quick_xml_deserialize::X509DataContent37TypeDeserializer;
+impl WithDeserializer for X509DataContent43Type {
+    type Deserializer = quick_xml_deserialize::X509DataContent43TypeDeserializer;
 }
-impl WithDeserializer for X509DataContent37TypeContent {
-    type Deserializer = quick_xml_deserialize::X509DataContent37TypeContentDeserializer;
+impl WithDeserializer for X509DataContent43TypeContent {
+    type Deserializer = quick_xml_deserialize::X509DataContent43TypeContentDeserializer;
 }
 #[derive(Debug)]
-pub struct PgpDataContent40Type {
+pub struct PgpDataContent47Type {
     pub pgp_key_id: String,
     pub pgp_key_packet: Option<String>,
 }
-impl WithSerializer for PgpDataContent40Type {
-    type Serializer<'x> = quick_xml_serialize::PgpDataContent40TypeSerializer<'x>;
+impl WithSerializer for PgpDataContent47Type {
+    type Serializer<'x> = quick_xml_serialize::PgpDataContent47TypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -638,21 +638,21 @@ impl WithSerializer for PgpDataContent40Type {
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
         let _is_root = is_root;
-        Ok(quick_xml_serialize::PgpDataContent40TypeSerializer {
+        Ok(quick_xml_serialize::PgpDataContent47TypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::PgpDataContent40TypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::PgpDataContent47TypeSerializerState::Init__),
         })
     }
 }
-impl WithDeserializer for PgpDataContent40Type {
-    type Deserializer = quick_xml_deserialize::PgpDataContent40TypeDeserializer;
+impl WithDeserializer for PgpDataContent47Type {
+    type Deserializer = quick_xml_deserialize::PgpDataContent47TypeDeserializer;
 }
 #[derive(Debug)]
-pub struct PgpDataContent41Type {
+pub struct PgpDataContent49Type {
     pub pgp_key_packet: String,
 }
-impl WithSerializer for PgpDataContent41Type {
-    type Serializer<'x> = quick_xml_serialize::PgpDataContent41TypeSerializer<'x>;
+impl WithSerializer for PgpDataContent49Type {
+    type Serializer<'x> = quick_xml_serialize::PgpDataContent49TypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -660,14 +660,14 @@ impl WithSerializer for PgpDataContent41Type {
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
         let _is_root = is_root;
-        Ok(quick_xml_serialize::PgpDataContent41TypeSerializer {
+        Ok(quick_xml_serialize::PgpDataContent49TypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::PgpDataContent41TypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::PgpDataContent49TypeSerializerState::Init__),
         })
     }
 }
-impl WithDeserializer for PgpDataContent41Type {
-    type Deserializer = quick_xml_deserialize::PgpDataContent41TypeDeserializer;
+impl WithDeserializer for PgpDataContent49Type {
+    type Deserializer = quick_xml_deserialize::PgpDataContent49TypeDeserializer;
 }
 #[derive(Debug)]
 pub struct TransformType {
@@ -715,12 +715,12 @@ impl WithDeserializer for TransformTypeContent {
     type Deserializer = quick_xml_deserialize::TransformTypeContentDeserializer;
 }
 #[derive(Debug)]
-pub struct DsaKeyValueContent48Type {
+pub struct DsaKeyValueContent60Type {
     pub p: String,
     pub q: String,
 }
-impl WithSerializer for DsaKeyValueContent48Type {
-    type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent48TypeSerializer<'x>;
+impl WithSerializer for DsaKeyValueContent60Type {
+    type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent60TypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -728,22 +728,22 @@ impl WithSerializer for DsaKeyValueContent48Type {
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
         let _is_root = is_root;
-        Ok(quick_xml_serialize::DsaKeyValueContent48TypeSerializer {
+        Ok(quick_xml_serialize::DsaKeyValueContent60TypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::DsaKeyValueContent48TypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::DsaKeyValueContent60TypeSerializerState::Init__),
         })
     }
 }
-impl WithDeserializer for DsaKeyValueContent48Type {
-    type Deserializer = quick_xml_deserialize::DsaKeyValueContent48TypeDeserializer;
+impl WithDeserializer for DsaKeyValueContent60Type {
+    type Deserializer = quick_xml_deserialize::DsaKeyValueContent60TypeDeserializer;
 }
 #[derive(Debug)]
-pub struct DsaKeyValueContent49Type {
+pub struct DsaKeyValueContent61Type {
     pub seed: String,
     pub pgen_counter: String,
 }
-impl WithSerializer for DsaKeyValueContent49Type {
-    type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent49TypeSerializer<'x>;
+impl WithSerializer for DsaKeyValueContent61Type {
+    type Serializer<'x> = quick_xml_serialize::DsaKeyValueContent61TypeSerializer<'x>;
     fn serializer<'ser>(
         &'ser self,
         name: Option<&'ser str>,
@@ -751,14 +751,14 @@ impl WithSerializer for DsaKeyValueContent49Type {
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
         let _is_root = is_root;
-        Ok(quick_xml_serialize::DsaKeyValueContent49TypeSerializer {
+        Ok(quick_xml_serialize::DsaKeyValueContent61TypeSerializer {
             value: self,
-            state: Box::new(quick_xml_serialize::DsaKeyValueContent49TypeSerializerState::Init__),
+            state: Box::new(quick_xml_serialize::DsaKeyValueContent61TypeSerializerState::Init__),
         })
     }
 }
-impl WithDeserializer for DsaKeyValueContent49Type {
-    type Deserializer = quick_xml_deserialize::DsaKeyValueContent49TypeDeserializer;
+impl WithDeserializer for DsaKeyValueContent61Type {
+    type Deserializer = quick_xml_deserialize::DsaKeyValueContent61TypeDeserializer;
 }
 #[derive(Debug)]
 pub struct X509IssuerSerialType {
@@ -2451,8 +2451,6 @@ pub mod quick_xml_deserialize {
                             }
                         } else {
                             *self.state = S::Reference(None);
-                            allow_any_element = true;
-                            fallback.get_or_insert(S::SignatureMethod(None));
                             event
                         }
                     }
@@ -5458,13 +5456,13 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct X509DataTypeContentDeserializer {
-        content_37: Option<super::X509DataContent37Type>,
+        content_43: Option<super::X509DataContent43Type>,
         state: Box<X509DataTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     enum X509DataTypeContentDeserializerState {
         Init__,
-        Content37(Option<<super::X509DataContent37Type as WithDeserializer>::Deserializer>),
+        Content43(Option<<super::X509DataContent43Type as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -5479,26 +5477,26 @@ pub mod quick_xml_deserialize {
         {
             use X509DataTypeContentDeserializerState as S;
             match state {
-                S::Content37(Some(deserializer)) => {
-                    self.store_content_37(deserializer.finish(reader)?)?
+                S::Content43(Some(deserializer)) => {
+                    self.store_content_43(deserializer.finish(reader)?)?
                 }
                 _ => (),
             }
             Ok(())
         }
-        fn store_content_37(&mut self, value: super::X509DataContent37Type) -> Result<(), Error> {
-            if self.content_37.is_some() {
+        fn store_content_43(&mut self, value: super::X509DataContent43Type) -> Result<(), Error> {
+            if self.content_43.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content37",
+                    b"Content43",
                 )))?;
             }
-            self.content_37 = Some(value);
+            self.content_43 = Some(value);
             Ok(())
         }
-        fn handle_content_37<'de, R>(
+        fn handle_content_43<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::X509DataContent37Type>,
+            output: DeserializerOutput<'de, super::X509DataContent43Type>,
             fallback: &mut Option<X509DataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5510,12 +5508,12 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                if self.content_37.is_some() {
-                    fallback.get_or_insert(X509DataTypeContentDeserializerState::Content37(None));
+                if self.content_43.is_some() {
+                    fallback.get_or_insert(X509DataTypeContentDeserializerState::Content43(None));
                     *self.state = X509DataTypeContentDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = X509DataTypeContentDeserializerState::Content37(None);
+                    *self.state = X509DataTypeContentDeserializerState::Content43(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -5525,7 +5523,7 @@ pub mod quick_xml_deserialize {
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    self.store_content_37(data)?;
+                    self.store_content_43(data)?;
                     *self.state = X509DataTypeContentDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
@@ -5534,13 +5532,13 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                X509DataTypeContentDeserializerState::Content37(Some(deserializer)),
+                                X509DataTypeContentDeserializerState::Content43(Some(deserializer)),
                             );
                             *self.state = X509DataTypeContentDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                X509DataTypeContentDeserializerState::Content37(Some(deserializer));
+                                X509DataTypeContentDeserializerState::Content43(Some(deserializer));
                         }
                     }
                     ret
@@ -5557,7 +5555,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let deserializer = Self {
-                content_37: None,
+                content_43: None,
                 state: Box::new(X509DataTypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
@@ -5586,9 +5584,9 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
                 event = match (state, event) {
-                    (S::Content37(Some(deserializer)), event) => {
+                    (S::Content43(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_37(reader, output, &mut fallback)? {
+                        match self.handle_content_43(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5610,15 +5608,15 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = X509DataTypeContentDeserializerState::Content37(None);
+                        *self.state = X509DataTypeContentDeserializerState::Content43(None);
                         event
                     }
-                    (S::Content37(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                    (S::Content43(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output =
-                            <super::X509DataContent37Type as WithDeserializer>::Deserializer::init(
+                            <super::X509DataContent43Type as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
-                        match self.handle_content_37(reader, output, &mut fallback)? {
+                        match self.handle_content_43(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -5658,9 +5656,9 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::X509DataTypeContent {
-                content_37: self
-                    .content_37
-                    .ok_or_else(|| ErrorKind::MissingElement("Content37".into()))?,
+                content_43: self
+                    .content_43
+                    .ok_or_else(|| ErrorKind::MissingElement("Content43".into()))?,
             })
         }
     }
@@ -5825,13 +5823,13 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub enum PgpDataTypeContentDeserializerState {
         Init__,
-        Content40(
-            Option<super::PgpDataContent40Type>,
-            Option<<super::PgpDataContent40Type as WithDeserializer>::Deserializer>,
+        Content47(
+            Option<super::PgpDataContent47Type>,
+            Option<<super::PgpDataContent47Type as WithDeserializer>::Deserializer>,
         ),
-        Content41(
-            Option<super::PgpDataContent41Type>,
-            Option<<super::PgpDataContent41Type as WithDeserializer>::Deserializer>,
+        Content49(
+            Option<super::PgpDataContent49Type>,
+            Option<<super::PgpDataContent49Type as WithDeserializer>::Deserializer>,
         ),
         Done__(super::PgpDataTypeContent),
         Unknown__,
@@ -5854,10 +5852,10 @@ pub mod quick_xml_deserialize {
             };
             let mut allow_any_element = false;
             let event = {
-                let output = <super::PgpDataContent40Type as WithDeserializer>::Deserializer::init(
+                let output = <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
                     reader, event,
                 )?;
-                match self.handle_content_40(reader, Default::default(), output, &mut *fallback)? {
+                match self.handle_content_47(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
                         event
@@ -5868,10 +5866,10 @@ pub mod quick_xml_deserialize {
                 }
             };
             let event = {
-                let output = <super::PgpDataContent41Type as WithDeserializer>::Deserializer::init(
+                let output = <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
                     reader, event,
                 )?;
-                match self.handle_content_41(reader, Default::default(), output, &mut *fallback)? {
+                match self.handle_content_49(reader, Default::default(), output, &mut *fallback)? {
                     ElementHandlerOutput::Continue { event, allow_any } => {
                         allow_any_element = allow_any_element || allow_any;
                         event
@@ -5899,57 +5897,57 @@ pub mod quick_xml_deserialize {
             use PgpDataTypeContentDeserializerState as S;
             match state {
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
-                S::Content40(mut values, deserializer) => {
+                S::Content47(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
-                        Self::store_content_40(&mut values, value)?;
+                        Self::store_content_47(&mut values, value)?;
                     }
-                    Ok(super::PgpDataTypeContent::Content40(values.ok_or_else(
-                        || ErrorKind::MissingElement("Content40".into()),
+                    Ok(super::PgpDataTypeContent::Content47(values.ok_or_else(
+                        || ErrorKind::MissingElement("Content47".into()),
                     )?))
                 }
-                S::Content41(mut values, deserializer) => {
+                S::Content49(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
                         let value = deserializer.finish(reader)?;
-                        Self::store_content_41(&mut values, value)?;
+                        Self::store_content_49(&mut values, value)?;
                     }
-                    Ok(super::PgpDataTypeContent::Content41(values.ok_or_else(
-                        || ErrorKind::MissingElement("Content41".into()),
+                    Ok(super::PgpDataTypeContent::Content49(values.ok_or_else(
+                        || ErrorKind::MissingElement("Content49".into()),
                     )?))
                 }
                 S::Done__(data) => Ok(data),
                 S::Unknown__ => unreachable!(),
             }
         }
-        fn store_content_40(
-            values: &mut Option<super::PgpDataContent40Type>,
-            value: super::PgpDataContent40Type,
+        fn store_content_47(
+            values: &mut Option<super::PgpDataContent47Type>,
+            value: super::PgpDataContent47Type,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content40",
+                    b"Content47",
                 )))?;
             }
             *values = Some(value);
             Ok(())
         }
-        fn store_content_41(
-            values: &mut Option<super::PgpDataContent41Type>,
-            value: super::PgpDataContent41Type,
+        fn store_content_49(
+            values: &mut Option<super::PgpDataContent49Type>,
+            value: super::PgpDataContent49Type,
         ) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content41",
+                    b"Content49",
                 )))?;
             }
             *values = Some(value);
             Ok(())
         }
-        fn handle_content_40<'de, R>(
+        fn handle_content_47<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::PgpDataContent40Type>,
-            output: DeserializerOutput<'de, super::PgpDataContent40Type>,
+            mut values: Option<super::PgpDataContent47Type>,
+            output: DeserializerOutput<'de, super::PgpDataContent47Type>,
             fallback: &mut Option<PgpDataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -5963,8 +5961,8 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => PgpDataTypeContentDeserializerState::Init__,
-                    Some(PgpDataTypeContentDeserializerState::Content40(_, Some(deserializer))) => {
-                        PgpDataTypeContentDeserializerState::Content40(values, Some(deserializer))
+                    Some(PgpDataTypeContentDeserializerState::Content47(_, Some(deserializer))) => {
+                        PgpDataTypeContentDeserializerState::Content47(values, Some(deserializer))
                     }
                     _ => unreachable!(),
                 };
@@ -5972,35 +5970,35 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(PgpDataTypeContentDeserializerState::Content40(_, Some(deserializer))) => {
+                Some(PgpDataTypeContentDeserializerState::Content47(_, Some(deserializer))) => {
                     let data = deserializer.finish(reader)?;
-                    Self::store_content_40(&mut values, data)?;
+                    Self::store_content_47(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    Self::store_content_40(&mut values, data)?;
+                    Self::store_content_47(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        PgpDataTypeContentDeserializerState::Content40(values, None),
+                        PgpDataTypeContentDeserializerState::Content47(values, None),
                     )?;
                     *self.state = PgpDataTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     *self.state =
-                        PgpDataTypeContentDeserializerState::Content40(values, Some(deserializer));
+                        PgpDataTypeContentDeserializerState::Content47(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
         }
-        fn handle_content_41<'de, R>(
+        fn handle_content_49<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::PgpDataContent41Type>,
-            output: DeserializerOutput<'de, super::PgpDataContent41Type>,
+            mut values: Option<super::PgpDataContent49Type>,
+            output: DeserializerOutput<'de, super::PgpDataContent49Type>,
             fallback: &mut Option<PgpDataTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6014,8 +6012,8 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = match fallback.take() {
                     None => PgpDataTypeContentDeserializerState::Init__,
-                    Some(PgpDataTypeContentDeserializerState::Content41(_, Some(deserializer))) => {
-                        PgpDataTypeContentDeserializerState::Content41(values, Some(deserializer))
+                    Some(PgpDataTypeContentDeserializerState::Content49(_, Some(deserializer))) => {
+                        PgpDataTypeContentDeserializerState::Content49(values, Some(deserializer))
                     }
                     _ => unreachable!(),
                 };
@@ -6023,26 +6021,26 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(PgpDataTypeContentDeserializerState::Content41(_, Some(deserializer))) => {
+                Some(PgpDataTypeContentDeserializerState::Content49(_, Some(deserializer))) => {
                     let data = deserializer.finish(reader)?;
-                    Self::store_content_41(&mut values, data)?;
+                    Self::store_content_49(&mut values, data)?;
                 }
                 Some(_) => unreachable!(),
             }
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    Self::store_content_41(&mut values, data)?;
+                    Self::store_content_49(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        PgpDataTypeContentDeserializerState::Content41(values, None),
+                        PgpDataTypeContentDeserializerState::Content49(values, None),
                     )?;
                     *self.state = PgpDataTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     *self.state =
-                        PgpDataTypeContentDeserializerState::Content41(values, Some(deserializer));
+                        PgpDataTypeContentDeserializerState::Content49(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
@@ -6084,18 +6082,18 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
                 event = match (state, event) {
-                    (S::Content40(values, Some(deserializer)), event) => {
+                    (S::Content47(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_40(reader, values, output, &mut fallback)? {
+                        match self.handle_content_47(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Content41(values, Some(deserializer)), event) => {
+                    (S::Content49(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_41(reader, values, output, &mut fallback)? {
+                        match self.handle_content_49(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -6117,24 +6115,24 @@ pub mod quick_xml_deserialize {
                         }
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
-                    (S::Content40(values, None), event) => {
+                    (S::Content47(values, None), event) => {
                         let output =
-                            <super::PgpDataContent40Type as WithDeserializer>::Deserializer::init(
+                            <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
-                        match self.handle_content_40(reader, values, output, &mut fallback)? {
+                        match self.handle_content_47(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Content41(values, None), event) => {
+                    (S::Content49(values, None), event) => {
                         let output =
-                            <super::PgpDataContent41Type as WithDeserializer>::Deserializer::init(
+                            <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
                                 reader, event,
                             )?;
-                        match self.handle_content_41(reader, values, output, &mut fallback)? {
+                        match self.handle_content_49(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
                             }
@@ -6841,21 +6839,21 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct DsaKeyValueTypeDeserializer {
-        content_48: Option<super::DsaKeyValueContent48Type>,
+        content_60: Option<super::DsaKeyValueContent60Type>,
         g: Option<String>,
         y: Option<String>,
         j: Option<String>,
-        content_49: Option<super::DsaKeyValueContent49Type>,
+        content_61: Option<super::DsaKeyValueContent61Type>,
         state: Box<DsaKeyValueTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum DsaKeyValueTypeDeserializerState {
         Init__,
-        Content48(Option<<super::DsaKeyValueContent48Type as WithDeserializer>::Deserializer>),
+        Content60(Option<<super::DsaKeyValueContent60Type as WithDeserializer>::Deserializer>),
         G(Option<<String as WithDeserializer>::Deserializer>),
         Y(Option<<String as WithDeserializer>::Deserializer>),
         J(Option<<String as WithDeserializer>::Deserializer>),
-        Content49(Option<<super::DsaKeyValueContent49Type as WithDeserializer>::Deserializer>),
+        Content61(Option<<super::DsaKeyValueContent61Type as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -6869,11 +6867,11 @@ pub mod quick_xml_deserialize {
                 reader.raise_unexpected_attrib(attrib)?;
             }
             Ok(Self {
-                content_48: None,
+                content_60: None,
                 g: None,
                 y: None,
                 j: None,
-                content_49: None,
+                content_61: None,
                 state: Box::new(DsaKeyValueTypeDeserializerState::Init__),
             })
         }
@@ -6887,29 +6885,29 @@ pub mod quick_xml_deserialize {
         {
             use DsaKeyValueTypeDeserializerState as S;
             match state {
-                S::Content48(Some(deserializer)) => {
-                    self.store_content_48(deserializer.finish(reader)?)?
+                S::Content60(Some(deserializer)) => {
+                    self.store_content_60(deserializer.finish(reader)?)?
                 }
                 S::G(Some(deserializer)) => self.store_g(deserializer.finish(reader)?)?,
                 S::Y(Some(deserializer)) => self.store_y(deserializer.finish(reader)?)?,
                 S::J(Some(deserializer)) => self.store_j(deserializer.finish(reader)?)?,
-                S::Content49(Some(deserializer)) => {
-                    self.store_content_49(deserializer.finish(reader)?)?
+                S::Content61(Some(deserializer)) => {
+                    self.store_content_61(deserializer.finish(reader)?)?
                 }
                 _ => (),
             }
             Ok(())
         }
-        fn store_content_48(
+        fn store_content_60(
             &mut self,
-            value: super::DsaKeyValueContent48Type,
+            value: super::DsaKeyValueContent60Type,
         ) -> Result<(), Error> {
-            if self.content_48.is_some() {
+            if self.content_60.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content48",
+                    b"Content60",
                 )))?;
             }
-            self.content_48 = Some(value);
+            self.content_60 = Some(value);
             Ok(())
         }
         fn store_g(&mut self, value: String) -> Result<(), Error> {
@@ -6933,22 +6931,22 @@ pub mod quick_xml_deserialize {
             self.j = Some(value);
             Ok(())
         }
-        fn store_content_49(
+        fn store_content_61(
             &mut self,
-            value: super::DsaKeyValueContent49Type,
+            value: super::DsaKeyValueContent61Type,
         ) -> Result<(), Error> {
-            if self.content_49.is_some() {
+            if self.content_61.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"Content49",
+                    b"Content61",
                 )))?;
             }
-            self.content_49 = Some(value);
+            self.content_61 = Some(value);
             Ok(())
         }
-        fn handle_content_48<'de, R>(
+        fn handle_content_60<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DsaKeyValueContent48Type>,
+            output: DeserializerOutput<'de, super::DsaKeyValueContent60Type>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -6960,7 +6958,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content48(None));
+                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content60(None));
                 *self.state = DsaKeyValueTypeDeserializerState::G(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -6970,7 +6968,7 @@ pub mod quick_xml_deserialize {
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    self.store_content_48(data)?;
+                    self.store_content_60(data)?;
                     *self.state = DsaKeyValueTypeDeserializerState::G(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
@@ -6978,14 +6976,14 @@ pub mod quick_xml_deserialize {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content48(
+                            fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content60(
                                 Some(deserializer),
                             ));
                             *self.state = DsaKeyValueTypeDeserializerState::G(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                DsaKeyValueTypeDeserializerState::Content48(Some(deserializer));
+                                DsaKeyValueTypeDeserializerState::Content60(Some(deserializer));
                         }
                     }
                     ret
@@ -7105,7 +7103,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(DsaKeyValueTypeDeserializerState::J(None));
-                *self.state = DsaKeyValueTypeDeserializerState::Content49(None);
+                *self.state = DsaKeyValueTypeDeserializerState::Content61(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -7115,7 +7113,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_j(data)?;
-                    *self.state = DsaKeyValueTypeDeserializerState::Content49(None);
+                    *self.state = DsaKeyValueTypeDeserializerState::Content61(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -7125,7 +7123,7 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(DsaKeyValueTypeDeserializerState::J(Some(
                                 deserializer,
                             )));
-                            *self.state = DsaKeyValueTypeDeserializerState::Content49(None);
+                            *self.state = DsaKeyValueTypeDeserializerState::Content61(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state = DsaKeyValueTypeDeserializerState::J(Some(deserializer));
@@ -7135,10 +7133,10 @@ pub mod quick_xml_deserialize {
                 }
             })
         }
-        fn handle_content_49<'de, R>(
+        fn handle_content_61<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::DsaKeyValueContent49Type>,
+            output: DeserializerOutput<'de, super::DsaKeyValueContent61Type>,
             fallback: &mut Option<DsaKeyValueTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -7150,7 +7148,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content49(None));
+                fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content61(None));
                 *self.state = DsaKeyValueTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
@@ -7160,7 +7158,7 @@ pub mod quick_xml_deserialize {
             Ok(match artifact {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
-                    self.store_content_49(data)?;
+                    self.store_content_61(data)?;
                     *self.state = DsaKeyValueTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
@@ -7168,14 +7166,14 @@ pub mod quick_xml_deserialize {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content49(
+                            fallback.get_or_insert(DsaKeyValueTypeDeserializerState::Content61(
                                 Some(deserializer),
                             ));
                             *self.state = DsaKeyValueTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                DsaKeyValueTypeDeserializerState::Content49(Some(deserializer));
+                                DsaKeyValueTypeDeserializerState::Content61(Some(deserializer));
                         }
                     }
                     ret
@@ -7205,9 +7203,9 @@ pub mod quick_xml_deserialize {
             let (event, allow_any) = loop {
                 let state = replace(&mut *self.state, S::Unknown__);
                 event = match (state, event) {
-                    (S::Content48(Some(deserializer)), event) => {
+                    (S::Content60(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_48(reader, output, &mut fallback)? {
+                        match self.handle_content_60(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7253,9 +7251,9 @@ pub mod quick_xml_deserialize {
                             }
                         }
                     }
-                    (S::Content49(Some(deserializer)), event) => {
+                    (S::Content61(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
-                        match self.handle_content_49(reader, output, &mut fallback)? {
+                        match self.handle_content_61(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7277,12 +7275,12 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = DsaKeyValueTypeDeserializerState::Content48(None);
+                        *self.state = DsaKeyValueTypeDeserializerState::Content60(None);
                         event
                     }
-                    (S::Content48(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: DsaKeyValueContent48Type as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                        match self.handle_content_48(reader, output, &mut fallback)? {
+                    (S::Content60(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output = < super :: DsaKeyValueContent60Type as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        match self.handle_content_60(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7342,13 +7340,13 @@ pub mod quick_xml_deserialize {
                                 }
                             }
                         } else {
-                            *self.state = S::Content49(None);
+                            *self.state = S::Content61(None);
                             event
                         }
                     }
-                    (S::Content49(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        let output = < super :: DsaKeyValueContent49Type as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                        match self.handle_content_49(reader, output, &mut fallback)? {
+                    (S::Content61(None), event @ (Event::Start(_) | Event::Empty(_))) => {
+                        let output = < super :: DsaKeyValueContent61Type as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        match self.handle_content_61(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Continue { event, allow_any } => {
                                 allow_any_element = allow_any_element || allow_any;
                                 event
@@ -7388,13 +7386,13 @@ pub mod quick_xml_deserialize {
             );
             self.finish_state(reader, state)?;
             Ok(super::DsaKeyValueType {
-                content_48: self.content_48,
+                content_60: self.content_60,
                 g: self.g,
                 y: self
                     .y
                     .ok_or_else(|| ErrorKind::MissingElement("Y".into()))?,
                 j: self.j,
-                content_49: self.content_49,
+                content_61: self.content_61,
             })
         }
     }
@@ -7707,35 +7705,35 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct X509DataContent37TypeDeserializer {
-        content: Option<super::X509DataContent37TypeContent>,
-        state: Box<X509DataContent37TypeDeserializerState>,
+    pub struct X509DataContent43TypeDeserializer {
+        content: Option<super::X509DataContent43TypeContent>,
+        state: Box<X509DataContent43TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum X509DataContent37TypeDeserializerState {
+    enum X509DataContent43TypeDeserializerState {
         Init__,
         Next__,
-        Content__(<super::X509DataContent37TypeContent as WithDeserializer>::Deserializer),
+        Content__(<super::X509DataContent43TypeContent as WithDeserializer>::Deserializer),
         Done__,
         Unknown__,
     }
-    impl X509DataContent37TypeDeserializer {
+    impl X509DataContent43TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: X509DataContent37TypeDeserializerState,
+            state: X509DataContent43TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            if let X509DataContent37TypeDeserializerState::Content__(deserializer) = state {
+            if let X509DataContent43TypeDeserializerState::Content__(deserializer) = state {
                 self.store_content(deserializer.finish(reader)?)?;
             }
             Ok(())
         }
         fn store_content(
             &mut self,
-            value: super::X509DataContent37TypeContent,
+            value: super::X509DataContent43TypeContent,
         ) -> Result<(), Error> {
             if self.content.is_some() {
                 Err(ErrorKind::DuplicateContent)?;
@@ -7746,8 +7744,8 @@ pub mod quick_xml_deserialize {
         fn handle_content<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::X509DataContent37TypeContent>,
-            fallback: &mut Option<X509DataContent37TypeDeserializerState>,
+            output: DeserializerOutput<'de, super::X509DataContent43TypeContent>,
+            fallback: &mut Option<X509DataContent43TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7760,7 +7758,7 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 *self.state = fallback
                     .take()
-                    .unwrap_or(X509DataContent37TypeDeserializerState::Next__);
+                    .unwrap_or(X509DataContent43TypeDeserializerState::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -7770,32 +7768,32 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state = X509DataContent37TypeDeserializerState::Done__;
+                    *self.state = X509DataContent43TypeDeserializerState::Done__;
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeDeserializerState::Content__(deserializer);
+                    *self.state = X509DataContent43TypeDeserializerState::Content__(deserializer);
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
         }
     }
-    impl<'de> Deserializer<'de, super::X509DataContent37Type> for X509DataContent37TypeDeserializer {
+    impl<'de> Deserializer<'de, super::X509DataContent43Type> for X509DataContent43TypeDeserializer {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::X509DataContent37Type>
+        ) -> DeserializerResult<'de, super::X509DataContent43Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 content: None,
-                state: Box::new(X509DataContent37TypeDeserializerState::Init__),
+                state: Box::new(X509DataContent43TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, X509DataContent37TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, X509DataContent43TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -7807,11 +7805,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::X509DataContent37Type>
+        ) -> DeserializerResult<'de, super::X509DataContent43Type>
         where
             R: DeserializeReader,
         {
-            use X509DataContent37TypeDeserializerState as S;
+            use X509DataContent43TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
@@ -7835,7 +7833,7 @@ pub mod quick_xml_deserialize {
                     }
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
-                        let output = < super :: X509DataContent37TypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = < super :: X509DataContent43TypeContent as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         match self.handle_content(reader, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -7860,26 +7858,26 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::X509DataContent37Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::X509DataContent43Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                X509DataContent37TypeDeserializerState::Unknown__,
+                X509DataContent43TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::X509DataContent37Type {
+            Ok(super::X509DataContent43Type {
                 content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
         }
     }
     #[derive(Debug)]
-    pub struct X509DataContent37TypeContentDeserializer {
-        state: Box<X509DataContent37TypeContentDeserializerState>,
+    pub struct X509DataContent43TypeContentDeserializer {
+        state: Box<X509DataContent43TypeContentDeserializerState>,
     }
     #[derive(Debug)]
-    pub enum X509DataContent37TypeContentDeserializerState {
+    pub enum X509DataContent43TypeContentDeserializerState {
         Init__,
         X509IssuerSerial(
             Option<super::X509IssuerSerialType>,
@@ -7901,15 +7899,15 @@ pub mod quick_xml_deserialize {
             Option<String>,
             Option<<String as WithDeserializer>::Deserializer>,
         ),
-        Done__(super::X509DataContent37TypeContent),
+        Done__(super::X509DataContent43TypeContent),
         Unknown__,
     }
-    impl X509DataContent37TypeContentDeserializer {
+    impl X509DataContent43TypeContentDeserializer {
         fn find_suitable<'de, R>(
             &mut self,
             reader: &R,
             event: Event<'de>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -7917,7 +7915,7 @@ pub mod quick_xml_deserialize {
             let (Event::Start(x) | Event::Empty(x)) = &event else {
                 *self.state = fallback
                     .take()
-                    .unwrap_or(X509DataContent37TypeContentDeserializerState::Init__);
+                    .unwrap_or(X509DataContent43TypeContentDeserializerState::Init__);
                 return Ok(ElementHandlerOutput::return_to_parent(event, true));
             };
             if matches!(
@@ -7974,17 +7972,17 @@ pub mod quick_xml_deserialize {
             }
             *self.state = fallback
                 .take()
-                .unwrap_or(X509DataContent37TypeContentDeserializerState::Init__);
+                .unwrap_or(X509DataContent43TypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, true))
         }
         fn finish_state<R>(
             reader: &R,
-            state: X509DataContent37TypeContentDeserializerState,
-        ) -> Result<super::X509DataContent37TypeContent, Error>
+            state: X509DataContent43TypeContentDeserializerState,
+        ) -> Result<super::X509DataContent43TypeContent, Error>
         where
             R: DeserializeReader,
         {
-            use X509DataContent37TypeContentDeserializerState as S;
+            use X509DataContent43TypeContentDeserializerState as S;
             match state {
                 S::Init__ => Err(ErrorKind::MissingContent.into()),
                 S::X509IssuerSerial(mut values, deserializer) => {
@@ -7992,7 +7990,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_x509_issuer_serial(&mut values, value)?;
                     }
-                    Ok(super::X509DataContent37TypeContent::X509IssuerSerial(
+                    Ok(super::X509DataContent43TypeContent::X509IssuerSerial(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("X509IssuerSerial".into()))?,
                     ))
@@ -8002,7 +8000,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_x509_ski(&mut values, value)?;
                     }
-                    Ok(super::X509DataContent37TypeContent::X509Ski(
+                    Ok(super::X509DataContent43TypeContent::X509Ski(
                         values.ok_or_else(|| ErrorKind::MissingElement("X509SKI".into()))?,
                     ))
                 }
@@ -8011,7 +8009,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_x509_subject_name(&mut values, value)?;
                     }
-                    Ok(super::X509DataContent37TypeContent::X509SubjectName(
+                    Ok(super::X509DataContent43TypeContent::X509SubjectName(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("X509SubjectName".into()))?,
                     ))
@@ -8021,7 +8019,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_x509_certificate(&mut values, value)?;
                     }
-                    Ok(super::X509DataContent37TypeContent::X509Certificate(
+                    Ok(super::X509DataContent43TypeContent::X509Certificate(
                         values
                             .ok_or_else(|| ErrorKind::MissingElement("X509Certificate".into()))?,
                     ))
@@ -8031,7 +8029,7 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_x509_crl(&mut values, value)?;
                     }
-                    Ok(super::X509DataContent37TypeContent::X509Crl(
+                    Ok(super::X509DataContent43TypeContent::X509Crl(
                         values.ok_or_else(|| ErrorKind::MissingElement("X509CRL".into()))?,
                     ))
                 }
@@ -8095,7 +8093,7 @@ pub mod quick_xml_deserialize {
             reader: &R,
             mut values: Option<super::X509IssuerSerialType>,
             output: DeserializerOutput<'de, super::X509IssuerSerialType>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8107,11 +8105,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => X509DataContent37TypeContentDeserializerState::Init__,
-                    Some(X509DataContent37TypeContentDeserializerState::X509IssuerSerial(
+                    None => X509DataContent43TypeContentDeserializerState::Init__,
+                    Some(X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
                         _,
                         Some(deserializer),
-                    )) => X509DataContent37TypeContentDeserializerState::X509IssuerSerial(
+                    )) => X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
                         values,
                         Some(deserializer),
                     ),
@@ -8121,7 +8119,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(X509DataContent37TypeContentDeserializerState::X509IssuerSerial(
+                Some(X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
                     _,
                     Some(deserializer),
                 )) => {
@@ -8136,15 +8134,15 @@ pub mod quick_xml_deserialize {
                     Self::store_x509_issuer_serial(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        X509DataContent37TypeContentDeserializerState::X509IssuerSerial(
+                        X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
                             values, None,
                         ),
                     )?;
-                    *self.state = X509DataContent37TypeContentDeserializerState::Done__(data);
+                    *self.state = X509DataContent43TypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeContentDeserializerState::X509IssuerSerial(
+                    *self.state = X509DataContent43TypeContentDeserializerState::X509IssuerSerial(
                         values,
                         Some(deserializer),
                     );
@@ -8157,7 +8155,7 @@ pub mod quick_xml_deserialize {
             reader: &R,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8169,11 +8167,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => X509DataContent37TypeContentDeserializerState::Init__,
-                    Some(X509DataContent37TypeContentDeserializerState::X509Ski(
+                    None => X509DataContent43TypeContentDeserializerState::Init__,
+                    Some(X509DataContent43TypeContentDeserializerState::X509Ski(
                         _,
                         Some(deserializer),
-                    )) => X509DataContent37TypeContentDeserializerState::X509Ski(
+                    )) => X509DataContent43TypeContentDeserializerState::X509Ski(
                         values,
                         Some(deserializer),
                     ),
@@ -8183,7 +8181,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(X509DataContent37TypeContentDeserializerState::X509Ski(
+                Some(X509DataContent43TypeContentDeserializerState::X509Ski(
                     _,
                     Some(deserializer),
                 )) => {
@@ -8198,13 +8196,13 @@ pub mod quick_xml_deserialize {
                     Self::store_x509_ski(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        X509DataContent37TypeContentDeserializerState::X509Ski(values, None),
+                        X509DataContent43TypeContentDeserializerState::X509Ski(values, None),
                     )?;
-                    *self.state = X509DataContent37TypeContentDeserializerState::Done__(data);
+                    *self.state = X509DataContent43TypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeContentDeserializerState::X509Ski(
+                    *self.state = X509DataContent43TypeContentDeserializerState::X509Ski(
                         values,
                         Some(deserializer),
                     );
@@ -8217,7 +8215,7 @@ pub mod quick_xml_deserialize {
             reader: &R,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8229,11 +8227,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => X509DataContent37TypeContentDeserializerState::Init__,
-                    Some(X509DataContent37TypeContentDeserializerState::X509SubjectName(
+                    None => X509DataContent43TypeContentDeserializerState::Init__,
+                    Some(X509DataContent43TypeContentDeserializerState::X509SubjectName(
                         _,
                         Some(deserializer),
-                    )) => X509DataContent37TypeContentDeserializerState::X509SubjectName(
+                    )) => X509DataContent43TypeContentDeserializerState::X509SubjectName(
                         values,
                         Some(deserializer),
                     ),
@@ -8243,7 +8241,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(X509DataContent37TypeContentDeserializerState::X509SubjectName(
+                Some(X509DataContent43TypeContentDeserializerState::X509SubjectName(
                     _,
                     Some(deserializer),
                 )) => {
@@ -8258,15 +8256,15 @@ pub mod quick_xml_deserialize {
                     Self::store_x509_subject_name(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        X509DataContent37TypeContentDeserializerState::X509SubjectName(
+                        X509DataContent43TypeContentDeserializerState::X509SubjectName(
                             values, None,
                         ),
                     )?;
-                    *self.state = X509DataContent37TypeContentDeserializerState::Done__(data);
+                    *self.state = X509DataContent43TypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeContentDeserializerState::X509SubjectName(
+                    *self.state = X509DataContent43TypeContentDeserializerState::X509SubjectName(
                         values,
                         Some(deserializer),
                     );
@@ -8279,7 +8277,7 @@ pub mod quick_xml_deserialize {
             reader: &R,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8291,11 +8289,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => X509DataContent37TypeContentDeserializerState::Init__,
-                    Some(X509DataContent37TypeContentDeserializerState::X509Certificate(
+                    None => X509DataContent43TypeContentDeserializerState::Init__,
+                    Some(X509DataContent43TypeContentDeserializerState::X509Certificate(
                         _,
                         Some(deserializer),
-                    )) => X509DataContent37TypeContentDeserializerState::X509Certificate(
+                    )) => X509DataContent43TypeContentDeserializerState::X509Certificate(
                         values,
                         Some(deserializer),
                     ),
@@ -8305,7 +8303,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(X509DataContent37TypeContentDeserializerState::X509Certificate(
+                Some(X509DataContent43TypeContentDeserializerState::X509Certificate(
                     _,
                     Some(deserializer),
                 )) => {
@@ -8320,15 +8318,15 @@ pub mod quick_xml_deserialize {
                     Self::store_x509_certificate(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        X509DataContent37TypeContentDeserializerState::X509Certificate(
+                        X509DataContent43TypeContentDeserializerState::X509Certificate(
                             values, None,
                         ),
                     )?;
-                    *self.state = X509DataContent37TypeContentDeserializerState::Done__(data);
+                    *self.state = X509DataContent43TypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeContentDeserializerState::X509Certificate(
+                    *self.state = X509DataContent43TypeContentDeserializerState::X509Certificate(
                         values,
                         Some(deserializer),
                     );
@@ -8341,7 +8339,7 @@ pub mod quick_xml_deserialize {
             reader: &R,
             mut values: Option<String>,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<X509DataContent37TypeContentDeserializerState>,
+            fallback: &mut Option<X509DataContent43TypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8353,11 +8351,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => X509DataContent37TypeContentDeserializerState::Init__,
-                    Some(X509DataContent37TypeContentDeserializerState::X509Crl(
+                    None => X509DataContent43TypeContentDeserializerState::Init__,
+                    Some(X509DataContent43TypeContentDeserializerState::X509Crl(
                         _,
                         Some(deserializer),
-                    )) => X509DataContent37TypeContentDeserializerState::X509Crl(
+                    )) => X509DataContent43TypeContentDeserializerState::X509Crl(
                         values,
                         Some(deserializer),
                     ),
@@ -8367,7 +8365,7 @@ pub mod quick_xml_deserialize {
             }
             match fallback.take() {
                 None => (),
-                Some(X509DataContent37TypeContentDeserializerState::X509Crl(
+                Some(X509DataContent43TypeContentDeserializerState::X509Crl(
                     _,
                     Some(deserializer),
                 )) => {
@@ -8382,13 +8380,13 @@ pub mod quick_xml_deserialize {
                     Self::store_x509_crl(&mut values, data)?;
                     let data = Self::finish_state(
                         reader,
-                        X509DataContent37TypeContentDeserializerState::X509Crl(values, None),
+                        X509DataContent43TypeContentDeserializerState::X509Crl(values, None),
                     )?;
-                    *self.state = X509DataContent37TypeContentDeserializerState::Done__(data);
+                    *self.state = X509DataContent43TypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = X509DataContent37TypeContentDeserializerState::X509Crl(
+                    *self.state = X509DataContent43TypeContentDeserializerState::X509Crl(
                         values,
                         Some(deserializer),
                     );
@@ -8397,25 +8395,25 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::X509DataContent37TypeContent>
-        for X509DataContent37TypeContentDeserializer
+    impl<'de> Deserializer<'de, super::X509DataContent43TypeContent>
+        for X509DataContent43TypeContentDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::X509DataContent37TypeContent>
+        ) -> DeserializerResult<'de, super::X509DataContent43TypeContent>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
-                state: Box::new(X509DataContent37TypeContentDeserializerState::Init__),
+                state: Box::new(X509DataContent43TypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(
                         &*x.state,
-                        X509DataContent37TypeContentDeserializerState::Init__
+                        X509DataContent43TypeContentDeserializerState::Init__
                     ) =>
                 {
                     DeserializerArtifact::None
@@ -8428,11 +8426,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::X509DataContent37TypeContent>
+        ) -> DeserializerResult<'de, super::X509DataContent43TypeContent>
         where
             R: DeserializeReader,
         {
-            use X509DataContent37TypeContentDeserializerState as S;
+            use X509DataContent43TypeContentDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
@@ -8588,7 +8586,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(self, reader: &R) -> Result<super::X509DataContent37TypeContent, Error>
+        fn finish<R>(self, reader: &R) -> Result<super::X509DataContent43TypeContent, Error>
         where
             R: DeserializeReader,
         {
@@ -8596,29 +8594,29 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct PgpDataContent40TypeDeserializer {
+    pub struct PgpDataContent47TypeDeserializer {
         pgp_key_id: Option<String>,
         pgp_key_packet: Option<String>,
-        state: Box<PgpDataContent40TypeDeserializerState>,
+        state: Box<PgpDataContent47TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum PgpDataContent40TypeDeserializerState {
+    enum PgpDataContent47TypeDeserializerState {
         Init__,
         PgpKeyId(Option<<String as WithDeserializer>::Deserializer>),
         PgpKeyPacket(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl PgpDataContent40TypeDeserializer {
+    impl PgpDataContent47TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: PgpDataContent40TypeDeserializerState,
+            state: PgpDataContent47TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use PgpDataContent40TypeDeserializerState as S;
+            use PgpDataContent47TypeDeserializerState as S;
             match state {
                 S::PgpKeyId(Some(deserializer)) => {
                     self.store_pgp_key_id(deserializer.finish(reader)?)?
@@ -8652,7 +8650,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<PgpDataContent40TypeDeserializerState>,
+            fallback: &mut Option<PgpDataContent47TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8664,11 +8662,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.pgp_key_id.is_some() {
-                    fallback.get_or_insert(PgpDataContent40TypeDeserializerState::PgpKeyId(None));
-                    *self.state = PgpDataContent40TypeDeserializerState::PgpKeyPacket(None);
+                    fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyId(None));
+                    *self.state = PgpDataContent47TypeDeserializerState::PgpKeyPacket(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = PgpDataContent40TypeDeserializerState::PgpKeyId(None);
+                    *self.state = PgpDataContent47TypeDeserializerState::PgpKeyId(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -8679,7 +8677,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_id(data)?;
-                    *self.state = PgpDataContent40TypeDeserializerState::PgpKeyPacket(None);
+                    *self.state = PgpDataContent47TypeDeserializerState::PgpKeyPacket(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -8687,13 +8685,13 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                PgpDataContent40TypeDeserializerState::PgpKeyId(Some(deserializer)),
+                                PgpDataContent47TypeDeserializerState::PgpKeyId(Some(deserializer)),
                             );
-                            *self.state = PgpDataContent40TypeDeserializerState::PgpKeyPacket(None);
+                            *self.state = PgpDataContent47TypeDeserializerState::PgpKeyPacket(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                PgpDataContent40TypeDeserializerState::PgpKeyId(Some(deserializer));
+                                PgpDataContent47TypeDeserializerState::PgpKeyId(Some(deserializer));
                         }
                     }
                     ret
@@ -8704,7 +8702,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<PgpDataContent40TypeDeserializerState>,
+            fallback: &mut Option<PgpDataContent47TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8715,8 +8713,8 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                fallback.get_or_insert(PgpDataContent40TypeDeserializerState::PgpKeyPacket(None));
-                *self.state = PgpDataContent40TypeDeserializerState::Done__;
+                fallback.get_or_insert(PgpDataContent47TypeDeserializerState::PgpKeyPacket(None));
+                *self.state = PgpDataContent47TypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -8726,7 +8724,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_packet(data)?;
-                    *self.state = PgpDataContent40TypeDeserializerState::Done__;
+                    *self.state = PgpDataContent47TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -8734,14 +8732,14 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                PgpDataContent40TypeDeserializerState::PgpKeyPacket(Some(
+                                PgpDataContent47TypeDeserializerState::PgpKeyPacket(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state = PgpDataContent40TypeDeserializerState::Done__;
+                            *self.state = PgpDataContent47TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = PgpDataContent40TypeDeserializerState::PgpKeyPacket(
+                            *self.state = PgpDataContent47TypeDeserializerState::PgpKeyPacket(
                                 Some(deserializer),
                             );
                         }
@@ -8751,23 +8749,23 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::PgpDataContent40Type> for PgpDataContent40TypeDeserializer {
+    impl<'de> Deserializer<'de, super::PgpDataContent47Type> for PgpDataContent47TypeDeserializer {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::PgpDataContent40Type>
+        ) -> DeserializerResult<'de, super::PgpDataContent47Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 pgp_key_id: None,
                 pgp_key_packet: None,
-                state: Box::new(PgpDataContent40TypeDeserializerState::Init__),
+                state: Box::new(PgpDataContent47TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, PgpDataContent40TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, PgpDataContent47TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -8779,11 +8777,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::PgpDataContent40Type>
+        ) -> DeserializerResult<'de, super::PgpDataContent47Type>
         where
             R: DeserializeReader,
         {
-            use PgpDataContent40TypeDeserializerState as S;
+            use PgpDataContent47TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -8827,7 +8825,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state = PgpDataContent40TypeDeserializerState::PgpKeyId(None);
+                        *self.state = PgpDataContent47TypeDeserializerState::PgpKeyId(None);
                         event
                     }
                     (S::PgpKeyId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -8891,16 +8889,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::PgpDataContent40Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::PgpDataContent47Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                PgpDataContent40TypeDeserializerState::Unknown__,
+                PgpDataContent47TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::PgpDataContent40Type {
+            Ok(super::PgpDataContent47Type {
                 pgp_key_id: self
                     .pgp_key_id
                     .ok_or_else(|| ErrorKind::MissingElement("PGPKeyID".into()))?,
@@ -8909,27 +8907,27 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct PgpDataContent41TypeDeserializer {
+    pub struct PgpDataContent49TypeDeserializer {
         pgp_key_packet: Option<String>,
-        state: Box<PgpDataContent41TypeDeserializerState>,
+        state: Box<PgpDataContent49TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum PgpDataContent41TypeDeserializerState {
+    enum PgpDataContent49TypeDeserializerState {
         Init__,
         PgpKeyPacket(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl PgpDataContent41TypeDeserializer {
+    impl PgpDataContent49TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: PgpDataContent41TypeDeserializerState,
+            state: PgpDataContent49TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use PgpDataContent41TypeDeserializerState as S;
+            use PgpDataContent49TypeDeserializerState as S;
             match state {
                 S::PgpKeyPacket(Some(deserializer)) => {
                     self.store_pgp_key_packet(deserializer.finish(reader)?)?
@@ -8951,7 +8949,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<PgpDataContent41TypeDeserializerState>,
+            fallback: &mut Option<PgpDataContent49TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -8964,11 +8962,11 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.pgp_key_packet.is_some() {
                     fallback
-                        .get_or_insert(PgpDataContent41TypeDeserializerState::PgpKeyPacket(None));
-                    *self.state = PgpDataContent41TypeDeserializerState::Done__;
+                        .get_or_insert(PgpDataContent49TypeDeserializerState::PgpKeyPacket(None));
+                    *self.state = PgpDataContent49TypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = PgpDataContent41TypeDeserializerState::PgpKeyPacket(None);
+                    *self.state = PgpDataContent49TypeDeserializerState::PgpKeyPacket(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -8979,7 +8977,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgp_key_packet(data)?;
-                    *self.state = PgpDataContent41TypeDeserializerState::Done__;
+                    *self.state = PgpDataContent49TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -8987,14 +8985,14 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                PgpDataContent41TypeDeserializerState::PgpKeyPacket(Some(
+                                PgpDataContent49TypeDeserializerState::PgpKeyPacket(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state = PgpDataContent41TypeDeserializerState::Done__;
+                            *self.state = PgpDataContent49TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = PgpDataContent41TypeDeserializerState::PgpKeyPacket(
+                            *self.state = PgpDataContent49TypeDeserializerState::PgpKeyPacket(
                                 Some(deserializer),
                             );
                         }
@@ -9004,22 +9002,22 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::PgpDataContent41Type> for PgpDataContent41TypeDeserializer {
+    impl<'de> Deserializer<'de, super::PgpDataContent49Type> for PgpDataContent49TypeDeserializer {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::PgpDataContent41Type>
+        ) -> DeserializerResult<'de, super::PgpDataContent49Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 pgp_key_packet: None,
-                state: Box::new(PgpDataContent41TypeDeserializerState::Init__),
+                state: Box::new(PgpDataContent49TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, PgpDataContent41TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, PgpDataContent49TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -9031,11 +9029,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::PgpDataContent41Type>
+        ) -> DeserializerResult<'de, super::PgpDataContent49Type>
         where
             R: DeserializeReader,
         {
-            use PgpDataContent41TypeDeserializerState as S;
+            use PgpDataContent49TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -9067,7 +9065,7 @@ pub mod quick_xml_deserialize {
                     (S::Init__, event) => {
                         allow_any_element = true;
                         fallback.get_or_insert(S::Init__);
-                        *self.state = PgpDataContent41TypeDeserializerState::PgpKeyPacket(None);
+                        *self.state = PgpDataContent49TypeDeserializerState::PgpKeyPacket(None);
                         event
                     }
                     (S::PgpKeyPacket(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9111,16 +9109,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::PgpDataContent41Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::PgpDataContent49Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                PgpDataContent41TypeDeserializerState::Unknown__,
+                PgpDataContent49TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::PgpDataContent41Type {
+            Ok(super::PgpDataContent49Type {
                 pgp_key_packet: self
                     .pgp_key_packet
                     .ok_or_else(|| ErrorKind::MissingElement("PGPKeyPacket".into()))?,
@@ -9524,29 +9522,29 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct DsaKeyValueContent48TypeDeserializer {
+    pub struct DsaKeyValueContent60TypeDeserializer {
         p: Option<String>,
         q: Option<String>,
-        state: Box<DsaKeyValueContent48TypeDeserializerState>,
+        state: Box<DsaKeyValueContent60TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum DsaKeyValueContent48TypeDeserializerState {
+    enum DsaKeyValueContent60TypeDeserializerState {
         Init__,
         P(Option<<String as WithDeserializer>::Deserializer>),
         Q(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl DsaKeyValueContent48TypeDeserializer {
+    impl DsaKeyValueContent60TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: DsaKeyValueContent48TypeDeserializerState,
+            state: DsaKeyValueContent60TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use DsaKeyValueContent48TypeDeserializerState as S;
+            use DsaKeyValueContent60TypeDeserializerState as S;
             match state {
                 S::P(Some(deserializer)) => self.store_p(deserializer.finish(reader)?)?,
                 S::Q(Some(deserializer)) => self.store_q(deserializer.finish(reader)?)?,
@@ -9572,7 +9570,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DsaKeyValueContent48TypeDeserializerState>,
+            fallback: &mut Option<DsaKeyValueContent60TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9584,11 +9582,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.p.is_some() {
-                    fallback.get_or_insert(DsaKeyValueContent48TypeDeserializerState::P(None));
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::Q(None);
+                    fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::P(None));
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::Q(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::P(None);
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::P(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9599,21 +9597,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_p(data)?;
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::Q(None);
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::Q(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(DsaKeyValueContent48TypeDeserializerState::P(
+                            fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::P(
                                 Some(deserializer),
                             ));
-                            *self.state = DsaKeyValueContent48TypeDeserializerState::Q(None);
+                            *self.state = DsaKeyValueContent60TypeDeserializerState::Q(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                DsaKeyValueContent48TypeDeserializerState::P(Some(deserializer));
+                                DsaKeyValueContent60TypeDeserializerState::P(Some(deserializer));
                         }
                     }
                     ret
@@ -9624,7 +9622,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DsaKeyValueContent48TypeDeserializerState>,
+            fallback: &mut Option<DsaKeyValueContent60TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9636,11 +9634,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.q.is_some() {
-                    fallback.get_or_insert(DsaKeyValueContent48TypeDeserializerState::Q(None));
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::Done__;
+                    fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::Q(None));
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::Q(None);
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::Q(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9651,21 +9649,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_q(data)?;
-                    *self.state = DsaKeyValueContent48TypeDeserializerState::Done__;
+                    *self.state = DsaKeyValueContent60TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
-                            fallback.get_or_insert(DsaKeyValueContent48TypeDeserializerState::Q(
+                            fallback.get_or_insert(DsaKeyValueContent60TypeDeserializerState::Q(
                                 Some(deserializer),
                             ));
-                            *self.state = DsaKeyValueContent48TypeDeserializerState::Done__;
+                            *self.state = DsaKeyValueContent60TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                DsaKeyValueContent48TypeDeserializerState::Q(Some(deserializer));
+                                DsaKeyValueContent60TypeDeserializerState::Q(Some(deserializer));
                         }
                     }
                     ret
@@ -9673,25 +9671,25 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::DsaKeyValueContent48Type>
-        for DsaKeyValueContent48TypeDeserializer
+    impl<'de> Deserializer<'de, super::DsaKeyValueContent60Type>
+        for DsaKeyValueContent60TypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DsaKeyValueContent48Type>
+        ) -> DeserializerResult<'de, super::DsaKeyValueContent60Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 p: None,
                 q: None,
-                state: Box::new(DsaKeyValueContent48TypeDeserializerState::Init__),
+                state: Box::new(DsaKeyValueContent60TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, DsaKeyValueContent48TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, DsaKeyValueContent60TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -9703,11 +9701,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DsaKeyValueContent48Type>
+        ) -> DeserializerResult<'de, super::DsaKeyValueContent60Type>
         where
             R: DeserializeReader,
         {
-            use DsaKeyValueContent48TypeDeserializerState as S;
+            use DsaKeyValueContent60TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -9750,7 +9748,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = DsaKeyValueContent48TypeDeserializerState::P(None);
+                        *self.state = DsaKeyValueContent60TypeDeserializerState::P(None);
                         event
                     }
                     (S::P(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9809,16 +9807,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DsaKeyValueContent48Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::DsaKeyValueContent60Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                DsaKeyValueContent48TypeDeserializerState::Unknown__,
+                DsaKeyValueContent60TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::DsaKeyValueContent48Type {
+            Ok(super::DsaKeyValueContent60Type {
                 p: self
                     .p
                     .ok_or_else(|| ErrorKind::MissingElement("P".into()))?,
@@ -9829,29 +9827,29 @@ pub mod quick_xml_deserialize {
         }
     }
     #[derive(Debug)]
-    pub struct DsaKeyValueContent49TypeDeserializer {
+    pub struct DsaKeyValueContent61TypeDeserializer {
         seed: Option<String>,
         pgen_counter: Option<String>,
-        state: Box<DsaKeyValueContent49TypeDeserializerState>,
+        state: Box<DsaKeyValueContent61TypeDeserializerState>,
     }
     #[derive(Debug)]
-    enum DsaKeyValueContent49TypeDeserializerState {
+    enum DsaKeyValueContent61TypeDeserializerState {
         Init__,
         Seed(Option<<String as WithDeserializer>::Deserializer>),
         PgenCounter(Option<<String as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
-    impl DsaKeyValueContent49TypeDeserializer {
+    impl DsaKeyValueContent61TypeDeserializer {
         fn finish_state<R>(
             &mut self,
             reader: &R,
-            state: DsaKeyValueContent49TypeDeserializerState,
+            state: DsaKeyValueContent61TypeDeserializerState,
         ) -> Result<(), Error>
         where
             R: DeserializeReader,
         {
-            use DsaKeyValueContent49TypeDeserializerState as S;
+            use DsaKeyValueContent61TypeDeserializerState as S;
             match state {
                 S::Seed(Some(deserializer)) => self.store_seed(deserializer.finish(reader)?)?,
                 S::PgenCounter(Some(deserializer)) => {
@@ -9881,7 +9879,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DsaKeyValueContent49TypeDeserializerState>,
+            fallback: &mut Option<DsaKeyValueContent61TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9893,11 +9891,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.seed.is_some() {
-                    fallback.get_or_insert(DsaKeyValueContent49TypeDeserializerState::Seed(None));
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::PgenCounter(None);
+                    fallback.get_or_insert(DsaKeyValueContent61TypeDeserializerState::Seed(None));
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::Seed(None);
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::Seed(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9908,7 +9906,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_seed(data)?;
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::PgenCounter(None);
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9916,14 +9914,14 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                DsaKeyValueContent49TypeDeserializerState::Seed(Some(deserializer)),
+                                DsaKeyValueContent61TypeDeserializerState::Seed(Some(deserializer)),
                             );
                             *self.state =
-                                DsaKeyValueContent49TypeDeserializerState::PgenCounter(None);
+                                DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
                             *self.state =
-                                DsaKeyValueContent49TypeDeserializerState::Seed(Some(deserializer));
+                                DsaKeyValueContent61TypeDeserializerState::Seed(Some(deserializer));
                         }
                     }
                     ret
@@ -9934,7 +9932,7 @@ pub mod quick_xml_deserialize {
             &mut self,
             reader: &R,
             output: DeserializerOutput<'de, String>,
-            fallback: &mut Option<DsaKeyValueContent49TypeDeserializerState>,
+            fallback: &mut Option<DsaKeyValueContent61TypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
             R: DeserializeReader,
@@ -9946,13 +9944,13 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.pgen_counter.is_some() {
-                    fallback.get_or_insert(DsaKeyValueContent49TypeDeserializerState::PgenCounter(
+                    fallback.get_or_insert(DsaKeyValueContent61TypeDeserializerState::PgenCounter(
                         None,
                     ));
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::Done__;
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::PgenCounter(None);
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::PgenCounter(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -9963,7 +9961,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_pgen_counter(data)?;
-                    *self.state = DsaKeyValueContent49TypeDeserializerState::Done__;
+                    *self.state = DsaKeyValueContent61TypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -9971,14 +9969,14 @@ pub mod quick_xml_deserialize {
                     match &ret {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
-                                DsaKeyValueContent49TypeDeserializerState::PgenCounter(Some(
+                                DsaKeyValueContent61TypeDeserializerState::PgenCounter(Some(
                                     deserializer,
                                 )),
                             );
-                            *self.state = DsaKeyValueContent49TypeDeserializerState::Done__;
+                            *self.state = DsaKeyValueContent61TypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = DsaKeyValueContent49TypeDeserializerState::PgenCounter(
+                            *self.state = DsaKeyValueContent61TypeDeserializerState::PgenCounter(
                                 Some(deserializer),
                             );
                         }
@@ -9988,25 +9986,25 @@ pub mod quick_xml_deserialize {
             })
         }
     }
-    impl<'de> Deserializer<'de, super::DsaKeyValueContent49Type>
-        for DsaKeyValueContent49TypeDeserializer
+    impl<'de> Deserializer<'de, super::DsaKeyValueContent61Type>
+        for DsaKeyValueContent61TypeDeserializer
     {
         fn init<R>(
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DsaKeyValueContent49Type>
+        ) -> DeserializerResult<'de, super::DsaKeyValueContent61Type>
         where
             R: DeserializeReader,
         {
             let deserializer = Self {
                 seed: None,
                 pgen_counter: None,
-                state: Box::new(DsaKeyValueContent49TypeDeserializerState::Init__),
+                state: Box::new(DsaKeyValueContent61TypeDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, DsaKeyValueContent49TypeDeserializerState::Init__) =>
+                    if matches!(&*x.state, DsaKeyValueContent61TypeDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -10018,11 +10016,11 @@ pub mod quick_xml_deserialize {
             mut self,
             reader: &R,
             event: Event<'de>,
-        ) -> DeserializerResult<'de, super::DsaKeyValueContent49Type>
+        ) -> DeserializerResult<'de, super::DsaKeyValueContent61Type>
         where
             R: DeserializeReader,
         {
-            use DsaKeyValueContent49TypeDeserializerState as S;
+            use DsaKeyValueContent61TypeDeserializerState as S;
             let mut event = event;
             let mut fallback = None;
             let mut allow_any_element = false;
@@ -10065,7 +10063,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = DsaKeyValueContent49TypeDeserializerState::Seed(None);
+                        *self.state = DsaKeyValueContent61TypeDeserializerState::Seed(None);
                         event
                     }
                     (S::Seed(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -10125,16 +10123,16 @@ pub mod quick_xml_deserialize {
                 allow_any,
             })
         }
-        fn finish<R>(mut self, reader: &R) -> Result<super::DsaKeyValueContent49Type, Error>
+        fn finish<R>(mut self, reader: &R) -> Result<super::DsaKeyValueContent61Type, Error>
         where
             R: DeserializeReader,
         {
             let state = replace(
                 &mut *self.state,
-                DsaKeyValueContent49TypeDeserializerState::Unknown__,
+                DsaKeyValueContent61TypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
-            Ok(super::DsaKeyValueContent49Type {
+            Ok(super::DsaKeyValueContent61Type {
                 seed: self
                     .seed
                     .ok_or_else(|| ErrorKind::MissingElement("Seed".into()))?,
@@ -11566,7 +11564,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum X509DataTypeContentSerializerState<'ser> {
         Init__,
-        Content37(<super::X509DataContent37Type as WithSerializer>::Serializer<'ser>),
+        Content43(<super::X509DataContent43Type as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11575,15 +11573,15 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     X509DataTypeContentSerializerState::Init__ => {
-                        *self.state = X509DataTypeContentSerializerState::Content37(
+                        *self.state = X509DataTypeContentSerializerState::Content43(
                             WithSerializer::serializer(
-                                &self.value.content_37,
-                                Some("ds:Content37"),
+                                &self.value.content_43,
+                                Some("ds:Content43"),
                                 false,
                             )?,
                         );
                     }
-                    X509DataTypeContentSerializerState::Content37(x) => {
+                    X509DataTypeContentSerializerState::Content43(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = X509DataTypeContentSerializerState::Done__,
@@ -11672,8 +11670,8 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum PgpDataTypeContentSerializerState<'ser> {
         Init__,
-        Content40(<super::PgpDataContent40Type as WithSerializer>::Serializer<'ser>),
-        Content41(<super::PgpDataContent41Type as WithSerializer>::Serializer<'ser>),
+        Content47(<super::PgpDataContent47Type as WithSerializer>::Serializer<'ser>),
+        Content49(<super::PgpDataContent49Type as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
@@ -11682,24 +11680,24 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     PgpDataTypeContentSerializerState::Init__ => match self.value {
-                        super::PgpDataTypeContent::Content40(x) => {
-                            *self.state = PgpDataTypeContentSerializerState::Content40(
-                                WithSerializer::serializer(x, Some("ds:Content40"), false)?,
+                        super::PgpDataTypeContent::Content47(x) => {
+                            *self.state = PgpDataTypeContentSerializerState::Content47(
+                                WithSerializer::serializer(x, Some("ds:Content47"), false)?,
                             )
                         }
-                        super::PgpDataTypeContent::Content41(x) => {
-                            *self.state = PgpDataTypeContentSerializerState::Content41(
-                                WithSerializer::serializer(x, Some("ds:Content41"), false)?,
+                        super::PgpDataTypeContent::Content49(x) => {
+                            *self.state = PgpDataTypeContentSerializerState::Content49(
+                                WithSerializer::serializer(x, Some("ds:Content49"), false)?,
                             )
                         }
                     },
-                    PgpDataTypeContentSerializerState::Content40(x) => {
+                    PgpDataTypeContentSerializerState::Content47(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = PgpDataTypeContentSerializerState::Done__,
                         }
                     }
-                    PgpDataTypeContentSerializerState::Content41(x) => {
+                    PgpDataTypeContentSerializerState::Content49(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = PgpDataTypeContentSerializerState::Done__,
@@ -11948,21 +11946,21 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum DsaKeyValueTypeSerializerState<'ser> {
         Init__,
-        Content48(
+        Content60(
             IterSerializer<
                 'ser,
-                Option<&'ser super::DsaKeyValueContent48Type>,
-                super::DsaKeyValueContent48Type,
+                Option<&'ser super::DsaKeyValueContent60Type>,
+                super::DsaKeyValueContent60Type,
             >,
         ),
         G(IterSerializer<'ser, Option<&'ser String>, String>),
         Y(<String as WithSerializer>::Serializer<'ser>),
         J(IterSerializer<'ser, Option<&'ser String>, String>),
-        Content49(
+        Content61(
             IterSerializer<
                 'ser,
-                Option<&'ser super::DsaKeyValueContent49Type>,
-                super::DsaKeyValueContent49Type,
+                Option<&'ser super::DsaKeyValueContent61Type>,
+                super::DsaKeyValueContent61Type,
             >,
         ),
         End__,
@@ -11975,9 +11973,9 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     DsaKeyValueTypeSerializerState::Init__ => {
                         *self.state =
-                            DsaKeyValueTypeSerializerState::Content48(IterSerializer::new(
-                                self.value.content_48.as_ref(),
-                                Some("ds:Content48"),
+                            DsaKeyValueTypeSerializerState::Content60(IterSerializer::new(
+                                self.value.content_60.as_ref(),
+                                Some("ds:Content60"),
                                 false,
                             ));
                         let mut bytes = BytesStart::new(self.name);
@@ -11986,7 +11984,7 @@ pub mod quick_xml_serialize {
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
-                    DsaKeyValueTypeSerializerState::Content48(x) => {
+                    DsaKeyValueTypeSerializerState::Content60(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
@@ -12018,14 +12016,14 @@ pub mod quick_xml_serialize {
                         Some(event) => return Ok(Some(event)),
                         None => {
                             *self.state =
-                                DsaKeyValueTypeSerializerState::Content49(IterSerializer::new(
-                                    self.value.content_49.as_ref(),
-                                    Some("ds:Content49"),
+                                DsaKeyValueTypeSerializerState::Content61(IterSerializer::new(
+                                    self.value.content_61.as_ref(),
+                                    Some("ds:Content61"),
                                     false,
                                 ))
                         }
                     },
-                    DsaKeyValueTypeSerializerState::Content49(x) => match x.next().transpose()? {
+                    DsaKeyValueTypeSerializerState::Content61(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => *self.state = DsaKeyValueTypeSerializerState::End__,
                     },
@@ -12125,58 +12123,58 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct X509DataContent37TypeSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataContent37Type,
-        pub(super) state: Box<X509DataContent37TypeSerializerState<'ser>>,
+    pub struct X509DataContent43TypeSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataContent43Type,
+        pub(super) state: Box<X509DataContent43TypeSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum X509DataContent37TypeSerializerState<'ser> {
+    pub(super) enum X509DataContent43TypeSerializerState<'ser> {
         Init__,
-        Content__(<super::X509DataContent37TypeContent as WithSerializer>::Serializer<'ser>),
+        Content__(<super::X509DataContent43TypeContent as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> X509DataContent37TypeSerializer<'ser> {
+    impl<'ser> X509DataContent43TypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    X509DataContent37TypeSerializerState::Init__ => {
-                        *self.state = X509DataContent37TypeSerializerState::Content__(
+                    X509DataContent43TypeSerializerState::Init__ => {
+                        *self.state = X509DataContent43TypeSerializerState::Content__(
                             WithSerializer::serializer(&self.value.content, None, false)?,
                         );
                     }
-                    X509DataContent37TypeSerializerState::Content__(x) => {
+                    X509DataContent43TypeSerializerState::Content__(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = X509DataContent37TypeSerializerState::Done__,
+                            None => *self.state = X509DataContent43TypeSerializerState::Done__,
                         }
                     }
-                    X509DataContent37TypeSerializerState::Done__ => return Ok(None),
-                    X509DataContent37TypeSerializerState::Phantom__(_) => unreachable!(),
+                    X509DataContent43TypeSerializerState::Done__ => return Ok(None),
+                    X509DataContent43TypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for X509DataContent37TypeSerializer<'ser> {
+    impl<'ser> Iterator for X509DataContent43TypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = X509DataContent37TypeSerializerState::Done__;
+                    *self.state = X509DataContent43TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct X509DataContent37TypeContentSerializer<'ser> {
-        pub(super) value: &'ser super::X509DataContent37TypeContent,
-        pub(super) state: Box<X509DataContent37TypeContentSerializerState<'ser>>,
+    pub struct X509DataContent43TypeContentSerializer<'ser> {
+        pub(super) value: &'ser super::X509DataContent43TypeContent,
+        pub(super) state: Box<X509DataContent43TypeContentSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum X509DataContent37TypeContentSerializerState<'ser> {
+    pub(super) enum X509DataContent43TypeContentSerializerState<'ser> {
         Init__,
         X509IssuerSerial(<super::X509IssuerSerialType as WithSerializer>::Serializer<'ser>),
         X509Ski(<String as WithSerializer>::Serializer<'ser>),
@@ -12186,14 +12184,14 @@ pub mod quick_xml_serialize {
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> X509DataContent37TypeContentSerializer<'ser> {
+    impl<'ser> X509DataContent43TypeContentSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    X509DataContent37TypeContentSerializerState::Init__ => match self.value {
-                        super::X509DataContent37TypeContent::X509IssuerSerial(x) => {
+                    X509DataContent43TypeContentSerializerState::Init__ => match self.value {
+                        super::X509DataContent43TypeContent::X509IssuerSerial(x) => {
                             *self.state =
-                                X509DataContent37TypeContentSerializerState::X509IssuerSerial(
+                                X509DataContent43TypeContentSerializerState::X509IssuerSerial(
                                     WithSerializer::serializer(
                                         x,
                                         Some("ds:X509IssuerSerial"),
@@ -12201,14 +12199,14 @@ pub mod quick_xml_serialize {
                                     )?,
                                 )
                         }
-                        super::X509DataContent37TypeContent::X509Ski(x) => {
-                            *self.state = X509DataContent37TypeContentSerializerState::X509Ski(
+                        super::X509DataContent43TypeContent::X509Ski(x) => {
+                            *self.state = X509DataContent43TypeContentSerializerState::X509Ski(
                                 WithSerializer::serializer(x, Some("ds:X509SKI"), false)?,
                             )
                         }
-                        super::X509DataContent37TypeContent::X509SubjectName(x) => {
+                        super::X509DataContent43TypeContent::X509SubjectName(x) => {
                             *self.state =
-                                X509DataContent37TypeContentSerializerState::X509SubjectName(
+                                X509DataContent43TypeContentSerializerState::X509SubjectName(
                                     WithSerializer::serializer(
                                         x,
                                         Some("ds:X509SubjectName"),
@@ -12216,9 +12214,9 @@ pub mod quick_xml_serialize {
                                     )?,
                                 )
                         }
-                        super::X509DataContent37TypeContent::X509Certificate(x) => {
+                        super::X509DataContent43TypeContent::X509Certificate(x) => {
                             *self.state =
-                                X509DataContent37TypeContentSerializerState::X509Certificate(
+                                X509DataContent43TypeContentSerializerState::X509Certificate(
                                     WithSerializer::serializer(
                                         x,
                                         Some("ds:X509Certificate"),
@@ -12226,90 +12224,90 @@ pub mod quick_xml_serialize {
                                     )?,
                                 )
                         }
-                        super::X509DataContent37TypeContent::X509Crl(x) => {
-                            *self.state = X509DataContent37TypeContentSerializerState::X509Crl(
+                        super::X509DataContent43TypeContent::X509Crl(x) => {
+                            *self.state = X509DataContent43TypeContentSerializerState::X509Crl(
                                 WithSerializer::serializer(x, Some("ds:X509CRL"), false)?,
                             )
                         }
                     },
-                    X509DataContent37TypeContentSerializerState::X509IssuerSerial(x) => {
+                    X509DataContent43TypeContentSerializerState::X509IssuerSerial(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = X509DataContent37TypeContentSerializerState::Done__
+                                *self.state = X509DataContent43TypeContentSerializerState::Done__
                             }
                         }
                     }
-                    X509DataContent37TypeContentSerializerState::X509Ski(x) => {
+                    X509DataContent43TypeContentSerializerState::X509Ski(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = X509DataContent37TypeContentSerializerState::Done__
+                                *self.state = X509DataContent43TypeContentSerializerState::Done__
                             }
                         }
                     }
-                    X509DataContent37TypeContentSerializerState::X509SubjectName(x) => {
+                    X509DataContent43TypeContentSerializerState::X509SubjectName(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = X509DataContent37TypeContentSerializerState::Done__
+                                *self.state = X509DataContent43TypeContentSerializerState::Done__
                             }
                         }
                     }
-                    X509DataContent37TypeContentSerializerState::X509Certificate(x) => {
+                    X509DataContent43TypeContentSerializerState::X509Certificate(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = X509DataContent37TypeContentSerializerState::Done__
+                                *self.state = X509DataContent43TypeContentSerializerState::Done__
                             }
                         }
                     }
-                    X509DataContent37TypeContentSerializerState::X509Crl(x) => {
+                    X509DataContent43TypeContentSerializerState::X509Crl(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = X509DataContent37TypeContentSerializerState::Done__
+                                *self.state = X509DataContent43TypeContentSerializerState::Done__
                             }
                         }
                     }
-                    X509DataContent37TypeContentSerializerState::Done__ => return Ok(None),
-                    X509DataContent37TypeContentSerializerState::Phantom__(_) => unreachable!(),
+                    X509DataContent43TypeContentSerializerState::Done__ => return Ok(None),
+                    X509DataContent43TypeContentSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for X509DataContent37TypeContentSerializer<'ser> {
+    impl<'ser> Iterator for X509DataContent43TypeContentSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = X509DataContent37TypeContentSerializerState::Done__;
+                    *self.state = X509DataContent43TypeContentSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct PgpDataContent40TypeSerializer<'ser> {
-        pub(super) value: &'ser super::PgpDataContent40Type,
-        pub(super) state: Box<PgpDataContent40TypeSerializerState<'ser>>,
+    pub struct PgpDataContent47TypeSerializer<'ser> {
+        pub(super) value: &'ser super::PgpDataContent47Type,
+        pub(super) state: Box<PgpDataContent47TypeSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum PgpDataContent40TypeSerializerState<'ser> {
+    pub(super) enum PgpDataContent47TypeSerializerState<'ser> {
         Init__,
         PgpKeyId(<String as WithSerializer>::Serializer<'ser>),
         PgpKeyPacket(IterSerializer<'ser, Option<&'ser String>, String>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> PgpDataContent40TypeSerializer<'ser> {
+    impl<'ser> PgpDataContent47TypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    PgpDataContent40TypeSerializerState::Init__ => {
-                        *self.state = PgpDataContent40TypeSerializerState::PgpKeyId(
+                    PgpDataContent47TypeSerializerState::Init__ => {
+                        *self.state = PgpDataContent47TypeSerializerState::PgpKeyId(
                             WithSerializer::serializer(
                                 &self.value.pgp_key_id,
                                 Some("ds:PGPKeyID"),
@@ -12317,11 +12315,11 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                     }
-                    PgpDataContent40TypeSerializerState::PgpKeyId(x) => {
+                    PgpDataContent47TypeSerializerState::PgpKeyId(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = PgpDataContent40TypeSerializerState::PgpKeyPacket(
+                                *self.state = PgpDataContent47TypeSerializerState::PgpKeyPacket(
                                     IterSerializer::new(
                                         self.value.pgp_key_packet.as_ref(),
                                         Some("ds:PGPKeyPacket"),
@@ -12331,49 +12329,49 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    PgpDataContent40TypeSerializerState::PgpKeyPacket(x) => {
+                    PgpDataContent47TypeSerializerState::PgpKeyPacket(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpDataContent40TypeSerializerState::Done__,
+                            None => *self.state = PgpDataContent47TypeSerializerState::Done__,
                         }
                     }
-                    PgpDataContent40TypeSerializerState::Done__ => return Ok(None),
-                    PgpDataContent40TypeSerializerState::Phantom__(_) => unreachable!(),
+                    PgpDataContent47TypeSerializerState::Done__ => return Ok(None),
+                    PgpDataContent47TypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for PgpDataContent40TypeSerializer<'ser> {
+    impl<'ser> Iterator for PgpDataContent47TypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = PgpDataContent40TypeSerializerState::Done__;
+                    *self.state = PgpDataContent47TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct PgpDataContent41TypeSerializer<'ser> {
-        pub(super) value: &'ser super::PgpDataContent41Type,
-        pub(super) state: Box<PgpDataContent41TypeSerializerState<'ser>>,
+    pub struct PgpDataContent49TypeSerializer<'ser> {
+        pub(super) value: &'ser super::PgpDataContent49Type,
+        pub(super) state: Box<PgpDataContent49TypeSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum PgpDataContent41TypeSerializerState<'ser> {
+    pub(super) enum PgpDataContent49TypeSerializerState<'ser> {
         Init__,
         PgpKeyPacket(<String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> PgpDataContent41TypeSerializer<'ser> {
+    impl<'ser> PgpDataContent49TypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    PgpDataContent41TypeSerializerState::Init__ => {
-                        *self.state = PgpDataContent41TypeSerializerState::PgpKeyPacket(
+                    PgpDataContent49TypeSerializerState::Init__ => {
+                        *self.state = PgpDataContent49TypeSerializerState::PgpKeyPacket(
                             WithSerializer::serializer(
                                 &self.value.pgp_key_packet,
                                 Some("ds:PGPKeyPacket"),
@@ -12381,26 +12379,26 @@ pub mod quick_xml_serialize {
                             )?,
                         );
                     }
-                    PgpDataContent41TypeSerializerState::PgpKeyPacket(x) => {
+                    PgpDataContent49TypeSerializerState::PgpKeyPacket(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = PgpDataContent41TypeSerializerState::Done__,
+                            None => *self.state = PgpDataContent49TypeSerializerState::Done__,
                         }
                     }
-                    PgpDataContent41TypeSerializerState::Done__ => return Ok(None),
-                    PgpDataContent41TypeSerializerState::Phantom__(_) => unreachable!(),
+                    PgpDataContent49TypeSerializerState::Done__ => return Ok(None),
+                    PgpDataContent49TypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for PgpDataContent41TypeSerializer<'ser> {
+    impl<'ser> Iterator for PgpDataContent49TypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = PgpDataContent41TypeSerializerState::Done__;
+                    *self.state = PgpDataContent49TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
@@ -12514,85 +12512,85 @@ pub mod quick_xml_serialize {
         }
     }
     #[derive(Debug)]
-    pub struct DsaKeyValueContent48TypeSerializer<'ser> {
-        pub(super) value: &'ser super::DsaKeyValueContent48Type,
-        pub(super) state: Box<DsaKeyValueContent48TypeSerializerState<'ser>>,
+    pub struct DsaKeyValueContent60TypeSerializer<'ser> {
+        pub(super) value: &'ser super::DsaKeyValueContent60Type,
+        pub(super) state: Box<DsaKeyValueContent60TypeSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum DsaKeyValueContent48TypeSerializerState<'ser> {
+    pub(super) enum DsaKeyValueContent60TypeSerializerState<'ser> {
         Init__,
         P(<String as WithSerializer>::Serializer<'ser>),
         Q(<String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> DsaKeyValueContent48TypeSerializer<'ser> {
+    impl<'ser> DsaKeyValueContent60TypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    DsaKeyValueContent48TypeSerializerState::Init__ => {
-                        *self.state = DsaKeyValueContent48TypeSerializerState::P(
+                    DsaKeyValueContent60TypeSerializerState::Init__ => {
+                        *self.state = DsaKeyValueContent60TypeSerializerState::P(
                             WithSerializer::serializer(&self.value.p, Some("ds:P"), false)?,
                         );
                     }
-                    DsaKeyValueContent48TypeSerializerState::P(x) => match x.next().transpose()? {
+                    DsaKeyValueContent60TypeSerializerState::P(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
                         None => {
-                            *self.state = DsaKeyValueContent48TypeSerializerState::Q(
+                            *self.state = DsaKeyValueContent60TypeSerializerState::Q(
                                 WithSerializer::serializer(&self.value.q, Some("ds:Q"), false)?,
                             )
                         }
                     },
-                    DsaKeyValueContent48TypeSerializerState::Q(x) => match x.next().transpose()? {
+                    DsaKeyValueContent60TypeSerializerState::Q(x) => match x.next().transpose()? {
                         Some(event) => return Ok(Some(event)),
-                        None => *self.state = DsaKeyValueContent48TypeSerializerState::Done__,
+                        None => *self.state = DsaKeyValueContent60TypeSerializerState::Done__,
                     },
-                    DsaKeyValueContent48TypeSerializerState::Done__ => return Ok(None),
-                    DsaKeyValueContent48TypeSerializerState::Phantom__(_) => unreachable!(),
+                    DsaKeyValueContent60TypeSerializerState::Done__ => return Ok(None),
+                    DsaKeyValueContent60TypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for DsaKeyValueContent48TypeSerializer<'ser> {
+    impl<'ser> Iterator for DsaKeyValueContent60TypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = DsaKeyValueContent48TypeSerializerState::Done__;
+                    *self.state = DsaKeyValueContent60TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }
         }
     }
     #[derive(Debug)]
-    pub struct DsaKeyValueContent49TypeSerializer<'ser> {
-        pub(super) value: &'ser super::DsaKeyValueContent49Type,
-        pub(super) state: Box<DsaKeyValueContent49TypeSerializerState<'ser>>,
+    pub struct DsaKeyValueContent61TypeSerializer<'ser> {
+        pub(super) value: &'ser super::DsaKeyValueContent61Type,
+        pub(super) state: Box<DsaKeyValueContent61TypeSerializerState<'ser>>,
     }
     #[derive(Debug)]
-    pub(super) enum DsaKeyValueContent49TypeSerializerState<'ser> {
+    pub(super) enum DsaKeyValueContent61TypeSerializerState<'ser> {
         Init__,
         Seed(<String as WithSerializer>::Serializer<'ser>),
         PgenCounter(<String as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }
-    impl<'ser> DsaKeyValueContent49TypeSerializer<'ser> {
+    impl<'ser> DsaKeyValueContent61TypeSerializer<'ser> {
         fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
             loop {
                 match &mut *self.state {
-                    DsaKeyValueContent49TypeSerializerState::Init__ => {
-                        *self.state = DsaKeyValueContent49TypeSerializerState::Seed(
+                    DsaKeyValueContent61TypeSerializerState::Init__ => {
+                        *self.state = DsaKeyValueContent61TypeSerializerState::Seed(
                             WithSerializer::serializer(&self.value.seed, Some("ds:Seed"), false)?,
                         );
                     }
-                    DsaKeyValueContent49TypeSerializerState::Seed(x) => {
+                    DsaKeyValueContent61TypeSerializerState::Seed(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
                             None => {
-                                *self.state = DsaKeyValueContent49TypeSerializerState::PgenCounter(
+                                *self.state = DsaKeyValueContent61TypeSerializerState::PgenCounter(
                                     WithSerializer::serializer(
                                         &self.value.pgen_counter,
                                         Some("ds:PgenCounter"),
@@ -12602,26 +12600,26 @@ pub mod quick_xml_serialize {
                             }
                         }
                     }
-                    DsaKeyValueContent49TypeSerializerState::PgenCounter(x) => {
+                    DsaKeyValueContent61TypeSerializerState::PgenCounter(x) => {
                         match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
-                            None => *self.state = DsaKeyValueContent49TypeSerializerState::Done__,
+                            None => *self.state = DsaKeyValueContent61TypeSerializerState::Done__,
                         }
                     }
-                    DsaKeyValueContent49TypeSerializerState::Done__ => return Ok(None),
-                    DsaKeyValueContent49TypeSerializerState::Phantom__(_) => unreachable!(),
+                    DsaKeyValueContent61TypeSerializerState::Done__ => return Ok(None),
+                    DsaKeyValueContent61TypeSerializerState::Phantom__(_) => unreachable!(),
                 }
             }
         }
     }
-    impl<'ser> Iterator for DsaKeyValueContent49TypeSerializer<'ser> {
+    impl<'ser> Iterator for DsaKeyValueContent61TypeSerializer<'ser> {
         type Item = Result<Event<'ser>, Error>;
         fn next(&mut self) -> Option<Self::Item> {
             match self.next_event() {
                 Ok(Some(event)) => Some(Ok(event)),
                 Ok(None) => None,
                 Err(error) => {
-                    *self.state = DsaKeyValueContent49TypeSerializerState::Done__;
+                    *self.state = DsaKeyValueContent61TypeSerializerState::Done__;
                     Some(Err(error))
                 }
             }

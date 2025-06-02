@@ -6,7 +6,7 @@ use std::io::Error as IoError;
 use anyhow::Error as AnyError;
 use thiserror::Error;
 
-use crate::types::{ElementMode, Ident, Type, TypeVariant, Types};
+use crate::types::{AttributeType, ElementMode, ElementType, Ident, Type, TypeVariant, Types};
 use crate::{GeneratorError, InterpreterError, ParserError};
 
 /// Trait that adds namespace information to a type.
@@ -290,33 +290,6 @@ impl<'a> TypesPrinter<'a> {
 
                 indentln!("display_name={:?}", &ty.display_name);
 
-                if let Some(x) = &x.any {
-                    indentln!("any");
-
-                    s.level += 1;
-
-                    if let Some(x) = &x.min_occurs {
-                        indentln!("min_occurs={x:?}");
-                    }
-                    if let Some(x) = &x.max_occurs {
-                        indentln!("max_occurs={x:?}");
-                    }
-                    if let Some(x) = &x.namespace {
-                        indentln!("namespace={x:?}");
-                    }
-                    if let Some(x) = &x.not_namespace {
-                        indentln!("not_namespace={x:?}");
-                    }
-                    if let Some(x) = &x.not_q_name {
-                        indentln!("not_q_name={x:?}");
-                    }
-                    if let Some(x) = &x.process_contents {
-                        indentln!("process_contents={x:?}");
-                    }
-
-                    s.level -= 1;
-                }
-
                 for x in &*x.elements {
                     indentln!("element");
 
@@ -327,11 +300,37 @@ impl<'a> TypesPrinter<'a> {
                     indentln!("max_occurs={:?}", x.max_occurs);
                     indentln!("element_type={:?}", x.element_mode);
 
-                    if x.element_mode == ElementMode::Element {
-                        indentln!("type={}", x.type_);
-                    } else {
-                        indent!("type=");
-                        self.resolve_complex_type(f, s, &x.type_)?;
+                    match (x.element_mode, &x.type_) {
+                        (ElementMode::Element, ElementType::Type(type_)) => {
+                            indentln!("type=Type({})", type_);
+                        }
+                        (ElementMode::Element, ElementType::Any(x)) => {
+                            indentln!("type=Any");
+
+                            s.level += 1;
+
+                            if let Some(x) = &x.id {
+                                indentln!("id={x:?}");
+                            }
+                            if let Some(x) = &x.namespace {
+                                indentln!("namespace={x:?}");
+                            }
+                            if let Some(x) = &x.not_q_name {
+                                indentln!("not_q_name={x:?}");
+                            }
+                            if let Some(x) = &x.not_namespace {
+                                indentln!("not_namespace={x:?}");
+                            }
+
+                            indentln!("process_contents={:?}", x.process_contents);
+
+                            s.level -= 1;
+                        }
+                        (ElementMode::Group, ElementType::Type(type_)) => {
+                            indent!("type=");
+                            self.resolve_complex_type(f, s, type_)?;
+                        }
+                        (ElementMode::Group, ElementType::Any(_)) => (),
                     }
 
                     s.level -= 1;
@@ -350,36 +349,40 @@ impl<'a> TypesPrinter<'a> {
                 indentln!("max_occurs={:?}", x.max_occurs);
                 indentln!("is_dynamic={}", x.is_dynamic);
 
-                if let Some(x) = &x.any_attribute {
-                    indentln!("any_attribute");
-
-                    s.level += 1;
-
-                    if let Some(x) = &x.namespace {
-                        indentln!("namespace={x:?}");
-                    }
-                    if let Some(x) = &x.not_namespace {
-                        indentln!("not_namespace={x:?}");
-                    }
-                    if let Some(x) = &x.not_q_name {
-                        indentln!("not_q_name={x:?}");
-                    }
-                    if let Some(x) = &x.process_contents {
-                        indentln!("process_contents={x:?}");
-                    }
-
-                    s.level -= 1;
-                }
-
                 for x in &*x.attributes {
                     indentln!("attribute");
 
                     s.level += 1;
 
                     indentln!("name={}", x.ident.name);
-                    indentln!("type={}", x.type_);
                     indentln!("use={:?}", x.use_);
                     indentln!("default={:?}", x.default);
+
+                    match &x.type_ {
+                        AttributeType::Type(type_) => indentln!("type=Type({})", type_),
+                        AttributeType::Any(x) => {
+                            indentln!("type=Any");
+
+                            s.level += 1;
+
+                            if let Some(x) = &x.id {
+                                indentln!("id={x:?}");
+                            }
+                            if let Some(x) = &x.namespace {
+                                indentln!("namespace={x:?}");
+                            }
+                            if let Some(x) = &x.not_q_name {
+                                indentln!("not_q_name={x:?}");
+                            }
+                            if let Some(x) = &x.not_namespace {
+                                indentln!("not_namespace={x:?}");
+                            }
+
+                            indentln!("process_contents={:?}", x.process_contents);
+
+                            s.level -= 1;
+                        }
+                    }
 
                     s.level -= 1;
                 }

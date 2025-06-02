@@ -20,7 +20,7 @@ use tracing::instrument;
 
 use crate::code::{format_module_ident, format_type_ident, IdentPath, Module};
 use crate::schema::{MaxOccurs, NamespaceId};
-use crate::types::{Ident, IdentType, Name, Type, TypeVariant, Types};
+use crate::types::{ElementType, Ident, IdentType, Name, Type, TypeVariant, Types};
 
 pub use self::context::Context;
 pub use self::data::{
@@ -89,6 +89,12 @@ pub struct Config<'types> {
 
     /// Name of the `xsd_parser` crate.
     pub xsd_parser_crate: Ident2,
+
+    /// Type to use to store unstructured `xs:any` elements.
+    pub any_type: Option<IdentPath>,
+
+    /// Type to use to store unstructured `xs:anyAttribute` attributes.
+    pub any_attribute_type: Option<IdentPath>,
 }
 
 #[derive(Debug)]
@@ -122,6 +128,8 @@ impl<'types> Generator<'types> {
             serde_support: SerdeSupport::None,
             dyn_type_traits: DynTypeTraits::Auto,
             xsd_parser_crate: format_ident!("xsd_parser"),
+            any_type: None,
+            any_attribute_type: None,
         };
         let state = State {
             cache: BTreeMap::new(),
@@ -189,7 +197,7 @@ impl<'types> Generator<'types> {
             .into_iter()
             .map(|x| {
                 let s = x.as_ref();
-                IdentPath::from_str(s).map_err(|()| Error::InvalidIdentifier(s.into()))
+                IdentPath::from_str(s).map_err(Error::from)
             })
             .collect::<Result<Vec<_>, _>>()?;
 
@@ -224,6 +232,40 @@ impl<'types> Generator<'types> {
         self.config.flags = value;
 
         self
+    }
+
+    /// Set the type to use to store unstructured `xs:any` elements.
+    ///
+    /// If this is set, the renderer will render additional fields to store
+    /// unstructured XML data for elements that has `xs:any` set.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error that is thrown, if `path` could not be converted.
+    pub fn any_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    where
+        P: TryInto<IdentPath>,
+    {
+        self.config.any_type = Some(path.try_into()?);
+
+        Ok(self)
+    }
+
+    /// Set the type to use to store unstructured `xs:anyAttribute` attributes.
+    ///
+    /// If this is set, the renderer will render additional fields to store
+    /// unstructured XML attributes for elements that has `xs:anyAttribute` set.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error that is thrown, if `path` could not be converted.
+    pub fn any_attribute_type<P>(mut self, path: P) -> Result<Self, P::Error>
+    where
+        P: TryInto<IdentPath>,
+    {
+        self.config.any_attribute_type = Some(path.try_into()?);
+
+        Ok(self)
     }
 
     /// Add the passed [`GeneratorFlags`] flags the generator should use for generating the code.
@@ -563,11 +605,13 @@ fn get_boxed_elements<'a>(
             .elements
             .iter()
             .filter_map(|f| {
-                if Walk::new(types, cache).is_loop(ident, &f.type_) {
-                    Some(f.ident.clone())
-                } else {
-                    None
+                if let ElementType::Type(type_) = &f.type_ {
+                    if Walk::new(types, cache).is_loop(ident, type_) {
+                        return Some(f.ident.clone());
+                    }
                 }
+
+                None
             })
             .collect(),
         _ => HashSet::new(),

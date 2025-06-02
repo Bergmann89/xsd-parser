@@ -1,7 +1,7 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::schema::xs::Use;
-use crate::types::{ComplexInfo, Ident, TypeVariant, Types};
+use crate::types::{ComplexInfo, ElementType, Ident, TypeVariant, Types};
 
 use super::misc::{Occurs, TypeRef};
 
@@ -78,7 +78,15 @@ impl<'a> Walk<'a> {
                     }
 
                     let occurs = Occurs::from_occurs(f.min_occurs, f.max_occurs);
-                    if occurs.is_direct() && self.is_loop(origin, &f.type_) {
+                    if !occurs.is_direct() {
+                        continue;
+                    }
+
+                    let ElementType::Type(type_) = &f.type_ else {
+                        continue;
+                    };
+
+                    if self.is_loop(origin, type_) {
                         ret = true;
                         break;
                     }
