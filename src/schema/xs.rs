@@ -14,6 +14,8 @@
     clippy::semicolon_if_nothing_returned
 )]
 
+use crate::xml::AnyElement;
+
 use super::{MaxOccurs, QName};
 
 pub type Use = AttributeUseType;

@@ -66,9 +66,11 @@ fn main() -> Result<(), Error> {
     config.parser.resolver = vec![Resolver::File];
 
     // Enables all interpreter flags (refer to the flags documentation for details)
-    // and supplies custom type definitions for `xs:allNNI` (using the `MaxOccurs` type)
-    // and `xs:QName` (using the `QName` type).
-    config.interpreter.flags = InterpreterFlags::all();
+    // and supplies custom type definitions for `xs:allNNI` (using the `MaxOccurs` type),
+    // `xs:QName` (using the `QName` type) and `xs:appinfo` as well as `xs:documentation`
+    // (using the `AnyElement` type).
+    // Using the AnyElement type is useful to store unstructured data for later usage.
+    config.interpreter.flags = InterpreterFlags::all() - InterpreterFlags::WITH_NUM_BIG_INT;
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
@@ -77,6 +79,14 @@ fn main() -> Result<(), Error> {
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
             Type::from(CustomInfo::new("QName")),
+        ),
+        (
+            IdentTriple::from((IdentType::Element, "xs:appinfo")),
+            Type::from(CustomInfo::new("AnyElement")),
+        ),
+        (
+            IdentTriple::from((IdentType::Element, "xs:documentation")),
+            Type::from(CustomInfo::new("AnyElement")),
         ),
     ];
 
