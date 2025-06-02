@@ -3,11 +3,23 @@
            xmlns:tns="http://example.com"
            targetNamespace="http://example.com"
            elementFormDefault="qualified">
+
+    <xs:complexType name="ChoiceType">
+        <xs:choice>
+            <xs:element name="Name" type="xs:string"/>
+            <xs:any namespace="##any" processContents="lax"/>
+        </xs:choice>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
+    </xs:complexType>
+
     <xs:complexType name="FooType">
         <xs:sequence>
             <xs:element name="Name" type="xs:string"/>
             <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Choice" type="tns:ChoiceType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:any namespace="##any" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
+        <xs:anyAttribute namespace="##other" processContents="lax"/>
     </xs:complexType>
 
     <xs:element name="Foo" type="tns:FooType"/>

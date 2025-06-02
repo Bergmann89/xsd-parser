@@ -12,11 +12,11 @@ pub mod union;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::hash::Hasher;
 
-pub use attribute::{AttributeInfo, AttributesInfo};
-pub use complex::{AnyAttributeInfo, AnyInfo, ComplexInfo, GroupInfo};
+pub use attribute::{AnyAttributeInfo, AttributeInfo, AttributeType, AttributesInfo};
+pub use complex::{ComplexInfo, GroupInfo};
 pub use custom::{CustomDefaultImpl, CustomInfo};
 pub use dynamic::DynamicInfo;
-pub use element::{ElementInfo, ElementMode, ElementsInfo};
+pub use element::{AnyInfo, ElementInfo, ElementMode, ElementType, ElementsInfo};
 pub use enumeration::{EnumerationInfo, VariantInfo};
 pub use reference::ReferenceInfo;
 pub use union::{UnionInfo, UnionTypeInfo, UnionTypesInfo};

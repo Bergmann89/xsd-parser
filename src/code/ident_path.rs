@@ -4,6 +4,7 @@ use std::str::FromStr;
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
+use thiserror::Error;
 
 use crate::{schema::NamespaceId, types::Types};
 
@@ -30,6 +31,11 @@ pub struct IdentPath {
 /// `std::str`. It is used to identify modules inside the code.
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
 pub struct ModulePath(pub SmallVec<[Ident2; 2]>);
+
+/// Error that is raised by [`IdentPath`] if parsing the value from string failed.
+#[derive(Debug, Error)]
+#[error("Invalid identifier path: {0}")]
+pub struct InvalidIdentPath(pub String);
 
 impl IdentPath {
     /// Crates a new [`IdentPath`] instance from the passed module `path` and the
@@ -139,8 +145,24 @@ impl IdentPath {
     }
 }
 
+impl TryFrom<&str> for IdentPath {
+    type Error = InvalidIdentPath;
+
+    fn try_from(value: &str) -> Result<Self, Self::Error> {
+        Self::from_str(value)
+    }
+}
+
+impl TryFrom<String> for IdentPath {
+    type Error = InvalidIdentPath;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        Self::from_str(&value)
+    }
+}
+
 impl FromStr for IdentPath {
-    type Err = ();
+    type Err = InvalidIdentPath;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut ident = None;
@@ -160,7 +182,7 @@ impl FromStr for IdentPath {
         }
 
         Ok(Self {
-            ident: ident.ok_or(())?,
+            ident: ident.ok_or_else(|| InvalidIdentPath(s.into()))?,
             path: Some(path),
         })
     }

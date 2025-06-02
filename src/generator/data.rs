@@ -4,14 +4,12 @@ use std::ops::Deref;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
-use crate::{
-    code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
-    schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
-    types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, CustomInfo,
-        DynamicInfo, ElementInfo, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type,
-        TypeVariant, Types, UnionInfo, UnionTypeInfo, VariantInfo,
-    },
+use crate::code::{format_field_ident, format_variant_ident, IdentPath, ModulePath};
+use crate::schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId};
+use crate::types::{
+    AttributeInfo, AttributeType, BuildInInfo, ComplexInfo, CustomInfo, DynamicInfo, ElementInfo,
+    ElementType, EnumerationInfo, GroupInfo, Ident, ReferenceInfo, Type, TypeVariant, Types,
+    UnionInfo, UnionTypeInfo, VariantInfo,
 };
 
 use super::{
@@ -446,6 +444,9 @@ pub struct ComplexTypeBase {
     /// Name of the XML tag of the type (if the type represents an element in the XML).
     pub tag_name: Option<String>,
 
+    /// Whether the type has at least one `xs:any` element or not.
+    pub has_any: bool,
+
     /// `true` if the type is a complex type, `false` otherwise.
     pub is_complex: bool,
 
@@ -476,11 +477,15 @@ pub struct ComplexTypeEnum<'types> {
     /// List of `xs:element`s or variants contained in this enum
     pub elements: Vec<ComplexTypeElement<'types>>,
 
-    /// Content of the `xs:any`.
-    pub any_element: Option<&'types AnyInfo>,
+    /// Whether any kind of element is allowed in the enum or not
+    ///
+    /// This is only true if no type for `xs:any` element is defined.
+    pub allow_any: bool,
 
-    /// Content of the `xs:anyAttribute`.
-    pub any_attribute: Option<&'types AnyAttributeInfo>,
+    /// Whether any kind of attribute is allowed in the enum or not
+    ///
+    /// This is only true if no type for `xs:anyAttribute` element is defined.
+    pub allow_any_attribute: bool,
 }
 
 /// Represents a rust struct.
@@ -497,8 +502,10 @@ pub struct ComplexTypeStruct<'types> {
     /// List of `xs:attribute`s contained in this struct.
     pub attributes: Vec<ComplexTypeAttribute<'types>>,
 
-    /// Content of the `xs:anyAttribute`.
-    pub any_attribute: Option<&'types AnyAttributeInfo>,
+    /// Whether any kind of attribute is allowed in the struct or not
+    ///
+    /// This is only true if no type for `xs:anyAttribute` element is defined.
+    pub allow_any_attribute: bool,
 }
 
 /// Content of a rust struct.
@@ -509,8 +516,10 @@ pub struct ComplexTypeStruct<'types> {
 pub enum StructMode<'types> {
     /// The struct does not contain any `xs:element`s.
     Empty {
-        /// Content of the `xs:any`.
-        any_element: Option<&'types AnyInfo>,
+        /// Whether any kind of element is allowed in the struct or not
+        ///
+        /// This is only true if no type for `xs:any` element is defined.
+        allow_any: bool,
     },
 
     /// The content of the struct is another generated type that contains
@@ -525,8 +534,10 @@ pub enum StructMode<'types> {
         /// List of `xs:element`s inside the group.
         elements: Vec<ComplexTypeElement<'types>>,
 
-        /// Content of the `xs:any`.
-        any_element: Option<&'types AnyInfo>,
+        /// Whether any kind of element is allowed in the struct or not
+        ///
+        /// This is only true if no type for `xs:any` element is defined.
+        allow_any: bool,
     },
 
     /// The content of the struct is a `xs:sequence` group.
@@ -534,8 +545,10 @@ pub enum StructMode<'types> {
         /// List of `xs:element`s inside the group.
         elements: Vec<ComplexTypeElement<'types>>,
 
-        /// Content of the `xs:any`.
-        any_element: Option<&'types AnyInfo>,
+        /// Whether any kind of element is allowed in the struct or not
+        ///
+        /// This is only true if no type for `xs:any` element is defined.
+        allow_any: bool,
     },
 }
 
@@ -645,9 +658,7 @@ impl<'types> ComplexType<'types> {
             1,
             MaxOccurs::Bounded(1),
             &[],
-            None,
             &info.elements,
-            info.any.as_ref(),
         )
     }
 
@@ -658,9 +669,7 @@ impl<'types> ComplexType<'types> {
             1,
             MaxOccurs::Bounded(1),
             &[],
-            None,
             &info.elements,
-            info.any.as_ref(),
         )
     }
 
@@ -671,26 +680,20 @@ impl<'types> ComplexType<'types> {
             1,
             MaxOccurs::Bounded(1),
             &[],
-            None,
             &info.elements,
-            info.any.as_ref(),
         )
     }
 
     fn new_complex(info: &'types ComplexInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
-        let (type_mode, elements, any_element) = match info.content.as_ref().and_then(|ident| {
+        let (type_mode, elements) = match info.content.as_ref().and_then(|ident| {
             req.types
                 .get_resolved_type(ident)
                 .map(|ty| (&ty.variant, ident))
         }) {
-            None => (TypeMode::Sequence, &[][..], None),
-            Some((TypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..], si.any.as_ref()),
-            Some((TypeVariant::Choice(si), _)) => {
-                (TypeMode::Choice, &si.elements[..], si.any.as_ref())
-            }
-            Some((TypeVariant::Sequence(si), _)) => {
-                (TypeMode::Sequence, &si.elements[..], si.any.as_ref())
-            }
+            None => (TypeMode::Sequence, &[][..]),
+            Some((TypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..]),
+            Some((TypeVariant::Choice(si), _)) => (TypeMode::Choice, &si.elements[..]),
+            Some((TypeVariant::Sequence(si), _)) => (TypeMode::Sequence, &si.elements[..]),
             Some((
                 TypeVariant::BuildIn(_)
                 | TypeVariant::Union(_)
@@ -701,14 +704,14 @@ impl<'types> ComplexType<'types> {
                 let content_ref = req.get_or_create_type_ref(ident.clone())?;
                 let target_type = content_ref.to_ident_path();
 
-                (TypeMode::Simple { target_type }, &[][..], None)
+                (TypeMode::Simple { target_type }, &[][..])
             }
             Some((x, _)) => {
                 let ident = &req.current_type_ref().type_ident;
 
                 tracing::warn!("Complex type has unexpected content: ident={ident}, info={info:#?}, content={x:#?}!");
 
-                (TypeMode::Sequence, &[][..], None)
+                (TypeMode::Sequence, &[][..])
             }
         };
 
@@ -718,9 +721,7 @@ impl<'types> ComplexType<'types> {
             info.min_occurs,
             info.max_occurs,
             &info.attributes,
-            info.any_attribute.as_ref(),
             elements,
-            any_element,
         )
     }
 
@@ -731,37 +732,15 @@ impl<'types> ComplexType<'types> {
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
-        any_attribute: Option<&'types AnyAttributeInfo>,
         elements: &'types [ElementInfo],
-        any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
         match type_mode {
-            TypeMode::Simple { target_type } => Self::new_simple(
-                req,
-                target_type,
-                min_occurs,
-                max_occurs,
-                attributes,
-                any_attribute,
-            ),
-            TypeMode::Choice => Self::new_enum(
-                req,
-                min_occurs,
-                max_occurs,
-                attributes,
-                any_attribute,
-                elements,
-                any_element,
-            ),
+            TypeMode::Simple { target_type } => {
+                Self::new_simple(req, target_type, min_occurs, max_occurs, attributes)
+            }
+            TypeMode::Choice => Self::new_enum(req, min_occurs, max_occurs, attributes, elements),
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
-                req,
-                &type_mode,
-                min_occurs,
-                max_occurs,
-                attributes,
-                any_attribute,
-                elements,
-                any_element,
+                req, &type_mode, min_occurs, max_occurs, attributes, elements,
             ),
         }
     }
@@ -772,13 +751,17 @@ impl<'types> ComplexType<'types> {
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
-        any_attribute: Option<&'types AnyAttributeInfo>,
     ) -> Result<Self, Error> {
-        let base = ComplexTypeBase::new(&mut req)?;
+        let base = ComplexTypeBase::new(&mut req, false)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+
+        let mut allow_any_attribute = false;
         let attributes = attributes
             .iter()
-            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .filter_map(|info| {
+                ComplexTypeAttribute::new_field(info, &mut req, &mut allow_any_attribute)
+                    .transpose()
+            })
             .collect::<Result<Vec<_>, _>>()?;
 
         let content = ComplexTypeContent {
@@ -788,13 +771,12 @@ impl<'types> ComplexType<'types> {
             max_occurs,
             target_type,
         };
+
         let type_ = ComplexTypeStruct {
             base,
-
             mode: StructMode::Content { content },
-
             attributes,
-            any_attribute,
+            allow_any_attribute,
         };
 
         Ok(Self::Struct {
@@ -808,35 +790,40 @@ impl<'types> ComplexType<'types> {
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
-        any_attribute: Option<&'types AnyAttributeInfo>,
         elements: &'types [ElementInfo],
-        any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
-        let base = ComplexTypeBase::new(&mut req)?;
+        let has_any = req.any_type.is_some() && elements.iter().any(ElementInfo::is_any);
+        let mut base = ComplexTypeBase::new(&mut req, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
-        let flatten = occurs == Occurs::Single
-            && attributes.is_empty()
-            && req.check_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
 
+        let mut allow_any_attribute = false;
         let attributes = attributes
             .iter()
-            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .filter_map(|info| {
+                ComplexTypeAttribute::new_field(info, &mut req, &mut allow_any_attribute)
+                    .transpose()
+            })
             .collect::<Result<Vec<_>, _>>()?;
 
-        let mut any_element = any_element;
+        let mut allow_any = false;
         let mut elements = elements
             .iter()
             .filter_map(|info| {
-                ComplexTypeElement::new_variant(info, &mut req, occurs.is_direct()).transpose()
+                ComplexTypeElement::new_variant(info, &mut req, &mut allow_any, occurs.is_direct())
+                    .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
+
+        let flatten = occurs == Occurs::Single
+            && attributes.is_empty()
+            && req.check_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
 
         if flatten {
             let type_ = ComplexTypeEnum {
                 base,
                 elements,
-                any_element,
-                any_attribute,
+                allow_any,
+                allow_any_attribute,
             };
 
             return Ok(ComplexType::Enum {
@@ -851,10 +838,10 @@ impl<'types> ComplexType<'types> {
 
         let content_type = has_content.then(|| {
             let type_ = ComplexTypeEnum {
-                base: ComplexTypeBase::new_empty(content_ident.clone()),
+                base: ComplexTypeBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
                 elements: take(&mut elements),
-                any_element: any_element.take(),
-                any_attribute: None,
+                allow_any,
+                allow_any_attribute,
             };
 
             Box::new(ComplexType::Enum {
@@ -876,7 +863,7 @@ impl<'types> ComplexType<'types> {
 
             StructMode::Content { content }
         } else {
-            StructMode::Empty { any_element }
+            StructMode::Empty { allow_any }
         };
 
         let type_ = ComplexTypeStruct {
@@ -884,7 +871,7 @@ impl<'types> ComplexType<'types> {
             mode,
 
             attributes,
-            any_attribute,
+            allow_any_attribute,
         };
 
         Ok(ComplexType::Struct {
@@ -893,44 +880,49 @@ impl<'types> ComplexType<'types> {
         })
     }
 
-    #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::too_many_lines, clippy::too_many_arguments)]
     fn new_struct(
         mut req: Request<'_, 'types>,
         type_mode: &TypeMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeInfo],
-        any_attribute: Option<&'types AnyAttributeInfo>,
         elements: &'types [ElementInfo],
-        any_element: Option<&'types AnyInfo>,
     ) -> Result<Self, Error> {
-        let base = ComplexTypeBase::new(&mut req)?;
+        let has_any = req.any_type.is_some() && elements.iter().any(ElementInfo::is_any);
+        let mut base = ComplexTypeBase::new(&mut req, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten =
             occurs == Occurs::Single && req.check_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
 
+        let mut allow_any_attribute = false;
         let attributes = attributes
             .iter()
-            .filter_map(|info| ComplexTypeAttribute::new_field(info, &mut req).transpose())
+            .filter_map(|info| {
+                ComplexTypeAttribute::new_field(info, &mut req, &mut allow_any_attribute)
+                    .transpose()
+            })
             .collect::<Result<Vec<_>, _>>()?;
 
+        let mut allow_any = false;
         let elements = elements
             .iter()
             .filter_map(|info| {
-                ComplexTypeElement::new_field(info, &mut req, occurs.is_direct()).transpose()
+                ComplexTypeElement::new_field(info, &mut req, &mut allow_any, occurs.is_direct())
+                    .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
 
         if flatten {
             let mode = match type_mode {
-                _ if elements.is_empty() => StructMode::Empty { any_element },
+                _ if elements.is_empty() => StructMode::Empty { allow_any },
                 TypeMode::All => StructMode::All {
                     elements,
-                    any_element,
+                    allow_any,
                 },
                 TypeMode::Sequence => StructMode::Sequence {
                     elements,
-                    any_element,
+                    allow_any,
                 },
                 _ => crate::unreachable!(),
             };
@@ -940,7 +932,7 @@ impl<'types> ComplexType<'types> {
                 mode,
 
                 attributes,
-                any_attribute,
+                allow_any_attribute,
             };
 
             return Ok(ComplexType::Struct {
@@ -957,21 +949,21 @@ impl<'types> ComplexType<'types> {
             let mode = match type_mode {
                 TypeMode::All => StructMode::All {
                     elements,
-                    any_element,
+                    allow_any,
                 },
                 TypeMode::Sequence => StructMode::Sequence {
                     elements,
-                    any_element,
+                    allow_any,
                 },
                 _ => crate::unreachable!(),
             };
 
             let type_ = ComplexTypeStruct {
-                base: ComplexTypeBase::new_empty(content_ident.clone()),
+                base: ComplexTypeBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
                 mode,
 
                 attributes: Vec::new(),
-                any_attribute: None,
+                allow_any_attribute: false,
             };
 
             Box::new(ComplexType::Struct {
@@ -993,7 +985,7 @@ impl<'types> ComplexType<'types> {
 
             StructMode::Content { content }
         } else {
-            StructMode::Empty { any_element }
+            StructMode::Empty { allow_any }
         };
 
         let type_ = ComplexTypeStruct {
@@ -1001,7 +993,7 @@ impl<'types> ComplexType<'types> {
             mode,
 
             attributes,
-            any_attribute,
+            allow_any_attribute,
         };
 
         Ok(ComplexType::Struct {
@@ -1024,11 +1016,11 @@ impl ComplexTypeBase {
         self.is_complex && self.tag_name.is_some() && !self.is_dynamic
     }
 
-    fn new(req: &mut Request<'_, '_>) -> Result<Self, Error> {
+    fn new(req: &mut Request<'_, '_>, has_any: bool) -> Result<Self, Error> {
         let type_ref = req.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
 
-        let mut ret = Self::new_empty(type_ident);
+        let mut ret = Self::new_empty(type_ident, has_any);
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
         ret.trait_impls = req.make_trait_impls()?;
 
@@ -1040,7 +1032,7 @@ impl ComplexTypeBase {
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2) -> Self {
+    fn new_empty(type_ident: Ident2, has_any: bool) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -1052,6 +1044,7 @@ impl ComplexTypeBase {
             trait_impls: Vec::new(),
 
             tag_name: None,
+            has_any,
             is_complex: false,
             is_dynamic: false,
 
@@ -1108,15 +1101,16 @@ impl ComplexTypeStruct<'_> {
         }
     }
 
-    /// Returns the [`AnyInfo`] if this struct has one.
+    /// Returns `true` if any kind of element is allowed in the struct, `false` otherwise.
     #[must_use]
-    pub fn any_element(&self) -> Option<&AnyInfo> {
-        if let StructMode::All { any_element, .. } | StructMode::Sequence { any_element, .. } =
-            &self.mode
+    pub fn allow_any(&self) -> bool {
+        if let StructMode::Empty { allow_any }
+        | StructMode::All { allow_any, .. }
+        | StructMode::Sequence { allow_any, .. } = &self.mode
         {
-            *any_element
+            *allow_any
         } else {
-            None
+            false
         }
     }
 
@@ -1143,26 +1137,29 @@ impl<'types> ComplexTypeElement<'types> {
     fn new_variant(
         info: &'types ElementInfo,
         req: &mut Request<'_, 'types>,
+        allow_any: &mut bool,
         direct_usage: bool,
     ) -> Result<Option<Self>, Error> {
         let force_box = req.box_flags.intersects(BoxFlags::ENUM_ELEMENTS);
 
-        Self::new(info, req, direct_usage, force_box)
+        Self::new(info, req, allow_any, direct_usage, force_box)
     }
 
     fn new_field(
         info: &'types ElementInfo,
         req: &mut Request<'_, 'types>,
+        allow_any: &mut bool,
         direct_usage: bool,
     ) -> Result<Option<Self>, Error> {
         let force_box = req.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
 
-        Self::new(info, req, direct_usage, force_box)
+        Self::new(info, req, allow_any, direct_usage, force_box)
     }
 
     fn new(
         info: &'types ElementInfo,
         req: &mut Request<'_, 'types>,
+        allow_any: &mut bool,
         direct_usage: bool,
         force_box: bool,
     ) -> Result<Option<Self>, Error> {
@@ -1177,12 +1174,30 @@ impl<'types> ComplexTypeElement<'types> {
         let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
-        let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
-        let target_type = target_ref.to_ident_path();
+        let (target_type, target_is_dynamic) = match &info.type_ {
+            ElementType::Any(_) => {
+                let Some(type_) = req.any_type.as_ref() else {
+                    *allow_any = true;
+
+                    return Ok(None);
+                };
+
+                let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
+                let target_is_dynamic = false;
+
+                (target_type, target_is_dynamic)
+            }
+            ElementType::Type(type_) => {
+                let target_ref = req.get_or_create_type_ref(type_.clone())?;
+                let target_type = target_ref.to_ident_path();
+                let target_is_dynamic = is_dynamic(type_, req.types);
+
+                (target_type, target_is_dynamic)
+            }
+        };
 
         let need_box = req.current_type_ref().boxed_elements.contains(&info.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
-        let target_is_dynamic = is_dynamic(&info.type_, req.types);
 
         Ok(Some(Self {
             info,
@@ -1203,24 +1218,44 @@ impl<'types> ComplexTypeAttribute<'types> {
     fn new_field(
         info: &'types AttributeInfo,
         req: &mut Request<'_, 'types>,
+        allow_any_attribute: &mut bool,
     ) -> Result<Option<Self>, Error> {
         if info.use_ == Use::Prohibited {
             return Ok(None);
         }
 
         let current_module = req.current_module();
-        let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
-        let target_type = target_ref.to_ident_path();
+
+        let (target_type, default_value) = match &info.type_ {
+            AttributeType::Any(_) => {
+                let Some(type_) = req.any_attribute_type.as_ref() else {
+                    *allow_any_attribute = true;
+
+                    return Ok(None);
+                };
+
+                let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
+
+                (target_type, None)
+            }
+            AttributeType::Type(type_) => {
+                let target_ref = req.get_or_create_type_ref(type_.clone())?;
+                let target_type = target_ref.to_ident_path();
+
+                let default_value = info
+                    .default
+                    .as_ref()
+                    .map(|default| req.get_default(current_module, default, type_))
+                    .transpose()?;
+
+                (target_type, default_value)
+            }
+        };
+
         let s_name = info.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let tag_name = make_tag_name(req.types, &info.ident);
-
-        let default_value = info
-            .default
-            .as_ref()
-            .map(|default| req.get_default(current_module, default, &info.type_))
-            .transpose()?;
         let is_option = matches!((&info.use_, &default_value), (Use::Optional, None));
 
         Ok(Some(Self {

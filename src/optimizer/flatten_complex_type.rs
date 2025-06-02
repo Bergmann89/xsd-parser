@@ -1,6 +1,6 @@
 use crate::{
     schema::{MaxOccurs, MinOccurs},
-    types::{ElementInfo, ElementMode, GroupInfo, Ident, Type, TypeVariant},
+    types::{ElementInfo, ElementMode, ElementType, GroupInfo, Ident, Type, TypeVariant},
 };
 
 use super::{Error, Optimizer};
@@ -147,18 +147,16 @@ impl Optimizer {
                     ctx.add_element(element);
                 }
                 ElementMode::Group => {
-                    self.flatten_complex_type_impl(
-                        &x.type_,
-                        min * x.min_occurs,
-                        max * x.max_occurs,
-                        ctx,
-                    );
+                    if let ElementType::Type(type_) = &x.type_ {
+                        self.flatten_complex_type_impl(
+                            type_,
+                            min * x.min_occurs,
+                            max * x.max_occurs,
+                            ctx,
+                        );
+                    }
                 }
             }
-        }
-
-        if let Some(any) = &si.any {
-            ctx.info.any = Some(any.clone());
         }
     }
 }

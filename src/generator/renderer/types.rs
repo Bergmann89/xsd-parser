@@ -366,6 +366,15 @@ impl ComplexTypeAttribute<'_> {
             }
         };
 
+        if let Some(ty) = self
+            .info
+            .is_any()
+            .then_some(())
+            .and(ctx.any_attribute_type.as_ref())
+        {
+            ctx.add_usings([ty.to_token_stream()]);
+        }
+
         if self.is_option {
             quote! {
                 #serde
@@ -401,6 +410,10 @@ impl ComplexTypeElement<'_> {
                 Some(quote!(#[serde(#default rename = #name)]))
             }
         };
+
+        if let Some(ty) = self.info.is_any().then_some(()).and(ctx.any_type.as_ref()) {
+            ctx.add_usings([ty.to_token_stream()]);
+        }
 
         quote! {
             #serde

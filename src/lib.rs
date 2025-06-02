@@ -290,6 +290,16 @@ pub fn exec_generator_module(
         generator = generator.dyn_type_traits(traits)?;
     }
 
+    if let Some(any_type) = config.any_type {
+        generator = generator.any_type(any_type).map_err(GeneratorError::from)?;
+    }
+
+    if let Some(any_attribute_type) = config.any_attribute_type {
+        generator = generator
+            .any_attribute_type(any_attribute_type)
+            .map_err(GeneratorError::from)?;
+    }
+
     generator = generator.with_type_postfix(IdentType::Type, config.type_postfix.type_);
     generator = generator.with_type_postfix(IdentType::Element, config.type_postfix.element);
     generator =

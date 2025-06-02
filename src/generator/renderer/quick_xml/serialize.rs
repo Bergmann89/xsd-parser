@@ -738,7 +738,11 @@ impl ComplexTypeStruct<'_> {
             let attrib_name = &attrib.tag_name;
             let field_ident = &attrib.ident;
 
-            if attrib.is_option {
+            if attrib.info.is_any() {
+                quote! {
+                    bytes.extend_attributes(self.value.#field_ident.attributes());
+                }
+            } else if attrib.is_option {
                 ctx.add_quick_xml_serialize_usings([
                     quote!(#xsd_parser::quick_xml::write_attrib_opt),
                 ]);

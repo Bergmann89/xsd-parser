@@ -713,16 +713,54 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any(&mut self, ty: &Any) -> Result<(), Error> {
+        let name = self
+            .state
+            .name_builder()
+            .shared_name("any")
+            .or(&ty.id)
+            .finish();
+        let ident = Ident::new(name).with_type(IdentType::Element);
+
+        let any = AnyInfo {
+            id: ty.id.clone(),
+            namespace: ty.namespace.clone(),
+            not_q_name: ty.not_q_name.clone(),
+            not_namespace: ty.not_namespace.clone(),
+            process_contents: ty.process_contents.clone(),
+        };
+
+        let mut el = ElementInfo::any(ident, any);
+        el.min_occurs = ty.min_occurs;
+        el.max_occurs = ty.max_occurs;
+
         let si = get_or_init_type!(self, Sequence);
-        si.any.create_or_update(ty);
+        si.elements.push_any(el);
 
         Ok(())
     }
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_any_attribute(&mut self, ty: &AnyAttribute) -> Result<(), Error> {
+        let name = self
+            .state
+            .name_builder()
+            .unique_name("any_attribute")
+            .or(&ty.id)
+            .finish();
+        let ident = Ident::new(name).with_type(IdentType::Attribute);
+
         let ci = get_or_init_any!(self, ComplexType);
-        ci.any_attribute.create_or_update(ty);
+        ci.attributes.find_or_insert(ident, |ident| {
+            let any = AnyAttributeInfo {
+                id: ty.id.clone(),
+                namespace: ty.namespace.clone(),
+                not_q_name: ty.not_q_name.clone(),
+                not_namespace: ty.not_namespace.clone(),
+                process_contents: ty.process_contents.clone(),
+            };
+
+            AttributeInfo::any(ident, any)
+        });
 
         Ok(())
     }
@@ -877,16 +915,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     match (&mut content_type.variant, mode) {
                         (TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si), UpdateMode::Restriction) => {
                             si.elements.retain(|element| element.min_occurs > 0);
-
-                            if matches!(
-                                si.any,
-                                Some(AnyInfo {
-                                    min_occurs: Some(0),
-                                    ..
-                                })
-                            ) {
-                                si.any = None;
-                            }
                         }
                         (_, UpdateMode::Extension) => (),
                         (_, _) => tracing::warn!("Complex type does not has `All`, `Choice` or `Sequence` as content: {content_ident:#?} => {content_type:#?}!"),
@@ -1068,7 +1096,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             return Err(Error::ExpectedGroupType);
         };
 
-        if si.elements.is_empty() && si.any.is_none() {
+        if si.elements.is_empty() {
             return Ok(());
         }
 
@@ -1209,28 +1237,6 @@ impl Update<GroupType> for ElementInfo {
     }
 }
 
-impl Update<Any> for AnyInfo {
-    fn update(&mut self, other: &Any) {
-        self.min_occurs = Some(other.min_occurs);
-        self.max_occurs = Some(other.max_occurs);
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
-impl Update<AnyAttribute> for AnyAttributeInfo {
-    fn update(&mut self, other: &AnyAttribute) {
-        self.process_contents = Some(other.process_contents.clone());
-
-        self.namespace.update(&other.namespace);
-        self.not_q_name.update(&other.not_q_name);
-        self.not_namespace.update(&other.not_namespace);
-    }
-}
-
 impl Update<ElementType> for ElementInfo {
     fn update(&mut self, other: &ElementType) {
         self.min_occurs = other.min_occurs;
@@ -1242,27 +1248,6 @@ impl Update<AttributeType> for AttributeInfo {
     fn update(&mut self, other: &AttributeType) {
         self.use_ = other.use_.clone();
         self.default.update(&other.default);
-    }
-}
-
-/* CreateOrUpdate */
-
-trait CreateOrUpdate<T> {
-    fn create_or_update(&mut self, other: &T);
-}
-
-impl<T, X> CreateOrUpdate<T> for Option<X>
-where
-    X: Update<T> + Default,
-{
-    fn create_or_update(&mut self, other: &T) {
-        if let Some(x) = self {
-            x.update(other);
-        } else {
-            let mut x = X::default();
-            x.update(other);
-            *self = Some(x);
-        }
     }
 }
 
