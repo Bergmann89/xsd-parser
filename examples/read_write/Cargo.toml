@@ -8,4 +8,5 @@ xsd-parser = { path = "../../" }
 
 [dependencies]
 xsd-parser = { path = "../../" }
+num = "0.4.3"
 

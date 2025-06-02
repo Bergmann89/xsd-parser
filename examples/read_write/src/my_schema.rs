@@ -1,3 +1,4 @@
+use num::{BigInt, BigUint};
 use xsd_parser::{
     quick_xml::{Error, WithDeserializer, WithSerializer},
     schema::Namespace,
@@ -50,7 +51,6 @@ impl WithSerializer for DocumentTypeContent {
         })
     }
 }
-pub type DocumentInfo = String;
 pub type Document = DocumentType;
 pub mod quick_xml_deserialize {
     use core::mem::replace;
@@ -71,7 +71,6 @@ pub mod quick_xml_deserialize {
         Init__,
         Next__,
         Content__(<super::DocumentTypeContent as WithDeserializer>::Deserializer),
-        Done__,
         Unknown__,
     }
     impl DocumentTypeDeserializer {
@@ -214,17 +213,10 @@ pub mod quick_xml_deserialize {
                             ElementHandlerOutput::Continue { event, .. } => event,
                         }
                     }
-                    (S::Done__, event) => {
-                        *self.state = S::Done__;
-                        break (DeserializerEvent::Continue(event), false);
-                    }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = match &*self.state {
-                S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
-                _ => DeserializerArtifact::Deserializer(self),
-            };
+            let artifact = DeserializerArtifact::Deserializer(self);
             Ok(DeserializerOutput {
                 artifact,
                 event,
@@ -609,7 +601,7 @@ pub mod xs {
     pub type NmtokensType = EntitiesType;
     pub type NotationType = String;
     pub type NameType = String;
-    pub type QnameType = String;
+    pub type QNameType = String;
     #[derive(Debug)]
     pub struct AnyType;
     impl WithDeserializer for AnyType {
@@ -640,21 +632,21 @@ pub mod xs {
     pub type DoubleType = f64;
     pub type DurationType = String;
     pub type FloatType = f32;
-    pub type GdayType = String;
-    pub type GmonthType = String;
-    pub type GmonthDayType = String;
-    pub type GyearType = String;
-    pub type GyearMonthType = String;
+    pub type GDayType = String;
+    pub type GMonthType = String;
+    pub type GMonthDayType = String;
+    pub type GYearType = String;
+    pub type GYearMonthType = String;
     pub type HexBinaryType = String;
     pub type IntType = i32;
-    pub type IntegerType = i32;
+    pub type IntegerType = super::BigInt;
     pub type LanguageType = String;
     pub type LongType = i64;
-    pub type NegativeIntegerType = isize;
-    pub type NonNegativeIntegerType = usize;
-    pub type NonPositiveIntegerType = isize;
+    pub type NegativeIntegerType = super::BigInt;
+    pub type NonNegativeIntegerType = super::BigUint;
+    pub type NonPositiveIntegerType = super::BigInt;
     pub type NormalizedStringType = String;
-    pub type PositiveIntegerType = usize;
+    pub type PositiveIntegerType = super::BigUint;
     pub type ShortType = i16;
     pub type StringType = String;
     pub type TimeType = String;

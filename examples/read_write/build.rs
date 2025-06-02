@@ -20,7 +20,7 @@ fn main() -> Result<(), Error> {
         Renderer::Types,
         Renderer::Defaults,
         Renderer::NamespaceConstants,
-        Renderer::QuickXmlDeserialize,
+        Renderer::QuickXmlDeserialize{boxed_deserializer: false},
         Renderer::QuickXmlSerialize,
     ]);
 
