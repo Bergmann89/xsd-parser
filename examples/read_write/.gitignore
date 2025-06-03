@@ -1,2 +1,3 @@
-/target/
 *~
+src/my_schema.rs
+/target/

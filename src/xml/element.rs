@@ -543,10 +543,10 @@ mod tests {
         assert_text!(value, b"\n");
     }
 
-    const XML: &str = r##"
+    const XML: &str = r#"
 <names>
     <name xmlns:ns="test" ns:first="bob" last="jones"/>
     <name first="elizabeth" last="smith"/>
 </names>
-"##;
+"#;
 }
