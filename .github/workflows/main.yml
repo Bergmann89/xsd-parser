@@ -49,3 +49,11 @@ jobs:
 
     - name: cargo build
       run: cargo build --release
+
+    - name: build examples
+      run: |
+        cargo build --examples
+        cd examples
+        cd read_write
+        cargo build
+
