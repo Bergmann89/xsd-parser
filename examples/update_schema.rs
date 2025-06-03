@@ -1,5 +1,5 @@
 //! This example is used to generate and update the XSD schema used in
-//! `xsd-parser` (see xs_generated.rs).
+//! `xsd-parser` (see `xs_generated.rs`).
 //!
 //! It demonstrates a more advanced use of the generator to create types from
 //! the schema with deserialization support enabled.

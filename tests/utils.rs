@@ -136,11 +136,11 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
 
     let input_xsd = input_xsd.as_ref();
 
-    generate_test(&input_xsd, expected_0, config.clone());
+    generate_test(input_xsd, expected_0, config.clone());
 
     config.optimizer.flags |= flags;
 
-    generate_test(&input_xsd, expected_1, config.clone());
+    generate_test(input_xsd, expected_1, config.clone());
 }
 
 pub fn quick_xml_read_test<T, P>(path: P) -> T
@@ -204,9 +204,8 @@ where
 {
     let reader = File::open(path).unwrap();
     let reader = BufReader::new(reader);
-    let ret = quick_xml::de::from_reader::<_, T>(reader).unwrap();
 
-    ret
+    quick_xml::de::from_reader::<_, T>(reader).unwrap()
 }
 
 pub fn serde_xml_rs_read_test<T, P>(path: P) -> T
@@ -215,9 +214,8 @@ where
     T: for<'de> Deserialize<'de>,
 {
     let reader = File::open(path).unwrap();
-    let ret = serde_xml_rs::from_reader::<_, T>(reader).unwrap();
 
-    ret
+    serde_xml_rs::from_reader::<_, T>(reader).unwrap()
 }
 
 fn fmt_code(s: &str) -> String {

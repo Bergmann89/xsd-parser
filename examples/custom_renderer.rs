@@ -155,6 +155,7 @@ impl Renderer for CustomRenderer {
     }
 }
 
+#[allow(clippy::unused_self)]
 impl CustomRenderer {
     /* Custom */
 
@@ -355,7 +356,7 @@ impl CustomRenderer {
                 self.render_complex_enum(type_, ctx);
 
                 if let Some(content_type) = content_type {
-                    self.render_complex(&content_type, ctx);
+                    self.render_complex(content_type, ctx);
                 }
             }
             ComplexType::Struct {
@@ -365,7 +366,7 @@ impl CustomRenderer {
                 self.render_complex_struct(type_, ctx);
 
                 if let Some(content_type) = content_type {
-                    self.render_complex(&content_type, ctx);
+                    self.render_complex(content_type, ctx);
                 }
             }
         }

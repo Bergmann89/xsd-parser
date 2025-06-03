@@ -13,6 +13,11 @@ It demonstrates a more advanced use of the generator to create types from the sc
 Short example that shows how to assign custom defined names to the generated types.
 
 
+# custom_renderer
+
+Example that explains how to implement user defined renderers. This is useful if you want to generate additional structures from the already parsed and interpreted schema.
+
+
 # read_write
 
 A more complex example.

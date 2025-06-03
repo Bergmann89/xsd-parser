@@ -1,14 +1,16 @@
-use xsd_parser::{generate, Config, Error, config::{Schema, InterpreterFlags, OptimizerFlags, GeneratorFlags}};
 use std::fs::File;
-use std::io::prelude::*;
-use xsd_parser::config::Renderer;
-use std::{
-    io::Write,
-    process::{Command, Output, Stdio},
+use std::io::Write;
+use std::process::{Command, Output, Stdio};
+
+use xsd_parser::{
+    Config, Error,
+    config::Renderer,
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, Schema},
+    generate,
 };
 
 fn main() -> Result<(), Error> {
-    // This is almost the starting point defined in the main `[README.md]`. 
+    // This is almost the starting point defined in the main `[README.md]`.
     let mut config = Config::default();
     config.parser.schemas = vec![Schema::File("my-schema.xsd".into())];
     config.interpreter.flags = InterpreterFlags::all();
@@ -20,27 +22,28 @@ fn main() -> Result<(), Error> {
         Renderer::Types,
         Renderer::Defaults,
         Renderer::NamespaceConstants,
-        Renderer::QuickXmlDeserialize{boxed_deserializer: false},
+        Renderer::QuickXmlDeserialize {
+            boxed_deserializer: false,
+        },
         Renderer::QuickXmlSerialize,
     ]);
 
     // Generate the code based on the configuration above.
     let code = generate(config)?;
     let code = code.to_string();
-    
+
     // Use a small helper to pretty-print the code (it uses `RUSTFMT`).
-    // Actually, this is easier to use, if one has to compare the result of 
+    // Actually, this is easier to use, if one has to compare the result of
     // 2 versions of `my-schema.xsd`.
     let code = rustfmt_pretty_print(code).unwrap();
 
-    // Generate my_schema.rs, containing all structures and implementations defined from 
+    // Generate my_schema.rs, containing all structures and implementations defined from
     // `my-schema.xsd` and the configuration above.
     let mut file = File::create("src/my_schema.rs")?;
     file.write_all(code.to_string().as_bytes())?;
 
     Ok(())
 }
-
 
 // A small helper to call `rustfmt` when generating file(s).
 // This may be useful to compare different versions of generated files.
@@ -49,10 +52,10 @@ pub fn rustfmt_pretty_print(code: String) -> Result<String, Error> {
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
+        .spawn()?;
 
     let mut stdin = child.stdin.take().unwrap();
+
     write!(stdin, "{code}")?;
     stdin.flush()?;
     drop(stdin);
@@ -62,6 +65,7 @@ pub fn rustfmt_pretty_print(code: String) -> Result<String, Error> {
         stdout,
         stderr,
     } = child.wait_with_output()?;
+
     let stdout = String::from_utf8_lossy(&stdout);
     let stderr = String::from_utf8_lossy(&stderr);
 
@@ -69,9 +73,13 @@ pub fn rustfmt_pretty_print(code: String) -> Result<String, Error> {
         let code = status.code();
         match code {
             Some(code) => {
-                if code != 0 { panic!("The `rustfmt` command failed with return code {code}"); }
+                if code != 0 {
+                    panic!("The `rustfmt` command failed with return code {code}!\n{stderr}");
+                }
             }
-            None => { panic!("The `rustfmt` command failed") },
+            None => {
+                panic!("The `rustfmt` command failed!\n{stderr}")
+            }
         }
     }
 
