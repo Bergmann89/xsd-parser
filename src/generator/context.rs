@@ -39,7 +39,18 @@ pub trait ValueKey: Any {
 }
 
 impl<'a, 'types> Context<'a, 'types> {
-    /// Returns the namespace ID of the currently rendered type.
+    /// Returns the [`Ident`]ifier of the type that is currently being rendered.
+    pub fn ident(&self) -> &Ident {
+        self.ident
+    }
+
+    /// Returns the generator config.
+    pub fn config(&self) -> &Config<'_> {
+        self.config
+    }
+
+    /// Returns the namespace ID of the currently rendered type if the config has
+    /// the [`USE_MODULES`](GeneratorFlags::USE_MODULES) flag set.
     pub fn current_ns(&self) -> Option<NamespaceId> {
         self.check_flags(GeneratorFlags::USE_MODULES)
             .then_some(self.ident.ns)
