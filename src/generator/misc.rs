@@ -70,6 +70,50 @@ bitflags! {
         ///
         /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
         const FLATTEN_STRUCT_CONTENT = 1 << 2;
+
+        /// The generator adds documentation to the rendered code if a
+        /// `xs:documentation` element was placed in the schema.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema_with_docs.xsd")]
+        /// ```
+        ///
+        /// Enable the `RENDER_DOCS` feature only will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/render_docs.rs")]
+        /// ```
+        const RENDER_DOCS = Self::RENDER_TYPE_DOCS.bits()
+            | Self::RENDER_ELEMENT_DOCS.bits()
+            | Self::RENDER_ATTRIBUTE_DOCS.bits()
+            | Self::RENDER_VARIANT_DOCS.bits();
+
+        /// The generator adds documentation to the rendered types if a
+        /// `xs:documentation` element was placed in the schema.
+        ///
+        /// See [`RENDER_DOCS`](Self::RENDER_DOCS) for details.
+        const RENDER_TYPE_DOCS = 1 << 3;
+
+        /// The generator adds documentation to the rendered elements if a
+        /// `xs:documentation` element was placed in the schema.
+        ///
+        /// See [`RENDER_DOCS`](Self::RENDER_DOCS) for details.
+        const RENDER_ELEMENT_DOCS = 1 << 4;
+
+        /// The generator adds documentation to the rendered attributes if a
+        /// `xs:documentation` element was placed in the schema.
+        ///
+        /// See [`RENDER_DOCS`](Self::RENDER_DOCS) for details.
+        const RENDER_ATTRIBUTE_DOCS = 1 << 5;
+
+        /// The generator adds documentation to the rendered enum variants for
+        /// `xs:enumeration` types if a `xs:documentation` element was placed
+        /// in the schema.
+        ///
+        /// See [`RENDER_DOCS`](Self::RENDER_DOCS) for details.
+        const RENDER_VARIANT_DOCS = 1 << 6;
     }
 }
 

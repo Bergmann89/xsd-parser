@@ -37,6 +37,7 @@ smallvec = "1.13"
 thiserror = "2.0.0"
 tokio = { version = "1.41", optional = true }
 tracing = "0.1"
+unindent = "0.2"
 url = "2.5"
 
 [dev-dependencies]

@@ -11,7 +11,7 @@ use quote::format_ident;
 use crate::{
     code::{IdentPath, Module, ModulePath},
     schema::NamespaceId,
-    types::Ident,
+    types::{Ident, Type},
 };
 
 use super::{Config, GeneratorFlags};
@@ -23,6 +23,9 @@ use super::{Config, GeneratorFlags};
 /// also used to collect the rendered code and add it to the corresponding module.
 #[derive(Debug)]
 pub struct Context<'a, 'types> {
+    /// The type information for the currently rendered type.
+    pub info: &'a Type,
+
     ident: &'a Ident,
     config: &'a Config<'types>,
     module: Mutex<&'a mut Module>,
@@ -149,6 +152,7 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(super) fn new(
+        info: &'a Type,
         ident: &'a Ident,
         config: &'a Config<'types>,
         module: &'a mut Module,
@@ -166,6 +170,8 @@ impl<'a, 'types> Context<'a, 'types> {
             .join(format_ident!("quick_xml_deserialize"));
 
         Self {
+            info,
+
             ident,
             config,
             module: Mutex::new(module),

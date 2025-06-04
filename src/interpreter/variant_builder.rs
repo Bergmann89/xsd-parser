@@ -6,9 +6,9 @@ use std::str::from_utf8;
 use tracing::instrument;
 
 use crate::schema::xs::{
-    Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType, ComplexContent,
-    ElementType, ExtensionType, Facet, FacetType, GroupType, List, QNameList, Restriction,
-    RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+    Annotation, Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType,
+    ComplexContent, ElementType, ExtensionType, Facet, FacetType, GroupType, List, QNameList,
+    Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
 };
 use crate::schema::{MaxOccurs, MinOccurs, Namespace};
 use crate::types::{
@@ -31,6 +31,10 @@ pub(super) struct VariantBuilder<'a, 'schema, 'state> {
 
     /// Mode of the content of the constructed type
     content_mode: ContentMode,
+
+    /// Documentation of the currently build type extracted from `xs:annotation`
+    /// and `xs:documentation` nodes.
+    documentation: Vec<String>,
 
     /// `true` if the simple content type of a complex type was already duplicated
     /// and is now unique for this type.
@@ -124,6 +128,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             fixed: false,
             type_mode: TypeMode::Unknown,
             content_mode: ContentMode::Unknown,
+            documentation: Vec::new(),
             is_simple_content_unique: false,
             owner,
         }
@@ -132,11 +137,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     pub(super) fn finish(self) -> Result<Type, Error> {
         let variant = self.variant.ok_or(Error::NoType)?;
 
-        Ok(Type::new(variant))
+        let mut type_ = Type::new(variant);
+        type_.documentation = self.documentation;
+
+        Ok(type_)
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element(&mut self, ty: &ElementType) -> Result<(), Error> {
+    pub(super) fn apply_element(
+        &mut self,
+        ty: &ElementType,
+        extract_docs: bool,
+    ) -> Result<(), Error> {
         use crate::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
@@ -185,6 +197,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             let ident = Ident::ANY_TYPE.with_ns(Some(xs));
 
             init_any!(self, Reference, ReferenceInfo::new(ident), true);
+        }
+
+        if extract_docs {
+            for content in &ty.content {
+                if let C::Annotation(ty) = content {
+                    self.apply_annotation(ty);
+                }
+            }
         }
 
         if ty.abstract_ {
@@ -244,7 +264,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::Restriction(x) => self.apply_simple_type_restriction(x)?,
                 C::Union(x) => self.apply_union(x)?,
                 C::List(x) => self.apply_list(x)?,
@@ -272,7 +292,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::SimpleType(x) => self.apply_simple_type(x)?,
                 C::Facet(x) => self.apply_facet(x)?,
             }
@@ -302,7 +322,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
+                C::OpenContent(_) | C::Assert(_) => (),
                 C::ComplexContent(x) => {
                     let ci = get_or_init_any!(self, ComplexType);
                     ci.is_dynamic = ty.abstract_;
@@ -316,6 +336,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::Group(x) => self.apply_group_ref(x)?,
                 C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
+                C::Annotation(x) => self.apply_annotation(x),
             }
         }
 
@@ -330,7 +351,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::Extension(x) => self.apply_simple_content_extension(x)?,
                 C::Restriction(x) => self.apply_simple_content_restriction(x)?,
             }
@@ -347,7 +368,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::Extension(x) => self.apply_complex_content_extension(x)?,
                 C::Restriction(x) => self.apply_complex_content_restriction(x)?,
             }
@@ -424,7 +445,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
+                C::OpenContent(_) | C::Assert(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::All(x) => self.apply_all(x)?,
                 C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::Attribute(x) => self.apply_attribute_ref(x)?,
@@ -444,7 +466,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) | C::OpenContent(_) | C::Assert(_) => (),
+                C::OpenContent(_) | C::Assert(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::All(x) => self.apply_all(x)?,
                 C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::Attribute(x) => self.apply_attribute_ref(x)?,
@@ -514,7 +537,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &ty.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::All(x) => self.apply_all(x)?,
                 C::Choice(x) => self.apply_choice(x)?,
                 C::Sequence(x) => self.apply_sequence(x)?,
@@ -529,7 +552,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_element_ref(&mut self, ty: &ElementType) -> Result<(), Error> {
-        match ty {
+        use crate::schema::xs::ElementTypeContent as C;
+
+        let element = match ty {
             ElementType {
                 ref_: Some(ref_),
                 name,
@@ -547,6 +572,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 });
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
+
+                element
             }
             ty => {
                 let field_name = self.state.name_builder().or(&ty.name).finish();
@@ -569,7 +596,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let type_ = if let Some(type_) = &ty.type_ {
                     self.parse_qname(type_)?
                 } else {
-                    self.create_element(ns, Some(type_name), ty)?
+                    self.create_element(ns, Some(type_name), ty, false)?
                 };
 
                 let ci = get_or_init_type!(self, Sequence);
@@ -578,6 +605,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 });
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
+
+                element
+            }
+        };
+
+        for content in &ty.content {
+            if let C::Annotation(x) = content {
+                if let Err(error) = x.extract_documentation_into(&mut element.documentation) {
+                    tracing::warn!(
+                        "Unable to extract documentation for `xs:element` reference: {error}"
+                    );
+                }
             }
         }
 
@@ -598,7 +637,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &group.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::Any(x) => self.apply_any(x)?,
                 C::All(x) => self.apply_all(&x.patch(ty))?,
                 C::Choice(x) => self.apply_choice(&x.patch(ty))?,
@@ -627,7 +666,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         for c in &group.content {
             match c {
-                C::Annotation(_) => (),
+                C::Annotation(x) => self.apply_annotation(x),
                 C::Attribute(x) => self.apply_attribute_ref(x)?,
                 C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
@@ -641,7 +680,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_attribute_ref(&mut self, ty: &AttributeType) -> Result<(), Error> {
-        match ty {
+        let attribute = match ty {
             AttributeType {
                 name: Some(name),
                 type_: Some(type_),
@@ -654,9 +693,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_type(IdentType::Attribute);
 
                 let ci = get_or_init_any!(self, ComplexType);
-                ci.attributes
-                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
-                    .update(ty);
+                let attribute = ci
+                    .attributes
+                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_));
+                attribute.update(ty);
+
+                attribute
             }
             AttributeType {
                 ref_: Some(ref_),
@@ -670,9 +712,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_type(IdentType::Attribute);
 
                 let ci = get_or_init_any!(self, ComplexType);
-                ci.attributes
-                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_))
-                    .update(ty);
+                let attribute = ci
+                    .attributes
+                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_));
+                attribute.update(ty);
+
+                attribute
             }
             AttributeType {
                 name: Some(name),
@@ -699,13 +744,22 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_type(IdentType::Attribute);
 
                 let ci = get_or_init_any!(self, ComplexType);
-                ci.attributes
-                    .find_or_insert(ident, |ident| {
-                        AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))
-                    })
-                    .update(ty);
+                let attribute = ci.attributes.find_or_insert(ident, |ident| {
+                    AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))
+                });
+                attribute.update(ty);
+
+                attribute
             }
             e => return Err(Error::InvalidAttributeReference(Box::new(e.clone()))),
+        };
+
+        if let Some(x) = &ty.annotation {
+            if let Err(error) = x.extract_documentation_into(&mut attribute.documentation) {
+                tracing::warn!(
+                    "Unable to extract documentation for `xs:attribute` reference: {error}"
+                );
+            }
         }
 
         Ok(())
@@ -784,8 +838,15 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         self.simple_content_builder(|builder| {
             let ei = get_or_init_any!(builder, Enumeration);
+
             let var = ei.variants.find_or_insert(ident, VariantInfo::new);
             var.use_ = Use::Required;
+
+            if let Some(x) = &ty.annotation {
+                if let Err(error) = x.extract_documentation_into(&mut var.documentation) {
+                    tracing::warn!("Unable to extract documentation for `xs:enumeration`: {error}");
+                }
+            }
 
             Ok(())
         })
@@ -815,6 +876,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .finish();
                 let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
                 ui.types.push(UnionTypeInfo::new(type_));
+            }
+
+            if let Some(x) = &ty.annotation {
+                if let Err(error) = x.extract_documentation_into(&mut builder.documentation) {
+                    tracing::warn!("Unable to extract documentation for `xs:union`: {error}");
+                }
             }
 
             Ok(())
@@ -860,7 +927,19 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             })?;
         }
 
+        if let Some(x) = &ty.annotation {
+            if let Err(error) = x.extract_documentation_into(&mut self.documentation) {
+                tracing::warn!("Unable to extract documentation for `xs:list`: {error}");
+            }
+        }
+
         Ok(())
+    }
+
+    fn apply_annotation(&mut self, ty: &Annotation) {
+        if let Err(error) = ty.extract_documentation_into(&mut self.documentation) {
+            tracing::warn!("Unable to extract documentation from annotation: {error}");
+        }
     }
 
     fn copy_base_type(&mut self, base: &Ident, mode: UpdateMode) -> Result<(), Error> {

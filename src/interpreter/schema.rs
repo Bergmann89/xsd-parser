@@ -60,7 +60,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                 | SchemaContent::Override(_)
                 | SchemaContent::Redefine(_) => (),
                 SchemaContent::Element(x) => {
-                    this.create_element(target_namespace, None, x)?;
+                    this.create_element(target_namespace, None, x, true)?;
                 }
                 SchemaContent::Attribute(x) => {
                     this.create_attribute(target_namespace, None, x)?;
@@ -87,7 +87,7 @@ impl SchemaInterpreter<'_, '_> {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_element(ident.ns, None, ty)?;
+            let new_ident = self.create_element(ident.ns, None, ty, true)?;
 
             crate::assert_eq!(ident, &new_ident);
         }
@@ -168,6 +168,7 @@ impl SchemaInterpreter<'_, '_> {
         ns: Option<NamespaceId>,
         name: Option<Name>,
         ty: &ElementType,
+        extract_docs: bool,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
@@ -175,7 +176,7 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type(ident, |builder| builder.apply_element(ty))
+        self.create_type(ident, |builder| builder.apply_element(ty, extract_docs))
     }
 
     #[instrument(err, level = "trace", skip(self))]

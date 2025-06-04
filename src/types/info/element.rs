@@ -29,6 +29,9 @@ pub struct ElementInfo {
 
     /// Name of the element to use inside the generated code.
     pub display_name: Option<String>,
+
+    /// Documentation of the element extracted from `xs:documentation` nodes.
+    pub documentation: Vec<String>,
 }
 
 /// Type of a [`ElementInfo`]
@@ -81,6 +84,7 @@ impl ElementInfo {
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 
@@ -94,6 +98,7 @@ impl ElementInfo {
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 
@@ -123,6 +128,7 @@ impl TypeEq for ElementInfo {
             min_occurs,
             max_occurs,
             display_name,
+            documentation,
         } = self;
 
         ident.hash(hasher);
@@ -131,6 +137,7 @@ impl TypeEq for ElementInfo {
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         display_name.hash(hasher);
+        documentation.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
@@ -141,6 +148,7 @@ impl TypeEq for ElementInfo {
             min_occurs,
             max_occurs,
             display_name,
+            documentation,
         } = self;
 
         ident.eq(&other.ident)
@@ -149,6 +157,7 @@ impl TypeEq for ElementInfo {
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && display_name.eq(&other.display_name)
+            && documentation.eq(&other.documentation)
     }
 }
 

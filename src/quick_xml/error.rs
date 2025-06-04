@@ -1,5 +1,6 @@
 use std::error::Error as StdError;
 use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
+use std::io::Error as IoError;
 use std::mem::take;
 use std::str::Utf8Error;
 
@@ -29,6 +30,14 @@ pub struct Error {
 /// Quick XML error kind.
 #[derive(Debug, Error)]
 pub enum Kind {
+    /// Error forwarded from the [`quick_xml`] crate.
+    #[error("IO Error: message={0}")]
+    IoError(
+        #[from]
+        #[source]
+        IoError,
+    ),
+
     /// Error forwarded from the [`quick_xml`] crate.
     #[error("XML Error: message={0}")]
     XmlError(
