@@ -27,6 +27,9 @@ pub struct AttributeInfo {
 
     /// Name of the attribute to use inside the generated code.
     pub display_name: Option<String>,
+
+    /// Documentation of the element extracted from `xs:documentation` nodes.
+    pub documentation: Vec<String>,
 }
 
 /// Type of a [`AttributeInfo`]
@@ -67,6 +70,7 @@ impl AttributeInfo {
             use_: Use::Optional,
             default: None,
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 
@@ -79,6 +83,7 @@ impl AttributeInfo {
             use_: Use::Required,
             default: None,
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 
@@ -115,6 +120,7 @@ impl TypeEq for AttributeInfo {
             use_,
             default,
             display_name,
+            documentation,
         } = self;
 
         ident.hash(hasher);
@@ -122,6 +128,7 @@ impl TypeEq for AttributeInfo {
         use_hash(use_, hasher);
         default.hash(hasher);
         display_name.hash(hasher);
+        documentation.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
@@ -131,6 +138,7 @@ impl TypeEq for AttributeInfo {
             use_,
             default,
             display_name,
+            documentation,
         } = self;
 
         ident.eq(&other.ident)
@@ -138,6 +146,7 @@ impl TypeEq for AttributeInfo {
             && use_.eq(&other.use_)
             && default.eq(&other.default)
             && display_name.eq(&other.display_name)
+            && documentation.eq(&other.documentation)
     }
 }
 

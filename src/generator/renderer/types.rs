@@ -5,7 +5,7 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 
 use crate::{
-    config::{SerdeSupport, TypedefMode},
+    config::{GeneratorFlags, SerdeSupport, TypedefMode},
     generator::{
         data::{
             ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement,
@@ -38,6 +38,33 @@ impl Renderer for TypesRenderer {
     }
 }
 
+/* Context */
+
+impl Context<'_, '_> {
+    pub(crate) fn render_type_docs(&self) -> Option<TokenStream> {
+        self.render_docs(
+            GeneratorFlags::RENDER_TYPE_DOCS,
+            &self.info.documentation[..],
+        )
+    }
+
+    pub(crate) fn render_docs(
+        &self,
+        flags: GeneratorFlags,
+        docs: &[String],
+    ) -> Option<TokenStream> {
+        self.check_flags(flags).then(|| {
+            let docs = docs.iter().flat_map(|s| s.split('\n')).map(|s| {
+                let s = s.trim_end();
+
+                quote!(#[doc = #s])
+            });
+
+            quote!(#( #docs )*)
+        })
+    }
+}
+
 /* CustomType */
 
 impl CustomType<'_> {
@@ -60,11 +87,13 @@ impl UnionType<'_> {
             variants,
             ..
         } = self;
+        let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
         let variants = variants.iter().map(|x| x.render_variant(ctx));
 
         let code = quote! {
+            #docs
             #derive
             pub enum #type_ident {
                 #( #variants )*
@@ -82,8 +111,8 @@ impl UnionType<'_> {
 impl UnionTypeVariant<'_> {
     fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
-            variant_ident,
             target_type,
+            variant_ident,
             ..
         } = self;
 
@@ -106,6 +135,7 @@ impl DynamicType<'_> {
             ..
         } = self;
 
+        let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let trait_impls = render_trait_impls(type_ident, &[]);
         let dyn_traits = sub_traits.as_ref().map_or_else(
@@ -114,6 +144,7 @@ impl DynamicType<'_> {
         );
 
         let code = quote! {
+            #docs
             #derive
             pub struct #type_ident(pub Box<dyn #trait_ident>);
 
@@ -139,6 +170,7 @@ impl ReferenceType<'_> {
             ..
         } = self;
 
+        let docs = ctx.render_type_docs();
         let target_type = ctx.resolve_type_for_module(target_type);
 
         let code = match mode {
@@ -146,7 +178,10 @@ impl ReferenceType<'_> {
             TypedefMode::Typedef => {
                 let target_type = occurs.make_type(&target_type, false);
 
-                quote! { pub type #type_ident = #target_type; }
+                quote! {
+                    #docs
+                    pub type #type_ident = #target_type;
+                }
             }
             TypedefMode::NewType => {
                 let target_type = occurs.make_type(&target_type, false);
@@ -156,6 +191,7 @@ impl ReferenceType<'_> {
                 let trait_impls = render_trait_impls(type_ident, trait_impls);
 
                 quote! {
+                    #docs
                     #derive
                     pub struct #type_ident(pub #target_type);
 
@@ -179,6 +215,7 @@ impl EnumerationType<'_> {
             ..
         } = self;
 
+        let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let trait_impls = render_trait_impls(type_ident, trait_impls);
 
@@ -188,6 +225,7 @@ impl EnumerationType<'_> {
             .collect::<Vec<_>>();
 
         let code = quote! {
+            #docs
             #derive
             pub enum #type_ident {
                 #( #variants )*
@@ -208,6 +246,8 @@ impl EnumerationTypeVariant<'_> {
             target_type,
         } = self;
 
+        let docs = ctx.render_docs(GeneratorFlags::RENDER_VARIANT_DOCS, &info.documentation[..]);
+
         let serde = if ctx.serde_support == SerdeSupport::None {
             None
         } else if info.type_.is_some() {
@@ -225,6 +265,7 @@ impl EnumerationTypeVariant<'_> {
         });
 
         quote! {
+            #docs
             #serde
             #variant_ident #target_type,
         }
@@ -262,6 +303,7 @@ impl ComplexType<'_> {
 
 impl ComplexTypeEnum<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
+        let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let type_ident = &self.type_ident;
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
@@ -269,6 +311,7 @@ impl ComplexTypeEnum<'_> {
         let variants = self.elements.iter().map(|x| x.render_variant(ctx));
 
         let code = quote! {
+            #docs
             #derive
             pub enum #type_ident {
                 #( #variants )*
@@ -283,6 +326,7 @@ impl ComplexTypeEnum<'_> {
 
 impl ComplexTypeStruct<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
+        let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
         let type_ident = &self.type_ident;
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
@@ -307,6 +351,7 @@ impl ComplexTypeStruct<'_> {
         };
 
         let code = quote! {
+            #docs
             #derive
             pub struct #type_ident
                 #struct_data
@@ -352,6 +397,11 @@ impl ComplexTypeAttribute<'_> {
             quote!()
         };
 
+        let docs = ctx.render_docs(
+            GeneratorFlags::RENDER_ATTRIBUTE_DOCS,
+            &self.info.documentation[..],
+        );
+
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml => {
@@ -377,11 +427,13 @@ impl ComplexTypeAttribute<'_> {
 
         if self.is_option {
             quote! {
+                #docs
                 #serde
                 pub #field_ident: Option<#target_type>,
             }
         } else {
             quote! {
+                #docs
                 #serde
                 pub #field_ident: #target_type,
             }
@@ -397,6 +449,11 @@ impl ComplexTypeElement<'_> {
             .occurs
             .make_type(&target_type, self.need_indirection)
             .unwrap();
+
+        let docs = ctx.render_docs(
+            GeneratorFlags::RENDER_ELEMENT_DOCS,
+            &self.info.documentation[..],
+        );
 
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
@@ -416,6 +473,7 @@ impl ComplexTypeElement<'_> {
         }
 
         quote! {
+            #docs
             #serde
             pub #field_ident: #target_type,
         }
@@ -425,6 +483,11 @@ impl ComplexTypeElement<'_> {
         let variant_ident = &self.variant_ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(&target_type, self.need_indirection);
+
+        let docs = ctx.render_docs(
+            GeneratorFlags::RENDER_ELEMENT_DOCS,
+            &self.info.documentation[..],
+        );
 
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
@@ -436,6 +499,7 @@ impl ComplexTypeElement<'_> {
         };
 
         quote! {
+            #docs
             #serde
             #variant_ident(#target_type),
         }

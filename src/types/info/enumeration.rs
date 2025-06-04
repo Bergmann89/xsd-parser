@@ -32,6 +32,9 @@ pub struct VariantInfo {
 
     /// Name of the variant to use inside the generated code.
     pub display_name: Option<String>,
+
+    /// Documentation of the type extracted from `xs:documentation` nodes.
+    pub documentation: Vec<String>,
 }
 
 /// Type information that represents a list of [`VariantInfo`] instances.
@@ -66,6 +69,7 @@ impl VariantInfo {
             use_: Use::Optional,
             type_: None,
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 
@@ -85,12 +89,14 @@ impl TypeEq for VariantInfo {
             use_,
             type_,
             display_name,
+            documentation,
         } = self;
 
         ident.hash(hasher);
         use_hash(use_, hasher);
         type_.type_hash(hasher, types);
         display_name.hash(hasher);
+        documentation.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &Types) -> bool {
@@ -99,12 +105,14 @@ impl TypeEq for VariantInfo {
             use_,
             type_,
             display_name,
+            documentation,
         } = self;
 
         ident.eq(&other.ident)
             && use_.eq(&other.use_)
             && type_.type_eq(&other.type_, types)
             && display_name.eq(&other.display_name)
+            && documentation.eq(&other.documentation)
     }
 }
 

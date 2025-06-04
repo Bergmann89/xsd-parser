@@ -519,8 +519,8 @@ impl<'types> GeneratorFixed<'types> {
             module,
             renderers,
         } = self;
+        let mut ctx = Context::new(ty, &ident, config, module);
         let ty = TypeData::new(ty, &ident, config, state)?;
-        let mut ctx = Context::new(&ident, config, module);
 
         tracing::debug!("Render type: {ident}");
 

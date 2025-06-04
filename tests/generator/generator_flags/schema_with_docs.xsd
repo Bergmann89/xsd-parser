@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com">
+    <xs:complexType name="MyChoice">
+        <xs:annotation>
+            <xs:documentation>
+                This is an example type to show how choices are working
+            </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element name="Once" type="xs:int">
+                <xs:annotation>
+                    <xs:documentation>
+                        Exactly one integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Optional" type="xs:int" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        An optional integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="OnceSpecify" type="xs:int" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Exactly one integer, but this was set explicitly.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TwiceOrMore" type="xs:int" minOccurs="2" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Two or more integers.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="MySequence">
+        <xs:annotation>
+            <xs:documentation>
+                This is an example type to show how sequences are working
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Once" type="xs:int">
+                <xs:annotation>
+                    <xs:documentation>
+                        Exactly one integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="Optional" type="xs:int" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>
+                        An optional integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="OnceSpecify" type="xs:int" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>
+                        Exactly one integer, but this was set explicitly.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="TwiceOrMore" type="xs:int" minOccurs="2" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation>
+                        Two or more integers.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

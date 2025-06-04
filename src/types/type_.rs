@@ -12,11 +12,14 @@ use super::{
 /// Represents a type that was read and interpreted from an XML schema.
 #[derive(Debug, Clone)]
 pub struct Type {
+    /// Actual data type this type represents.
+    pub variant: TypeVariant,
+
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
 
-    /// Actual data type this type represents.
-    pub variant: TypeVariant,
+    /// Documentation of the type extracted from `xs:documentation` nodes.
+    pub documentation: Vec<String>,
 }
 
 /// Actual data type a [`Type`] represents.
@@ -152,6 +155,7 @@ impl Type {
         Self {
             variant,
             display_name: None,
+            documentation: Vec::new(),
         }
     }
 }
