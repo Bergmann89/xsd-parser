@@ -220,10 +220,9 @@ where
 
 fn fmt_code(s: &str) -> String {
     let mut child = Command::new("rustfmt")
-        .arg("--emit")
-        .arg("stdout")
-        .arg("--edition")
-        .arg("2021")
+        .args(["--emit", "stdout"])
+        .args(["--edition", "2021"])
+        .args(["--config", "normalize_doc_attributes=true"])
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()

@@ -33,7 +33,7 @@ impl Annotation {
     ///
     /// This will extract each `xs:documentation` node from the `xs:annotation`,
     /// serialize the content of the `xs:documentation` node into a string and
-    /// return is as vector.
+    /// return it as vector.
     ///
     /// # Errors
     ///
