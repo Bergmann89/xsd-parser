@@ -1,4 +1,4 @@
-//! Contains the [`CustomInfo`] type information and all related types.
+//! Contains the [`CustomMeta`] type information and all related types.
 
 use std::fmt::{Debug, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
@@ -6,13 +6,13 @@ use std::hash::{Hash, Hasher};
 use proc_macro2::TokenStream;
 
 /// Type information for a custom defined type.
-pub struct CustomInfo {
+pub struct CustomMeta {
     name: &'static str,
     include: Option<&'static str>,
     default: Option<Box<dyn CustomDefaultImpl>>,
 }
 
-impl CustomInfo {
+impl CustomMeta {
     /// Create a new custom type information with the passed `name`.
     #[must_use]
     pub fn new(name: &'static str) -> Self {
@@ -63,7 +63,7 @@ impl CustomInfo {
     }
 }
 
-impl Clone for CustomInfo {
+impl Clone for CustomMeta {
     fn clone(&self) -> Self {
         Self {
             name: self.name,
@@ -76,7 +76,7 @@ impl Clone for CustomInfo {
     }
 }
 
-impl Debug for CustomInfo {
+impl Debug for CustomMeta {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         f.debug_struct("CustomType")
             .field("name", &self.name)
@@ -86,15 +86,15 @@ impl Debug for CustomInfo {
     }
 }
 
-impl Eq for CustomInfo {}
+impl Eq for CustomMeta {}
 
-impl PartialEq for CustomInfo {
+impl PartialEq for CustomMeta {
     fn eq(&self, other: &Self) -> bool {
         self.name.eq(other.name)
     }
 }
 
-impl Hash for CustomInfo {
+impl Hash for CustomMeta {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.name.hash(state);
     }
@@ -104,7 +104,7 @@ impl Hash for CustomInfo {
 /// schema to actual default code.
 ///
 /// You can add a custom default implementation to your custom type using
-/// [`CustomInfo::with_default`].
+/// [`CustomMeta::with_default`].
 pub trait CustomDefaultImpl: Send + Sync + 'static {
     /// Try to convert the passed string `s` that contains the default value from
     /// the XML schema to actual default code. If the value could not be converted

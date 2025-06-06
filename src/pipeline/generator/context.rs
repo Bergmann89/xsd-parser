@@ -10,8 +10,8 @@ use quote::format_ident;
 
 use crate::models::{
     code::{IdentPath, Module, ModulePath},
+    meta::MetaType,
     schema::NamespaceId,
-    types::Type,
     Ident,
 };
 
@@ -25,7 +25,7 @@ use super::{Config, GeneratorFlags};
 #[derive(Debug)]
 pub struct Context<'a, 'types> {
     /// The type information for the currently rendered type.
-    pub info: &'a Type,
+    pub info: &'a MetaType,
 
     ident: &'a Ident,
     config: &'a Config<'types>,
@@ -153,7 +153,7 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(super) fn new(
-        info: &'a Type,
+        info: &'a MetaType,
         ident: &'a Ident,
         config: &'a Config<'types>,
         module: &'a mut Module,

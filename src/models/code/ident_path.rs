@@ -6,7 +6,7 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
 use thiserror::Error;
 
-use crate::models::{schema::NamespaceId, types::Types};
+use crate::models::{meta::MetaTypes, schema::NamespaceId};
 
 use super::format_module_ident;
 
@@ -209,7 +209,7 @@ impl ModulePath {
     /// This tries to look up the passed namespace id in the types information and create
     /// a module path for it.
     #[must_use]
-    pub fn from_namespace(ns: Option<NamespaceId>, types: &Types) -> Self {
+    pub fn from_namespace(ns: Option<NamespaceId>, types: &MetaTypes) -> Self {
         let ident = ns
             .and_then(|id| types.modules.get(&id))
             .and_then(|module| module.name.as_ref())

@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::models::{
-    types::{Base, TypeVariant, Types},
+    meta::{Base, MetaTypeVariant, MetaTypes},
     Ident,
 };
 
@@ -9,31 +9,31 @@ use crate::models::{
 pub(crate) struct BaseMap(HashMap<Ident, Base>);
 
 impl BaseMap {
-    pub(crate) fn new(types: &Types) -> Self {
+    pub(crate) fn new(types: &MetaTypes) -> Self {
         let mut ret = HashMap::new();
 
-        for (ident, type_) in &types.types {
+        for (ident, type_) in &types.items {
             match &type_.variant {
-                TypeVariant::Enumeration(ei) => {
+                MetaTypeVariant::Enumeration(ei) => {
                     if matches!(
                         ei.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::Enumeration(_))
+                        Some(MetaTypeVariant::Enumeration(_))
                     ) {
                         ret.insert(ident.clone(), ei.base.clone());
                     }
                 }
-                TypeVariant::Union(ei) => {
+                MetaTypeVariant::Union(ei) => {
                     if matches!(
                         ei.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::Union(_))
+                        Some(MetaTypeVariant::Union(_))
                     ) {
                         ret.insert(ident.clone(), ei.base.clone());
                     }
                 }
-                TypeVariant::ComplexType(ci) => {
+                MetaTypeVariant::ComplexType(ci) => {
                     if matches!(
                         ci.base.as_ident().and_then(|base| types.get_variant(base)),
-                        Some(TypeVariant::ComplexType(_))
+                        Some(MetaTypeVariant::ComplexType(_))
                     ) {
                         ret.insert(ident.clone(), ci.base.clone());
                     }

@@ -7,7 +7,7 @@ use quote::format_ident;
 
 use crate::models::{
     code::{IdentPath, Module},
-    types::Module as TypesModule,
+    meta::ModuleMeta as TypesModule,
 };
 
 use super::{data::TypeData, Config, Context};

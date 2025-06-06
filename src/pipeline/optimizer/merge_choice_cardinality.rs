@@ -1,4 +1,4 @@
-use crate::models::{schema::MaxOccurs, types::TypeVariant, Ident};
+use crate::models::{meta::MetaTypeVariant, schema::MaxOccurs, Ident};
 
 use super::{Error, Optimizer};
 
@@ -34,7 +34,7 @@ impl Optimizer {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::ComplexType(ci) = ty else {
+        let MetaTypeVariant::ComplexType(ci) = ty else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -42,7 +42,7 @@ impl Optimizer {
             return Err(Error::MissingContentType(ident));
         };
 
-        let Some(TypeVariant::Choice(ci)) = self.types.get_variant_mut(&content_ident) else {
+        let Some(MetaTypeVariant::Choice(ci)) = self.types.get_variant_mut(&content_ident) else {
             return Err(Error::ExpectedComplexChoice(ident));
         };
 
@@ -57,7 +57,7 @@ impl Optimizer {
             element.max_occurs = MaxOccurs::Bounded(1);
         }
 
-        let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) else {
+        let Some(MetaTypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) else {
             unreachable!();
         };
 
@@ -76,9 +76,10 @@ impl Optimizer {
 
         let idents = self
             .types
+            .items
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
+                if matches!(&type_.variant, MetaTypeVariant::ComplexType(ci) if ci.has_complex_choice_content(&self.types)) {
                     Some(ident)
                 } else {
                     None

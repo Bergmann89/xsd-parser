@@ -6,6 +6,10 @@ use std::str::from_utf8;
 use tracing::instrument;
 
 use crate::models::{
+    meta::{
+        AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta, ElementMode,
+        EnumerationMetaVariant, MetaType, MetaTypeVariant, ReferenceMeta, UnionMetaType,
+    },
     schema::{
         xs::{
             Annotation, Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType,
@@ -13,10 +17,6 @@ use crate::models::{
             QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
         },
         MaxOccurs, MinOccurs, Namespace,
-    },
-    types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, Base, DynamicInfo, ElementInfo, ElementMode,
-        ReferenceInfo, Type, TypeVariant, UnionTypeInfo, VariantInfo,
     },
     Ident, IdentType, Name,
 };
@@ -27,7 +27,7 @@ use super::{Error, SchemaInterpreter};
 #[derive(Debug)]
 pub(super) struct VariantBuilder<'a, 'schema, 'state> {
     /// Type variant that is constructed by the builder
-    variant: Option<TypeVariant>,
+    variant: Option<MetaTypeVariant>,
 
     /// `true` if `type_` is fixed and can not be changed anymore
     fixed: bool,
@@ -84,10 +84,10 @@ macro_rules! init_any {
         init_any!($builder, $variant, Default::default(), true)
     };
     ($builder:expr, $variant:ident, $value:expr, $fixed:expr) => {{
-        $builder.variant = Some(TypeVariant::$variant($value));
+        $builder.variant = Some(MetaTypeVariant::$variant($value));
         $builder.fixed = $fixed;
 
-        let TypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
+        let MetaTypeVariant::$variant(ret) = $builder.variant.as_mut().unwrap() else {
             crate::unreachable!();
         };
 
@@ -103,14 +103,14 @@ macro_rules! get_or_init_any {
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::$variant(ret)) => ret,
+            Some(MetaTypeVariant::$variant(ret)) => ret,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
     };
 }
 
-/// Get the `SimpleInfo` from any possible type or initialize the required variant.
+/// Get the `GroupMeta` from any possible type or initialize the required variant.
 macro_rules! get_or_init_type {
     ($builder:expr, $variant:ident) => {
         get_or_init_type!($builder, $variant, Default::default())
@@ -118,7 +118,11 @@ macro_rules! get_or_init_type {
     ($builder:expr, $variant:ident, $default:expr) => {
         match &mut $builder.variant {
             None => init_any!($builder, $variant, $default, true),
-            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => si,
+            Some(
+                MetaTypeVariant::All(si)
+                | MetaTypeVariant::Choice(si)
+                | MetaTypeVariant::Sequence(si),
+            ) => si,
             _ if !$builder.fixed => init_any!($builder, $variant, $default, true),
             Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
         }
@@ -140,10 +144,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
     }
 
-    pub(super) fn finish(self) -> Result<Type, Error> {
+    pub(super) fn finish(self) -> Result<MetaType, Error> {
         let variant = self.variant.ok_or(Error::NoType)?;
 
-        let mut type_ = Type::new(variant);
+        let mut type_ = MetaType::new(variant);
         type_.documentation = self.documentation;
 
         Ok(type_)
@@ -160,7 +164,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
 
-            init_any!(self, Reference, ReferenceInfo::new(type_), true);
+            init_any!(self, Reference, ReferenceMeta::new(type_), true);
         } else if !ty.content.is_empty() {
             let ident = self
                 .state
@@ -193,7 +197,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             });
 
             if has_content {
-                init_any!(self, Reference, ReferenceInfo::new(type_?), true);
+                init_any!(self, Reference, ReferenceMeta::new(type_?), true);
             }
         } else {
             let xs = self
@@ -202,7 +206,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
             let ident = Ident::ANY_TYPE.with_ns(Some(xs));
 
-            init_any!(self, Reference, ReferenceInfo::new(ident), true);
+            init_any!(self, Reference, ReferenceMeta::new(ident), true);
         }
 
         if extract_docs {
@@ -216,7 +220,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         if ty.abstract_ {
             let type_ = match self.variant.take() {
                 None => None,
-                Some(TypeVariant::Reference(ti)) => Some(ti.type_),
+                Some(MetaTypeVariant::Reference(ti)) => Some(ti.type_),
                 e => crate::unreachable!("Unexpected type: {:?}", e),
             };
 
@@ -229,14 +233,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ident = builder.state.current_ident().unwrap().clone();
                 let base_ty = builder.get_element_mut(base_ident)?;
 
-                if let TypeVariant::Reference(ti) = &mut base_ty.variant {
-                    base_ty.variant = TypeVariant::Dynamic(DynamicInfo {
+                if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
+                    base_ty.variant = MetaTypeVariant::Dynamic(DynamicMeta {
                         type_: Some(ti.type_.clone()),
                         derived_types: vec![ti.type_.clone()],
                     });
                 }
 
-                let TypeVariant::Dynamic(ai) = &mut base_ty.variant else {
+                let MetaTypeVariant::Dynamic(ai) = &mut base_ty.variant else {
                     return Err(Error::ExpectedDynamicElement(base_ident.clone()));
                 };
 
@@ -253,7 +257,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     pub(super) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
-            init_any!(self, Reference, ReferenceInfo::new(type_), false);
+            init_any!(self, Reference, ReferenceMeta::new(type_), false);
         } else if let Some(x) = &ty.simple_type {
             self.apply_simple_type(x)?;
         }
@@ -306,10 +310,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         if let Some(base) = base {
             match &mut self.variant {
-                Some(TypeVariant::BuildIn(_) | TypeVariant::Reference(_)) => (),
-                Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
-                Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
+                Some(MetaTypeVariant::BuildIn(_) | MetaTypeVariant::Reference(_)) => (),
+                Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
+                Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
+                Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
                 e => unreachable!("Unexpected type: {e:#?}"),
             }
         }
@@ -391,10 +395,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.apply_extension(ty)?;
 
         match &mut self.variant {
-            Some(TypeVariant::Reference(_)) => (),
-            Some(TypeVariant::Union(e)) => e.base = Base::Extension(base),
-            Some(TypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
-            Some(TypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
+            Some(MetaTypeVariant::Reference(_)) => (),
+            Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
+            Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
+            Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
             e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
@@ -409,10 +413,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.apply_restriction(ty)?;
 
         match &mut self.variant {
-            Some(TypeVariant::Reference(_)) => (),
-            Some(TypeVariant::Union(e)) => e.base = Base::Restriction(base),
-            Some(TypeVariant::Enumeration(e)) => e.base = Base::Restriction(base),
-            Some(TypeVariant::ComplexType(e)) => e.base = Base::Restriction(base),
+            Some(MetaTypeVariant::Reference(_)) => (),
+            Some(MetaTypeVariant::Union(e)) => e.base = Base::Restriction(base),
+            Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Restriction(base),
+            Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Restriction(base),
             e => crate::unreachable!("Unexpected type: {e:#?}!"),
         }
 
@@ -574,7 +578,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
+                    ElementMeta::new(ident, type_, ElementMode::Element)
                 });
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
@@ -607,7 +611,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
-                    ElementInfo::new(ident, type_, ElementMode::Element)
+                    ElementMeta::new(ident, type_, ElementMode::Element)
                 });
                 crate::assert_eq!(element.element_mode, ElementMode::Element);
                 element.update(ty);
@@ -701,7 +705,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ci = get_or_init_any!(self, ComplexType);
                 let attribute = ci
                     .attributes
-                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_));
+                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_));
                 attribute.update(ty);
 
                 attribute
@@ -720,7 +724,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ci = get_or_init_any!(self, ComplexType);
                 let attribute = ci
                     .attributes
-                    .find_or_insert(ident, |ident| AttributeInfo::new(ident, type_));
+                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_));
                 attribute.update(ty);
 
                 attribute
@@ -751,7 +755,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 let ci = get_or_init_any!(self, ComplexType);
                 let attribute = ci.attributes.find_or_insert(ident, |ident| {
-                    AttributeInfo::new(ident, type_.unwrap_or(Ident::STRING))
+                    AttributeMeta::new(ident, type_.unwrap_or(Ident::STRING))
                 });
                 attribute.update(ty);
 
@@ -781,7 +785,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .finish();
         let ident = Ident::new(name).with_type(IdentType::Element);
 
-        let any = AnyInfo {
+        let any = AnyMeta {
             id: ty.id.clone(),
             namespace: ty.namespace.clone(),
             not_q_name: ty.not_q_name.clone(),
@@ -789,7 +793,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             process_contents: ty.process_contents.clone(),
         };
 
-        let mut el = ElementInfo::any(ident, any);
+        let mut el = ElementMeta::any(ident, any);
         el.min_occurs = ty.min_occurs;
         el.max_occurs = ty.max_occurs;
 
@@ -811,7 +815,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let ci = get_or_init_any!(self, ComplexType);
         ci.attributes.find_or_insert(ident, |ident| {
-            let any = AnyAttributeInfo {
+            let any = AnyAttributeMeta {
                 id: ty.id.clone(),
                 namespace: ty.namespace.clone(),
                 not_q_name: ty.not_q_name.clone(),
@@ -819,7 +823,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 process_contents: ty.process_contents.clone(),
             };
 
-            AttributeInfo::any(ident, any)
+            AttributeMeta::any(ident, any)
         });
 
         Ok(())
@@ -845,7 +849,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.simple_content_builder(|builder| {
             let ei = get_or_init_any!(builder, Enumeration);
 
-            let var = ei.variants.find_or_insert(ident, VariantInfo::new);
+            let var = ei
+                .variants
+                .find_or_insert(ident, EnumerationMetaVariant::new);
             var.use_ = Use::Required;
 
             if let Some(x) = &ty.annotation {
@@ -866,7 +872,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             if let Some(types) = &ty.member_types {
                 for type_ in &types.0 {
                     let type_ = builder.owner.parse_qname(type_)?;
-                    ui.types.push(UnionTypeInfo::new(type_));
+                    ui.types.push(UnionMetaType::new(type_));
                 }
             }
 
@@ -881,7 +887,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .auto_extend(false, true, builder.owner.state)
                     .finish();
                 let type_ = builder.owner.create_simple_type(ns, Some(name), x)?;
-                ui.types.push(UnionTypeInfo::new(type_));
+                ui.types.push(UnionMetaType::new(type_));
             }
 
             if let Some(x) = &ty.annotation {
@@ -924,7 +930,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         if let Some(type_) = type_ {
             self.simple_content_builder(|builder| {
-                let ti = get_or_init_any!(builder, Reference, ReferenceInfo::new(type_.clone()));
+                let ti = get_or_init_any!(builder, Reference, ReferenceMeta::new(type_.clone()));
                 ti.type_ = type_;
                 ti.min_occurs = 0;
                 ti.max_occurs = MaxOccurs::Unbounded;
@@ -986,19 +992,20 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let mut base = base.clone();
 
         match (self.content_mode, &mut base) {
-            (ContentMode::Simple, TypeVariant::Enumeration(ei)) => ei.variants.clear(),
-            (ContentMode::Complex, TypeVariant::ComplexType(ci)) => {
+            (ContentMode::Simple, MetaTypeVariant::Enumeration(ei)) => ei.variants.clear(),
+            (ContentMode::Complex, MetaTypeVariant::ComplexType(ci)) => {
                 if let Some(content_ident) = &ci.content {
                     let mut content_type = self
                         .owner
                         .state
                         .types
+                        .items
                         .get(content_ident)
                         .ok_or_else(|| Error::UnknownType(content_ident.clone()))?
                         .clone();
 
                     match (&mut content_type.variant, mode) {
-                        (TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si), UpdateMode::Restriction) => {
+                        (MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si) | MetaTypeVariant::Sequence(si), UpdateMode::Restriction) => {
                             si.elements.retain(|element| element.min_occurs > 0);
                         }
                         (_, UpdateMode::Extension) => (),
@@ -1098,9 +1105,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 f(&mut builder)?;
 
                 let content = builder.variant.unwrap();
-                let content = Type::new(content);
+                let content = MetaType::new(content);
 
-                match self.owner.state.types.entry(content_ident) {
+                match self.owner.state.types.items.entry(content_ident) {
                     Entry::Vacant(e) => {
                         e.insert(content);
                     }
@@ -1140,19 +1147,20 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let mut variant = None;
         let mut update_content_mode = UpdateContentMode::Unknown;
 
-        if let Some(TypeVariant::ComplexType(ci)) = &self.variant {
+        if let Some(MetaTypeVariant::ComplexType(ci)) = &self.variant {
             if let Some(content_ident) = &ci.content {
                 let content_ty = self
                     .owner
                     .state
                     .types
+                    .items
                     .get(content_ident)
                     .ok_or_else(|| Error::UnknownType(content_ident.clone()))?;
 
                 match (complex_content_type, &content_ty.variant) {
-                    (ComplexContentType::All, TypeVariant::All(_))
-                    | (ComplexContentType::Choice, TypeVariant::Choice(_))
-                    | (ComplexContentType::Sequence, TypeVariant::Sequence(_)) => {
+                    (ComplexContentType::All, MetaTypeVariant::All(_))
+                    | (ComplexContentType::Choice, MetaTypeVariant::Choice(_))
+                    | (ComplexContentType::Sequence, MetaTypeVariant::Sequence(_)) => {
                         variant = Some(content_ty.variant.clone());
                         update_content_mode = UpdateContentMode::Update;
                     }
@@ -1162,9 +1170,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         let variant = variant.unwrap_or_else(|| match complex_content_type {
-            ComplexContentType::All => TypeVariant::All(Default::default()),
-            ComplexContentType::Choice => TypeVariant::Choice(Default::default()),
-            ComplexContentType::Sequence => TypeVariant::Sequence(Default::default()),
+            ComplexContentType::All => MetaTypeVariant::All(Default::default()),
+            ComplexContentType::Choice => MetaTypeVariant::Choice(Default::default()),
+            ComplexContentType::Sequence => MetaTypeVariant::Sequence(Default::default()),
         });
 
         let mut builder = VariantBuilder::new(&mut *self.owner);
@@ -1175,8 +1183,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let ty = builder.finish()?;
 
-        let (TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) =
-            &ty.variant
+        let (MetaTypeVariant::All(si)
+        | MetaTypeVariant::Choice(si)
+        | MetaTypeVariant::Sequence(si)) = &ty.variant
         else {
             return Err(Error::ExpectedGroupType);
         };
@@ -1188,7 +1197,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ns = self.state.current_ns();
 
         match &mut self.variant {
-            Some(TypeVariant::ComplexType(ci)) => match update_content_mode {
+            Some(MetaTypeVariant::ComplexType(ci)) => match update_content_mode {
                 UpdateContentMode::Unknown => {
                     self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
@@ -1199,7 +1208,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 UpdateContentMode::Update => {
                     let content_ident = ci.content.as_ref().unwrap();
 
-                    self.owner.state.types.insert(content_ident.clone(), ty);
+                    self.owner
+                        .state
+                        .types
+                        .items
+                        .insert(content_ident.clone(), ty);
 
                     ci.min_occurs = ci.min_occurs.min(min_occurs);
                     ci.max_occurs = ci.max_occurs.max(max_occurs);
@@ -1208,12 +1221,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
                     let content_ident = ci.content.as_ref().unwrap();
-                    let content_type = self.owner.state.types.get_mut(content_ident).unwrap();
+                    let content_type = self.owner.state.types.items.get_mut(content_ident).unwrap();
                     let content_variant = &mut content_type.variant;
 
-                    let (TypeVariant::All(si)
-                    | TypeVariant::Choice(si)
-                    | TypeVariant::Sequence(si)) = content_variant
+                    let (MetaTypeVariant::All(si)
+                    | MetaTypeVariant::Choice(si)
+                    | MetaTypeVariant::Sequence(si)) = content_variant
                     else {
                         unreachable!();
                     };
@@ -1222,21 +1235,25 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         .with_ns(ns)
                         .with_type(IdentType::Group);
                     let element = si.elements.find_or_insert(ident, |ident| {
-                        ElementInfo::new(ident, type_ident, ElementMode::Group)
+                        ElementMeta::new(ident, type_ident, ElementMode::Group)
                     });
 
                     element.min_occurs = element.min_occurs.min(min_occurs);
                     element.max_occurs = element.max_occurs.max(max_occurs);
                 }
             },
-            Some(TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si)) => {
+            Some(
+                MetaTypeVariant::All(si)
+                | MetaTypeVariant::Choice(si)
+                | MetaTypeVariant::Sequence(si),
+            ) => {
                 self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
                 let ident = Ident::new(field_name)
                     .with_ns(ns)
                     .with_type(IdentType::Group);
                 let element = si.elements.find_or_insert(ident, |ident| {
-                    ElementInfo::new(ident, type_ident, ElementMode::Group)
+                    ElementMeta::new(ident, type_ident, ElementMode::Group)
                 });
 
                 element.min_occurs = element.min_occurs.min(min_occurs);
@@ -1315,21 +1332,21 @@ impl<T: Clone> Update<Option<T>> for Option<T> {
     }
 }
 
-impl Update<GroupType> for ElementInfo {
+impl Update<GroupType> for ElementMeta {
     fn update(&mut self, other: &GroupType) {
         self.min_occurs = other.min_occurs;
         self.max_occurs = other.max_occurs;
     }
 }
 
-impl Update<ElementType> for ElementInfo {
+impl Update<ElementType> for ElementMeta {
     fn update(&mut self, other: &ElementType) {
         self.min_occurs = other.min_occurs;
         self.max_occurs = other.max_occurs;
     }
 }
 
-impl Update<AttributeType> for AttributeInfo {
+impl Update<AttributeType> for AttributeMeta {
     fn update(&mut self, other: &AttributeType) {
         self.use_ = other.use_.clone();
         self.default.update(&other.default);

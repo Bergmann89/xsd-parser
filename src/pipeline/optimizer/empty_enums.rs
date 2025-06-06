@@ -1,5 +1,5 @@
 use crate::models::{
-    types::{ReferenceInfo, TypeVariant},
+    meta::{MetaTypeVariant, ReferenceMeta},
     Name,
 };
 
@@ -27,8 +27,8 @@ impl Optimizer {
     pub fn remove_empty_enum_variants(mut self) -> Self {
         tracing::debug!("remove_empty_enum_variants");
 
-        for type_ in self.types.types.values_mut() {
-            if let TypeVariant::Enumeration(x) = &mut type_.variant {
+        for type_ in self.types.items.values_mut() {
+            if let MetaTypeVariant::Enumeration(x) = &mut type_.variant {
                 x.variants
                     .retain(|x| !matches!(&x.ident.name, Name::Named(x) if x.is_empty()));
             }
@@ -63,12 +63,13 @@ impl Optimizer {
     pub fn remove_empty_enums(mut self) -> Self {
         tracing::debug!("remove_empty_enums");
 
-        for type_ in self.types.types.values_mut() {
-            if let TypeVariant::Enumeration(x) = &mut type_.variant {
+        for type_ in self.types.items.values_mut() {
+            if let MetaTypeVariant::Enumeration(x) = &mut type_.variant {
                 if x.variants.is_empty() {
                     if let Some(base) = x.base.as_ident() {
                         self.typedefs = None;
-                        type_.variant = TypeVariant::Reference(ReferenceInfo::new(base.clone()));
+                        type_.variant =
+                            MetaTypeVariant::Reference(ReferenceMeta::new(base.clone()));
                     }
                 }
             }

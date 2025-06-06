@@ -1,6 +1,7 @@
 use std::collections::{btree_map::Entry, BTreeMap};
 
 use crate::models::{
+    meta::{MetaType, MetaTypes, NameBuilder},
     schema::{
         xs::{
             AttributeGroupType, ComplexBaseType, ElementType, GroupType, Schema, SchemaContent,
@@ -8,7 +9,6 @@ use crate::models::{
         },
         NamespaceId, Schemas,
     },
-    types::{NameBuilder, Type, Types},
     Ident, IdentType, Name,
 };
 
@@ -16,7 +16,7 @@ use super::Error;
 
 #[derive(Default, Debug)]
 pub(super) struct State<'a> {
-    pub types: Types,
+    pub types: MetaTypes,
     pub node_cache: BTreeMap<Ident, Node<'a>>,
     pub type_stack: Vec<Option<Ident>>,
 }
@@ -72,9 +72,9 @@ impl<'a> State<'a> {
     ) -> Result<(), Error>
     where
         I: Into<Ident>,
-        T: Into<Type>,
+        T: Into<MetaType>,
     {
-        match self.types.entry(ident.into()) {
+        match self.types.items.entry(ident.into()) {
             Entry::Vacant(e) => {
                 e.insert(type_.into());
 

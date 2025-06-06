@@ -5,15 +5,15 @@ use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
 use super::{
-    ComplexInfo, CustomInfo, DynamicInfo, EnumerationInfo, GroupInfo, ReferenceInfo, TypeEq, Types,
-    UnionInfo,
+    ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
+    TypeEq, UnionMeta,
 };
 
 /// Represents a type that was read and interpreted from an XML schema.
 #[derive(Debug, Clone)]
-pub struct Type {
+pub struct MetaType {
     /// Actual data type this type represents.
-    pub variant: TypeVariant,
+    pub variant: MetaTypeVariant,
 
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
@@ -24,43 +24,43 @@ pub struct Type {
 
 /// Actual data type a [`Type`] represents.
 #[derive(Debug, Clone)]
-pub enum TypeVariant {
+pub enum MetaTypeVariant {
     /// Represents a union type
-    Union(UnionInfo),
+    Union(UnionMeta),
 
     /// Represents a build-in type
-    BuildIn(BuildInInfo),
+    BuildIn(BuildInMeta),
 
     /// Represents a user defined type
-    Custom(CustomInfo),
+    Custom(CustomMeta),
 
     /// References an other type
-    Reference(ReferenceInfo),
+    Reference(ReferenceMeta),
 
     /// Represents an enumeration
-    Enumeration(EnumerationInfo),
+    Enumeration(EnumerationMeta),
 
     /// Represents an dynamic element
-    Dynamic(DynamicInfo),
+    Dynamic(DynamicMeta),
 
     /// Represents a specific set of elements
-    All(GroupInfo),
+    All(GroupMeta),
 
     /// Represents a choice of different elements
-    Choice(GroupInfo),
+    Choice(GroupMeta),
 
     /// Represents a sequence of different elements
-    Sequence(GroupInfo),
+    Sequence(GroupMeta),
 
     /// Represents a complex type
-    ComplexType(ComplexInfo),
+    ComplexType(ComplexMeta),
 }
 
 /// Union that defined the build in types of the rust language or
 /// custom defined types.
 #[allow(missing_docs)]
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
-pub enum BuildInInfo {
+pub enum BuildInMeta {
     U8,
     U16,
     U32,
@@ -86,26 +86,26 @@ pub enum BuildInInfo {
 
 macro_rules! impl_from {
     ($var:ident, $ty:ty) => {
-        impl From<$ty> for Type {
+        impl From<$ty> for MetaType {
             fn from(value: $ty) -> Self {
-                Type::new(TypeVariant::$var(value))
+                MetaType::new(MetaTypeVariant::$var(value))
             }
         }
     };
 }
 
-impl_from!(Union, UnionInfo);
-impl_from!(BuildIn, BuildInInfo);
-impl_from!(Custom, CustomInfo);
-impl_from!(Reference, ReferenceInfo);
-impl_from!(Enumeration, EnumerationInfo);
-impl_from!(Dynamic, DynamicInfo);
-impl_from!(ComplexType, ComplexInfo);
+impl_from!(Union, UnionMeta);
+impl_from!(BuildIn, BuildInMeta);
+impl_from!(Custom, CustomMeta);
+impl_from!(Reference, ReferenceMeta);
+impl_from!(Enumeration, EnumerationMeta);
+impl_from!(Dynamic, DynamicMeta);
+impl_from!(ComplexType, ComplexMeta);
 
-impl Type {
+impl MetaType {
     /// Create a new [`Type`] instance from the passed `variant`.
     #[must_use]
-    pub fn new(variant: TypeVariant) -> Self {
+    pub fn new(variant: MetaTypeVariant) -> Self {
         Self {
             variant,
             display_name: None,
@@ -114,24 +114,24 @@ impl Type {
     }
 }
 
-impl Deref for Type {
-    type Target = TypeVariant;
+impl Deref for MetaType {
+    type Target = MetaTypeVariant;
 
     fn deref(&self) -> &Self::Target {
         &self.variant
     }
 }
 
-impl DerefMut for Type {
+impl DerefMut for MetaType {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.variant
     }
 }
 
-impl TypeEq for Type {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for MetaType {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         #[allow(clippy::enum_glob_use)]
-        use TypeVariant::*;
+        use MetaTypeVariant::*;
 
         self.display_name.hash(hasher);
 
@@ -149,9 +149,9 @@ impl TypeEq for Type {
         }
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         #[allow(clippy::enum_glob_use)]
-        use TypeVariant::*;
+        use MetaTypeVariant::*;
 
         if self.display_name != other.display_name {
             return false;
@@ -172,9 +172,9 @@ impl TypeEq for Type {
     }
 }
 
-/* BuildInInfo */
+/* BuildInMeta */
 
-impl BuildInInfo {
+impl BuildInMeta {
     /// Get the name of the build-in type as `&str`.
     #[must_use]
     pub fn as_str(&self) -> &'static str {
@@ -202,7 +202,7 @@ impl BuildInInfo {
     }
 }
 
-impl Display for BuildInInfo {
+impl Display for BuildInMeta {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         write!(f, "{}", self.as_str())
     }

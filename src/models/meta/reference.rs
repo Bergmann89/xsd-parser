@@ -1,16 +1,17 @@
-//! Contains the [`ReferenceInfo`] type information and all related types.
+//! Contains the [`ReferenceMeta`] type information and all related types.
 
 use std::hash::{Hash, Hasher};
 
 use crate::models::{
     schema::{MaxOccurs, MinOccurs},
-    types::{TypeEq, Types},
     Ident,
 };
 
+use super::{MetaTypes, TypeEq};
+
 /// Type information that defines a reference to another type.
 #[derive(Debug, Clone)]
-pub struct ReferenceInfo {
+pub struct ReferenceMeta {
     /// Type that is referenced.
     pub type_: Ident,
 
@@ -21,8 +22,8 @@ pub struct ReferenceInfo {
     pub max_occurs: MaxOccurs,
 }
 
-impl ReferenceInfo {
-    /// Create a new [`ReferenceInfo`] instance from the passed `type_`.
+impl ReferenceMeta {
+    /// Create a new [`ReferenceMeta`] instance from the passed `type_`.
     #[must_use]
     pub fn new<T>(type_: T) -> Self
     where
@@ -61,8 +62,8 @@ impl ReferenceInfo {
     }
 }
 
-impl TypeEq for ReferenceInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for ReferenceMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             type_,
             min_occurs,
@@ -74,7 +75,7 @@ impl TypeEq for ReferenceInfo {
         max_occurs.hash(hasher);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             type_,
             min_occurs,

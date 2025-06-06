@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::models::{
-    types::{TypeVariant, Types},
+    meta::{MetaTypeVariant, MetaTypes},
     Ident,
 };
 
@@ -9,11 +9,11 @@ use crate::models::{
 pub(crate) struct TypedefMap(HashMap<Ident, Ident>);
 
 impl TypedefMap {
-    pub(crate) fn new(types: &Types) -> Self {
+    pub(crate) fn new(types: &MetaTypes) -> Self {
         let mut ret = HashMap::new();
 
-        for (ident, type_) in &types.types {
-            if let TypeVariant::Reference(x) = &type_.variant {
+        for (ident, type_) in &types.items {
+            if let MetaTypeVariant::Reference(x) = &type_.variant {
                 if x.is_single() {
                     ret.insert(ident.clone(), x.type_.clone());
                 }

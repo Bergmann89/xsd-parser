@@ -20,8 +20,8 @@ use tracing::instrument;
 
 use crate::models::{
     code::{format_module_ident, format_type_ident, IdentPath, Module},
+    meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes},
     schema::{MaxOccurs, NamespaceId},
-    types::{ElementType, Type, TypeVariant, Types},
     Ident, IdentType, Name,
 };
 
@@ -65,7 +65,7 @@ pub struct GeneratorFixed<'types> {
 #[derive(Debug)]
 pub struct Config<'types> {
     /// Reference to the types the code should be generated for.
-    pub types: &'types Types,
+    pub types: &'types MetaTypes,
 
     /// Flags that controls the behavior of the generator.
     pub flags: GeneratorFlags,
@@ -111,7 +111,7 @@ struct State<'types> {
 
 impl<'types> Generator<'types> {
     /// Create a new code generator from the passed `types`.
-    pub fn new(types: &'types Types) -> Self {
+    pub fn new(types: &'types MetaTypes) -> Self {
         let config = Config {
             types,
             flags: GeneratorFlags::empty(),
@@ -445,7 +445,7 @@ impl<'types> GeneratorFixed<'types> {
     /// ```
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
-        for ident in self.config.types.keys() {
+        for ident in self.config.types.items.keys() {
             self.state
                 .get_or_create_type_ref(&self.config, ident.clone())?;
         }
@@ -468,7 +468,7 @@ impl<'types> GeneratorFixed<'types> {
     /// ```
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_named_types(mut self) -> Result<Self, Error> {
-        for ident in self.config.types.keys() {
+        for ident in self.config.types.items.keys() {
             if ident.name.is_named() {
                 self.state
                     .get_or_create_type_ref(&self.config, ident.clone())?;
@@ -551,12 +551,13 @@ impl<'types> State<'types> {
         if !self.cache.contains_key(&ident) {
             let ty = config
                 .types
+                .items
                 .get(&ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
             let name = make_type_name(&config.postfixes, ty, &ident);
             let (module_ident, type_ident) = match &ty.variant {
-                TypeVariant::BuildIn(x) => (None, format_ident!("{x}")),
-                TypeVariant::Custom(x) => (None, format_ident!("{}", x.name())),
+                MetaTypeVariant::BuildIn(x) => (None, format_ident!("{x}")),
+                MetaTypeVariant::Custom(x) => (None, format_ident!("{}", x.name())),
                 _ => {
                     let use_modules = config.flags.intersects(GeneratorFlags::USE_MODULES);
                     let module_ident =
@@ -593,36 +594,37 @@ impl<'types> State<'types> {
 
 fn get_boxed_elements<'a>(
     ident: &Ident,
-    mut ty: &'a Type,
-    types: &'a Types,
+    mut ty: &'a MetaType,
+    types: &'a MetaTypes,
     cache: &BTreeMap<Ident, TypeRef>,
 ) -> HashSet<Ident> {
-    if let TypeVariant::ComplexType(ci) = &ty.variant {
-        if let Some(type_) = ci.content.as_ref().and_then(|ident| types.get(ident)) {
+    if let MetaTypeVariant::ComplexType(ci) = &ty.variant {
+        if let Some(type_) = ci.content.as_ref().and_then(|ident| types.items.get(ident)) {
             ty = type_;
         }
     }
 
     match &ty.variant {
-        TypeVariant::All(si) | TypeVariant::Choice(si) | TypeVariant::Sequence(si) => si
-            .elements
-            .iter()
-            .filter_map(|f| {
-                if let ElementType::Type(type_) = &f.type_ {
-                    if Walk::new(types, cache).is_loop(ident, type_) {
-                        return Some(f.ident.clone());
+        MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si) | MetaTypeVariant::Sequence(si) => {
+            si.elements
+                .iter()
+                .filter_map(|f| {
+                    if let ElementMetaVariant::Type(type_) = &f.type_ {
+                        if Walk::new(types, cache).is_loop(ident, type_) {
+                            return Some(f.ident.clone());
+                        }
                     }
-                }
 
-                None
-            })
-            .collect(),
+                    None
+                })
+                .collect()
+        }
         _ => HashSet::new(),
     }
 }
 
-fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
-    if let TypeVariant::Reference(ti) = &ty.variant {
+fn make_type_name(postfixes: &[String], ty: &MetaType, ident: &Ident) -> Name {
+    if let MetaTypeVariant::Reference(ti) = &ty.variant {
         if ident.name.is_generated() && ti.type_.name.is_named() {
             let s = ti.type_.name.to_type_name();
 
@@ -647,7 +649,7 @@ fn make_type_name(postfixes: &[String], ty: &Type, ident: &Ident) -> Name {
     }
 }
 
-fn format_module(types: &Types, ns: Option<NamespaceId>) -> Result<Option<Ident2>, Error> {
+fn format_module(types: &MetaTypes, ns: Option<NamespaceId>) -> Result<Option<Ident2>, Error> {
     let Some(ns) = ns else {
         return Ok(None);
     };

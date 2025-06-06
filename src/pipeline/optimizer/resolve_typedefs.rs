@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::models::types::{AttributeType, Base, ElementType, TypeVariant};
+use crate::models::meta::{AttributeMetaVariant, Base, ElementMetaVariant, MetaTypeVariant};
 
 use super::{get_typedefs, Optimizer};
 
@@ -41,30 +41,30 @@ impl Optimizer {
 
         let mut replaced_references = HashMap::new();
 
-        for type_ in self.types.values_mut() {
+        for type_ in self.types.items.values_mut() {
             match &mut type_.variant {
-                TypeVariant::Reference(x) if x.is_single() => {
+                MetaTypeVariant::Reference(x) if x.is_single() => {
                     let new_type = typedefs.resolve(&x.type_).clone();
                     replaced_references
                         .entry(x.type_.clone())
                         .or_insert_with(|| new_type.clone());
                     x.type_ = new_type;
                 }
-                TypeVariant::Union(x) => {
+                MetaTypeVariant::Union(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.types {
                         x.type_ = typedefs.resolve(&x.type_).clone();
                     }
                 }
-                TypeVariant::Dynamic(x) => {
+                MetaTypeVariant::Dynamic(x) => {
                     x.type_ = x.type_.as_ref().map(|x| typedefs.resolve(x)).cloned();
 
                     for x in &mut x.derived_types {
                         *x = typedefs.resolve(x).clone();
                     }
                 }
-                TypeVariant::Enumeration(x) => {
+                MetaTypeVariant::Enumeration(x) => {
                     resolve_base!(&mut x.base);
 
                     for x in &mut *x.variants {
@@ -73,7 +73,7 @@ impl Optimizer {
                         }
                     }
                 }
-                TypeVariant::ComplexType(x) => {
+                MetaTypeVariant::ComplexType(x) => {
                     resolve_base!(&mut x.base);
 
                     if let Some(ident) = &mut x.content {
@@ -81,14 +81,16 @@ impl Optimizer {
                     }
 
                     for attrib in &mut *x.attributes {
-                        if let AttributeType::Type(type_) = &mut attrib.type_ {
+                        if let AttributeMetaVariant::Type(type_) = &mut attrib.variant {
                             *type_ = typedefs.resolve(type_).clone();
                         }
                     }
                 }
-                TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
+                MetaTypeVariant::All(x)
+                | MetaTypeVariant::Choice(x)
+                | MetaTypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
-                        if let ElementType::Type(type_) = &mut element.type_ {
+                        if let ElementMetaVariant::Type(type_) = &mut element.type_ {
                             *type_ = typedefs.resolve(type_).clone();
                         }
                     }
@@ -97,8 +99,8 @@ impl Optimizer {
             }
         }
 
-        for type_ in self.types.values_mut() {
-            let TypeVariant::Dynamic(di) = &mut type_.variant else {
+        for type_ in self.types.items.values_mut() {
+            let MetaTypeVariant::Dynamic(di) = &mut type_.variant else {
                 continue;
             };
 

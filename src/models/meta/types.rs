@@ -1,28 +1,12 @@
-//! The `types` module contains all type information related types.
-
-pub mod info;
-pub mod type_;
-
-mod misc;
-
 use std::collections::BTreeMap;
-use std::ops::Deref;
-use std::ops::DerefMut;
-use std::sync::atomic::AtomicUsize;
-use std::sync::Arc;
-
-pub use self::info::{
-    AnyAttributeInfo, AnyInfo, AttributeInfo, AttributeType, AttributesInfo, Base, ComplexInfo,
-    CustomInfo, DynamicInfo, ElementInfo, ElementMode, ElementType, ElementsInfo, EnumerationInfo,
-    GroupInfo, ReferenceInfo, UnionInfo, UnionTypeInfo, UnionTypesInfo, VariantInfo,
-};
-pub use self::misc::{NameBuilder, NameFallback, TypeEq};
-pub use self::type_::{BuildInInfo, Type, TypeVariant};
+use std::sync::{atomic::AtomicUsize, Arc};
 
 use crate::models::{
     schema::{Namespace, NamespaceId},
     Ident, Name,
 };
+
+use super::{MetaType, MetaTypeVariant, NameBuilder};
 
 /// This structure contains information about the type and module definitions.
 ///
@@ -30,19 +14,19 @@ use crate::models::{
 /// the data of a specific [`Schemas`](crate::schema::Schemas). The types of this
 /// structure can be optimized further using the [`Optimizer`](crate::optimizer::Optimizer).
 #[derive(Default, Debug)]
-pub struct Types {
+pub struct MetaTypes {
     /// Map of the different types.
-    pub types: BTreeMap<Ident, Type>,
+    pub items: BTreeMap<Ident, MetaType>,
 
     /// Map of the different namespaces.
-    pub modules: BTreeMap<NamespaceId, Module>,
+    pub modules: BTreeMap<NamespaceId, ModuleMeta>,
 
     next_name_id: Arc<AtomicUsize>,
 }
 
 /// Represents a module used by type information in the [`Types`] structure.
 #[derive(Debug)]
-pub struct Module {
+pub struct ModuleMeta {
     /// Name of the module (also used as xml prefix).
     pub name: Option<Name>,
 
@@ -50,7 +34,7 @@ pub struct Module {
     pub namespace: Option<Namespace>,
 }
 
-impl Types {
+impl MetaTypes {
     /// Create a new [`NameBuilder`] instance, that can be used to build type named.
     pub fn name_builder(&mut self) -> NameBuilder {
         NameBuilder::new(self.next_name_id.clone())
@@ -63,7 +47,7 @@ impl Types {
     /// type definitions to the very base type. If the type could not be found `None`
     /// is returned.
     #[must_use]
-    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<(&'a Ident, &'a Type)> {
+    pub fn get_resolved<'a>(&'a self, ident: &'a Ident) -> Option<(&'a Ident, &'a MetaType)> {
         let mut visit = Vec::new();
 
         get_resolved_impl(self, ident, &mut visit)
@@ -74,7 +58,7 @@ impl Types {
     /// Like [`get_resolved`](Self::get_resolved), but instead of returning the identifier and
     /// the type it will return only the resolved type.
     #[must_use]
-    pub fn get_resolved_type<'a>(&'a self, ident: &'a Ident) -> Option<&'a Type> {
+    pub fn get_resolved_type<'a>(&'a self, ident: &'a Ident) -> Option<&'a MetaType> {
         self.get_resolved(ident).map(|(_ident, ty)| ty)
     }
 
@@ -87,44 +71,30 @@ impl Types {
         self.get_resolved(ident).map(|(ident, _ty)| ident)
     }
 
-    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
+    /// Return the [`MetaTypeVariant`] of corresponding type for the passed identifier.
     ///
     /// This is a shorthand for `self.get(ident).map(|ty| &type.variant)`.
     #[inline]
     #[must_use]
-    pub fn get_variant(&self, ident: &Ident) -> Option<&TypeVariant> {
-        self.get(ident).map(|ty| &ty.variant)
+    pub fn get_variant(&self, ident: &Ident) -> Option<&MetaTypeVariant> {
+        self.items.get(ident).map(|ty| &ty.variant)
     }
 
-    /// Return the [`TypeVariant`] of corresponding type for the passed identifier.
+    /// Return the [`MetaTypeVariant`] of corresponding type for the passed identifier.
     ///
     /// This is a shorthand for `self.get_mut(ident).map(|ty| &type.variant)`.
     #[inline]
     #[must_use]
-    pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut TypeVariant> {
-        self.get_mut(ident).map(|ty| &mut ty.variant)
-    }
-}
-
-impl Deref for Types {
-    type Target = BTreeMap<Ident, Type>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.types
-    }
-}
-
-impl DerefMut for Types {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.types
+    pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut MetaTypeVariant> {
+        self.items.get_mut(ident).map(|ty| &mut ty.variant)
     }
 }
 
 fn get_resolved_impl<'a>(
-    types: &'a Types,
+    types: &'a MetaTypes,
     ident: &'a Ident,
     visited: &mut Vec<&'a Ident>,
-) -> Option<(&'a Ident, &'a Type)> {
+) -> Option<(&'a Ident, &'a MetaType)> {
     if visited.contains(&ident) {
         let chain = visited
             .iter()
@@ -138,10 +108,10 @@ fn get_resolved_impl<'a>(
         return None;
     }
 
-    let ty = types.get(ident)?;
+    let ty = types.items.get(ident)?;
 
     match &ty.variant {
-        TypeVariant::Reference(x) if x.is_single() => {
+        MetaTypeVariant::Reference(x) if x.is_single() => {
             visited.push(ident);
 
             let ret = match get_resolved_impl(types, &x.type_, visited) {

@@ -1,4 +1,4 @@
-//! Contains the [`ElementInfo`] type information and all related types.
+//! Contains the [`ElementMeta`] type information and all related types.
 
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
@@ -8,18 +8,19 @@ use crate::models::{
         xs::{BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListType},
         MaxOccurs, MinOccurs,
     },
-    types::{TypeEq, Types},
     Ident,
 };
 
+use super::{MetaTypes, TypeEq};
+
 /// Type information that contains data about a element.
 #[derive(Debug, Clone)]
-pub struct ElementInfo {
+pub struct ElementMeta {
     /// Identifier of the element.
     pub ident: Ident,
 
     /// Type of the element.
-    pub type_: ElementType,
+    pub type_: ElementMetaVariant,
 
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
@@ -37,11 +38,13 @@ pub struct ElementInfo {
     pub documentation: Vec<String>,
 }
 
-/// Type of a [`ElementInfo`]
+/// Variant of a [`ElementMeta`]
+///
+/// Either it's any element or it has a specific type.
 #[derive(Debug, Clone)]
-pub enum ElementType {
+pub enum ElementMetaVariant {
     /// The element is a `xs:any`.
-    Any(AnyInfo),
+    Any(AnyMeta),
 
     /// The element has a specific type.
     Type(Ident),
@@ -51,7 +54,7 @@ pub enum ElementType {
 /// are not explicitly defined by the schema.
 #[allow(missing_docs)]
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub struct AnyInfo {
+pub struct AnyMeta {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_q_name: Option<QnameListType>,
@@ -59,11 +62,11 @@ pub struct AnyInfo {
     pub process_contents: ProcessContentsType,
 }
 
-/// Type information that represents a list of [`ElementInfo`] instances.
+/// Type information that represents a list of [`ElementMeta`] instances.
 #[derive(Default, Debug, Clone)]
-pub struct ElementsInfo(pub Vec<ElementInfo>);
+pub struct ElementsMeta(pub Vec<ElementMeta>);
 
-/// Defines the type of an [`ElementInfo`]
+/// Defines the type of an [`ElementMeta`]
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]
 pub enum ElementMode {
     /// Represents an actual XML element.
@@ -73,16 +76,16 @@ pub enum ElementMode {
     Group,
 }
 
-/* ElementInfo */
+/* ElementMeta */
 
-impl ElementInfo {
-    /// Create a new [`ElementInfo`] instance from the passed `name`, `type_`
+impl ElementMeta {
+    /// Create a new [`ElementMeta`] instance from the passed `name`, `type_`
     /// and `element_mode`.
     #[must_use]
     pub fn new(ident: Ident, type_: Ident, element_mode: ElementMode) -> Self {
         Self {
             ident,
-            type_: ElementType::Type(type_),
+            type_: ElementMetaVariant::Type(type_),
             element_mode,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -91,12 +94,12 @@ impl ElementInfo {
         }
     }
 
-    /// Create a new [`ElementInfo`] instance for an `xs:any` element.
+    /// Create a new [`ElementMeta`] instance for an `xs:any` element.
     #[must_use]
-    pub fn any(ident: Ident, any: AnyInfo) -> Self {
+    pub fn any(ident: Ident, any: AnyMeta) -> Self {
         Self {
             ident,
-            type_: ElementType::Any(any),
+            type_: ElementMetaVariant::Any(any),
             element_mode: ElementMode::Element,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -108,13 +111,13 @@ impl ElementInfo {
     /// Returns `true` if this element represents an `xs:any` element, `false` otherwise.
     #[must_use]
     pub fn is_any(&self) -> bool {
-        matches!(&self.type_, ElementType::Any(_))
+        matches!(&self.type_, ElementMetaVariant::Any(_))
     }
 
-    /// Returns the [`AnyInfo`] if this element is a `xs:any`.
+    /// Returns the [`AnyMeta`] if this element is a `xs:any`.
     #[must_use]
-    pub fn as_any(&self) -> Option<&AnyInfo> {
-        if let ElementType::Any(any) = &self.type_ {
+    pub fn as_any(&self) -> Option<&AnyMeta> {
+        if let ElementMetaVariant::Any(any) = &self.type_ {
             Some(any)
         } else {
             None
@@ -122,8 +125,8 @@ impl ElementInfo {
     }
 }
 
-impl TypeEq for ElementInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for ElementMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             ident,
             type_,
@@ -143,7 +146,7 @@ impl TypeEq for ElementInfo {
         documentation.hash(hasher);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             ident,
             type_,
@@ -164,14 +167,14 @@ impl TypeEq for ElementInfo {
     }
 }
 
-/* ElementsInfo */
+/* ElementsMeta */
 
-impl ElementsInfo {
+impl ElementsMeta {
     /// Push a new `xs:any` element to the list.
     ///
     /// This will update the names of all `xs:any` elements, if more than
     /// one element was added.
-    pub fn push_any(&mut self, mut el: ElementInfo) {
+    pub fn push_any(&mut self, mut el: ElementMeta) {
         let mut i = 0;
         for element in &mut self.0 {
             if element.is_any() && element.ident.name.is_generated() {
@@ -190,34 +193,34 @@ impl ElementsInfo {
     }
 }
 
-impl Deref for ElementsInfo {
-    type Target = Vec<ElementInfo>;
+impl Deref for ElementsMeta {
+    type Target = Vec<ElementMeta>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl DerefMut for ElementsInfo {
+impl DerefMut for ElementsMeta {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl TypeEq for ElementsInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for ElementsMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         TypeEq::type_hash_slice(&self.0, hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }
 }
 
 /* ElementType */
 
-impl TypeEq for ElementType {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for ElementMetaVariant {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         match self {
             Self::Any(x) => {
                 hasher.write_u8(0);
@@ -230,7 +233,7 @@ impl TypeEq for ElementType {
         }
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         match (self, other) {
             (Self::Any(a), Self::Any(b)) => a.eq(b),
             (Self::Type(a), Self::Type(b)) => a.type_eq(b, types),
@@ -239,9 +242,9 @@ impl TypeEq for ElementType {
     }
 }
 
-/* AnyInfo */
+/* AnyMeta */
 
-impl Hash for AnyInfo {
+impl Hash for AnyMeta {
     fn hash<H: Hasher>(&self, hasher: &mut H) {
         // HACK: We currently only hash the id, because the types from the `xs`
         // module do not implement `Hash`.

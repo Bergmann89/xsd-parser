@@ -14,7 +14,7 @@ mod unrestricted_base;
 
 use thiserror::Error;
 
-use crate::models::{types::Types, Ident};
+use crate::models::{meta::MetaTypes, Ident};
 
 use self::misc::{BaseMap, TypedefMap};
 
@@ -27,7 +27,7 @@ use self::misc::{BaseMap, TypedefMap};
 #[must_use]
 #[derive(Debug)]
 pub struct Optimizer {
-    types: Types,
+    types: MetaTypes,
     bases: Option<BaseMap>,
     typedefs: Option<TypedefMap>,
 }
@@ -92,7 +92,7 @@ pub(super) use get_typedefs;
 
 impl Optimizer {
     /// Create a new [`Optimizer`] instance from the passed `types`.
-    pub fn new(types: Types) -> Self {
+    pub fn new(types: MetaTypes) -> Self {
         Self {
             types,
             bases: None,
@@ -102,7 +102,7 @@ impl Optimizer {
 
     /// Finish the optimization and return the resulting [`Types`].
     #[must_use]
-    pub fn finish(self) -> Types {
+    pub fn finish(self) -> MetaTypes {
         self.types
     }
 }

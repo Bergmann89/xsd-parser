@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use crate::models::types::{ReferenceInfo, Type, TypeEq, TypeVariant, Types};
+use crate::models::meta::{MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta, TypeEq};
 
 use super::Optimizer;
 
@@ -41,8 +41,8 @@ impl Optimizer {
         use std::collections::hash_map::Entry;
 
         struct Value<'a> {
-            type_: &'a Type,
-            types: &'a Types,
+            type_: &'a MetaType,
+            types: &'a MetaTypes,
         }
 
         impl PartialEq for Value<'_> {
@@ -74,7 +74,7 @@ impl Optimizer {
             let mut map = HashMap::new();
             let mut idents = HashMap::new();
 
-            for (ident, type_) in self.types.iter() {
+            for (ident, type_) in &self.types.items {
                 match map.entry(Value { type_, types }) {
                     Entry::Vacant(e) => {
                         if let Some(ident) = types.get_resolved_ident(ident) {
@@ -83,7 +83,7 @@ impl Optimizer {
                     }
                     Entry::Occupied(e) => {
                         let reference_ident = e.get();
-                        if !matches!(&type_.variant, TypeVariant::Reference(ti) if &ti.type_ == reference_ident)
+                        if !matches!(&type_.variant, MetaTypeVariant::Reference(ti) if &ti.type_ == reference_ident)
                         {
                             idents.insert(ident.clone(), reference_ident.clone());
                         }
@@ -101,8 +101,8 @@ impl Optimizer {
                     "Create reference for duplicate type: {ident} => {referenced_type}"
                 );
 
-                let ty = self.types.get_mut(&ident).unwrap();
-                ty.variant = TypeVariant::Reference(ReferenceInfo::new(referenced_type));
+                let ty = self.types.items.get_mut(&ident).unwrap();
+                ty.variant = MetaTypeVariant::Reference(ReferenceMeta::new(referenced_type));
             }
         }
 

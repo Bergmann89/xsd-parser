@@ -32,11 +32,13 @@ fn generate_default() {
     let mut types = exec_optimizer(config.optimizer, types).expect("Optimizer failed");
 
     let ty1 = types
+        .items
         .get_mut(&ident_1)
         .expect("Failed to resolve `tns:fooType`");
     ty1.display_name = Some("Bar".into());
 
     let ty2 = types
+        .items
         .get_mut(&ident_2)
         .expect("Failed to resolve `tns:FooType`");
     ty2.display_name = Some("Baz".into());

@@ -1,4 +1,4 @@
-use crate::models::types::{ReferenceInfo, TypeVariant};
+use crate::models::meta::{MetaTypeVariant, ReferenceMeta};
 
 use super::{get_bases, Optimizer};
 
@@ -33,15 +33,15 @@ impl Optimizer {
 
         let bases = get_bases!(self);
 
-        for (ident, type_) in &mut *self.types {
+        for (ident, type_) in &mut self.types.items {
             match &type_.variant {
-                TypeVariant::ComplexType(_)
-                | TypeVariant::Enumeration(_)
-                | TypeVariant::Union(_) => {
+                MetaTypeVariant::ComplexType(_)
+                | MetaTypeVariant::Enumeration(_)
+                | MetaTypeVariant::Union(_) => {
                     let base = bases.get_unrestricted(ident).clone();
                     if *ident != base {
                         self.typedefs = None;
-                        type_.variant = TypeVariant::Reference(ReferenceInfo::new(base));
+                        type_.variant = MetaTypeVariant::Reference(ReferenceMeta::new(base));
                     }
                 }
                 _ => (),

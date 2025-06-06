@@ -1,5 +1,5 @@
 use crate::models::{
-    types::{EnumerationInfo, TypeVariant, UnionInfo, UnionTypeInfo, VariantInfo},
+    meta::{EnumerationMeta, EnumerationMetaVariant, MetaTypeVariant, UnionMeta, UnionMetaType},
     Ident,
 };
 use crate::traits::VecHelper;
@@ -40,7 +40,7 @@ impl Optimizer {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::Union(_) = variant else {
+        let MetaTypeVariant::Union(_) = variant else {
             return Err(Error::ExpectedUnion(ident));
         };
 
@@ -49,7 +49,7 @@ impl Optimizer {
         self.merge_enum_union_impl(&ident, None, &mut next);
 
         if let Some(next) = next {
-            let ty = self.types.get_mut(&ident).unwrap();
+            let ty = self.types.items.get_mut(&ident).unwrap();
             ty.variant = next;
         }
 
@@ -64,9 +64,10 @@ impl Optimizer {
 
         let idents = self
             .types
+            .items
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::Union(_)) {
+                if matches!(&type_.variant, MetaTypeVariant::Union(_)) {
                     Some(ident)
                 } else {
                     None
@@ -86,66 +87,68 @@ impl Optimizer {
         &self,
         ident: &Ident,
         display_name: Option<&str>,
-        next: &mut Option<TypeVariant>,
+        next: &mut Option<MetaTypeVariant>,
     ) {
         let Some(type_) = self.types.get_variant(ident) else {
             return;
         };
 
         match type_ {
-            TypeVariant::Union(x) => {
+            MetaTypeVariant::Union(x) => {
                 for t in &*x.types {
                     self.merge_enum_union_impl(&t.type_, t.display_name.as_deref(), next);
                 }
             }
-            TypeVariant::Enumeration(x) => {
+            MetaTypeVariant::Enumeration(x) => {
                 *next = match next.take() {
-                    None => Some(TypeVariant::Enumeration(EnumerationInfo::default())),
-                    Some(TypeVariant::Enumeration(ei)) => Some(TypeVariant::Enumeration(ei)),
-                    Some(TypeVariant::Union(ui)) => {
-                        let mut ei = EnumerationInfo::default();
+                    None => Some(MetaTypeVariant::Enumeration(EnumerationMeta::default())),
+                    Some(MetaTypeVariant::Enumeration(ei)) => {
+                        Some(MetaTypeVariant::Enumeration(ei))
+                    }
+                    Some(MetaTypeVariant::Union(ui)) => {
+                        let mut ei = EnumerationMeta::default();
 
                         for t in ui.types.0 {
                             let var = ei.variants.find_or_insert(t.type_.clone(), |ident| {
-                                VariantInfo::new(ident).with_type(Some(t.type_.clone()))
+                                EnumerationMetaVariant::new(ident).with_type(Some(t.type_.clone()))
                             });
                             var.display_name = t.display_name;
                         }
 
-                        Some(TypeVariant::Enumeration(ei))
+                        Some(MetaTypeVariant::Enumeration(ei))
                     }
                     _ => crate::unreachable!(),
                 };
 
-                let Some(TypeVariant::Enumeration(ei)) = next else {
+                let Some(MetaTypeVariant::Enumeration(ei)) = next else {
                     crate::unreachable!();
                 };
 
                 for var in &*x.variants {
                     let new_var = ei.variants.find_or_insert(var.ident.clone(), |ident| {
-                        VariantInfo::new(ident).with_type(var.type_.clone())
+                        EnumerationMetaVariant::new(ident).with_type(var.type_.clone())
                     });
                     new_var.display_name.clone_from(&var.display_name);
                 }
             }
-            TypeVariant::Reference(x) if x.is_single() => {
+            MetaTypeVariant::Reference(x) if x.is_single() => {
                 self.merge_enum_union_impl(&x.type_, display_name, next);
             }
             _ => {
                 if next.is_none() {
-                    *next = Some(TypeVariant::Union(UnionInfo::default()));
+                    *next = Some(MetaTypeVariant::Union(UnionMeta::default()));
                 }
 
                 match next {
-                    Some(TypeVariant::Union(ui)) => {
-                        let mut ti = UnionTypeInfo::new(ident.clone());
+                    Some(MetaTypeVariant::Union(ui)) => {
+                        let mut ti = UnionMetaType::new(ident.clone());
                         ti.display_name = display_name.map(ToOwned::to_owned);
 
                         ui.types.push(ti);
                     }
-                    Some(TypeVariant::Enumeration(ei)) => {
+                    Some(MetaTypeVariant::Enumeration(ei)) => {
                         let var = ei.variants.find_or_insert(ident.clone(), |x| {
-                            VariantInfo::new(x).with_type(Some(ident.clone()))
+                            EnumerationMetaVariant::new(x).with_type(Some(ident.clone()))
                         });
                         var.display_name = display_name.map(ToOwned::to_owned);
                     }

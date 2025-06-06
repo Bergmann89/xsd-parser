@@ -8,8 +8,8 @@ use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
 use crate::models::{
+    meta::{ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes},
     schema::{xs::Use, MaxOccurs},
-    types::{ComplexInfo, ElementInfo, ElementMode, ElementType, TypeVariant, Types},
     Ident,
 };
 
@@ -2421,18 +2421,18 @@ impl ComplexTypeElement<'_> {
         !self.treat_as_group() && !self.treat_as_group()
     }
 
-    fn target_type_allows_any(&self, types: &Types) -> bool {
-        fn walk(types: &Types, visit: &mut HashSet<Ident>, ident: &Ident) -> bool {
+    fn target_type_allows_any(&self, types: &MetaTypes) -> bool {
+        fn walk(types: &MetaTypes, visit: &mut HashSet<Ident>, ident: &Ident) -> bool {
             if !visit.insert(ident.clone()) {
                 return false;
             }
 
             match types.get_variant(ident) {
-                Some(TypeVariant::All(si) | TypeVariant::Choice(si)) => {
+                Some(MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si)) => {
                     for element in &*si.elements {
                         match &element.type_ {
-                            ElementType::Any(_) => return true,
-                            ElementType::Type(type_) => {
+                            ElementMetaVariant::Any(_) => return true,
+                            ElementMetaVariant::Type(type_) => {
                                 if walk(types, visit, type_) {
                                     return true;
                                 }
@@ -2442,18 +2442,18 @@ impl ComplexTypeElement<'_> {
 
                     false
                 }
-                Some(TypeVariant::Sequence(si)) => match si.elements.first() {
+                Some(MetaTypeVariant::Sequence(si)) => match si.elements.first() {
                     None => false,
-                    Some(ElementInfo {
-                        type_: ElementType::Any(_),
+                    Some(ElementMeta {
+                        type_: ElementMetaVariant::Any(_),
                         ..
                     }) => true,
-                    Some(ElementInfo {
-                        type_: ElementType::Type(type_),
+                    Some(ElementMeta {
+                        type_: ElementMetaVariant::Type(type_),
                         ..
                     }) => walk(types, visit, type_),
                 },
-                Some(TypeVariant::ComplexType(ComplexInfo {
+                Some(MetaTypeVariant::ComplexType(ComplexMeta {
                     content: Some(content),
                     ..
                 })) => walk(types, visit, content),
@@ -2464,8 +2464,8 @@ impl ComplexTypeElement<'_> {
         let mut visit = HashSet::new();
 
         match &self.info.type_ {
-            ElementType::Any(_) => true,
-            ElementType::Type(type_) => walk(types, &mut visit, type_),
+            ElementMetaVariant::Any(_) => true,
+            ElementMetaVariant::Type(type_) => walk(types, &mut visit, type_),
         }
     }
 

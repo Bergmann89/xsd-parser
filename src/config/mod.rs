@@ -6,8 +6,8 @@ mod optimizer;
 mod parser;
 
 pub use crate::models::{
+    meta::MetaType,
     schema::{Namespace, NamespacePrefix},
-    types::Type,
     Ident, IdentType, Name,
 };
 pub use crate::pipeline::generator::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};

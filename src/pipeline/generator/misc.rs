@@ -7,8 +7,8 @@ use quote::quote;
 
 use crate::models::{
     code::IdentPath,
+    meta::{DynamicMeta, MetaType, MetaTypeVariant, MetaTypes},
     schema::{MaxOccurs, MinOccurs},
-    types::{DynamicInfo, Type, TypeVariant, Types},
     Ident,
 };
 
@@ -177,7 +177,7 @@ bitflags! {
 pub enum TypedefMode {
     /// The [`Generator`](super::Generator) will automatically detect if a
     /// new type struct or a simple type definition should be used
-    /// for a [`Reference`](TypeVariant::Reference) type.
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
     ///
     /// Detecting the correct type automatically depends basically on the
     /// occurrence of the references type. If the target type is only referenced
@@ -200,7 +200,7 @@ pub enum TypedefMode {
     Auto,
 
     /// The [`Generator`](super::Generator) will always use a simple type definition
-    /// for a [`Reference`](TypeVariant::Reference) type.
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -216,7 +216,7 @@ pub enum TypedefMode {
     Typedef,
 
     /// The [`Generator`](super::Generator) will always use a new type struct
-    /// for a [`Reference`](TypeVariant::Reference) type.
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -385,7 +385,7 @@ pub enum DynTypeTraits {
 
 #[derive(Debug)]
 pub(super) struct PendingType<'types> {
-    pub ty: &'types Type,
+    pub ty: &'types MetaType,
     pub ident: Ident,
 }
 
@@ -416,11 +416,11 @@ pub(super) struct TraitInfos(BTreeMap<Ident, TraitInfo>);
 
 impl TraitInfos {
     #[must_use]
-    pub(super) fn new(types: &Types) -> Self {
+    pub(super) fn new(types: &MetaTypes) -> Self {
         let mut ret = Self(BTreeMap::new());
 
-        for (base_ident, ty) in types.iter() {
-            let TypeVariant::Dynamic(ai) = &ty.variant else {
+        for (base_ident, ty) in types.items.iter() {
+            let MetaTypeVariant::Dynamic(ai) = &ty.variant else {
                 continue;
             };
 
@@ -432,7 +432,7 @@ impl TraitInfos {
                     .insert(base_ident.clone());
 
                 match types.get_variant(type_ident) {
-                    Some(TypeVariant::Dynamic(DynamicInfo {
+                    Some(MetaTypeVariant::Dynamic(DynamicMeta {
                         type_: Some(type_ident),
                         ..
                     })) => {
@@ -442,7 +442,7 @@ impl TraitInfos {
                             .traits_all
                             .insert(base_ident.clone());
                     }
-                    Some(TypeVariant::Reference(ri)) if ri.is_single() => {
+                    Some(MetaTypeVariant::Reference(ri)) if ri.is_single() => {
                         ret.0
                             .entry(ri.type_.clone())
                             .or_default()

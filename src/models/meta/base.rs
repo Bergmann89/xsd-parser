@@ -1,29 +1,11 @@
-//! Contains different type information types.
+//! Contains the [`Base`] type information and all related types.
 
-pub mod attribute;
-pub mod complex;
-pub mod custom;
-pub mod dynamic;
-pub mod element;
-pub mod enumeration;
-pub mod reference;
-pub mod union;
-
-use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::Hasher;
 
-pub use attribute::{AnyAttributeInfo, AttributeInfo, AttributeType, AttributesInfo};
-pub use complex::{ComplexInfo, GroupInfo};
-pub use custom::{CustomDefaultImpl, CustomInfo};
-pub use dynamic::DynamicInfo;
-pub use element::{AnyInfo, ElementInfo, ElementMode, ElementType, ElementsInfo};
-pub use enumeration::{EnumerationInfo, VariantInfo};
-pub use reference::ReferenceInfo;
-pub use union::{UnionInfo, UnionTypeInfo, UnionTypesInfo};
+use crate::models::Ident;
 
-use crate::models::{schema::xs::Use, Ident};
-
-use super::{TypeEq, Types};
+use super::{MetaTypes, TypeEq};
 
 /// Describes the base type information of a specific type information.
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
@@ -72,7 +54,7 @@ impl Display for Base {
 }
 
 impl TypeEq for Base {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         match self {
             Self::None => hasher.write_u8(0),
             Self::Extension(x) => {
@@ -86,7 +68,7 @@ impl TypeEq for Base {
         }
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         #[allow(clippy::enum_glob_use)]
         use Base::*;
 
@@ -96,13 +78,5 @@ impl TypeEq for Base {
             (Restriction(x), Restriction(y)) => x.type_eq(y, types),
             (_, _) => false,
         }
-    }
-}
-
-fn use_hash<H: Hasher>(use_: &Use, hasher: &mut H) {
-    match use_ {
-        Use::Prohibited => hasher.write_u8(0),
-        Use::Optional => hasher.write_u8(1),
-        Use::Required => hasher.write_u8(2),
     }
 }

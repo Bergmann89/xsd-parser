@@ -1,5 +1,5 @@
 use crate::models::{
-    types::{ComplexInfo, ElementInfo, ElementMode, GroupInfo, Type, TypeVariant},
+    meta::{ComplexMeta, ElementMeta, ElementMode, GroupMeta, MetaType, MetaTypeVariant},
     Ident,
 };
 use crate::traits::VecHelper;
@@ -33,9 +33,10 @@ impl Optimizer {
 
         let idents = self
             .types
+            .items
             .iter()
             .filter_map(|(ident, ty)| {
-                if matches!(&ty.variant, TypeVariant::Dynamic(_)) {
+                if matches!(&ty.variant, MetaTypeVariant::Dynamic(_)) {
                     Some(ident)
                 } else {
                     None
@@ -48,27 +49,27 @@ impl Optimizer {
             let content_name = self.types.name_builder().shared_name("Content").finish();
             let content_ident = Ident::new(content_name).with_ns(ident.ns);
 
-            let type_ = self.types.get_mut(&ident).unwrap();
-            let TypeVariant::Dynamic(x) = &mut type_.variant else {
+            let type_ = self.types.items.get_mut(&ident).unwrap();
+            let MetaTypeVariant::Dynamic(x) = &mut type_.variant else {
                 crate::unreachable!();
             };
 
-            let mut si = GroupInfo::default();
+            let mut si = GroupMeta::default();
             for derived in &x.derived_types {
                 si.elements.find_or_insert(derived.clone(), |ident| {
-                    ElementInfo::new(ident, derived.clone(), ElementMode::Element)
+                    ElementMeta::new(ident, derived.clone(), ElementMode::Element)
                 });
             }
 
-            type_.variant = TypeVariant::ComplexType(ComplexInfo {
+            type_.variant = MetaTypeVariant::ComplexType(ComplexMeta {
                 content: Some(content_ident.clone()),
                 is_dynamic: true,
                 ..Default::default()
             });
 
-            match self.types.entry(content_ident) {
+            match self.types.items.entry(content_ident) {
                 Entry::Vacant(e) => {
-                    e.insert(Type::new(TypeVariant::Choice(si)));
+                    e.insert(MetaType::new(MetaTypeVariant::Choice(si)));
                 }
                 Entry::Occupied(_) => crate::unreachable!(),
             }

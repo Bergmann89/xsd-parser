@@ -1,29 +1,25 @@
-//! Contains the [`EnumerationInfo`] type information and all related types.
+//! Contains the [`EnumerationMeta`] type information and all related types.
 
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-use crate::models::{
-    schema::xs::Use,
-    types::{TypeEq, Types},
-    Ident,
-};
+use crate::models::{schema::xs::Use, Ident};
 
-use super::{use_hash, Base};
+use super::{use_hash, Base, MetaTypes, TypeEq};
 
 /// Type information that defines an enumeration type.
 #[derive(Default, Debug, Clone)]
-pub struct EnumerationInfo {
+pub struct EnumerationMeta {
     /// Base type of this enumeration type.
     pub base: Base,
 
     /// Variants defined for this enumeration.
-    pub variants: VariantsInfo,
+    pub variants: EnumerationMetaVariants,
 }
 
-/// Type information that defines variants of an [`EnumerationInfo`].
+/// Type information that defines variants of an [`EnumerationMeta`].
 #[derive(Debug, Clone)]
-pub struct VariantInfo {
+pub struct EnumerationMetaVariant {
     /// Identifier of the variant.
     pub ident: Ident,
 
@@ -40,31 +36,31 @@ pub struct VariantInfo {
     pub documentation: Vec<String>,
 }
 
-/// Type information that represents a list of [`VariantInfo`] instances.
+/// Type information that represents a list of [`EnumerationMetaVariant`] instances.
 #[derive(Default, Debug, Clone)]
-pub struct VariantsInfo(pub Vec<VariantInfo>);
+pub struct EnumerationMetaVariants(pub Vec<EnumerationMetaVariant>);
 
-/* EnumerationInfo */
+/* EnumerationMeta */
 
-impl TypeEq for EnumerationInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for EnumerationMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self { base, variants } = self;
 
         base.type_hash(hasher, types);
         variants.type_hash(hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self { base, variants } = self;
 
         base.type_eq(&other.base, types) && variants.type_eq(&other.variants, types)
     }
 }
 
-/* VariantInfo */
+/* EnumerationMetaVariant */
 
-impl VariantInfo {
-    /// Create a new [`VariantInfo`] instance from the passed `name`.
+impl EnumerationMetaVariant {
+    /// Create a new [`EnumerationMetaVariant`] instance from the passed `name`.
     #[must_use]
     pub fn new(ident: Ident) -> Self {
         Self {
@@ -85,8 +81,8 @@ impl VariantInfo {
     }
 }
 
-impl TypeEq for VariantInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for EnumerationMetaVariant {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             ident,
             use_,
@@ -102,7 +98,7 @@ impl TypeEq for VariantInfo {
         documentation.hash(hasher);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             ident,
             use_,
@@ -119,28 +115,28 @@ impl TypeEq for VariantInfo {
     }
 }
 
-/* VariantsInfo */
+/* EnumerationMetaVariants */
 
-impl Deref for VariantsInfo {
-    type Target = Vec<VariantInfo>;
+impl Deref for EnumerationMetaVariants {
+    type Target = Vec<EnumerationMetaVariant>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl DerefMut for VariantsInfo {
+impl DerefMut for EnumerationMetaVariants {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl TypeEq for VariantsInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for EnumerationMetaVariants {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         TypeEq::type_hash_slice(&self.0, hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }
 }

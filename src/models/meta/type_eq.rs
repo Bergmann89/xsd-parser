@@ -2,7 +2,7 @@ use std::hash::{Hash, Hasher};
 
 use crate::models::Ident;
 
-use super::super::Types;
+use super::MetaTypes;
 
 /// Trait to check if two types are equal to each other or not.
 ///
@@ -12,10 +12,10 @@ use super::super::Types;
 /// values are equal.
 pub trait TypeEq: Sized {
     /// Feeds this value into the given [`Hasher`].
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types);
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes);
 
     /// Feeds a slice of this value into the given [`Hasher`].
-    fn type_hash_slice<H: Hasher>(slice: &[Self], hasher: &mut H, types: &Types) {
+    fn type_hash_slice<H: Hasher>(slice: &[Self], hasher: &mut H, types: &MetaTypes) {
         hasher.write_usize(slice.len());
         for item in slice {
             item.type_hash(hasher, types);
@@ -24,10 +24,10 @@ pub trait TypeEq: Sized {
 
     /// Check if this instance is equal to the `other` instance using the passed
     /// `types` to resolve identifiers.
-    fn type_eq(&self, other: &Self, types: &Types) -> bool;
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool;
 
     /// Check if the two passed iterators contain type equal elements.
-    fn type_eq_iter<'a, X, Y>(x: X, y: Y, types: &Types) -> bool
+    fn type_eq_iter<'a, X, Y>(x: X, y: Y, types: &MetaTypes) -> bool
     where
         Self: 'a,
         X: IntoIterator<Item = &'a Self>,
@@ -51,11 +51,11 @@ pub trait TypeEq: Sized {
 }
 
 impl TypeEq for Ident {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         types.get_resolved_ident(self).unwrap_or(self).hash(hasher);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let a = types.get_resolved_ident(self).unwrap_or(self);
         let b = types.get_resolved_ident(other).unwrap_or(other);
 
@@ -67,7 +67,7 @@ impl<T> TypeEq for Option<T>
 where
     T: TypeEq,
 {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         if let Some(inner) = self {
             hasher.write_u8(1);
             inner.type_hash(hasher, types);
@@ -76,7 +76,7 @@ where
         }
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         match (self, other) {
             (Some(x), Some(y)) => x.type_eq(y, types),
             (None, None) => true,

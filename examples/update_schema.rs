@@ -19,7 +19,7 @@ use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
     Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
 };
-use xsd_parser::models::types::{CustomInfo, Type};
+use xsd_parser::models::meta::{CustomMeta, MetaType};
 use xsd_parser::{generate, IdentType};
 
 fn main() -> Result<(), Error> {
@@ -74,19 +74,19 @@ fn main() -> Result<(), Error> {
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
-            Type::from(CustomInfo::new("MaxOccurs").with_default(max_occurs_default)),
+            MetaType::from(CustomMeta::new("MaxOccurs").with_default(max_occurs_default)),
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
-            Type::from(CustomInfo::new("QName")),
+            MetaType::from(CustomMeta::new("QName")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:appinfo")),
-            Type::from(CustomInfo::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:documentation")),
-            Type::from(CustomInfo::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement")),
         ),
     ];
 

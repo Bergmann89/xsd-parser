@@ -1,5 +1,5 @@
 use crate::models::{
-    types::{TypeVariant, UnionInfo, UnionTypeInfo},
+    meta::{MetaTypeVariant, UnionMeta, UnionMetaType},
     Ident,
 };
 
@@ -7,7 +7,7 @@ use super::{Error, Optimizer};
 
 struct FlattenUnionInfo {
     count: usize,
-    info: UnionInfo,
+    info: UnionMeta,
 }
 
 impl Optimizer {
@@ -37,17 +37,17 @@ impl Optimizer {
     pub fn flatten_union(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("flatten_union(ident={ident:?})");
 
-        let Some(ty) = self.types.get(&ident) else {
+        let Some(ty) = self.types.items.get(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::Union(ui) = &ty.variant else {
+        let MetaTypeVariant::Union(ui) = &ty.variant else {
             return Err(Error::ExpectedUnion(ident));
         };
 
         let mut info = FlattenUnionInfo {
             count: 0,
-            info: UnionInfo::default(),
+            info: UnionMeta::default(),
         };
 
         self.flatten_union_impl(&ident, None, &mut info);
@@ -55,8 +55,8 @@ impl Optimizer {
         if info.count > 1 {
             info.info.base = ui.base.clone();
 
-            let ty = self.types.get_mut(&ident).unwrap();
-            ty.variant = TypeVariant::Union(info.info);
+            let ty = self.types.items.get_mut(&ident).unwrap();
+            ty.variant = MetaTypeVariant::Union(info.info);
         }
 
         Ok(self)
@@ -70,9 +70,10 @@ impl Optimizer {
 
         let idents = self
             .types
+            .items
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::Union(_)) {
+                if matches!(&type_.variant, MetaTypeVariant::Union(_)) {
                     Some(ident)
                 } else {
                     None
@@ -94,22 +95,22 @@ impl Optimizer {
         display_name: Option<&str>,
         next: &mut FlattenUnionInfo,
     ) {
-        let Some(type_) = self.types.get(ident) else {
+        let Some(type_) = self.types.items.get(ident) else {
             return;
         };
 
         match &type_.variant {
-            TypeVariant::Union(x) => {
+            MetaTypeVariant::Union(x) => {
                 next.count += 1;
                 for t in &*x.types {
                     self.flatten_union_impl(&t.type_, t.display_name.as_deref(), next);
                 }
             }
-            TypeVariant::Reference(x) if x.is_single() => {
+            MetaTypeVariant::Reference(x) if x.is_single() => {
                 self.flatten_union_impl(&x.type_, display_name, next);
             }
             _ => {
-                let mut ui = UnionTypeInfo::new(ident.clone());
+                let mut ui = UnionMetaType::new(ident.clone());
                 ui.display_name = display_name.map(ToOwned::to_owned);
 
                 next.info.types.push(ui);

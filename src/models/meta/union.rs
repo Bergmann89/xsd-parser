@@ -1,28 +1,25 @@
-//! Contains the [`UnionInfo`] type information and all related types.
+//! Contains the [`UnionMeta`] type information and all related types.
 
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-use crate::models::{
-    types::{TypeEq, Types},
-    Ident,
-};
+use crate::models::Ident;
 
-use super::Base;
+use super::{Base, MetaTypes, TypeEq};
 
 /// Type information that defines a union type.
 #[derive(Default, Debug, Clone)]
-pub struct UnionInfo {
+pub struct UnionMeta {
     /// Base type of the union type.
     pub base: Base,
 
     /// Types that are unified in this union type.
-    pub types: UnionTypesInfo,
+    pub types: UnionMetaTypes,
 }
 
-/// Type information that represents one type unified by a [`UnionInfo`].
+/// Type information that represents one type unified by a [`UnionMeta`].
 #[derive(Debug, Clone)]
-pub struct UnionTypeInfo {
+pub struct UnionMetaType {
     /// Target type of this type variant.
     pub type_: Ident,
 
@@ -30,31 +27,31 @@ pub struct UnionTypeInfo {
     pub display_name: Option<String>,
 }
 
-/// Type information that represents a list of [`UnionTypeInfo`] instances.
+/// Type information that represents a list of [`UnionMetaType`] instances.
 #[derive(Default, Debug, Clone)]
-pub struct UnionTypesInfo(pub Vec<UnionTypeInfo>);
+pub struct UnionMetaTypes(pub Vec<UnionMetaType>);
 
-/* UnionInfo */
+/* UnionMeta */
 
-impl TypeEq for UnionInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, ctx: &Types) {
+impl TypeEq for UnionMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, ctx: &MetaTypes) {
         let Self { base, types } = self;
 
         base.type_hash(hasher, ctx);
         types.type_hash(hasher, ctx);
     }
 
-    fn type_eq(&self, other: &Self, ctx: &Types) -> bool {
+    fn type_eq(&self, other: &Self, ctx: &MetaTypes) -> bool {
         let Self { base, types } = self;
 
         base.type_eq(&other.base, ctx) && types.type_eq(&other.types, ctx)
     }
 }
 
-/* UnionTypeInfo */
+/* UnionMetaType */
 
-impl UnionTypeInfo {
-    /// Create a new [`UnionTypeInfo`] from the passed `type_`.
+impl UnionMetaType {
+    /// Create a new [`UnionMetaType`] from the passed `type_`.
     #[must_use]
     pub fn new(type_: Ident) -> Self {
         Self {
@@ -64,8 +61,8 @@ impl UnionTypeInfo {
     }
 }
 
-impl TypeEq for UnionTypeInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for UnionMetaType {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             type_,
             display_name,
@@ -75,7 +72,7 @@ impl TypeEq for UnionTypeInfo {
         display_name.hash(hasher);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             type_,
             display_name,
@@ -85,28 +82,28 @@ impl TypeEq for UnionTypeInfo {
     }
 }
 
-/* UnionTypesInfo */
+/* UnionMetaTypes */
 
-impl Deref for UnionTypesInfo {
-    type Target = Vec<UnionTypeInfo>;
+impl Deref for UnionMetaTypes {
+    type Target = Vec<UnionMetaType>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl DerefMut for UnionTypesInfo {
+impl DerefMut for UnionMetaTypes {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl TypeEq for UnionTypesInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for UnionMetaTypes {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         TypeEq::type_hash_slice(&self.0, hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         TypeEq::type_eq_iter(self.0.iter(), other.0.iter(), types)
     }
 }

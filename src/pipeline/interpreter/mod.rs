@@ -13,11 +13,11 @@ use tracing::instrument;
 
 use crate::config::Namespace;
 use crate::models::{
-    schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
-    types::{
-        AnyAttributeInfo, AnyInfo, AttributeInfo, BuildInInfo, ComplexInfo, CustomInfo,
-        ElementInfo, GroupInfo, Module, ReferenceInfo, Type, TypeVariant, Types,
+    meta::{
+        AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta,
+        ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, ReferenceMeta,
     },
+    schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
     Ident, IdentType, Name,
 };
 
@@ -57,7 +57,7 @@ impl<'a> Interpreter<'a> {
     pub fn with_type<I, T>(mut self, ident: I, type_: T) -> Result<Self, Error>
     where
         I: Into<Ident> + Debug,
-        T: Into<Type> + Debug,
+        T: Into<MetaType> + Debug,
     {
         self.state.add_type(ident, type_, true)?;
 
@@ -78,7 +78,7 @@ impl<'a> Interpreter<'a> {
         T: Into<Ident> + Debug,
     {
         self.state
-            .add_type(ident, ReferenceInfo::new(type_), true)?;
+            .add_type(ident, ReferenceMeta::new(type_), true)?;
 
         Ok(self)
     }
@@ -93,7 +93,7 @@ impl<'a> Interpreter<'a> {
         macro_rules! add {
             ($ident:ident, $type:ident) => {
                 self.state
-                    .add_type(Ident::$ident, BuildInInfo::$type, true)?;
+                    .add_type(Ident::$ident, BuildInMeta::$type, true)?;
             };
         }
 
@@ -137,7 +137,7 @@ impl<'a> Interpreter<'a> {
             ($ns:ident, $src:expr, $dst:ident) => {
                 self.state.add_type(
                     Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceInfo::new(Ident::$dst),
+                    ReferenceMeta::new(Ident::$dst),
                     true,
                 )?;
             };
@@ -146,7 +146,7 @@ impl<'a> Interpreter<'a> {
             ($ns:ident, $src:expr, $dst:ident) => {
                 self.state.add_type(
                     Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceInfo::new(Ident::$dst)
+                    ReferenceMeta::new(Ident::$dst)
                         .min_occurs(0)
                         .max_occurs(MaxOccurs::Unbounded),
                     true,
@@ -237,9 +237,9 @@ impl<'a> Interpreter<'a> {
 
         let any_name = Name::named("any");
         let any_ident = Ident::new(any_name).with_type(IdentType::Element);
-        let mut any = ElementInfo::any(
+        let mut any = ElementMeta::any(
             any_ident,
-            AnyInfo {
+            AnyMeta {
                 id: None,
                 namespace: None,
                 not_q_name: None,
@@ -250,13 +250,13 @@ impl<'a> Interpreter<'a> {
         any.min_occurs = 0;
         any.max_occurs = MaxOccurs::Unbounded;
 
-        let mut content_sequence = GroupInfo::default();
+        let mut content_sequence = GroupMeta::default();
         content_sequence.elements.push_any(any);
 
         let content_name = self.state.name_builder().shared_name("Content").finish();
         let content_ident = Ident::new(content_name).with_ns(Some(xs));
-        let content_variant = TypeVariant::Sequence(content_sequence);
-        let content_type = Type::new(content_variant);
+        let content_variant = MetaTypeVariant::Sequence(content_sequence);
+        let content_type = MetaType::new(content_variant);
 
         self.state
             .add_type(content_ident.clone(), content_type, true)?;
@@ -267,9 +267,9 @@ impl<'a> Interpreter<'a> {
 
         let any_attribute_name = Name::named("any_attribute");
         let any_attribute_ident = Ident::new(any_attribute_name).with_type(IdentType::Attribute);
-        let any_attribute = AttributeInfo::any(
+        let any_attribute = AttributeMeta::any(
             any_attribute_ident,
-            AnyAttributeInfo {
+            AnyAttributeMeta {
                 id: None,
                 namespace: None,
                 not_q_name: None,
@@ -278,7 +278,7 @@ impl<'a> Interpreter<'a> {
             },
         );
 
-        let mut complex = ComplexInfo {
+        let mut complex = ComplexMeta {
             content: Some(content_ident),
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -286,8 +286,8 @@ impl<'a> Interpreter<'a> {
         };
         complex.attributes.push(any_attribute);
 
-        let variant = TypeVariant::ComplexType(complex);
-        let type_ = Type::new(variant);
+        let variant = MetaTypeVariant::ComplexType(complex);
+        let type_ = MetaType::new(variant);
 
         self.state.add_type(ident, type_, true)?;
 
@@ -310,13 +310,13 @@ impl<'a> Interpreter<'a> {
             ($ns:ident, $src:expr, $dst:literal) => {{
                 self.state.add_type(
                     Ident::type_($src).with_ns(Some($ns)),
-                    ReferenceInfo::new(Ident::type_($dst)),
+                    ReferenceMeta::new(Ident::type_($dst)),
                     true,
                 )?;
             }};
         }
 
-        let big_int = CustomInfo::new("BigInt")
+        let big_int = CustomMeta::new("BigInt")
             .include_from("num::BigInt")
             .with_default(|s: &str| {
                 let code = quote! {
@@ -328,7 +328,7 @@ impl<'a> Interpreter<'a> {
                 Some(code)
             });
 
-        let big_uint = CustomInfo::new("BigUint")
+        let big_uint = CustomMeta::new("BigUint")
             .include_from("num::BigUint")
             .with_default(|s: &str| {
                 let code = quote! {
@@ -360,9 +360,9 @@ impl<'a> Interpreter<'a> {
     ///
     /// Returns a suitable [`Error`] if the operation was not successful.
     #[instrument(err, level = "trace", skip(self))]
-    pub fn finish(mut self) -> Result<Types, Error> {
+    pub fn finish(mut self) -> Result<MetaTypes, Error> {
         for (id, info) in self.schemas.namespaces() {
-            let module = Module {
+            let module = ModuleMeta {
                 name: info
                     .prefix
                     .as_ref()

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use bitflags::bitflags;
 
-use crate::models::types::Type;
+use crate::models::meta::MetaType;
 
 use super::IdentTriple;
 
@@ -13,7 +13,7 @@ pub struct InterpreterConfig {
     /// are actually interpreted.
     ///
     /// See [`with_type`](crate::Interpreter::with_type) for more details.
-    pub types: Vec<(IdentTriple, Type)>,
+    pub types: Vec<(IdentTriple, MetaType)>,
 
     /// Additional flags to control the interpreter.
     pub flags: InterpreterFlags,

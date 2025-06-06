@@ -5,8 +5,8 @@
 //! It serves as the central type layer for schema handling and Rust code generation.
 
 pub mod code;
+pub mod meta;
 pub mod schema;
-pub mod types;
 
 mod ident;
 mod name;

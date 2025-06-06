@@ -1,6 +1,6 @@
 use crate::models::{
+    meta::{ElementMeta, ElementMetaVariant, ElementMode, GroupMeta, MetaType, MetaTypeVariant},
     schema::{MaxOccurs, MinOccurs},
-    types::{ElementInfo, ElementMode, ElementType, GroupInfo, Type, TypeVariant},
     Ident,
 };
 
@@ -35,11 +35,11 @@ impl Optimizer {
     pub fn flatten_complex_type(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
-        let Some(ty) = self.types.get(&ident) else {
+        let Some(ty) = self.types.items.get(&ident) else {
             return Err(Error::UnknownType(ident));
         };
 
-        let TypeVariant::ComplexType(ci) = &ty.variant else {
+        let MetaTypeVariant::ComplexType(ci) = &ty.variant else {
             return Err(Error::ExpectedComplexType(ident));
         };
 
@@ -54,14 +54,14 @@ impl Optimizer {
         if ctx.count > 1 {
             let variant = match ctx.mode {
                 Mode::Unknown => unreachable!(),
-                Mode::Sequence => TypeVariant::Sequence(ctx.info),
-                Mode::Mixed | Mode::Choice => TypeVariant::Choice(ctx.info),
+                Mode::Sequence => MetaTypeVariant::Sequence(ctx.info),
+                Mode::Mixed | Mode::Choice => MetaTypeVariant::Choice(ctx.info),
             };
-            let type_ = Type::new(variant);
+            let type_ = MetaType::new(variant);
 
-            self.types.insert(content_ident, type_);
+            self.types.items.insert(content_ident, type_);
 
-            if let Some(TypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
+            if let Some(MetaTypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
                 ci.min_occurs *= ctx.occurs.min;
                 ci.max_occurs *= ctx.occurs.max;
             }
@@ -78,9 +78,10 @@ impl Optimizer {
 
         let idents = self
             .types
+            .items
             .iter()
             .filter_map(|(ident, type_)| {
-                if matches!(&type_.variant, TypeVariant::ComplexType(ci) if ci.has_complex_content(&self.types)) {
+                if matches!(&type_.variant, MetaTypeVariant::ComplexType(ci) if ci.has_complex_content(&self.types)) {
                     Some(ident)
                 } else {
                     None
@@ -103,17 +104,17 @@ impl Optimizer {
         max: MaxOccurs,
         ctx: &mut Context,
     ) {
-        let Some(type_) = self.types.get(ident) else {
+        let Some(type_) = self.types.items.get(ident) else {
             return;
         };
 
         let si = match &type_.variant {
-            TypeVariant::Choice(si) => {
+            MetaTypeVariant::Choice(si) => {
                 ctx.set_mode(Mode::Choice);
 
                 si
             }
-            TypeVariant::All(si) | TypeVariant::Sequence(si) => {
+            MetaTypeVariant::All(si) | MetaTypeVariant::Sequence(si) => {
                 if max > MaxOccurs::Bounded(1) {
                     ctx.set_mode(Mode::Choice);
                 } else {
@@ -122,7 +123,7 @@ impl Optimizer {
 
                 si
             }
-            TypeVariant::Reference(ti) if ti.is_single() => {
+            MetaTypeVariant::Reference(ti) if ti.is_single() => {
                 self.flatten_complex_type_impl(
                     &ti.type_,
                     min * ti.min_occurs,
@@ -148,7 +149,7 @@ impl Optimizer {
                     ctx.add_element(element);
                 }
                 ElementMode::Group => {
-                    if let ElementType::Type(type_) = &x.type_ {
+                    if let ElementMetaVariant::Type(type_) = &x.type_ {
                         self.flatten_complex_type_impl(
                             type_,
                             min * x.min_occurs,
@@ -164,7 +165,7 @@ impl Optimizer {
 
 #[derive(Debug, Default)]
 struct Context {
-    info: GroupInfo,
+    info: GroupMeta,
     mode: Mode,
     count: usize,
     occurs: ContextOccurs,
@@ -210,7 +211,7 @@ impl Context {
         };
     }
 
-    fn add_element(&mut self, mut element: ElementInfo) {
+    fn add_element(&mut self, mut element: ElementMeta) {
         let existing = self
             .info
             .elements
@@ -237,7 +238,7 @@ impl Context {
 }
 
 impl ContextOccurs {
-    fn update(&mut self, element: &mut ElementInfo) {
+    fn update(&mut self, element: &mut ElementMeta) {
         self.min += element.min_occurs;
         self.max += element.max_occurs;
 
@@ -258,25 +259,25 @@ impl Default for ContextOccurs {
 #[cfg(test)]
 mod tests {
     use crate::models::{
+        meta::{ElementMeta, ElementMode, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes},
         schema::MaxOccurs,
-        types::{ElementInfo, ElementMode, ElementsInfo, Type, TypeVariant, Types},
         Ident,
     };
     use crate::Optimizer;
 
     macro_rules! make_type {
         ($types:expr, $name:literal, $type:ident $( $rest:tt )*) => {{
-            let mut variant = TypeVariant::$type(Default::default());
-            let TypeVariant::$type(info) = &mut variant else { unreachable!(); };
+            let mut variant = MetaTypeVariant::$type(Default::default());
+            let MetaTypeVariant::$type(info) = &mut variant else { unreachable!(); };
             make_type!(__init info $type $( $rest )*);
-            let ty = Type::new(variant);
-            $types.insert(Ident::type_($name), ty);
+            let ty = MetaType::new(variant);
+            $types.items.insert(Ident::type_($name), ty);
         }};
         (__init $info:ident ComplexType($name:literal) $(,)? ) => {
             $info.content = Some(Ident::type_($name));
         };
         (__init $info:ident $group:ident { $( $element:expr ),* $(,)? } $(,)? ) => {
-            $info.elements = ElementsInfo(vec![
+            $info.elements = ElementsMeta(vec![
                 $( $element ),*
             ]);
         };
@@ -295,7 +296,7 @@ mod tests {
         ($element_name:literal, $type_name:literal, $type:ident { $( $field:ident: $value:tt ),* $(,)? }) => {{
             let type_ident = element_info!(__type_ident $type $type_name);
             #[allow(unused_mut)]
-            let mut element = ElementInfo::new(Ident::name($element_name), type_ident, ElementMode::$type);
+            let mut element = ElementMeta::new(Ident::name($element_name), type_ident, ElementMode::$type);
             $(
                 element_info!(__set_field element.$field $value);
             )*
@@ -329,10 +330,10 @@ mod tests {
             let main = $types.get_variant(&Ident::type_($main_ident)).unwrap();
             let content = $types.get_variant(&Ident::type_($content_ident)).unwrap();
 
-            let TypeVariant::ComplexType(main) = main else {
+            let MetaTypeVariant::ComplexType(main) = main else {
                 panic!("Wrong type");
             };
-            let TypeVariant::$content_type(content) = content else {
+            let MetaTypeVariant::$content_type(content) = content else {
                 panic!("Wrong type");
             };
 
@@ -342,7 +343,7 @@ mod tests {
 
     #[test]
     fn sequence_with_choice_expect_choice() {
-        let mut types = Types::default();
+        let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
             types,
@@ -383,7 +384,7 @@ mod tests {
 
     #[test]
     fn nested_sequences_expect_sequence() {
-        let mut types = Types::default();
+        let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
             types,
@@ -434,7 +435,7 @@ mod tests {
 
     #[test]
     fn nested_sequences_expect_choice() {
-        let mut types = Types::default();
+        let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
             types,
@@ -499,7 +500,7 @@ mod tests {
 
     #[test]
     fn nested_choices_expect_choice() {
-        let mut types = Types::default();
+        let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
             types,

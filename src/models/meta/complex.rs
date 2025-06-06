@@ -1,18 +1,17 @@
-//! Contains the [`ComplexInfo`] type information and all related types.
+//! Contains the [`ComplexMeta`] type information and all related types.
 
 use std::hash::{Hash, Hasher};
 
 use crate::models::{
     schema::{MaxOccurs, MinOccurs},
-    types::{TypeEq, TypeVariant, Types},
     Ident,
 };
 
-use super::{AttributesInfo, Base, ElementsInfo};
+use super::{AttributesMeta, Base, ElementsMeta, MetaTypeVariant, MetaTypes, TypeEq};
 
 /// Type information that contains data about a complex type.
 #[derive(Debug, Clone)]
-pub struct ComplexInfo {
+pub struct ComplexMeta {
     /// Base type of the complex type.
     pub base: Base,
 
@@ -30,85 +29,113 @@ pub struct ComplexInfo {
     pub is_dynamic: bool,
 
     /// List of attributes defined for this complex type.
-    pub attributes: AttributesInfo,
+    pub attributes: AttributesMeta,
 }
 
 /// Represents a group of elements.
 ///
 /// This is usually a `xs:all`, `xs:choice` or `xs:sequence`.
 #[derive(Default, Debug, Clone)]
-pub struct GroupInfo {
+pub struct GroupMeta {
     /// List of elements defined in this group.
-    pub elements: ElementsInfo,
+    pub elements: ElementsMeta,
 }
 
-/* GroupInfo */
+/* GroupMeta */
 
-impl TypeEq for GroupInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for GroupMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self { elements } = self;
 
         elements.type_hash(hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self { elements } = self;
 
         elements.type_eq(&other.elements, types)
     }
 }
 
-/* ComplexInfo */
+/* ComplexMeta */
 
-impl ComplexInfo {
+impl ComplexMeta {
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::Choice`], `false` otherwise.
+    /// is a [`MetaTypeVariant::All`], `false` otherwise.
     #[must_use]
-    pub fn has_complex_choice_content(&self, types: &Types) -> bool {
+    pub fn has_complex_all_content(&self, types: &MetaTypes) -> bool {
         matches!(
             self.content
                 .as_ref()
                 .and_then(|ident| types.get_resolved_type(ident))
                 .map(|ty| &ty.variant),
-            Some(TypeVariant::Choice(_))
+            Some(MetaTypeVariant::All(_))
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::All`], [`TypeVariant::Choice`] or [`TypeVariant::Sequence`],
-    /// `false` otherwise.
+    /// is a [`MetaTypeVariant::Choice`], `false` otherwise.
     #[must_use]
-    pub fn has_complex_content(&self, types: &Types) -> bool {
+    pub fn has_complex_choice_content(&self, types: &MetaTypes) -> bool {
         matches!(
             self.content
                 .as_ref()
                 .and_then(|ident| types.get_resolved_type(ident))
                 .map(|ty| &ty.variant),
-            Some(TypeVariant::All(_) | TypeVariant::Choice(_) | TypeVariant::Sequence(_))
+            Some(MetaTypeVariant::Choice(_))
         )
     }
 
     /// Returns `true` if the content of this complex type information
-    /// is a [`TypeVariant::BuildIn`], [`TypeVariant::Union`] or [`TypeVariant::Enumeration`],
+    /// is a [`MetaTypeVariant::Sequence`], `false` otherwise.
+    #[must_use]
+    pub fn has_complex_sequence_content(&self, types: &MetaTypes) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved_type(ident))
+                .map(|ty| &ty.variant),
+            Some(MetaTypeVariant::Sequence(_))
+        )
+    }
+
+    /// Returns `true` if the content of this complex type information
+    /// is a [`MetaTypeVariant::All`], [`MetaTypeVariant::Choice`] or [`MetaTypeVariant::Sequence`],
     /// `false` otherwise.
     #[must_use]
-    pub fn has_simple_content(&self, types: &Types) -> bool {
+    pub fn has_complex_content(&self, types: &MetaTypes) -> bool {
         matches!(
             self.content
                 .as_ref()
                 .and_then(|ident| types.get_resolved_type(ident))
                 .map(|ty| &ty.variant),
             Some(
-                TypeVariant::Reference(_)
-                    | TypeVariant::BuildIn(_)
-                    | TypeVariant::Union(_)
-                    | TypeVariant::Enumeration(_)
+                MetaTypeVariant::All(_) | MetaTypeVariant::Choice(_) | MetaTypeVariant::Sequence(_)
+            )
+        )
+    }
+
+    /// Returns `true` if the content of this complex type information
+    /// is a [`MetaTypeVariant::BuildIn`], [`MetaTypeVariant::Union`] or [`MetaTypeVariant::Enumeration`],
+    /// `false` otherwise.
+    #[must_use]
+    pub fn has_simple_content(&self, types: &MetaTypes) -> bool {
+        matches!(
+            self.content
+                .as_ref()
+                .and_then(|ident| types.get_resolved_type(ident))
+                .map(|ty| &ty.variant),
+            Some(
+                MetaTypeVariant::Reference(_)
+                    | MetaTypeVariant::BuildIn(_)
+                    | MetaTypeVariant::Union(_)
+                    | MetaTypeVariant::Enumeration(_)
             )
         )
     }
 }
 
-impl Default for ComplexInfo {
+impl Default for ComplexMeta {
     fn default() -> Self {
         Self {
             base: Base::None,
@@ -116,13 +143,13 @@ impl Default for ComplexInfo {
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             is_dynamic: false,
-            attributes: AttributesInfo::default(),
+            attributes: AttributesMeta::default(),
         }
     }
 }
 
-impl TypeEq for ComplexInfo {
-    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &Types) {
+impl TypeEq for ComplexMeta {
+    fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             base,
             content,
@@ -140,7 +167,7 @@ impl TypeEq for ComplexInfo {
         attributes.type_hash(hasher, types);
     }
 
-    fn type_eq(&self, other: &Self, types: &Types) -> bool {
+    fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             base,
             content,

@@ -6,12 +6,12 @@ use quote::{format_ident, quote};
 
 use crate::models::{
     code::{format_field_ident, format_variant_ident, IdentPath, ModulePath},
-    schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
-    types::{
-        AttributeInfo, AttributeType, BuildInInfo, ComplexInfo, CustomInfo, DynamicInfo,
-        ElementInfo, ElementType, EnumerationInfo, GroupInfo, ReferenceInfo, Type, TypeVariant,
-        Types, UnionInfo, UnionTypeInfo, VariantInfo,
+    meta::{
+        AttributeMeta, AttributeMetaVariant, BuildInMeta, ComplexMeta, CustomMeta, DynamicMeta,
+        ElementMeta, ElementMetaVariant, EnumerationMeta, EnumerationMetaVariant, GroupMeta,
+        MetaType, MetaTypeVariant, MetaTypes, ReferenceMeta, UnionMeta, UnionMetaType,
     },
+    schema::{xs::Use, MaxOccurs, MinOccurs, NamespaceId},
     Ident,
 };
 
@@ -29,32 +29,32 @@ use super::{
 /// renderer can profit from the enriched data.
 #[derive(Debug)]
 pub enum TypeData<'types> {
-    /// Corresponds to [`TypeVariant::BuildIn`].
+    /// Corresponds to [`MetaTypeVariant::BuildIn`].
     BuildIn(BuildInType<'types>),
 
-    /// Corresponds to [`TypeVariant::Custom`].
+    /// Corresponds to [`MetaTypeVariant::Custom`].
     Custom(CustomType<'types>),
 
-    /// Corresponds to [`TypeVariant::Union`].
+    /// Corresponds to [`MetaTypeVariant::Union`].
     Union(UnionType<'types>),
 
-    /// Corresponds to [`TypeVariant::Dynamic`].
+    /// Corresponds to [`MetaTypeVariant::Dynamic`].
     Dynamic(DynamicType<'types>),
 
-    /// Corresponds to [`TypeVariant::Reference`].
+    /// Corresponds to [`MetaTypeVariant::Reference`].
     Reference(ReferenceType<'types>),
 
-    /// Corresponds to [`TypeVariant::Enumeration`].
+    /// Corresponds to [`MetaTypeVariant::Enumeration`].
     Enumeration(EnumerationType<'types>),
 
-    /// Corresponds to [`TypeVariant::All`], [`TypeVariant::Choice`],
-    /// [`TypeVariant::Sequence`] or [`TypeVariant::ComplexType`].
+    /// Corresponds to [`MetaTypeVariant::All`], [`MetaTypeVariant::Choice`],
+    /// [`MetaTypeVariant::Sequence`] or [`MetaTypeVariant::ComplexType`].
     Complex(ComplexType<'types>),
 }
 
 impl<'types> TypeData<'types> {
     pub(super) fn new(
-        ty: &'types Type,
+        ty: &'types MetaType,
         ident: &Ident,
         config: &Config<'types>,
         state: &mut State<'types>,
@@ -62,54 +62,54 @@ impl<'types> TypeData<'types> {
         let req = Request::new(ident, config, state);
 
         Ok(match &ty.variant {
-            TypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
-            TypeVariant::Custom(x) => Self::Custom(CustomType::new(x)),
-            TypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
-            TypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
-            TypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
-            TypeVariant::Enumeration(x) => Self::Enumeration(EnumerationType::new(x, req)?),
-            TypeVariant::All(x) => Self::Complex(ComplexType::new_all(x, req)?),
-            TypeVariant::Choice(x) => Self::Complex(ComplexType::new_choice(x, req)?),
-            TypeVariant::Sequence(x) => Self::Complex(ComplexType::new_sequence(x, req)?),
-            TypeVariant::ComplexType(x) => Self::Complex(ComplexType::new_complex(x, req)?),
+            MetaTypeVariant::BuildIn(x) => Self::BuildIn(BuildInType::new(x)),
+            MetaTypeVariant::Custom(x) => Self::Custom(CustomType::new(x)),
+            MetaTypeVariant::Union(x) => Self::Union(UnionType::new(x, req)?),
+            MetaTypeVariant::Dynamic(x) => Self::Dynamic(DynamicType::new(x, req)?),
+            MetaTypeVariant::Reference(x) => Self::Reference(ReferenceType::new(x, req)?),
+            MetaTypeVariant::Enumeration(x) => Self::Enumeration(EnumerationType::new(x, req)?),
+            MetaTypeVariant::All(x) => Self::Complex(ComplexType::new_all(x, req)?),
+            MetaTypeVariant::Choice(x) => Self::Complex(ComplexType::new_choice(x, req)?),
+            MetaTypeVariant::Sequence(x) => Self::Complex(ComplexType::new_sequence(x, req)?),
+            MetaTypeVariant::ComplexType(x) => Self::Complex(ComplexType::new_complex(x, req)?),
         })
     }
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::BuildIn`] type.
+/// of a [`MetaTypeVariant::BuildIn`] type.
 #[derive(Debug)]
 pub struct BuildInType<'types> {
     /// Reference to the original type information.
-    pub info: &'types BuildInInfo,
+    pub info: &'types BuildInMeta,
 }
 
 impl<'types> BuildInType<'types> {
-    fn new(info: &'types BuildInInfo) -> Self {
+    fn new(info: &'types BuildInMeta) -> Self {
         Self { info }
     }
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::Custom`] type.
+/// of a [`MetaTypeVariant::Custom`] type.
 #[derive(Debug)]
 pub struct CustomType<'types> {
     /// Reference to the original type information.
-    pub info: &'types CustomInfo,
+    pub info: &'types CustomMeta,
 }
 
 impl<'types> CustomType<'types> {
-    fn new(info: &'types CustomInfo) -> Self {
+    fn new(info: &'types CustomMeta) -> Self {
         Self { info }
     }
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::Union`] type.
+/// of a [`MetaTypeVariant::Union`] type.
 #[derive(Debug)]
 pub struct UnionType<'types> {
     /// Reference to the original type information.
-    pub info: &'types UnionInfo,
+    pub info: &'types UnionMeta,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
@@ -125,7 +125,7 @@ pub struct UnionType<'types> {
 #[derive(Debug)]
 pub struct UnionTypeVariant<'types> {
     /// Reference to the original type information.
-    pub info: &'types UnionTypeInfo,
+    pub info: &'types UnionMetaType,
 
     /// The type that is stored by the this variant.
     pub target_type: IdentPath,
@@ -135,7 +135,7 @@ pub struct UnionTypeVariant<'types> {
 }
 
 impl<'types> UnionType<'types> {
-    fn new(info: &'types UnionInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new(info: &'types UnionMeta, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let type_ident = req.current_type_ref().type_ident.clone();
         let trait_impls = req.make_trait_impls()?;
         let variants = info
@@ -153,7 +153,7 @@ impl<'types> UnionType<'types> {
     }
 }
 
-impl UnionTypeInfo {
+impl UnionMetaType {
     fn make_variant<'types>(
         &'types self,
         req: &mut Request<'_, 'types>,
@@ -171,11 +171,11 @@ impl UnionTypeInfo {
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::Dynamic`] type.
+/// of a [`MetaTypeVariant::Dynamic`] type.
 #[derive(Debug)]
 pub struct DynamicType<'types> {
     /// Reference to the original type information.
-    pub info: &'types DynamicInfo,
+    pub info: &'types DynamicMeta,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
@@ -212,7 +212,7 @@ pub struct DerivedType {
 }
 
 impl<'types> DynamicType<'types> {
-    fn new(info: &'types DynamicInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new(info: &'types DynamicMeta, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let type_ident = req.current_type_ref().type_ident.clone();
         let trait_ident = format_ident!("{type_ident}Trait");
         let ident = req.ident.clone();
@@ -253,11 +253,11 @@ impl<'types> DynamicType<'types> {
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::Reference`] type.
+/// of a [`MetaTypeVariant::Reference`] type.
 #[derive(Debug)]
 pub struct ReferenceType<'types> {
     /// Reference to the original type information.
-    pub info: &'types ReferenceInfo,
+    pub info: &'types ReferenceMeta,
 
     /// Typedef mode that should be used to render this reference type.
     pub mode: TypedefMode,
@@ -276,7 +276,7 @@ pub struct ReferenceType<'types> {
 }
 
 impl<'types> ReferenceType<'types> {
-    fn new(info: &'types ReferenceInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new(info: &'types ReferenceMeta, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
         let type_ident = req.current_type_ref().type_ident.clone();
         let target_ref = req.get_or_create_type_ref(info.type_.clone())?;
@@ -301,11 +301,11 @@ impl<'types> ReferenceType<'types> {
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::Enumeration`] type.
+/// of a [`MetaTypeVariant::Enumeration`] type.
 #[derive(Debug)]
 pub struct EnumerationType<'types> {
     /// Reference to the original type information.
-    pub info: &'types EnumerationInfo,
+    pub info: &'types EnumerationMeta,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
@@ -321,7 +321,7 @@ pub struct EnumerationType<'types> {
 #[derive(Debug)]
 pub struct EnumerationTypeVariant<'types> {
     /// Reference to the original type information.
-    pub info: &'types VariantInfo,
+    pub info: &'types EnumerationMetaVariant,
 
     /// Name of this variant.
     pub variant_ident: Ident2,
@@ -331,7 +331,7 @@ pub struct EnumerationTypeVariant<'types> {
 }
 
 impl<'types> EnumerationType<'types> {
-    fn new(info: &'types EnumerationInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new(info: &'types EnumerationMeta, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let mut unknown = 0usize;
         let type_ident = req.current_type_ref().type_ident.clone();
         let trait_impls = req.make_trait_impls()?;
@@ -351,7 +351,7 @@ impl<'types> EnumerationType<'types> {
     }
 }
 
-impl VariantInfo {
+impl EnumerationMetaVariant {
     fn make_variant<'types>(
         &'types self,
         unknown: &mut usize,
@@ -394,8 +394,8 @@ impl VariantInfo {
 }
 
 /// Contains additional information for the rendering process
-/// of a [`TypeVariant::All`], [`TypeVariant::Choice`],
-/// [`TypeVariant::Sequence`] or [`TypeVariant::ComplexType`] type.
+/// of a [`MetaTypeVariant::All`], [`MetaTypeVariant::Choice`],
+/// [`MetaTypeVariant::Sequence`] or [`MetaTypeVariant::ComplexType`] type.
 ///
 /// To simplify the rendering process this recursive type was added to the
 /// generator. It basically boils down to the following:
@@ -583,7 +583,7 @@ pub struct ComplexTypeContent {
 #[derive(Debug)]
 pub struct ComplexTypeElement<'types> {
     /// Reference to the original type information.
-    pub info: &'types ElementInfo,
+    pub info: &'types ElementMeta,
 
     /// Occurrence of the element within it's parent type.
     pub occurs: Occurs,
@@ -621,7 +621,7 @@ pub struct ComplexTypeElement<'types> {
 #[derive(Debug)]
 pub struct ComplexTypeAttribute<'types> {
     /// Reference to the original type information.
-    pub info: &'types AttributeInfo,
+    pub info: &'types AttributeMeta,
 
     /// Identifier of the attribute.
     pub ident: Ident2,
@@ -654,7 +654,7 @@ enum TypeMode {
 }
 
 impl<'types> ComplexType<'types> {
-    fn new_all(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new_all(info: &'types GroupMeta, req: Request<'_, 'types>) -> Result<Self, Error> {
         Self::new(
             req,
             TypeMode::All,
@@ -665,7 +665,7 @@ impl<'types> ComplexType<'types> {
         )
     }
 
-    fn new_choice(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new_choice(info: &'types GroupMeta, req: Request<'_, 'types>) -> Result<Self, Error> {
         Self::new(
             req,
             TypeMode::Choice,
@@ -676,7 +676,7 @@ impl<'types> ComplexType<'types> {
         )
     }
 
-    fn new_sequence(info: &'types GroupInfo, req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new_sequence(info: &'types GroupMeta, req: Request<'_, 'types>) -> Result<Self, Error> {
         Self::new(
             req,
             TypeMode::Sequence,
@@ -687,21 +687,21 @@ impl<'types> ComplexType<'types> {
         )
     }
 
-    fn new_complex(info: &'types ComplexInfo, mut req: Request<'_, 'types>) -> Result<Self, Error> {
+    fn new_complex(info: &'types ComplexMeta, mut req: Request<'_, 'types>) -> Result<Self, Error> {
         let (type_mode, elements) = match info.content.as_ref().and_then(|ident| {
             req.types
                 .get_resolved_type(ident)
                 .map(|ty| (&ty.variant, ident))
         }) {
             None => (TypeMode::Sequence, &[][..]),
-            Some((TypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..]),
-            Some((TypeVariant::Choice(si), _)) => (TypeMode::Choice, &si.elements[..]),
-            Some((TypeVariant::Sequence(si), _)) => (TypeMode::Sequence, &si.elements[..]),
+            Some((MetaTypeVariant::All(si), _)) => (TypeMode::All, &si.elements[..]),
+            Some((MetaTypeVariant::Choice(si), _)) => (TypeMode::Choice, &si.elements[..]),
+            Some((MetaTypeVariant::Sequence(si), _)) => (TypeMode::Sequence, &si.elements[..]),
             Some((
-                TypeVariant::BuildIn(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Enumeration(_)
-                | TypeVariant::Reference(_),
+                MetaTypeVariant::BuildIn(_)
+                | MetaTypeVariant::Union(_)
+                | MetaTypeVariant::Enumeration(_)
+                | MetaTypeVariant::Reference(_),
                 ident,
             )) => {
                 let content_ref = req.get_or_create_type_ref(ident.clone())?;
@@ -734,8 +734,8 @@ impl<'types> ComplexType<'types> {
         type_mode: TypeMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
-        attributes: &'types [AttributeInfo],
-        elements: &'types [ElementInfo],
+        attributes: &'types [AttributeMeta],
+        elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         match type_mode {
             TypeMode::Simple { target_type } => {
@@ -753,7 +753,7 @@ impl<'types> ComplexType<'types> {
         target_type: IdentPath,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
-        attributes: &'types [AttributeInfo],
+        attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
         let base = ComplexTypeBase::new(&mut req, false)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
@@ -792,10 +792,10 @@ impl<'types> ComplexType<'types> {
         mut req: Request<'_, 'types>,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
-        attributes: &'types [AttributeInfo],
-        elements: &'types [ElementInfo],
+        attributes: &'types [AttributeMeta],
+        elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
-        let has_any = req.any_type.is_some() && elements.iter().any(ElementInfo::is_any);
+        let has_any = req.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
         let mut base = ComplexTypeBase::new(&mut req, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
@@ -889,10 +889,10 @@ impl<'types> ComplexType<'types> {
         type_mode: &TypeMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
-        attributes: &'types [AttributeInfo],
-        elements: &'types [ElementInfo],
+        attributes: &'types [AttributeMeta],
+        elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
-        let has_any = req.any_type.is_some() && elements.iter().any(ElementInfo::is_any);
+        let has_any = req.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
         let mut base = ComplexTypeBase::new(&mut req, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten =
@@ -1027,7 +1027,7 @@ impl ComplexTypeBase {
         ret.tag_name = Some(make_tag_name(req.types, req.ident));
         ret.trait_impls = req.make_trait_impls()?;
 
-        if let Some(TypeVariant::ComplexType(ci)) = req.types.get_variant(req.ident) {
+        if let Some(MetaTypeVariant::ComplexType(ci)) = req.types.get_variant(req.ident) {
             ret.is_complex = true;
             ret.is_dynamic = ci.is_dynamic;
         }
@@ -1138,7 +1138,7 @@ impl Deref for ComplexTypeStruct<'_> {
 
 impl<'types> ComplexTypeElement<'types> {
     fn new_variant(
-        info: &'types ElementInfo,
+        info: &'types ElementMeta,
         req: &mut Request<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
@@ -1149,7 +1149,7 @@ impl<'types> ComplexTypeElement<'types> {
     }
 
     fn new_field(
-        info: &'types ElementInfo,
+        info: &'types ElementMeta,
         req: &mut Request<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
@@ -1160,7 +1160,7 @@ impl<'types> ComplexTypeElement<'types> {
     }
 
     fn new(
-        info: &'types ElementInfo,
+        info: &'types ElementMeta,
         req: &mut Request<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
@@ -1178,7 +1178,7 @@ impl<'types> ComplexTypeElement<'types> {
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
         let (target_type, target_is_dynamic) = match &info.type_ {
-            ElementType::Any(_) => {
+            ElementMetaVariant::Any(_) => {
                 let Some(type_) = req.any_type.as_ref() else {
                     *allow_any = true;
 
@@ -1190,7 +1190,7 @@ impl<'types> ComplexTypeElement<'types> {
 
                 (target_type, target_is_dynamic)
             }
-            ElementType::Type(type_) => {
+            ElementMetaVariant::Type(type_) => {
                 let target_ref = req.get_or_create_type_ref(type_.clone())?;
                 let target_type = target_ref.to_ident_path();
                 let target_is_dynamic = is_dynamic(type_, req.types);
@@ -1219,7 +1219,7 @@ impl<'types> ComplexTypeElement<'types> {
 
 impl<'types> ComplexTypeAttribute<'types> {
     fn new_field(
-        info: &'types AttributeInfo,
+        info: &'types AttributeMeta,
         req: &mut Request<'_, 'types>,
         allow_any_attribute: &mut bool,
     ) -> Result<Option<Self>, Error> {
@@ -1230,8 +1230,8 @@ impl<'types> ComplexTypeAttribute<'types> {
         let current_module = req.current_module();
         let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
 
-        let (target_type, default_value) = match &info.type_ {
-            AttributeType::Any(_) => {
+        let (target_type, default_value) = match &info.variant {
+            AttributeMetaVariant::Any(_) => {
                 let Some(type_) = req.any_attribute_type.as_ref() else {
                     *allow_any_attribute = true;
 
@@ -1242,7 +1242,7 @@ impl<'types> ComplexTypeAttribute<'types> {
 
                 (target_type, None)
             }
-            AttributeType::Type(type_) => {
+            AttributeMetaVariant::Type(type_) => {
                 let target_ref = req.get_or_create_type_ref(type_.clone())?;
                 let target_type = target_ref.to_ident_path();
 
@@ -1336,6 +1336,7 @@ impl<'a, 'types> Request<'a, 'types> {
             .collect::<Result<Vec<_>, _>>()
     }
 
+    #[allow(clippy::too_many_lines)]
     fn get_default(
         &mut self,
         current_ns: Option<NamespaceId>,
@@ -1344,6 +1345,7 @@ impl<'a, 'types> Request<'a, 'types> {
     ) -> Result<TokenStream, Error> {
         let types = self.types;
         let ty = types
+            .items
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
         let type_ref = self.get_or_create_type_ref(ident.clone())?;
@@ -1357,41 +1359,41 @@ impl<'a, 'types> Request<'a, 'types> {
         }
 
         match &ty.variant {
-            TypeVariant::BuildIn(BuildInInfo::U8) => build_in!(u8),
-            TypeVariant::BuildIn(BuildInInfo::U16) => build_in!(u16),
-            TypeVariant::BuildIn(BuildInInfo::U32) => build_in!(u32),
-            TypeVariant::BuildIn(BuildInInfo::U64) => build_in!(u64),
-            TypeVariant::BuildIn(BuildInInfo::U128) => build_in!(u128),
-            TypeVariant::BuildIn(BuildInInfo::Usize) => build_in!(usize),
+            MetaTypeVariant::BuildIn(BuildInMeta::U8) => build_in!(u8),
+            MetaTypeVariant::BuildIn(BuildInMeta::U16) => build_in!(u16),
+            MetaTypeVariant::BuildIn(BuildInMeta::U32) => build_in!(u32),
+            MetaTypeVariant::BuildIn(BuildInMeta::U64) => build_in!(u64),
+            MetaTypeVariant::BuildIn(BuildInMeta::U128) => build_in!(u128),
+            MetaTypeVariant::BuildIn(BuildInMeta::Usize) => build_in!(usize),
 
-            TypeVariant::BuildIn(BuildInInfo::I8) => build_in!(i8),
-            TypeVariant::BuildIn(BuildInInfo::I16) => build_in!(i16),
-            TypeVariant::BuildIn(BuildInInfo::I32) => build_in!(i32),
-            TypeVariant::BuildIn(BuildInInfo::I64) => build_in!(i64),
-            TypeVariant::BuildIn(BuildInInfo::I128) => build_in!(i128),
-            TypeVariant::BuildIn(BuildInInfo::Isize) => build_in!(isize),
+            MetaTypeVariant::BuildIn(BuildInMeta::I8) => build_in!(i8),
+            MetaTypeVariant::BuildIn(BuildInMeta::I16) => build_in!(i16),
+            MetaTypeVariant::BuildIn(BuildInMeta::I32) => build_in!(i32),
+            MetaTypeVariant::BuildIn(BuildInMeta::I64) => build_in!(i64),
+            MetaTypeVariant::BuildIn(BuildInMeta::I128) => build_in!(i128),
+            MetaTypeVariant::BuildIn(BuildInMeta::Isize) => build_in!(isize),
 
-            TypeVariant::BuildIn(BuildInInfo::F32) => build_in!(f32),
-            TypeVariant::BuildIn(BuildInInfo::F64) => build_in!(f64),
+            MetaTypeVariant::BuildIn(BuildInMeta::F32) => build_in!(f32),
+            MetaTypeVariant::BuildIn(BuildInMeta::F64) => build_in!(f64),
 
-            TypeVariant::BuildIn(BuildInInfo::Bool) => {
+            MetaTypeVariant::BuildIn(BuildInMeta::Bool) => {
                 match default.to_ascii_lowercase().as_str() {
                     "true" | "yes" | "1" => return Ok(quote!(true)),
                     "false" | "no" | "0" => return Ok(quote!(false)),
                     _ => (),
                 }
             }
-            TypeVariant::BuildIn(BuildInInfo::String) => {
+            MetaTypeVariant::BuildIn(BuildInMeta::String) => {
                 return Ok(quote!(String::from(#default)));
             }
 
-            TypeVariant::Custom(x) => {
+            MetaTypeVariant::Custom(x) => {
                 if let Some(x) = x.default(default) {
                     return Ok(x);
                 }
             }
 
-            TypeVariant::Enumeration(ei) => {
+            MetaTypeVariant::Enumeration(ei) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
@@ -1421,7 +1423,7 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            TypeVariant::Union(ui) => {
+            MetaTypeVariant::Union(ui) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
                 let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
@@ -1441,16 +1443,18 @@ impl<'a, 'types> Request<'a, 'types> {
                 }
             }
 
-            TypeVariant::Reference(ti) => match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
-                Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
-                Occurs::DynamicList if default.is_empty() => {
-                    let module_path = ModulePath::from_namespace(current_ns, types);
-                    let target_type = type_ref.to_ident_path().relative_to(&module_path);
+            MetaTypeVariant::Reference(ti) => {
+                match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
+                    Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
+                    Occurs::DynamicList if default.is_empty() => {
+                        let module_path = ModulePath::from_namespace(current_ns, types);
+                        let target_type = type_ref.to_ident_path().relative_to(&module_path);
 
-                    return Ok(quote! { #target_type(Vec::new()) });
+                        return Ok(quote! { #target_type(Vec::new()) });
+                    }
+                    _ => (),
                 }
-                _ => (),
-            },
+            }
 
             _ => (),
         }
@@ -1472,20 +1476,20 @@ impl<'types> Deref for Request<'_, 'types> {
 
 /* Helper */
 
-fn is_dynamic(ident: &Ident, types: &Types) -> bool {
-    let Some(ty) = types.get(ident) else {
+fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
+    let Some(ty) = types.items.get(ident) else {
         return false;
     };
 
     match &ty.variant {
-        TypeVariant::Dynamic(_) => true,
-        TypeVariant::ComplexType(ci) => ci.is_dynamic,
-        TypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+        MetaTypeVariant::Dynamic(_) => true,
+        MetaTypeVariant::ComplexType(ci) => ci.is_dynamic,
+        MetaTypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
         _ => false,
     }
 }
 
-fn make_tag_name(types: &Types, ident: &Ident) -> String {
+fn make_tag_name(types: &MetaTypes, ident: &Ident) -> String {
     let name = ident.name.to_string();
 
     if let Some(module) = ident
@@ -1509,9 +1513,10 @@ fn make_derived_type_data<'types>(
 
     let ty = req
         .types
+        .items
         .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-    let base_ident = if let TypeVariant::Dynamic(di) = &ty.variant {
+    let base_ident = if let MetaTypeVariant::Dynamic(di) = &ty.variant {
         di.type_.clone()
     } else {
         None

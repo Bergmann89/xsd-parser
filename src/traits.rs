@@ -1,7 +1,7 @@
 use std::ops::DerefMut;
 
 use crate::models::{
-    types::{AttributeInfo, ElementInfo, VariantInfo},
+    meta::{AttributeMeta, ElementMeta, EnumerationMetaVariant},
     Ident,
 };
 
@@ -84,19 +84,19 @@ pub trait WithIdent {
     fn ident(&self) -> &Ident;
 }
 
-impl WithIdent for VariantInfo {
+impl WithIdent for EnumerationMetaVariant {
     fn ident(&self) -> &Ident {
         &self.ident
     }
 }
 
-impl WithIdent for ElementInfo {
+impl WithIdent for ElementMeta {
     fn ident(&self) -> &Ident {
         &self.ident
     }
 }
 
-impl WithIdent for AttributeInfo {
+impl WithIdent for AttributeMeta {
     fn ident(&self) -> &Ident {
         &self.ident
     }

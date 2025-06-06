@@ -42,7 +42,7 @@ use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
     OptimizerFlags, ParserConfig, ParserFlags, Renderer, Resolver, Schema,
 };
-use self::models::{schema::Schemas, types::Types};
+use self::models::{meta::MetaTypes, schema::Schemas};
 use self::pipeline::{
     generator::renderer::{
         DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
@@ -157,7 +157,7 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas))]
-pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Types, Error> {
+pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<MetaTypes, Error> {
     tracing::info!("Interpret Schema");
 
     let mut interpreter = Interpreter::new(schemas);
@@ -201,7 +201,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(types))]
-pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
+pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaTypes, Error> {
     tracing::info!("Optimize Types");
 
     let mut optimizer = Optimizer::new(types);
@@ -253,7 +253,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
 pub fn exec_generator(
     config: GeneratorConfig,
     schemas: &Schemas,
-    types: &Types,
+    types: &MetaTypes,
 ) -> Result<TokenStream, Error> {
     let module = exec_generator_module(config, schemas, types)?;
     let code = module.to_token_stream();
@@ -271,7 +271,7 @@ pub fn exec_generator(
 pub fn exec_generator_module(
     config: GeneratorConfig,
     schemas: &Schemas,
-    types: &Types,
+    types: &MetaTypes,
 ) -> Result<Module, Error> {
     tracing::info!("Generate Module");
 

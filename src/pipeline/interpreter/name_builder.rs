@@ -1,4 +1,4 @@
-use crate::models::types::NameBuilder;
+use crate::models::meta::NameBuilder;
 
 use super::state::State;
 

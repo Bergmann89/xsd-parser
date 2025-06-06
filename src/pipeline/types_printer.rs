@@ -2,12 +2,14 @@ use std::collections::HashSet;
 use std::fmt::{Display, Formatter, Result as FmtResult};
 
 use crate::models::{
-    types::{AttributeType, ElementMode, ElementType, Type, TypeVariant, Types},
+    meta::{
+        AttributeMetaVariant, ElementMetaVariant, ElementMode, MetaType, MetaTypeVariant, MetaTypes,
+    },
     Ident,
 };
 
 pub(crate) struct TypesPrinter<'a> {
-    types: &'a Types,
+    types: &'a MetaTypes,
 }
 
 #[derive(Default)]
@@ -17,12 +19,12 @@ struct State {
 }
 
 impl<'a> TypesPrinter<'a> {
-    pub(crate) fn new(types: &'a Types) -> Self {
+    pub(crate) fn new(types: &'a MetaTypes) -> Self {
         Self { types }
     }
 
     fn print_all(&self, f: &mut Formatter<'_>, s: &mut State) -> FmtResult {
-        for (ident, ty) in &**self.types {
+        for (ident, ty) in &self.types.items {
             self.print_type(f, s, ident, ty)?;
         }
 
@@ -35,7 +37,7 @@ impl<'a> TypesPrinter<'a> {
         s: &mut State,
         ident: &Ident,
     ) -> FmtResult {
-        if let Some(x) = self.types.get(ident) {
+        if let Some(x) = self.types.items.get(ident) {
             self.print_type(f, s, ident, x)
         } else {
             writeln!(f, "NOT FOUND")?;
@@ -50,7 +52,7 @@ impl<'a> TypesPrinter<'a> {
         f: &mut Formatter<'_>,
         s: &mut State,
         ident: &Ident,
-        ty: &Type,
+        ty: &MetaType,
     ) -> FmtResult {
         macro_rules! indent {
             ($( $tt:tt )*) => {{
@@ -72,7 +74,7 @@ impl<'a> TypesPrinter<'a> {
         }
 
         match &ty.variant {
-            TypeVariant::BuildIn(x) => {
+            MetaTypeVariant::BuildIn(x) => {
                 writeln!(f, "{}: BuildIn", ident)?;
 
                 s.level += 1;
@@ -82,7 +84,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            TypeVariant::Custom(x) => {
+            MetaTypeVariant::Custom(x) => {
                 writeln!(f, "{}: Custom", ident)?;
 
                 s.level += 1;
@@ -92,7 +94,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            TypeVariant::Union(x) => {
+            MetaTypeVariant::Union(x) => {
                 writeln!(f, "{}: Union", ident)?;
 
                 s.level += 1;
@@ -109,7 +111,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            TypeVariant::Reference(x) => {
+            MetaTypeVariant::Reference(x) => {
                 writeln!(f, "{}: Reference", ident)?;
 
                 s.level += 1;
@@ -121,7 +123,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            TypeVariant::Dynamic(x) => {
+            MetaTypeVariant::Dynamic(x) => {
                 writeln!(f, "{}: Dynamic", ident)?;
 
                 s.level += 1;
@@ -137,7 +139,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            TypeVariant::Enumeration(x) => {
+            MetaTypeVariant::Enumeration(x) => {
                 writeln!(f, "{}: Enumeration", ident)?;
 
                 s.level += 1;
@@ -154,11 +156,11 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 2;
             }
-            TypeVariant::All(x) | TypeVariant::Choice(x) | TypeVariant::Sequence(x) => {
+            MetaTypeVariant::All(x) | MetaTypeVariant::Choice(x) | MetaTypeVariant::Sequence(x) => {
                 match &ty.variant {
-                    TypeVariant::All(_) => writeln!(f, "{}: All", ident)?,
-                    TypeVariant::Choice(_) => writeln!(f, "{}: Choice", ident)?,
-                    TypeVariant::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
+                    MetaTypeVariant::All(_) => writeln!(f, "{}: All", ident)?,
+                    MetaTypeVariant::Choice(_) => writeln!(f, "{}: Choice", ident)?,
+                    MetaTypeVariant::Sequence(_) => writeln!(f, "{}: Sequence", ident)?,
                     _ => (),
                 }
 
@@ -177,10 +179,10 @@ impl<'a> TypesPrinter<'a> {
                     indentln!("element_type={:?}", x.element_mode);
 
                     match (x.element_mode, &x.type_) {
-                        (ElementMode::Element, ElementType::Type(type_)) => {
+                        (ElementMode::Element, ElementMetaVariant::Type(type_)) => {
                             indentln!("type=Type({})", type_);
                         }
-                        (ElementMode::Element, ElementType::Any(x)) => {
+                        (ElementMode::Element, ElementMetaVariant::Any(x)) => {
                             indentln!("type=Any");
 
                             s.level += 1;
@@ -202,11 +204,11 @@ impl<'a> TypesPrinter<'a> {
 
                             s.level -= 1;
                         }
-                        (ElementMode::Group, ElementType::Type(type_)) => {
+                        (ElementMode::Group, ElementMetaVariant::Type(type_)) => {
                             indent!("type=");
                             self.resolve_complex_type(f, s, type_)?;
                         }
-                        (ElementMode::Group, ElementType::Any(_)) => (),
+                        (ElementMode::Group, ElementMetaVariant::Any(_)) => (),
                     }
 
                     s.level -= 1;
@@ -214,7 +216,7 @@ impl<'a> TypesPrinter<'a> {
 
                 s.level -= 1;
             }
-            TypeVariant::ComplexType(x) => {
+            MetaTypeVariant::ComplexType(x) => {
                 writeln!(f, "{}: ComplexType", ident)?;
 
                 s.level += 1;
@@ -234,9 +236,9 @@ impl<'a> TypesPrinter<'a> {
                     indentln!("use={:?}", x.use_);
                     indentln!("default={:?}", x.default);
 
-                    match &x.type_ {
-                        AttributeType::Type(type_) => indentln!("type=Type({})", type_),
-                        AttributeType::Any(x) => {
+                    match &x.variant {
+                        AttributeMetaVariant::Type(type_) => indentln!("type=Type({})", type_),
+                        AttributeMetaVariant::Any(x) => {
                             indentln!("type=Any");
 
                             s.level += 1;

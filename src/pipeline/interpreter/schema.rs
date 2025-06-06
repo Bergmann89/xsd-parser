@@ -3,6 +3,7 @@ use std::str::from_utf8;
 use tracing::instrument;
 
 use crate::models::{
+    meta::{MetaType, MetaTypeVariant},
     schema::{
         xs::{
             AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
@@ -10,7 +11,6 @@ use crate::models::{
         },
         Namespace, NamespaceId, QName, Schemas,
     },
-    types::{Type, TypeVariant},
     Ident, IdentType, Name, RawByteStr,
 };
 
@@ -86,8 +86,8 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
 
 impl SchemaInterpreter<'_, '_> {
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_element_mut(&mut self, ident: &Ident) -> Result<&mut Type, Error> {
-        if !self.state.types.contains_key(ident) {
+    pub(super) fn get_element_mut(&mut self, ident: &Ident) -> Result<&mut MetaType, Error> {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -96,12 +96,15 @@ impl SchemaInterpreter<'_, '_> {
             crate::assert_eq!(ident, &new_ident);
         }
 
-        Ok(self.state.types.get_mut(ident).unwrap())
+        Ok(self.state.types.items.get_mut(ident).unwrap())
     }
 
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_simple_type_variant(&mut self, ident: &Ident) -> Result<&TypeVariant, Error> {
-        if !self.state.types.contains_key(ident) {
+    pub(super) fn get_simple_type_variant(
+        &mut self,
+        ident: &Ident,
+    ) -> Result<&MetaTypeVariant, Error> {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_simple_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -113,18 +116,18 @@ impl SchemaInterpreter<'_, '_> {
         match self.state.types.get_variant(ident) {
             None
             | Some(
-                TypeVariant::ComplexType(_)
-                | TypeVariant::All(_)
-                | TypeVariant::Choice(_)
-                | TypeVariant::Sequence(_)
-                | TypeVariant::Dynamic(_),
+                MetaTypeVariant::ComplexType(_)
+                | MetaTypeVariant::All(_)
+                | MetaTypeVariant::Choice(_)
+                | MetaTypeVariant::Sequence(_)
+                | MetaTypeVariant::Dynamic(_),
             ) => Err(Error::UnknownType(ident.clone())),
             Some(
-                ty @ (TypeVariant::Enumeration(_)
-                | TypeVariant::BuildIn(_)
-                | TypeVariant::Custom(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Reference(_)),
+                ty @ (MetaTypeVariant::Enumeration(_)
+                | MetaTypeVariant::BuildIn(_)
+                | MetaTypeVariant::Custom(_)
+                | MetaTypeVariant::Union(_)
+                | MetaTypeVariant::Reference(_)),
             ) => Ok(ty),
         }
     }
@@ -133,8 +136,8 @@ impl SchemaInterpreter<'_, '_> {
     pub(super) fn get_complex_type_variant(
         &mut self,
         ident: &Ident,
-    ) -> Result<&TypeVariant, Error> {
-        if !self.state.types.contains_key(ident) {
+    ) -> Result<&MetaTypeVariant, Error> {
+        if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_complex_type(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
@@ -146,18 +149,18 @@ impl SchemaInterpreter<'_, '_> {
         match self.state.types.get_variant(ident) {
             None
             | Some(
-                TypeVariant::Enumeration(_)
-                | TypeVariant::BuildIn(_)
-                | TypeVariant::Custom(_)
-                | TypeVariant::Union(_)
-                | TypeVariant::Reference(_),
+                MetaTypeVariant::Enumeration(_)
+                | MetaTypeVariant::BuildIn(_)
+                | MetaTypeVariant::Custom(_)
+                | MetaTypeVariant::Union(_)
+                | MetaTypeVariant::Reference(_),
             ) => Err(Error::UnknownType(ident.clone())),
             Some(
-                ty @ (TypeVariant::ComplexType(_)
-                | TypeVariant::All(_)
-                | TypeVariant::Choice(_)
-                | TypeVariant::Sequence(_)
-                | TypeVariant::Dynamic(_)),
+                ty @ (MetaTypeVariant::ComplexType(_)
+                | MetaTypeVariant::All(_)
+                | MetaTypeVariant::Choice(_)
+                | MetaTypeVariant::Sequence(_)
+                | MetaTypeVariant::Dynamic(_)),
             ) => Ok(ty),
         }
     }
@@ -235,7 +238,7 @@ impl SchemaInterpreter<'_, '_> {
     where
         F: FnMut(&mut VariantBuilder<'_, '_, '_>) -> Result<(), Error>,
     {
-        if self.state.types.types.contains_key(&ident)
+        if self.state.types.items.contains_key(&ident)
             || self
                 .state
                 .type_stack
