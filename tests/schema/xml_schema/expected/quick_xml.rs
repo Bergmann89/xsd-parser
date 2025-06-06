@@ -1,8 +1,8 @@
 use xsd_parser::{
+    models::schema::Namespace,
     quick_xml::{
         DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, WithDeserializer,
     },
-    schema::Namespace,
     xml::{AnyAttributes, AnyElement},
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");

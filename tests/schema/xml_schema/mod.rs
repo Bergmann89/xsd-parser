@@ -1,7 +1,6 @@
 use xsd_parser::{
     config::{Generate, GeneratorFlags, IdentTriple, OptimizerFlags, ParserFlags, Resolver},
-    types::IdentType,
-    Config,
+    Config, IdentType,
 };
 
 use crate::utils::generate_test;

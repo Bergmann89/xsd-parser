@@ -1,4 +1,4 @@
-use xsd_parser::{generator::BoxFlags, types::IdentType, Config};
+use xsd_parser::{config::BoxFlags, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 

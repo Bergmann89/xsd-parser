@@ -12,7 +12,7 @@ use serde::Deserialize;
 use xsd_parser::{
     config::{Config, Generate, IdentTriple, OptimizerFlags, Schema},
     generate,
-    generator::GeneratorFlags,
+    pipeline::generator::GeneratorFlags,
     quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
 };
 

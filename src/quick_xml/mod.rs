@@ -16,7 +16,7 @@ pub use quick_xml::{
     Writer,
 };
 
-pub use crate::misc::RawByteStr;
+pub use crate::models::RawByteStr;
 
 pub use self::attributes::{filter_xmlns_attributes, write_attrib, write_attrib_opt};
 pub use self::deserialize::{

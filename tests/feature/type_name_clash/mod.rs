@@ -2,9 +2,7 @@ use std::path::PathBuf;
 
 use xsd_parser::{
     config::{IdentTriple, OptimizerFlags, Schema},
-    exec_generator, exec_interpreter, exec_optimizer, exec_parser,
-    types::IdentType,
-    Config,
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, Config, IdentType,
 };
 
 use crate::utils::{generate_test_validate, ConfigEx};

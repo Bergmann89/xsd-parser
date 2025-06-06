@@ -15,12 +15,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use tracing_subscriber::{fmt, EnvFilter};
 
+use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
     Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
 };
-use xsd_parser::generate;
-use xsd_parser::generator::GeneratorFlags;
-use xsd_parser::types::{CustomInfo, IdentType, Type};
+use xsd_parser::models::types::{CustomInfo, Type};
+use xsd_parser::{generate, IdentType};
 
 fn main() -> Result<(), Error> {
     // Initialize the logging framework. Log output can be controlled using the

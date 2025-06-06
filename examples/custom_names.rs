@@ -16,13 +16,11 @@ use anyhow::{anyhow, Error};
 use quote::ToTokens;
 use xsd_parser::{
     config::{
-        GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver,
-        Schema,
+        Config, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
+        Resolver, Schema,
     },
     exec_generator_module, exec_interpreter, exec_optimizer, exec_parser,
-    schema::Schemas,
-    types::{IdentType, Types},
-    Config,
+    models::{schema::Schemas, types::Types, IdentType},
 };
 
 fn main() -> Result<(), Error> {

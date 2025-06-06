@@ -1,56 +1,56 @@
 #![recursion_limit = "256"]
 #![doc = include_str!(concat!(env!("OUT_DIR"), "/README.md"))]
 
-pub mod code;
 pub mod config;
-pub mod generator;
-pub mod interpreter;
-pub mod optimizer;
-pub mod parser;
+pub mod models;
+pub mod pipeline;
 pub mod quick_xml;
-pub mod schema;
-pub mod types;
 pub mod xml;
 
 mod macros;
-mod misc;
+mod traits;
 
 /// Type alias for [`generator::Error`].
-pub type GeneratorError = generator::Error;
+pub type GeneratorError = self::pipeline::generator::Error;
 
 /// Type alias for [`interpreter::Error`].
-pub type InterpreterError = interpreter::Error;
+pub type InterpreterError = self::pipeline::interpreter::Error;
 
 /// Type alias for [`parser::Error`].
-pub type ParserError<E> = parser::Error<E>;
+pub type ParserError<E> = self::pipeline::parser::Error<E>;
 
+use std::fmt::Debug;
 use std::fs::write;
+use std::io::Error as IoError;
 
-pub use code::{Module, SubModules};
-pub use config::Config;
-pub use generator::Generator;
-pub use interpreter::Interpreter;
-pub use misc::{AsAny, Error, WithNamespace};
-pub use optimizer::Optimizer;
-pub use parser::Parser;
+pub use self::config::Config;
+pub use self::models::code::{Module, SubModules};
+pub use self::models::{Ident, IdentType, Name};
+pub use self::pipeline::{
+    generator::Generator, interpreter::Interpreter, optimizer::Optimizer, parser::Parser,
+};
+pub use self::traits::{AsAny, VecHelper, WithIdent, WithNamespace};
 
+use anyhow::Error as AnyError;
 use macros::{assert_eq, unreachable};
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use thiserror::Error as ThisError;
 use tracing::instrument;
 
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
     OptimizerFlags, ParserConfig, ParserFlags, Renderer, Resolver, Schema,
 };
-use self::generator::renderer::{
-    DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
-    QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
+use self::models::{schema::Schemas, types::Types};
+use self::pipeline::{
+    generator::renderer::{
+        DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
+        QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
+    },
+    parser::resolver::{FileResolver, ManyResolver},
+    TypesPrinter,
 };
-use self::misc::TypesPrinter;
-use self::parser::resolver::{FileResolver, ManyResolver};
-use self::schema::Schemas;
-use self::types::{IdentType, Types};
 
 /// Generates rust code from a XML schema using the passed `config`.
 ///
@@ -108,7 +108,7 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
         match r {
             #[cfg(feature = "web-resolver")]
             Resolver::Web => {
-                let web_resolver = self::parser::resolver::WebResolver::new();
+                let web_resolver = self::pipeline::parser::resolver::WebResolver::new();
 
                 resolver = resolver.add_resolver(web_resolver);
             }
@@ -347,4 +347,46 @@ pub fn exec_generator_module(
     let module = generator.into_module();
 
     Ok(module)
+}
+
+/// Error emitted by the [`generate`] function.
+#[derive(Debug, ThisError)]
+pub enum Error {
+    /// IO Error.
+    #[error("IO Error: {0}")]
+    IoError(#[from] IoError),
+
+    /// Parser error.
+    #[error("Parser error: {0}")]
+    ParserError(ParserError<AnyError>),
+
+    /// Interpreter error.
+    #[error("Interpreter error: {0}")]
+    InterpreterError(#[from] InterpreterError),
+
+    /// Generator error.
+    #[error("Generator error: {0}")]
+    GeneratorError(#[from] GeneratorError),
+}
+
+impl<E> From<ParserError<E>> for Error
+where
+    AnyError: From<E>,
+{
+    fn from(value: ParserError<E>) -> Self {
+        match value {
+            ParserError::IoError(err) => Self::ParserError(ParserError::IoError(err)),
+            ParserError::XmlError(err) => Self::ParserError(ParserError::XmlError(err)),
+            ParserError::UrlParseError(err) => Self::ParserError(ParserError::UrlParseError(err)),
+            ParserError::UnableToResolve(url) => {
+                Self::ParserError(ParserError::UnableToResolve(url))
+            }
+            ParserError::Resolver(err) => {
+                Self::ParserError(ParserError::Resolver(AnyError::from(err)))
+            }
+            ParserError::InvalidFilePath(path) => {
+                Self::ParserError(ParserError::InvalidFilePath(path))
+            }
+        }
+    }
 }

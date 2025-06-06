@@ -32,18 +32,19 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 use tracing_subscriber::{fmt, EnvFilter};
 
-use xsd_parser::generator::DynTypeTraits;
 use xsd_parser::{
     config::{GeneratorFlags, SerdeSupport, TypedefMode},
-    generator::{
-        renderer::Renderer, ComplexType, ComplexTypeAttribute, ComplexTypeContent,
-        ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, Context, CustomType, DynamicType,
-        EnumerationType, EnumerationTypeVariant, Occurs, ReferenceType, TypeData, UnionType,
-        UnionTypeVariant,
+    models::schema::xs::Use,
+    pipeline::{
+        generator::{
+            renderer::Renderer, ComplexType, ComplexTypeAttribute, ComplexTypeContent,
+            ComplexTypeElement, ComplexTypeEnum, ComplexTypeStruct, Context, CustomType,
+            DynTypeTraits, DynamicType, EnumerationType, EnumerationTypeVariant, Occurs,
+            ReferenceType, TypeData, UnionType, UnionTypeVariant,
+        },
+        parser::resolver::FileResolver,
+        Generator, Interpreter, Optimizer, Parser,
     },
-    parser::resolver::FileResolver,
-    schema::xs::Use,
-    Generator, Interpreter, Optimizer, Parser,
 };
 
 fn main() -> Result<(), Error> {

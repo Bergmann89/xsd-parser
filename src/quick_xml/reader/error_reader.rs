@@ -3,10 +3,8 @@ use quick_xml::{
     name::{LocalName, QName, ResolveResult},
 };
 
-use crate::{
-    quick_xml::{error::ErrorInfo, Error},
-    xml::NamespacesShared,
-};
+use crate::quick_xml::{error::ErrorInfo, Error};
+use crate::xml::NamespacesShared;
 
 use super::{XmlReader, XmlReaderSync};
 

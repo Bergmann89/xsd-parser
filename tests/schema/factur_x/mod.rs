@@ -1,4 +1,4 @@
-use xsd_parser::{config::NamespaceIdent, types::IdentType, Config};
+use xsd_parser::{config::NamespaceIdent, Config, IdentType};
 
 use crate::utils::ConfigEx;
 

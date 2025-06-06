@@ -10,7 +10,7 @@ use quick_xml::{
     name::QName,
 };
 
-use crate::misc::format_utf8_slice;
+use crate::models::format_utf8_slice;
 use crate::quick_xml::{
     Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
     Error, Event, WithDeserializer, WithSerializer, XmlReader,
@@ -437,10 +437,8 @@ mod tests {
 
     use quick_xml::{events::BytesText, Writer};
 
-    use crate::{
-        quick_xml::{DeserializeSync, SerializeSync, SliceReader},
-        xml::Value,
-    };
+    use crate::quick_xml::{DeserializeSync, SerializeSync, SliceReader};
+    use crate::xml::Value;
 
     use super::Element;
 
