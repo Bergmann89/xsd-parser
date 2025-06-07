@@ -5,6 +5,7 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 
 use crate::config::{RendererFlags, SerdeSupport, TypedefMode};
+use crate::models::data::ConfigValue;
 use crate::models::{
     data::{
         ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
@@ -514,13 +515,13 @@ where
     };
 
     let extra = extra.into_iter().map(|x| format_ident!("{x}"));
-    let types = ctx
-        .derive
-        .iter()
-        .cloned()
-        .chain(serde)
-        .chain(extra)
-        .collect::<Vec<_>>();
+    let types = ctx.derive.iter().cloned().chain(serde).chain(extra);
+
+    let types = match &ctx.data.derive {
+        ConfigValue::Default => types.collect::<Vec<_>>(),
+        ConfigValue::Extend(extra) => types.chain(extra.iter().cloned()).collect::<Vec<_>>(),
+        ConfigValue::Overwrite(types) => types.clone(),
+    };
 
     if types.is_empty() {
         quote! {}

@@ -1,6 +1,6 @@
 use crate::models::{
     data::{
-        BuildInData, ComplexData, CustomData, DataType, DynamicData, EnumerationData,
+        BuildInData, ComplexData, ConfigValue, CustomData, DataType, DynamicData, EnumerationData,
         ReferenceData, UnionData,
     },
     meta::MetaType,
@@ -16,6 +16,7 @@ impl<'types> DataType<'types> {
         use crate::models::data::DataTypeVariant as D;
         use crate::models::meta::MetaTypeVariant as M;
 
+        let derive = ConfigValue::Default;
         let variant = match &meta.variant {
             M::BuildIn(x) => D::BuildIn(BuildInData::new(x)),
             M::Custom(x) => D::Custom(CustomData::new(x)),
@@ -29,6 +30,10 @@ impl<'types> DataType<'types> {
             M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx)?),
         };
 
-        Ok(Self { meta, variant })
+        Ok(Self {
+            meta,
+            derive,
+            variant,
+        })
     }
 }

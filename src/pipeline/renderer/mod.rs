@@ -115,7 +115,10 @@ impl<'types> Renderer<'types> {
 
     /// Set the traits the generated types should derive from.
     ///
-    /// Default is `Debug` and `Clone`.
+    /// Default is `Debug`.
+    ///
+    /// If you want to set the derive for a single value, please have a look to
+    /// [`DataType::derive`](crate::models::data::DataType::derive).
     ///
     /// # Examples
     ///
