@@ -32,3 +32,21 @@ pub use self::reference::ReferenceData;
 pub use self::type_::{DataType, DataTypeVariant};
 pub use self::types::DataTypes;
 pub use self::union::{UnionData, UnionTypeVariant};
+
+/// A generic configuration value wrapper that supports different merging strategies.
+///
+/// This enum is used to represent configuration fields that may either use default values,
+/// extend existing ones, or completely overwrite them. It provides a flexible mechanism
+/// for combining configurations from multiple sources.
+#[derive(Default, Debug)]
+pub enum ConfigValue<T> {
+    /// Uses the default behavior or value.
+    #[default]
+    Default,
+
+    /// Appends or merges the provided value with existing data.
+    Extend(T),
+
+    /// Replaces any existing data with the provided value.
+    Overwrite(T),
+}

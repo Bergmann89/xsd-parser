@@ -1,9 +1,12 @@
 use std::ops::Deref;
 
+use proc_macro2::Ident as Ident2;
+
 use crate::models::meta::MetaType;
 
 use super::{
-    BuildInData, ComplexData, CustomData, DynamicData, EnumerationData, ReferenceData, UnionData,
+    BuildInData, ComplexData, ConfigValue, CustomData, DynamicData, EnumerationData, ReferenceData,
+    UnionData,
 };
 
 /// Represents a fully evaluated and enriched type definition used for rendering.
@@ -17,8 +20,11 @@ use super::{
 /// on the kind of the underlying type.
 #[derive(Debug)]
 pub struct DataType<'types> {
-    /// Underlying meta type this data type contains additional information for
+    /// Underlying meta type this data type contains additional information for.
     pub meta: &'types MetaType,
+
+    /// Defines traits to derive the type from.
+    pub derive: ConfigValue<Vec<Ident2>>,
 
     /// The variant of the data type.
     pub variant: DataTypeVariant<'types>,
