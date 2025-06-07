@@ -4,21 +4,24 @@ mod generator;
 mod interpreter;
 mod optimizer;
 mod parser;
+mod renderer;
 
 pub use crate::models::{
     meta::MetaType,
     schema::{Namespace, NamespacePrefix},
     Ident, IdentType, Name,
 };
-pub use crate::pipeline::generator::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
 
 use crate::models::schema::Schemas;
 use crate::InterpreterError;
 
-pub use self::generator::{Generate, GeneratorConfig, Renderer, TypePostfix};
+pub use self::generator::{
+    BoxFlags, Generate, GeneratorConfig, GeneratorFlags, SerdeSupport, TypePostfix, TypedefMode,
+};
 pub use self::interpreter::{InterpreterConfig, InterpreterFlags};
 pub use self::optimizer::{OptimizerConfig, OptimizerFlags};
 pub use self::parser::{ParserConfig, ParserFlags, Resolver, Schema};
+pub use self::renderer::{DynTypeTraits, RenderStep, RendererConfig, RendererFlags};
 
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
@@ -35,6 +38,9 @@ pub struct Config {
 
     /// Configuration for the code generator.
     pub generator: GeneratorConfig,
+
+    /// Configuration for the code renderer.
+    pub renderer: RendererConfig,
 }
 
 impl Config {
@@ -122,6 +128,27 @@ impl Config {
         self
     }
 
+    /// Set renderer flags to the config.
+    pub fn set_renderer_flags(mut self, flags: RendererFlags) -> Self {
+        self.renderer.flags = flags;
+
+        self
+    }
+
+    /// Add code renderer flags to the config.
+    pub fn with_renderer_flags(mut self, flags: RendererFlags) -> Self {
+        self.renderer.flags.insert(flags);
+
+        self
+    }
+
+    /// Remove code renderer flags to the config.
+    pub fn without_renderer_flags(mut self, flags: RendererFlags) -> Self {
+        self.renderer.flags.remove(flags);
+
+        self
+    }
+
     /// Set boxing flags to the code generator config.
     pub fn set_box_flags(mut self, flags: BoxFlags) -> Self {
         self.generator.box_flags = flags;
@@ -147,11 +174,11 @@ impl Config {
     ///
     /// If the same type of renderer was already added,
     /// it is replaced by the new one.
-    pub fn with_renderer(mut self, renderer: Renderer) -> Self {
-        if let Some(index) = self.generator.renderers.iter().position(|x| x == &renderer) {
-            self.generator.renderers[index] = renderer;
+    pub fn with_render_step(mut self, step: RenderStep) -> Self {
+        if let Some(index) = self.renderer.steps.iter().position(|x| x == &step) {
+            self.renderer.steps[index] = step;
         } else {
-            self.generator.renderers.push(renderer);
+            self.renderer.steps.push(step);
         }
 
         self
@@ -160,12 +187,12 @@ impl Config {
     /// Add multiple renderers to the generator config.
     ///
     /// See [`with_renderer`](Self::with_renderer) for details.
-    pub fn with_renderers<I>(mut self, renderers: I) -> Self
+    pub fn with_render_steps<I>(mut self, steps: I) -> Self
     where
-        I: IntoIterator<Item = Renderer>,
+        I: IntoIterator<Item = RenderStep>,
     {
-        for renderer in renderers {
-            self = self.with_renderer(renderer);
+        for step in steps {
+            self = self.with_render_step(step);
         }
 
         self
@@ -173,11 +200,11 @@ impl Config {
 
     /// Enable code generation for [`quick_xml`] serialization.
     pub fn with_quick_xml_serialize(self) -> Self {
-        self.with_renderers([
-            Renderer::Types,
-            Renderer::Defaults,
-            Renderer::NamespaceConstants,
-            Renderer::QuickXmlSerialize,
+        self.with_render_steps([
+            RenderStep::Types,
+            RenderStep::Defaults,
+            RenderStep::NamespaceConstants,
+            RenderStep::QuickXmlSerialize,
         ])
     }
 
@@ -189,11 +216,11 @@ impl Config {
     /// Enable code generation for [`quick_xml`] deserialization
     /// with the passed configuration.
     pub fn with_quick_xml_deserialize_config(self, boxed_deserializer: bool) -> Self {
-        self.with_renderers([
-            Renderer::Types,
-            Renderer::Defaults,
-            Renderer::NamespaceConstants,
-            Renderer::QuickXmlDeserialize { boxed_deserializer },
+        self.with_render_steps([
+            RenderStep::Types,
+            RenderStep::Defaults,
+            RenderStep::NamespaceConstants,
+            RenderStep::QuickXmlDeserialize { boxed_deserializer },
         ])
     }
 
@@ -245,7 +272,7 @@ impl Config {
         I: IntoIterator,
         I::Item: Into<String>,
     {
-        self.generator.derive = Some(
+        self.renderer.derive = Some(
             derive
                 .into_iter()
                 .map(Into::into)

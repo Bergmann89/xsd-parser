@@ -1,12 +1,13 @@
 use std::collections::{BTreeMap, HashSet};
 
 use crate::models::{
+    data::Occurs,
     meta::{ComplexMeta, ElementMetaVariant, MetaTypeVariant, MetaTypes},
     schema::xs::Use,
     Ident,
 };
 
-use super::misc::{Occurs, TypeRef};
+use super::state::TypeRef;
 
 /* Walk */
 

@@ -1,17 +1,18 @@
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use super::super::data::{ComplexType, ComplexTypeAttribute, ComplexTypeStruct};
-use super::{Context, Renderer, TypeData};
+use crate::models::data::{ComplexData, ComplexDataAttribute, ComplexDataStruct, DataTypeVariant};
+
+use super::super::{Context, RenderStep};
 
 /// Implements a [`Renderer`] that renders associated methods that return the default
 /// values of the different attributes and elements according to the schema.
 #[derive(Debug)]
-pub struct DefaultsRenderer;
+pub struct DefaultsRenderStep;
 
-impl Renderer for DefaultsRenderer {
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
-        if let TypeData::Complex(x) = ty {
+impl RenderStep for DefaultsRenderStep {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+        if let DataTypeVariant::Complex(x) = &ctx.data.variant {
             x.render_defaults(ctx);
         }
     }
@@ -19,10 +20,10 @@ impl Renderer for DefaultsRenderer {
 
 /* ComplexType */
 
-impl ComplexType<'_> {
+impl ComplexData<'_> {
     pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {
         match self {
-            ComplexType::Enum {
+            ComplexData::Enum {
                 type_: _,
                 content_type,
             } => {
@@ -30,7 +31,7 @@ impl ComplexType<'_> {
                     content_type.render_defaults(ctx);
                 }
             }
-            ComplexType::Struct {
+            ComplexData::Struct {
                 type_,
                 content_type,
             } => {
@@ -44,7 +45,7 @@ impl ComplexType<'_> {
     }
 }
 
-impl ComplexTypeStruct<'_> {
+impl ComplexDataStruct<'_> {
     pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {
         let type_ident = &self.type_ident;
         let mut has_attributes = false;
@@ -66,7 +67,7 @@ impl ComplexTypeStruct<'_> {
     }
 }
 
-impl ComplexTypeAttribute<'_> {
+impl ComplexDataAttribute<'_> {
     fn render_default_fn(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let default = self.default_value.as_ref()?;
         let target_ident = ctx.resolve_type_for_module(&self.target_type);

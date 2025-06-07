@@ -433,7 +433,8 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
 
 #[cfg(test)]
 mod tests {
-    use std::{str::from_utf8, sync::Arc};
+    use std::str::from_utf8;
+    use std::sync::Arc;
 
     use quick_xml::{events::BytesText, Writer};
 

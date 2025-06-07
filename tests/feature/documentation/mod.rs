@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GeneratorFlags, OptimizerFlags},
+    config::{OptimizerFlags, RendererFlags},
     Config, IdentType,
 };
 
@@ -12,7 +12,7 @@ fn generate_default() {
         "tests/feature/documentation/expected/default.rs",
         Config::test_default()
             .without_optimizer_flags(OptimizerFlags::all())
-            .with_generator_flags(GeneratorFlags::RENDER_DOCS)
+            .with_renderer_flags(RendererFlags::RENDER_DOCS)
             .with_generate([(IdentType::Element, "tns:SomeDetails")]),
     );
 }

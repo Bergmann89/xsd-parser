@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
+use quote::ToTokens;
 use xsd_parser::{
     config::{IdentTriple, OptimizerFlags, Schema},
-    exec_generator, exec_interpreter, exec_optimizer, exec_parser, Config, IdentType,
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render, Config, IdentType,
 };
 
 use crate::utils::{generate_test_validate, ConfigEx};
@@ -28,23 +29,24 @@ fn generate_default() {
         .resolve(&schemas)
         .expect("Unable to resolve ident triple");
 
-    let types = exec_interpreter(config.interpreter, &schemas).expect("Interpreter failed");
-    let mut types = exec_optimizer(config.optimizer, types).expect("Optimizer failed");
+    let meta_types = exec_interpreter(config.interpreter, &schemas).expect("Interpreter failed");
+    let mut meta_types = exec_optimizer(config.optimizer, meta_types).expect("Optimizer failed");
 
-    let ty1 = types
+    let ty1 = meta_types
         .items
         .get_mut(&ident_1)
         .expect("Failed to resolve `tns:fooType`");
     ty1.display_name = Some("Bar".into());
 
-    let ty2 = types
+    let ty2 = meta_types
         .items
         .get_mut(&ident_2)
         .expect("Failed to resolve `tns:FooType`");
-    ty2.display_name = Some("Baz".into());
 
-    let code = exec_generator(config.generator, &schemas, &types).expect("Generator failed");
-    let code = code.to_string();
+    let data_types =
+        exec_generator(config.generator, &schemas, &meta_types).expect("Generator failed");
+    let module = exec_render(config.renderer, &data_types).expect("Renderer failed");
+    let code = module.to_token_stream().to_string();
 
     generate_test_validate(code, "tests/feature/type_name_clash/expected/default.rs");
 }

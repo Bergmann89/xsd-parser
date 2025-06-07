@@ -1,20 +1,20 @@
 use proc_macro2::Literal;
 use quote::quote;
 
-use super::{Config, Module, Renderer};
+use super::super::{MetaData, Module, RenderStep};
 
 /// Implements a [`Renderer`] that renders constants for the different namespaces
 /// used in the schema.
 #[derive(Debug)]
-pub struct NamespaceConstantsRenderer;
+pub struct NamespaceConstantsRenderStep;
 
-impl Renderer for NamespaceConstantsRenderer {
-    fn finish(&mut self, config: &Config<'_>, module: &mut Module) {
-        let xsd_parser = &config.xsd_parser_crate;
+impl RenderStep for NamespaceConstantsRenderStep {
+    fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
+        let xsd_parser = &meta.xsd_parser_crate;
 
         module.usings([quote!(#xsd_parser::models::schema::Namespace)]);
 
-        let namespace_constants = config.types.modules.values().filter_map(|module| {
+        let namespace_constants = meta.types.meta.types.modules.values().filter_map(|module| {
             let ns = module.namespace.as_ref()?;
             let const_name = module.make_ns_const();
             let const_name = const_name.ident();

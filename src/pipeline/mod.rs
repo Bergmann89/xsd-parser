@@ -9,6 +9,7 @@ pub mod generator;
 pub mod interpreter;
 pub mod optimizer;
 pub mod parser;
+pub mod renderer;
 
 mod types_printer;
 
@@ -16,5 +17,6 @@ pub use self::generator::Generator;
 pub use self::interpreter::Interpreter;
 pub use self::optimizer::Optimizer;
 pub use self::parser::Parser;
+pub use self::renderer::Renderer;
 
 pub(crate) use self::types_printer::TypesPrinter;

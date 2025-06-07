@@ -104,12 +104,12 @@ fn main() -> Result<(), Error> {
     //      its dependent types.
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
     config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
-    config.generator.xsd_parser = "crate".into();
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
     config.generator.generate =
         Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
-    config.generator.derive = Some(
+    config.renderer.xsd_parser = "crate".into();
+    config.renderer.derive = Some(
         ["Debug", "Clone", "Eq", "PartialEq"]
             .into_iter()
             .map(String::from)

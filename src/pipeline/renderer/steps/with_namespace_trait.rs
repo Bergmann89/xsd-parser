@@ -1,33 +1,34 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::quote;
 
-use super::super::data::{
-    ComplexType, ComplexTypeEnum, ComplexTypeStruct, DynamicType, EnumerationType, ReferenceType,
-    UnionType,
+use crate::models::data::{
+    ComplexData, ComplexDataEnum, ComplexDataStruct, DynamicData, EnumerationData, ReferenceData,
+    UnionData,
 };
-use super::{Context, Renderer, TypeData};
 
-/// Implements a [`Renderer`] that renders the [`WithNamespace`](crate::WithNamespace)
+use super::super::{Context, DataTypeVariant, RenderStep};
+
+/// Implements a [`RenderStep`] that renders the [`WithNamespace`](crate::WithNamespace)
 /// trait for each type defined in the schema.
 #[derive(Debug)]
-pub struct WithNamespaceTraitRenderer;
+pub struct WithNamespaceTraitRenderStep;
 
-impl Renderer for WithNamespaceTraitRenderer {
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
-        match ty {
-            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
-            TypeData::Union(x) => x.render_with_namespace_trait(ctx),
-            TypeData::Dynamic(x) => x.render_with_namespace_trait(ctx),
-            TypeData::Reference(x) => x.render_with_namespace_trait(ctx),
-            TypeData::Enumeration(x) => x.render_with_namespace_trait(ctx),
-            TypeData::Complex(x) => x.render_with_namespace_trait(ctx),
+impl RenderStep for WithNamespaceTraitRenderStep {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+        match &ctx.data.variant {
+            DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
+            DataTypeVariant::Union(x) => x.render_with_namespace_trait(ctx),
+            DataTypeVariant::Dynamic(x) => x.render_with_namespace_trait(ctx),
+            DataTypeVariant::Reference(x) => x.render_with_namespace_trait(ctx),
+            DataTypeVariant::Enumeration(x) => x.render_with_namespace_trait(ctx),
+            DataTypeVariant::Complex(x) => x.render_with_namespace_trait(ctx),
         }
     }
 }
 
 /* UnionType */
 
-impl UnionType<'_> {
+impl UnionData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -37,7 +38,7 @@ impl UnionType<'_> {
 
 /* DynamicType */
 
-impl DynamicType<'_> {
+impl DynamicData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -47,7 +48,7 @@ impl DynamicType<'_> {
 
 /* ReferenceType */
 
-impl ReferenceType<'_> {
+impl ReferenceData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -57,7 +58,7 @@ impl ReferenceType<'_> {
 
 /* EnumerationType */
 
-impl EnumerationType<'_> {
+impl EnumerationData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -67,7 +68,7 @@ impl EnumerationType<'_> {
 
 /* ComplexType */
 
-impl ComplexType<'_> {
+impl ComplexData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         match self {
             Self::Enum {
@@ -94,7 +95,7 @@ impl ComplexType<'_> {
     }
 }
 
-impl ComplexTypeEnum<'_> {
+impl ComplexDataEnum<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -102,7 +103,7 @@ impl ComplexTypeEnum<'_> {
     }
 }
 
-impl ComplexTypeStruct<'_> {
+impl ComplexDataStruct<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
             ctx.module().append(code);
@@ -111,8 +112,8 @@ impl ComplexTypeStruct<'_> {
 }
 
 fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Option<TokenStream> {
-    let ns = ctx.current_ns()?;
-    let module = ctx.types.modules.get(&ns)?;
+    let ns = ctx.ident.ns.as_ref()?;
+    let module = ctx.types.meta.types.modules.get(ns)?;
     let xsd_parser = &ctx.xsd_parser_crate;
 
     let (prefix, namespace) = match (&module.name, &module.namespace) {

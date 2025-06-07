@@ -4,34 +4,32 @@ use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote, ToTokens};
 use smallvec::{smallvec, SmallVec};
 
-use crate::config::{GeneratorFlags, SerdeSupport, TypedefMode};
-use crate::models::schema::xs::Use;
-
-use super::super::{
+use crate::config::{RendererFlags, SerdeSupport, TypedefMode};
+use crate::models::{
     data::{
-        ComplexType, ComplexTypeAttribute, ComplexTypeContent, ComplexTypeElement, ComplexTypeEnum,
-        ComplexTypeStruct, CustomType, DynamicType, EnumerationType, EnumerationTypeVariant,
-        ReferenceType, UnionType, UnionTypeVariant,
+        ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
+        ComplexDataStruct, CustomData, DynamicData, EnumerationData, EnumerationTypeVariant,
+        Occurs, ReferenceData, UnionData, UnionTypeVariant,
     },
-    misc::Occurs,
-    DynTypeTraits,
+    schema::xs::Use,
 };
-use super::{Context, Renderer, TypeData};
 
-/// Implements a [`Renderer`] that renders the actual rust types of the types defined in the schema.
+use super::super::{Context, DataTypeVariant, RenderStep};
+
+/// Implements a [`RenderStep`] that renders the actual rust types of the types defined in the schema.
 #[derive(Debug)]
-pub struct TypesRenderer;
+pub struct TypesRenderStep;
 
-impl Renderer for TypesRenderer {
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
-        match ty {
-            TypeData::BuildIn(_) => (),
-            TypeData::Custom(x) => x.render_types(ctx),
-            TypeData::Union(x) => x.render_types(ctx),
-            TypeData::Dynamic(x) => x.render_types(ctx),
-            TypeData::Reference(x) => x.render_types(ctx),
-            TypeData::Enumeration(x) => x.render_types(ctx),
-            TypeData::Complex(x) => x.render_types(ctx),
+impl RenderStep for TypesRenderStep {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+        match &ctx.data.variant {
+            DataTypeVariant::BuildIn(_) => (),
+            DataTypeVariant::Custom(x) => x.render_types(ctx),
+            DataTypeVariant::Union(x) => x.render_types(ctx),
+            DataTypeVariant::Dynamic(x) => x.render_types(ctx),
+            DataTypeVariant::Reference(x) => x.render_types(ctx),
+            DataTypeVariant::Enumeration(x) => x.render_types(ctx),
+            DataTypeVariant::Complex(x) => x.render_types(ctx),
         }
     }
 }
@@ -41,17 +39,13 @@ impl Renderer for TypesRenderer {
 impl Context<'_, '_> {
     pub(crate) fn render_type_docs(&self) -> Option<TokenStream> {
         self.render_docs(
-            GeneratorFlags::RENDER_TYPE_DOCS,
-            &self.info.documentation[..],
+            RendererFlags::RENDER_TYPE_DOCS,
+            &self.data.documentation[..],
         )
     }
 
-    pub(crate) fn render_docs(
-        &self,
-        flags: GeneratorFlags,
-        docs: &[String],
-    ) -> Option<TokenStream> {
-        self.check_flags(flags).then(|| {
+    pub(crate) fn render_docs(&self, flags: RendererFlags, docs: &[String]) -> Option<TokenStream> {
+        self.check_renderer_flags(flags).then(|| {
             let docs = docs.iter().flat_map(|s| s.split('\n')).map(|s| {
                 let s = s.trim_end();
 
@@ -65,9 +59,9 @@ impl Context<'_, '_> {
 
 /* CustomType */
 
-impl CustomType<'_> {
+impl CustomData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
-        let Some(include) = self.info.include() else {
+        let Some(include) = self.meta.include() else {
             return;
         };
 
@@ -77,7 +71,7 @@ impl CustomType<'_> {
 
 /* UnionType */
 
-impl UnionType<'_> {
+impl UnionData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -124,7 +118,7 @@ impl UnionTypeVariant<'_> {
 
 /* DynamicType */
 
-impl DynamicType<'_> {
+impl DynamicData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -157,7 +151,7 @@ impl DynamicType<'_> {
 
 /* ReferenceType */
 
-impl ReferenceType<'_> {
+impl ReferenceData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             mode,
@@ -204,7 +198,7 @@ impl ReferenceType<'_> {
 
 /* EnumerationType */
 
-impl EnumerationType<'_> {
+impl EnumerationData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -244,7 +238,7 @@ impl EnumerationTypeVariant<'_> {
             target_type,
         } = self;
 
-        let docs = ctx.render_docs(GeneratorFlags::RENDER_VARIANT_DOCS, &info.documentation[..]);
+        let docs = ctx.render_docs(RendererFlags::RENDER_VARIANT_DOCS, &info.documentation[..]);
 
         let serde = if ctx.serde_support == SerdeSupport::None {
             None
@@ -272,7 +266,7 @@ impl EnumerationTypeVariant<'_> {
 
 /* ComplexType */
 
-impl ComplexType<'_> {
+impl ComplexData<'_> {
     pub(crate) fn render_types(&self, ctx: &mut Context<'_, '_>) {
         match self {
             Self::Enum {
@@ -299,7 +293,7 @@ impl ComplexType<'_> {
     }
 }
 
-impl ComplexTypeEnum<'_> {
+impl ComplexDataEnum<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
@@ -322,7 +316,7 @@ impl ComplexTypeEnum<'_> {
     }
 }
 
-impl ComplexTypeStruct<'_> {
+impl ComplexDataStruct<'_> {
     fn render_type(&self, ctx: &mut Context<'_, '_>) {
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, Option::<String>::None);
@@ -361,7 +355,7 @@ impl ComplexTypeStruct<'_> {
     }
 }
 
-impl ComplexTypeContent {
+impl ComplexDataContent {
     fn render_field(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(&target_type, false)?;
@@ -381,7 +375,7 @@ impl ComplexTypeContent {
     }
 }
 
-impl ComplexTypeAttribute<'_> {
+impl ComplexDataAttribute<'_> {
     fn render_field(&self, ctx: &Context<'_, '_>, type_ident: &Ident2) -> TokenStream {
         let field_ident = &self.ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
@@ -396,7 +390,7 @@ impl ComplexTypeAttribute<'_> {
         };
 
         let docs = ctx.render_docs(
-            GeneratorFlags::RENDER_ATTRIBUTE_DOCS,
+            RendererFlags::RENDER_ATTRIBUTE_DOCS,
             &self.info.documentation[..],
         );
 
@@ -439,7 +433,7 @@ impl ComplexTypeAttribute<'_> {
     }
 }
 
-impl ComplexTypeElement<'_> {
+impl ComplexDataElement<'_> {
     fn render_field(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let field_ident = &self.field_ident;
         let target_type = ctx.resolve_type_for_module(&self.target_type);
@@ -449,7 +443,7 @@ impl ComplexTypeElement<'_> {
             .unwrap();
 
         let docs = ctx.render_docs(
-            GeneratorFlags::RENDER_ELEMENT_DOCS,
+            RendererFlags::RENDER_ELEMENT_DOCS,
             &self.info.documentation[..],
         );
 
@@ -483,7 +477,7 @@ impl ComplexTypeElement<'_> {
         let target_type = self.occurs.make_type(&target_type, self.need_indirection);
 
         let docs = ctx.render_docs(
-            GeneratorFlags::RENDER_ELEMENT_DOCS,
+            RendererFlags::RENDER_ELEMENT_DOCS,
             &self.info.documentation[..],
         );
 
@@ -538,19 +532,13 @@ where
 }
 
 fn get_dyn_type_traits(ctx: &Context<'_, '_>) -> TokenStream {
-    format_traits(match &ctx.dyn_type_traits {
-        DynTypeTraits::Custom(x) => x
-            .iter()
-            .map(|ident| {
-                ctx.add_usings([quote!(#ident)]);
+    format_traits(ctx.dyn_type_traits.iter().map(|ident| {
+        ctx.add_usings([quote!(#ident)]);
 
-                let ident = ident.ident();
+        let ident = ident.ident();
 
-                quote!(#ident)
-            })
-            .collect::<Vec<_>>(),
-        DynTypeTraits::Auto => vec![],
-    })
+        quote!(#ident)
+    }))
 }
 
 fn format_traits<I>(iter: I) -> TokenStream

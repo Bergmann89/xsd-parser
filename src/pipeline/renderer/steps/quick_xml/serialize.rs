@@ -2,51 +2,49 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
-use crate::models::{code::IdentPath, schema::Namespace};
-use crate::pipeline::generator::{
+use crate::models::code::IdentPath;
+use crate::models::{
     data::{
-        ComplexType, ComplexTypeBase, ComplexTypeContent, ComplexTypeElement, ComplexTypeEnum,
-        ComplexTypeStruct, DynamicType, EnumerationType, EnumerationTypeVariant, ReferenceType,
-        TypeData, UnionType, UnionTypeVariant,
+        ComplexBase, ComplexData, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
+        ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData, EnumerationTypeVariant,
+        Occurs, ReferenceData, UnionData, UnionTypeVariant,
     },
-    misc::Occurs,
-    renderer::Renderer,
-    Config, Context, DynTypeTraits,
+    schema::Namespace,
 };
+
+use super::super::super::{Context, MetaData, RenderStep};
 
 /// Implements a [`Renderer`] that renders the code for the `quick_xml` serialization.
 #[derive(Debug)]
-pub struct QuickXmlSerializeRenderer;
+pub struct QuickXmlSerializeRenderStep;
 
-impl Renderer for QuickXmlSerializeRenderer {
-    fn initialize(&mut self, config: &mut Config<'_>) {
-        if let DynTypeTraits::Custom(x) = &mut config.dyn_type_traits {
-            let ident = IdentPath::from_parts(
-                [config.xsd_parser_crate.clone(), format_ident!("quick_xml")],
-                format_ident!("WithBoxedSerializer"),
-            );
+impl RenderStep for QuickXmlSerializeRenderStep {
+    fn initialize(&mut self, meta: &mut MetaData<'_>) {
+        let ident = IdentPath::from_parts(
+            [meta.xsd_parser_crate.clone(), format_ident!("quick_xml")],
+            format_ident!("WithBoxedSerializer"),
+        );
 
-            if !x.contains(&ident) {
-                x.push(ident);
-            }
+        if !meta.dyn_type_traits.contains(&ident) {
+            meta.dyn_type_traits.push(ident);
         }
     }
 
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
-        match ty {
-            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
-            TypeData::Union(x) => x.render_serializer(ctx),
-            TypeData::Dynamic(x) => x.render_serializer(ctx),
-            TypeData::Reference(x) => x.render_serializer(ctx),
-            TypeData::Enumeration(x) => x.render_serializer(ctx),
-            TypeData::Complex(x) => x.render_serializer(ctx),
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
+        match &ctx.data.variant {
+            DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
+            DataTypeVariant::Union(x) => x.render_serializer(ctx),
+            DataTypeVariant::Dynamic(x) => x.render_serializer(ctx),
+            DataTypeVariant::Reference(x) => x.render_serializer(ctx),
+            DataTypeVariant::Enumeration(x) => x.render_serializer(ctx),
+            DataTypeVariant::Complex(x) => x.render_serializer(ctx),
         }
     }
 }
 
 /* UnionType */
 
-impl UnionType<'_> {
+impl UnionData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -91,7 +89,7 @@ impl UnionTypeVariant<'_> {
 
 /* DynamicType */
 
-impl DynamicType<'_> {
+impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
@@ -124,7 +122,7 @@ impl DynamicType<'_> {
 
 /* ReferenceType */
 
-impl ReferenceType<'_> {
+impl ReferenceData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             mode,
@@ -195,7 +193,7 @@ impl ReferenceType<'_> {
 
 /* EnumerationType */
 
-impl EnumerationType<'_> {
+impl EnumerationData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -252,7 +250,7 @@ impl EnumerationTypeVariant<'_> {
 
 /* ComplexType */
 
-impl ComplexType<'_> {
+impl ComplexData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         match self {
             Self::Enum {
@@ -279,7 +277,7 @@ impl ComplexType<'_> {
     }
 }
 
-impl ComplexTypeBase {
+impl ComplexBase {
     fn render_with_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -399,6 +397,8 @@ impl ComplexTypeBase {
         let _self = self;
 
         ctx.types
+            .meta
+            .types
             .modules
             .values()
             .filter_map(|module| {
@@ -420,7 +420,7 @@ impl ComplexTypeBase {
     }
 }
 
-impl ComplexTypeEnum<'_> {
+impl ComplexDataEnum<'_> {
     fn serializer_need_end_state(&self) -> bool {
         self.represents_element()
     }
@@ -575,7 +575,7 @@ impl ComplexTypeEnum<'_> {
     }
 }
 
-impl ComplexTypeStruct<'_> {
+impl ComplexDataStruct<'_> {
     fn serializer_need_end_state(&self) -> bool {
         self.represents_element() && self.has_content()
     }
@@ -789,7 +789,7 @@ impl ComplexTypeStruct<'_> {
     }
 }
 
-impl ComplexTypeContent {
+impl ComplexDataContent {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let serializer = self
             .occurs
@@ -854,7 +854,7 @@ impl ComplexTypeContent {
     }
 }
 
-impl ComplexTypeElement<'_> {
+impl ComplexDataElement<'_> {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;

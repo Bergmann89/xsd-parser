@@ -19,7 +19,7 @@ use xsd_parser::{
         Config, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
         Resolver, Schema,
     },
-    exec_generator_module, exec_interpreter, exec_optimizer, exec_parser,
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::{meta::MetaTypes, schema::Schemas, IdentType},
 };
 
@@ -38,10 +38,11 @@ fn main() -> Result<(), Error> {
     // Execute the different steps of the code generation process. The `define_custom_names`
     // function defines a custom step inside the process to set custom names for specified types.
     let schemas = exec_parser(config.parser)?;
-    let types = exec_interpreter(config.interpreter, &schemas)?;
-    let types = define_custom_names(&schemas, types)?;
-    let types = exec_optimizer(config.optimizer, types)?;
-    let module = exec_generator_module(config.generator, &schemas, &types)?;
+    let meta_types = exec_interpreter(config.interpreter, &schemas)?;
+    let meta_types = define_custom_names(&schemas, meta_types)?;
+    let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
+    let module = exec_render(config.renderer, &data_types)?;
     let code = module.to_token_stream().to_string();
 
     // Print the generated code to stdout.

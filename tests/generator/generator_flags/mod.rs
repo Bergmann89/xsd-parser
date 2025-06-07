@@ -43,17 +43,3 @@ fn flatten_content() {
             ]),
     );
 }
-
-#[test]
-fn render_docs() {
-    generate_test(
-        "tests/generator/generator_flags/schema_with_docs.xsd",
-        "tests/generator/generator_flags/expected/render_docs.rs",
-        Config::test_default()
-            .set_generator_flags(GeneratorFlags::RENDER_DOCS)
-            .with_generate([
-                (IdentType::Type, "tns:MyChoice"),
-                (IdentType::Type, "tns:MySequence"),
-            ]),
-    );
-}

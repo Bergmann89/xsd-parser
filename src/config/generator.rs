@@ -1,4 +1,6 @@
-use super::{BoxFlags, GeneratorFlags, IdentTriple, SerdeSupport, TypedefMode};
+use bitflags::bitflags;
+
+use super::IdentTriple;
 
 /// Configuration for the code generator.
 #[derive(Debug, Clone)]
@@ -7,16 +9,6 @@ pub struct GeneratorConfig {
     ///
     /// See [`with_type`](crate::Generator::with_type) for more details.
     pub types: Vec<IdentTriple>,
-
-    /// Sets the traits the generated types should derive from.
-    ///
-    /// See [`derive`](crate::Generator::derive) for more details.
-    pub derive: Option<Vec<String>>,
-
-    /// Set the traits that should be implemented by dynamic types.
-    ///
-    /// See [`dyn_type_traits`](crate::Generator::dyn_type_traits) for more details.
-    pub dyn_type_traits: Option<Vec<String>>,
 
     /// Postfixes that should be applied to the name of the different generated
     /// types.
@@ -39,12 +31,6 @@ pub struct GeneratorConfig {
     /// Additional flags to control the generator.
     pub flags: GeneratorFlags,
 
-    /// Name of the `xsd-parser` crate that is used for the generated code.
-    pub xsd_parser: String,
-
-    /// Renderers to use for rendering the code.
-    pub renderers: Vec<Renderer>,
-
     /// Type to use to store unstructured `xs:any` elements.
     ///
     /// See [`Generator::any_type`](crate::Generator::any_type) for details.
@@ -61,19 +47,131 @@ impl Default for GeneratorConfig {
     fn default() -> Self {
         Self {
             types: vec![],
-            derive: None,
             type_postfix: TypePostfix::default(),
-            dyn_type_traits: None,
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
             serde_support: SerdeSupport::None,
             generate: Generate::Named,
             flags: GeneratorFlags::empty(),
-            xsd_parser: "xsd_parser".into(),
-            renderers: vec![Renderer::Types],
             any_type: None,
             any_attribute_type: None,
         }
+    }
+}
+
+bitflags! {
+    /// Different flags that control what code the [`Generator`](super::Generator)
+    /// is generating.
+    #[derive(Debug, Clone, Copy)]
+    pub struct GeneratorFlags: u32 {
+        /// None of the features are enabled.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Setting none of the flags will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/empty.rs")]
+        /// ```
+        const NONE = 0;
+
+        /// The generated code uses modules for the different namespaces.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `USE_MODULES` feature only will result in the following code:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/use_modules.rs")]
+        /// ```
+        const USE_MODULES = 1 << 0;
+
+        /// The generator flattens the content type of choice types if it does not
+        /// define any element attributes.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `FLATTEN_CONTENT` feature only will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/flatten_content.rs")]
+        /// ```
+        const FLATTEN_CONTENT = Self::FLATTEN_ENUM_CONTENT.bits()
+            | Self::FLATTEN_STRUCT_CONTENT.bits();
+
+        /// The generator flattens the content of enum types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_ENUM_CONTENT = 1 << 1;
+
+        /// The generator flattens the content of struct types if possible.
+        ///
+        /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
+        const FLATTEN_STRUCT_CONTENT = 1 << 2;
+    }
+}
+
+bitflags! {
+    /// Flags to tell the [`Generator`](super::Generator) how to deal with boxed
+    /// types.
+    #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+    pub struct BoxFlags: u32 {
+        /// Boxed types will only be used if necessary.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/box_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `AUTO` feature only will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/box_flags/expected/auto.rs")]
+        /// ```
+        const AUTO = 0;
+
+        /// Elements in a `xs:choice` type will always be boxed.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/box_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `ENUM_ELEMENTS` feature only will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/box_flags/expected/enum_elements.rs")]
+        /// ```
+        const ENUM_ELEMENTS = 1 << 0;
+
+        /// Elements in a `xs:all` or `xs:sequence` type will always be boxed.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/box_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `STRUCT_ELEMENTS` feature only will result in the following code:
+        /// ```rust
+        #[doc = include_str!("../../tests/generator/box_flags/expected/struct_elements.rs")]
+        /// ```
+        const STRUCT_ELEMENTS = 1 << 1;
     }
 }
 
@@ -100,6 +198,133 @@ impl Default for TypePostfix {
     }
 }
 
+/// Tells the [`Generator`](super::Generator) how to deal with type definitions.
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum TypedefMode {
+    /// The [`Generator`](super::Generator) will automatically detect if a
+    /// new type struct or a simple type definition should be used
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    ///
+    /// Detecting the correct type automatically depends basically on the
+    /// occurrence of the references type. If the target type is only referenced
+    /// exactly once, a type definition is rendered. If a different
+    /// occurrence is used, it is wrapped in a new type struct because usually
+    /// additional code needs to be implemented for such types.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/typedef_mode/schema.xsd")]
+    /// ```
+    ///
+    /// If the typedef mode is set to [`TypedefMode::Auto`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/typedef_mode/expected/auto.rs")]
+    /// ```
+    #[default]
+    Auto,
+
+    /// The [`Generator`](super::Generator) will always use a simple type definition
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/typedef_mode/schema.xsd")]
+    /// ```
+    ///
+    /// If the typedef mode is set to [`TypedefMode::Typedef`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/typedef_mode/expected/typedef.rs")]
+    /// ```
+    Typedef,
+
+    /// The [`Generator`](super::Generator) will always use a new type struct
+    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/typedef_mode/schema.xsd")]
+    /// ```
+    ///
+    /// If the typedef mode is set to [`TypedefMode::NewType`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/typedef_mode/expected/new_type.rs")]
+    /// ```
+    NewType,
+}
+
+/// Tells the [`Generator`](super::Generator) how to generate code for the
+/// [`serde`] crate.
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum SerdeSupport {
+    /// No code for the [`serde`] crate is generated.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
+    /// ```
+    ///
+    /// If the serde support mode is set to [`SerdeSupport::None`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/serde_support/expected/none.rs")]
+    /// ```
+    #[default]
+    None,
+
+    /// Generates code that can be serialized and deserialized using the
+    /// [`serde`] create in combination with the with [`quick_xml`] crate.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
+    /// ```
+    ///
+    /// If the serde support mode is set to [`SerdeSupport::QuickXml`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/serde_support/expected/quick_xml.rs")]
+    /// ```
+    QuickXml,
+
+    /// Generates code that can be serialized and deserialized using the
+    /// [`serde`] create in combination with the with [`serde-xml-rs`](https://docs.rs/serde-xml-rs) crate.
+    ///
+    /// # Examples
+    ///
+    /// Consider the following XML schema:
+    /// ```xml
+    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
+    /// ```
+    ///
+    /// If the serde support mode is set to [`SerdeSupport::SerdeXmlRs`] the following code is rendered:
+    /// ```rust
+    #[doc = include_str!("../../tests/generator/serde_support/expected/serde_xml_rs.rs")]
+    /// ```
+    SerdeXmlRs,
+}
+
+impl SerdeSupport {
+    /// Returns `true` if this is equal to [`SerdeSupport::None`], `false` otherwise.
+    #[must_use]
+    pub fn is_none(&self) -> bool {
+        matches!(self, Self::None)
+    }
+
+    /// Returns `false` if this is equal to [`SerdeSupport::None`], `true` otherwise.
+    #[must_use]
+    pub fn is_some(&self) -> bool {
+        !matches!(self, Self::None)
+    }
+}
+
 /// Configuration which types the [`Generator`](crate::Generator) should generate
 /// code for used in [`GeneratorConfig`].
 #[derive(Debug, Clone)]
@@ -112,36 +337,4 @@ pub enum Generate {
 
     /// List of identifiers the generator will generate code for.
     Types(Vec<IdentTriple>),
-}
-
-/// Configuration for the [`Renderer`](crate::generator::renderer::Renderer)s
-/// the [`Generator`](crate::Generator) should use for rendering the code.
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
-pub enum Renderer {
-    /// Render to render the pure types.
-    Types,
-
-    /// Renderer to render associated methods that return the default values
-    /// of the different fields of a struct.
-    Defaults,
-
-    /// Renderer to add constants for the namespaces to the generated code.
-    NamespaceConstants,
-
-    /// Renderer that adds the [`WithNamespace`](crate::WithNamespace) trait to
-    /// the generated types.
-    WithNamespaceTrait,
-
-    /// Renderer that renders code for the `quick_xml` serializer of the
-    /// different types.
-    QuickXmlSerialize,
-
-    /// Renderer that renders code for the `quick_xml` deserializer of the
-    /// different types.
-    QuickXmlDeserialize {
-        /// Whether to box the deserializer or not.
-        ///
-        /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::QuickXmlDeserializeRenderer::boxed_deserializer).
-        boxed_deserializer: bool,
-    },
 }

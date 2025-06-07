@@ -8,26 +8,25 @@ use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
 use crate::models::{
+    data::{
+        ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
+        ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DerivedType, DynamicData,
+        EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, StructMode, UnionData,
+        UnionTypeVariant,
+    },
     meta::{ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes},
     schema::{xs::Use, MaxOccurs},
     Ident,
 };
 
 use super::super::super::{
-    context::ValueKey,
-    data::{
-        ComplexType, ComplexTypeAttribute, ComplexTypeBase, ComplexTypeContent, ComplexTypeElement,
-        ComplexTypeEnum, ComplexTypeStruct, DerivedType, DynamicType, EnumerationType,
-        EnumerationTypeVariant, ReferenceType, StructMode, TypeData, UnionType, UnionTypeVariant,
-    },
-    misc::Occurs,
-    renderer::Renderer,
-    Context,
+    context::{Context, ValueKey},
+    RenderStep,
 };
 
 /// Implements a [`Renderer`] that renders the code for the `quick_xml` deserialization.
 #[derive(Debug)]
-pub struct QuickXmlDeserializeRenderer {
+pub struct QuickXmlDeserializeRenderStep {
     /// Whether to box the deserializer or not.
     ///
     /// Boxing the deserializer will reduce the stack usage, but may decrease
@@ -41,17 +40,17 @@ impl ValueKey for BoxedDeserializer {
     type Type = bool;
 }
 
-impl Renderer for QuickXmlDeserializeRenderer {
-    fn render_type(&mut self, ctx: &mut Context<'_, '_>, ty: &TypeData<'_>) {
+impl RenderStep for QuickXmlDeserializeRenderStep {
+    fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         ctx.set::<BoxedDeserializer>(self.boxed_deserializer);
 
-        match ty {
-            TypeData::BuildIn(_) | TypeData::Custom(_) => (),
-            TypeData::Union(x) => x.render_deserializer(ctx),
-            TypeData::Dynamic(x) => x.render_deserializer(ctx),
-            TypeData::Reference(x) => x.render_deserializer(ctx),
-            TypeData::Enumeration(x) => x.render_deserializer(ctx),
-            TypeData::Complex(x) => x.render_deserializer(ctx),
+        match &ctx.data.variant {
+            DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
+            DataTypeVariant::Union(x) => x.render_deserializer(ctx),
+            DataTypeVariant::Dynamic(x) => x.render_deserializer(ctx),
+            DataTypeVariant::Reference(x) => x.render_deserializer(ctx),
+            DataTypeVariant::Enumeration(x) => x.render_deserializer(ctx),
+            DataTypeVariant::Complex(x) => x.render_deserializer(ctx),
         }
 
         ctx.unset::<BoxedDeserializer>();
@@ -60,7 +59,7 @@ impl Renderer for QuickXmlDeserializeRenderer {
 
 /* UnionType */
 
-impl UnionType<'_> {
+impl UnionData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -122,7 +121,7 @@ impl UnionTypeVariant<'_> {
 
 /* DynamicType */
 
-impl DynamicType<'_> {
+impl DynamicData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         self.render_with_deserializer(ctx);
         self.render_deserializer_types(ctx);
@@ -332,7 +331,10 @@ impl DerivedType {
             });
         };
 
-        if let Some(module) = ident.ns.and_then(|ns| ctx.types.modules.get(&ns)) {
+        if let Some(module) = ident
+            .ns
+            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+        {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
             quote! {
@@ -388,7 +390,7 @@ impl DerivedType {
 
 /* ReferenceType */
 
-impl ReferenceType<'_> {
+impl ReferenceData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             mode,
@@ -487,7 +489,7 @@ impl ReferenceType<'_> {
 
 /* EnumerationType */
 
-impl EnumerationType<'_> {
+impl EnumerationData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -578,7 +580,7 @@ impl EnumerationTypeVariant<'_> {
 
 /* ComplexType */
 
-impl ComplexType<'_> {
+impl ComplexData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         match self {
             Self::Enum {
@@ -605,7 +607,7 @@ impl ComplexType<'_> {
     }
 }
 
-impl ComplexTypeBase {
+impl ComplexBase {
     fn return_end_event(&self, ctx: &Context<'_, '_>) -> (TokenStream, TokenStream) {
         let xsd_parser = &ctx.xsd_parser_crate;
         ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::DeserializerEvent)]);
@@ -716,7 +718,7 @@ impl ComplexTypeBase {
     }
 }
 
-impl ComplexTypeEnum<'_> {
+impl ComplexDataEnum<'_> {
     fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         self.render_with_deserializer(ctx);
         self.render_deserializer_type(ctx);
@@ -1092,7 +1094,7 @@ impl ComplexTypeEnum<'_> {
     }
 }
 
-impl ComplexTypeStruct<'_> {
+impl ComplexDataStruct<'_> {
     fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         self.render_with_deserializer(ctx);
         self.render_deserializer_type(ctx);
@@ -1349,10 +1351,10 @@ impl ComplexTypeStruct<'_> {
         let element_init = self
             .elements()
             .iter()
-            .map(ComplexTypeElement::deserializer_struct_field_init);
+            .map(ComplexDataElement::deserializer_struct_field_init);
         let content_init = self
             .content()
-            .map(ComplexTypeContent::deserializer_struct_field_init);
+            .map(ComplexDataContent::deserializer_struct_field_init);
 
         let has_normal_attributes = index > 0;
         let need_default_handler = !self.allow_any_attribute || any_attribute.is_some();
@@ -1551,10 +1553,10 @@ impl ComplexTypeStruct<'_> {
         let element_init = self
             .elements()
             .iter()
-            .map(ComplexTypeElement::deserializer_struct_field_init);
+            .map(ComplexDataElement::deserializer_struct_field_init);
         let content_init = self
             .content()
-            .map(ComplexTypeContent::deserializer_struct_field_init);
+            .map(ComplexDataContent::deserializer_struct_field_init);
         let init_deserializer = do_box(
             boxed_deserializer,
             quote! {
@@ -1663,7 +1665,7 @@ impl ComplexTypeStruct<'_> {
     fn render_deserializer_fn_next_content_complex(
         &self,
         ctx: &Context<'_, '_>,
-        content: &ComplexTypeContent,
+        content: &ComplexDataContent,
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
         let target_type = ctx.resolve_type_for_deserialize_module(&content.target_type);
@@ -1927,7 +1929,7 @@ impl ComplexTypeStruct<'_> {
         let attributes = self
             .attributes
             .iter()
-            .map(ComplexTypeAttribute::deserializer_struct_field_finish);
+            .map(ComplexDataAttribute::deserializer_struct_field_finish);
         let elements = self
             .elements()
             .iter()
@@ -1951,7 +1953,7 @@ impl ComplexTypeStruct<'_> {
     }
 }
 
-impl ComplexTypeContent {
+impl ComplexDataContent {
     fn need_next_state(&self) -> bool {
         !self.is_simple
     }
@@ -2285,7 +2287,7 @@ impl ComplexTypeContent {
     }
 }
 
-impl ComplexTypeAttribute<'_> {
+impl ComplexDataAttribute<'_> {
     fn deserializer_matcher(
         &self,
         ctx: &Context<'_, '_>,
@@ -2303,7 +2305,12 @@ impl ComplexTypeAttribute<'_> {
             });
 
             None
-        } else if let Some(module) = self.info.ident.ns.and_then(|ns| ctx.types.modules.get(&ns)) {
+        } else if let Some(module) = self
+            .info
+            .ident
+            .ns
+            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+        {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
             *index += 1;
@@ -2390,7 +2397,7 @@ impl ComplexTypeAttribute<'_> {
     }
 }
 
-impl ComplexTypeElement<'_> {
+impl ComplexDataElement<'_> {
     fn store_ident(&self) -> Ident2 {
         let ident = self.field_ident.to_string();
         let ident = ident.trim_start_matches('_');
@@ -2490,7 +2497,12 @@ impl ComplexTypeElement<'_> {
             return #call_handler;
         };
 
-        if let Some(module) = self.info.ident.ns.and_then(|ns| ctx.types.modules.get(&ns)) {
+        if let Some(module) = self
+            .info
+            .ident
+            .ns
+            .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
+        {
             let ns_name = ctx.resolve_type_for_deserialize_module(&module.make_ns_const());
 
             Some(quote! {
@@ -3170,7 +3182,7 @@ impl ComplexTypeElement<'_> {
     fn deserializer_struct_field_fn_handle_sequence(
         &self,
         ctx: &Context<'_, '_>,
-        next: Option<&ComplexTypeElement<'_>>,
+        next: Option<&ComplexDataElement<'_>>,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
@@ -3402,7 +3414,7 @@ impl ComplexTypeElement<'_> {
     fn deserializer_struct_field_fn_next_sequence_create(
         &self,
         ctx: &Context<'_, '_>,
-        next: Option<&ComplexTypeElement<'_>>,
+        next: Option<&ComplexDataElement<'_>>,
         allow_any: bool,
     ) -> TokenStream {
         let name = &self.b_name;
@@ -3418,7 +3430,7 @@ impl ComplexTypeElement<'_> {
             quote!(S::Done__)
         };
 
-        let allow_any = allow_any || self.target_type_allows_any(ctx.types);
+        let allow_any = allow_any || self.target_type_allows_any(ctx.types.meta.types);
         let allow_any = allow_any.then(|| {
             quote! {
                 allow_any_element = true;
@@ -3459,7 +3471,7 @@ impl ComplexTypeElement<'_> {
                 .ident
                 .ns
                 .as_ref()
-                .and_then(|ns| ctx.types.modules.get(ns))
+                .and_then(|ns| ctx.types.meta.types.modules.get(ns))
                 .map(|module| ctx.resolve_type_for_deserialize_module(&module.make_ns_const()))
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
