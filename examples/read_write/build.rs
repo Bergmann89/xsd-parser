@@ -4,8 +4,7 @@ use std::process::{Command, Output, Stdio};
 
 use xsd_parser::{
     Config, Error,
-    config::Renderer,
-    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, Schema},
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, RenderStep, Schema},
     generate,
 };
 
@@ -18,14 +17,14 @@ fn main() -> Result<(), Error> {
     config.generator.flags = GeneratorFlags::all();
 
     // Add renderers for `quick-xml` serializer and deserializer.
-    let config = config.with_renderers([
-        Renderer::Types,
-        Renderer::Defaults,
-        Renderer::NamespaceConstants,
-        Renderer::QuickXmlDeserialize {
+    let config = config.with_render_steps([
+        RenderStep::Types,
+        RenderStep::Defaults,
+        RenderStep::NamespaceConstants,
+        RenderStep::QuickXmlDeserialize {
             boxed_deserializer: false,
         },
-        Renderer::QuickXmlSerialize,
+        RenderStep::QuickXmlSerialize,
     ]);
 
     // Generate the code based on the configuration above.

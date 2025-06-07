@@ -1,56 +1,64 @@
 #![recursion_limit = "256"]
 #![doc = include_str!(concat!(env!("OUT_DIR"), "/README.md"))]
 
-pub mod code;
 pub mod config;
-pub mod generator;
-pub mod interpreter;
-pub mod optimizer;
-pub mod parser;
+pub mod models;
+pub mod pipeline;
 pub mod quick_xml;
-pub mod schema;
-pub mod types;
 pub mod xml;
 
 mod macros;
-mod misc;
+mod traits;
 
-/// Type alias for [`generator::Error`].
-pub type GeneratorError = generator::Error;
+/// Type alias for [`pipeline::renderer::Error`].
+pub type RendererError = self::pipeline::renderer::Error;
 
-/// Type alias for [`interpreter::Error`].
-pub type InterpreterError = interpreter::Error;
+/// Type alias for [`pipeline::generator::Error`].
+pub type GeneratorError = self::pipeline::generator::Error;
 
-/// Type alias for [`parser::Error`].
-pub type ParserError<E> = parser::Error<E>;
+/// Type alias for [`pipeline::interpreter::Error`].
+pub type InterpreterError = self::pipeline::interpreter::Error;
 
+/// Type alias for [`pipeline::parser::Error`].
+pub type ParserError<E> = self::pipeline::parser::Error<E>;
+
+use std::fmt::Debug;
 use std::fs::write;
+use std::io::Error as IoError;
 
-pub use code::{Module, SubModules};
-pub use config::Config;
-pub use generator::Generator;
-pub use interpreter::Interpreter;
-pub use misc::{AsAny, Error, WithNamespace};
-pub use optimizer::Optimizer;
-pub use parser::Parser;
+pub use self::config::Config;
+pub use self::models::{
+    code::{Module, SubModules},
+    data::DataTypes,
+    meta::MetaTypes,
+    schema::Schemas,
+    Ident, IdentType, Name,
+};
+pub use self::pipeline::{
+    generator::Generator, interpreter::Interpreter, optimizer::Optimizer, parser::Parser,
+    renderer::Renderer,
+};
+pub use self::traits::{AsAny, VecHelper, WithIdent, WithNamespace};
 
-use macros::{assert_eq, unreachable};
+use anyhow::Error as AnyError;
 use proc_macro2::TokenStream;
 use quote::ToTokens;
+use thiserror::Error as ThisError;
 use tracing::instrument;
 
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
-    OptimizerFlags, ParserConfig, ParserFlags, Renderer, Resolver, Schema,
+    OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
 };
-use self::generator::renderer::{
-    DefaultsRenderer, NamespaceConstantsRenderer, QuickXmlDeserializeRenderer,
-    QuickXmlSerializeRenderer, TypesRenderer, WithNamespaceTraitRenderer,
+use self::macros::{assert_eq, unreachable};
+use self::pipeline::{
+    parser::resolver::{FileResolver, ManyResolver},
+    renderer::{
+        DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
+        QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+    },
+    TypesPrinter,
 };
-use self::misc::TypesPrinter;
-use self::parser::resolver::{FileResolver, ManyResolver};
-use self::schema::Schemas;
-use self::types::{IdentType, Types};
 
 /// Generates rust code from a XML schema using the passed `config`.
 ///
@@ -87,9 +95,10 @@ pub fn generate(config: Config) -> Result<TokenStream, Error> {
 #[instrument(err, level = "trace")]
 pub fn generate_modules(config: Config) -> Result<Module, Error> {
     let schemas = exec_parser(config.parser)?;
-    let types = exec_interpreter(config.interpreter, &schemas)?;
-    let types = exec_optimizer(config.optimizer, types)?;
-    let module = exec_generator_module(config.generator, &schemas, &types)?;
+    let meta_types = exec_interpreter(config.interpreter, &schemas)?;
+    let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
+    let module = exec_render(config.renderer, &data_types)?;
 
     Ok(module)
 }
@@ -108,7 +117,7 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
         match r {
             #[cfg(feature = "web-resolver")]
             Resolver::Web => {
-                let web_resolver = self::parser::resolver::WebResolver::new();
+                let web_resolver = self::pipeline::parser::resolver::WebResolver::new();
 
                 resolver = resolver.add_resolver(web_resolver);
             }
@@ -157,7 +166,7 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas))]
-pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<Types, Error> {
+pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<MetaTypes, Error> {
     tracing::info!("Interpret Schema");
 
     let mut interpreter = Interpreter::new(schemas);
@@ -201,7 +210,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(types))]
-pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Error> {
+pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaTypes, Error> {
     tracing::info!("Optimize Types");
 
     let mut optimizer = Optimizer::new(types);
@@ -244,51 +253,24 @@ pub fn exec_optimizer(config: OptimizerConfig, types: Types) -> Result<Types, Er
 }
 
 /// Executes the [`Generator`] with the passed `config`, `schema` and `types` to
-/// generate the whole code as token stream.
+/// generate a [`DataTypes`] for further processing.
 ///
 /// # Errors
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 #[instrument(err, level = "trace", skip(schemas, types))]
-pub fn exec_generator(
+pub fn exec_generator<'types>(
     config: GeneratorConfig,
     schemas: &Schemas,
-    types: &Types,
-) -> Result<TokenStream, Error> {
-    let module = exec_generator_module(config, schemas, types)?;
-    let code = module.to_token_stream();
-
-    Ok(code)
-}
-
-/// Executes the [`Generator`] with the passed `config`, `schema` and `types` to
-/// generate a [`Module`] for further processing.
-///
-/// # Errors
-///
-/// Returns a suitable [`Error`] type if the process was not successful.
-#[instrument(err, level = "trace", skip(schemas, types))]
-pub fn exec_generator_module(
-    config: GeneratorConfig,
-    schemas: &Schemas,
-    types: &Types,
-) -> Result<Module, Error> {
+    types: &'types MetaTypes,
+) -> Result<DataTypes<'types>, Error> {
     tracing::info!("Generate Module");
 
     let mut generator = Generator::new(types)
         .flags(config.flags)
         .box_flags(config.box_flags)
         .typedef_mode(config.typedef_mode)
-        .serde_support(config.serde_support)
-        .xsd_parser_crate(config.xsd_parser);
-
-    if let Some(derive) = config.derive {
-        generator = generator.derive(derive);
-    }
-
-    if let Some(traits) = config.dyn_type_traits {
-        generator = generator.dyn_type_traits(traits)?;
-    }
+        .serde_support(config.serde_support);
 
     if let Some(any_type) = config.any_type {
         generator = generator.any_type(any_type).map_err(GeneratorError::from)?;
@@ -311,26 +293,6 @@ pub fn exec_generator_module(
         generator = generator.with_type(ident)?;
     }
 
-    for renderer in config.renderers {
-        match renderer {
-            Renderer::Types => generator = generator.with_renderer(TypesRenderer),
-            Renderer::Defaults => generator = generator.with_renderer(DefaultsRenderer),
-            Renderer::NamespaceConstants => {
-                generator = generator.with_renderer(NamespaceConstantsRenderer);
-            }
-            Renderer::WithNamespaceTrait => {
-                generator = generator.with_renderer(WithNamespaceTraitRenderer);
-            }
-            Renderer::QuickXmlSerialize => {
-                generator = generator.with_renderer(QuickXmlSerializeRenderer);
-            }
-            Renderer::QuickXmlDeserialize { boxed_deserializer } => {
-                generator =
-                    generator.with_renderer(QuickXmlDeserializeRenderer { boxed_deserializer });
-            }
-        }
-    }
-
     let mut generator = generator.into_fixed();
     match config.generate {
         Generate::All => generator = generator.generate_all_types()?,
@@ -344,7 +306,112 @@ pub fn exec_generator_module(
         }
     }
 
-    let module = generator.into_module();
+    let data_types = generator.finish();
+
+    Ok(data_types)
+}
+
+/// Executes the rendering process using the passed `config` and the `types`
+/// created by the [`Generator`].
+///
+/// # Errors
+///
+/// Returns a suitable [`Error`] type if the process was not successful.
+pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Module, RendererError> {
+    let mut renderer = Renderer::new(types)
+        .flags(config.flags)
+        .xsd_parser_crate(config.xsd_parser);
+
+    if let Some(derive) = config.derive {
+        renderer = renderer.derive(derive);
+    }
+
+    if let Some(traits) = config.dyn_type_traits {
+        renderer = renderer.dyn_type_traits(traits)?;
+    }
+
+    for step in config.steps {
+        match step {
+            RenderStep::Types => renderer = renderer.with_step(TypesRenderStep),
+            RenderStep::Defaults => renderer = renderer.with_step(DefaultsRenderStep),
+            RenderStep::NamespaceConstants => {
+                renderer = renderer.with_step(NamespaceConstantsRenderStep);
+            }
+            RenderStep::WithNamespaceTrait => {
+                renderer = renderer.with_step(WithNamespaceTraitRenderStep);
+            }
+            RenderStep::QuickXmlSerialize => {
+                renderer = renderer.with_step(QuickXmlSerializeRenderStep);
+            }
+            RenderStep::QuickXmlDeserialize { boxed_deserializer } => {
+                renderer = renderer.with_step(QuickXmlDeserializeRenderStep { boxed_deserializer });
+            }
+        }
+    }
+
+    let module = renderer.finish();
 
     Ok(module)
+}
+
+/// Error emitted by the [`generate`] function.
+#[derive(Debug, ThisError)]
+pub enum Error {
+    /// IO Error.
+    #[error("IO Error: {0}")]
+    IoError(
+        #[from]
+        #[source]
+        IoError,
+    ),
+
+    /// Parser error.
+    #[error("Parser error: {0}")]
+    ParserError(#[source] ParserError<AnyError>),
+
+    /// Interpreter error.
+    #[error("Interpreter error: {0}")]
+    InterpreterError(
+        #[from]
+        #[source]
+        InterpreterError,
+    ),
+
+    /// Generator error.
+    #[error("Generator error: {0}")]
+    GeneratorError(
+        #[from]
+        #[source]
+        GeneratorError,
+    ),
+
+    /// Renderer error.
+    #[error("Renderer error: {0}")]
+    RendererError(
+        #[from]
+        #[source]
+        RendererError,
+    ),
+}
+
+impl<E> From<ParserError<E>> for Error
+where
+    AnyError: From<E>,
+{
+    fn from(value: ParserError<E>) -> Self {
+        match value {
+            ParserError::IoError(err) => Self::ParserError(ParserError::IoError(err)),
+            ParserError::XmlError(err) => Self::ParserError(ParserError::XmlError(err)),
+            ParserError::UrlParseError(err) => Self::ParserError(ParserError::UrlParseError(err)),
+            ParserError::UnableToResolve(url) => {
+                Self::ParserError(ParserError::UnableToResolve(url))
+            }
+            ParserError::Resolver(err) => {
+                Self::ParserError(ParserError::Resolver(AnyError::from(err)))
+            }
+            ParserError::InvalidFilePath(path) => {
+                Self::ParserError(ParserError::InvalidFilePath(path))
+            }
+        }
+    }
 }

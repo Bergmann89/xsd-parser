@@ -2,7 +2,7 @@ use std::fmt::{Debug, Formatter, Result as FmtResult};
 
 use quick_xml::events::{BytesCData, BytesText};
 
-use crate::misc::format_utf8_slice;
+use crate::models::format_utf8_slice;
 
 use super::Element;
 

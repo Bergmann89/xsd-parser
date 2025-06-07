@@ -10,7 +10,7 @@ use quick_xml::{
     name::QName,
 };
 
-use crate::misc::format_utf8_slice;
+use crate::models::format_utf8_slice;
 use crate::quick_xml::{
     Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
     Error, Event, WithDeserializer, WithSerializer, XmlReader,
@@ -433,14 +433,13 @@ impl<'de> Deserializer<'de, Element<'static>> for ElementDeserializer {
 
 #[cfg(test)]
 mod tests {
-    use std::{str::from_utf8, sync::Arc};
+    use std::str::from_utf8;
+    use std::sync::Arc;
 
     use quick_xml::{events::BytesText, Writer};
 
-    use crate::{
-        quick_xml::{DeserializeSync, SerializeSync, SliceReader},
-        xml::Value,
-    };
+    use crate::quick_xml::{DeserializeSync, SerializeSync, SliceReader};
+    use crate::xml::Value;
 
     use super::Element;
 

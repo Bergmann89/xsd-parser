@@ -12,7 +12,7 @@ use quick_xml::{
 };
 use thiserror::Error;
 
-use crate::misc::RawByteStr;
+use crate::models::RawByteStr;
 
 /// Quick XML Error
 #[derive(Debug)]

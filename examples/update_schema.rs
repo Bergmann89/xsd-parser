@@ -15,12 +15,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use tracing_subscriber::{fmt, EnvFilter};
 
+use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
     Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
 };
-use xsd_parser::generate;
-use xsd_parser::generator::GeneratorFlags;
-use xsd_parser::types::{CustomInfo, IdentType, Type};
+use xsd_parser::models::meta::{CustomMeta, MetaType};
+use xsd_parser::{generate, IdentType};
 
 fn main() -> Result<(), Error> {
     // Initialize the logging framework. Log output can be controlled using the
@@ -74,19 +74,19 @@ fn main() -> Result<(), Error> {
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
-            Type::from(CustomInfo::new("MaxOccurs").with_default(max_occurs_default)),
+            MetaType::from(CustomMeta::new("MaxOccurs").with_default(max_occurs_default)),
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
-            Type::from(CustomInfo::new("QName")),
+            MetaType::from(CustomMeta::new("QName")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:appinfo")),
-            Type::from(CustomInfo::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:documentation")),
-            Type::from(CustomInfo::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement")),
         ),
     ];
 
@@ -104,12 +104,12 @@ fn main() -> Result<(), Error> {
     //      its dependent types.
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
     config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
-    config.generator.xsd_parser = "crate".into();
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
     config.generator.generate =
         Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
-    config.generator.derive = Some(
+    config.renderer.xsd_parser = "crate".into();
+    config.renderer.derive = Some(
         ["Debug", "Clone", "Eq", "PartialEq"]
             .into_iter()
             .map(String::from)

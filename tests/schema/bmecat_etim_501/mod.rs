@@ -1,8 +1,7 @@
 use xsd_parser::{
     config::{GeneratorFlags, NamespaceIdent, OptimizerFlags},
-    schema::Namespace,
-    types::IdentType,
-    Config,
+    models::schema::Namespace,
+    Config, IdentType,
 };
 
 use crate::utils::{generate_test, ConfigEx};

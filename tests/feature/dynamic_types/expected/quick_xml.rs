@@ -1,7 +1,7 @@
 use core::fmt::Debug;
 use xsd_parser::{
+    models::schema::Namespace,
     quick_xml::{BoxedSerializer, Error, WithBoxedSerializer, WithDeserializer, WithSerializer},
-    schema::Namespace,
     AsAny,
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");

@@ -1,4 +1,4 @@
-use xsd_parser::{quick_xml::WithDeserializer, schema::Namespace};
+use xsd_parser::{models::schema::Namespace, quick_xml::WithDeserializer};
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");

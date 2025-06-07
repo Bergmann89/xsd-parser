@@ -1,4 +1,7 @@
-use xsd_parser::{config::NamespaceIdent, generator::SerdeSupport, types::IdentType, Config};
+use xsd_parser::{
+    config::{NamespaceIdent, SerdeSupport},
+    Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 

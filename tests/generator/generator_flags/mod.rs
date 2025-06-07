@@ -1,4 +1,4 @@
-use xsd_parser::{generator::GeneratorFlags, types::IdentType, Config};
+use xsd_parser::{config::GeneratorFlags, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -37,20 +37,6 @@ fn flatten_content() {
         "tests/generator/generator_flags/expected/flatten_content.rs",
         Config::test_default()
             .set_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
-            .with_generate([
-                (IdentType::Type, "tns:MyChoice"),
-                (IdentType::Type, "tns:MySequence"),
-            ]),
-    );
-}
-
-#[test]
-fn render_docs() {
-    generate_test(
-        "tests/generator/generator_flags/schema_with_docs.xsd",
-        "tests/generator/generator_flags/expected/render_docs.rs",
-        Config::test_default()
-            .set_generator_flags(GeneratorFlags::RENDER_DOCS)
             .with_generate([
                 (IdentType::Type, "tns:MyChoice"),
                 (IdentType::Type, "tns:MySequence"),

@@ -1,8 +1,6 @@
 use xsd_parser::{
-    config::{GeneratorFlags, NamespaceIdent},
-    generator::SerdeSupport,
-    types::IdentType,
-    Config,
+    config::{GeneratorFlags, NamespaceIdent, SerdeSupport},
+    Config, IdentType,
 };
 
 use crate::utils::{generate_test, ConfigEx};

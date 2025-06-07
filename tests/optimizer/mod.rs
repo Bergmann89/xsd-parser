@@ -1,4 +1,4 @@
-use xsd_parser::{config::OptimizerFlags, types::IdentType, Config};
+use xsd_parser::{config::OptimizerFlags, Config, IdentType};
 
 use crate::utils::{optimizer_test, optimizer_test_with_config, ConfigEx};
 

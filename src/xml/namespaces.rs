@@ -6,7 +6,7 @@ use std::sync::Arc;
 
 use quick_xml::name::Namespace;
 
-use crate::misc::format_utf8_slice;
+use crate::models::format_utf8_slice;
 
 /// Represents a list of namespaces.
 #[derive(Default, Debug, Clone, Eq, PartialEq)]

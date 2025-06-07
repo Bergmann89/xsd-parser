@@ -16,13 +16,11 @@ use anyhow::{anyhow, Error};
 use quote::ToTokens;
 use xsd_parser::{
     config::{
-        GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver,
-        Schema,
+        Config, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
+        Resolver, Schema,
     },
-    exec_generator_module, exec_interpreter, exec_optimizer, exec_parser,
-    schema::Schemas,
-    types::{IdentType, Types},
-    Config,
+    exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
+    models::{meta::MetaTypes, schema::Schemas, IdentType},
 };
 
 fn main() -> Result<(), Error> {
@@ -40,10 +38,11 @@ fn main() -> Result<(), Error> {
     // Execute the different steps of the code generation process. The `define_custom_names`
     // function defines a custom step inside the process to set custom names for specified types.
     let schemas = exec_parser(config.parser)?;
-    let types = exec_interpreter(config.interpreter, &schemas)?;
-    let types = define_custom_names(&schemas, types)?;
-    let types = exec_optimizer(config.optimizer, types)?;
-    let module = exec_generator_module(config.generator, &schemas, &types)?;
+    let meta_types = exec_interpreter(config.interpreter, &schemas)?;
+    let meta_types = define_custom_names(&schemas, meta_types)?;
+    let meta_types = exec_optimizer(config.optimizer, meta_types)?;
+    let data_types = exec_generator(config.generator, &schemas, &meta_types)?;
+    let module = exec_render(config.renderer, &data_types)?;
     let code = module.to_token_stream().to_string();
 
     // Print the generated code to stdout.
@@ -53,7 +52,7 @@ fn main() -> Result<(), Error> {
 }
 
 /// Define custom names for specific types.
-fn define_custom_names(schemas: &Schemas, mut types: Types) -> Result<Types, Error> {
+fn define_custom_names(schemas: &Schemas, mut types: MetaTypes) -> Result<MetaTypes, Error> {
     // Types are identified by a triple of namespace, element type and name, which are
     // combined into `IdentTriple`.
     let ident = IdentTriple::from((IdentType::Element, "xs:schema"));
@@ -87,6 +86,7 @@ fn define_custom_names(schemas: &Schemas, mut types: Types) -> Result<Types, Err
     // `Types` is more or less a map of `Ident` to `Type`, so we can use `get_mut`,
     // to get a mutable reference to the type we want to rename.
     let ty = types
+        .items
         .get_mut(&ident)
         .ok_or_else(|| anyhow!("Unable to find `xs:schema` element in the types map!"))?;
 

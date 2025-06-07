@@ -13,7 +13,7 @@ use quick_xml::{
 use indexmap::IndexMap;
 use quick_xml::name::QName;
 
-use crate::misc::{format_utf8_slice, RawByteStr};
+use crate::models::{format_utf8_slice, RawByteStr};
 use crate::quick_xml::{Error, ErrorKind};
 
 /// Represents a list of unstructured XML attributes.

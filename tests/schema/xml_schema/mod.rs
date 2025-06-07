@@ -1,7 +1,6 @@
 use xsd_parser::{
     config::{Generate, GeneratorFlags, IdentTriple, OptimizerFlags, ParserFlags, Resolver},
-    types::IdentType,
-    Config,
+    Config, IdentType,
 };
 
 use crate::utils::generate_test;
@@ -15,8 +14,7 @@ fn generate_quick_xml() {
 
     config.optimizer.flags = OptimizerFlags::all();
 
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::RENDER_DOCS;
+    config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
     config.generator.any_type = Some("xsd_parser::xml::AnyElement".into());
     config.generator.any_attribute_type = Some("xsd_parser::xml::AnyAttributes".into());
     config.generator.generate =

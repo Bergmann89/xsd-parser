@@ -1,7 +1,6 @@
 use xsd_parser::{
-    generator::{SerdeSupport, TypedefMode},
-    types::IdentType,
-    Config,
+    config::{SerdeSupport, TypedefMode},
+    Config, IdentType,
 };
 
 use crate::utils::{generate_test, ConfigEx};

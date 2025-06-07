@@ -10,9 +10,8 @@ use quick_xml::Reader;
 use serde::Deserialize;
 
 use xsd_parser::{
-    config::{Config, Generate, IdentTriple, OptimizerFlags, Schema},
+    config::{Config, Generate, GeneratorFlags, IdentTriple, OptimizerFlags, Schema},
     generate,
-    generator::GeneratorFlags,
     quick_xml::{DeserializeSync, ErrorReader, Event, IoReader, WithSerializer, Writer, XmlReader},
 };
 
@@ -131,8 +130,8 @@ pub fn optimizer_test_with_config<P1, P2, P3, T>(
         .schemas
         .push(Schema::File(input_xsd.as_ref().to_path_buf()));
     config.generator.generate = Generate::Types(types.into_iter().map(Into::into).collect());
-    config.generator.derive = Some(Vec::new());
     config.generator.flags -= GeneratorFlags::USE_MODULES;
+    config.renderer.derive = Some(Vec::new());
 
     let input_xsd = input_xsd.as_ref();
 
