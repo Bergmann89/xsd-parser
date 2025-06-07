@@ -1,4 +1,17 @@
-//! The `optimizer` module contains the type information [`Optimizer`] and all related types.
+//! Type-level optimization utilities for reducing schema complexity.
+//!
+//! This module defines the [`Optimizer`] and supporting logic for transforming
+//! a [`MetaTypes`] structure into a simpler, cleaner, and smaller form.
+//!
+//! Optimizations include:
+//! - Flattening nested complex types
+//! - Removing unused or duplicate unions/enums
+//! - Resolving typedef chains
+//! - Normalizing choice cardinalities
+//! - Simplifying unrestricted base types
+//!
+//! These transformations are especially useful before code generation, to avoid
+//! verbose or redundant Rust output and ensure efficient, idiomatic structures.
 
 mod dynamic_to_choice;
 mod empty_enums;
@@ -18,12 +31,17 @@ use crate::models::{meta::MetaTypes, Ident};
 
 use self::misc::{BaseMap, TypedefMap};
 
-/// The [`Optimizer`] is a structure that can be used to reduce the size and the
-/// complexity of a [`Types`] instance.
+/// Optimizes a [`MetaTypes`] structure by reducing redundant or verbose type definitions.
 ///
-/// The optimizer contains different optimizations that could be applied to a
-/// [`Types`] instance. Optimizations are usually used to reduce the size or the
-/// complexity of the different types.
+/// The [`Optimizer`] performs various semantic transformations on a type graph,
+/// such as flattening unions, removing empty enums, simplifying typedef chains,
+/// and reducing nested complex structures.
+///
+/// It is typically used after schema interpretation and before code generation,
+/// to ensure that only necessary and well-structured types are preserved in the final output.
+///
+/// Optimization is performed lazily; the resulting [`MetaTypes`] can be retrieved
+/// using [`finish`](Self::finish).
 #[must_use]
 #[derive(Debug)]
 pub struct Optimizer {
@@ -100,7 +118,7 @@ impl Optimizer {
         }
     }
 
-    /// Finish the optimization and return the resulting [`Types`].
+    /// Finish the optimization and return the resulting [`MetaTypes`].
     #[must_use]
     pub fn finish(self) -> MetaTypes {
         self.types

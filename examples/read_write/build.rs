@@ -4,7 +4,7 @@ use std::process::{Command, Output, Stdio};
 
 use xsd_parser::{
     Config, Error,
-    config::{RenderStep, GeneratorFlags, InterpreterFlags, OptimizerFlags, Schema},
+    config::{GeneratorFlags, InterpreterFlags, OptimizerFlags, RenderStep, Schema},
     generate,
 };
 

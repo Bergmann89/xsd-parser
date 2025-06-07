@@ -14,7 +14,7 @@ use crate::models::{
 
 use super::super::super::{Context, MetaData, RenderStep};
 
-/// Implements a [`Renderer`] that renders the code for the `quick_xml` serialization.
+/// Implements a [`RenderStep`] that renders the code for the `quick_xml` serialization.
 #[derive(Debug)]
 pub struct QuickXmlSerializeRenderStep;
 

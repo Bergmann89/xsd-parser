@@ -5,10 +5,16 @@ use super::IdentTriple;
 /// Configuration for the code generator.
 #[derive(Debug, Clone)]
 pub struct GeneratorConfig {
-    /// Types to add to the generator before the actual code is generated.
+    /// Additional flags to control the generator.
+    pub flags: GeneratorFlags,
+
+    /// Types to add to the generator before the actual data types are generated.
     ///
     /// See [`with_type`](crate::Generator::with_type) for more details.
     pub types: Vec<IdentTriple>,
+
+    /// Specify which meta types the generator should generate data types for.
+    pub generate: Generate,
 
     /// Postfixes that should be applied to the name of the different generated
     /// types.
@@ -24,12 +30,6 @@ pub struct GeneratorConfig {
 
     /// Tells the generator how to generate code for the [`serde`] crate.
     pub serde_support: SerdeSupport,
-
-    /// Specify which types the generator should generate code for.
-    pub generate: Generate,
-
-    /// Additional flags to control the generator.
-    pub flags: GeneratorFlags,
 
     /// Type to use to store unstructured `xs:any` elements.
     ///
@@ -60,7 +60,7 @@ impl Default for GeneratorConfig {
 }
 
 bitflags! {
-    /// Different flags that control what code the [`Generator`](super::Generator)
+    /// Different flags that control what code the [`Generator`](crate::Generator)
     /// is generating.
     #[derive(Debug, Clone, Copy)]
     pub struct GeneratorFlags: u32 {
@@ -124,7 +124,7 @@ bitflags! {
 }
 
 bitflags! {
-    /// Flags to tell the [`Generator`](super::Generator) how to deal with boxed
+    /// Flags to tell the [`Generator`](crate::Generator) how to deal with boxed
     /// types.
     #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
     pub struct BoxFlags: u32 {
@@ -198,12 +198,12 @@ impl Default for TypePostfix {
     }
 }
 
-/// Tells the [`Generator`](super::Generator) how to deal with type definitions.
+/// Tells the [`Generator`](crate::Generator) how to deal with type definitions.
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
 pub enum TypedefMode {
-    /// The [`Generator`](super::Generator) will automatically detect if a
+    /// The [`Generator`](crate::Generator) will automatically detect if a
     /// new type struct or a simple type definition should be used
-    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    /// for a [`Reference`](crate::models::meta::MetaTypeVariant::Reference) type.
     ///
     /// Detecting the correct type automatically depends basically on the
     /// occurrence of the references type. If the target type is only referenced
@@ -225,8 +225,8 @@ pub enum TypedefMode {
     #[default]
     Auto,
 
-    /// The [`Generator`](super::Generator) will always use a simple type definition
-    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    /// The [`Generator`](crate::Generator) will always use a simple type definition
+    /// for a [`Reference`](crate::models::meta::MetaTypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -241,8 +241,8 @@ pub enum TypedefMode {
     /// ```
     Typedef,
 
-    /// The [`Generator`](super::Generator) will always use a new type struct
-    /// for a [`Reference`](MetaTypeVariant::Reference) type.
+    /// The [`Generator`](crate::Generator) will always use a new type struct
+    /// for a [`Reference`](crate::models::meta::MetaTypeVariant::Reference) type.
     ///
     /// # Examples
     ///
@@ -258,7 +258,7 @@ pub enum TypedefMode {
     NewType,
 }
 
-/// Tells the [`Generator`](super::Generator) how to generate code for the
+/// Tells the [`Generator`](crate::Generator) how to generate code for the
 /// [`serde`] crate.
 #[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
 pub enum SerdeSupport {

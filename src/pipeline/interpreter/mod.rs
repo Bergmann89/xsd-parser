@@ -1,4 +1,27 @@
-//! The `interpreter` module contains the schema [`Interpreter`] and all related types.
+//! Schema interpretation logic for transforming parsed XML schemas into semantic
+//! type definitions.
+//!
+//! This module defines the [`Interpreter`] type, which processes raw [`Schemas`] loaded
+//! by the [`Parser`](crate::Parser) and converts them into semantic [`MetaTypes`].
+//! These types represent meaningful, structured representations such as complex types,
+//! enums, references, and attributes.
+//!
+//! The interpreter is capable of:
+//! - registering custom or user-defined types
+//! - resolving XSD primitive types and typedefs
+//! - adding default build-in or XML-specific types (e.g., `xs:string`, `xs:anyType`)
+//! - integrating numeric backends (e.g., `num::BigInt`) for large integers
+//!
+//! The resulting [`MetaTypes`] structure can then be passed to the generator to
+//! generate Rust specific type structures.
+//!
+//! # Example
+//! ```rust,ignore
+//! let meta_types = Interpreter::new(&schemas)
+//!     .with_buildin_types()?
+//!     .with_default_typedefs()?
+//!     .finish()?;
+//! ```
 
 mod error;
 mod name_builder;
@@ -27,11 +50,15 @@ use self::schema::SchemaInterpreter;
 use self::state::{Node, State};
 use self::variant_builder::VariantBuilder;
 
-/// The [`Interpreter`] is used to interpret the XML schema information.
+/// The `Interpreter` transforms raw parsed XML schema data into semantically
+/// meaningful Rust-compatible type metadata.
 ///
-/// This structure can be used to interpret the [`Schemas`] structure that was
-/// loaded by the [`Parser`](crate::parser::Parser) to generate the more common
-/// [`Types`] definition out of it.
+/// It operates on a [`Schemas`] structure produced by the [`Parser`](crate::Parser)
+/// and produces a [`MetaTypes`] structure, which is the central format used for
+/// code generation.
+///
+/// This abstraction allows the intermediate schema format to be reshaped into a form
+/// suitable for deterministic and idiomatic Rust code generation.
 #[must_use]
 #[derive(Debug)]
 pub struct Interpreter<'a> {
@@ -47,8 +74,8 @@ impl<'a> Interpreter<'a> {
         Self { state, schemas }
     }
 
-    /// Add a custom [`Type`] information for the passed `ident`ifier to the
-    /// resulting [`Types`] structure.
+    /// Add a custom [`MetaType`] information for the passed `ident`ifier to the
+    /// resulting [`MetaTypes`] structure.
     ///
     /// # Errors
     ///
@@ -64,7 +91,7 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
-    /// Add a simple type definition to the resulting [`Types`] structure using
+    /// Add a simple type definition to the resulting [`MetaTypes`] structure using
     /// `ident` as identifier for the new type and `type_` as target type for the
     /// type definition.
     ///
@@ -83,7 +110,7 @@ impl<'a> Interpreter<'a> {
         Ok(self)
     }
 
-    /// Adds the default build-in types to the resulting [`Types`] structure.
+    /// Adds the default build-in types to the resulting [`MetaTypes`] structure.
     ///
     /// # Errors
     ///
@@ -121,7 +148,7 @@ impl<'a> Interpreter<'a> {
     }
 
     /// Adds the type definitions for common XML types (like `xs:string` or `xs:int`)
-    /// to the resulting [`Types`] structure.
+    /// to the resulting [`MetaTypes`] structure.
     ///
     /// # Errors
     ///
@@ -354,7 +381,7 @@ impl<'a> Interpreter<'a> {
     }
 
     /// Finishes the interpretation of the [`Schemas`] structure and returns
-    /// the [`Types`] structure with the generated type information.
+    /// the [`MetaTypes`] structure with the generated type information.
     ///
     /// # Errors
     ///

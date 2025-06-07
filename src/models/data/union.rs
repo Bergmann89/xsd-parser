@@ -5,8 +5,8 @@ use crate::models::{
     meta::{UnionMeta, UnionMetaType},
 };
 
-/// Contains additional information for the rendering process
-/// of a [`MetaTypeVariant::Union`] type.
+/// Contains additional information for the rendering process of a
+/// [`MetaTypeVariant::Union`](crate::models::meta::MetaTypeVariant::Union) type.
 #[derive(Debug)]
 pub struct UnionData<'types> {
     /// Reference to the original type information.
@@ -22,7 +22,7 @@ pub struct UnionData<'types> {
     pub trait_impls: Vec<TokenStream>,
 }
 
-/// Type variant used in [`UnionType`].
+/// Type variant used in [`UnionData`].
 #[derive(Debug)]
 pub struct UnionTypeVariant<'types> {
     /// Reference to the original type information.

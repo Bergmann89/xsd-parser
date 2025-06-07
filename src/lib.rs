@@ -29,6 +29,9 @@ use std::io::Error as IoError;
 pub use self::config::Config;
 pub use self::models::{
     code::{Module, SubModules},
+    data::DataTypes,
+    meta::MetaTypes,
+    schema::Schemas,
     Ident, IdentType, Name,
 };
 pub use self::pipeline::{
@@ -48,7 +51,6 @@ use self::config::{
     OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
 };
 use self::macros::{assert_eq, unreachable};
-use self::models::{data::DataTypes, meta::MetaTypes, schema::Schemas};
 use self::pipeline::{
     parser::resolver::{FileResolver, ManyResolver},
     renderer::{

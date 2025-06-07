@@ -1,4 +1,24 @@
-//! The `generator` module contains the code [`Generator`] and all related types.
+//! Code generation pipeline for transforming resolved schema models into Rust data structures.
+//!
+//! This module defines the [`Generator`] and [`GeneratorFixed`] types, along with supporting
+//! logic and configuration mechanisms for converting fully interpreted [`MetaTypes`] into
+//! concrete Rust representations [`DataTypes`].
+//!
+//! The [`Generator`] allows fine-grained configuration such as boxing strategy, type naming,
+//! serde support, and handling of `xs:any`/`xs:anyAttribute`. Once configured, the generator
+//! can be "fixed" into a [`GeneratorFixed`] state to emit type definitions in a controlled,
+//! deterministic fashion.
+//!
+//! Code generation is performed by walking the dependency graph of types, resolving references,
+//! and emitting type-safe Rust structures including enums, structs, and aliases.
+//!
+//! # Example
+//! ```rust,ignore
+//! let data_types = Generator::new(meta_types)
+//!     .with_flags(GeneratorFlags::USE_MODULES)
+//!     .generate_named_types()?
+//!     .finish();
+//! ```
 
 mod context;
 mod data;
@@ -29,7 +49,15 @@ pub use self::meta::MetaData;
 use self::state::{PendingType, State, TraitInfos, TypeRef};
 use self::walk::Walk;
 
-/// Type that is used to generate rust code from a [`Types`] object.
+/// Configurable Rust code generator for schema-derived type information.
+///
+/// The [`Generator`] type provides a flexible interface to customize how Rust code
+/// structures are generated from XSD-like schema models represented as [`MetaTypes`].
+/// It supports configuration of type postfixes, boxing rules, serde integration, and more.
+///
+/// Once all configuration is applied, the generator can be "sealed" into a
+/// [`GeneratorFixed`] instance using [`into_fixed`](Self::into_fixed),
+/// after which only code generation (not configuration) is permitted.
 #[must_use]
 #[derive(Debug)]
 pub struct Generator<'types> {
@@ -37,11 +65,18 @@ pub struct Generator<'types> {
     state: State<'types>,
 }
 
-/// Type that is used to generate rust code from a [`Types`] object.
+/// Finalized code generator that emits Rust types from resolved schema definitions.
 ///
-/// In contrast to [`Generator`] this type does not allow changes to the
-/// configuration of the generator, because at least one type was already
-/// generated.
+/// [`GeneratorFixed`] is produced by sealing a [`Generator`] with [`Generator::into_fixed()`],
+/// locking its configuration and enabling deterministic generation of all required types.
+///
+/// It offers methods to:
+/// - generate a specific type
+/// - generate all named types
+/// - generate all available types
+///
+/// Once generation is complete, use [`finish`](Self::finish) to retrieve the generated
+/// [`DataTypes`] output for rendering.
 #[must_use]
 #[derive(Debug)]
 pub struct GeneratorFixed<'types> {
@@ -112,7 +147,7 @@ impl<'types> Generator<'types> {
 
     /// Set the type to use to store unstructured `xs:any` elements.
     ///
-    /// If this is set, the renderer will render additional fields to store
+    /// If this is set, the generator will create additional fields to store
     /// unstructured XML data for elements that has `xs:any` set.
     ///
     /// # Errors
@@ -129,7 +164,7 @@ impl<'types> Generator<'types> {
 
     /// Set the type to use to store unstructured `xs:anyAttribute` attributes.
     ///
-    /// If this is set, the renderer will render additional fields to store
+    /// If this is set, the generator will create additional fields to store
     /// unstructured XML attributes for elements that has `xs:anyAttribute` set.
     ///
     /// # Errors
@@ -224,7 +259,8 @@ impl<'types> Generator<'types> {
     ///
     /// You need to call this method if the general configuration of the generator
     /// is finished. The resulting [`GeneratorFixed`] type will only provide methods
-    /// to render code for specific types.
+    /// to generate data types for specific types. The underlying configuration can
+    /// not be changed anymore.
     pub fn into_fixed(self) -> GeneratorFixed<'types> {
         let Self { meta, state } = self;
 
@@ -258,7 +294,7 @@ impl<'types> GeneratorFixed<'types> {
     /// Generate the code for all types.
     ///
     /// This will generate the code for all types that are specified in
-    /// the [`Types`] object passed to the generator.
+    /// the [`MetaTypes`] object passed to the generator.
     ///
     /// # Examples
     ///
@@ -280,7 +316,7 @@ impl<'types> GeneratorFixed<'types> {
     /// Generate the code for all named types.
     ///
     /// This will generate the code for all types with an explicit name and all
-    /// dependencies of these types that are specified in the [`Types`] object
+    /// dependencies of these types that are specified in the [`MetaTypes`] object
     /// passed to the generator.
     ///
     /// # Examples

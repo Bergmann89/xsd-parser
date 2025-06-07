@@ -8,11 +8,15 @@ use crate::models::{
 
 use super::{MetaType, MetaTypeVariant, NameBuilder};
 
-/// This structure contains information about the type and module definitions.
+/// Intermediate representation of all resolved type and module metadata.
 ///
-/// It is created by the [`Interpreter`](crate::interpreter::Interpreter) by reading
-/// the data of a specific [`Schemas`](crate::schema::Schemas). The types of this
-/// structure can be optimized further using the [`Optimizer`](crate::optimizer::Optimizer).
+/// This structure is created by the [`Interpreter`](crate::Interpreter)
+/// from the parsed [`Schemas`](crate::Schemas). It contains the full set of
+/// interpreted types, along with module-to-namespace mappings.
+///
+/// This type acts as the canonical source of truth for all derived type definitions,
+/// which can be passed to the [`Optimizer`](crate::Optimizer) for post-processing,
+/// or used directly by the code [`Generator`](crate::Generator).
 #[derive(Default, Debug)]
 pub struct MetaTypes {
     /// Map of the different types.
@@ -24,7 +28,7 @@ pub struct MetaTypes {
     next_name_id: Arc<AtomicUsize>,
 }
 
-/// Represents a module used by type information in the [`Types`] structure.
+/// Represents a module used by type information in the [`MetaTypes`] structure.
 #[derive(Debug)]
 pub struct ModuleMeta {
     /// Name of the module (also used as xml prefix).

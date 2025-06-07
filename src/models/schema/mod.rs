@@ -1,4 +1,10 @@
-//! The `schema` module contains the XML schema types.
+//! The `schema` module contains internal representations of XML Schema (XSD) structures.
+//!
+//! This module defines types that model loaded XML schemas, namespaces, and their relationships,
+//! serving as the output of the [`Parser`](crate::Parser) and input to the
+//! [`Interpreter`](crate::Interpreter).
+//!
+//! It manages the resolution of namespaces and tracks schema documents across multiple sources.
 
 pub mod xs;
 
@@ -17,11 +23,18 @@ pub use namespace_prefix::NamespacePrefix;
 pub use occurs::{MaxOccurs, MinOccurs};
 pub use qname::QName;
 
-/// Represents the XML schema information load from different sources.
+/// Top-level structure for managing loaded XML schema files and associated namespaces.
 ///
-/// This structure is usually created by the [`Parser`](crate::parser::Parser).
-/// It is the used by the [`Interpreter`](crate::interpreter::Interpreter) to
-/// generate the more common [`Types`](crate::types::Types) structure out of it.
+/// This type is created and populated by the [`Parser`](crate::Parser), and used
+/// by the [`Interpreter`](crate::Interpreter) to resolve schema components into
+/// meaningful Rust types.
+///
+/// It tracks all loaded schemas, the namespaces they belong to, and which prefixes
+/// are associated with which namespace URIs. Each namespace and schema is assigned
+/// a unique ID (`NamespaceId`, `SchemaId`) to allow efficient lookup and association.
+///
+/// This type supports iterating over loaded schemas and namespaces,
+/// as well as resolving prefixes and namespaces during interpretation.
 #[derive(Default, Debug)]
 pub struct Schemas {
     schemas: SchemaFiles,

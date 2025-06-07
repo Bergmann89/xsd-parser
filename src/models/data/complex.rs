@@ -10,9 +10,12 @@ use crate::models::{
 
 use super::Occurs;
 
-/// Contains additional information for the rendering process
-/// of a [`MetaTypeVariant::All`], [`MetaTypeVariant::Choice`],
-/// [`MetaTypeVariant::Sequence`] or [`MetaTypeVariant::ComplexType`] type.
+/// Contains additional information for the rendering process of a
+/// [`MetaTypeVariant::All`](crate::models::meta::MetaTypeVariant::All),
+/// [`MetaTypeVariant::Choice`](crate::models::meta::MetaTypeVariant::Choice),
+/// [`MetaTypeVariant::Sequence`](crate::models::meta::MetaTypeVariant::Sequence)
+/// or [`MetaTypeVariant::ComplexType`](crate::models::meta::MetaTypeVariant::ComplexType)
+/// type.
 ///
 /// To simplify the rendering process this recursive type was added to the
 /// generator. It basically boils down to the following:
@@ -51,8 +54,8 @@ pub enum ComplexData<'types> {
     },
 }
 
-/// Contains basic information for that is shared between [`ComplexTypeEnum`]
-/// and [`ComplexTypeStruct`].
+/// Contains basic information for that is shared between [`ComplexDataEnum`]
+/// and [`ComplexDataStruct`].
 #[derive(Debug)]
 pub struct ComplexBase {
     /// The identifier of the rendered type.
@@ -88,7 +91,7 @@ pub struct ComplexBase {
 
 /// Represents a rust enum.
 ///
-/// Is used as part of the [`ComplexType`].
+/// Is used as part of the [`ComplexData`].
 #[derive(Debug)]
 pub struct ComplexDataEnum<'types> {
     /// Basic type information.
@@ -110,7 +113,7 @@ pub struct ComplexDataEnum<'types> {
 
 /// Represents a rust struct.
 ///
-/// Is used as part of the [`ComplexType`].
+/// Is used as part of the [`ComplexData`].
 #[derive(Debug)]
 pub struct ComplexDataStruct<'types> {
     /// Basic type information.
@@ -130,7 +133,7 @@ pub struct ComplexDataStruct<'types> {
 
 /// Content of a rust struct.
 ///
-/// Used by [`ComplexTypeStruct`] to tell how the actual content of the struct
+/// Used by [`ComplexDataStruct`] to tell how the actual content of the struct
 /// should be rendered.
 #[derive(Debug)]
 pub enum StructMode<'types> {
@@ -196,7 +199,7 @@ pub struct ComplexDataContent {
 
 /// Contains the details of an XML element.
 ///
-/// Is used in [`ComplexTypeEnum`] or [`StructMode`].
+/// Is used in [`ComplexDataEnum`] or [`StructMode`].
 #[derive(Debug)]
 pub struct ComplexDataElement<'types> {
     /// Reference to the original type information.
@@ -234,7 +237,7 @@ pub struct ComplexDataElement<'types> {
 
 /// Contains the details of an XML attribute.
 ///
-/// Is used in [`ComplexTypeStruct`].
+/// Is used in [`ComplexDataStruct`].
 #[derive(Debug)]
 pub struct ComplexDataAttribute<'types> {
     /// Reference to the original type information.

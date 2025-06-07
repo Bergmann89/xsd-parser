@@ -7,14 +7,21 @@ use crate::pipeline::generator::MetaData as GeneratorMetaData;
 
 use super::DataType;
 
-/// This structure contains information about the generated data types.
+/// Holds all generated Rust data types along with associated metadata.
 ///
-/// It is created by the [`Generator`](crate::Generator) by using the information
-/// from the [`MetaTypes`](crate::models::meta::MetaTypes) structure. The information
-/// of this structure can be rendered to actual code using the [`Renderers`](crate::Renderers).
+/// This structure is produced by the [`Generator`](crate::Generator) after processing
+/// the intermediate [`MetaTypes`](crate::models::meta::MetaTypes). It serves as the
+/// final intermediate representation used in the rendering stage to output Rust code.
+///
+/// The `items` map contains type-safe, idiomatic Rust representations for each schema
+/// element, type, or attribute group encountered.
+///
+/// The `meta` field holds generator-specific configuration and state, such as flags,
+/// postfix rules, and user-defined overrides, which influence the structure and naming
+/// of generated code.
 #[derive(Debug)]
 pub struct DataTypes<'types> {
-    /// Meta types
+    /// Meta types and information from the generator process
     pub meta: GeneratorMetaData<'types>,
 
     /// Map of the different types.

@@ -5,8 +5,9 @@ use crate::models::{code::IdentPath, meta::ReferenceMeta};
 
 use super::Occurs;
 
-/// Contains additional information for the rendering process
-/// of a [`MetaTypeVariant::Reference`] type.
+/// Contains additional information for the rendering process of a
+/// [`MetaTypeVariant::Reference`](crate::models::meta::MetaTypeVariant::Reference)
+/// type.
 #[derive(Debug)]
 pub struct ReferenceData<'types> {
     /// Reference to the original type information.

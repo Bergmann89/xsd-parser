@@ -16,6 +16,7 @@ fn main() {
     let doc_svg = cargo_dir.join("doc/overview.svg");
 
     println!("cargo:rerun-if-changed={}", readme.display());
+    println!("cargo:rerun-if-changed={}", doc_svg.display());
 
     let rx = Regex::new(r"`(.*?)`").unwrap();
 
@@ -41,14 +42,17 @@ fn main() {
 }
 
 const KEYWORDS: &[&str] = &[
-    "Parser",
-    "Schemas",
-    "Resolver",
-    "Interpreter",
-    "Types",
-    "Optimizer",
-    "Generator",
-    "Renderer",
-    "generate",
     "Config",
+    "DataTypes",
+    "generate",
+    "Generator",
+    "Interpreter",
+    "MetaTypes",
+    "Module",
+    "Optimizer",
+    "Parser",
+    "Renderer",
+    "RenderStep",
+    "Resolver",
+    "Schemas",
 ];

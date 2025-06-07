@@ -7,7 +7,8 @@
 //! customized as needed.
 //!
 //! The [`Renderer`] can be extended with custom [`RenderStep`] implementations
-//! or modified using configuration methods such as `flags()`, `derive()`, and `dyn_type_traits()`.
+//! or modified using configuration methods such as [`flags()`](Renderer::flags),
+//! [`derive()`](Renderer::derive), and [`dyn_type_traits()`](Renderer::dyn_type_traits).
 //!
 //! Example usage:
 //! ```rust,ignore
@@ -44,7 +45,19 @@ pub use self::steps::{
     QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
 };
 
-/// Type that is used to render the actual rust code.
+/// The [`Renderer`] is the central orchestrator for Rust code generation from
+/// resolved schema types.
+///
+/// It allows the user to define a rendering pipeline using modular [`RenderStep`]s.
+/// Each step contributes part of the code output - such as type definitions,
+/// trait impls, constants, or serialization logic.
+///
+/// The [`Renderer`] holds configuration, shared metadata, and controls the execution
+/// of rendering steps over the input [`DataTypes`].
+///
+/// You can chain configuration methods to adjust derive traits, dynamic trait
+/// injection, and serialization support, and then call [`finish`](Renderer::finish)
+/// to produce a [`Module`] ready for rendering as Rust source.
 #[must_use]
 #[derive(Debug)]
 pub struct Renderer<'types> {
@@ -220,10 +233,11 @@ impl<'types> Renderer<'types> {
 
 /// Trait that is used to define a renderer.
 ///
-/// A renderer is used to generate the actual code of a specific [`TypeData`].
-/// The idea is that different renderers generate different code. This can be
-/// used by the user to compose different renderers depending on his needs, or
-/// he could even implement customized renderers on his own.
+/// A render step is used to generate the actual code of a specific
+/// [`DataType`](crate::models::data::DataType).
+/// The idea is that different render steps generate different code. This can be
+/// used by the user to compose different render steps depending on his needs, or
+/// he could even implement customized steps on his own.
 pub trait RenderStep: Debug {
     /// Initialized the renderer.
     ///

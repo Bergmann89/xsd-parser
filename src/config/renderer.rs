@@ -13,7 +13,7 @@ pub struct RendererConfig {
 
     /// Sets the traits the generated types should derive from.
     ///
-    /// See [`derive`](crate::Generator::derive) for more details.
+    /// See [`derive`](crate::Renderer::derive) for more details.
     pub derive: Option<Vec<String>>,
 
     /// Name of the `xsd-parser` crate that is used for the generated code.
@@ -21,7 +21,7 @@ pub struct RendererConfig {
 
     /// Set the traits that should be implemented by dynamic types.
     ///
-    /// See [`dyn_type_traits`](crate::Generator::dyn_type_traits) for more details.
+    /// See [`dyn_type_traits`](crate::Renderer::dyn_type_traits) for more details.
     pub dyn_type_traits: Option<Vec<String>>,
 }
 
@@ -103,8 +103,8 @@ bitflags! {
     }
 }
 
-/// Configuration for the [`Renderer`](crate::generator::renderer::Renderer)s
-/// the [`Generator`](crate::Generator) should use for rendering the code.
+/// Configuration for the [`RenderSteps`](crate::pipeline::renderer::RenderStep)s
+/// the [`Renderer`](crate::Renderer) should use for rendering the code.
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum RenderStep {
     /// Render to render the pure types.
@@ -130,7 +130,7 @@ pub enum RenderStep {
     QuickXmlDeserialize {
         /// Whether to box the deserializer or not.
         ///
-        /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::QuickXmlDeserializeRenderer::boxed_deserializer).
+        /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
     },
 }

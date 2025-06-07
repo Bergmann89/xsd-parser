@@ -38,7 +38,7 @@ impl Default for ParserConfig {
     }
 }
 
-/// Configuration for the [`Resolver`](crate::parser::resolver::Resolver)s used in [`ParserConfig`].
+/// Configuration for the [`Resolver`](crate::pipeline::parser::Resolver)s used in [`ParserConfig`].
 #[derive(Debug, Clone)]
 pub enum Resolver {
     /// Resolver that is used to resolve ewb resources (like `http://...` or `https://...`).

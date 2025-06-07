@@ -5,7 +5,7 @@ use crate::models::data::{ComplexData, ComplexDataAttribute, ComplexDataStruct, 
 
 use super::super::{Context, RenderStep};
 
-/// Implements a [`Renderer`] that renders associated methods that return the default
+/// Implements a [`RenderStep`] that renders associated methods that return the default
 /// values of the different attributes and elements according to the schema.
 #[derive(Debug)]
 pub struct DefaultsRenderStep;

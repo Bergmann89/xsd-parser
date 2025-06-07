@@ -1,12 +1,12 @@
 //! Rust-oriented data type representations for code generation.
 //!
-//! This module defines the complete set of data structures used to represent
-//! resolved, Rust-specific type information in preparation for rendering.
-//! These types are derived from interpreted and optimized schema definitions,
-//! and form the core of the code generation stage.
+//! This module defines the full set of intermediate structures used to represent
+//! resolved and Rust-specific data types, derived from interpreted and optimized
+//! XML schemas meta types.
 //!
-//! These models are used directly by the generator and renderer stages
-//! to produce idiomatic, type-safe Rust code.
+//! These types abstract the XML schema constructs into idiomatic Rust equivalents
+//! like structs, enums, options, and vectors, and form the backbone of the code
+//! generation phase.
 
 mod build_in;
 mod complex;

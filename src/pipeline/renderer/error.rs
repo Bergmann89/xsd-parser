@@ -2,7 +2,7 @@ use thiserror::Error;
 
 use crate::models::{code::InvalidIdentPath, schema::NamespaceId, Ident};
 
-/// Error that might be raised by the [`Generator`](super::Generator).
+/// Error that might be raised by the [`Generator`](crate::Generator).
 #[derive(Debug, Error)]
 pub enum Error {
     /// Unknown type identifier.

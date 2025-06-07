@@ -17,7 +17,7 @@ pub struct MetaData<'types> {
 
     /// List of postfixed to add to the name of the generated types.
     ///
-    /// This corresponds to the variants of [`IdentType`].
+    /// This corresponds to the variants of [`IdentType`](crate::models::IdentType).
     pub postfixes: [String; 8],
 
     /// Tells the generator how to deal with boxed elements.

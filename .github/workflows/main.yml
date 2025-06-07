@@ -66,8 +66,8 @@ jobs:
           ~/.cargo/registry/index/
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
-          target/
-        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          examples/read_write/target/
+        key: ${{ runner.os }}-examples-read-write-${{ hashFiles('**/Cargo.lock') }}
 
     - name: cargo clippy
       working-directory: examples/read_write

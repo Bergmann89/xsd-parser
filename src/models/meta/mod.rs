@@ -1,4 +1,9 @@
-//! The `meta` module contains all [`MetaType`] related types.
+//! The `meta` module contains all [`MetaType`] related definitions and structures.
+//!
+//! This module represents the internal type system used after schema interpretation,
+//! serving as an intermediate form between raw XML schema and Rust code generation.
+//! It is produced by the [`Interpreter`](crate::Interpreter) and optionally
+//! optimized by the [`Optimizer`](crate::Optimizer).
 
 mod attribute;
 mod base;

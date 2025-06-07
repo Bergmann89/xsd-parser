@@ -1,4 +1,21 @@
-//! The `parser` module contains the schema [`Parser`] and all related types.
+//! XML Schema (XSD) parser and resolver infrastructure.
+//!
+//! This module defines the [`Parser`] type and supporting logic for loading,
+//! resolving, and parsing XML Schema documents (`.xsd`) into structured [`Schemas`].
+//!
+//! The parser supports various input sources (e.g., files, strings, URLs) and
+//! handles `<import>` and `<include>` logic using pluggable [`Resolver`] implementations.
+//!
+//! Parsed schemas can be passed to the [`Interpreter`](crate::Interpreter) for
+//! further transformation into semantic types.
+//!
+//! # Example
+//! ```rust,ignore
+//! let schemas = Parser::new()
+//!     .with_default_resolver()
+//!     .add_schema_from_file("schema.xsd")?
+//!     .finish();
+//! ```
 
 pub mod resolver;
 
@@ -13,7 +30,7 @@ use quick_xml::{
     events::Event,
     name::{LocalName, QName, ResolveResult},
 };
-use resolver::{FileResolver, NoOpResolver, ResolveRequest, Resolver};
+use resolver::{FileResolver, NoOpResolver, ResolveRequest};
 use tracing::instrument;
 use url::Url;
 
@@ -27,17 +44,22 @@ use crate::quick_xml::{
 use crate::xml::NamespacesShared;
 
 pub use self::error::Error;
+pub use self::resolver::Resolver;
 
-/// The [`Parser`] is used to load and parse XML schema information from different
-/// sources.
+/// The [`Parser`] is responsible for loading and parsing XML Schema documents into
+/// a structured [`Schemas`] representation.
 ///
-/// This structure can be used to load XML schemas information from different
-/// sources using so called [`Resolver`]s. After the content of a schema was load
-/// is it parsed and added to the list of schemas, managed by this parser.
+/// It supports resolution of schema references such as `<import>` and `<include>`
+/// using a pluggable [`Resolver`], and can read schema content from strings, files,
+/// or URLs.
 ///
-/// The resulting [`Schemas`] instance can then be used by an
-/// [`Interpreter`](crate::interpreter::Interpreter), to generate the more common
-/// [`Types`](crate::types::Types) structure out of it.
+/// Internally, the parser maintains a queue of pending schema loads and a cache
+/// to prevent duplicate resolutions. Once all schemas are processed, the
+/// [`finish`](Self::finish) method returns the final [`Schemas`] collection.
+///
+/// A generic resolver type `TResolver` controls how external schemas are fetched.
+/// By default, a no-op resolver is used, but file-based or custom resolvers can
+/// be injected using [`with_resolver`](Self::with_resolver).
 #[must_use]
 #[derive(Default, Debug)]
 pub struct Parser<TResolver = NoOpResolver> {

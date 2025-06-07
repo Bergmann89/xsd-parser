@@ -170,7 +170,7 @@ impl Config {
         self
     }
 
-    /// Adds the passed `renderer` to the config.
+    /// Adds the passed `step` to the config.
     ///
     /// If the same type of renderer was already added,
     /// it is replaced by the new one.
@@ -186,7 +186,7 @@ impl Config {
 
     /// Add multiple renderers to the generator config.
     ///
-    /// See [`with_renderer`](Self::with_renderer) for details.
+    /// See [`with_render_step`](Self::with_render_step) for details.
     pub fn with_render_steps<I>(mut self, steps: I) -> Self
     where
         I: IntoIterator<Item = RenderStep>,

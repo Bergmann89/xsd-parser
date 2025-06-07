@@ -11,7 +11,7 @@ pub enum Error {
     /// Type has already been defined.
     ///
     /// Is raised if a new type with an already existing identifier is added
-    /// to the [`Types`](crate::types::Types) structure.
+    /// to the [`MetaTypes`](crate::models::meta::MetaTypes) structure.
     #[error("Type has already been defined: {0}!")]
     TypeAlreadyDefined(Ident),
 

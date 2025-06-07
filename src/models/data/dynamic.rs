@@ -2,8 +2,9 @@ use proc_macro2::{Ident as Ident2, Literal};
 
 use crate::models::{code::IdentPath, meta::DynamicMeta, Ident};
 
-/// Contains additional information for the rendering process
-/// of a [`MetaTypeVariant::Dynamic`] type.
+/// Contains additional information for the rendering process of a
+/// [`MetaTypeVariant::Dynamic`](crate::models::meta::MetaTypeVariant::Dynamic)
+/// type.
 #[derive(Debug)]
 pub struct DynamicData<'types> {
     /// Reference to the original type information.
@@ -27,7 +28,7 @@ pub struct DynamicData<'types> {
     pub derived_types: Vec<DerivedType>,
 }
 
-/// Represents a derived type used by [`DynamicType`].
+/// Represents a derived type used by [`DynamicData`]
 #[derive(Debug)]
 pub struct DerivedType {
     /// Identifier of the derived type.

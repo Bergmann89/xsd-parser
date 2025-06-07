@@ -24,7 +24,7 @@ use super::super::super::{
     RenderStep,
 };
 
-/// Implements a [`Renderer`] that renders the code for the `quick_xml` deserialization.
+/// Implements a [`RenderStep`] that renders the code for the `quick_xml` deserialization.
 #[derive(Debug)]
 pub struct QuickXmlDeserializeRenderStep {
     /// Whether to box the deserializer or not.

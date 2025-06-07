@@ -3,7 +3,7 @@ use quote::quote;
 
 use super::super::{MetaData, Module, RenderStep};
 
-/// Implements a [`Renderer`] that renders constants for the different namespaces
+/// Implements a [`RenderStep`] that renders constants for the different namespaces
 /// used in the schema.
 #[derive(Debug)]
 pub struct NamespaceConstantsRenderStep;

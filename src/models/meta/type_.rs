@@ -9,7 +9,11 @@ use super::{
     TypeEq, UnionMeta,
 };
 
-/// Represents a type that was read and interpreted from an XML schema.
+/// Represents a fully interpreted type from an XML schema.
+///
+/// This is the core type wrapper used during schema interpretation. It contains
+/// the actual type structure (`variant`), optional human-readable naming information,
+/// and collected documentation from schema definitions (e.g. `xs:documentation`).
 #[derive(Debug, Clone)]
 pub struct MetaType {
     /// Actual data type this type represents.
@@ -22,7 +26,7 @@ pub struct MetaType {
     pub documentation: Vec<String>,
 }
 
-/// Actual data type a [`Type`] represents.
+/// Actual data variant a [`MetaType`] represents.
 #[derive(Debug, Clone)]
 pub enum MetaTypeVariant {
     /// Represents a union type
@@ -103,7 +107,7 @@ impl_from!(Dynamic, DynamicMeta);
 impl_from!(ComplexType, ComplexMeta);
 
 impl MetaType {
-    /// Create a new [`Type`] instance from the passed `variant`.
+    /// Create a new [`MetaType`] instance from the passed `variant`.
     #[must_use]
     pub fn new(variant: MetaTypeVariant) -> Self {
         Self {
