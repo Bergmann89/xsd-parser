@@ -8,6 +8,7 @@ pub mod quick_xml;
 pub mod xml;
 
 mod macros;
+mod meta_types_printer;
 mod traits;
 
 /// Type alias for [`pipeline::renderer::Error`].
@@ -27,6 +28,7 @@ use std::fs::write;
 use std::io::Error as IoError;
 
 pub use self::config::Config;
+pub use self::meta_types_printer::MetaTypesPrinter;
 pub use self::models::{
     code::{Module, SubModules},
     data::DataTypes,
@@ -57,7 +59,6 @@ use self::pipeline::{
         DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
         QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
     },
-    TypesPrinter,
 };
 
 /// Generates rust code from a XML schema using the passed `config`.
@@ -195,7 +196,7 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
     let types = interpreter.finish()?;
 
     if let Some(output) = config.debug_output {
-        let printer = TypesPrinter::new(&types);
+        let printer = MetaTypesPrinter::new(&types);
         let debug = format!("{printer}");
 
         write(output, debug)?;
@@ -243,7 +244,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
     let types = optimizer.finish();
 
     if let Some(output) = config.debug_output {
-        let printer = TypesPrinter::new(&types);
+        let printer = MetaTypesPrinter::new(&types);
         let debug = format!("{printer}");
 
         write(output, debug)?;

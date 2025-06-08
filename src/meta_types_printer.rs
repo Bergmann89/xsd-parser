@@ -8,7 +8,16 @@ use crate::models::{
     Ident,
 };
 
-pub(crate) struct TypesPrinter<'a> {
+/// Pretty-printer for [`MetaTypes`] content.
+///
+/// The [`MetaTypesPrinter`] recursively formats all known [`MetaType`] entries
+/// in a structured and indented way. It handles all variant types
+/// (`BuildIn`, `Custom`, `Reference`, `ComplexType`, etc.) and also detects
+/// and prevents cycles by tracking visited type identifiers.
+///
+/// This type is typically used via its [`Display`] implementation.
+#[derive(Debug)]
+pub struct MetaTypesPrinter<'a> {
     types: &'a MetaTypes,
 }
 
@@ -18,14 +27,39 @@ struct State {
     visit: HashSet<Ident>,
 }
 
-impl<'a> TypesPrinter<'a> {
-    pub(crate) fn new(types: &'a MetaTypes) -> Self {
+impl<'a> MetaTypesPrinter<'a> {
+    /// Create a new [`MetaTypesPrinter`] from the passed `types`.
+    #[must_use]
+    pub fn new(types: &'a MetaTypes) -> Self {
         Self { types }
     }
 
-    fn print_all(&self, f: &mut Formatter<'_>, s: &mut State) -> FmtResult {
+    /// Print the information of all meta types to the passed formatter `f`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error raised by the formatter.
+    pub fn print_all(&self, f: &mut Formatter<'_>) -> FmtResult {
+        let mut s = State::default();
+
         for (ident, ty) in &self.types.items {
-            self.print_type(f, s, ident, ty)?;
+            self.print_type_impl(f, &mut s, ident, ty)?;
+        }
+
+        Ok(())
+    }
+
+    /// Print the information of a single meta type identified by `ident` to
+    /// the passed formatter `f`.
+    ///
+    /// # Errors
+    ///
+    /// Forwards the error raised by the formatter.
+    pub fn print_type(&self, ident: &Ident, f: &mut Formatter<'_>) -> FmtResult {
+        let mut s = State::default();
+
+        if let Some(ty) = self.types.items.get(ident) {
+            self.print_type_impl(f, &mut s, ident, ty)?;
         }
 
         Ok(())
@@ -38,7 +72,7 @@ impl<'a> TypesPrinter<'a> {
         ident: &Ident,
     ) -> FmtResult {
         if let Some(x) = self.types.items.get(ident) {
-            self.print_type(f, s, ident, x)
+            self.print_type_impl(f, s, ident, x)
         } else {
             writeln!(f, "NOT FOUND")?;
 
@@ -47,7 +81,7 @@ impl<'a> TypesPrinter<'a> {
     }
 
     #[allow(clippy::too_many_lines)]
-    fn print_type(
+    fn print_type_impl(
         &self,
         f: &mut Formatter<'_>,
         s: &mut State,
@@ -101,7 +135,7 @@ impl<'a> TypesPrinter<'a> {
 
                 indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
-                indentln!("types");
+                indentln!("types:");
 
                 s.level += 1;
 
@@ -129,7 +163,7 @@ impl<'a> TypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("display_name={:?}", &ty.display_name);
-                indentln!("types");
+                indentln!("types:");
 
                 s.level += 1;
 
@@ -146,7 +180,7 @@ impl<'a> TypesPrinter<'a> {
 
                 indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
-                indentln!("variants");
+                indentln!("variants:");
 
                 s.level += 1;
 
@@ -169,7 +203,7 @@ impl<'a> TypesPrinter<'a> {
                 indentln!("display_name={:?}", &ty.display_name);
 
                 for x in &*x.elements {
-                    indentln!("element");
+                    indentln!("element:");
 
                     s.level += 1;
 
@@ -228,7 +262,7 @@ impl<'a> TypesPrinter<'a> {
                 indentln!("is_dynamic={}", x.is_dynamic);
 
                 for x in &*x.attributes {
-                    indentln!("attribute");
+                    indentln!("attribute:");
 
                     s.level += 1;
 
@@ -266,14 +300,8 @@ impl<'a> TypesPrinter<'a> {
                 }
 
                 if let Some(content) = &x.content {
-                    indentln!("content");
-
-                    s.level += 1;
-
-                    indent!("type=");
+                    indent!("content=");
                     self.resolve_complex_type(f, s, content)?;
-
-                    s.level -= 1;
                 }
 
                 s.level -= 1;
@@ -286,10 +314,8 @@ impl<'a> TypesPrinter<'a> {
     }
 }
 
-impl Display for TypesPrinter<'_> {
+impl Display for MetaTypesPrinter<'_> {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
-        let mut s = State::default();
-
-        self.print_all(f, &mut s)
+        self.print_all(f)
     }
 }
