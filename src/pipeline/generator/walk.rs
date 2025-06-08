@@ -88,7 +88,7 @@ impl<'a> Walk<'a> {
                         continue;
                     }
 
-                    let ElementMetaVariant::Type(type_) = &f.type_ else {
+                    let ElementMetaVariant::Type(type_) = &f.variant else {
                         continue;
                     };
 

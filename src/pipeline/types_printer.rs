@@ -178,7 +178,7 @@ impl<'a> TypesPrinter<'a> {
                     indentln!("max_occurs={:?}", x.max_occurs);
                     indentln!("element_type={:?}", x.element_mode);
 
-                    match (x.element_mode, &x.type_) {
+                    match (x.element_mode, &x.variant) {
                         (ElementMode::Element, ElementMetaVariant::Type(type_)) => {
                             indentln!("type=Type({})", type_);
                         }

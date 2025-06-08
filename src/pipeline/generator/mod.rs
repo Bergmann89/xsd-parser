@@ -437,7 +437,7 @@ fn get_boxed_elements<'a>(
             si.elements
                 .iter()
                 .filter_map(|f| {
-                    if let ElementMetaVariant::Type(type_) = &f.type_ {
+                    if let ElementMetaVariant::Type(type_) = &f.variant {
                         if Walk::new(types, cache).is_loop(ident, type_) {
                             return Some(f.ident.clone());
                         }

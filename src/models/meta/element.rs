@@ -20,7 +20,7 @@ pub struct ElementMeta {
     pub ident: Ident,
 
     /// Type of the element.
-    pub type_: ElementMetaVariant,
+    pub variant: ElementMetaVariant,
 
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
@@ -85,7 +85,7 @@ impl ElementMeta {
     pub fn new(ident: Ident, type_: Ident, element_mode: ElementMode) -> Self {
         Self {
             ident,
-            type_: ElementMetaVariant::Type(type_),
+            variant: ElementMetaVariant::Type(type_),
             element_mode,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -99,7 +99,7 @@ impl ElementMeta {
     pub fn any(ident: Ident, any: AnyMeta) -> Self {
         Self {
             ident,
-            type_: ElementMetaVariant::Any(any),
+            variant: ElementMetaVariant::Any(any),
             element_mode: ElementMode::Element,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
@@ -111,13 +111,13 @@ impl ElementMeta {
     /// Returns `true` if this element represents an `xs:any` element, `false` otherwise.
     #[must_use]
     pub fn is_any(&self) -> bool {
-        matches!(&self.type_, ElementMetaVariant::Any(_))
+        matches!(&self.variant, ElementMetaVariant::Any(_))
     }
 
     /// Returns the [`AnyMeta`] if this element is a `xs:any`.
     #[must_use]
     pub fn as_any(&self) -> Option<&AnyMeta> {
-        if let ElementMetaVariant::Any(any) = &self.type_ {
+        if let ElementMetaVariant::Any(any) = &self.variant {
             Some(any)
         } else {
             None
@@ -129,7 +129,7 @@ impl TypeEq for ElementMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             ident,
-            type_,
+            variant: type_,
             element_mode,
             min_occurs,
             max_occurs,
@@ -149,7 +149,7 @@ impl TypeEq for ElementMeta {
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             ident,
-            type_,
+            variant: type_,
             element_mode,
             min_occurs,
             max_occurs,
@@ -158,7 +158,7 @@ impl TypeEq for ElementMeta {
         } = self;
 
         ident.eq(&other.ident)
-            && type_.type_eq(&other.type_, types)
+            && type_.type_eq(&other.variant, types)
             && element_mode.eq(&other.element_mode)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)

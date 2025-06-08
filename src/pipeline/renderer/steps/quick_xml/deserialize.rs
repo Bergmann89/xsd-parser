@@ -2437,7 +2437,7 @@ impl ComplexDataElement<'_> {
             match types.get_variant(ident) {
                 Some(MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si)) => {
                     for element in &*si.elements {
-                        match &element.type_ {
+                        match &element.variant {
                             ElementMetaVariant::Any(_) => return true,
                             ElementMetaVariant::Type(type_) => {
                                 if walk(types, visit, type_) {
@@ -2452,11 +2452,11 @@ impl ComplexDataElement<'_> {
                 Some(MetaTypeVariant::Sequence(si)) => match si.elements.first() {
                     None => false,
                     Some(ElementMeta {
-                        type_: ElementMetaVariant::Any(_),
+                        variant: ElementMetaVariant::Any(_),
                         ..
                     }) => true,
                     Some(ElementMeta {
-                        type_: ElementMetaVariant::Type(type_),
+                        variant: ElementMetaVariant::Type(type_),
                         ..
                     }) => walk(types, visit, type_),
                 },
@@ -2470,7 +2470,7 @@ impl ComplexDataElement<'_> {
 
         let mut visit = HashSet::new();
 
-        match &self.info.type_ {
+        match &self.info.variant {
             ElementMetaVariant::Any(_) => true,
             ElementMetaVariant::Type(type_) => walk(types, &mut visit, type_),
         }
