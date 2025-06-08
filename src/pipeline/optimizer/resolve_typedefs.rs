@@ -90,7 +90,7 @@ impl Optimizer {
                 | MetaTypeVariant::Choice(x)
                 | MetaTypeVariant::Sequence(x) => {
                     for element in &mut *x.elements {
-                        if let ElementMetaVariant::Type(type_) = &mut element.type_ {
+                        if let ElementMetaVariant::Type(type_) = &mut element.variant {
                             *type_ = typedefs.resolve(type_).clone();
                         }
                     }

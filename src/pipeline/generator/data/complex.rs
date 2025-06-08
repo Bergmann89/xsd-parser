@@ -474,7 +474,7 @@ impl<'types> ComplexDataElement<'types> {
         let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
         let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
 
-        let (target_type, target_is_dynamic) = match &info.type_ {
+        let (target_type, target_is_dynamic) = match &info.variant {
             ElementMetaVariant::Any(_) => {
                 let Some(type_) = ctx.any_type.as_ref() else {
                     *allow_any = true;

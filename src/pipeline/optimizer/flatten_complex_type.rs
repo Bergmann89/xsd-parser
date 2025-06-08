@@ -149,7 +149,7 @@ impl Optimizer {
                     ctx.add_element(element);
                 }
                 ElementMode::Group => {
-                    if let ElementMetaVariant::Type(type_) = &x.type_ {
+                    if let ElementMetaVariant::Type(type_) = &x.variant {
                         self.flatten_complex_type_impl(
                             type_,
                             min * x.min_occurs,
