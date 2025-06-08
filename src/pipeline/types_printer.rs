@@ -8,7 +8,9 @@ use crate::models::{
     Ident,
 };
 
-pub(crate) struct TypesPrinter<'a> {
+#[derive(Debug)]
+#[allow(missing_docs)]
+pub struct TypesPrinter<'a> {
     types: &'a MetaTypes,
 }
 
@@ -19,7 +21,9 @@ struct State {
 }
 
 impl<'a> TypesPrinter<'a> {
-    pub(crate) fn new(types: &'a MetaTypes) -> Self {
+    #[must_use]
+    #[allow(missing_docs)]
+    pub fn new(types: &'a MetaTypes) -> Self {
         Self { types }
     }
 

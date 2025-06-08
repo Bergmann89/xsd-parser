@@ -36,7 +36,7 @@ pub use self::models::{
 };
 pub use self::pipeline::{
     generator::Generator, interpreter::Interpreter, optimizer::Optimizer, parser::Parser,
-    renderer::Renderer,
+    renderer::Renderer, TypesPrinter,
 };
 pub use self::traits::{AsAny, VecHelper, WithIdent, WithNamespace};
 
@@ -57,7 +57,6 @@ use self::pipeline::{
         DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
         QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
     },
-    TypesPrinter,
 };
 
 /// Generates rust code from a XML schema using the passed `config`.

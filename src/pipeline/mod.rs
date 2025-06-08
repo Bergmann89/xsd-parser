@@ -18,5 +18,4 @@ pub use self::interpreter::Interpreter;
 pub use self::optimizer::Optimizer;
 pub use self::parser::Parser;
 pub use self::renderer::Renderer;
-
-pub(crate) use self::types_printer::TypesPrinter;
+pub use self::types_printer::TypesPrinter;
