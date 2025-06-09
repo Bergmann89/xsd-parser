@@ -33,7 +33,7 @@ use proc_macro2::Ident as Ident2;
 use quote::format_ident;
 use tracing::instrument;
 
-use crate::config::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
+use crate::config::{BoxFlags, GeneratorFlags, TypedefMode};
 use crate::models::{
     code::{format_module_ident, format_type_ident, IdentPath},
     data::{DataType, DataTypes},
@@ -104,7 +104,6 @@ impl<'types> Generator<'types> {
             ],
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
-            serde_support: SerdeSupport::None,
             any_type: None,
             any_attribute_type: None,
         };
@@ -127,13 +126,6 @@ impl<'types> Generator<'types> {
     /// Set the [`TypedefMode`] value the generator should use for generating the code.
     pub fn typedef_mode(mut self, value: TypedefMode) -> Self {
         self.meta.typedef_mode = value;
-
-        self
-    }
-
-    /// Set the [`SerdeSupport`] value the generator should use for generating the code.
-    pub fn serde_support(mut self, value: SerdeSupport) -> Self {
-        self.meta.serde_support = value;
 
         self
     }

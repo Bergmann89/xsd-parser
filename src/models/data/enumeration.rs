@@ -1,4 +1,4 @@
-use proc_macro2::{Ident as Ident2, TokenStream};
+use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
     code::IdentPath,
@@ -28,6 +28,12 @@ pub struct EnumerationData<'types> {
 pub struct EnumerationTypeVariant<'types> {
     /// Reference to the original type information.
     pub meta: &'types EnumerationMetaVariant,
+
+    /// Name of the attribute as string.
+    pub s_name: String,
+
+    /// Name of the attribute as byte string literal.
+    pub b_name: Literal,
 
     /// Name of this variant.
     pub variant_ident: Ident2,

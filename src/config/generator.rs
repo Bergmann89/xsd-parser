@@ -28,9 +28,6 @@ pub struct GeneratorConfig {
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
 
-    /// Tells the generator how to generate code for the [`serde`] crate.
-    pub serde_support: SerdeSupport,
-
     /// Type to use to store unstructured `xs:any` elements.
     ///
     /// See [`Generator::any_type`](crate::Generator::any_type) for details.
@@ -50,7 +47,6 @@ impl Default for GeneratorConfig {
             type_postfix: TypePostfix::default(),
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,
-            serde_support: SerdeSupport::None,
             generate: Generate::Named,
             flags: GeneratorFlags::empty(),
             any_type: None,
@@ -256,73 +252,6 @@ pub enum TypedefMode {
     #[doc = include_str!("../../tests/generator/typedef_mode/expected/new_type.rs")]
     /// ```
     NewType,
-}
-
-/// Tells the [`Generator`](crate::Generator) how to generate code for the
-/// [`serde`] crate.
-#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
-pub enum SerdeSupport {
-    /// No code for the [`serde`] crate is generated.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
-    /// ```
-    ///
-    /// If the serde support mode is set to [`SerdeSupport::None`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/serde_support/expected/none.rs")]
-    /// ```
-    #[default]
-    None,
-
-    /// Generates code that can be serialized and deserialized using the
-    /// [`serde`] create in combination with the with [`quick_xml`] crate.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
-    /// ```
-    ///
-    /// If the serde support mode is set to [`SerdeSupport::QuickXml`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/serde_support/expected/quick_xml.rs")]
-    /// ```
-    QuickXml,
-
-    /// Generates code that can be serialized and deserialized using the
-    /// [`serde`] create in combination with the with [`serde-xml-rs`](https://docs.rs/serde-xml-rs) crate.
-    ///
-    /// # Examples
-    ///
-    /// Consider the following XML schema:
-    /// ```xml
-    #[doc = include_str!("../../tests/generator/serde_support/schema.xsd")]
-    /// ```
-    ///
-    /// If the serde support mode is set to [`SerdeSupport::SerdeXmlRs`] the following code is rendered:
-    /// ```rust
-    #[doc = include_str!("../../tests/generator/serde_support/expected/serde_xml_rs.rs")]
-    /// ```
-    SerdeXmlRs,
-}
-
-impl SerdeSupport {
-    /// Returns `true` if this is equal to [`SerdeSupport::None`], `false` otherwise.
-    #[must_use]
-    pub fn is_none(&self) -> bool {
-        matches!(self, Self::None)
-    }
-
-    /// Returns `false` if this is equal to [`SerdeSupport::None`], `true` otherwise.
-    #[must_use]
-    pub fn is_some(&self) -> bool {
-        !matches!(self, Self::None)
-    }
 }
 
 /// Configuration which types the [`Generator`](crate::Generator) should generate
