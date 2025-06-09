@@ -327,17 +327,17 @@ impl CustomRenderStep {
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
         let EnumerationTypeVariant {
-            info,
+            meta,
             variant_ident,
             target_type,
         } = var;
 
         let serde = if ctx.serde_support == SerdeSupport::None {
             None
-        } else if info.type_.is_some() {
+        } else if meta.type_.is_some() {
             Some(quote!(#[serde(other)]))
         } else {
-            let name = format!("{}", info.ident.name);
+            let name = format!("{}", meta.ident.name);
 
             Some(quote!(#[serde(rename = #name)]))
         };
@@ -415,7 +415,7 @@ impl CustomRenderStep {
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = el.info.ident.name.to_string();
+                let name = el.meta.ident.name.to_string();
 
                 Some(quote!(#[serde(rename = #name)]))
             }
@@ -480,7 +480,7 @@ impl CustomRenderStep {
             let default_path = format!("{type_ident}::default_{field_ident}");
 
             quote!(default = #default_path,)
-        } else if attrib.info.use_ == Use::Optional {
+        } else if attrib.meta.use_ == Use::Optional {
             quote!(default,)
         } else {
             quote!()
@@ -489,12 +489,12 @@ impl CustomRenderStep {
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml => {
-                let name = format!("@{}", attrib.info.ident.name);
+                let name = format!("@{}", attrib.meta.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
             SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", attrib.info.ident.name);
+                let name = format!("{}", attrib.meta.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
@@ -528,7 +528,7 @@ impl CustomRenderStep {
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = field.info.ident.name.to_string();
+                let name = field.meta.ident.name.to_string();
                 let default = match field.occurs {
                     Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
                     Occurs::Optional | Occurs::DynamicList => quote!(default,),

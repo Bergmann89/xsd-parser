@@ -446,35 +446,35 @@ impl<'types> ComplexDataElement<'types> {
     }
 
     fn new_field(
-        info: &'types ElementMeta,
+        meta: &'types ElementMeta,
         ctx: &mut Context<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
     ) -> Result<Option<Self>, Error> {
         let force_box = ctx.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
 
-        Self::new(info, ctx, allow_any, direct_usage, force_box)
+        Self::new(meta, ctx, allow_any, direct_usage, force_box)
     }
 
     fn new(
-        info: &'types ElementMeta,
+        meta: &'types ElementMeta,
         ctx: &mut Context<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
         force_box: bool,
     ) -> Result<Option<Self>, Error> {
-        let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
+        let occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
         if occurs == Occurs::None {
             return Ok(None);
         }
 
-        let tag_name = make_tag_name(ctx.types, &info.ident);
-        let s_name = info.ident.name.to_string();
+        let tag_name = make_tag_name(ctx.types, &meta.ident);
+        let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let field_ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
-        let variant_ident = format_variant_ident(&info.ident.name, info.display_name.as_deref());
+        let field_ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
+        let variant_ident = format_variant_ident(&meta.ident.name, meta.display_name.as_deref());
 
-        let (target_type, target_is_dynamic) = match &info.variant {
+        let (target_type, target_is_dynamic) = match &meta.variant {
             ElementMetaVariant::Any(_) => {
                 let Some(type_) = ctx.any_type.as_ref() else {
                     *allow_any = true;
@@ -496,11 +496,11 @@ impl<'types> ComplexDataElement<'types> {
             }
         };
 
-        let need_box = ctx.current_type_ref().boxed_elements.contains(&info.ident);
+        let need_box = ctx.current_type_ref().boxed_elements.contains(&meta.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
 
         Ok(Some(Self {
-            info,
+            meta,
             occurs,
             s_name,
             b_name,
@@ -516,18 +516,18 @@ impl<'types> ComplexDataElement<'types> {
 
 impl<'types> ComplexDataAttribute<'types> {
     fn new_field(
-        info: &'types AttributeMeta,
+        meta: &'types AttributeMeta,
         ctx: &mut Context<'_, 'types>,
         allow_any_attribute: &mut bool,
     ) -> Result<Option<Self>, Error> {
-        if info.use_ == Use::Prohibited {
+        if meta.use_ == Use::Prohibited {
             return Ok(None);
         }
 
         let current_module = ctx.current_module();
-        let ident = format_field_ident(&info.ident.name, info.display_name.as_deref());
+        let ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
 
-        let (target_type, default_value) = match &info.variant {
+        let (target_type, default_value) = match &meta.variant {
             AttributeMetaVariant::Any(_) => {
                 let Some(type_) = ctx.any_attribute_type.as_ref() else {
                     *allow_any_attribute = true;
@@ -543,7 +543,7 @@ impl<'types> ComplexDataAttribute<'types> {
                 let target_ref = ctx.get_or_create_type_ref(type_.clone())?;
                 let target_type = target_ref.to_ident_path();
 
-                let default_value = info
+                let default_value = meta
                     .default
                     .as_ref()
                     .map(|default| ctx.get_default(current_module, default, type_))
@@ -553,13 +553,13 @@ impl<'types> ComplexDataAttribute<'types> {
             }
         };
 
-        let s_name = info.ident.name.to_string();
+        let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let tag_name = make_tag_name(ctx.types, &info.ident);
-        let is_option = matches!((&info.use_, &default_value), (Use::Optional, None));
+        let tag_name = make_tag_name(ctx.types, &meta.ident);
+        let is_option = matches!((&meta.use_, &default_value), (Use::Optional, None));
 
         Ok(Some(Self {
-            info,
+            meta,
             ident,
             s_name,
             b_name,

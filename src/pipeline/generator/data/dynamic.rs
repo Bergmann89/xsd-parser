@@ -12,7 +12,7 @@ use super::super::{Context, Error};
 
 impl<'types> DynamicData<'types> {
     pub(super) fn new(
-        info: &'types DynamicMeta,
+        meta: &'types DynamicMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
         let type_ident = ctx.current_type_ref().type_ident.clone();
@@ -35,7 +35,7 @@ impl<'types> DynamicData<'types> {
                     .collect::<Result<Vec<_>, _>>()
             })
             .transpose()?;
-        let derived_types = info
+        let derived_types = meta
             .derived_types
             .iter()
             .map(|ident| make_derived_type_data(ctx, ident))
@@ -44,7 +44,7 @@ impl<'types> DynamicData<'types> {
         let deserializer_ident = format_ident!("{type_ident}Deserializer");
 
         Ok(Self {
-            meta: info,
+            meta,
             type_ident,
             trait_ident,
             deserializer_ident,

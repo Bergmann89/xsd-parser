@@ -7,7 +7,7 @@ use super::{Error, Optimizer};
 
 struct FlattenUnionInfo {
     count: usize,
-    info: UnionMeta,
+    meta: UnionMeta,
 }
 
 impl Optimizer {
@@ -47,16 +47,16 @@ impl Optimizer {
 
         let mut info = FlattenUnionInfo {
             count: 0,
-            info: UnionMeta::default(),
+            meta: UnionMeta::default(),
         };
 
         self.flatten_union_impl(&ident, None, &mut info);
 
         if info.count > 1 {
-            info.info.base = ui.base.clone();
+            info.meta.base = ui.base.clone();
 
             let ty = self.types.items.get_mut(&ident).unwrap();
-            ty.variant = MetaTypeVariant::Union(info.info);
+            ty.variant = MetaTypeVariant::Union(info.meta);
         }
 
         Ok(self)
@@ -113,7 +113,7 @@ impl Optimizer {
                 let mut ui = UnionMetaType::new(ident.clone());
                 ui.display_name = display_name.map(ToOwned::to_owned);
 
-                next.info.types.push(ui);
+                next.meta.types.push(ui);
             }
         }
     }

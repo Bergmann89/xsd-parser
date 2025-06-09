@@ -8,12 +8,12 @@ use super::super::{Context, Error};
 
 impl<'types> ReferenceData<'types> {
     pub(super) fn new(
-        info: &'types ReferenceMeta,
+        meta: &'types ReferenceMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
-        let occurs = Occurs::from_occurs(info.min_occurs, info.max_occurs);
+        let occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
         let type_ident = ctx.current_type_ref().type_ident.clone();
-        let target_ref = ctx.get_or_create_type_ref(info.type_.clone())?;
+        let target_ref = ctx.get_or_create_type_ref(meta.type_.clone())?;
         let target_type = target_ref.to_ident_path();
         let trait_impls = ctx.make_trait_impls()?;
 
@@ -24,7 +24,7 @@ impl<'types> ReferenceData<'types> {
         };
 
         Ok(Self {
-            meta: info,
+            meta,
             mode,
             occurs,
             type_ident,

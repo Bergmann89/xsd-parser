@@ -555,7 +555,7 @@ impl EnumerationTypeVariant<'_> {
         other: &mut Option<TokenStream>,
     ) -> Option<TokenStream> {
         let Self {
-            info,
+            meta,
             target_type,
             variant_ident,
         } = self;
@@ -570,7 +570,7 @@ impl EnumerationTypeVariant<'_> {
             return None;
         }
 
-        let name = Literal::byte_string(info.ident.name.to_string().as_bytes());
+        let name = Literal::byte_string(meta.ident.name.to_string().as_bytes());
 
         Some(quote! {
             #name => Ok(Self::#variant_ident),
@@ -2299,14 +2299,14 @@ impl ComplexDataAttribute<'_> {
 
         let else_ = (*index).gt(&0).then(|| quote!(else));
 
-        if self.info.is_any() {
+        if self.meta.is_any() {
             *any_attribute = Some(quote! {
                 #field_ident.push(attrib)?;
             });
 
             None
         } else if let Some(module) = self
-            .info
+            .meta
             .ident
             .ns
             .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
@@ -2335,7 +2335,7 @@ impl ComplexDataAttribute<'_> {
         let field_ident = &self.ident;
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
-        if self.info.is_any() {
+        if self.meta.is_any() {
             quote!(let mut #field_ident = #target_type::default();)
         } else {
             quote!(let mut #field_ident: Option<#target_type> = None;)
@@ -2365,13 +2365,13 @@ impl ComplexDataAttribute<'_> {
         let field_ident = &self.ident;
         let xsd_parser = &ctx.xsd_parser_crate;
 
-        let convert = if self.info.is_any() {
+        let convert = if self.meta.is_any() {
             None
         } else if self.default_value.is_some() {
             let default_fn_ident = format_ident!("default_{field_ident}");
 
             Some(quote! { .unwrap_or_else(super::#type_ident::#default_fn_ident) })
-        } else if self.info.use_ == Use::Required {
+        } else if self.meta.use_ == Use::Required {
             let name = &self.s_name;
 
             ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::ErrorKind)]);
@@ -2414,13 +2414,13 @@ impl ComplexDataElement<'_> {
 
     #[inline]
     fn treat_as_any(&self) -> bool {
-        self.info.is_any()
+        self.meta.is_any()
     }
 
     #[inline]
     fn treat_as_group(&self) -> bool {
         !self.treat_as_any()
-            && (self.info.element_mode == ElementMode::Group || self.target_is_dynamic)
+            && (self.meta.element_mode == ElementMode::Group || self.target_is_dynamic)
     }
 
     #[inline]
@@ -2470,7 +2470,7 @@ impl ComplexDataElement<'_> {
 
         let mut visit = HashSet::new();
 
-        match &self.info.variant {
+        match &self.meta.variant {
             ElementMetaVariant::Any(_) => true,
             ElementMetaVariant::Type(type_) => walk(types, &mut visit, type_),
         }
@@ -2498,7 +2498,7 @@ impl ComplexDataElement<'_> {
         };
 
         if let Some(module) = self
-            .info
+            .meta
             .ident
             .ns
             .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
@@ -2760,7 +2760,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Data`
-        let data_handler = match (represents_element, self.occurs, self.info.max_occurs) {
+        let data_handler = match (represents_element, self.occurs, self.meta.max_occurs) {
             (_, Occurs::None, _) => unreachable!(),
             // Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
@@ -2800,7 +2800,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Deserializer`
-        let deserializer_handler = match (self.occurs, self.info.max_occurs) {
+        let deserializer_handler = match (self.occurs, self.meta.max_occurs) {
             (Occurs::None, _) => unreachable!(),
             // If we only expect one element we never initialize a new deserializer
             // we only continue the deserialization process for `End` events (because
@@ -3210,7 +3210,7 @@ impl ComplexDataElement<'_> {
 
         // Handler for `DeserializerArtifact::None`: Should only be the
         // case if we try to initialize a new deserializer.
-        let handler_none = match (self.occurs, self.info.min_occurs) {
+        let handler_none = match (self.occurs, self.meta.min_occurs) {
             (Occurs::None, _) => unreachable!(),
             // If we do not expect any data we continue with the next state
             (_, 0) | (Occurs::Optional, _) => quote! {
@@ -3253,7 +3253,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Data`:
-        let data_handler = match (self.occurs, self.info.max_occurs) {
+        let data_handler = match (self.occurs, self.meta.max_occurs) {
             // If we got some data we simple move one to the next element
             (Occurs::Single | Occurs::Optional, _) => quote! {
                 *self.state = #next_state;
@@ -3274,7 +3274,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Deserializer:
-        let min = self.info.min_occurs;
+        let min = self.meta.min_occurs;
         let deserializer_handler = match self.occurs {
             // If we expect only one element we continue to the next state,
             // because the old yet unfinished deserializer already contains
@@ -3439,7 +3439,7 @@ impl ComplexDataElement<'_> {
         });
 
         let need_name_matcher =
-            !self.target_is_dynamic && self.info.element_mode == ElementMode::Element;
+            !self.target_is_dynamic && self.meta.element_mode == ElementMode::Element;
 
         let mut body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -3453,7 +3453,7 @@ impl ComplexDataElement<'_> {
             }
         };
 
-        if self.info.is_any() {
+        if self.meta.is_any() {
             body = quote! {
                 if is_any_retry {
                     #body
@@ -3467,7 +3467,7 @@ impl ComplexDataElement<'_> {
             };
         } else if need_name_matcher {
             let ns_name = self
-                .info
+                .meta
                 .ident
                 .ns
                 .as_ref()

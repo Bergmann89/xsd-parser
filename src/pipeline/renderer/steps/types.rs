@@ -234,19 +234,19 @@ impl EnumerationData<'_> {
 impl EnumerationTypeVariant<'_> {
     fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
-            info,
+            meta,
             variant_ident,
             target_type,
         } = self;
 
-        let docs = ctx.render_docs(RendererFlags::RENDER_VARIANT_DOCS, &info.documentation[..]);
+        let docs = ctx.render_docs(RendererFlags::RENDER_VARIANT_DOCS, &meta.documentation[..]);
 
         let serde = if ctx.serde_support == SerdeSupport::None {
             None
-        } else if info.type_.is_some() {
+        } else if meta.type_.is_some() {
             Some(quote!(#[serde(other)]))
         } else {
-            let name = format!("{}", info.ident.name);
+            let name = format!("{}", meta.ident.name);
 
             Some(quote!(#[serde(rename = #name)]))
         };
@@ -384,7 +384,7 @@ impl ComplexDataAttribute<'_> {
             let default_path = format!("{type_ident}::default_{field_ident}");
 
             quote!(default = #default_path,)
-        } else if self.info.use_ == Use::Optional {
+        } else if self.meta.use_ == Use::Optional {
             quote!(default,)
         } else {
             quote!()
@@ -392,25 +392,25 @@ impl ComplexDataAttribute<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ATTRIBUTE_DOCS,
-            &self.info.documentation[..],
+            &self.meta.documentation[..],
         );
 
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml => {
-                let name = format!("@{}", self.info.ident.name);
+                let name = format!("@{}", self.meta.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
             SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", self.info.ident.name);
+                let name = format!("{}", self.meta.ident.name);
 
                 Some(quote!(#[serde(#default rename = #name)]))
             }
         };
 
         if let Some(ty) = self
-            .info
+            .meta
             .is_any()
             .then_some(())
             .and(ctx.any_attribute_type.as_ref())
@@ -445,13 +445,13 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.info.documentation[..],
+            &self.meta.documentation[..],
         );
 
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = self.info.ident.name.to_string();
+                let name = self.meta.ident.name.to_string();
                 let default = match self.occurs {
                     Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
                     Occurs::Optional | Occurs::DynamicList => quote!(default,),
@@ -461,7 +461,7 @@ impl ComplexDataElement<'_> {
             }
         };
 
-        if let Some(ty) = self.info.is_any().then_some(()).and(ctx.any_type.as_ref()) {
+        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
             ctx.add_usings([ty.to_token_stream()]);
         }
 
@@ -479,13 +479,13 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.info.documentation[..],
+            &self.meta.documentation[..],
         );
 
         let serde = match ctx.serde_support {
             SerdeSupport::None => None,
             SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = self.info.ident.name.to_string();
+                let name = self.meta.ident.name.to_string();
 
                 Some(quote!(#[serde(rename = #name)]))
             }
