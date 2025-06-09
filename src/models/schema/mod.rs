@@ -14,7 +14,7 @@ mod occurs;
 mod qname;
 
 use std::borrow::Cow;
-use std::collections::btree_map::{BTreeMap, Entry, Iter};
+use std::collections::btree_map::{BTreeMap, Entry, Iter, IterMut};
 
 use self::xs::Schema;
 
@@ -160,6 +160,11 @@ impl Schemas {
         self.schemas.iter()
     }
 
+    /// Returns a mutable iterator over all schemas stored in this structure.
+    pub fn schemas_mut(&mut self) -> IterMut<'_, SchemaId, Schema> {
+        self.schemas.iter_mut()
+    }
+
     /// Returns an iterator over all namespace information instances stored
     /// in this structure.
     pub fn namespaces(&self) -> Iter<'_, NamespaceId, NamespaceInfo> {
@@ -171,6 +176,13 @@ impl Schemas {
     #[must_use]
     pub fn get_schema(&self, id: &SchemaId) -> Option<&Schema> {
         self.schemas.get(id)
+    }
+
+    /// Returns a mutable reference to a specific schema by using the schema id,
+    /// or `None` if the schema is not known.
+    #[must_use]
+    pub fn get_schema_mut(&mut self, id: &SchemaId) -> Option<&mut Schema> {
+        self.schemas.get_mut(id)
     }
 
     /// Returns a reference to a specific namespace information instance by using
