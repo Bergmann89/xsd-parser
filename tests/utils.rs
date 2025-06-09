@@ -214,7 +214,17 @@ where
 {
     let reader = File::open(path).unwrap();
 
-    serde_xml_rs::from_reader::<_, T>(reader).unwrap()
+    serde_xml_rs::from_reader::<T, _>(reader).unwrap()
+}
+
+pub fn serde_xml_rs_v7_read_test<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: for<'de> Deserialize<'de>,
+{
+    let reader = File::open(path).unwrap();
+
+    serde_xml_rs_v7::from_reader::<_, T>(reader).unwrap()
 }
 
 fn fmt_code(s: &str) -> String {

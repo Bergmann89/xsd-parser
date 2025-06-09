@@ -44,7 +44,8 @@ pub use self::pipeline::{
     renderer::{
         DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
         QuickXmlSerializeRenderStep, Renderer, SerdeQuickXmlTypesRenderStep,
-        SerdeXmlRsTypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+        SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep, TypesRenderStep,
+        WithNamespaceTraitRenderStep,
     },
 };
 pub use self::traits::{AsAny, VecHelper, WithIdent, WithNamespace};
@@ -58,6 +59,7 @@ use tracing::instrument;
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
     OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
+    SerdeXmlRsVersion,
 };
 use self::macros::{assert_eq, unreachable};
 use self::pipeline::parser::resolver::{FileResolver, ManyResolver};
@@ -334,7 +336,12 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
     for step in config.steps {
         match step {
             RenderStep::Types => renderer = renderer.with_step(TypesRenderStep),
-            RenderStep::TypesSerdeXmlRs => renderer = renderer.with_step(SerdeXmlRsTypesRenderStep),
+            RenderStep::TypesSerdeXmlRs {
+                version: SerdeXmlRsVersion::Version07AndBelow,
+            } => renderer = renderer.with_step(SerdeXmlRsV7TypesRenderStep),
+            RenderStep::TypesSerdeXmlRs {
+                version: SerdeXmlRsVersion::Version08AndAbove,
+            } => renderer = renderer.with_step(SerdeXmlRsV8TypesRenderStep),
             RenderStep::TypesSerdeQuickXml => {
                 renderer = renderer.with_step(SerdeQuickXmlTypesRenderStep);
             }

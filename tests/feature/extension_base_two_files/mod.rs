@@ -1,4 +1,7 @@
-use xsd_parser::{config::GeneratorFlags, Config, IdentType};
+use xsd_parser::{
+    config::{GeneratorFlags, SerdeXmlRsVersion},
+    Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -30,7 +33,7 @@ fn generate_serde_xml_rs() {
         "tests/feature/extension_base_two_files/schema.xsd",
         "tests/feature/extension_base_two_files/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_xml_rs()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }

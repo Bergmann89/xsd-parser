@@ -1,4 +1,7 @@
-use xsd_parser::{config::TypedefMode, Config, IdentType};
+use xsd_parser::{
+    config::{SerdeXmlRsVersion, TypedefMode},
+    Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -31,7 +34,7 @@ fn generate_serde_xml_rs() {
         "tests/feature/tuple_with_integer/schema.xsd",
         "tests/feature/tuple_with_integer/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_xml_rs()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove)
             .with_typedef_mode(TypedefMode::NewType)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );

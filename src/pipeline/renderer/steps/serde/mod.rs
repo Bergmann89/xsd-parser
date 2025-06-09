@@ -1,5 +1,6 @@
 mod quick_xml;
-mod serde_xml_rs;
+mod serde_xml_rs_v7;
+mod serde_xml_rs_v8;
 
 use std::fmt::Display;
 use std::str::FromStr;
@@ -10,7 +11,8 @@ use quote::quote;
 use crate::models::code::IdentPath;
 
 pub use self::quick_xml::SerdeQuickXmlTypesRenderStep;
-pub use self::serde_xml_rs::SerdeXmlRsTypesRenderStep;
+pub use self::serde_xml_rs_v7::SerdeXmlRsV7TypesRenderStep;
+pub use self::serde_xml_rs_v8::SerdeXmlRsV8TypesRenderStep;
 
 use super::super::Context;
 
