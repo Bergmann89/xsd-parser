@@ -241,11 +241,13 @@ impl Config {
     pub fn with_serde_support(mut self, serde_support: SerdeSupport) -> Self {
         self.generator.serde_support = serde_support;
 
-        if self.generator.serde_support != SerdeSupport::None {
+        if self.generator.serde_support == SerdeSupport::None {
+            self
+        } else {
             self.optimizer.flags |= OptimizerFlags::SERDE;
-        }
 
-        self
+            self.with_render_steps([RenderStep::Types, RenderStep::Defaults])
+        }
     }
 
     /// Set the types the code should be generated for.
