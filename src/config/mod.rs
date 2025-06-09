@@ -21,7 +21,9 @@ pub use self::generator::{
 pub use self::interpreter::{InterpreterConfig, InterpreterFlags};
 pub use self::optimizer::{OptimizerConfig, OptimizerFlags};
 pub use self::parser::{ParserConfig, ParserFlags, Resolver, Schema};
-pub use self::renderer::{DynTypeTraits, RenderStep, RendererConfig, RendererFlags};
+pub use self::renderer::{
+    DynTypeTraits, RenderStep, RendererConfig, RendererFlags, SerdeXmlRsVersion,
+};
 
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
@@ -245,10 +247,13 @@ impl Config {
     }
 
     /// Enable render steps for types with [`quick_xml`] serde support.
-    pub fn with_serde_xml_rs(mut self) -> Self {
+    pub fn with_serde_xml_rs(mut self, version: SerdeXmlRsVersion) -> Self {
         self.optimizer.flags |= OptimizerFlags::SERDE;
 
-        self.with_render_steps([RenderStep::TypesSerdeXmlRs, RenderStep::Defaults])
+        self.with_render_steps([
+            RenderStep::TypesSerdeXmlRs { version },
+            RenderStep::Defaults,
+        ])
     }
 
     /// Set the types the code should be generated for.

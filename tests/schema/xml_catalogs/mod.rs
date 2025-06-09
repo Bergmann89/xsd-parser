@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GeneratorFlags, OptimizerFlags, ParserFlags},
+    config::{GeneratorFlags, OptimizerFlags, ParserFlags, SerdeXmlRsVersion},
     Config,
 };
 
@@ -35,7 +35,7 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/schema/xml_catalogs/schema.xsd",
         "tests/schema/xml_catalogs/expected/serde_xml_rs.rs",
-        config().with_serde_xml_rs(),
+        config().with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove),
     );
 }
 

@@ -1,112 +1,113 @@
 pub mod er {
+    use core::ops::{Deref, DerefMut};
     use serde::{Deserialize, Serialize};
     #[derive(Debug, Serialize, Deserialize)]
     pub struct CatalogType {
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
-        #[serde(default, rename = "prefer")]
+        #[serde(default, rename = "@er:prefer")]
         pub prefer: Option<SystemOrPublicType>,
-        #[serde(rename = "$value")]
+        #[serde(rename = "#content")]
         pub content: Vec<CatalogTypeContent>,
     }
     #[derive(Debug, Serialize, Deserialize)]
     pub enum CatalogTypeContent {
-        #[serde(rename = "public")]
+        #[serde(rename = "er:public")]
         Public(PublicType),
-        #[serde(rename = "system")]
+        #[serde(rename = "er:system")]
         System(SystemType),
-        #[serde(rename = "uri")]
+        #[serde(rename = "er:uri")]
         Uri(UriType),
-        #[serde(rename = "rewriteSystem")]
+        #[serde(rename = "er:rewriteSystem")]
         RewriteSystem(RewriteSystemType),
-        #[serde(rename = "rewriteURI")]
+        #[serde(rename = "er:rewriteURI")]
         RewriteUri(RewriteUriType),
-        #[serde(rename = "uriSuffix")]
+        #[serde(rename = "er:uriSuffix")]
         UriSuffix(UriSuffixType),
-        #[serde(rename = "systemSuffix")]
+        #[serde(rename = "er:systemSuffix")]
         SystemSuffix(SystemSuffixType),
-        #[serde(rename = "delegatePublic")]
+        #[serde(rename = "er:delegatePublic")]
         DelegatePublic(DelegatePublicType),
-        #[serde(rename = "delegateSystem")]
+        #[serde(rename = "er:delegateSystem")]
         DelegateSystem(DelegateSystemType),
-        #[serde(rename = "delegateURI")]
+        #[serde(rename = "er:delegateURI")]
         DelegateUri(DelegateUriType),
-        #[serde(rename = "nextCatalog")]
+        #[serde(rename = "er:nextCatalog")]
         NextCatalog(NextCatalogType),
-        #[serde(rename = "group")]
+        #[serde(rename = "er:group")]
         Group(GroupType),
     }
     pub type Catalog = CatalogType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct DelegatePublicType {
-        #[serde(rename = "publicIdStartString")]
+        #[serde(rename = "@er:publicIdStartString")]
         pub public_id_start_string: String,
-        #[serde(rename = "catalog")]
+        #[serde(rename = "@er:catalog")]
         pub catalog: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type DelegatePublic = DelegatePublicType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct DelegateSystemType {
-        #[serde(rename = "systemIdStartString")]
+        #[serde(rename = "@er:systemIdStartString")]
         pub system_id_start_string: String,
-        #[serde(rename = "catalog")]
+        #[serde(rename = "@er:catalog")]
         pub catalog: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type DelegateSystem = DelegateSystemType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct DelegateUriType {
-        #[serde(rename = "uriStartString")]
+        #[serde(rename = "@er:uriStartString")]
         pub uri_start_string: String,
-        #[serde(rename = "catalog")]
+        #[serde(rename = "@er:catalog")]
         pub catalog: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type DelegateUri = DelegateUriType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct GroupType {
-        #[serde(default, rename = "prefer")]
+        #[serde(default, rename = "@er:prefer")]
         pub prefer: Option<SystemOrPublicType>,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
-        #[serde(rename = "$value")]
+        #[serde(rename = "#content")]
         pub content: Vec<GroupTypeContent>,
     }
     #[derive(Debug, Serialize, Deserialize)]
     pub enum GroupTypeContent {
-        #[serde(rename = "public")]
+        #[serde(rename = "er:public")]
         Public(PublicType),
-        #[serde(rename = "system")]
+        #[serde(rename = "er:system")]
         System(SystemType),
-        #[serde(rename = "uri")]
+        #[serde(rename = "er:uri")]
         Uri(UriType),
-        #[serde(rename = "rewriteSystem")]
+        #[serde(rename = "er:rewriteSystem")]
         RewriteSystem(RewriteSystemType),
-        #[serde(rename = "rewriteURI")]
+        #[serde(rename = "er:rewriteURI")]
         RewriteUri(RewriteUriType),
-        #[serde(rename = "uriSuffix")]
+        #[serde(rename = "er:uriSuffix")]
         UriSuffix(UriSuffixType),
-        #[serde(rename = "systemSuffix")]
+        #[serde(rename = "er:systemSuffix")]
         SystemSuffix(SystemSuffixType),
-        #[serde(rename = "delegatePublic")]
+        #[serde(rename = "er:delegatePublic")]
         DelegatePublic(DelegatePublicType),
-        #[serde(rename = "delegateSystem")]
+        #[serde(rename = "er:delegateSystem")]
         DelegateSystem(DelegateSystemType),
-        #[serde(rename = "delegateURI")]
+        #[serde(rename = "er:delegateURI")]
         DelegateUri(DelegateUriType),
-        #[serde(rename = "nextCatalog")]
+        #[serde(rename = "er:nextCatalog")]
         NextCatalog(NextCatalogType),
     }
     pub type Group = GroupType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct NextCatalogType {
-        #[serde(rename = "catalog")]
+        #[serde(rename = "@er:catalog")]
         pub catalog: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type NextCatalog = NextCatalogType;
@@ -114,47 +115,73 @@ pub mod er {
     pub type PubIdCharsType = String;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct PublicType {
-        #[serde(rename = "publicId")]
+        #[serde(rename = "@er:publicId")]
         pub public_id: String,
-        #[serde(rename = "uri")]
+        #[serde(rename = "@er:uri")]
         pub uri: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type Public = PublicType;
     pub type PublicIdentifierType = String;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct RewriteSystemType {
-        #[serde(rename = "systemIdStartString")]
+        #[serde(rename = "@er:systemIdStartString")]
         pub system_id_start_string: String,
-        #[serde(rename = "rewritePrefix")]
+        #[serde(rename = "@er:rewritePrefix")]
         pub rewrite_prefix: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type RewriteSystem = RewriteSystemType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct RewriteUriType {
-        #[serde(rename = "uriStartString")]
+        #[serde(rename = "@er:uriStartString")]
         pub uri_start_string: String,
-        #[serde(rename = "rewritePrefix")]
+        #[serde(rename = "@er:rewritePrefix")]
         pub rewrite_prefix: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type RewriteUri = RewriteUriType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct SystemType {
-        #[serde(rename = "systemId")]
+        #[serde(rename = "@er:systemId")]
         pub system_id: String,
-        #[serde(rename = "uri")]
+        #[serde(rename = "@er:uri")]
         pub uri: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type System = SystemType;
     #[derive(Debug, Serialize, Deserialize)]
-    pub enum SystemOrPublicType {
+    pub struct SystemOrPublicType {
+        #[serde(rename = "#text")]
+        pub value: SystemOrPublicValue,
+    }
+    impl From<SystemOrPublicValue> for SystemOrPublicType {
+        fn from(value: SystemOrPublicValue) -> Self {
+            Self { value }
+        }
+    }
+    impl From<SystemOrPublicType> for SystemOrPublicValue {
+        fn from(value: SystemOrPublicType) -> Self {
+            value.value
+        }
+    }
+    impl Deref for SystemOrPublicType {
+        type Target = SystemOrPublicValue;
+        fn deref(&self) -> &Self::Target {
+            &self.value
+        }
+    }
+    impl DerefMut for SystemOrPublicType {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            &mut self.value
+        }
+    }
+    #[derive(Debug, Serialize, Deserialize)]
+    pub enum SystemOrPublicValue {
         #[serde(rename = "system")]
         System,
         #[serde(rename = "public")]
@@ -162,31 +189,31 @@ pub mod er {
     }
     #[derive(Debug, Serialize, Deserialize)]
     pub struct SystemSuffixType {
-        #[serde(rename = "systemIdSuffix")]
+        #[serde(rename = "@er:systemIdSuffix")]
         pub system_id_suffix: String,
-        #[serde(rename = "uri")]
+        #[serde(rename = "@er:uri")]
         pub uri: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type SystemSuffix = SystemSuffixType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct UriType {
-        #[serde(rename = "name")]
+        #[serde(rename = "@er:name")]
         pub name: String,
-        #[serde(rename = "uri")]
+        #[serde(rename = "@er:uri")]
         pub uri: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type Uri = UriType;
     #[derive(Debug, Serialize, Deserialize)]
     pub struct UriSuffixType {
-        #[serde(rename = "uriSuffix")]
+        #[serde(rename = "@er:uriSuffix")]
         pub uri_suffix: String,
-        #[serde(rename = "uri")]
+        #[serde(rename = "@er:uri")]
         pub uri: String,
-        #[serde(default, rename = "id")]
+        #[serde(default, rename = "@er:id")]
         pub id: Option<String>,
     }
     pub type UriSuffix = UriSuffixType;

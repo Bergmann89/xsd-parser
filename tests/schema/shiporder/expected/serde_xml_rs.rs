@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 pub type Shiporder = ShiporderType;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ShiporderType {
-    #[serde(rename = "orderid")]
+    #[serde(rename = "@orderid")]
     pub orderid: String,
     #[serde(rename = "orderperson")]
     pub orderperson: String,

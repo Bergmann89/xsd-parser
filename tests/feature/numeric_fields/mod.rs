@@ -1,4 +1,4 @@
-use xsd_parser::{Config, IdentType};
+use xsd_parser::{config::SerdeXmlRsVersion, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -28,7 +28,7 @@ fn generate_serde_xml_rs() {
         "tests/feature/numeric_fields/schema.xsd",
         "tests/feature/numeric_fields/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_xml_rs()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove)
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
@@ -73,13 +73,13 @@ fn write_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_serde_xml_rs() {
-    use serde_xml_rs::{EnumType, Foo};
+    use serde_xml_rs::{EnumTypeValue, Foo};
 
     let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>(
         "tests/feature/numeric_fields/example/default.xml",
     );
 
-    assert!(matches!(obj._4, EnumType::_1));
+    assert!(matches!(obj._4.value, EnumTypeValue::_1));
 }
 
 #[test]

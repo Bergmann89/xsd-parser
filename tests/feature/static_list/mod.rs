@@ -1,4 +1,4 @@
-use xsd_parser::{Config, IdentType};
+use xsd_parser::{config::SerdeXmlRsVersion, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -28,7 +28,18 @@ fn generate_serde_xml_rs() {
         "tests/feature/static_list/schema.xsd",
         "tests/feature/static_list/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_xml_rs()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove)
+            .with_generate([(IdentType::Element, "tns:Array")]),
+    );
+}
+
+#[test]
+fn generate_serde_xml_rs_v7() {
+    generate_test(
+        "tests/feature/static_list/schema.xsd",
+        "tests/feature/static_list/expected/serde_xml_rs_v7.rs",
+        Config::test_default()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version07AndBelow)
             .with_generate([(IdentType::Element, "tns:Array")]),
     );
 }
@@ -86,6 +97,18 @@ fn read_serde_xml_rs() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
+fn read_serde_xml_rs_v7() {
+    use serde_xml_rs_v7::Array;
+
+    let obj = crate::utils::serde_xml_rs_v7_read_test::<Array, _>(
+        "tests/feature/static_list/example/default.xml",
+    );
+
+    assert_eq!(obj.item, [111, 222, 333, 444, 555]);
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
 fn read_serde_quick_xml() {
     use serde_quick_xml::Array;
 
@@ -115,6 +138,13 @@ mod serde_xml_rs {
     #![allow(unused_imports)]
 
     include!("expected/serde_xml_rs.rs");
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod serde_xml_rs_v7 {
+    #![allow(unused_imports)]
+
+    include!("expected/serde_xml_rs_v7.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

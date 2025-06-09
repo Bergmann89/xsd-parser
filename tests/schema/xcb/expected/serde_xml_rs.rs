@@ -2,22 +2,22 @@ use serde::{Deserialize, Serialize};
 pub type Xcb = XcbType;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct XcbType {
-    #[serde(rename = "header")]
+    #[serde(rename = "@header")]
     pub header: String,
-    #[serde(default, rename = "extension-xname")]
+    #[serde(default, rename = "@extension-xname")]
     pub extension_xname: Option<String>,
-    #[serde(default, rename = "extension-name")]
+    #[serde(default, rename = "@extension-name")]
     pub extension_name: Option<String>,
     #[serde(
         default = "XcbType::default_extension_multiword",
-        rename = "extension-multiword"
+        rename = "@extension-multiword"
     )]
     pub extension_multiword: bool,
-    #[serde(default, rename = "major-version")]
+    #[serde(default, rename = "@major-version")]
     pub major_version: Option<i32>,
-    #[serde(default, rename = "minor-version")]
+    #[serde(default, rename = "@minor-version")]
     pub minor_version: Option<i32>,
-    #[serde(default, rename = "$value")]
+    #[serde(default, rename = "#content")]
     pub content: Vec<XcbTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -55,13 +55,13 @@ impl XcbType {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RequestType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "opcode")]
+    #[serde(rename = "@opcode")]
     pub opcode: i32,
-    #[serde(default, rename = "combine-adjacent")]
+    #[serde(default, rename = "@combine-adjacent")]
     pub combine_adjacent: Option<bool>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<RequestTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -87,15 +87,15 @@ pub enum RequestTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EventType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "number")]
+    #[serde(rename = "@number")]
     pub number: i32,
-    #[serde(default, rename = "no-sequence-number")]
+    #[serde(default, rename = "@no-sequence-number")]
     pub no_sequence_number: Option<bool>,
-    #[serde(default, rename = "xge")]
+    #[serde(default, rename = "@xge")]
     pub xge: Option<bool>,
-    #[serde(default, rename = "$value")]
+    #[serde(default, rename = "#content")]
     pub content: Vec<EventTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,20 +113,20 @@ pub enum EventTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PacketStructCopyType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "number")]
+    #[serde(rename = "@number")]
     pub number: i32,
-    #[serde(rename = "ref")]
+    #[serde(rename = "@ref")]
     pub ref_: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PacketStructType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "number")]
+    #[serde(rename = "@number")]
     pub number: i32,
-    #[serde(default, rename = "$value")]
+    #[serde(default, rename = "#content")]
     pub content: Vec<PacketStructTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -142,9 +142,9 @@ pub enum PacketStructTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StructType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<StructTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -162,21 +162,21 @@ pub enum StructTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct XidtypeType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct XidunionType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
     #[serde(default, rename = "type")]
     pub type_: Vec<String>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EnumType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<EnumTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -188,44 +188,44 @@ pub struct EnumTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TypedefType {
-    #[serde(rename = "oldname")]
+    #[serde(rename = "@oldname")]
     pub oldname: String,
-    #[serde(rename = "newname")]
+    #[serde(rename = "@newname")]
     pub newname: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PadType {
-    #[serde(default, rename = "bytes")]
+    #[serde(default, rename = "@bytes")]
     pub bytes: Option<i32>,
-    #[serde(default, rename = "align")]
+    #[serde(default, rename = "@align")]
     pub align: Option<i32>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VarType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "type")]
+    #[serde(rename = "@type")]
     pub type_: String,
-    #[serde(default, rename = "enum")]
+    #[serde(default, rename = "@enum")]
     pub enum_: Option<String>,
-    #[serde(default, rename = "altenum")]
+    #[serde(default, rename = "@altenum")]
     pub altenum: Option<String>,
-    #[serde(default, rename = "mask")]
+    #[serde(default, rename = "@mask")]
     pub mask: Option<String>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ListType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "type")]
+    #[serde(rename = "@type")]
     pub type_: String,
-    #[serde(default, rename = "enum")]
+    #[serde(default, rename = "@enum")]
     pub enum_: Option<String>,
-    #[serde(default, rename = "altenum")]
+    #[serde(default, rename = "@altenum")]
     pub altenum: Option<String>,
-    #[serde(default, rename = "mask")]
+    #[serde(default, rename = "@mask")]
     pub mask: Option<String>,
-    #[serde(default, rename = "$value")]
+    #[serde(default, rename = "#content")]
     pub content: Option<ListTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -251,17 +251,17 @@ pub enum ListTypeContent {
 pub struct AnyType;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ExprfieldType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "type")]
+    #[serde(rename = "@type")]
     pub type_: String,
-    #[serde(default, rename = "enum")]
+    #[serde(default, rename = "@enum")]
     pub enum_: Option<String>,
-    #[serde(default, rename = "altenum")]
+    #[serde(default, rename = "@altenum")]
     pub altenum: Option<String>,
-    #[serde(default, rename = "mask")]
+    #[serde(default, rename = "@mask")]
     pub mask: Option<String>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: ExprfieldTypeContent,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -285,18 +285,18 @@ pub enum ExprfieldTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ValueparamType {
-    #[serde(rename = "value-mask-type")]
+    #[serde(rename = "@value-mask-type")]
     pub value_mask_type: String,
-    #[serde(rename = "value-mask-name")]
+    #[serde(rename = "@value-mask-name")]
     pub value_mask_name: String,
-    #[serde(rename = "value-list-name")]
+    #[serde(rename = "@value-list-name")]
     pub value_list_name: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SwitchexprType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<SwitchexprTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -330,7 +330,7 @@ pub enum SwitchexprTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ReplyType {
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<ReplyTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -352,7 +352,7 @@ pub enum ReplyTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DocType {
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<DocTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -372,9 +372,9 @@ pub enum DocTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ItemType {
-    #[serde(rename = "name")]
+    #[serde(rename = "@name")]
     pub name: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: ItemTypeContent,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -386,10 +386,10 @@ pub enum ItemTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OpType {
-    #[serde(rename = "op")]
+    #[serde(rename = "@op")]
     pub op: String,
-    #[serde(rename = "$value")]
-    pub content: [OpTypeContent; 8usize],
+    #[serde(rename = "#content")]
+    pub content: Vec<OpTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub enum OpTypeContent {
@@ -412,10 +412,10 @@ pub enum OpTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UnopType {
-    #[serde(rename = "op")]
+    #[serde(rename = "@op")]
     pub op: String,
-    #[serde(rename = "$value")]
-    pub content: [UnopTypeContent; 8usize],
+    #[serde(rename = "#content")]
+    pub content: Vec<UnopTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub enum UnopTypeContent {
@@ -438,9 +438,9 @@ pub enum UnopTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EnumrefType {
-    #[serde(rename = "ref")]
+    #[serde(rename = "@ref")]
     pub ref_: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -464,7 +464,7 @@ pub enum PopcountType {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SumofType {
-    #[serde(rename = "ref")]
+    #[serde(rename = "@ref")]
     pub ref_: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -474,9 +474,9 @@ pub enum DecOrHexIntegerType {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CaseexprType {
-    #[serde(default, rename = "name")]
+    #[serde(default, rename = "@name")]
     pub name: Option<String>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#content")]
     pub content: Vec<CaseexprTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -510,22 +510,22 @@ pub enum CaseexprTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FieldType {
-    #[serde(default, rename = "name")]
+    #[serde(default, rename = "@name")]
     pub name: Option<String>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ErrorType {
-    #[serde(default, rename = "type")]
+    #[serde(default, rename = "@type")]
     pub type_: Option<String>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "#text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SeeType {
-    #[serde(default, rename = "name")]
+    #[serde(default, rename = "@name")]
     pub name: Option<String>,
-    #[serde(default, rename = "type")]
+    #[serde(default, rename = "@type")]
     pub type_: Option<String>,
 }

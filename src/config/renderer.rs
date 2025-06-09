@@ -116,7 +116,10 @@ pub enum RenderStep {
     Types,
 
     /// Step to render the types with `serde-xml-rs` support.
-    TypesSerdeXmlRs,
+    TypesSerdeXmlRs {
+        /// Version of `serde-xml-rs` to render the code for.
+        version: SerdeXmlRsVersion,
+    },
 
     /// Step to render the types with `quick_xml` serde support.
     TypesSerdeQuickXml,
@@ -163,6 +166,16 @@ impl RenderStep {
             (_, _) => false,
         }
     }
+}
+
+/// Version of `serde-xml-rs` to render the code for.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum SerdeXmlRsVersion {
+    /// Render code for `serde-xml-rs <= 0.7`.
+    Version07AndBelow,
+
+    /// Render code for `serde-xml-rs >= 0.8`.
+    Version08AndAbove,
 }
 
 /// Defines which additional traits should be implemented by the generated traits

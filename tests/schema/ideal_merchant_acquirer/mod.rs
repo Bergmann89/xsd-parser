@@ -1,4 +1,7 @@
-use xsd_parser::{config::NamespaceIdent, Config, IdentType};
+use xsd_parser::{
+    config::{NamespaceIdent, SerdeXmlRsVersion},
+    Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -33,17 +36,19 @@ fn generate_quick_xml() {
 }
 
 #[test]
-fn generate_serde_xml_rs() {
+fn generate_serde_xml_rs_v7() {
     generate_test(
         "tests/schema/ideal_merchant_acquirer/schema.xsd",
-        "tests/schema/ideal_merchant_acquirer/expected/serde_xml_rs.rs",
-        Config::test_default().with_serde_xml_rs().with_generate([(
-            IdentType::Element,
-            Some(NamespaceIdent::namespace(
-                b"http://www.idealdesk.com/ideal/messages/mer-acq/3.3.1",
-            )),
-            "DirectoryReq",
-        )]),
+        "tests/schema/ideal_merchant_acquirer/expected/serde_xml_rs_v7.rs",
+        Config::test_default()
+            .with_serde_xml_rs(SerdeXmlRsVersion::Version07AndBelow)
+            .with_generate([(
+                IdentType::Element,
+                Some(NamespaceIdent::namespace(
+                    b"http://www.idealdesk.com/ideal/messages/mer-acq/3.3.1",
+                )),
+                "DirectoryReq",
+            )]),
     );
 }
 
@@ -76,10 +81,10 @@ fn read_quick_xml() {
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
-fn read_serde_xml_rs() {
-    use serde_xml_rs::DirectoryReq;
+fn read_serde_xml_rs_v7() {
+    use serde_xml_rs_v7::DirectoryReq;
 
-    crate::utils::serde_xml_rs_read_test::<DirectoryReq, _>(
+    crate::utils::serde_xml_rs_v7_read_test::<DirectoryReq, _>(
         "tests/schema/ideal_merchant_acquirer/example/merchant-acquirer.xml",
     );
 }
@@ -109,10 +114,10 @@ mod quick_xml {
 }
 
 #[cfg(not(feature = "update-expectations"))]
-mod serde_xml_rs {
+mod serde_xml_rs_v7 {
     #![allow(unused_imports)]
 
-    include!("expected/serde_xml_rs.rs");
+    include!("expected/serde_xml_rs_v7.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]
