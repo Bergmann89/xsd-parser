@@ -5,6 +5,7 @@ mod bmecat_etim_501;
 mod factur_x;
 mod ideal_merchant_acquirer;
 mod shiporder;
+mod sitemap;
 mod xcb;
 mod xml_catalogs;
 mod xml_schema;
