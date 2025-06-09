@@ -27,7 +27,7 @@ pub struct EnumerationData<'types> {
 #[derive(Debug)]
 pub struct EnumerationTypeVariant<'types> {
     /// Reference to the original type information.
-    pub info: &'types EnumerationMetaVariant,
+    pub meta: &'types EnumerationMetaVariant,
 
     /// Name of this variant.
     pub variant_ident: Ident2,

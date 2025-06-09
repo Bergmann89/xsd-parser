@@ -12,21 +12,21 @@ use super::super::{Context, Error};
 
 impl<'types> EnumerationData<'types> {
     pub(super) fn new(
-        info: &'types EnumerationMeta,
+        meta: &'types EnumerationMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
         let mut unknown = 0usize;
         let type_ident = ctx.current_type_ref().type_ident.clone();
         let trait_impls = ctx.make_trait_impls()?;
 
-        let variants = info
+        let variants = meta
             .variants
             .iter()
             .filter_map(|var| var.make_variant(&mut unknown, ctx))
             .collect::<Result<Vec<_>, _>>()?;
 
         Ok(EnumerationData {
-            meta: info,
+            meta,
             type_ident,
             variants,
             trait_impls,
@@ -67,7 +67,7 @@ impl EnumerationMetaVariant {
                 let target_type = type_ref.map(TypeRef::to_ident_path);
 
                 Some(Ok(EnumerationTypeVariant {
-                    info: self,
+                    meta: self,
                     variant_ident,
                     target_type,
                 }))

@@ -54,8 +54,8 @@ impl Optimizer {
         if ctx.count > 1 {
             let variant = match ctx.mode {
                 Mode::Unknown => unreachable!(),
-                Mode::Sequence => MetaTypeVariant::Sequence(ctx.info),
-                Mode::Mixed | Mode::Choice => MetaTypeVariant::Choice(ctx.info),
+                Mode::Sequence => MetaTypeVariant::Sequence(ctx.meta),
+                Mode::Mixed | Mode::Choice => MetaTypeVariant::Choice(ctx.meta),
             };
             let type_ = MetaType::new(variant);
 
@@ -165,7 +165,7 @@ impl Optimizer {
 
 #[derive(Debug, Default)]
 struct Context {
-    info: GroupMeta,
+    meta: GroupMeta,
     mode: Mode,
     count: usize,
     occurs: ContextOccurs,
@@ -201,7 +201,7 @@ impl Context {
                 self.occurs.min = 0;
                 self.occurs.max = MaxOccurs::Bounded(0);
 
-                for element in &mut *self.info.elements {
+                for element in &mut *self.meta.elements {
                     self.occurs.update(element);
                 }
 
@@ -213,7 +213,7 @@ impl Context {
 
     fn add_element(&mut self, mut element: ElementMeta) {
         let existing = self
-            .info
+            .meta
             .elements
             .iter_mut()
             .find(|x| x.ident == element.ident);
@@ -232,7 +232,7 @@ impl Context {
                 self.occurs.update(&mut element);
             }
 
-            self.info.elements.push(element);
+            self.meta.elements.push(element);
         }
     }
 }

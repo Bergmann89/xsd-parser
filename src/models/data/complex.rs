@@ -203,7 +203,7 @@ pub struct ComplexDataContent {
 #[derive(Debug)]
 pub struct ComplexDataElement<'types> {
     /// Reference to the original type information.
-    pub info: &'types ElementMeta,
+    pub meta: &'types ElementMeta,
 
     /// Occurrence of the element within it's parent type.
     pub occurs: Occurs,
@@ -241,7 +241,7 @@ pub struct ComplexDataElement<'types> {
 #[derive(Debug)]
 pub struct ComplexDataAttribute<'types> {
     /// Reference to the original type information.
-    pub info: &'types AttributeMeta,
+    pub meta: &'types AttributeMeta,
 
     /// Identifier of the attribute.
     pub ident: Ident2,

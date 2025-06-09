@@ -26,7 +26,7 @@ pub struct UnionData<'types> {
 #[derive(Debug)]
 pub struct UnionTypeVariant<'types> {
     /// Reference to the original type information.
-    pub info: &'types UnionMetaType,
+    pub meta: &'types UnionMetaType,
 
     /// The type that is stored by the this variant.
     pub target_type: IdentPath,

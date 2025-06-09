@@ -228,7 +228,7 @@ impl EnumerationData<'_> {
 impl EnumerationTypeVariant<'_> {
     fn render_serializer_variant(&self) -> TokenStream {
         let Self {
-            info,
+            meta,
             target_type,
             variant_ident,
         } = self;
@@ -238,7 +238,7 @@ impl EnumerationTypeVariant<'_> {
                 Self::#variant_ident(x) => x.serialize_bytes(),
             }
         } else {
-            let name = info.ident.name.to_string();
+            let name = meta.ident.name.to_string();
             let name = Literal::string(&name);
 
             quote! {
@@ -735,7 +735,7 @@ impl ComplexDataStruct<'_> {
             let attrib_name = &attrib.tag_name;
             let field_ident = &attrib.ident;
 
-            if attrib.info.is_any() {
+            if attrib.meta.is_any() {
                 quote! {
                     bytes.extend_attributes(self.value.#field_ident.attributes());
                 }
