@@ -6,4 +6,5 @@ mod factur_x;
 mod ideal_merchant_acquirer;
 mod shiporder;
 mod xcb;
+mod xml_catalogs;
 mod xml_schema;
