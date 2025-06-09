@@ -61,3 +61,15 @@ mod quick_xml {
 
     include!("expected/quick_xml.rs");
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod serde_xml_rs {
+    include!("expected/serde_xml_rs.rs");
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod serde_quick_xml {
+    #![allow(unused_imports)]
+
+    include!("expected/serde_quick_xml.rs");
+}

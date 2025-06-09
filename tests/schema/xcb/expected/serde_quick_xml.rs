@@ -47,6 +47,12 @@ pub enum XcbTypeContent {
     #[serde(rename = "import")]
     Import(String),
 }
+impl XcbType {
+    #[must_use]
+    pub fn default_extension_multiword() -> bool {
+        false
+    }
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct RequestType {
     #[serde(rename = "@name")]
