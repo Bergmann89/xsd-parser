@@ -4,7 +4,7 @@ use std::marker::PhantomData;
 use std::str::{from_utf8, FromStr};
 
 use quick_xml::{
-    events::{attributes::Attribute, BytesStart, Event},
+    events::{attributes::Attribute, BytesStart, BytesText, Event},
     name::{Namespace, QName, ResolveResult},
 };
 use thiserror::Error;
@@ -460,7 +460,11 @@ where
     where
         R: XmlReader,
     {
-        T::deserialize_bytes(reader, self.data[..].trim_ascii())
+        let text = from_utf8(&self.data[..])?;
+        let text = BytesText::from_escaped(text);
+        let text = text.unescape()?;
+
+        T::deserialize_bytes(reader, text.as_bytes().trim_ascii())
     }
 }
 
