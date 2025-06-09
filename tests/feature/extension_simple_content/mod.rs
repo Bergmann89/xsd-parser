@@ -1,4 +1,4 @@
-use xsd_parser::{config::SerdeSupport, Config, IdentType};
+use xsd_parser::{Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -27,7 +27,7 @@ fn generate_serde_xml_rs() {
         "tests/feature/extension_simple_content/schema.xsd",
         "tests/feature/extension_simple_content/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
+            .with_serde_xml_rs()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }
@@ -38,7 +38,7 @@ fn generate_serde_quick_xml() {
         "tests/feature/extension_simple_content/schema.xsd",
         "tests/feature/extension_simple_content/expected/serde_quick_xml.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
+            .with_serde_quick_xml()
             .with_generate([(IdentType::Element, "tns:Foo")]),
     );
 }

@@ -1,4 +1,4 @@
-use xsd_parser::{config::SerdeSupport, Config, IdentType};
+use xsd_parser::{Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -7,13 +7,11 @@ fn none() {
     generate_test(
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/none.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::None)
-            .with_generate([
-                (IdentType::Type, "tns:MyAll"),
-                (IdentType::Type, "tns:MyChoice"),
-                (IdentType::Type, "tns:MySequence"),
-            ]),
+        Config::test_default().with_generate([
+            (IdentType::Type, "tns:MyAll"),
+            (IdentType::Type, "tns:MyChoice"),
+            (IdentType::Type, "tns:MySequence"),
+        ]),
     );
 }
 
@@ -23,7 +21,7 @@ fn quick_xml() {
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/quick_xml.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
+            .with_serde_quick_xml()
             .with_generate([
                 (IdentType::Type, "tns:MyAll"),
                 (IdentType::Type, "tns:MyChoice"),
@@ -37,12 +35,10 @@ fn serde_xml_rs() {
     generate_test(
         "tests/generator/serde_support/schema.xsd",
         "tests/generator/serde_support/expected/serde_xml_rs.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
-            .with_generate([
-                (IdentType::Type, "tns:MyAll"),
-                (IdentType::Type, "tns:MyChoice"),
-                (IdentType::Type, "tns:MySequence"),
-            ]),
+        Config::test_default().with_serde_xml_rs().with_generate([
+            (IdentType::Type, "tns:MyAll"),
+            (IdentType::Type, "tns:MyChoice"),
+            (IdentType::Type, "tns:MySequence"),
+        ]),
     );
 }

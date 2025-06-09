@@ -28,9 +28,8 @@ use std::str::FromStr;
 
 use inflector::Inflector;
 use quote::format_ident;
-use smallvec::{smallvec, SmallVec};
 
-use crate::config::{DynTypeTraits, RendererFlags, SerdeSupport};
+use crate::config::{DynTypeTraits, RendererFlags};
 use crate::models::{
     code::{IdentPath, Module},
     data::{DataTypeVariant, DataTypes},
@@ -42,7 +41,8 @@ pub use self::error::Error;
 pub use self::meta::MetaData;
 pub use self::steps::{
     DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-    QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+    QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsTypesRenderStep,
+    TypesRenderStep, WithNamespaceTraitRenderStep,
 };
 
 /// The [`Renderer`] is the central orchestrator for Rust code generation from
@@ -195,21 +195,12 @@ impl<'types> Renderer<'types> {
                     _ => IdentPath::from_ident(x.clone()),
                 });
 
-                let serde: SmallVec<[IdentPath; 2]> = if meta.serde_support == SerdeSupport::None {
-                    smallvec![]
-                } else {
-                    smallvec![
-                        IdentPath::from_str("serde::Serialize").unwrap(),
-                        IdentPath::from_str("serde::de::DeserializeOwned").unwrap()
-                    ]
-                };
-
                 let as_any = IdentPath::from_parts(
                     Some(meta.xsd_parser_crate.clone()),
                     format_ident!("AsAny"),
                 );
 
-                traits.chain(serde).chain(Some(as_any)).collect()
+                traits.chain(Some(as_any)).collect()
             }
             DynTypeTraits::Custom(x) => x,
         };

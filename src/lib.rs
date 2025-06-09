@@ -37,8 +37,15 @@ pub use self::models::{
     Ident, IdentType, Name,
 };
 pub use self::pipeline::{
-    generator::Generator, interpreter::Interpreter, optimizer::Optimizer, parser::Parser,
-    renderer::Renderer,
+    generator::Generator,
+    interpreter::Interpreter,
+    optimizer::Optimizer,
+    parser::Parser,
+    renderer::{
+        DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
+        QuickXmlSerializeRenderStep, Renderer, SerdeQuickXmlTypesRenderStep,
+        SerdeXmlRsTypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+    },
 };
 pub use self::traits::{AsAny, VecHelper, WithIdent, WithNamespace};
 
@@ -53,13 +60,7 @@ use self::config::{
     OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
 };
 use self::macros::{assert_eq, unreachable};
-use self::pipeline::{
-    parser::resolver::{FileResolver, ManyResolver},
-    renderer::{
-        DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-        QuickXmlSerializeRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
-    },
-};
+use self::pipeline::parser::resolver::{FileResolver, ManyResolver};
 
 /// Generates rust code from a XML schema using the passed `config`.
 ///
@@ -270,8 +271,7 @@ pub fn exec_generator<'types>(
     let mut generator = Generator::new(types)
         .flags(config.flags)
         .box_flags(config.box_flags)
-        .typedef_mode(config.typedef_mode)
-        .serde_support(config.serde_support);
+        .typedef_mode(config.typedef_mode);
 
     if let Some(any_type) = config.any_type {
         generator = generator.any_type(any_type).map_err(GeneratorError::from)?;
@@ -334,6 +334,10 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
     for step in config.steps {
         match step {
             RenderStep::Types => renderer = renderer.with_step(TypesRenderStep),
+            RenderStep::TypesSerdeXmlRs => renderer = renderer.with_step(SerdeXmlRsTypesRenderStep),
+            RenderStep::TypesSerdeQuickXml => {
+                renderer = renderer.with_step(SerdeQuickXmlTypesRenderStep);
+            }
             RenderStep::Defaults => renderer = renderer.with_step(DefaultsRenderStep),
             RenderStep::NamespaceConstants => {
                 renderer = renderer.with_step(NamespaceConstantsRenderStep);

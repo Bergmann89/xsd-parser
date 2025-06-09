@@ -30,19 +30,14 @@ use anyhow::Error;
 use clap::Parser as ClapParser;
 use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote, ToTokens};
-use smallvec::{smallvec, SmallVec};
 use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::{
-    config::{GeneratorFlags, SerdeSupport, TypedefMode},
-    models::{
-        data::{
-            ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-            ComplexDataEnum, ComplexDataStruct, CustomData, DataTypeVariant, DynamicData,
-            EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, UnionData,
-            UnionTypeVariant,
-        },
-        schema::xs::Use,
+    config::{GeneratorFlags, TypedefMode},
+    models::data::{
+        ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
+        ComplexDataStruct, CustomData, DataTypeVariant, DynamicData, EnumerationData,
+        EnumerationTypeVariant, Occurs, ReferenceData, UnionData, UnionTypeVariant,
     },
     pipeline::{
         parser::resolver::FileResolver,
@@ -327,20 +322,10 @@ impl CustomRenderStep {
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
         let EnumerationTypeVariant {
-            meta,
             variant_ident,
             target_type,
+            ..
         } = var;
-
-        let serde = if ctx.serde_support == SerdeSupport::None {
-            None
-        } else if meta.type_.is_some() {
-            Some(quote!(#[serde(other)]))
-        } else {
-            let name = format!("{}", meta.ident.name);
-
-            Some(quote!(#[serde(rename = #name)]))
-        };
 
         let target_type = target_type.as_ref().map(|target_type| {
             let target_type = ctx.resolve_type_for_module(target_type);
@@ -349,7 +334,6 @@ impl CustomRenderStep {
         });
 
         quote! {
-            #serde
             #variant_ident #target_type,
         }
     }
@@ -409,20 +393,11 @@ impl CustomRenderStep {
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
         let variant_ident = &el.variant_ident;
+
         let target_type = ctx.resolve_type_for_module(&el.target_type);
         let target_type = el.occurs.make_type(&target_type, el.need_indirection);
 
-        let serde = match ctx.serde_support {
-            SerdeSupport::None => None,
-            SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = el.meta.ident.name.to_string();
-
-                Some(quote!(#[serde(rename = #name)]))
-            }
-        };
-
         quote! {
-            #serde
             #variant_ident(#target_type),
         }
     }
@@ -435,7 +410,7 @@ impl CustomRenderStep {
         let attributes = ty
             .attributes
             .iter()
-            .map(|attrib| self.render_complex_struct_attrib(attrib, type_ident, ctx));
+            .map(|attrib| self.render_complex_struct_attrib(attrib, ctx));
         let fields = ty
             .elements()
             .iter()
@@ -471,45 +446,19 @@ impl CustomRenderStep {
     fn render_complex_struct_attrib(
         &self,
         attrib: &ComplexDataAttribute<'_>,
-        type_ident: &Ident2,
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
         let field_ident = &attrib.ident;
+
         let target_type = ctx.resolve_type_for_module(&attrib.target_type);
-        let default = if attrib.default_value.is_some() {
-            let default_path = format!("{type_ident}::default_{field_ident}");
-
-            quote!(default = #default_path,)
-        } else if attrib.meta.use_ == Use::Optional {
-            quote!(default,)
+        let target_type = if attrib.is_option {
+            quote!(Option<#target_type>)
         } else {
-            quote!()
+            target_type
         };
 
-        let serde = match ctx.serde_support {
-            SerdeSupport::None => None,
-            SerdeSupport::QuickXml => {
-                let name = format!("@{}", attrib.meta.ident.name);
-
-                Some(quote!(#[serde(#default rename = #name)]))
-            }
-            SerdeSupport::SerdeXmlRs => {
-                let name = format!("{}", attrib.meta.ident.name);
-
-                Some(quote!(#[serde(#default rename = #name)]))
-            }
-        };
-
-        if attrib.is_option {
-            quote! {
-                #serde
-                pub #field_ident: Option<#target_type>,
-            }
-        } else {
-            quote! {
-                #serde
-                pub #field_ident: #target_type,
-            }
+        quote! {
+            pub #field_ident: #target_type,
         }
     }
 
@@ -519,27 +468,14 @@ impl CustomRenderStep {
         ctx: &Context<'_, '_>,
     ) -> TokenStream {
         let field_ident = &field.field_ident;
+
         let target_type = ctx.resolve_type_for_module(&field.target_type);
         let target_type = field
             .occurs
             .make_type(&target_type, field.need_indirection)
             .unwrap();
 
-        let serde = match ctx.serde_support {
-            SerdeSupport::None => None,
-            SerdeSupport::QuickXml | SerdeSupport::SerdeXmlRs => {
-                let name = field.meta.ident.name.to_string();
-                let default = match field.occurs {
-                    Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
-                    Occurs::Optional | Occurs::DynamicList => quote!(default,),
-                };
-
-                Some(quote!(#[serde(#default rename = #name)]))
-            }
-        };
-
         quote! {
-            #serde
             pub #field_ident: #target_type,
         }
     }
@@ -551,17 +487,8 @@ impl CustomRenderStep {
     ) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&content.target_type);
         let target_type = content.occurs.make_type(&target_type, false)?;
-        let serde_default = (content.min_occurs == 0).then(|| quote!(default,));
-        let serde = match (ctx.serde_support, content.is_simple) {
-            (SerdeSupport::None, _) => None,
-            (SerdeSupport::QuickXml, true) => {
-                Some(quote!(#[serde(#serde_default rename = "$text")]))
-            }
-            (_, _) => Some(quote!(#[serde(#serde_default rename = "$value")])),
-        };
 
         Some(quote! {
-            #serde
             pub content: #target_type,
         })
     }
@@ -574,22 +501,8 @@ where
     I: IntoIterator,
     I::Item: Display,
 {
-    let serde: SmallVec<[Ident2; 2]> = if ctx.serde_support == SerdeSupport::None {
-        smallvec![]
-    } else {
-        ctx.add_usings([quote!(serde::Serialize), quote!(serde::Deserialize)]);
-
-        smallvec![format_ident!("Serialize"), format_ident!("Deserialize")]
-    };
-
     let extra = extra.into_iter().map(|x| format_ident!("{x}"));
-    let types = ctx
-        .derive
-        .iter()
-        .cloned()
-        .chain(serde)
-        .chain(extra)
-        .collect::<Vec<_>>();
+    let types = ctx.derive.iter().cloned().chain(extra).collect::<Vec<_>>();
 
     if types.is_empty() {
         quote! {}

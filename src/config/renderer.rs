@@ -105,10 +105,21 @@ bitflags! {
 
 /// Configuration for the [`RenderSteps`](crate::pipeline::renderer::RenderStep)s
 /// the [`Renderer`](crate::Renderer) should use for rendering the code.
+///
+/// Caution: Some render steps are incompatible to each other (e.g. only
+/// one `TypesXXX` step should be used, because they render the general type
+/// structure). While other render steps depend on each other (e.g. `QuickXmlXXX`
+/// depends on `Types` and `NamespaceConstants`).
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum RenderStep {
-    /// Render to render the pure types.
+    /// Step to render the pure types.
     Types,
+
+    /// Step to render the types with `serde-xml-rs` support.
+    TypesSerdeXmlRs,
+
+    /// Step to render the types with `quick_xml` serde support.
+    TypesSerdeQuickXml,
 
     /// Renderer to render associated methods that return the default values
     /// of the different fields of a struct.
@@ -133,6 +144,25 @@ pub enum RenderStep {
         /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
     },
+}
+
+impl RenderStep {
+    /// Return `true` if the passed value identifies the same step, `false` otherwise.
+    #[must_use]
+    pub fn is_same(&self, other: &Self) -> bool {
+        match (self, other) {
+            (
+                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml,
+                Self::Types | Self::TypesSerdeXmlRs { .. } | Self::TypesSerdeQuickXml,
+            )
+            | (Self::Defaults, Self::Defaults)
+            | (Self::NamespaceConstants, Self::NamespaceConstants)
+            | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
+            | (Self::QuickXmlSerialize, Self::QuickXmlSerialize)
+            | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. }) => true,
+            (_, _) => false,
+        }
+    }
 }
 
 /// Defines which additional traits should be implemented by the generated traits

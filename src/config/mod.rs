@@ -16,7 +16,7 @@ use crate::models::schema::Schemas;
 use crate::InterpreterError;
 
 pub use self::generator::{
-    BoxFlags, Generate, GeneratorConfig, GeneratorFlags, SerdeSupport, TypePostfix, TypedefMode,
+    BoxFlags, Generate, GeneratorConfig, GeneratorFlags, TypePostfix, TypedefMode,
 };
 pub use self::interpreter::{InterpreterConfig, InterpreterFlags};
 pub use self::optimizer::{OptimizerConfig, OptimizerFlags};
@@ -175,7 +175,7 @@ impl Config {
     /// If the same type of renderer was already added,
     /// it is replaced by the new one.
     pub fn with_render_step(mut self, step: RenderStep) -> Self {
-        if let Some(index) = self.renderer.steps.iter().position(|x| x == &step) {
+        if let Some(index) = self.renderer.steps.iter().position(|x| x.is_same(&step)) {
             self.renderer.steps[index] = step;
         } else {
             self.renderer.steps.push(step);
@@ -213,7 +213,7 @@ impl Config {
         self.with_quick_xml_deserialize_config(false)
     }
 
-    /// Enable code generation for [`quick_xml`] deserialization
+    /// Enable render steps for [`quick_xml`] deserialization
     /// with the passed configuration.
     pub fn with_quick_xml_deserialize_config(self, boxed_deserializer: bool) -> Self {
         self.with_render_steps([
@@ -224,30 +224,31 @@ impl Config {
         ])
     }
 
-    /// Enable code generation for [`quick_xml`] serialization and deserialization
+    /// Enable render steps for [`quick_xml`] serialization and deserialization
     /// with the default settings.
     pub fn with_quick_xml(self) -> Self {
         self.with_quick_xml_serialize().with_quick_xml_deserialize()
     }
 
-    /// Enable code generation for [`quick_xml`] serialization and deserialization
+    /// Enable render steps for [`quick_xml`] serialization and deserialization
     /// with the passed configuration.
     pub fn with_quick_xml_config(self, boxed_deserializer: bool) -> Self {
         self.with_quick_xml_serialize()
             .with_quick_xml_deserialize_config(boxed_deserializer)
     }
 
-    /// Set the [`serde`] support.
-    pub fn with_serde_support(mut self, serde_support: SerdeSupport) -> Self {
-        self.generator.serde_support = serde_support;
+    /// Enable render steps for types with [`quick_xml`] serde support.
+    pub fn with_serde_quick_xml(mut self) -> Self {
+        self.optimizer.flags |= OptimizerFlags::SERDE;
 
-        if self.generator.serde_support == SerdeSupport::None {
-            self
-        } else {
-            self.optimizer.flags |= OptimizerFlags::SERDE;
+        self.with_render_steps([RenderStep::TypesSerdeQuickXml, RenderStep::Defaults])
+    }
 
-            self.with_render_steps([RenderStep::Types, RenderStep::Defaults])
-        }
+    /// Enable render steps for types with [`quick_xml`] serde support.
+    pub fn with_serde_xml_rs(mut self) -> Self {
+        self.optimizer.flags |= OptimizerFlags::SERDE;
+
+        self.with_render_steps([RenderStep::TypesSerdeXmlRs, RenderStep::Defaults])
     }
 
     /// Set the types the code should be generated for.

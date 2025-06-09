@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GeneratorFlags, NamespaceIdent, SerdeSupport},
+    config::{GeneratorFlags, NamespaceIdent},
     Config, IdentType,
 };
 
@@ -38,13 +38,11 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/feature/no_prefix/schema.xsd",
         "tests/feature/no_prefix/expected/serde_xml_rs.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
-            .with_generate([(
-                IdentType::Element,
-                Some(NamespaceIdent::namespace(b"http://example.com")),
-                "Foo",
-            )]),
+        Config::test_default().with_serde_xml_rs().with_generate([(
+            IdentType::Element,
+            Some(NamespaceIdent::namespace(b"http://example.com")),
+            "Foo",
+        )]),
     );
 }
 
@@ -54,7 +52,7 @@ fn generate_serde_quick_xml() {
         "tests/feature/no_prefix/schema.xsd",
         "tests/feature/no_prefix/expected/serde_quick_xml.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
+            .with_serde_quick_xml()
             .with_generate([(
                 IdentType::Element,
                 Some(NamespaceIdent::namespace(b"http://example.com")),

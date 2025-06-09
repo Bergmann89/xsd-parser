@@ -1,3 +1,4 @@
+use proc_macro2::Literal;
 use quote::format_ident;
 
 use crate::models::{
@@ -64,10 +65,14 @@ impl EnumerationMetaVariant {
                     format_variant_ident(&self.ident.name, self.display_name.as_deref())
                 };
 
+                let s_name = self.ident.name.to_string();
+                let b_name = Literal::byte_string(s_name.as_bytes());
                 let target_type = type_ref.map(TypeRef::to_ident_path);
 
                 Some(Ok(EnumerationTypeVariant {
                     meta: self,
+                    s_name,
+                    b_name,
                     variant_ident,
                     target_type,
                 }))

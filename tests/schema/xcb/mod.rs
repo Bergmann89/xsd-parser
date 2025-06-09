@@ -1,5 +1,5 @@
 use xsd_parser::{
-    config::{GeneratorFlags, OptimizerFlags, SerdeSupport},
+    config::{GeneratorFlags, OptimizerFlags},
     Config, IdentType,
 };
 
@@ -36,7 +36,7 @@ fn generate_serde_xml_rs() {
         "tests/schema/xcb/schema.xsd",
         "tests/schema/xcb/expected/serde_xml_rs.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
+            .with_serde_xml_rs()
             .with_optimizer_flags(OptimizerFlags::FLATTEN_COMPLEX_TYPES)
             .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
             .with_generate([(IdentType::Element, "xcb")]),
@@ -49,7 +49,7 @@ fn generate_serde_quick_xml() {
         "tests/schema/xcb/schema.xsd",
         "tests/schema/xcb/expected/serde_quick_xml.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
+            .with_serde_quick_xml()
             .with_optimizer_flags(OptimizerFlags::FLATTEN_COMPLEX_TYPES)
             .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT)
             .with_generate([(IdentType::Element, "xcb")]),

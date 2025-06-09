@@ -3,7 +3,7 @@
 use std::collections::HashSet;
 use std::ops::Not;
 
-use proc_macro2::{Ident as Ident2, Literal, TokenStream};
+use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
@@ -555,9 +555,10 @@ impl EnumerationTypeVariant<'_> {
         other: &mut Option<TokenStream>,
     ) -> Option<TokenStream> {
         let Self {
-            meta,
+            b_name,
             target_type,
             variant_ident,
+            ..
         } = self;
 
         if let Some(target_type) = target_type {
@@ -570,10 +571,8 @@ impl EnumerationTypeVariant<'_> {
             return None;
         }
 
-        let name = Literal::byte_string(meta.ident.name.to_string().as_bytes());
-
         Some(quote! {
-            #name => Ok(Self::#variant_ident),
+            #b_name => Ok(Self::#variant_ident),
         })
     }
 }

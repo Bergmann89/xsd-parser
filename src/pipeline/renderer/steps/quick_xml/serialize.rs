@@ -228,9 +228,10 @@ impl EnumerationData<'_> {
 impl EnumerationTypeVariant<'_> {
     fn render_serializer_variant(&self) -> TokenStream {
         let Self {
-            meta,
+            s_name,
             target_type,
             variant_ident,
+            ..
         } = self;
 
         if target_type.is_some() {
@@ -238,11 +239,8 @@ impl EnumerationTypeVariant<'_> {
                 Self::#variant_ident(x) => x.serialize_bytes(),
             }
         } else {
-            let name = meta.ident.name.to_string();
-            let name = Literal::string(&name);
-
             quote! {
-                Self::#variant_ident => Ok(Some(Cow::Borrowed(#name))),
+                Self::#variant_ident => Ok(Some(Cow::Borrowed(#s_name))),
             }
         }
     }

@@ -1,8 +1,4 @@
-use xsd_parser::{
-    config::{NamespaceIdent, SerdeSupport},
-    models::schema::Namespace,
-    Config, IdentType,
-};
+use xsd_parser::{config::NamespaceIdent, models::schema::Namespace, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -36,9 +32,11 @@ fn generate_serde_xml_rs() {
     generate_test(
         "tests/feature/complex_type_empty/schema.xsd",
         "tests/feature/complex_type_empty/expected/serde_xml_rs.rs",
-        Config::test_default()
-            .with_serde_support(SerdeSupport::SerdeXmlRs)
-            .with_generate([(IdentType::Type, Some(NS), "SuccessType")]),
+        Config::test_default().with_serde_xml_rs().with_generate([(
+            IdentType::Type,
+            Some(NS),
+            "SuccessType",
+        )]),
     );
 }
 
@@ -48,7 +46,7 @@ fn generate_serde_quick_xml() {
         "tests/feature/complex_type_empty/schema.xsd",
         "tests/feature/complex_type_empty/expected/serde_quick_xml.rs",
         Config::test_default()
-            .with_serde_support(SerdeSupport::QuickXml)
+            .with_serde_quick_xml()
             .with_generate([(IdentType::Type, Some(NS), "SuccessType")]),
     );
 }

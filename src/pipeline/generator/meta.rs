@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use crate::config::{BoxFlags, GeneratorFlags, SerdeSupport, TypedefMode};
+use crate::config::{BoxFlags, GeneratorFlags, TypedefMode};
 use crate::models::{code::IdentPath, meta::MetaTypes};
 
 /// Meta data of the generator process.
@@ -25,9 +25,6 @@ pub struct MetaData<'types> {
 
     /// Tells the generator how to deal with type definitions.
     pub typedef_mode: TypedefMode,
-
-    /// Tells the generator if and how to generate code to support [`serde`].
-    pub serde_support: SerdeSupport,
 
     /// Type to use to store unstructured `xs:any` elements.
     pub any_type: Option<IdentPath>,
