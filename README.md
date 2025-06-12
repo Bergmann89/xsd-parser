@@ -57,6 +57,32 @@ This library provides the following features:
 
 Below you can find a short list of the most important changes for each released version.
 
+## Version 1.2
+
+This release introduces a series of architectural improvements, enhanced flexibility in code generation, and broader schema compatibility.
+
+- **Refactored Pipeline Structure**
+  The internal code generation pipeline has been refactored to introduce a new `Renderer` step and an accompanying `DataType` model. This separation gives users more control over the rendering process, allows better extension points for customization, and prepares the architecture for further growth.
+
+- **Refactored Serde Support**
+  Support for `serde` has been moved into dedicated renderer steps. This makes it possible to support multiple versions of `serde`-based implementations, such as `serde-xml-rs` 0.7 and 0.8, without mixing code. Each renderer step now cleanly encapsulates the logic for one serialization backend.
+
+- **Implement Support for Unstructured Data**
+  Added support for `xs:any` and `xs:anyAttribute` by introducing an internal representation for unstructured XML data. This enables working with flexible or unknown schema elements and fixes a long-standing gap in schema coverage.
+
+- **Implement Support for `BigInt` and `BigUint`**
+  Schemas defining integer types without upper bounds can now be mapped to `num::BigInt` or `num::BigUint`, depending on context. This is useful when working with large numeric values.
+
+- **Improved Documentation Support**
+  XSD annotations (`xs:documentation`) are now parsed and included as Rust doc comments in the generated code, improving type-level visibility and usability.
+
+- **Different Bug Fixes and Improvements**
+  - Enum restrictions on text types are now correctly interpreted and rendered
+  - Complex types in the XML Catalog schema are now rendered correctly
+  - Introduced per-type `derive` settings for advanced customization
+  - Various naming, escaping, and formatting issues were resolved across the pipeline.
+  - Generated names of nested elements now uses the name of the parent element as prefix to prevent name collisions.
+
 ## Version 1.1
 
 - Implemented feature to generated boxed `quick_xml` deserializers to reduce stack usage during deserialization

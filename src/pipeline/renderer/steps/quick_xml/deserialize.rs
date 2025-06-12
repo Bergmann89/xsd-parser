@@ -2424,7 +2424,7 @@ impl ComplexDataElement<'_> {
 
     #[inline]
     fn treat_as_element(&self) -> bool {
-        !self.treat_as_group() && !self.treat_as_group()
+        !self.treat_as_group()
     }
 
     fn target_type_allows_any(&self, types: &MetaTypes) -> bool {
