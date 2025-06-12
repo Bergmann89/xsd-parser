@@ -1,0 +1,28 @@
+<?xml version='1.0'?>
+<xs:schema
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+  <xs:element name="rootElement">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="myElement">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="myElement">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="created_date" type="RecordDateType" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="RecordDateType">
+    <xs:attribute name="RecordDate" type="xs:date" use="required" />
+  </xs:complexType>
+</xs:schema>
