@@ -81,7 +81,7 @@ pub enum RequestTypeContent {
     #[serde(rename = "switch")]
     Switch(SwitchexprType),
     #[serde(rename = "reply")]
-    Reply(ReplyType),
+    Reply(RequestReplyType),
     #[serde(rename = "doc")]
     Doc(DocType),
 }
@@ -182,7 +182,7 @@ pub struct EnumType {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EnumTypeContent {
     #[serde(rename = "item")]
-    pub item: ItemType,
+    pub item: EnumItemType,
     #[serde(default, rename = "doc")]
     pub doc: Option<DocType>,
 }
@@ -329,12 +329,12 @@ pub enum SwitchexprTypeContent {
     Fd(AnyType),
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ReplyType {
+pub struct RequestReplyType {
     #[serde(rename = "#content")]
-    pub content: Vec<ReplyTypeContent>,
+    pub content: Vec<RequestReplyTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub enum ReplyTypeContent {
+pub enum RequestReplyTypeContent {
     #[serde(rename = "pad")]
     Pad(PadType),
     #[serde(rename = "field")]
@@ -371,14 +371,14 @@ pub enum DocTypeContent {
     See(SeeType),
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub struct ItemType {
+pub struct EnumItemType {
     #[serde(rename = "@name")]
     pub name: String,
     #[serde(rename = "#content")]
-    pub content: ItemTypeContent,
+    pub content: EnumItemTypeContent,
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub enum ItemTypeContent {
+pub enum EnumItemTypeContent {
     #[serde(rename = "value")]
     Value(DecOrHexIntegerType),
     #[serde(rename = "bit")]

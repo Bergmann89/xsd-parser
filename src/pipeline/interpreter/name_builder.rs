@@ -9,6 +9,14 @@ impl NameBuilder {
         replace: bool,
         state: &mut State<'_>,
     ) -> Self {
-        self.extend(replace, state.last_named_type(stop_at_group))
+        for x in state.type_stack.iter().rev() {
+            match x {
+                Some(x) => return self.extend(replace, Some(x.name.as_str())),
+                None if stop_at_group => break,
+                _ => (),
+            }
+        }
+
+        self
     }
 }

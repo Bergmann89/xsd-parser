@@ -299,7 +299,7 @@ impl WithDeserializer for UdxHeader {
 }
 #[derive(Debug)]
 pub struct TNewCatalogProductElementType {
-    pub mode: TNewCatalogMode,
+    pub mode: TNewCatalogProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -311,8 +311,8 @@ pub struct TNewCatalogProductElementType {
 }
 impl TNewCatalogProductElementType {
     #[must_use]
-    pub fn default_mode() -> TNewCatalogMode {
-        TNewCatalogMode::New
+    pub fn default_mode() -> TNewCatalogProductMode {
+        TNewCatalogProductMode::New
     }
 }
 impl WithSerializer for TNewCatalogProductElementType {
@@ -339,7 +339,7 @@ impl WithDeserializer for TNewCatalogProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdateProductsProductElementType {
-    pub mode: TUpdateProductsMode,
+    pub mode: TUpdateProductsProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -373,15 +373,15 @@ impl WithDeserializer for TUpdateProductsProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdatePricesProductElementType {
-    pub mode: TUpdatePricesMode,
+    pub mode: TUpdatePricesProductMode,
     pub supplier_pid: String,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub user_defined_extensions: Option<UdxProduct>,
 }
 impl TUpdatePricesProductElementType {
     #[must_use]
-    pub fn default_mode() -> TUpdatePricesMode {
-        TUpdatePricesMode::Update
+    pub fn default_mode() -> TUpdatePricesProductMode {
+        TUpdatePricesProductMode::Update
     }
 }
 impl WithSerializer for TUpdatePricesProductElementType {
@@ -408,7 +408,7 @@ impl WithDeserializer for TUpdatePricesProductElementType {
 }
 #[derive(Debug)]
 pub struct TNewProductdataProductElementType {
-    pub mode: TNewProductdataMode,
+    pub mode: TNewProductdataProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -417,8 +417,8 @@ pub struct TNewProductdataProductElementType {
 }
 impl TNewProductdataProductElementType {
     #[must_use]
-    pub fn default_mode() -> TNewProductdataMode {
-        TNewProductdataMode::New
+    pub fn default_mode() -> TNewProductdataProductMode {
+        TNewProductdataProductMode::New
     }
 }
 impl WithSerializer for TNewProductdataProductElementType {
@@ -491,7 +491,7 @@ impl WithDeserializer for DtMlstring {
 }
 #[derive(Debug)]
 pub struct CatalogDatetimeElementType {
-    pub type_: CatalogType,
+    pub type_: CatalogDatetimeType,
     pub date: String,
 }
 impl WithSerializer for CatalogDatetimeElementType {
@@ -1240,7 +1240,7 @@ impl WithDeserializer for TypePartyId {
 }
 #[derive(Debug)]
 pub struct SupplierAddressElementType {
-    pub type_: SupplierType,
+    pub type_: SupplierAddressType,
     pub contact: Vec<DtMlstring>,
     pub street: Vec<DtMlstring>,
     pub zip: Vec<DtMlstring>,
@@ -1313,17 +1313,17 @@ impl DeserializeBytes for TypeBmEcatEtimVersion {
     }
 }
 #[derive(Debug)]
-pub enum TNewCatalogMode {
+pub enum TNewCatalogProductMode {
     New,
 }
-impl SerializeBytes for TNewCatalogMode {
+impl SerializeBytes for TNewCatalogProductMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
     }
 }
-impl DeserializeBytes for TNewCatalogMode {
+impl DeserializeBytes for TNewCatalogProductMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1562,12 +1562,12 @@ impl WithDeserializer for ProductLogisticDetailsElementType {
     type Deserializer = quick_xml_deserialize::ProductLogisticDetailsElementTypeDeserializer;
 }
 #[derive(Debug)]
-pub enum TUpdateProductsMode {
+pub enum TUpdateProductsProductMode {
     Delete,
     New,
     Update,
 }
-impl SerializeBytes for TUpdateProductsMode {
+impl SerializeBytes for TUpdateProductsProductMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Delete => Ok(Some(Cow::Borrowed("delete"))),
@@ -1576,7 +1576,7 @@ impl SerializeBytes for TUpdateProductsMode {
         }
     }
 }
-impl DeserializeBytes for TUpdateProductsMode {
+impl DeserializeBytes for TUpdateProductsProductMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1590,17 +1590,17 @@ impl DeserializeBytes for TUpdateProductsMode {
     }
 }
 #[derive(Debug)]
-pub enum TUpdatePricesMode {
+pub enum TUpdatePricesProductMode {
     Update,
 }
-impl SerializeBytes for TUpdatePricesMode {
+impl SerializeBytes for TUpdatePricesProductMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Update => Ok(Some(Cow::Borrowed("update"))),
         }
     }
 }
-impl DeserializeBytes for TUpdatePricesMode {
+impl DeserializeBytes for TUpdatePricesProductMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -1612,17 +1612,17 @@ impl DeserializeBytes for TUpdatePricesMode {
     }
 }
 #[derive(Debug)]
-pub enum TNewProductdataMode {
+pub enum TNewProductdataProductMode {
     New,
 }
-impl SerializeBytes for TNewProductdataMode {
+impl SerializeBytes for TNewProductdataProductMode {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::New => Ok(Some(Cow::Borrowed("new"))),
         }
     }
 }
-impl DeserializeBytes for TNewProductdataMode {
+impl DeserializeBytes for TNewProductdataProductMode {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3069,17 +3069,17 @@ impl DeserializeBytes for DtLang {
     }
 }
 #[derive(Debug)]
-pub enum CatalogType {
+pub enum CatalogDatetimeType {
     GenerationDate,
 }
-impl SerializeBytes for CatalogType {
+impl SerializeBytes for CatalogDatetimeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::GenerationDate => Ok(Some(Cow::Borrowed("generation_date"))),
         }
     }
 }
-impl DeserializeBytes for CatalogType {
+impl DeserializeBytes for CatalogDatetimeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3091,17 +3091,17 @@ impl DeserializeBytes for CatalogType {
     }
 }
 #[derive(Debug)]
-pub enum SupplierType {
+pub enum SupplierAddressType {
     Supplier,
 }
-impl SerializeBytes for SupplierType {
+impl SerializeBytes for SupplierAddressType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::Supplier => Ok(Some(Cow::Borrowed("supplier"))),
         }
     }
 }
-impl DeserializeBytes for SupplierType {
+impl DeserializeBytes for SupplierAddressType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -3489,7 +3489,7 @@ impl DeserializeBytes for DtUnit {
 }
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
-    pub type_: ProductPriceDetailsType,
+    pub type_: ProductPriceDetailsDatetimeType,
     pub date: String,
 }
 impl WithSerializer for ProductPriceDetailsDatetimeElementType {
@@ -4062,11 +4062,11 @@ impl DeserializeBytes for ProductStatusType {
     }
 }
 #[derive(Debug)]
-pub enum ProductPriceDetailsType {
+pub enum ProductPriceDetailsDatetimeType {
     ValidStartDate,
     ValidEndDate,
 }
-impl SerializeBytes for ProductPriceDetailsType {
+impl SerializeBytes for ProductPriceDetailsDatetimeType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
             Self::ValidStartDate => Ok(Some(Cow::Borrowed("valid_start_date"))),
@@ -4074,7 +4074,7 @@ impl SerializeBytes for ProductPriceDetailsType {
         }
     }
 }
-impl DeserializeBytes for ProductPriceDetailsType {
+impl DeserializeBytes for ProductPriceDetailsDatetimeType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -9557,7 +9557,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TNewCatalogProductElementTypeDeserializer {
-        mode: super::TNewCatalogMode,
+        mode: super::TNewCatalogProductMode,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
@@ -9599,7 +9599,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TNewCatalogMode> = None;
+            let mut mode: Option<super::TNewCatalogProductMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -10608,7 +10608,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TUpdateProductsProductElementTypeDeserializer {
-        mode: super::TUpdateProductsMode,
+        mode: super::TUpdateProductsProductMode,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
@@ -10650,7 +10650,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TUpdateProductsMode> = None;
+            let mut mode: Option<super::TUpdateProductsProductMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -11637,7 +11637,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TUpdatePricesProductElementTypeDeserializer {
-        mode: super::TUpdatePricesMode,
+        mode: super::TUpdatePricesProductMode,
         supplier_pid: Option<String>,
         product_price_details: Vec<super::ProductPriceDetailsElementType>,
         user_defined_extensions: Option<super::UdxProduct>,
@@ -11659,7 +11659,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TUpdatePricesMode> = None;
+            let mut mode: Option<super::TUpdatePricesProductMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -12093,7 +12093,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct TNewProductdataProductElementTypeDeserializer {
-        mode: super::TNewProductdataMode,
+        mode: super::TNewProductdataProductMode,
         supplier_pid: Option<String>,
         product_details: Option<super::ProductDetailsElementType>,
         product_features: Vec<super::ProductFeaturesElementType>,
@@ -12123,7 +12123,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut mode: Option<super::TNewProductdataMode> = None;
+            let mut mode: Option<super::TNewProductdataProductMode> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -13060,7 +13060,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct CatalogDatetimeElementTypeDeserializer {
-        type_: super::CatalogType,
+        type_: super::CatalogDatetimeType,
         date: Option<String>,
         state: Box<CatalogDatetimeElementTypeDeserializerState>,
     }
@@ -13076,7 +13076,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::CatalogType> = None;
+            let mut type_: Option<super::CatalogDatetimeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -13427,7 +13427,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct SupplierAddressElementTypeDeserializer {
-        type_: super::SupplierType,
+        type_: super::SupplierAddressType,
         contact: Vec<super::DtMlstring>,
         street: Vec<super::DtMlstring>,
         zip: Vec<super::DtMlstring>,
@@ -13457,7 +13457,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::SupplierType> = None;
+            let mut type_: Option<super::SupplierAddressType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -25314,7 +25314,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ProductPriceDetailsDatetimeElementTypeDeserializer {
-        type_: super::ProductPriceDetailsType,
+        type_: super::ProductPriceDetailsDatetimeType,
         date: Option<String>,
         state: Box<ProductPriceDetailsDatetimeElementTypeDeserializerState>,
     }
@@ -25330,7 +25330,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut type_: Option<super::ProductPriceDetailsType> = None;
+            let mut type_: Option<super::ProductPriceDetailsDatetimeType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(

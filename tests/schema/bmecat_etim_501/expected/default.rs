@@ -71,7 +71,7 @@ pub struct UdxHeader {
 }
 #[derive(Debug)]
 pub struct TNewCatalogProductElementType {
-    pub mode: TNewCatalogMode,
+    pub mode: TNewCatalogProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -83,7 +83,7 @@ pub struct TNewCatalogProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdateProductsProductElementType {
-    pub mode: TUpdateProductsMode,
+    pub mode: TUpdateProductsProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -95,14 +95,14 @@ pub struct TUpdateProductsProductElementType {
 }
 #[derive(Debug)]
 pub struct TUpdatePricesProductElementType {
-    pub mode: TUpdatePricesMode,
+    pub mode: TUpdatePricesProductMode,
     pub supplier_pid: String,
     pub product_price_details: Vec<ProductPriceDetailsElementType>,
     pub user_defined_extensions: Option<UdxProduct>,
 }
 #[derive(Debug)]
 pub struct TNewProductdataProductElementType {
-    pub mode: TNewProductdataMode,
+    pub mode: TNewProductdataProductMode,
     pub supplier_pid: String,
     pub product_details: ProductDetailsElementType,
     pub product_features: Vec<ProductFeaturesElementType>,
@@ -121,7 +121,7 @@ pub struct DtMlstring {
 }
 #[derive(Debug)]
 pub struct CatalogDatetimeElementType {
-    pub type_: CatalogType,
+    pub type_: CatalogDatetimeType,
     pub date: String,
 }
 #[derive(Debug)]
@@ -362,7 +362,7 @@ pub struct TypePartyId {
 }
 #[derive(Debug)]
 pub struct SupplierAddressElementType {
-    pub type_: SupplierType,
+    pub type_: SupplierAddressType,
     pub contact: Vec<DtMlstring>,
     pub street: Vec<DtMlstring>,
     pub zip: Vec<DtMlstring>,
@@ -381,7 +381,7 @@ pub enum TypeBmEcatEtimVersion {
     _50,
 }
 #[derive(Debug)]
-pub enum TNewCatalogMode {
+pub enum TNewCatalogProductMode {
     New,
 }
 #[derive(Debug)]
@@ -472,17 +472,17 @@ pub struct ProductLogisticDetailsElementType {
     pub country_of_origin: Vec<String>,
 }
 #[derive(Debug)]
-pub enum TUpdateProductsMode {
+pub enum TUpdateProductsProductMode {
     Delete,
     New,
     Update,
 }
 #[derive(Debug)]
-pub enum TUpdatePricesMode {
+pub enum TUpdatePricesProductMode {
     Update,
 }
 #[derive(Debug)]
-pub enum TNewProductdataMode {
+pub enum TNewProductdataProductMode {
     New,
 }
 #[derive(Debug)]
@@ -967,11 +967,11 @@ pub enum DtLang {
     Zul,
 }
 #[derive(Debug)]
-pub enum CatalogType {
+pub enum CatalogDatetimeType {
     GenerationDate,
 }
 #[derive(Debug)]
-pub enum SupplierType {
+pub enum SupplierAddressType {
     Supplier,
 }
 #[derive(Debug)]
@@ -1076,7 +1076,7 @@ pub enum DtUnit {
 }
 #[derive(Debug)]
 pub struct ProductPriceDetailsDatetimeElementType {
-    pub type_: ProductPriceDetailsType,
+    pub type_: ProductPriceDetailsDatetimeType,
     pub date: String,
 }
 #[derive(Debug)]
@@ -1227,7 +1227,7 @@ pub enum ProductStatusType {
     Others,
 }
 #[derive(Debug)]
-pub enum ProductPriceDetailsType {
+pub enum ProductPriceDetailsDatetimeType {
     ValidStartDate,
     ValidEndDate,
 }
