@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<my_name>
+    <!-- This element has no explicit type, so it defaults to xs:anyType -->
+    <!-- It can contain any valid XML content -->
+    <some_child_element>Hello World</some_child_element>
+    <another_element attr="value">
+        <nested>Content can be arbitrary</nested>
+    </another_element>
+    <!-- Mixed content is also allowed with anyType -->
+    Some text content
+    <yet_another>42</yet_another>
+    More text
+</my_name>

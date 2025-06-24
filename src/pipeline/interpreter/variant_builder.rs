@@ -198,6 +198,15 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
             if has_content {
                 init_any!(self, Reference, ReferenceMeta::new(type_?), true);
+            } else {
+                // No actual type content found, default to xs:anyType
+                let xs = self
+                    .schemas
+                    .resolve_namespace(&Some(Namespace::XS))
+                    .ok_or_else(|| Error::UnknownNamespace(Namespace::XS.clone()))?;
+                let ident = Ident::ANY_TYPE.with_ns(Some(xs));
+
+                init_any!(self, Reference, ReferenceMeta::new(ident), true);
             }
         } else {
             let xs = self
