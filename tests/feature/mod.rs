@@ -10,6 +10,7 @@ mod complex_type_with_group;
 mod complex_type_with_repeated_content;
 mod documentation;
 mod dynamic_types;
+mod element_without_type;
 mod enumeration;
 mod enumeration_with_annotation;
 mod extension_base;
