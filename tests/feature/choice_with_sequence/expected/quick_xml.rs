@@ -234,7 +234,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => FooTypeDeserializerState::Init__,
+                    None => FooTypeDeserializerState::Content2(values, None),
                     Some(FooTypeDeserializerState::Content2(_, Some(deserializer))) => {
                         FooTypeDeserializerState::Content2(values, Some(deserializer))
                     }
@@ -280,7 +280,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => FooTypeDeserializerState::Init__,
+                    None => FooTypeDeserializerState::Content3(values, None),
                     Some(FooTypeDeserializerState::Content3(_, Some(deserializer))) => {
                         FooTypeDeserializerState::Content3(values, Some(deserializer))
                     }

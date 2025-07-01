@@ -355,7 +355,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => MyChoiceTypeContentDeserializerState::Init__,
+                    None => MyChoiceTypeContentDeserializerState::Once(values, None),
                     Some(MyChoiceTypeContentDeserializerState::Once(_, Some(deserializer))) => {
                         MyChoiceTypeContentDeserializerState::Once(values, Some(deserializer))
                     }
@@ -406,7 +406,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => MyChoiceTypeContentDeserializerState::Init__,
+                    None => MyChoiceTypeContentDeserializerState::Optional(values, None),
                     Some(MyChoiceTypeContentDeserializerState::Optional(_, Some(deserializer))) => {
                         MyChoiceTypeContentDeserializerState::Optional(values, Some(deserializer))
                     }
@@ -457,7 +457,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => MyChoiceTypeContentDeserializerState::Init__,
+                    None => MyChoiceTypeContentDeserializerState::OnceSpecify(values, None),
                     Some(MyChoiceTypeContentDeserializerState::OnceSpecify(
                         _,
                         Some(deserializer),
@@ -514,7 +514,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => MyChoiceTypeContentDeserializerState::Init__,
+                    None => MyChoiceTypeContentDeserializerState::TwiceOrMore(values, None),
                     Some(MyChoiceTypeContentDeserializerState::TwiceOrMore(
                         _,
                         Some(deserializer),

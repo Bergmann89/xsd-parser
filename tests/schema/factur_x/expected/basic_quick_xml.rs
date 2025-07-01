@@ -4016,7 +4016,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => DateTimeTypeContentDeserializerState::Init__,
+                    None => DateTimeTypeContentDeserializerState::DateTimeString(values, None),
                     Some(DateTimeTypeContentDeserializerState::DateTimeString(
                         _,
                         Some(deserializer),
@@ -19984,7 +19984,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => IndicatorTypeContentDeserializerState::Init__,
+                    None => IndicatorTypeContentDeserializerState::Indicator(values, None),
                     Some(IndicatorTypeContentDeserializerState::Indicator(
                         _,
                         Some(deserializer),

@@ -5597,7 +5597,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => BmecatElementTypeContentDeserializerState::Init__,
+                    None => BmecatElementTypeContentDeserializerState::Header(values, None),
                     Some(BmecatElementTypeContentDeserializerState::Header(
                         _,
                         Some(deserializer),
@@ -5654,7 +5654,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => BmecatElementTypeContentDeserializerState::Init__,
+                    None => BmecatElementTypeContentDeserializerState::TNewCatalog(values, None),
                     Some(BmecatElementTypeContentDeserializerState::TNewCatalog(
                         _,
                         Some(deserializer),
@@ -5714,7 +5714,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => BmecatElementTypeContentDeserializerState::Init__,
+                    None => {
+                        BmecatElementTypeContentDeserializerState::TUpdateProducts(values, None)
+                    }
                     Some(BmecatElementTypeContentDeserializerState::TUpdateProducts(
                         _,
                         Some(deserializer),
@@ -5774,7 +5776,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => BmecatElementTypeContentDeserializerState::Init__,
+                    None => BmecatElementTypeContentDeserializerState::TUpdatePrices(values, None),
                     Some(BmecatElementTypeContentDeserializerState::TUpdatePrices(
                         _,
                         Some(deserializer),
@@ -5834,7 +5836,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => BmecatElementTypeContentDeserializerState::Init__,
+                    None => {
+                        BmecatElementTypeContentDeserializerState::TNewProductdata(values, None)
+                    }
                     Some(BmecatElementTypeContentDeserializerState::TNewProductdata(
                         _,
                         Some(deserializer),
@@ -27134,7 +27138,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_manufacturer (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -27169,7 +27173,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_supplier (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38104,7 +38108,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfSurchargeElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeType(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeType(
                             _,
@@ -38171,7 +38179,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfSurchargeElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeClass(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeClass(
                             _,
@@ -38240,7 +38252,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfSurchargeElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeManner(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeManner(
                             _,
@@ -38308,7 +38324,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback.take() {
@@ -38354,7 +38370,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_price_amount (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38391,7 +38407,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_calculation (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38426,7 +38442,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfSurchargeElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfMaterialBasis(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfMaterialBasis(
                             _,
@@ -38492,7 +38512,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback.take() {
@@ -38538,7 +38558,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_threshold (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38577,7 +38597,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_shutter (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38616,7 +38636,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_credit (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38650,7 +38670,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_table (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -39584,7 +39604,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfPortcode(
+                        values, None,
+                    ),
                     Some(UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfPortcode(
                         _,
                         Some(deserializer),
@@ -39647,7 +39669,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFname(
+                        values, None,
+                    ),
                     Some(UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFname(
                         _,
                         Some(deserializer),
@@ -39709,7 +39733,9 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFvalue(
+                        values, None,
+                    ),
                     Some(UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFvalue(
                         _,
                         Some(deserializer),
@@ -39772,7 +39798,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateX(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateX(
                             _,
@@ -39837,7 +39867,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateY(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateY(
                             _,
@@ -39902,7 +39936,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateZ(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateZ(
                             _,
@@ -39967,7 +40005,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
-                    None => UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__,
+                    None => {
+                        UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfMatrixValues(
+                            values, None,
+                        )
+                    }
                     Some(
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfMatrixValues(
                             _,
@@ -40926,7 +40968,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_code (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -40963,7 +41005,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_name (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41000,7 +41042,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_boolean (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41037,7 +41079,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_numeric (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41074,7 +41116,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_range_from (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41114,7 +41156,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_range_to (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41151,7 +41193,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_string (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41188,7 +41230,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_set (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41225,7 +41267,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_select (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41262,7 +41304,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_unit_code (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41299,7 +41341,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_reference_gtin (& mut values , data) ? ; } Some (_) => unreachable ! () , }
