@@ -2815,26 +2815,26 @@ impl ComplexDataElement<'_> {
             // deserializer.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
                 quote! {
-                                    let can_have_more = values.len().saturating_add(1) < #max;
-                                    let ret = if can_have_more {
-                                        ElementHandlerOutput::from_event(event, allow_any)
-                                    } else {
-                                        ElementHandlerOutput::from_event_end(event, allow_any)
-                                    };
+                    let can_have_more = values.len().saturating_add(1) < #max;
+                    let ret = if can_have_more {
+                        ElementHandlerOutput::from_event(event, allow_any)
+                    } else {
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    };
 
-                                    match (can_have_more, &ret) {
-                                        (true, ElementHandlerOutput::Continue { .. })  => {
-                                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
+                    match (can_have_more, &ret) {
+                        (true, ElementHandlerOutput::Continue { .. })  => {
+                            fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
 
-                                            *self.state = #deserializer_state_ident::#variant_ident(values, None);
-                                        }
-                                        (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
-                                            *self.state = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
-                                        }
-                                    }
-                h
-                                    ret
-                                }
+                            *self.state = #deserializer_state_ident::#variant_ident(values, None);
+                        }
+                        (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
+                            *self.state = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
+                        }
+                    }
+
+                    ret
+                }
             }
             // Unbound, we can try a new deserializer in any case.
             (Occurs::DynamicList | Occurs::StaticList(_), _) => quote! {
@@ -2874,7 +2874,7 @@ impl ComplexDataElement<'_> {
 
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => #deserializer_state_ident::Init__,
+                        None => #deserializer_state_ident::#variant_ident(values, None),
                         Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => #deserializer_state_ident::#variant_ident(values, Some(deserializer)),
                         _ => unreachable!(),
                     };

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:Foo xmlns:tns="http://example.com">
+  <tns:Once>222</tns:Once>
+</tns:Foo>

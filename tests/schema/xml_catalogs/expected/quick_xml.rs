@@ -1124,7 +1124,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::Public(values, None),
                         Some(CatalogTypeContentDeserializerState::Public(
                             _,
                             Some(deserializer),
@@ -1178,7 +1178,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::System(values, None),
                         Some(CatalogTypeContentDeserializerState::System(
                             _,
                             Some(deserializer),
@@ -1232,7 +1232,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::Uri(values, None),
                         Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Uri(values, Some(deserializer))
                         }
@@ -1283,7 +1283,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteSystem(
                             _,
                             Some(deserializer),
@@ -1343,7 +1343,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::RewriteUri(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteUri(
                             _,
                             Some(deserializer),
@@ -1403,7 +1403,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::UriSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::UriSuffix(
                             _,
                             Some(deserializer),
@@ -1460,7 +1460,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::SystemSuffix(
                             _,
                             Some(deserializer),
@@ -1520,7 +1520,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegatePublic(
                             _,
                             Some(deserializer),
@@ -1580,7 +1580,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateSystem(
                             _,
                             Some(deserializer),
@@ -1640,7 +1640,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::DelegateUri(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateUri(
                             _,
                             Some(deserializer),
@@ -1700,7 +1700,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::NextCatalog(values, None),
                         Some(CatalogTypeContentDeserializerState::NextCatalog(
                             _,
                             Some(deserializer),
@@ -1760,7 +1760,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => CatalogTypeContentDeserializerState::Init__,
+                        None => CatalogTypeContentDeserializerState::Group(values, None),
                         Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Group(values, Some(deserializer))
                         }
@@ -3151,7 +3151,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::Public(values, None),
                         Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Public(values, Some(deserializer))
                         }
@@ -3202,7 +3202,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::System(values, None),
                         Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::System(values, Some(deserializer))
                         }
@@ -3253,7 +3253,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::Uri(values, None),
                         Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Uri(values, Some(deserializer))
                         }
@@ -3304,7 +3304,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteSystem(
                             _,
                             Some(deserializer),
@@ -3364,7 +3364,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::RewriteUri(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteUri(
                             _,
                             Some(deserializer),
@@ -3421,7 +3421,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::UriSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::UriSuffix(
                             _,
                             Some(deserializer),
@@ -3477,7 +3477,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::SystemSuffix(
                             _,
                             Some(deserializer),
@@ -3537,7 +3537,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(GroupTypeContentDeserializerState::DelegatePublic(
                             _,
                             Some(deserializer),
@@ -3597,7 +3597,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateSystem(
                             _,
                             Some(deserializer),
@@ -3657,7 +3657,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::DelegateUri(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateUri(
                             _,
                             Some(deserializer),
@@ -3714,7 +3714,7 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
-                        None => GroupTypeContentDeserializerState::Init__,
+                        None => GroupTypeContentDeserializerState::NextCatalog(values, None),
                         Some(GroupTypeContentDeserializerState::NextCatalog(
                             _,
                             Some(deserializer),
