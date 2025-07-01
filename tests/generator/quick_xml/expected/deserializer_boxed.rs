@@ -55,7 +55,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Box::new(Self {
                 content: None,
@@ -742,7 +742,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Box::new(Self {
                 once: None,

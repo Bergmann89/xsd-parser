@@ -899,7 +899,7 @@ impl ComplexDataEnum<'_> {
             quote! {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
         });
@@ -1359,7 +1359,7 @@ impl ComplexDataStruct<'_> {
         let need_default_handler = !self.allow_any_attribute || any_attribute.is_some();
         let default_attrib_handler = need_default_handler.then(|| {
             let body = any_attribute
-                .unwrap_or_else(|| quote! { reader.raise_unexpected_attrib(attrib)?; });
+                .unwrap_or_else(|| quote! { reader.raise_unexpected_attrib_checked(attrib)?; });
 
             if has_normal_attributes {
                 quote! {

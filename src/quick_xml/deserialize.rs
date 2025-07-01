@@ -510,6 +510,45 @@ pub trait DeserializeReader: XmlReader {
         )))
     }
 
+    /// Raises an [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) error
+    /// for the given attribute if it is not globally allowed (e.g., an XSI attribute).
+    ///
+    /// This method checks if the attribute is not globally allowed using
+    /// [`is_globally_allowed_attrib`](DeserializeReader::is_globally_allowed_attrib)
+    /// and, if so, raises the error. Otherwise, it returns `Ok(())`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`UnexpectedAttribute`](ErrorKind::UnexpectedAttribute) if the
+    /// attribute is not globally allowed.
+    fn raise_unexpected_attrib_checked(&self, attrib: Attribute<'_>) -> Result<(), Error> {
+        if !self.is_globally_allowed_attrib(&attrib) {
+            self.raise_unexpected_attrib(attrib)?;
+        }
+
+        Ok(())
+    }
+
+    /// Returns `true` if the given attribute is a globally allowed XML Schema
+    /// Instance (XSI) attribute, `false` otherwise.
+    ///
+    /// Specifically, this checks if the attribute is in the `xsi` namespace and
+    /// has a local name of `schemaLocation`, `noNamespaceSchemaLocation`, `type`,
+    /// or `nil`. These attributes are globally valid and do not need to be
+    /// explicitly declared in the XML schema.
+    fn is_globally_allowed_attrib(&self, attrib: &Attribute<'_>) -> bool {
+        if let (ResolveResult::Bound(x), local) = self.resolve(attrib.key, true) {
+            let local = local.as_ref();
+            x.0 == &**crate::models::schema::Namespace::XSI
+                && (local == b"schemaLocation"
+                    || local == b"noNamespaceSchemaLocation"
+                    || local == b"type"
+                    || local == b"nil")
+        } else {
+            false
+        }
+    }
+
     /// Try to resolve the local name of the passed qname and the expected namespace.
     ///
     /// Checks if the passed [`QName`] `name` matches the expected namespace `ns`

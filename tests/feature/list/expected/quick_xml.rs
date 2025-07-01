@@ -101,7 +101,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut a_list, b"a-list", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {

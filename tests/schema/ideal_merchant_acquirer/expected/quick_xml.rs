@@ -821,7 +821,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -1255,7 +1255,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 merchant_id: None,
@@ -1589,7 +1589,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut id, b"Id", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -2099,7 +2099,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut id, b"Id", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -2540,7 +2540,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut id, b"Id", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -2689,7 +2689,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut id, b"Id", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -3730,7 +3730,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut encoding, b"Encoding", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -3817,7 +3817,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut algorithm, b"Algorithm", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -3913,7 +3913,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut algorithm, b"Algorithm", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -4159,7 +4159,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -4570,7 +4570,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -5095,7 +5095,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -5311,7 +5311,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -5681,7 +5681,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -6183,7 +6183,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -6559,7 +6559,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 transform: Vec::new(),
@@ -6770,7 +6770,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut algorithm, b"Algorithm", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6864,7 +6864,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content_60: None,
@@ -7417,7 +7417,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 modulus: None,
@@ -9152,7 +9152,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut algorithm, b"Algorithm", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -10163,7 +10163,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 x509_issuer_name: None,

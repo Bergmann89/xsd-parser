@@ -586,7 +586,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 exchanged_document_context: None,
@@ -1072,7 +1072,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 business_process_specified_document_context_parameter: None,
@@ -1428,7 +1428,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 id: None,
@@ -1858,7 +1858,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 applicable_header_trade_agreement: None,
@@ -2315,7 +2315,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 id: None,
@@ -2535,7 +2535,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut scheme_id, b"schemeID", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -2669,7 +2669,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -2807,7 +2807,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -3206,7 +3206,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 buyer_reference: None,
@@ -3755,7 +3755,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 state: Box::new(HeaderTradeDeliveryTypeDeserializerState::Init__),
@@ -3835,7 +3835,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 invoice_currency_code: None,
@@ -4202,7 +4202,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut format, b"format", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -4347,7 +4347,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -4489,7 +4489,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 name: None,
@@ -5023,7 +5023,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 issuer_assigned_id: None,
@@ -5244,7 +5244,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,
@@ -5388,7 +5388,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 tax_basis_total_amount: None,
@@ -5924,7 +5924,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 id: None,
@@ -6123,7 +6123,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 country_id: None,
@@ -6336,7 +6336,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 id: None,
@@ -6551,7 +6551,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut currency_id, b"currencyID", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6685,7 +6685,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: None,

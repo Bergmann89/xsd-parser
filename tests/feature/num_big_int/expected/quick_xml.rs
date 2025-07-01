@@ -79,7 +79,7 @@ pub mod tns {
                     ) {
                         reader.read_attrib(&mut b_int, b"b-int", &attrib.value)?;
                     } else {
-                        reader.raise_unexpected_attrib(attrib)?;
+                        reader.raise_unexpected_attrib_checked(attrib)?;
                     }
                 }
                 Ok(Self {

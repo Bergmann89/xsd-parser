@@ -5181,7 +5181,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut version, b"version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6096,7 +6096,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 generator_info: None,
@@ -6721,7 +6721,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 product: Vec::new(),
@@ -6946,7 +6946,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7177,7 +7177,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut prev_version, b"prev_version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7402,7 +7402,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 product: Vec::new(),
@@ -7634,7 +7634,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 language: Vec::new(),
@@ -8543,7 +8543,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 buyer_id: Vec::new(),
@@ -8860,7 +8860,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 supplier_id: Vec::new(),
@@ -9363,7 +9363,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_version: None,
@@ -9608,7 +9608,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -10659,7 +10659,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -11668,7 +11668,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -12132,7 +12132,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut mode, b"mode", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -12794,7 +12794,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut default, b"default", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -12942,7 +12942,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut lang, b"lang", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -13085,7 +13085,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -13308,7 +13308,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -13466,7 +13466,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -14322,7 +14322,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 mime: Vec::new(),
@@ -14558,7 +14558,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 description_short: Vec::new(),
@@ -16115,7 +16115,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 reference_feature_system_name: None,
@@ -16568,7 +16568,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 order_unit: None,
@@ -17332,7 +17332,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 datetime: Vec::new(),
@@ -17908,7 +17908,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_mime_info: None,
@@ -21125,7 +21125,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut quantity, b"quantity", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -21665,7 +21665,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 customs_tariff_number: Vec::new(),
@@ -22095,7 +22095,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_mime_info: None,
@@ -23831,7 +23831,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 mime_source: Vec::new(),
@@ -24233,7 +24233,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -24383,7 +24383,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -24531,7 +24531,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -24691,7 +24691,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -24843,7 +24843,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 fname: Vec::new(),
@@ -25339,7 +25339,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -25582,7 +25582,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut price_type, b"price_type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -26291,7 +26291,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 price_unit: None,
@@ -26610,7 +26610,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_mime: Vec::new(),
@@ -26835,7 +26835,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -27352,7 +27352,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_additional_price_factor: None,
@@ -27693,7 +27693,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_country_branch_number: Vec::new(),
@@ -27922,7 +27922,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_country_branch_supplier_id: Vec::new(),
@@ -28162,7 +28162,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_packing_unit: Vec::new(),
@@ -28406,7 +28406,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_netvolume: None,
@@ -29239,7 +29239,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_reach_listdate: None,
@@ -29837,7 +29837,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_hazardous_substances: Vec::new(),
@@ -32232,7 +32232,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_surcharge: Vec::new(),
@@ -32462,7 +32462,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_warranty_business: None,
@@ -32792,7 +32792,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_product_etim_release_date: None,
@@ -33033,7 +33033,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_reference_feature_mc_id: None,
@@ -33594,7 +33594,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_product_characteristic: Vec::new(),
@@ -33822,7 +33822,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 customs_number: None,
@@ -34063,7 +34063,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_mime_source: Vec::new(),
@@ -35058,7 +35058,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut country, b"country", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok (Self { type_ : type_ . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("type" . into ()))) ? , country : country . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("country" . into ()))) ? , content : None , state : Box :: new (UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementTypeDeserializerState :: Init__) , })
@@ -35217,7 +35217,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut country, b"country", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok (Self { type_ : type_ . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("type" . into ()))) ? , country : country . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("country" . into ()))) ? , content : None , state : Box :: new (UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementTypeDeserializerState :: Init__) , })
@@ -35398,7 +35398,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_quantity_min: None,
@@ -37020,7 +37020,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_un_number: None,
@@ -37462,7 +37462,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -39115,7 +39115,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -40290,7 +40290,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -41774,7 +41774,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_matrix_value: Vec::new(),
@@ -42008,7 +42008,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 udx_edxf_matrix_source_value: None,

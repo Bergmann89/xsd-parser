@@ -102,7 +102,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut another_value, b"anotherValue", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {

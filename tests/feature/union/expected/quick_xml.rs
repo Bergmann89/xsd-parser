@@ -92,7 +92,7 @@ pub mod quick_xml_deserialize {
                 ) {
                     reader.read_attrib(&mut union_, b"union", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
