@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:Foo
+  xmlns:tns="http://example.com"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://example.com ../schema.xsd">
+  <tns:Once>222</tns:Once>
+</tns:Foo>

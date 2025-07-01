@@ -1215,7 +1215,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"minor-version" {
                     reader.read_attrib(&mut minor_version, b"minor-version", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -2736,7 +2736,7 @@ pub mod quick_xml_deserialize {
                         &attrib.value,
                     )?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -3965,7 +3965,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"xge" {
                     reader.read_attrib(&mut xge, b"xge", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -4766,7 +4766,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"ref" {
                     reader.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -4867,7 +4867,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"number" {
                     reader.read_attrib(&mut number, b"number", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -5571,7 +5571,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6366,7 +6366,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6448,7 +6448,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -6656,7 +6656,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7120,7 +7120,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"newname" {
                     reader.read_attrib(&mut newname, b"newname", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7210,7 +7210,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"align" {
                     reader.read_attrib(&mut align, b"align", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7308,7 +7308,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"mask" {
                     reader.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -7417,7 +7417,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"mask" {
                     reader.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -8573,7 +8573,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"mask" {
                     reader.read_attrib(&mut mask, b"mask", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -9664,7 +9664,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"value-list-name" {
                     reader.read_attrib(&mut value_list_name, b"value-list-name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -9757,7 +9757,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -11351,7 +11351,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -12364,7 +12364,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 content: Vec::new(),
@@ -13235,7 +13235,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -13713,7 +13713,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"op" {
                     reader.read_attrib(&mut op, b"op", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -14791,7 +14791,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"op" {
                     reader.read_attrib(&mut op, b"op", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -15871,7 +15871,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"ref" {
                     reader.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -16093,7 +16093,7 @@ pub mod quick_xml_deserialize {
         {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
-                reader.raise_unexpected_attrib(attrib)?;
+                reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
                 state: Box::new(PopcountTypeDeserializerState::Init__),
@@ -16877,7 +16877,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"ref" {
                     reader.read_attrib(&mut ref_, b"ref", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -16959,7 +16959,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -18536,7 +18536,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"name" {
                     reader.read_attrib(&mut name, b"name", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -18675,7 +18675,7 @@ pub mod quick_xml_deserialize {
                 if attrib.key.local_name().as_ref() == b"type" {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
@@ -18816,7 +18816,7 @@ pub mod quick_xml_deserialize {
                 } else if attrib.key.local_name().as_ref() == b"type" {
                     reader.read_attrib(&mut type_, b"type", &attrib.value)?;
                 } else {
-                    reader.raise_unexpected_attrib(attrib)?;
+                    reader.raise_unexpected_attrib_checked(attrib)?;
                 }
             }
             Ok(Self {
