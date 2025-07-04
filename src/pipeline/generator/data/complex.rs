@@ -92,7 +92,7 @@ impl<'types> ComplexData<'types> {
                 | MetaTypeVariant::Reference(_),
                 ident,
             )) => {
-                let content_ref = ctx.get_or_create_type_ref(ident.clone())?;
+                let content_ref = ctx.get_or_create_type_ref(ident)?;
                 let target_type = content_ref.to_ident_path();
 
                 (TypeMode::Simple { target_type }, &[][..])
@@ -488,7 +488,7 @@ impl<'types> ComplexDataElement<'types> {
                 (target_type, target_is_dynamic)
             }
             ElementMetaVariant::Type(type_) => {
-                let target_ref = ctx.get_or_create_type_ref(type_.clone())?;
+                let target_ref = ctx.get_or_create_type_ref(type_)?;
                 let target_type = target_ref.to_ident_path();
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
@@ -540,7 +540,7 @@ impl<'types> ComplexDataAttribute<'types> {
                 (target_type, None)
             }
             AttributeMetaVariant::Type(type_) => {
-                let target_ref = ctx.get_or_create_type_ref(type_.clone())?;
+                let target_ref = ctx.get_or_create_type_ref(type_)?;
                 let target_type = target_ref.to_ident_path();
 
                 let default_value = meta

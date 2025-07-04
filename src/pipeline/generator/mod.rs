@@ -221,6 +221,10 @@ impl<'types> Generator<'types> {
 
     /// Will fix the generator by call [`into_fixed`](Self::into_fixed) and then
     /// [`generate_type`](GeneratorFixed::generate_type).
+    ///
+    /// # Errors
+    ///
+    /// Raises an [`Error`] if the type generation failed.
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_type(self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
         self.into_fixed().generate_type(ident)
@@ -268,6 +272,10 @@ impl<'types> GeneratorFixed<'types> {
     /// This will generate the code for the passed type identifier and all
     /// dependencies of this type.
     ///
+    /// # Errors
+    ///
+    /// Raises an [`Error`] if the type generation failed.
+    ///
     /// # Examples
     ///
     /// ```ignore
@@ -277,7 +285,7 @@ impl<'types> GeneratorFixed<'types> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_type(mut self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
         self.state
-            .get_or_create_type_ref(&self.data_types.meta, ident)?;
+            .get_or_create_type_ref(&self.data_types.meta, &ident)?;
         self.generate_pending()?;
 
         Ok(self)
@@ -287,6 +295,10 @@ impl<'types> GeneratorFixed<'types> {
     ///
     /// This will generate the code for all types that are specified in
     /// the [`MetaTypes`] object passed to the generator.
+    ///
+    /// # Errors
+    ///
+    /// Raises an [`Error`] if the type generation failed.
     ///
     /// # Examples
     ///
@@ -298,7 +310,7 @@ impl<'types> GeneratorFixed<'types> {
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
         for ident in self.data_types.meta.types.items.keys() {
             self.state
-                .get_or_create_type_ref(&self.data_types.meta, ident.clone())?;
+                .get_or_create_type_ref(&self.data_types.meta, ident)?;
         }
         self.generate_pending()?;
 
@@ -311,6 +323,10 @@ impl<'types> GeneratorFixed<'types> {
     /// dependencies of these types that are specified in the [`MetaTypes`] object
     /// passed to the generator.
     ///
+    /// # Errors
+    ///
+    /// Raises an [`Error`] if the type generation failed.
+    ///
     /// # Examples
     ///
     /// ```ignore
@@ -322,7 +338,7 @@ impl<'types> GeneratorFixed<'types> {
         for ident in self.data_types.meta.types.items.keys() {
             if ident.name.is_named() {
                 self.state
-                    .get_or_create_type_ref(&self.data_types.meta, ident.clone())?;
+                    .get_or_create_type_ref(&self.data_types.meta, ident)?;
             }
         }
         self.generate_pending()?;
@@ -366,15 +382,15 @@ impl<'types> State<'types> {
     fn get_or_create_type_ref(
         &mut self,
         meta: &MetaData<'types>,
-        ident: Ident,
+        ident: &Ident,
     ) -> Result<&TypeRef, Error> {
-        if !self.cache.contains_key(&ident) {
+        if !self.cache.contains_key(ident) {
             let ty = meta
                 .types
                 .items
-                .get(&ident)
+                .get(ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let name = make_type_name(&meta.postfixes, ty, &ident);
+            let name = make_type_name(&meta.postfixes, ty, ident);
             let (module_ident, type_ident) = match &ty.variant {
                 MetaTypeVariant::BuildIn(x) => (None, format_ident!("{x}")),
                 MetaTypeVariant::Custom(x) => (None, format_ident!("{}", x.name())),
@@ -390,7 +406,7 @@ impl<'types> State<'types> {
 
             tracing::debug!("Queue new type generation: {ident}");
 
-            let boxed_elements = get_boxed_elements(&ident, ty, meta.types, &self.cache);
+            let boxed_elements = get_boxed_elements(ident, ty, meta.types, &self.cache);
             self.pending.push_back(PendingType {
                 ty,
                 ident: ident.clone(),
@@ -406,7 +422,7 @@ impl<'types> State<'types> {
             assert!(self.cache.insert(ident.clone(), type_ref).is_none());
         }
 
-        Ok(self.cache.get_mut(&ident).unwrap())
+        Ok(self.cache.get_mut(ident).unwrap())
     }
 }
 

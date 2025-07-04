@@ -51,7 +51,7 @@ impl<'a, 'types> Context<'a, 'types> {
             .get_or_insert_with(|| TraitInfos::new(self.meta.types))
     }
 
-    pub(super) fn get_or_create_type_ref(&mut self, ident: Ident) -> Result<&TypeRef, Error> {
+    pub(super) fn get_or_create_type_ref(&mut self, ident: &Ident) -> Result<&TypeRef, Error> {
         self.state.get_or_create_type_ref(self.meta, ident)
     }
 
@@ -68,7 +68,7 @@ impl<'a, 'types> Context<'a, 'types> {
             .collect::<Vec<_>>()
             .into_iter()
             .map(|ident| {
-                let type_ref = self.get_or_create_type_ref(ident.clone())?;
+                let type_ref = self.get_or_create_type_ref(&ident)?;
                 let ident = format_ident!("{}Trait", type_ref.type_ident);
                 let trait_type = type_ref.to_ident_path().with_ident(ident);
                 let trait_ident = trait_type.relative_to(&module_path);
@@ -90,7 +90,7 @@ impl<'a, 'types> Context<'a, 'types> {
             .items
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-        let type_ref = self.get_or_create_type_ref(ident.clone())?;
+        let type_ref = self.get_or_create_type_ref(ident)?;
 
         macro_rules! build_in {
             ($ty:ty) => {

@@ -26,7 +26,7 @@ impl<'types> DynamicData<'types> {
                 traits_direct
                     .iter()
                     .map(|ident| {
-                        ctx.get_or_create_type_ref(ident.clone()).map(|x| {
+                        ctx.get_or_create_type_ref(ident).map(|x| {
                             let ident = format_ident!("{}Trait", x.type_ident);
 
                             x.to_ident_path().with_ident(ident)
@@ -73,7 +73,7 @@ fn make_derived_type_data<'types>(
     };
     let ident = base_ident.unwrap_or(ident.clone());
 
-    let target_ref = ctx.get_or_create_type_ref(ident.clone())?;
+    let target_ref = ctx.get_or_create_type_ref(&ident)?;
     let target_type = target_ref.to_ident_path();
     let variant_ident = format_variant_ident(&ident.name, None);
 
