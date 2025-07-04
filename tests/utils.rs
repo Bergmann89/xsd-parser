@@ -278,6 +278,7 @@ fn quick_xml_event_cmp(a: &Event<'_>, b: &Event<'_>) -> Option<bool> {
         }
         (Event::End(a), Event::End(b)) => Some(a.name() == b.name()),
         (Event::Text(a), Event::Text(b)) => Some(a.trim_ascii() == b.trim_ascii()),
+        (Event::GeneralRef(a), Event::GeneralRef(b)) => Some(a.trim_ascii() == b.trim_ascii()),
         (Event::Eof, Event::Eof) => None,
         (_, _) => Some(false),
     }

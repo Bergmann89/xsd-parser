@@ -37,7 +37,7 @@ impl UnionMetaType {
     ) -> Result<UnionTypeVariant<'types>, Error> {
         let s_name = self.type_.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let type_ref = ctx.get_or_create_type_ref(self.type_.clone())?;
+        let type_ref = ctx.get_or_create_type_ref(&self.type_)?;
         let target_type = type_ref.to_ident_path();
         let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
 

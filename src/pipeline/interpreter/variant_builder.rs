@@ -1134,6 +1134,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         Ok(())
     }
 
+    #[allow(clippy::too_many_lines)]
     #[instrument(err, level = "trace", skip(self, f))]
     fn create_subtype_builder<F>(
         &mut self,

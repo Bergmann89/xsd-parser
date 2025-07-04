@@ -4,6 +4,7 @@ use std::marker::PhantomData;
 use std::str::{from_utf8, FromStr};
 
 use quick_xml::{
+    escape::unescape,
     events::{attributes::Attribute, BytesStart, BytesText, Event},
     name::{Namespace, QName, ResolveResult},
 };
@@ -431,7 +432,18 @@ where
     {
         match event {
             Event::Text(x) => {
-                self.data.extend_from_slice(&x.into_inner());
+                self.data.extend_from_slice(x.as_ref());
+
+                Ok(DeserializerOutput {
+                    artifact: DeserializerArtifact::Deserializer(self),
+                    event: DeserializerEvent::None,
+                    allow_any: false,
+                })
+            }
+            Event::GeneralRef(x) => {
+                self.data.push(b'&');
+                self.data.extend_from_slice(x.as_ref());
+                self.data.push(b';');
 
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -460,9 +472,10 @@ where
     where
         R: XmlReader,
     {
-        let text = from_utf8(&self.data[..])?;
-        let text = BytesText::from_escaped(text);
-        let text = text.unescape()?;
+        let text = dbg!(from_utf8(&self.data[..])?);
+        let text = dbg!(BytesText::from_escaped(text));
+        let text = dbg!(text.decode()?);
+        let text = dbg!(unescape(&text)?);
 
         T::deserialize_bytes(reader, text.as_bytes().trim_ascii())
     }
@@ -712,6 +725,7 @@ where
                 | Event::Text(_)
                 | Event::Comment(_)
                 | Event::DocType(_)
+                | Event::GeneralRef(_)
                 | Event::PI(_),
             ) => (),
             Some(event) if allow_any => {
