@@ -278,7 +278,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     pub(super) fn apply_simple_type(&mut self, ty: &SimpleBaseType) -> Result<(), Error> {
         use crate::models::schema::xs::SimpleBaseTypeContent as C;
 
-        self.type_mode = TypeMode::Simple;
+        if self.type_mode == TypeMode::Unknown {
+            self.type_mode = TypeMode::Simple;
+        }
+
         self.content_mode = ContentMode::Simple;
 
         for c in &ty.content {
@@ -996,8 +999,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             (_, _) => crate::unreachable!("Unset or invalid combination!"),
         };
 
-        tracing::debug!("{base:#?}");
-
         let mut base = base.clone();
 
         match (self.content_mode, &mut base) {
@@ -1044,8 +1045,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
             (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
         }
-
-        tracing::debug!("{:#?}", self.variant);
 
         Ok(())
     }

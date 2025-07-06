@@ -201,7 +201,7 @@ impl<'a> Interpreter<'a> {
         add!(xs, "gMonth", STRING);
         add!(xs, "gDay", STRING);
 
-        /* Date related types */
+        /* Data related types */
 
         add!(xs, "hexBinary", STRING);
         add!(xs, "base64Binary", STRING);
@@ -239,6 +239,8 @@ impl<'a> Interpreter<'a> {
         add!(xs, "NCName", STRING);
         add!(xs, "ID", STRING);
         add!(xs, "IDREF", STRING);
+
+        add!(xs, "anySimpleType", STRING);
 
         add_list!(xs, "NMTOKENS", STRING);
         add_list!(xs, "IDREFS", STRING);

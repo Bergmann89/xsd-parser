@@ -140,6 +140,7 @@ pub mod xs {
     pub type NotationType = String;
     pub type NameType = String;
     pub type QNameType = String;
+    pub type AnySimpleType = String;
     #[derive(Debug)]
     pub struct AnyType;
     pub type AnyUriType = String;
