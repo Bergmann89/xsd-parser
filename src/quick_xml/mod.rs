@@ -20,15 +20,15 @@ pub use crate::models::RawByteStr;
 
 pub use self::attributes::{filter_xmlns_attributes, write_attrib, write_attrib_opt};
 pub use self::deserialize::{
-    ContentDeserializer, DeserializeBytes, DeserializeReader, DeserializeStrError, DeserializeSync,
-    Deserializer, DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
-    ElementHandlerOutput, WithDeserializer,
+    ContentDeserializer, DeserializeBytes, DeserializeBytesFromStr, DeserializeReader,
+    DeserializeStrError, DeserializeSync, Deserializer, DeserializerArtifact, DeserializerEvent,
+    DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
 };
 pub use self::error::{Error, Kind as ErrorKind, UnionError};
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
-    BoxedSerializer, ContentSerializer, IterSerializer, SerializeBytes, SerializeSync, Serializer,
-    WithBoxedSerializer, WithSerializer,
+    BoxedSerializer, ContentSerializer, IterSerializer, SerializeBytes, SerializeBytesToString,
+    SerializeSync, Serializer, WithBoxedSerializer, WithSerializer,
 };
 
 #[cfg(feature = "async")]

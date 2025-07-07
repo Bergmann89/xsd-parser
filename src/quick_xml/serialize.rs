@@ -175,14 +175,42 @@ pub trait SerializeBytes: Sized {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error>;
 }
 
+/// Marker trait used to automatically implement [`SerializeBytes`] for any type
+/// that implements [`ToString`].
+pub trait SerializeBytesToString: ToString {}
+
 impl<X> SerializeBytes for X
 where
-    X: ToString,
+    X: SerializeBytesToString,
 {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         Ok(Some(Cow::Owned(self.to_string())))
     }
 }
+
+impl SerializeBytesToString for bool {}
+impl SerializeBytesToString for String {}
+
+impl SerializeBytesToString for u8 {}
+impl SerializeBytesToString for u16 {}
+impl SerializeBytesToString for u32 {}
+impl SerializeBytesToString for u64 {}
+impl SerializeBytesToString for usize {}
+
+impl SerializeBytesToString for i8 {}
+impl SerializeBytesToString for i16 {}
+impl SerializeBytesToString for i32 {}
+impl SerializeBytesToString for i64 {}
+impl SerializeBytesToString for isize {}
+
+impl SerializeBytesToString for f32 {}
+impl SerializeBytesToString for f64 {}
+
+#[cfg(feature = "num")]
+impl SerializeBytesToString for num::BigInt {}
+
+#[cfg(feature = "num")]
+impl SerializeBytesToString for num::BigUint {}
 
 /// Implements a [`Serializer`] for any type that implements [`SerializeBytes`].
 

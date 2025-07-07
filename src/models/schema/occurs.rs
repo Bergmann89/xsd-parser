@@ -6,6 +6,8 @@ use std::str::FromStr;
 
 use serde::{de::Error as DeError, Deserialize, Serialize};
 
+use crate::quick_xml::DeserializeBytesFromStr;
+
 /// Represents the minimum occurrence of types or elements
 pub type MinOccurs = usize;
 
@@ -131,3 +133,5 @@ impl<'de> Deserialize<'de> for MaxOccurs {
         }
     }
 }
+
+impl DeserializeBytesFromStr for MaxOccurs {}
