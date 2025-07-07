@@ -27,6 +27,7 @@ encoding_rs = "0.8"
 futures = "0.3"
 indexmap = "2.9"
 Inflector = "0.11"
+num = { version = "0.4", optional = true }
 parking_lot = "0.12"
 proc-macro2 = "1.0"
 quick-xml = { version = "0.38", features = [ "async-tokio", "encoding", "serialize" ] }
@@ -42,11 +43,11 @@ url = "2.5"
 
 [dev-dependencies]
 clap = { version = "4.5", features = [ "derive" ] }
-num = "0.4"
 serde-xml-rs = "0.8"
 serde-xml-rs-v7 = { package = "serde-xml-rs", version = "0.7" }
 text-diff = "0.4"
 tracing-subscriber = { version = "0.3", features = [ "std", "env-filter", "json", "tracing-log" ] }
+xsd-parser = { path = ".", features = [ "num" ] }
 
 [build-dependencies]
 base64 = "0.22"

@@ -367,9 +367,25 @@ pub struct DeserializeStrError<E> {
     pub error: E,
 }
 
+impl DeserializeBytes for bool {
+    fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
+        let _reader = reader;
+
+        match bytes {
+            b"TRUE" | b"True" | b"true" | b"YES" | b"Yes" | b"yes" | b"1" => Ok(true),
+            b"FALSE" | b"False" | b"false" | b"NO" | b"No" | b"no" | b"0" => Ok(false),
+            _ => Err(ErrorKind::UnknownOrInvalidValue(bytes.to_owned().into()).into()),
+        }
+    }
+}
+
+/// Marker trait used to automatically implement [`DeserializeBytes`] for any
+/// type that implements [`FromStr`].
+pub trait DeserializeBytesFromStr: FromStr {}
+
 impl<X> DeserializeBytes for X
 where
-    X: FromStr,
+    X: DeserializeBytesFromStr,
     X::Err: std::error::Error + Send + Sync + 'static,
 {
     fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
@@ -384,6 +400,29 @@ where
         })
     }
 }
+
+impl DeserializeBytesFromStr for String {}
+
+impl DeserializeBytesFromStr for u8 {}
+impl DeserializeBytesFromStr for u16 {}
+impl DeserializeBytesFromStr for u32 {}
+impl DeserializeBytesFromStr for u64 {}
+impl DeserializeBytesFromStr for usize {}
+
+impl DeserializeBytesFromStr for i8 {}
+impl DeserializeBytesFromStr for i16 {}
+impl DeserializeBytesFromStr for i32 {}
+impl DeserializeBytesFromStr for i64 {}
+impl DeserializeBytesFromStr for isize {}
+
+impl DeserializeBytesFromStr for f32 {}
+impl DeserializeBytesFromStr for f64 {}
+
+#[cfg(feature = "num")]
+impl DeserializeBytesFromStr for num::BigInt {}
+
+#[cfg(feature = "num")]
+impl DeserializeBytesFromStr for num::BigUint {}
 
 /// Implements a [`Deserializer`] for any type that implements [`DeserializeBytes`].
 #[derive(Debug)]

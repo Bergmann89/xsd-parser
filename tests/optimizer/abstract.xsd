@@ -3,7 +3,7 @@
     xmlns:tns="http://example.com"
     targetNamespace="http://example.com">
 
-    <xs:element name="Abstract" abstract="true" />
+    <xs:element name="Abstract" abstract="1" />
 
     <xs:element name="First" substitutionGroup="tns:Abstract">
         <xs:complexType>
