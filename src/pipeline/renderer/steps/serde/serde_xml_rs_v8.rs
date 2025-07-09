@@ -557,7 +557,7 @@ fn prefixed_name(ctx: &Context<'_, '_>, ident: &Ident, name: &str) -> String {
         .ns
         .as_ref()
         .and_then(|ns| ctx.meta.modules.get(ns))
-        .and_then(|x| x.name.as_ref())
+        .and_then(|x| x.prefix.as_ref())
         .map(Name::as_str);
 
     if let Some(prefix) = prefix {

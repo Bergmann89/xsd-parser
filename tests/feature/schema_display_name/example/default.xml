@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Foo>
+<Foo xmlns="http://example.com">
   <Once>222</Once>
   <OnceSpecify>444</OnceSpecify>
   <TwiceOrMore>111</TwiceOrMore>

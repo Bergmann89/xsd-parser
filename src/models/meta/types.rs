@@ -34,6 +34,9 @@ pub struct ModuleMeta {
     /// Name of the module (also used as xml prefix).
     pub name: Option<Name>,
 
+    /// Prefix of the modules namespace.
+    pub prefix: Option<Name>,
+
     /// Namespace of the module.
     pub namespace: Option<Namespace>,
 }

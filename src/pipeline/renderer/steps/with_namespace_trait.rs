@@ -116,9 +116,9 @@ fn render_trait_with_namespace(ctx: &Context<'_, '_>, type_ident: &Ident2) -> Op
     let module = ctx.types.meta.types.modules.get(ns)?;
     let xsd_parser = &ctx.xsd_parser_crate;
 
-    let (prefix, namespace) = match (&module.name, &module.namespace) {
+    let (prefix, namespace) = match (&module.prefix, &module.namespace) {
         (Some(prefix), Some(namespace)) => {
-            let prefix = prefix.to_string();
+            let prefix = prefix.as_str();
             let namespace = namespace.to_string();
 
             (quote!(Some(#prefix)), quote!(Some(#namespace)))
