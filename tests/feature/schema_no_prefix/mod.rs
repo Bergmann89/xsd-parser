@@ -8,8 +8,8 @@ use crate::utils::{generate_test, ConfigEx};
 #[test]
 fn generate_default() {
     generate_test(
-        "tests/feature/no_prefix/schema.xsd",
-        "tests/feature/no_prefix/expected/default.rs",
+        "tests/feature/schema_no_prefix/schema.xsd",
+        "tests/feature/schema_no_prefix/expected/default.rs",
         Config::test_default()
             .with_generator_flags(GeneratorFlags::USE_MODULES)
             .with_generate([(
@@ -23,8 +23,8 @@ fn generate_default() {
 #[test]
 fn generate_quick_xml() {
     generate_test(
-        "tests/feature/no_prefix/schema.xsd",
-        "tests/feature/no_prefix/expected/quick_xml.rs",
+        "tests/feature/schema_no_prefix/schema.xsd",
+        "tests/feature/schema_no_prefix/expected/quick_xml.rs",
         Config::test_default().with_quick_xml().with_generate([(
             IdentType::Element,
             Some(NamespaceIdent::namespace(b"http://example.com")),
@@ -36,8 +36,8 @@ fn generate_quick_xml() {
 #[test]
 fn generate_serde_xml_rs() {
     generate_test(
-        "tests/feature/no_prefix/schema.xsd",
-        "tests/feature/no_prefix/expected/serde_xml_rs.rs",
+        "tests/feature/schema_no_prefix/schema.xsd",
+        "tests/feature/schema_no_prefix/expected/serde_xml_rs.rs",
         Config::test_default()
             .with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove)
             .with_generate([(
@@ -51,8 +51,8 @@ fn generate_serde_xml_rs() {
 #[test]
 fn generate_serde_quick_xml() {
     generate_test(
-        "tests/feature/no_prefix/schema.xsd",
-        "tests/feature/no_prefix/expected/serde_quick_xml.rs",
+        "tests/feature/schema_no_prefix/schema.xsd",
+        "tests/feature/schema_no_prefix/expected/serde_quick_xml.rs",
         Config::test_default()
             .with_serde_quick_xml()
             .with_generate([(
@@ -68,8 +68,9 @@ fn generate_serde_quick_xml() {
 fn read_quick_xml() {
     use quick_xml::Foo;
 
-    let obj =
-        crate::utils::quick_xml_read_test::<Foo, _>("tests/feature/no_prefix/example/default.xml");
+    let obj = crate::utils::quick_xml_read_test::<Foo, _>(
+        "tests/feature/schema_no_prefix/example/default.xml",
+    );
 
     assert_eq!(obj.once, 222);
     assert_eq!(obj.optional, None);
@@ -92,7 +93,7 @@ fn write_quick_xml() {
     crate::utils::quick_xml_write_test(
         &obj,
         "Foo",
-        "tests/feature/no_prefix/example/serialize.xml",
+        "tests/feature/schema_no_prefix/example/default.xml",
     );
 }
 
@@ -101,8 +102,9 @@ fn write_quick_xml() {
 fn read_serde_xml_rs() {
     use serde_xml_rs::Foo;
 
-    let obj =
-        crate::utils::serde_xml_rs_read_test::<Foo, _>("tests/feature/no_prefix/example/serde.xml");
+    let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>(
+        "tests/feature/schema_no_prefix/example/serde.xml",
+    );
 
     assert_eq!(obj.once, 111);
     assert_eq!(obj.optional, Some(222));
@@ -116,7 +118,7 @@ fn read_serde_quick_xml() {
     use serde_quick_xml::Foo;
 
     let obj = crate::utils::serde_quick_xml_read_test::<Foo, _>(
-        "tests/feature/no_prefix/example/serde.xml",
+        "tests/feature/schema_no_prefix/example/serde.xml",
     );
 
     assert_eq!(obj.once, 111);

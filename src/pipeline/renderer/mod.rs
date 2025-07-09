@@ -33,7 +33,7 @@ use crate::config::{DynTypeTraits, RendererFlags};
 use crate::models::{
     code::{IdentPath, Module},
     data::{DataTypeVariant, DataTypes},
-    meta::ModuleMeta as TypesModule,
+    meta::ModuleMeta,
 };
 
 pub use self::context::Context;
@@ -257,14 +257,14 @@ pub trait RenderStep: Debug {
     }
 }
 
-impl TypesModule {
+impl ModuleMeta {
     pub(super) fn make_ns_const(&self) -> IdentPath {
         let ident = format_ident!(
             "NS_{}",
-            self.name
-                .as_ref()
-                .map_or_else(|| String::from("DEFAULT"), ToString::to_string)
-                .to_screaming_snake_case()
+            self.name.as_ref().or(self.prefix.as_ref()).map_or_else(
+                || String::from("DEFAULT"),
+                |name| name.as_str().to_screaming_snake_case()
+            )
         );
 
         IdentPath::from_parts([], ident)

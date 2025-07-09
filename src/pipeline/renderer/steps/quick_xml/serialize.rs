@@ -405,10 +405,16 @@ impl ComplexBase {
                     return None;
                 }
 
-                let name = module.name.as_ref()?;
                 let ns_const = ctx.resolve_type_for_serialize_module(&module.make_ns_const());
 
-                let xmlns = Literal::byte_string(format!("xmlns:{name}").as_bytes());
+                let buffer;
+                let xmlns = if let Some(prefix) = &module.prefix {
+                    buffer = format!("xmlns:{prefix}");
+                    buffer.as_bytes()
+                } else {
+                    b"xmlns"
+                };
+                let xmlns = Literal::byte_string(xmlns);
 
                 Some(quote! {
                     bytes.push_attribute((&#xmlns[..], &#ns_const[..]));

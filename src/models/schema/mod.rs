@@ -58,6 +58,9 @@ pub struct NamespaceInfo {
 
     /// Schema files associated with this namespace.
     pub schemas: Vec<SchemaId>,
+
+    /// User defined name to use for module generation for this namespace.
+    pub module_name: Option<String>,
 }
 
 /// Represents an unique id for a XML schema.
@@ -186,10 +189,17 @@ impl Schemas {
     }
 
     /// Returns a reference to a specific namespace information instance by using
-    /// the namespace id, or `None` if the schema is not known.
+    /// the namespace id.
     #[must_use]
     pub fn get_namespace_info(&self, id: &NamespaceId) -> Option<&NamespaceInfo> {
         self.namespace_infos.get(id)
+    }
+
+    /// Returns a mutable reference to a specific namespace information instance
+    /// by using the namespace id.
+    #[must_use]
+    pub fn get_namespace_info_mut(&mut self, id: &NamespaceId) -> Option<&mut NamespaceInfo> {
+        self.namespace_infos.get_mut(id)
     }
 
     /// Returns a reference to a specific namespace information instance by using
@@ -231,6 +241,7 @@ impl NamespaceInfo {
             prefix: None,
             namespace,
             schemas: Vec::new(),
+            module_name: None,
         }
     }
 }

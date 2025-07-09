@@ -391,12 +391,22 @@ impl<'a> Interpreter<'a> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn finish(mut self) -> Result<MetaTypes, Error> {
         for (id, info) in self.schemas.namespaces() {
+            let prefix = info
+                .prefix
+                .as_ref()
+                .map(ToString::to_string)
+                .map(Name::new_named);
+            let name = info
+                .module_name
+                .clone()
+                .map(Name::new_named)
+                .or_else(|| prefix.clone());
+            let namespace = info.namespace.clone();
+
             let module = ModuleMeta {
-                name: info
-                    .prefix
-                    .as_ref()
-                    .map(|prefix| Name::new_named(prefix.to_string())),
-                namespace: info.namespace.clone(),
+                name,
+                prefix,
+                namespace,
             };
 
             self.state.types.modules.insert(*id, module);

@@ -125,7 +125,10 @@ pub mod quick_xml_serialize {
                 match &mut *self.state {
                     SuccessTypeSerializerState::Init__ => {
                         *self.state = SuccessTypeSerializerState::Done__;
-                        let bytes = BytesStart::new(self.name);
+                        let mut bytes = BytesStart::new(self.name);
+                        if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                        }
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     SuccessTypeSerializerState::Done__ => return Ok(None),

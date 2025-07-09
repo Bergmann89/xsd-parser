@@ -591,7 +591,7 @@ fn make_tag_name(types: &MetaTypes, ident: &Ident) -> String {
         .ns
         .as_ref()
         .and_then(|ns| types.modules.get(ns))
-        .and_then(|module| module.name.as_ref())
+        .and_then(|module| module.prefix.as_ref())
     {
         format!("{module}:{name}")
     } else {

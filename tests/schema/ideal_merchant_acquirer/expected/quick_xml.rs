@@ -10515,6 +10515,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib(&mut bytes, "version", &self.value.version)?;
@@ -10603,6 +10604,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -10681,6 +10683,7 @@ pub mod quick_xml_serialize {
                             )?);
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -10781,6 +10784,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -10865,6 +10869,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -10928,6 +10933,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -11097,6 +11103,7 @@ pub mod quick_xml_serialize {
                         *self.state = ObjectTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -11144,6 +11151,7 @@ pub mod quick_xml_serialize {
                         *self.state = CanonicalizationMethodTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
@@ -11197,6 +11205,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
@@ -11263,6 +11272,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
@@ -11346,6 +11356,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -11467,6 +11478,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
@@ -11531,6 +11543,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -11637,6 +11650,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -11757,6 +11771,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -11866,6 +11881,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -11918,6 +11934,7 @@ pub mod quick_xml_serialize {
                         *self.state = DigestMethodTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
@@ -11986,6 +12003,7 @@ pub mod quick_xml_serialize {
                             ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -12085,6 +12103,7 @@ pub mod quick_xml_serialize {
                             )?);
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
@@ -12439,6 +12458,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
@@ -12661,6 +12681,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
