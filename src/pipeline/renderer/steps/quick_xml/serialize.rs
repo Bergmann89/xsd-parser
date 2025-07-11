@@ -437,7 +437,7 @@ impl ComplexDataEnum<'_> {
         let state_variants = self
             .elements
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx));
+            .filter_map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.represents_element().then(|| {
             quote! {
                 End__,
@@ -591,10 +591,10 @@ impl ComplexDataStruct<'_> {
         let state_variants = self
             .elements()
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx, self.is_mixed));
+            .filter_map(|x| x.render_serializer_state_variant(ctx));
         let state_content = self
             .content()
-            .map(|x| x.render_serializer_state_variant(ctx));
+            .and_then(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.serializer_need_end_state().then(|| {
             quote! {
                 End__,
@@ -861,17 +861,18 @@ impl ComplexDataContent {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_serializer_state_variant(
-        &self,
-        ctx: &Context<'_, '_>,
-    ) -> TokenStream {
+    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if self.treat_as_text() {
+            return None;
+        }
+
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
         let serializer = self.occurs.make_serializer_type(&target_type);
 
-        quote! {
+        Some(quote! {
             #variant_ident(#serializer),
-        }
+        })
     }
 
     fn render_serializer_enum_state_init(

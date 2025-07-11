@@ -518,7 +518,7 @@ impl<'types> ComplexDataElement<'types> {
         let variant_ident = format_variant_ident(&meta.ident.name, meta.display_name.as_deref());
 
         let (target_type, target_is_dynamic) = match &meta.variant {
-            ElementMetaVariant::Any(_) => {
+            ElementMetaVariant::Any { .. } => {
                 let Some(type_) = ctx.any_type.as_ref() else {
                     *allow_any = true;
 
@@ -532,13 +532,22 @@ impl<'types> ComplexDataElement<'types> {
 
                 (target_type, target_is_dynamic)
             }
-            ElementMetaVariant::Type(type_) => {
+            ElementMetaVariant::Type { type_, .. } => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
 
                 let target_type = target_ref.to_ident_path();
                 let target_type = make_path_data(mixed, target_type);
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
+
+                (target_type, target_is_dynamic)
+            }
+            ElementMetaVariant::Text => {
+                let target_type = format_ident!("String");
+                let target_type = IdentPath::from_ident(target_type);
+                let target_type = PathData::from_path(target_type);
+
+                let target_is_dynamic = false;
 
                 (target_type, target_is_dynamic)
             }
@@ -656,7 +665,7 @@ fn make_path_data(is_mixed: bool, path: IdentPath) -> PathData {
 
         PathData::from_path(mixed)
             .with_generic(path)
-            .with_using("xsd_parser::quick_xml::Mixed")
+            .with_using("xsd_parser::xml::Mixed")
     } else {
         PathData::from_path(path)
     }

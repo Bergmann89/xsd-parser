@@ -5,6 +5,7 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
+use crate::models::meta::ElementMetaVariant;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta, ElementMode,
@@ -598,7 +599,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element = ci.elements.find_or_insert(ident, |ident| {
                     ElementMeta::new(ident, type_, ElementMode::Element)
                 });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
+                crate::assert!(matches!(
+                    element.variant,
+                    ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+                ));
                 element.update(ty);
 
                 element
@@ -631,7 +638,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
                     ElementMeta::new(ident, type_, ElementMode::Element)
                 });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
+                crate::assert!(matches!(
+                    element.variant,
+                    ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+                ));
                 element.update(ty);
 
                 element

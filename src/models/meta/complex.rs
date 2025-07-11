@@ -7,7 +7,7 @@ use crate::models::{
     Ident,
 };
 
-use super::{AttributesMeta, Base, ElementsMeta, MetaTypeVariant, MetaTypes, TypeEq};
+use super::{AttributesMeta, Base, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes, TypeEq};
 
 /// Type information that contains data about a complex type.
 #[derive(Debug, Clone)]
@@ -63,15 +63,20 @@ impl TypeEq for GroupMeta {
 /* ComplexMeta */
 
 impl ComplexMeta {
+    /// Get the meta type information of the content fo this complex type.
+    #[must_use]
+    pub fn content_meta<'a>(&'a self, types: &'a MetaTypes) -> Option<&'a MetaType> {
+        self.content
+            .as_ref()
+            .and_then(|ident| types.get_resolved_type(ident))
+    }
+
     /// Returns `true` if the content of this complex type information
     /// is a [`MetaTypeVariant::All`], `false` otherwise.
     #[must_use]
     pub fn has_complex_all_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::All(_))
         )
     }
@@ -81,10 +86,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_choice_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::Choice(_))
         )
     }
@@ -94,10 +96,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_sequence_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::Sequence(_))
         )
     }
@@ -108,10 +107,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(
                 MetaTypeVariant::All(_) | MetaTypeVariant::Choice(_) | MetaTypeVariant::Sequence(_)
             )
@@ -124,10 +120,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_simple_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(
                 MetaTypeVariant::Reference(_)
                     | MetaTypeVariant::BuildIn(_)

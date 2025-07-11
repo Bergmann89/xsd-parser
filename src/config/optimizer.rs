@@ -93,5 +93,10 @@ bitflags! {
         ///
         /// See [`merge_choice_cardinalities`](crate::Optimizer::merge_choice_cardinalities) for details.
         const MERGE_CHOICE_CARDINALITIES = 1 << 11;
+
+        /// Wether to simplify complex mixed types or not.
+        ///
+        /// See [`simplify_mixed_types`](crate::Optimizer::simplify_mixed_types) for details.
+        const SIMPLIFY_MIXED_TYPES = 1 << 12;
     }
 }

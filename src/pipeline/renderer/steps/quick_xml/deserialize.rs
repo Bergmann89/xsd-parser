@@ -2434,22 +2434,6 @@ impl ComplexDataElement<'_> {
         format_ident!("handle_{ident}")
     }
 
-    #[inline]
-    fn treat_as_any(&self) -> bool {
-        self.meta.is_any()
-    }
-
-    #[inline]
-    fn treat_as_group(&self) -> bool {
-        !self.treat_as_any()
-            && (self.meta.element_mode == ElementMode::Group || self.target_is_dynamic)
-    }
-
-    #[inline]
-    fn treat_as_element(&self) -> bool {
-        !self.treat_as_group()
-    }
-
     fn target_type_allows_any(&self, types: &MetaTypes) -> bool {
         fn walk(types: &MetaTypes, visit: &mut HashSet<Ident>, ident: &Ident) -> bool {
             if !visit.insert(ident.clone()) {
@@ -2460,8 +2444,9 @@ impl ComplexDataElement<'_> {
                 Some(MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si)) => {
                     for element in &*si.elements {
                         match &element.variant {
-                            ElementMetaVariant::Any(_) => return true,
-                            ElementMetaVariant::Type(type_) => {
+                            ElementMetaVariant::Text => return false,
+                            ElementMetaVariant::Any { .. } => return true,
+                            ElementMetaVariant::Type { type_, .. } => {
                                 if walk(types, visit, type_) {
                                     return true;
                                 }
@@ -2474,11 +2459,15 @@ impl ComplexDataElement<'_> {
                 Some(MetaTypeVariant::Sequence(si)) => match si.elements.first() {
                     None => false,
                     Some(ElementMeta {
-                        variant: ElementMetaVariant::Any(_),
+                        variant: ElementMetaVariant::Any { .. },
                         ..
                     }) => true,
                     Some(ElementMeta {
-                        variant: ElementMetaVariant::Type(type_),
+                        variant: ElementMetaVariant::Text,
+                        ..
+                    }) => false,
+                    Some(ElementMeta {
+                        variant: ElementMetaVariant::Type { type_, .. },
                         ..
                     }) => walk(types, visit, type_),
                 },
@@ -2493,8 +2482,9 @@ impl ComplexDataElement<'_> {
         let mut visit = HashSet::new();
 
         match &self.meta.variant {
-            ElementMetaVariant::Any(_) => true,
-            ElementMetaVariant::Type(type_) => walk(types, &mut visit, type_),
+            ElementMetaVariant::Any { .. } => true,
+            ElementMetaVariant::Type { type_, .. } => walk(types, &mut visit, type_),
+            ElementMetaVariant::Text => false,
         }
     }
 
@@ -3444,8 +3434,15 @@ impl ComplexDataElement<'_> {
             }
         });
 
-        let need_name_matcher =
-            !self.target_is_dynamic && self.meta.element_mode == ElementMode::Element;
+        let need_name_matcher = !self.target_is_dynamic
+            && matches!(
+                &self.meta.variant,
+                ElementMetaVariant::Any { .. }
+                    | ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+            );
 
         let mut body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
