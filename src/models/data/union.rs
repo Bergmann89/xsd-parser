@@ -1,7 +1,7 @@
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    code::IdentPath,
+    data::PathData,
     meta::{UnionMeta, UnionMetaType},
 };
 
@@ -35,7 +35,7 @@ pub struct UnionTypeVariant<'types> {
     pub b_name: Literal,
 
     /// The type that is stored by the this variant.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// Identifier of this variant.
     pub variant_ident: Ident2,

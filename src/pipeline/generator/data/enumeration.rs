@@ -3,7 +3,7 @@ use quote::format_ident;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{EnumerationData, EnumerationTypeVariant},
+    data::{EnumerationData, EnumerationTypeVariant, PathData},
     meta::{EnumerationMeta, EnumerationMetaVariant},
     schema::xs::Use,
 };
@@ -67,7 +67,9 @@ impl EnumerationMetaVariant {
 
                 let s_name = self.ident.name.to_string();
                 let b_name = Literal::byte_string(s_name.as_bytes());
+
                 let target_type = type_ref.map(TypeRef::to_ident_path);
+                let target_type = target_type.map(PathData::from_path);
 
                 Some(Ok(EnumerationTypeVariant {
                     meta: self,

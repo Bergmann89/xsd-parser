@@ -4,6 +4,7 @@ use proc_macro2::{Ident as Ident2, Literal};
 use quote::format_ident;
 
 use crate::config::{BoxFlags, GeneratorFlags};
+use crate::models::data::PathData;
 use crate::models::meta::MetaTypes;
 use crate::models::{
     code::{format_field_ident, format_variant_ident, IdentPath},
@@ -152,6 +153,7 @@ impl<'types> ComplexData<'types> {
     ) -> Result<Self, Error> {
         let base = ComplexBase::new(ctx, false, false)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
+        let target_type = PathData::from_path(target_type);
 
         let mut allow_any_attribute = false;
         let attributes = attributes
@@ -206,8 +208,14 @@ impl<'types> ComplexData<'types> {
         let mut elements = elements
             .iter()
             .filter_map(|meta| {
-                ComplexDataElement::new_variant(meta, ctx, &mut allow_any, occurs.is_direct())
-                    .transpose()
+                ComplexDataElement::new_variant(
+                    meta,
+                    ctx,
+                    &mut allow_any,
+                    occurs.is_direct(),
+                    is_mixed,
+                )
+                .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
 
@@ -254,7 +262,10 @@ impl<'types> ComplexData<'types> {
 
         let mode = if has_content {
             let type_ref = ctx.current_type_ref();
+
             let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
+            let target_type = PathData::from_path(target_type);
+
             let content = ComplexDataContent {
                 occurs,
                 is_simple: false,
@@ -310,8 +321,14 @@ impl<'types> ComplexData<'types> {
         let elements = elements
             .iter()
             .filter_map(|meta| {
-                ComplexDataElement::new_field(meta, ctx, &mut allow_any, occurs.is_direct())
-                    .transpose()
+                ComplexDataElement::new_field(
+                    meta,
+                    ctx,
+                    &mut allow_any,
+                    occurs.is_direct(),
+                    is_mixed,
+                )
+                .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
 
@@ -380,7 +397,10 @@ impl<'types> ComplexData<'types> {
 
         let mode = if has_content {
             let type_ref = ctx.current_type_ref();
+
             let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
+            let target_type = PathData::from_path(target_type);
+
             let content = ComplexDataContent {
                 occurs,
                 is_simple: false,
@@ -459,10 +479,11 @@ impl<'types> ComplexDataElement<'types> {
         ctx: &mut Context<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
+        mixed: bool,
     ) -> Result<Option<Self>, Error> {
         let force_box = ctx.box_flags.intersects(BoxFlags::ENUM_ELEMENTS);
 
-        Self::new(meta, ctx, allow_any, direct_usage, force_box)
+        Self::new(meta, ctx, allow_any, direct_usage, force_box, mixed)
     }
 
     fn new_field(
@@ -470,10 +491,11 @@ impl<'types> ComplexDataElement<'types> {
         ctx: &mut Context<'_, 'types>,
         allow_any: &mut bool,
         direct_usage: bool,
+        mixed: bool,
     ) -> Result<Option<Self>, Error> {
         let force_box = ctx.box_flags.intersects(BoxFlags::STRUCT_ELEMENTS);
 
-        Self::new(meta, ctx, allow_any, direct_usage, force_box)
+        Self::new(meta, ctx, allow_any, direct_usage, force_box, mixed)
     }
 
     fn new(
@@ -482,6 +504,7 @@ impl<'types> ComplexDataElement<'types> {
         allow_any: &mut bool,
         direct_usage: bool,
         force_box: bool,
+        mixed: bool,
     ) -> Result<Option<Self>, Error> {
         let occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
         if occurs == Occurs::None {
@@ -503,13 +526,18 @@ impl<'types> ComplexDataElement<'types> {
                 };
 
                 let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
+                let target_type = PathData::from_path(target_type);
+
                 let target_is_dynamic = false;
 
                 (target_type, target_is_dynamic)
             }
             ElementMetaVariant::Type(type_) => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
+
                 let target_type = target_ref.to_ident_path();
+                let target_type = make_path_data(mixed, target_type);
+
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
                 (target_type, target_is_dynamic)
@@ -556,12 +584,15 @@ impl<'types> ComplexDataAttribute<'types> {
                 };
 
                 let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
+                let target_type = PathData::from_path(target_type);
 
                 (target_type, None)
             }
             AttributeMetaVariant::Type(type_) => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
+
                 let target_type = target_ref.to_ident_path();
+                let target_type = PathData::from_path(target_type);
 
                 let default_value = meta
                     .default
@@ -616,5 +647,17 @@ fn make_tag_name(types: &MetaTypes, ident: &Ident) -> String {
         format!("{module}:{name}")
     } else {
         name
+    }
+}
+
+fn make_path_data(is_mixed: bool, path: IdentPath) -> PathData {
+    if is_mixed {
+        let mixed = IdentPath::from_ident(format_ident!("Mixed"));
+
+        PathData::from_path(mixed)
+            .with_generic(path)
+            .with_using("xsd_parser::quick_xml::Mixed")
+    } else {
+        PathData::from_path(path)
     }
 }

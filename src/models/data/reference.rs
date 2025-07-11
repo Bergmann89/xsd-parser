@@ -1,9 +1,10 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
 
 use crate::config::TypedefMode;
-use crate::models::{code::IdentPath, meta::ReferenceMeta};
-
-use super::Occurs;
+use crate::models::{
+    data::{Occurs, PathData},
+    meta::ReferenceMeta,
+};
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::Reference`](crate::models::meta::MetaTypeVariant::Reference)
@@ -23,7 +24,7 @@ pub struct ReferenceData<'types> {
     pub type_ident: Ident2,
 
     /// Actual target type of this referenced type.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// List of traits that needs to be implemented by this type.
     pub trait_impls: Vec<TokenStream>,
