@@ -437,7 +437,7 @@ impl ComplexDataEnum<'_> {
         let state_variants = self
             .elements
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx, self.is_mixed));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.represents_element().then(|| {
             quote! {
                 End__,
@@ -864,15 +864,10 @@ impl ComplexDataElement<'_> {
     fn render_serializer_state_variant(
         &self,
         ctx: &Context<'_, '_>,
-        is_mixed: bool,
     ) -> TokenStream {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
         let serializer = self.occurs.make_serializer_type(&target_type);
-
-        if is_mixed {
-            ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::Mixed"]);
-        }
 
         quote! {
             #variant_ident(#serializer),
