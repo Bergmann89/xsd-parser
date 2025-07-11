@@ -6,6 +6,7 @@ pub mod reader;
 mod attributes;
 mod deserialize;
 mod error;
+mod mixed;
 mod serialize;
 
 pub use std::io::Write as XmlWrite;
@@ -25,6 +26,7 @@ pub use self::deserialize::{
     DeserializerOutput, DeserializerResult, ElementHandlerOutput, WithDeserializer,
 };
 pub use self::error::{Error, Kind as ErrorKind, UnionError};
+pub use self::mixed::Mixed;
 pub use self::reader::{ErrorReader, IoReader, SliceReader, XmlReader, XmlReaderSync};
 pub use self::serialize::{
     BoxedSerializer, ContentSerializer, IterSerializer, SerializeBytes, SerializeBytesToString,

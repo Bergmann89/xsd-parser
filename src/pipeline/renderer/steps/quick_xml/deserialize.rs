@@ -23,6 +23,7 @@ use super::super::super::{
     context::{Context, ValueKey},
     RenderStep,
 };
+use super::super::make_mixed;
 
 /// Implements a [`RenderStep`] that renders the code for the `quick_xml` deserialization.
 #[derive(Debug)]
@@ -746,7 +747,7 @@ impl ComplexDataEnum<'_> {
         let variants = self
             .elements
             .iter()
-            .map(|x| x.deserializer_enum_variant_decl(ctx));
+            .map(|x| x.deserializer_enum_variant_decl(ctx, self.is_mixed));
 
         let code = quote! {
             #[derive(Debug)]
@@ -775,10 +776,11 @@ impl ComplexDataEnum<'_> {
         let store_elements = self
             .elements
             .iter()
-            .map(|x| x.deserializer_enum_variant_fn_store(ctx));
+            .map(|x| x.deserializer_enum_variant_fn_store(ctx, self.is_mixed));
         let handle_elements = self.elements.iter().map(|x| {
             x.deserializer_enum_variant_fn_handle(
                 ctx,
+                self.is_mixed,
                 represents_element,
                 &boxed_deserializer_ident(boxed_deserializer, deserializer_ident),
                 deserializer_state_ident,
@@ -807,17 +809,17 @@ impl ComplexDataEnum<'_> {
         let elements = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_element(ctx))
+            .filter_map(|x| x.deserializer_enum_variant_init_element(ctx, self.is_mixed))
             .collect::<Vec<_>>();
         let groups = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, !allow_any))
+            .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, self.is_mixed, !allow_any))
             .collect::<Vec<_>>();
         let any = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_any(ctx))
+            .filter_map(|x| x.deserializer_enum_variant_init_any(ctx, self.is_mixed))
             .collect::<Vec<_>>();
 
         let x = if elements.is_empty() {
@@ -1027,7 +1029,7 @@ impl ComplexDataEnum<'_> {
         let handlers_create = self
             .elements
             .iter()
-            .map(|x| x.deserializer_enum_variant_fn_next_create(ctx));
+            .map(|x| x.deserializer_enum_variant_fn_next_create(ctx, self.is_mixed));
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(core::mem::replace),
@@ -1109,16 +1111,18 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_decl(ctx));
+        let text_before = self.is_mixed.then(|| quote!(text_before: Option<String>,));
         let elements = self
             .elements()
             .iter()
-            .map(|x| x.deserializer_struct_field_decl(ctx));
+            .map(|x| x.deserializer_struct_field_decl(ctx, self.is_mixed));
         let content = self.content().map(|x| x.deserializer_field_decl(ctx));
 
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
                 #( #attributes )*
+                #text_before
                 #( #elements )*
                 #content
                 state: Box<#deserializer_state_ident>,
@@ -1168,6 +1172,8 @@ impl ComplexDataStruct<'_> {
             StructMode::All { elements, .. } => {
                 let variants = elements.iter().map(|element| {
                     let target_type = ctx.resolve_type_for_deserialize_module(&element.target_type);
+                    let target_type = make_mixed(self.is_mixed, target_type);
+
                     let variant_ident = &element.variant_ident;
 
                     quote! {
@@ -1185,6 +1191,8 @@ impl ComplexDataStruct<'_> {
             StructMode::Sequence { elements, .. } => {
                 let variants = elements.iter().map(|element| {
                     let target_type = ctx.resolve_type_for_deserialize_module(&element.target_type);
+                    let target_type = make_mixed(self.is_mixed, target_type);
+
                     let variant_ident = &element.variant_ident;
 
                     quote! {
@@ -1241,14 +1249,23 @@ impl ComplexDataStruct<'_> {
         let elements = self.elements();
         let store_elements = elements
             .iter()
-            .map(|x| x.deserializer_struct_field_fn_store(ctx));
+            .map(|x| x.deserializer_struct_field_fn_store(ctx, self.is_mixed));
         let handle_elements = elements.iter().enumerate().map(|(i, x)| {
             let next = elements.get(i + 1);
 
             if let StructMode::All { .. } = &self.mode {
-                x.deserializer_struct_field_fn_handle_all(ctx, deserializer_state_ident)
+                x.deserializer_struct_field_fn_handle_all(
+                    ctx,
+                    self.is_mixed,
+                    deserializer_state_ident,
+                )
             } else {
-                x.deserializer_struct_field_fn_handle_sequence(ctx, next, deserializer_state_ident)
+                x.deserializer_struct_field_fn_handle_sequence(
+                    ctx,
+                    next,
+                    self.is_mixed,
+                    deserializer_state_ident,
+                )
             }
         });
 
@@ -1277,11 +1294,11 @@ impl ComplexDataStruct<'_> {
         let elements = self
             .elements()
             .iter()
-            .filter_map(|x| x.deserializer_struct_field_init_element(ctx));
+            .filter_map(|x| x.deserializer_struct_field_init_element(ctx, self.is_mixed));
         let groups = self
             .elements()
             .iter()
-            .filter_map(|x| x.deserializer_struct_field_init_group(ctx, !allow_any))
+            .filter_map(|x| x.deserializer_struct_field_init_group(ctx, self.is_mixed, !allow_any))
             .collect::<Vec<_>>();
 
         let (allow_any_result, allow_any_decl) = if groups.is_empty() || allow_any {
@@ -1347,6 +1364,7 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_init(ctx, &self.type_ident));
+        let text_before = self.is_mixed.then(|| quote!(text_before: None,));
         let element_init = self
             .elements()
             .iter()
@@ -1400,6 +1418,7 @@ impl ComplexDataStruct<'_> {
             quote! {
                 Self {
                     #( #attrib_init )*
+                    #text_before
                     #( #element_init )*
                     #content_init
                     state: Box::new(#deserializer_state_ident::Init__),
@@ -1694,6 +1713,20 @@ impl ComplexDataStruct<'_> {
             }
         };
 
+        let text_before = self.is_mixed.then(|| {
+            quote! {
+                (S::Init__, Event::Text(text)) => {
+                    *self.state = S::Init__;
+
+                    let text = text.decode()?;
+
+                    self.text_before.get_or_insert_default().push_str(&text);
+
+                    break (DeserializerEvent::None, false);
+                }
+            }
+        });
+
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::Event),
             quote!(#xsd_parser::quick_xml::WithDeserializer),
@@ -1725,6 +1758,7 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
+                    #text_before
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -1756,6 +1790,23 @@ impl ComplexDataStruct<'_> {
             .elements()
             .iter()
             .map(|x| x.deserializer_struct_field_fn_next_all(ctx));
+        let handlers_text_before = self.is_mixed.then(|| {
+            quote! {
+                (S::Init__, Event::Text(text)) => {
+                    *self.state = S::Init__;
+
+                    let text = text.decode()?;
+
+                    self.text_before.get_or_insert_default().push_str(&text);
+
+                    return Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::Deserializer(self),
+                        event: DeserializerEvent::None,
+                        allow_any: false,
+                    });
+                }
+            }
+        });
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1775,6 +1826,7 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
+                    #handlers_text_before
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         match self.find_suitable(reader, event, &mut fallback)? {
@@ -1810,10 +1862,27 @@ impl ComplexDataStruct<'_> {
         let handlers_continue = elements
             .iter()
             .map(|x| x.deserializer_struct_field_fn_next_sequence_continue(ctx));
+        let handlers_text_before = self.is_mixed.then(|| {
+            quote! {
+                (S::Init__, Event::Text(text)) => {
+                    *self.state = S::Init__;
+
+                    let text = text.decode()?;
+
+                    self.text_before.get_or_insert_default().push_str(&text);
+
+                    return Ok(DeserializerOutput {
+                        artifact: DeserializerArtifact::Deserializer(self),
+                        event: DeserializerEvent::None,
+                        allow_any: false,
+                    });
+                }
+            }
+        });
         let handlers_create = elements.iter().enumerate().map(|(i, x)| {
             let next = elements.get(i + 1);
 
-            x.deserializer_struct_field_fn_next_sequence_create(ctx, next, allow_any)
+            x.deserializer_struct_field_fn_next_sequence_create(ctx, next, self.is_mixed, allow_any)
         });
 
         ctx.add_quick_xml_deserialize_usings([
@@ -1888,6 +1957,7 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
+                    #handlers_text_before
                     (S::Init__, event) => {
                         #init_set_any
 
@@ -1929,6 +1999,9 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(ComplexDataAttribute::deserializer_struct_field_finish);
+        let text_before = self
+            .is_mixed
+            .then(|| quote!(text_before: self.text_before,));
         let elements = self
             .elements()
             .iter()
@@ -1945,6 +2018,7 @@ impl ComplexDataStruct<'_> {
 
             Ok(super::#type_ident {
                 #( #attributes )*
+                #text_before
                 #( #elements )*
                 #content
             })
@@ -2478,6 +2552,7 @@ impl ComplexDataElement<'_> {
     fn deserializer_init_element(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         call_handler: &TokenStream,
     ) -> Option<TokenStream> {
         if !self.treat_as_element() {
@@ -2486,7 +2561,9 @@ impl ComplexDataElement<'_> {
 
         let b_name = &self.b_name;
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
@@ -2521,6 +2598,7 @@ impl ComplexDataElement<'_> {
     fn deserializer_init_group(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         handle_any: bool,
         call_handler: &TokenStream,
     ) -> Option<TokenStream> {
@@ -2529,7 +2607,9 @@ impl ComplexDataElement<'_> {
         }
 
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::WithDeserializer),
@@ -2562,10 +2642,12 @@ impl ComplexDataElement<'_> {
         })
     }
 
-    fn deserializer_enum_variant_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_enum_variant_decl(&self, ctx: &Context<'_, '_>, is_mixed: bool) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
 
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
+
         let variant_ident = &self.variant_ident;
 
         ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
@@ -2581,34 +2663,45 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_enum_variant_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+    fn deserializer_enum_variant_init_element(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
         let call_handler =
             quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
-        self.deserializer_init_element(ctx, &call_handler)
+        self.deserializer_init_element(ctx, is_mixed, &call_handler)
     }
 
     fn deserializer_enum_variant_init_group(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         handle_any: bool,
     ) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
         let call_handler =
             quote!(self.#handler_ident(reader, Default::default(), output, &mut *fallback));
 
-        self.deserializer_init_group(ctx, handle_any, &call_handler)
+        self.deserializer_init_group(ctx, is_mixed, handle_any, &call_handler)
     }
 
-    fn deserializer_enum_variant_init_any(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+    fn deserializer_enum_variant_init_any(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> Option<TokenStream> {
         if !self.treat_as_any() {
             return None;
         }
 
         let xsd_parser = &ctx.xsd_parser_crate;
         let handler_ident = self.handler_ident();
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         ctx.add_quick_xml_deserialize_usings([
             quote!(#xsd_parser::quick_xml::WithDeserializer),
@@ -2688,9 +2781,15 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_enum_variant_fn_store(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_enum_variant_fn_store(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         let name = &self.b_name;
         let store_ident = self.store_ident();
@@ -2734,12 +2833,16 @@ impl ComplexDataElement<'_> {
     fn deserializer_enum_variant_fn_handle(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         represents_element: bool,
         deserializer_ident: &Ident2,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
+
         let store_ident = self.store_ident();
         let handler_ident = self.handler_ident();
         let variant_ident = &self.variant_ident;
@@ -2913,9 +3016,15 @@ impl ComplexDataElement<'_> {
         self.deserializer_enum_variant_fn_next(ctx, &matcher, &output)
     }
 
-    fn deserializer_enum_variant_fn_next_create(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_enum_variant_fn_next_create(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::WithDeserializer)]);
 
@@ -2951,15 +3060,21 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_struct_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_struct_field_decl(&self, ctx: &Context<'_, '_>, is_mixed: bool) -> TokenStream {
         let field_ident = &self.field_ident;
-        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
+        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
         let target_type = match self.occurs {
             Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
             e => crate::unreachable!("{:?}", e),
         };
+
+        if is_mixed {
+            let xsd_parser = &ctx.xsd_parser_crate;
+            ctx.add_quick_xml_deserialize_usings([quote!(#xsd_parser::quick_xml::Mixed)]);
+        }
 
         quote! {
             #field_ident: #target_type,
@@ -2977,22 +3092,27 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_struct_field_init_element(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+    fn deserializer_struct_field_init_element(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
 
-        self.deserializer_init_element(ctx, &call_handler)
+        self.deserializer_init_element(ctx, is_mixed, &call_handler)
     }
 
     fn deserializer_struct_field_init_group(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         handle_any: bool,
     ) -> Option<TokenStream> {
         let handler_ident = self.handler_ident();
         let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
 
-        self.deserializer_init_group(ctx, handle_any, &call_handler)
+        self.deserializer_init_group(ctx, is_mixed, handle_any, &call_handler)
     }
 
     fn deserializer_struct_field_finish_state_all(&self) -> TokenStream {
@@ -3057,9 +3177,15 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn deserializer_struct_field_fn_store(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn deserializer_struct_field_fn_store(
+        &self,
+        ctx: &Context<'_, '_>,
+        is_mixed: bool,
+    ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         let name = &self.b_name;
         let field_ident = &self.field_ident;
@@ -3100,10 +3226,14 @@ impl ComplexDataElement<'_> {
     fn deserializer_struct_field_fn_handle_all(
         &self,
         ctx: &Context<'_, '_>,
+        is_mixed: bool,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
+
         let store_ident = self.store_ident();
         let handler_ident = self.handler_ident();
         let variant_ident = &self.variant_ident;
@@ -3182,10 +3312,13 @@ impl ComplexDataElement<'_> {
         &self,
         ctx: &Context<'_, '_>,
         next: Option<&ComplexDataElement<'_>>,
+        is_mixed: bool,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
         let xsd_parser = &ctx.xsd_parser_crate;
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         let store_ident = self.store_ident();
         let field_ident = &self.field_ident;
@@ -3414,12 +3547,15 @@ impl ComplexDataElement<'_> {
         &self,
         ctx: &Context<'_, '_>,
         next: Option<&ComplexDataElement<'_>>,
+        is_mixed: bool,
         allow_any: bool,
     ) -> TokenStream {
         let name = &self.b_name;
         let variant_ident = &self.variant_ident;
         let handler_ident = self.handler_ident();
+
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+        let target_type = make_mixed(is_mixed, target_type);
 
         let next_state = if let Some(next) = next {
             let variant_ident = &next.variant_ident;

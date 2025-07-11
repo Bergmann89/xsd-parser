@@ -21,6 +21,7 @@ mod extension_simple_content;
 mod extra_derive;
 mod globally_allowed_attribute;
 mod list;
+mod mixed_content;
 mod num_big_int;
 mod numeric_fields;
 mod ref_to_attribute;

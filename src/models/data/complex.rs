@@ -57,6 +57,7 @@ pub enum ComplexData<'types> {
 /// Contains basic information for that is shared between [`ComplexDataEnum`]
 /// and [`ComplexDataStruct`].
 #[derive(Debug)]
+#[allow(clippy::struct_excessive_bools)]
 pub struct ComplexBase {
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
@@ -75,6 +76,9 @@ pub struct ComplexBase {
 
     /// `true` if the type is dynamic, `false` otherwise.
     pub is_dynamic: bool,
+
+    /// `true` if the type has mixed content, `false` otherwise.
+    pub is_mixed: bool,
 
     /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,

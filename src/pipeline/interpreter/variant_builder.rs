@@ -340,7 +340,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.type_mode = TypeMode::Complex;
         self.content_mode = ContentMode::Complex;
 
-        get_or_init_any!(self, ComplexType);
+        let ci = get_or_init_any!(self, ComplexType);
+        if let Some(mixed) = ty.mixed {
+            ci.is_mixed = mixed;
+        }
 
         for c in &ty.content {
             match c {
@@ -386,7 +389,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
         use crate::models::schema::xs::ComplexContentContent as C;
 
-        get_or_init_any!(self, ComplexType);
+        let ci = get_or_init_any!(self, ComplexType);
+        if let Some(mixed) = ty.mixed {
+            ci.is_mixed = mixed;
+        }
 
         for c in &ty.content {
             match c {

@@ -28,6 +28,9 @@ pub struct ComplexMeta {
     /// Whether the type is dynamic or not.
     pub is_dynamic: bool,
 
+    /// Wether the content of this type is mixed (contains also text) or not.
+    pub is_mixed: bool,
+
     /// List of attributes defined for this complex type.
     pub attributes: AttributesMeta,
 }
@@ -143,6 +146,7 @@ impl Default for ComplexMeta {
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             is_dynamic: false,
+            is_mixed: false,
             attributes: AttributesMeta::default(),
         }
     }
@@ -156,6 +160,7 @@ impl TypeEq for ComplexMeta {
             min_occurs,
             max_occurs,
             is_dynamic,
+            is_mixed: mixed_content,
             attributes,
         } = self;
 
@@ -164,6 +169,7 @@ impl TypeEq for ComplexMeta {
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         is_dynamic.hash(hasher);
+        mixed_content.hash(hasher);
         attributes.type_hash(hasher, types);
     }
 
@@ -174,6 +180,7 @@ impl TypeEq for ComplexMeta {
             min_occurs,
             max_occurs,
             is_dynamic,
+            is_mixed: mixed_content,
             attributes,
         } = self;
 
@@ -182,6 +189,7 @@ impl TypeEq for ComplexMeta {
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && is_dynamic.eq(&other.is_dynamic)
+            && mixed_content.eq(&other.is_mixed)
             && attributes.type_eq(&other.attributes, types)
     }
 }
