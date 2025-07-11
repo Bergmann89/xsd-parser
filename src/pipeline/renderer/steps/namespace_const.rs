@@ -10,14 +10,12 @@ pub struct NamespaceConstantsRenderStep;
 
 impl RenderStep for NamespaceConstantsRenderStep {
     fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
-        let xsd_parser = &meta.xsd_parser_crate;
-
-        module.usings([quote!(#xsd_parser::models::schema::Namespace)]);
+        module.usings(["xsd_parser::models::schema::Namespace"]);
 
         let namespace_constants = meta.types.meta.types.modules.values().filter_map(|module| {
             let ns = module.namespace.as_ref()?;
             let const_name = module.make_ns_const();
-            let const_name = const_name.ident();
+            let const_name = const_name.path.ident();
             let namespace = Literal::byte_string(&ns.0);
 
             Some(quote! {

@@ -7,7 +7,7 @@ use crate::models::{
     Ident,
 };
 
-use super::{AttributesMeta, Base, ElementsMeta, MetaTypeVariant, MetaTypes, TypeEq};
+use super::{AttributesMeta, Base, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes, TypeEq};
 
 /// Type information that contains data about a complex type.
 #[derive(Debug, Clone)]
@@ -27,6 +27,9 @@ pub struct ComplexMeta {
 
     /// Whether the type is dynamic or not.
     pub is_dynamic: bool,
+
+    /// Wether the content of this type is mixed (contains also text) or not.
+    pub is_mixed: bool,
 
     /// List of attributes defined for this complex type.
     pub attributes: AttributesMeta,
@@ -60,15 +63,20 @@ impl TypeEq for GroupMeta {
 /* ComplexMeta */
 
 impl ComplexMeta {
+    /// Get the meta type information of the content fo this complex type.
+    #[must_use]
+    pub fn content_meta<'a>(&'a self, types: &'a MetaTypes) -> Option<&'a MetaType> {
+        self.content
+            .as_ref()
+            .and_then(|ident| types.get_resolved_type(ident))
+    }
+
     /// Returns `true` if the content of this complex type information
     /// is a [`MetaTypeVariant::All`], `false` otherwise.
     #[must_use]
     pub fn has_complex_all_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::All(_))
         )
     }
@@ -78,10 +86,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_choice_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::Choice(_))
         )
     }
@@ -91,10 +96,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_sequence_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(MetaTypeVariant::Sequence(_))
         )
     }
@@ -105,10 +107,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_complex_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(
                 MetaTypeVariant::All(_) | MetaTypeVariant::Choice(_) | MetaTypeVariant::Sequence(_)
             )
@@ -121,10 +120,7 @@ impl ComplexMeta {
     #[must_use]
     pub fn has_simple_content(&self, types: &MetaTypes) -> bool {
         matches!(
-            self.content
-                .as_ref()
-                .and_then(|ident| types.get_resolved_type(ident))
-                .map(|ty| &ty.variant),
+            self.content_meta(types).map(|ty| &ty.variant),
             Some(
                 MetaTypeVariant::Reference(_)
                     | MetaTypeVariant::BuildIn(_)
@@ -143,6 +139,7 @@ impl Default for ComplexMeta {
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             is_dynamic: false,
+            is_mixed: false,
             attributes: AttributesMeta::default(),
         }
     }
@@ -156,6 +153,7 @@ impl TypeEq for ComplexMeta {
             min_occurs,
             max_occurs,
             is_dynamic,
+            is_mixed: mixed_content,
             attributes,
         } = self;
 
@@ -164,6 +162,7 @@ impl TypeEq for ComplexMeta {
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         is_dynamic.hash(hasher);
+        mixed_content.hash(hasher);
         attributes.type_hash(hasher, types);
     }
 
@@ -174,6 +173,7 @@ impl TypeEq for ComplexMeta {
             min_occurs,
             max_occurs,
             is_dynamic,
+            is_mixed: mixed_content,
             attributes,
         } = self;
 
@@ -182,6 +182,7 @@ impl TypeEq for ComplexMeta {
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && is_dynamic.eq(&other.is_dynamic)
+            && mixed_content.eq(&other.is_mixed)
             && attributes.type_eq(&other.attributes, types)
     }
 }

@@ -2,7 +2,7 @@ use proc_macro2::Literal;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{UnionData, UnionTypeVariant},
+    data::{PathData, UnionData, UnionTypeVariant},
     meta::{UnionMeta, UnionMetaType},
 };
 
@@ -37,8 +37,12 @@ impl UnionMetaType {
     ) -> Result<UnionTypeVariant<'types>, Error> {
         let s_name = self.type_.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
+
         let type_ref = ctx.get_or_create_type_ref(&self.type_)?;
+
         let target_type = type_ref.to_ident_path();
+        let target_type = PathData::from_path(target_type);
+
         let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
 
         Ok(UnionTypeVariant {

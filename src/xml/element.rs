@@ -4,9 +4,8 @@ use std::mem::replace;
 use std::slice::Iter;
 use std::str::from_utf8;
 
-use quick_xml::events::BytesEnd;
 use quick_xml::{
-    events::{attributes::Attribute, BytesStart},
+    events::{attributes::Attribute, BytesEnd, BytesStart},
     name::QName,
 };
 

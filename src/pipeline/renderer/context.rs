@@ -8,8 +8,8 @@ use quote::format_ident;
 
 use crate::config::GeneratorFlags;
 use crate::models::{
-    code::{IdentPath, Module, ModulePath},
-    data::DataType,
+    code::{Module, ModulePath},
+    data::{DataType, PathData},
     Ident,
 };
 
@@ -46,8 +46,10 @@ pub trait ValueKey: Any {
 
 impl<'a, 'types> Context<'a, 'types> {
     /// Resolves the passed `ident` relative to the module of the current rendered type.
-    pub fn resolve_type_for_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.module_path)
+    pub fn resolve_type_for_module(&self, target_type: &PathData) -> TokenStream {
+        self.add_usings(&target_type.usings);
+
+        target_type.resolve_relative_to(&self.module_path)
     }
 
     /// Add using directives to the module the of the current rendered type.
@@ -56,6 +58,7 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
+        let usings = self.patch_usings(usings);
         let mut root = self.module.lock();
         Self::main_module(self.module_path.last(), &mut root).usings(usings);
     }
@@ -98,12 +101,19 @@ impl<'a, 'types> Context<'a, 'types> {
         self.values.remove(&TypeId::of::<K>());
     }
 
-    pub(crate) fn resolve_type_for_serialize_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.serialize_module_path)
+    pub(crate) fn resolve_type_for_serialize_module(&self, target_type: &PathData) -> TokenStream {
+        self.add_quick_xml_serialize_usings(&target_type.usings);
+
+        target_type.resolve_relative_to(&self.serialize_module_path)
     }
 
-    pub(crate) fn resolve_type_for_deserialize_module(&self, ident: &IdentPath) -> TokenStream {
-        ident.relative_to(&self.deserialize_module_path)
+    pub(crate) fn resolve_type_for_deserialize_module(
+        &self,
+        target_type: &PathData,
+    ) -> TokenStream {
+        self.add_quick_xml_deserialize_usings(&target_type.usings);
+
+        target_type.resolve_relative_to(&self.deserialize_module_path)
     }
 
     pub(crate) fn quick_xml_serialize(&mut self) -> &mut Module {
@@ -119,6 +129,8 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
+        let usings = self.patch_usings(usings);
+
         let mut root = self.module.lock();
         Self::main_module(self.module_path.last(), &mut root)
             .module_mut("quick_xml_serialize")
@@ -130,6 +142,8 @@ impl<'a, 'types> Context<'a, 'types> {
         I: IntoIterator,
         I::Item: ToString,
     {
+        let usings = self.patch_usings(usings);
+
         let mut root = self.module.lock();
         Self::main_module(self.module_path.last(), &mut root)
             .module_mut("quick_xml_deserialize")
@@ -174,6 +188,24 @@ impl<'a, 'types> Context<'a, 'types> {
         } else {
             root
         }
+    }
+
+    fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, I>
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let xsd_parser = &self.xsd_parser_crate;
+
+        usings.into_iter().map(move |s| {
+            let s = s.to_string();
+
+            if let Some(s) = s.strip_prefix("xsd_parser::") {
+                format!("{xsd_parser}::{s}")
+            } else {
+                s
+            }
+        })
     }
 }
 
