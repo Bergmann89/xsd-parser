@@ -14,7 +14,8 @@ fn generate_quick_xml() {
 
     config.optimizer.flags = OptimizerFlags::all();
 
-    config.generator.flags = GeneratorFlags::all() - GeneratorFlags::USE_MODULES;
+    config.generator.flags =
+        GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;
     config.generator.any_type = Some("xsd_parser::xml::AnyElement".into());
     config.generator.any_attribute_type = Some("xsd_parser::xml::AnyAttributes".into());
     config.generator.generate =

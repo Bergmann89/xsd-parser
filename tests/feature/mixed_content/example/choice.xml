@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tns:MixedChoice xmlns:tns="http://example.com">
+    Text before
+    <tns:Fuu>111</tns:Fuu>
+    Text after
+</tns:MixedChoice>

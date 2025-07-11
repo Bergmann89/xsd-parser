@@ -37,6 +37,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::All,
+            false,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -51,6 +52,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::Choice,
+            false,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -65,6 +67,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::Sequence,
+            false,
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -109,6 +112,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             type_mode,
+            meta.is_mixed && ctx.check_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
             meta.min_occurs,
             meta.max_occurs,
             &meta.attributes,
@@ -120,6 +124,7 @@ impl<'types> ComplexData<'types> {
     fn new(
         ctx: &mut Context<'_, 'types>,
         type_mode: TypeMode,
+        is_mixed: bool,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
@@ -129,9 +134,11 @@ impl<'types> ComplexData<'types> {
             TypeMode::Simple { target_type } => {
                 Self::new_simple(ctx, target_type, min_occurs, max_occurs, attributes)
             }
-            TypeMode::Choice => Self::new_enum(ctx, min_occurs, max_occurs, attributes, elements),
+            TypeMode::Choice => {
+                Self::new_enum(ctx, is_mixed, min_occurs, max_occurs, attributes, elements)
+            }
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
-                ctx, &type_mode, min_occurs, max_occurs, attributes, elements,
+                ctx, &type_mode, is_mixed, min_occurs, max_occurs, attributes, elements,
             ),
         }
     }
@@ -143,7 +150,7 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false)?;
+        let base = ComplexBase::new(ctx, false, false)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -177,13 +184,14 @@ impl<'types> ComplexData<'types> {
 
     fn new_enum(
         ctx: &mut Context<'_, 'types>,
+        is_mixed: bool,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any)?;
+        let mut base = ComplexBase::new(ctx, has_any, is_mixed)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -204,6 +212,7 @@ impl<'types> ComplexData<'types> {
             .collect::<Result<Vec<_>, _>>()?;
 
         let flatten = occurs == Occurs::Single
+            && !is_mixed
             && attributes.is_empty()
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
 
@@ -227,7 +236,11 @@ impl<'types> ComplexData<'types> {
 
         let content_type = has_content.then(|| {
             let type_ = ComplexDataEnum {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
+                base: ComplexBase::new_empty(
+                    content_ident.clone(),
+                    take(&mut base.has_any),
+                    is_mixed,
+                ),
                 elements: take(&mut elements),
                 allow_any,
                 allow_any_attribute,
@@ -273,13 +286,14 @@ impl<'types> ComplexData<'types> {
     fn new_struct(
         ctx: &mut Context<'_, 'types>,
         type_mode: &TypeMode,
+        is_mixed: bool,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any)?;
+        let mut base = ComplexBase::new(ctx, has_any, is_mixed)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -347,7 +361,11 @@ impl<'types> ComplexData<'types> {
             };
 
             let type_ = ComplexDataStruct {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
+                base: ComplexBase::new_empty(
+                    content_ident.clone(),
+                    take(&mut base.has_any),
+                    is_mixed,
+                ),
                 mode,
 
                 attributes: Vec::new(),
@@ -392,11 +410,11 @@ impl<'types> ComplexData<'types> {
 }
 
 impl ComplexBase {
-    fn new(ctx: &mut Context<'_, '_>, has_any: bool) -> Result<Self, Error> {
+    fn new(ctx: &mut Context<'_, '_>, has_any: bool, is_mixed: bool) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
 
-        let mut ret = Self::new_empty(type_ident, has_any);
+        let mut ret = Self::new_empty(type_ident, has_any, is_mixed);
         ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident));
         ret.trait_impls = ctx.make_trait_impls()?;
 
@@ -408,7 +426,7 @@ impl ComplexBase {
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2, has_any: bool) -> Self {
+    fn new_empty(type_ident: Ident2, has_any: bool, is_mixed: bool) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -421,8 +439,10 @@ impl ComplexBase {
 
             tag_name: None,
             has_any,
+
             is_complex: false,
             is_dynamic: false,
+            is_mixed,
 
             serializer_ident,
             serializer_state_ident,
