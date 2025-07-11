@@ -3,7 +3,7 @@ use quote::format_ident;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{DerivedType, DynamicData},
+    data::{DerivedType, DynamicData, PathData},
     meta::{DynamicMeta, MetaTypeVariant},
     Ident,
 };
@@ -29,7 +29,9 @@ impl<'types> DynamicData<'types> {
                         ctx.get_or_create_type_ref(ident).map(|x| {
                             let ident = format_ident!("{}Trait", x.type_ident);
 
-                            x.to_ident_path().with_ident(ident)
+                            let target_type = x.to_ident_path().with_ident(ident);
+
+                            PathData::from_path(target_type)
                         })
                     })
                     .collect::<Result<Vec<_>, _>>()
@@ -74,7 +76,10 @@ fn make_derived_type_data<'types>(
     let ident = base_ident.unwrap_or(ident.clone());
 
     let target_ref = ctx.get_or_create_type_ref(&ident)?;
+
     let target_type = target_ref.to_ident_path();
+    let target_type = PathData::from_path(target_type);
+
     let variant_ident = format_variant_ident(&ident.name, None);
 
     Ok(DerivedType {

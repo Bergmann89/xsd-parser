@@ -15,7 +15,6 @@ use crate::models::{
 };
 
 use super::super::super::{Context, MetaData, RenderStep};
-use super::super::make_mixed;
 
 /// Implements a [`RenderStep`] that renders the code for the `quick_xml` serialization.
 #[derive(Debug)]
@@ -892,10 +891,7 @@ impl ComplexDataElement<'_> {
         is_mixed: bool,
     ) -> TokenStream {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
-        let target_type = make_mixed(is_mixed, target_type);
-
         let variant_ident = &self.variant_ident;
-
         let serializer = self.occurs.make_serializer_type(&target_type);
 
         if is_mixed {

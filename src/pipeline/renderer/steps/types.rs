@@ -9,7 +9,7 @@ use crate::models::data::{
 };
 
 use super::super::{Context, DataTypeVariant, RenderStep};
-use super::{format_traits, get_derive, get_dyn_type_traits, make_mixed, render_trait_impls};
+use super::{format_traits, get_derive, get_dyn_type_traits, render_trait_impls};
 
 /// Implements a [`RenderStep`] that renders the actual rust types of the types defined in the schema.
 #[derive(Debug)]
@@ -262,10 +262,7 @@ impl ComplexDataEnum<'_> {
         let type_ident = &self.type_ident;
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
 
-        let variants = self
-            .elements
-            .iter()
-            .map(|x| x.render_variant(ctx, self.is_mixed));
+        let variants = self.elements.iter().map(|x| x.render_variant(ctx));
 
         let code = quote! {
             #docs
@@ -292,10 +289,7 @@ impl ComplexDataStruct<'_> {
         let text_before = self
             .is_mixed
             .then(|| quote!(pub text_before: Option<String>,));
-        let fields = self
-            .elements()
-            .iter()
-            .map(|x| x.render_field(ctx, self.is_mixed));
+        let fields = self.elements().iter().map(|x| x.render_field(ctx));
         let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
 
         let struct_data = if self.is_unit_struct() {
@@ -368,11 +362,10 @@ impl ComplexDataAttribute<'_> {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_field(&self, ctx: &Context<'_, '_>, is_mixed: bool) -> TokenStream {
+    fn render_field(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let field_ident = &self.field_ident;
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
-        let target_type = make_mixed(is_mixed, target_type);
         let target_type = self
             .occurs
             .make_type(&target_type, self.need_indirection)
@@ -382,11 +375,6 @@ impl ComplexDataElement<'_> {
             RendererFlags::RENDER_ELEMENT_DOCS,
             &self.meta.documentation[..],
         );
-
-        if is_mixed {
-            let xsd_parser = &ctx.xsd_parser_crate;
-            ctx.add_usings([quote!(#xsd_parser::quick_xml::Mixed)]);
-        }
 
         if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
             ctx.add_usings([ty.to_token_stream()]);
@@ -398,22 +386,16 @@ impl ComplexDataElement<'_> {
         }
     }
 
-    fn render_variant(&self, ctx: &Context<'_, '_>, is_mixed: bool) -> TokenStream {
+    fn render_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let variant_ident = &self.variant_ident;
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
-        let target_type = make_mixed(is_mixed, target_type);
         let target_type = self.occurs.make_type(&target_type, self.need_indirection);
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
             &self.meta.documentation[..],
         );
-
-        if is_mixed {
-            let xsd_parser = &ctx.xsd_parser_crate;
-            ctx.add_usings([quote!(#xsd_parser::quick_xml::Mixed)]);
-        }
 
         quote! {
             #docs

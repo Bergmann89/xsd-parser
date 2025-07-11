@@ -1,4 +1,5 @@
 use crate::config::TypedefMode;
+use crate::models::data::PathData;
 use crate::models::{
     data::{Occurs, ReferenceData},
     meta::ReferenceMeta,
@@ -13,8 +14,12 @@ impl<'types> ReferenceData<'types> {
     ) -> Result<Self, Error> {
         let occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
         let type_ident = ctx.current_type_ref().type_ident.clone();
+
         let target_ref = ctx.get_or_create_type_ref(&meta.type_)?;
+
         let target_type = target_ref.to_ident_path();
+        let target_type = PathData::from_path(target_type);
+
         let trait_impls = ctx.make_trait_impls()?;
 
         let mode = match (ctx.typedef_mode, occurs) {

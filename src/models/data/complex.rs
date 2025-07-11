@@ -3,12 +3,11 @@ use std::ops::Deref;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    code::IdentPath,
     meta::{AttributeMeta, ElementMeta},
     schema::{MaxOccurs, MinOccurs},
 };
 
-use super::Occurs;
+use super::{Occurs, PathData};
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::All`](crate::models::meta::MetaTypeVariant::All),
@@ -30,6 +29,7 @@ use super::Occurs;
 /// Additional improvements may be applied to the type, to reduce the complexity
 /// of the generated type (for example flattening the content if possible).
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum ComplexData<'types> {
     /// The type represents an enumeration.
     ///
@@ -140,6 +140,7 @@ pub struct ComplexDataStruct<'types> {
 /// Used by [`ComplexDataStruct`] to tell how the actual content of the struct
 /// should be rendered.
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum StructMode<'types> {
     /// The struct does not contain any `xs:element`s.
     Empty {
@@ -198,7 +199,7 @@ pub struct ComplexDataContent {
     pub max_occurs: MaxOccurs,
 
     /// Actual target type of the content.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 }
 
 /// Contains the details of an XML element.
@@ -228,7 +229,7 @@ pub struct ComplexDataElement<'types> {
     pub variant_ident: Ident2,
 
     /// Actual target type of the element.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// `true` if this element needs some indirection
     /// (like a `Box` or a `Vec`), `false` otherwise.
@@ -263,7 +264,7 @@ pub struct ComplexDataAttribute<'types> {
     pub is_option: bool,
 
     /// The actual target type of the attribute.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// The default value of the attribute.
     pub default_value: Option<TokenStream>,

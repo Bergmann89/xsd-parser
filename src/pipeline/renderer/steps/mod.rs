@@ -107,11 +107,3 @@ fn render_trait_impls<'a>(
         }
     })
 }
-
-fn make_mixed(is_mixed: bool, tokens: TokenStream) -> TokenStream {
-    if is_mixed {
-        quote!(Mixed<#tokens>)
-    } else {
-        tokens
-    }
-}

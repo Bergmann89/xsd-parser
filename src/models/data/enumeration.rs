@@ -1,7 +1,7 @@
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    code::IdentPath,
+    data::PathData,
     meta::{EnumerationMeta, EnumerationMetaVariant},
 };
 
@@ -39,5 +39,5 @@ pub struct EnumerationTypeVariant<'types> {
     pub variant_ident: Ident2,
 
     /// Target type of this variant.
-    pub target_type: Option<IdentPath>,
+    pub target_type: Option<PathData>,
 }

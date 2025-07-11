@@ -30,6 +30,7 @@ use inflector::Inflector;
 use quote::format_ident;
 
 use crate::config::{DynTypeTraits, RendererFlags};
+use crate::models::data::PathData;
 use crate::models::{
     code::{IdentPath, Module},
     data::{DataTypeVariant, DataTypes},
@@ -258,7 +259,7 @@ pub trait RenderStep: Debug {
 }
 
 impl ModuleMeta {
-    pub(super) fn make_ns_const(&self) -> IdentPath {
+    pub(super) fn make_ns_const(&self) -> PathData {
         let ident = format_ident!(
             "NS_{}",
             self.name.as_ref().or(self.prefix.as_ref()).map_or_else(
@@ -267,6 +268,8 @@ impl ModuleMeta {
             )
         );
 
-        IdentPath::from_parts([], ident)
+        let path = IdentPath::from_parts([], ident);
+
+        PathData::from_path(path)
     }
 }

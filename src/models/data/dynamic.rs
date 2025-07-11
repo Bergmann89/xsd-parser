@@ -1,6 +1,6 @@
 use proc_macro2::{Ident as Ident2, Literal};
 
-use crate::models::{code::IdentPath, meta::DynamicMeta, Ident};
+use crate::models::{data::PathData, meta::DynamicMeta, Ident};
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::Dynamic`](crate::models::meta::MetaTypeVariant::Dynamic)
@@ -22,7 +22,7 @@ pub struct DynamicData<'types> {
 
     /// List of additional traits that need to be implemented by the derived
     /// types (if this type was inherited from another dynamic type).
-    pub sub_traits: Option<Vec<IdentPath>>,
+    pub sub_traits: Option<Vec<PathData>>,
 
     /// List of derived types.
     pub derived_types: Vec<DerivedType>,
@@ -38,7 +38,7 @@ pub struct DerivedType {
     pub b_name: Literal,
 
     /// The actual target type of this derived type information.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// Name of the variant used for this derived type information.
     pub variant_ident: Ident2,
