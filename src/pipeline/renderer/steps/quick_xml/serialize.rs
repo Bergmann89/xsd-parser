@@ -54,16 +54,15 @@ impl UnionData<'_> {
             ..
         } = self;
 
-        let xsd_parser = &ctx.xsd_parser_crate;
         let variants = variants
             .iter()
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
         let usings = [
-            quote!(std::borrow::Cow),
-            quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::SerializeBytes),
+            "std::borrow::Cow",
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::SerializeBytes",
         ];
         let code = quote! {
             impl SerializeBytes for #type_ident {
@@ -95,12 +94,10 @@ impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
-        let xsd_parser = &ctx.xsd_parser_crate;
-
         let usings = [
-            quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::WithSerializer),
-            quote!(#xsd_parser::quick_xml::BoxedSerializer),
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::WithSerializer",
+            "xsd_parser::quick_xml::BoxedSerializer",
         ];
         let code = quote! {
             impl WithSerializer for #type_ident {
@@ -137,7 +134,6 @@ impl ReferenceData<'_> {
             return;
         }
 
-        let xsd_parser = ctx.xsd_parser_crate.clone();
         let body = match occurs {
             Occurs::None => return,
             Occurs::Single => {
@@ -177,9 +173,9 @@ impl ReferenceData<'_> {
         };
 
         let usings = [
-            quote!(std::borrow::Cow),
-            quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::SerializeBytes),
+            "std::borrow::Cow",
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::SerializeBytes",
         ];
         let code = quote! {
             impl SerializeBytes for #type_ident {
@@ -203,15 +199,14 @@ impl EnumerationData<'_> {
             ..
         } = self;
 
-        let xsd_parser = &ctx.xsd_parser_crate;
         let variants = variants
             .iter()
             .map(EnumerationTypeVariant::render_serializer_variant);
 
         let usings = [
-            quote!(std::borrow::Cow),
-            quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::SerializeBytes),
+            "std::borrow::Cow",
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::SerializeBytes",
         ];
         let code = quote! {
             impl SerializeBytes for #type_ident {
@@ -284,7 +279,6 @@ impl ComplexBase {
             serializer_ident,
             ..
         } = self;
-        let xsd_parser = &ctx.xsd_parser_crate;
 
         let body = if let Some(tag_name) = &self.element_tag() {
             self.render_with_serializer_for_element(tag_name)
@@ -293,8 +287,8 @@ impl ComplexBase {
         };
 
         let usings = [
-            quote!(#xsd_parser::quick_xml::Error),
-            quote!(#xsd_parser::quick_xml::WithSerializer),
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::WithSerializer",
         ];
         let code = quote! {
             impl WithSerializer for #type_ident {
@@ -375,10 +369,9 @@ impl ComplexBase {
     }
 
     fn render_serializer_handle_state_end(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let xsd_parser = &ctx.xsd_parser_crate;
         let serializer_state_ident = &self.serializer_state_ident;
 
-        ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::BytesEnd)]);
+        ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::BytesEnd"]);
 
         quote! {
             #serializer_state_ident::End__ => {
@@ -444,7 +437,7 @@ impl ComplexDataEnum<'_> {
         let state_variants = self
             .elements
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx, self.is_mixed));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.represents_element().then(|| {
             quote! {
                 End__,
@@ -468,7 +461,6 @@ impl ComplexDataEnum<'_> {
     fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
-        let xsd_parser = &ctx.xsd_parser_crate;
 
         let emit_start_event = self
             .serializer_need_end_state()
@@ -514,9 +506,9 @@ impl ComplexDataEnum<'_> {
             .then(|| self.render_serializer_handle_state_end(ctx));
 
         let usings = [
-            quote!(core::iter::Iterator),
-            quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::Error),
+            "core::iter::Iterator",
+            "xsd_parser::quick_xml::Event",
+            "xsd_parser::quick_xml::Error",
         ];
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
@@ -557,8 +549,7 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let xsd_parser = &ctx.xsd_parser_crate;
-        ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::BytesStart)]);
+        ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::BytesStart"]);
 
         let xmlns = self.render_serializer_xmlns(ctx);
         let bytes_ctor = if xmlns.is_empty() {
@@ -600,7 +591,7 @@ impl ComplexDataStruct<'_> {
         let state_variants = self
             .elements()
             .iter()
-            .map(|x| x.render_serializer_state_variant(ctx, self.is_mixed));
+            .map(|x| x.render_serializer_state_variant(ctx));
         let state_content = self
             .content()
             .map(|x| x.render_serializer_state_variant(ctx));
@@ -628,7 +619,6 @@ impl ComplexDataStruct<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn render_serializer_impl(&self, ctx: &mut Context<'_, '_>) {
-        let xsd_parser = &ctx.xsd_parser_crate;
         let serializer_ident = &self.serializer_ident;
         let serializer_state_ident = &self.serializer_state_ident;
 
@@ -660,10 +650,8 @@ impl ComplexDataStruct<'_> {
                 *self.state = #serializer_state_ident::TextBefore__;
             };
 
-            let xsd_parser = &ctx.xsd_parser_crate;
-
             swap(&mut init_state, &mut handle_state_init);
-            ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::BytesText)]);
+            ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::BytesText"]);
 
             quote! {
                 #serializer_state_ident::TextBefore__ => {
@@ -712,9 +700,9 @@ impl ComplexDataStruct<'_> {
             .then(|| self.render_serializer_handle_state_end(ctx));
 
         let usings = [
-            quote!(core::iter::Iterator),
-            quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::Error),
+            "core::iter::Iterator",
+            "xsd_parser::quick_xml::Event",
+            "xsd_parser::quick_xml::Error",
         ];
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
@@ -758,8 +746,6 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let xsd_parser = &ctx.xsd_parser_crate;
-
         let xmlns = self.render_serializer_xmlns(ctx);
         let attributes = self.attributes.iter().map(|attrib| {
             let attrib_name = &attrib.tag_name;
@@ -770,15 +756,13 @@ impl ComplexDataStruct<'_> {
                     bytes.extend_attributes(self.value.#field_ident.attributes());
                 }
             } else if attrib.is_option {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::write_attrib_opt),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::write_attrib_opt"]);
 
                 quote! {
                     write_attrib_opt(&mut bytes, #attrib_name, &self.value.#field_ident)?;
                 }
             } else {
-                ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::write_attrib)]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::write_attrib"]);
 
                 quote! {
                     write_attrib(&mut bytes, #attrib_name, &self.value.#field_ident)?;
@@ -787,8 +771,8 @@ impl ComplexDataStruct<'_> {
         });
 
         ctx.add_quick_xml_serialize_usings([
-            quote!(#xsd_parser::quick_xml::Event),
-            quote!(#xsd_parser::quick_xml::BytesStart),
+            "xsd_parser::quick_xml::Event",
+            "xsd_parser::quick_xml::BytesStart",
         ]);
 
         let bytes_mut = self.has_attributes().then(|| quote!(mut));
@@ -835,14 +819,10 @@ impl ComplexDataContent {
         ctx: &Context<'_, '_>,
         state_ident: &Ident2,
     ) -> TokenStream {
-        let xsd_parser = &ctx.xsd_parser_crate;
-
         match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::WithSerializer),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::WithSerializer"]);
 
                 quote! {
                     *self.state = #state_ident::Content__(
@@ -851,9 +831,7 @@ impl ComplexDataContent {
                 }
             }
             Occurs::Optional => {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::IterSerializer),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::IterSerializer"]);
 
                 quote! {
                     *self.state = #state_ident::Content__(
@@ -866,9 +844,7 @@ impl ComplexDataContent {
                 }
             }
             Occurs::DynamicList | Occurs::StaticList(_) => {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::IterSerializer),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::IterSerializer"]);
 
                 quote! {
                     *self.state = #state_ident::Content__(
@@ -885,19 +861,10 @@ impl ComplexDataContent {
 }
 
 impl ComplexDataElement<'_> {
-    fn render_serializer_state_variant(
-        &self,
-        ctx: &Context<'_, '_>,
-        is_mixed: bool,
-    ) -> TokenStream {
+    fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
         let serializer = self.occurs.make_serializer_type(&target_type);
-
-        if is_mixed {
-            let xsd_parser = &ctx.xsd_parser_crate;
-            ctx.add_quick_xml_serialize_usings([quote!(#xsd_parser::quick_xml::Mixed)]);
-        }
 
         quote! {
             #variant_ident(#serializer),
@@ -948,17 +915,13 @@ impl ComplexDataElement<'_> {
         state_ident: &Ident2,
         value: &TokenStream,
     ) -> TokenStream {
-        let xsd_parser = &ctx.xsd_parser_crate;
-
         let field_name = &self.tag_name;
         let variant_ident = &self.variant_ident;
 
         match self.occurs {
             Occurs::None => crate::unreachable!(),
             Occurs::Single => {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::WithSerializer),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::WithSerializer"]);
 
                 quote! {
                     *self.state = #state_ident::#variant_ident(
@@ -967,9 +930,7 @@ impl ComplexDataElement<'_> {
                 }
             }
             Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
-                ctx.add_quick_xml_serialize_usings([
-                    quote!(#xsd_parser::quick_xml::IterSerializer),
-                ]);
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::IterSerializer"]);
 
                 quote! {
                     *self.state = #state_ident::#variant_ident(
