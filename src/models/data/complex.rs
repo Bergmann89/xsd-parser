@@ -207,8 +207,8 @@ pub struct ComplexDataContent {
 /// Is used in [`ComplexDataEnum`] or [`StructMode`].
 #[derive(Debug)]
 pub struct ComplexDataElement<'types> {
-    /// Reference to the original type information.
-    pub meta: &'types ElementMeta,
+    /// Origin of the element
+    pub origin: ComplexDataElementOrigin<'types>,
 
     /// Occurrence of the element within it's parent type.
     pub occurs: Occurs,
@@ -238,6 +238,16 @@ pub struct ComplexDataElement<'types> {
     /// `true` if the target type of this element is dynamic,
     /// `false` otherwise.
     pub target_is_dynamic: bool,
+}
+
+/// Origin of a [`ComplexDataElement`].
+#[derive(Debug)]
+pub enum ComplexDataElementOrigin<'types> {
+    /// The element was created from a corresponding [`ElementMeta`]
+    Meta(&'types ElementMeta),
+
+    /// The element was generated as text element.
+    Generated(Box<ElementMeta>),
 }
 
 /// Contains the details of an XML attribute.
@@ -357,5 +367,17 @@ impl Deref for ComplexDataStruct<'_> {
 
     fn deref(&self) -> &Self::Target {
         &self.base
+    }
+}
+
+impl ComplexDataElement<'_> {
+    /// Returns the [`ElementMeta`] this element was created for.
+    #[inline]
+    #[must_use]
+    pub fn meta(&self) -> &ElementMeta {
+        match &self.origin {
+            ComplexDataElementOrigin::Generated(meta) => meta,
+            ComplexDataElementOrigin::Meta(meta) => meta,
+        }
     }
 }

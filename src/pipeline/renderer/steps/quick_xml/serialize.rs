@@ -1,5 +1,3 @@
-use std::mem::swap;
-
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
@@ -587,14 +585,13 @@ impl ComplexDataStruct<'_> {
     fn render_serializer_state_type(&self, ctx: &mut Context<'_, '_>) {
         let state_ident = &self.serializer_state_ident;
 
-        let text_before = self.is_mixed.then(|| quote!(TextBefore__,));
         let state_variants = self
             .elements()
             .iter()
             .map(|x| x.render_serializer_state_variant(ctx));
         let state_content = self
             .content()
-            .map(|x| x.render_serializer_state_variant(ctx));
+            .and_then(|x| x.render_serializer_state_variant(ctx));
         let state_end = self.serializer_need_end_state().then(|| {
             quote! {
                 End__,
@@ -605,7 +602,6 @@ impl ComplexDataStruct<'_> {
             #[derive(Debug)]
             pub(super) enum #state_ident<'ser> {
                 Init__,
-                #text_before
                 #( #state_variants )*
                 #state_content
                 #state_end
@@ -633,7 +629,7 @@ impl ComplexDataStruct<'_> {
         };
 
         let elements = self.elements();
-        let mut handle_state_init = if let Some(first) = elements.first() {
+        let handle_state_init = if let Some(first) = elements.first() {
             let init = first.render_serializer_struct_state_init(ctx, serializer_state_ident);
 
             quote!(#init;)
@@ -644,25 +640,6 @@ impl ComplexDataStruct<'_> {
         } else {
             quote!(*self.state = #final_state;)
         };
-
-        let handle_text_before = self.is_mixed.then(|| {
-            let mut init_state = quote! {
-                *self.state = #serializer_state_ident::TextBefore__;
-            };
-
-            swap(&mut init_state, &mut handle_state_init);
-            ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::BytesText"]);
-
-            quote! {
-                #serializer_state_ident::TextBefore__ => {
-                    #init_state
-
-                    if let Some(text) = &self.value.text_before {
-                        return Ok(Some(Event::Text(BytesText::from_escaped(text))));
-                    }
-                }
-            }
-        });
 
         let handle_state_variants = (0..).take(elements.len()).map(|i| {
             let element = &elements[i];
@@ -714,7 +691,6 @@ impl ComplexDataStruct<'_> {
                                 #handle_state_init
                                 #emit_start_event
                             }
-                            #handle_text_before
                             #( #handle_state_variants )*
                             #handle_state_content
                             #handle_state_end

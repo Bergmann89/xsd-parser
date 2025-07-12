@@ -494,7 +494,11 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
-        let name = prefixed_name(ctx, &self.meta.ident, s_name);
+        let name = if self.meta().is_text() {
+            "#text".into()
+        } else {
+            prefixed_name(ctx, &self.meta().ident, s_name)
+        };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
@@ -505,7 +509,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         let default = match self.occurs.array_to_vec() {
@@ -513,7 +517,12 @@ impl ComplexDataElement<'_> {
             Occurs::Optional | Occurs::DynamicList => quote!(default,),
         };
 
-        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
+        if let Some(ty) = self
+            .meta()
+            .is_any()
+            .then_some(())
+            .and(ctx.any_type.as_ref())
+        {
             ctx.add_usings([ty.to_token_stream()]);
         }
 
@@ -531,7 +540,11 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
-        let name = prefixed_name(ctx, &self.meta.ident, s_name);
+        let name = if self.meta().is_text() {
+            "#text".into()
+        } else {
+            prefixed_name(ctx, &self.meta().ident, s_name)
+        };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
@@ -541,7 +554,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         quote! {

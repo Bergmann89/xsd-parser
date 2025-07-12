@@ -286,9 +286,6 @@ impl ComplexDataStruct<'_> {
         let trait_impls = render_trait_impls(type_ident, &self.trait_impls);
 
         let attributes = self.attributes.iter().map(|x| x.render_field(ctx));
-        let text_before = self
-            .is_mixed
-            .then(|| quote!(pub text_before: Option<String>,));
         let fields = self.elements().iter().map(|x| x.render_field(ctx));
         let content = self.content().as_ref().and_then(|x| x.render_field(ctx));
 
@@ -298,7 +295,6 @@ impl ComplexDataStruct<'_> {
             quote! {
                 {
                     #( #attributes )*
-                    #text_before
                     #( #fields )*
                     #content
                 }
@@ -373,10 +369,15 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
-        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
+        if let Some(ty) = self
+            .meta()
+            .is_any()
+            .then_some(())
+            .and(ctx.any_type.as_ref())
+        {
             ctx.add_usings([ty.to_token_stream()]);
         }
 
@@ -394,7 +395,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         quote! {

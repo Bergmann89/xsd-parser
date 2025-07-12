@@ -814,6 +814,8 @@ impl ComplexDataEnum<'_> {
             quote!(x)
         };
 
+        let event_decl =
+            (!groups.is_empty() || !any.is_empty()).then(|| quote!(let mut event = event;));
         let (allow_any_result, allow_any_decl) = if groups.is_empty() || allow_any {
             (quote!(#allow_any), None)
         } else {
@@ -822,6 +824,18 @@ impl ComplexDataEnum<'_> {
                 Some(quote!(let mut allow_any_element = false;)),
             )
         };
+
+        let fallback = self
+            .elements
+            .iter()
+            .find_map(|x| x.deserializer_enum_variant_init_text(ctx))
+            .unwrap_or_else(|| {
+                quote! {
+                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+
+                    Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+                }
+            });
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
@@ -840,21 +854,16 @@ impl ComplexDataEnum<'_> {
             where
                 R: DeserializeReader,
             {
-                let (Event::Start(#x) | Event::Empty(#x)) = &event else {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
-
-                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
-                };
-
+                #event_decl
                 #allow_any_decl
 
-                #( #elements )*
-                #( #groups )*
-                #( #any )*
+                if let Event::Start(#x) | Event::Empty(#x) = &event {
+                    #( #elements )*
+                    #( #groups )*
+                    #( #any )*
+                }
 
-                *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
-
-                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+                #fallback
             }
         }
     }
@@ -1091,7 +1100,6 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_decl(ctx));
-        let text_before = self.is_mixed.then(|| quote!(text_before: Option<String>,));
         let elements = self
             .elements()
             .iter()
@@ -1102,7 +1110,6 @@ impl ComplexDataStruct<'_> {
             #[derive(Debug)]
             pub struct #deserializer_ident {
                 #( #attributes )*
-                #text_before
                 #( #elements )*
                 #content
                 state: Box<#deserializer_state_ident>,
@@ -1275,6 +1282,18 @@ impl ComplexDataStruct<'_> {
             )
         };
 
+        let fallback = self
+            .elements()
+            .iter()
+            .find_map(|x| x.deserializer_struct_field_init_text(ctx))
+            .unwrap_or_else(|| {
+                quote! {
+                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+
+                    Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+                }
+            });
+
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ElementHandlerOutput",
@@ -1292,20 +1311,14 @@ impl ComplexDataStruct<'_> {
             where
                 R: DeserializeReader,
             {
-                let (Event::Start(x) | Event::Empty(x)) = &event else {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
-
-                    return Ok(ElementHandlerOutput::return_to_parent(event, #allow_any));
-                };
-
                 #allow_any_decl
 
-                #( #elements )*
-                #( #groups )*
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    #( #elements )*
+                    #( #groups )*
+                }
 
-                *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
-
-                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+                #fallback
             }
         }
     }
@@ -1328,7 +1341,6 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(|x| x.deserializer_struct_field_init(ctx, &self.type_ident));
-        let text_before = self.is_mixed.then(|| quote!(text_before: None,));
         let element_init = self
             .elements()
             .iter()
@@ -1382,7 +1394,6 @@ impl ComplexDataStruct<'_> {
             quote! {
                 Self {
                     #( #attrib_init )*
-                    #text_before
                     #( #element_init )*
                     #content_init
                     state: Box::new(#deserializer_state_ident::Init__),
@@ -1669,20 +1680,6 @@ impl ComplexDataStruct<'_> {
             }
         };
 
-        let text_before = self.is_mixed.then(|| {
-            quote! {
-                (S::Init__, Event::Text(text)) => {
-                    *self.state = S::Init__;
-
-                    let text = text.decode()?;
-
-                    self.text_before.get_or_insert_default().push_str(&text);
-
-                    break (DeserializerEvent::None, false);
-                }
-            }
-        });
-
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::WithDeserializer",
@@ -1714,7 +1711,6 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
-                    #text_before
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -1746,23 +1742,6 @@ impl ComplexDataStruct<'_> {
             .elements()
             .iter()
             .map(|x| x.deserializer_struct_field_fn_next_all(ctx));
-        let handlers_text_before = self.is_mixed.then(|| {
-            quote! {
-                (S::Init__, Event::Text(text)) => {
-                    *self.state = S::Init__;
-
-                    let text = text.decode()?;
-
-                    self.text_before.get_or_insert_default().push_str(&text);
-
-                    return Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Deserializer(self),
-                        event: DeserializerEvent::None,
-                        allow_any: false,
-                    });
-                }
-            }
-        });
 
         quote! {
             use #deserializer_state_ident as S;
@@ -1782,7 +1761,6 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
-                    #handlers_text_before
                     (state @ (S::Init__ | S::Next__), event) => {
                         fallback.get_or_insert(state);
                         match self.find_suitable(reader, event, &mut fallback)? {
@@ -1817,23 +1795,6 @@ impl ComplexDataStruct<'_> {
         let handlers_continue = elements
             .iter()
             .map(|x| x.deserializer_struct_field_fn_next_sequence_continue(ctx));
-        let handlers_text_before = self.is_mixed.then(|| {
-            quote! {
-                (S::Init__, Event::Text(text)) => {
-                    *self.state = S::Init__;
-
-                    let text = text.decode()?;
-
-                    self.text_before.get_or_insert_default().push_str(&text);
-
-                    return Ok(DeserializerOutput {
-                        artifact: DeserializerArtifact::Deserializer(self),
-                        event: DeserializerEvent::None,
-                        allow_any: false,
-                    });
-                }
-            }
-        });
         let handlers_create = elements.iter().enumerate().map(|(i, x)| {
             let next = elements.get(i + 1);
 
@@ -1912,7 +1873,6 @@ impl ComplexDataStruct<'_> {
                             allow_any: false,
                         });
                     }
-                    #handlers_text_before
                     (S::Init__, event) => {
                         #init_set_any
 
@@ -1954,9 +1914,6 @@ impl ComplexDataStruct<'_> {
             .attributes
             .iter()
             .map(ComplexDataAttribute::deserializer_struct_field_finish);
-        let text_before = self
-            .is_mixed
-            .then(|| quote!(text_before: self.text_before,));
         let elements = self
             .elements()
             .iter()
@@ -1973,7 +1930,6 @@ impl ComplexDataStruct<'_> {
 
             Ok(super::#type_ident {
                 #( #attributes )*
-                #text_before
                 #( #elements )*
                 #content
             })
@@ -2434,22 +2390,6 @@ impl ComplexDataElement<'_> {
         format_ident!("handle_{ident}")
     }
 
-    #[inline]
-    fn treat_as_any(&self) -> bool {
-        self.meta.is_any()
-    }
-
-    #[inline]
-    fn treat_as_group(&self) -> bool {
-        !self.treat_as_any()
-            && (self.meta.element_mode == ElementMode::Group || self.target_is_dynamic)
-    }
-
-    #[inline]
-    fn treat_as_element(&self) -> bool {
-        !self.treat_as_group()
-    }
-
     fn target_type_allows_any(&self, types: &MetaTypes) -> bool {
         fn walk(types: &MetaTypes, visit: &mut HashSet<Ident>, ident: &Ident) -> bool {
             if !visit.insert(ident.clone()) {
@@ -2460,8 +2400,9 @@ impl ComplexDataElement<'_> {
                 Some(MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si)) => {
                     for element in &*si.elements {
                         match &element.variant {
-                            ElementMetaVariant::Any(_) => return true,
-                            ElementMetaVariant::Type(type_) => {
+                            ElementMetaVariant::Text => return false,
+                            ElementMetaVariant::Any { .. } => return true,
+                            ElementMetaVariant::Type { type_, .. } => {
                                 if walk(types, visit, type_) {
                                     return true;
                                 }
@@ -2474,11 +2415,15 @@ impl ComplexDataElement<'_> {
                 Some(MetaTypeVariant::Sequence(si)) => match si.elements.first() {
                     None => false,
                     Some(ElementMeta {
-                        variant: ElementMetaVariant::Any(_),
+                        variant: ElementMetaVariant::Any { .. },
                         ..
                     }) => true,
                     Some(ElementMeta {
-                        variant: ElementMetaVariant::Type(type_),
+                        variant: ElementMetaVariant::Text,
+                        ..
+                    }) => false,
+                    Some(ElementMeta {
+                        variant: ElementMetaVariant::Type { type_, .. },
                         ..
                     }) => walk(types, visit, type_),
                 },
@@ -2492,9 +2437,10 @@ impl ComplexDataElement<'_> {
 
         let mut visit = HashSet::new();
 
-        match &self.meta.variant {
-            ElementMetaVariant::Any(_) => true,
-            ElementMetaVariant::Type(type_) => walk(types, &mut visit, type_),
+        match &self.meta().variant {
+            ElementMetaVariant::Any { .. } => true,
+            ElementMetaVariant::Type { type_, .. } => walk(types, &mut visit, type_),
+            ElementMetaVariant::Text => false,
         }
     }
 
@@ -2519,7 +2465,7 @@ impl ComplexDataElement<'_> {
         };
 
         if let Some(module) = self
-            .meta
+            .meta()
             .ident
             .ns
             .and_then(|ns| ctx.types.meta.types.modules.get(&ns))
@@ -2572,7 +2518,7 @@ impl ComplexDataElement<'_> {
         };
 
         Some(quote! {
-            let event = {
+            event = {
                 let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
 
                 match #call_handler? {
@@ -2634,7 +2580,7 @@ impl ComplexDataElement<'_> {
         ]);
 
         Some(quote! {
-            let event = {
+            event = {
                 let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
 
                 match self.#handler_ident(reader, Default::default(), output, &mut *fallback)? {
@@ -2642,6 +2588,21 @@ impl ComplexDataElement<'_> {
                     output => { return Ok(output); }
                 }
             };
+        })
+    }
+
+    fn deserializer_enum_variant_init_text(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if !self.treat_as_text() {
+            return None;
+        }
+
+        let handler_ident = self.handler_ident();
+        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+
+        Some(quote! {
+            let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
+
+            self.#handler_ident(reader, Default::default(), output, &mut *fallback)
         })
     }
 
@@ -2773,7 +2734,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Data`
-        let data_handler = match (represents_element, self.occurs, self.meta.max_occurs) {
+        let data_handler = match (represents_element, self.occurs, self.meta().max_occurs) {
             (_, Occurs::None, _) => unreachable!(),
             // Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
@@ -2813,7 +2774,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Deserializer`
-        let deserializer_handler = match (self.occurs, self.meta.max_occurs) {
+        let deserializer_handler = match (self.occurs, self.meta().max_occurs) {
             (Occurs::None, _) => unreachable!(),
             // If we only expect one element we never initialize a new deserializer
             // we only continue the deserialization process for `End` events (because
@@ -3003,6 +2964,21 @@ impl ComplexDataElement<'_> {
         let call_handler = quote!(self.#handler_ident(reader, output, &mut *fallback));
 
         self.deserializer_init_group(ctx, handle_any, &call_handler)
+    }
+
+    fn deserializer_struct_field_init_text(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if !self.treat_as_text() {
+            return None;
+        }
+
+        let handler_ident = self.handler_ident();
+        let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
+
+        Some(quote! {
+            let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
+
+            self.#handler_ident(reader, output, &mut *fallback)
+        })
     }
 
     fn deserializer_struct_field_finish_state_all(&self) -> TokenStream {
@@ -3216,7 +3192,7 @@ impl ComplexDataElement<'_> {
 
         // Handler for `DeserializerArtifact::None`: Should only be the
         // case if we try to initialize a new deserializer.
-        let handler_none = match (self.occurs, self.meta.min_occurs) {
+        let handler_none = match (self.occurs, self.meta().min_occurs) {
             (Occurs::None, _) => unreachable!(),
             // If we do not expect any data we continue with the next state
             (_, 0) | (Occurs::Optional, _) => quote! {
@@ -3259,7 +3235,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Data`:
-        let data_handler = match (self.occurs, self.meta.max_occurs) {
+        let data_handler = match (self.occurs, self.meta().max_occurs) {
             // If we got some data we simple move one to the next element
             (Occurs::Single | Occurs::Optional, _) => quote! {
                 *self.state = #next_state;
@@ -3280,7 +3256,7 @@ impl ComplexDataElement<'_> {
         };
 
         // Handler for `DeserializerArtifact::Deserializer:
-        let min = self.meta.min_occurs;
+        let min = self.meta().min_occurs;
         let deserializer_handler = match self.occurs {
             // If we expect only one element we continue to the next state,
             // because the old yet unfinished deserializer already contains
@@ -3444,8 +3420,15 @@ impl ComplexDataElement<'_> {
             }
         });
 
-        let need_name_matcher =
-            !self.target_is_dynamic && self.meta.element_mode == ElementMode::Element;
+        let need_name_matcher = !self.target_is_dynamic
+            && matches!(
+                &self.meta().variant,
+                ElementMetaVariant::Any { .. }
+                    | ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+            );
 
         let mut body = quote! {
             let output = <#target_type as WithDeserializer>::Deserializer::init(reader, event)?;
@@ -3459,7 +3442,7 @@ impl ComplexDataElement<'_> {
             }
         };
 
-        if self.meta.is_any() {
+        if self.treat_as_any() {
             body = quote! {
                 if is_any_retry {
                     #body
@@ -3473,7 +3456,7 @@ impl ComplexDataElement<'_> {
             };
         } else if need_name_matcher {
             let ns_name = self
-                .meta
+                .meta()
                 .ident
                 .ns
                 .as_ref()
@@ -3494,11 +3477,13 @@ impl ComplexDataElement<'_> {
             }
         }
 
+        let filter = self
+            .treat_as_text()
+            .not()
+            .then(|| quote!(@ (Event::Start(_) | Event::Empty(_))));
+
         quote! {
-            (
-                S::#variant_ident(None),
-                event @ (Event::Start(_) | Event::Empty(_))
-            ) => {
+            (S::#variant_ident(None), event #filter) => {
                 #body
             }
         }

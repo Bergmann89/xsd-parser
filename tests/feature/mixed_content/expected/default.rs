@@ -1,15 +1,15 @@
-use xsd_parser::quick_xml::Mixed;
+use xsd_parser::xml::{Mixed, Text};
 pub type MixedAll = MixedAllType;
 #[derive(Debug)]
 pub struct MixedAllType {
-    pub text_before: Option<String>,
+    pub text_before: Option<Text>,
     pub fuu: Mixed<i32>,
     pub bar: Mixed<String>,
 }
 pub type MixedChoice = MixedChoiceType;
 #[derive(Debug)]
 pub struct MixedChoiceType {
-    pub text_before: Option<String>,
+    pub text_before: Option<Text>,
     pub content: MixedChoiceTypeContent,
 }
 #[derive(Debug)]
@@ -20,7 +20,7 @@ pub enum MixedChoiceTypeContent {
 pub type MixedChoiceList = MixedChoiceListType;
 #[derive(Debug)]
 pub struct MixedChoiceListType {
-    pub text_before: Option<String>,
+    pub text_before: Option<Text>,
     pub content: Vec<MixedChoiceListTypeContent>,
 }
 #[derive(Debug)]
@@ -31,7 +31,7 @@ pub enum MixedChoiceListTypeContent {
 pub type MixedSequence = MixedSequenceType;
 #[derive(Debug)]
 pub struct MixedSequenceType {
-    pub text_before: Option<String>,
+    pub text_before: Option<Text>,
     pub fuu: Mixed<i32>,
     pub bar: Mixed<String>,
 }

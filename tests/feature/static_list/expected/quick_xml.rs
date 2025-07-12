@@ -57,18 +57,14 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(ArrayTypeDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Item")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_item(reader, output, &mut *fallback);
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Item")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_item(reader, output, &mut *fallback);
+                }
             }
             *self.state = fallback
                 .take()

@@ -210,14 +210,26 @@ impl<'a> MetaTypesPrinter<'a> {
                     indentln!("name={}", x.ident.name);
                     indentln!("min_occurs={}", x.min_occurs);
                     indentln!("max_occurs={:?}", x.max_occurs);
-                    indentln!("element_type={:?}", x.element_mode);
 
-                    match (x.element_mode, &x.variant) {
-                        (ElementMode::Element, ElementMetaVariant::Type(type_)) => {
-                            indentln!("type=Type({})", type_);
+                    match &x.variant {
+                        ElementMetaVariant::Text => {
+                            indentln!("variant=Text");
                         }
-                        (ElementMode::Element, ElementMetaVariant::Any(x)) => {
-                            indentln!("type=Any");
+                        ElementMetaVariant::Type {
+                            type_,
+                            mode: ElementMode::Element,
+                        } => {
+                            indentln!("variant=Type({})", type_);
+                        }
+                        ElementMetaVariant::Type {
+                            type_,
+                            mode: ElementMode::Group,
+                        } => {
+                            indent!("variant=");
+                            self.resolve_complex_type(f, s, type_)?;
+                        }
+                        ElementMetaVariant::Any { meta: x } => {
+                            indentln!("variant=Any");
 
                             s.level += 1;
 
@@ -238,11 +250,6 @@ impl<'a> MetaTypesPrinter<'a> {
 
                             s.level -= 1;
                         }
-                        (ElementMode::Group, ElementMetaVariant::Type(type_)) => {
-                            indent!("type=");
-                            self.resolve_complex_type(f, s, type_)?;
-                        }
-                        (ElementMode::Group, ElementMetaVariant::Any(_)) => (),
                     }
 
                     s.level -= 1;

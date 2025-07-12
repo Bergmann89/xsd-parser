@@ -746,34 +746,26 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(ChoiceTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Name")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_name(reader, Default::default(), output, &mut *fallback);
-            }
-            if x.name().local_name().as_ref() == b"any2" {
-                let output =
-                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_any(reader, Default::default(), output, &mut *fallback);
-            }
-            let event = {
-                let output =
-                    <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
-                match self.handle_any(reader, Default::default(), output, &mut *fallback)? {
-                    ElementHandlerOutput::Continue { event, .. } => event,
-                    output => {
-                        return Ok(output);
-                    }
+            let mut event = event;
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Name")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_name(reader, Default::default(), output, &mut *fallback);
                 }
-            };
+                event = {
+                    let output =
+                        <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                    match self.handle_any(reader, Default::default(), output, &mut *fallback)? {
+                        ElementHandlerOutput::Continue { event, .. } => event,
+                        output => {
+                            return Ok(output);
+                        }
+                    }
+                };
+            }
             *self.state = fallback
                 .take()
                 .unwrap_or(ChoiceTypeContentDeserializerState::Init__);

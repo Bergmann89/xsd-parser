@@ -35,31 +35,42 @@ fn generate_quick_xml() {
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_all() {
     use quick_xml::MixedAll;
+    use xsd_parser::xml::Text;
 
     let obj = crate::utils::quick_xml_read_test::<MixedAll, _>(
         "tests/feature/mixed_content/example/all.xml",
     );
 
-    assert_eq!(obj.text_before.as_deref(), Some("\n    Text before\n    "));
+    assert_eq!(
+        obj.text_before.as_ref().map(Text::as_str),
+        Some("\n    Text before\n    ")
+    );
     assert_eq!(obj.fuu.value, 111);
     assert_eq!(
-        obj.fuu.text_after.as_deref(),
+        obj.fuu.text_after.as_ref().map(Text::as_str),
         Some("\n    Text between\n    ")
     );
     assert_eq!(obj.bar.value, "Hello World");
-    assert_eq!(obj.bar.text_after.as_deref(), Some("\n    Text after\n"));
+    assert_eq!(
+        obj.bar.text_after.as_ref().map(Text::as_str),
+        Some("\n    Text after\n")
+    );
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_choice_single() {
     use quick_xml::{MixedChoice, MixedChoiceTypeContent};
+    use xsd_parser::xml::Text;
 
     let obj = crate::utils::quick_xml_read_test::<MixedChoice, _>(
         "tests/feature/mixed_content/example/choice.xml",
     );
 
-    assert_eq!(obj.text_before.as_deref(), Some("\n    Text before\n    "));
+    assert_eq!(
+        obj.text_before.as_ref().map(Text::as_str),
+        Some("\n    Text before\n    ")
+    );
 
     let MixedChoiceTypeContent::Fuu(mixed) = &obj.content else {
         panic!(
@@ -69,19 +80,26 @@ fn read_quick_xml_choice_single() {
     };
 
     assert_eq!(mixed.value, 111);
-    assert_eq!(mixed.text_after.as_deref(), Some("\n    Text after\n"));
+    assert_eq!(
+        mixed.text_after.as_ref().map(Text::as_str),
+        Some("\n    Text after\n")
+    );
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_choice_list() {
     use quick_xml::{MixedChoiceList, MixedChoiceListTypeContent};
+    use xsd_parser::xml::Text;
 
     let obj = crate::utils::quick_xml_read_test::<MixedChoiceList, _>(
         "tests/feature/mixed_content/example/all.xml",
     );
 
-    assert_eq!(obj.text_before.as_deref(), Some("\n    Text before\n    "));
+    assert_eq!(
+        obj.text_before.as_ref().map(Text::as_str),
+        Some("\n    Text before\n    ")
+    );
 
     let mut it = obj.content.into_iter();
 
@@ -94,7 +112,7 @@ fn read_quick_xml_choice_list() {
     };
     assert_eq!(mixed.value, 111);
     assert_eq!(
-        mixed.text_after.as_deref(),
+        mixed.text_after.as_ref().map(Text::as_str),
         Some("\n    Text between\n    ")
     );
 
@@ -106,7 +124,10 @@ fn read_quick_xml_choice_list() {
         );
     };
     assert_eq!(mixed.value, "Hello World");
-    assert_eq!(mixed.text_after.as_deref(), Some("\n    Text after\n"));
+    assert_eq!(
+        mixed.text_after.as_ref().map(Text::as_str),
+        Some("\n    Text after\n")
+    );
 
     assert!(it.next().is_none());
 }
@@ -115,36 +136,43 @@ fn read_quick_xml_choice_list() {
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml_sequence() {
     use quick_xml::MixedSequence;
+    use xsd_parser::xml::Text;
 
     let obj = crate::utils::quick_xml_read_test::<MixedSequence, _>(
         "tests/feature/mixed_content/example/sequence.xml",
     );
 
-    assert_eq!(obj.text_before.as_deref(), Some("\n    Text before\n    "));
+    assert_eq!(
+        obj.text_before.as_ref().map(Text::as_str),
+        Some("\n    Text before\n    ")
+    );
     assert_eq!(obj.fuu.value, 111);
     assert_eq!(
-        obj.fuu.text_after.as_deref(),
+        obj.fuu.text_after.as_ref().map(Text::as_str),
         Some("\n    Text between\n    ")
     );
     assert_eq!(obj.bar.value, "Hello World");
-    assert_eq!(obj.bar.text_after.as_deref(), Some("\n    Text after\n"));
+    assert_eq!(
+        obj.bar.text_after.as_ref().map(Text::as_str),
+        Some("\n    Text after\n")
+    );
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml_all() {
     use quick_xml::MixedAll;
-    use xsd_parser::quick_xml::Mixed;
+    use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedAll {
-        text_before: Some("Text before".into()),
+        text_before: Some(Text::new("Text before")),
         fuu: Mixed {
             value: 111,
-            text_after: Some("Text between".into()),
+            text_after: Some(Text::new("Text between")),
         },
         bar: Mixed {
             value: "Hello World".into(),
-            text_after: Some("Text after".into()),
+            text_after: Some(Text::new("Text after")),
         },
     };
 
@@ -159,13 +187,13 @@ fn write_quick_xml_all() {
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml_choice_single() {
     use quick_xml::{MixedChoice, MixedChoiceTypeContent};
-    use xsd_parser::quick_xml::Mixed;
+    use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedChoice {
-        text_before: Some("Text before".into()),
+        text_before: Some(Text::new("Text before")),
         content: MixedChoiceTypeContent::Fuu(Mixed {
             value: 111,
-            text_after: Some("Text after".into()),
+            text_after: Some(Text::new("Text after")),
         }),
     };
 
@@ -180,18 +208,18 @@ fn write_quick_xml_choice_single() {
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml_choice_list() {
     use quick_xml::{MixedChoiceList, MixedChoiceListTypeContent};
-    use xsd_parser::quick_xml::Mixed;
+    use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedChoiceList {
-        text_before: Some("Text before".into()),
+        text_before: Some(Text::new("\n    Text before\n    ")),
         content: vec![
             MixedChoiceListTypeContent::Fuu(Mixed {
                 value: 111,
-                text_after: Some("Text between".into()),
+                text_after: Some(Text::new("\n    Text between\n    ")),
             }),
             MixedChoiceListTypeContent::Bar(Mixed {
                 value: "Hello World".into(),
-                text_after: Some("Text after".into()),
+                text_after: Some(Text::new("\n    Text after\n")),
             }),
         ],
     };
@@ -207,17 +235,17 @@ fn write_quick_xml_choice_list() {
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml_sequence() {
     use quick_xml::MixedSequence;
-    use xsd_parser::quick_xml::Mixed;
+    use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedSequence {
-        text_before: Some("Text before".into()),
+        text_before: Some(Text::new("Text before")),
         fuu: Mixed {
             value: 111,
-            text_after: Some("Text between".into()),
+            text_after: Some(Text::new("Text between")),
         },
         bar: Mixed {
             value: "Hello World".into(),
-            text_after: Some("Text after".into()),
+            text_after: Some(Text::new("Text after")),
         },
     };
 

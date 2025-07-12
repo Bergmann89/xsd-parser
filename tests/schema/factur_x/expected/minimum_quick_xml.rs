@@ -2966,23 +2966,19 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(DateTimeTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_UDT),
-                Some(b"DateTimeString")
-            ) {
-                let output = < super :: DateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                return self.handle_date_time_string(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_UDT),
+                    Some(b"DateTimeString")
+                ) {
+                    let output = < super :: DateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    return self.handle_date_time_string(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()

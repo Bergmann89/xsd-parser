@@ -139,8 +139,13 @@ impl Optimizer {
         ctx.count += 1;
 
         for x in &*si.elements {
-            match x.element_mode {
-                ElementMode::Element => {
+            match &x.variant {
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Element,
+                    ..
+                }
+                | ElementMetaVariant::Any { .. }
+                | ElementMetaVariant::Text => {
                     let mut element = x.clone();
 
                     element.min_occurs *= min;
@@ -148,15 +153,16 @@ impl Optimizer {
 
                     ctx.add_element(element);
                 }
-                ElementMode::Group => {
-                    if let ElementMetaVariant::Type(type_) = &x.variant {
-                        self.flatten_complex_type_impl(
-                            type_,
-                            min * x.min_occurs,
-                            max * x.max_occurs,
-                            ctx,
-                        );
-                    }
+                ElementMetaVariant::Type {
+                    type_,
+                    mode: ElementMode::Group,
+                } => {
+                    self.flatten_complex_type_impl(
+                        type_,
+                        min * x.min_occurs,
+                        max * x.max_occurs,
+                        ctx,
+                    );
                 }
             }
         }

@@ -23,7 +23,7 @@ mod union;
 pub use self::build_in::BuildInData;
 pub use self::complex::{
     ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-    ComplexDataEnum, ComplexDataStruct, StructMode,
+    ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, StructMode,
 };
 pub use self::custom::CustomData;
 pub use self::dynamic::{DerivedType, DynamicData};

@@ -235,25 +235,21 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(FooTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Bar")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_bar(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Baz")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_baz(reader, Default::default(), output, &mut *fallback);
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Bar")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_bar(reader, Default::default(), output, &mut *fallback);
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Baz")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_baz(reader, Default::default(), output, &mut *fallback);
+                }
             }
             *self.state = fallback
                 .take()

@@ -61,7 +61,7 @@ use self::config::{
     OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
     SerdeXmlRsVersion,
 };
-use self::macros::{assert_eq, unreachable};
+use self::macros::{assert, assert_eq, unreachable};
 use self::pipeline::parser::resolver::{FileResolver, ManyResolver};
 
 /// Generates rust code from a XML schema using the passed `config`.

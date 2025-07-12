@@ -62,47 +62,50 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback.take().unwrap_or(FooTypeDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Once")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_once(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"Optional")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_optional(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"OnceSpecify")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_once_specify(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_TNS),
-                Some(b"TwiceOrMore")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_twice_or_more(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Once")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_once(reader, Default::default(), output, &mut *fallback);
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"Optional")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_optional(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"OnceSpecify")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_once_specify(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_TNS),
+                    Some(b"TwiceOrMore")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_twice_or_more(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback.take().unwrap_or(FooTypeDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
