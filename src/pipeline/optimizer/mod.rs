@@ -23,6 +23,7 @@ mod merge_enum_unions;
 mod misc;
 mod remove_duplicates;
 mod resolve_typedefs;
+mod simplify_mixed_types;
 mod unrestricted_base;
 
 use thiserror::Error;
@@ -83,6 +84,31 @@ pub enum Error {
     /// Is raised if the content type of a complex type could not be resolved.
     #[error("Complex type {0} is missing a content type!")]
     MissingContentType(Ident),
+
+    /// The complex type is expected to have a choice content.
+    ///
+    /// Is raised if the content type of a complex type it not a choice.
+    #[error("Complex type {0} is expected to have a choice content!")]
+    ExpectedChoiceContent(Ident),
+
+    /// The complex type is expected to have content with [`MaxOccurs::Unbounded`](crate::models::schema::MaxOccurs::Unbounded).
+    ///
+    /// Is raised if the content of a complex type does nor have unbounded occurrence.
+    #[error("Complex type {0} is expected to have content with unbound occurrence!")]
+    ExpectedUnboundContent(Ident),
+
+    /// The complex type has an unexpected content type.
+    ///
+    /// Is raised if the content type of a complex type does not match the expectations.
+    #[error("Complex type {0} has an unexpected content type!")]
+    UnexpectedContentType(Ident),
+
+    /// The complex type contains an unexpected element in it's content type.
+    ///
+    /// Is raised if any element of the content of a complex type does not match the
+    /// expectations.
+    #[error("Complex type {0} contains an unexpected element in it's content type!")]
+    UnexpectedElementInContent(Ident),
 }
 
 macro_rules! get_bases {

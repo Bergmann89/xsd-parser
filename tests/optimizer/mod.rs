@@ -1,4 +1,7 @@
-use xsd_parser::{config::OptimizerFlags, Config, IdentType};
+use xsd_parser::{
+    config::{GeneratorFlags, OptimizerFlags},
+    Config, IdentType,
+};
 
 use crate::utils::{optimizer_test, optimizer_test_with_config, ConfigEx};
 
@@ -140,5 +143,20 @@ fn merge_choice_cardinalities() {
         "tests/optimizer/expected1/merge_choice_cardinalities.rs",
         [(IdentType::Type, "tns:MyComplexType")],
         OptimizerFlags::MERGE_CHOICE_CARDINALITIES,
+    );
+}
+
+#[test]
+fn simplify_mixed_types() {
+    optimizer_test_with_config(
+        "tests/optimizer/simplify_mixed_types.xsd",
+        "tests/optimizer/expected0/simplify_mixed_types.rs",
+        "tests/optimizer/expected1/simplify_mixed_types.rs",
+        [
+            (IdentType::Type, "tns:MixedChoiceList"),
+            (IdentType::Type, "tns:MixedSequence"),
+        ],
+        OptimizerFlags::SIMPLIFY_MIXED_TYPES,
+        Config::test_default().with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
     );
 }

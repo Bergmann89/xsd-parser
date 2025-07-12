@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:complexType name="MixedChoiceList" mixed="true">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="Fuu" type="xs:int" />
+            <xs:element name="Bar" type="xs:string" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="MixedSequence" mixed="true">
+        <xs:sequence>
+            <xs:element name="Fuu" type="xs:int" />
+            <xs:element name="Bar" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

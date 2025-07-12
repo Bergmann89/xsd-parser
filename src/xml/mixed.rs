@@ -64,7 +64,7 @@ where
     type Deserializer = MixedDeserializer<T>;
 }
 
-/// Implements the [`Serializer`](super::Serializer) trait for the [`Mixed`] types.
+/// Implements the [`Serializer`](crate::quick_xml::Serializer) trait for the [`Mixed`] types.
 pub enum MixedSerializer<'ser, T>
 where
     T: WithSerializer,

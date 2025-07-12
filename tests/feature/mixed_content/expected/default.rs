@@ -20,18 +20,20 @@ pub enum MixedChoiceTypeContent {
 pub type MixedChoiceList = MixedChoiceListType;
 #[derive(Debug)]
 pub struct MixedChoiceListType {
-    pub text_before: Option<Text>,
     pub content: Vec<MixedChoiceListTypeContent>,
 }
 #[derive(Debug)]
 pub enum MixedChoiceListTypeContent {
-    Fuu(Mixed<i32>),
-    Bar(Mixed<String>),
+    Fuu(i32),
+    Bar(String),
+    Text(Text),
 }
 pub type MixedSequence = MixedSequenceType;
 #[derive(Debug)]
 pub struct MixedSequenceType {
     pub text_before: Option<Text>,
-    pub fuu: Mixed<i32>,
-    pub bar: Mixed<String>,
+    pub fuu: i32,
+    pub text_after_fuu: Option<Text>,
+    pub bar: String,
+    pub text_after_bar: Option<Text>,
 }

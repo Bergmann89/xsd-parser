@@ -12,7 +12,7 @@ fn generate_quick_xml() {
     config.parser.flags = ParserFlags::all();
     config.parser.resolver = vec![Resolver::File];
 
-    config.optimizer.flags = OptimizerFlags::all();
+    config.optimizer.flags = OptimizerFlags::all() - OptimizerFlags::SIMPLIFY_MIXED_TYPES;
 
     config.generator.flags =
         GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;

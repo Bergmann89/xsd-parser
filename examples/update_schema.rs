@@ -91,7 +91,7 @@ fn main() -> Result<(), Error> {
     ];
 
     // Enables all optimizer flags (refer to the flags documentation for details).
-    config.optimizer.flags = OptimizerFlags::all();
+    config.optimizer.flags = OptimizerFlags::all() - OptimizerFlags::SIMPLIFY_MIXED_TYPES;
 
     // The generator configuration sets the following:
     //   -  Enables all generator flags except USE_MODULES to avoid separate modules

@@ -243,6 +243,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
     exec!(REMOVE_DUPLICATES, remove_duplicates);
     exec!(RESOLVE_TYPEDEFS, resolve_typedefs);
     exec!(MERGE_CHOICE_CARDINALITIES, merge_choice_cardinalities);
+    exec!(SIMPLIFY_MIXED_TYPES, simplify_mixed_types);
 
     let types = optimizer.finish();
 
