@@ -81,27 +81,30 @@ impl WithDeserializer for ChoiceTypeContent {
 }
 pub mod quick_xml_deserialize {
     use core::mem::replace;
-    use xsd_parser::quick_xml::{
-        filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer, DeserializerArtifact,
-        DeserializerEvent, DeserializerOutput, DeserializerResult, ElementHandlerOutput, Error,
-        ErrorKind, Event, RawByteStr, WithDeserializer,
+    use xsd_parser::{
+        quick_xml::{
+            filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
+            DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult,
+            ElementHandlerOutput, Error, ErrorKind, Event, RawByteStr, WithDeserializer,
+        },
+        xml::{AnyAttributes, AnyElement},
     };
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
-        any_attribute: super::AnyAttributes,
+        any_attribute: AnyAttributes,
         name: Option<String>,
-        any_0: Vec<super::AnyElement>,
+        any_0: Vec<AnyElement>,
         choice: Vec<super::ChoiceType>,
-        any_1: Vec<super::AnyElement>,
+        any_1: Vec<AnyElement>,
         state: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
         Init__,
         Name(Option<<String as WithDeserializer>::Deserializer>),
-        Any0(Option<<super::AnyElement as WithDeserializer>::Deserializer>),
+        Any0(Option<<AnyElement as WithDeserializer>::Deserializer>),
         Choice(Option<<super::ChoiceType as WithDeserializer>::Deserializer>),
-        Any1(Option<<super::AnyElement as WithDeserializer>::Deserializer>),
+        Any1(Option<<AnyElement as WithDeserializer>::Deserializer>),
         Done__,
         Unknown__,
     }
@@ -110,7 +113,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut any_attribute = super::AnyAttributes::default();
+            let mut any_attribute = AnyAttributes::default();
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 any_attribute.push(attrib)?;
@@ -149,7 +152,7 @@ pub mod quick_xml_deserialize {
             self.name = Some(value);
             Ok(())
         }
-        fn store_any_0(&mut self, value: super::AnyElement) -> Result<(), Error> {
+        fn store_any_0(&mut self, value: AnyElement) -> Result<(), Error> {
             self.any_0.push(value);
             Ok(())
         }
@@ -157,7 +160,7 @@ pub mod quick_xml_deserialize {
             self.choice.push(value);
             Ok(())
         }
-        fn store_any_1(&mut self, value: super::AnyElement) -> Result<(), Error> {
+        fn store_any_1(&mut self, value: AnyElement) -> Result<(), Error> {
             self.any_1.push(value);
             Ok(())
         }
@@ -214,7 +217,7 @@ pub mod quick_xml_deserialize {
         fn handle_any_0<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::AnyElement>,
+            output: DeserializerOutput<'de, AnyElement>,
             fallback: &mut Option<FooTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -305,7 +308,7 @@ pub mod quick_xml_deserialize {
         fn handle_any_1<'de, R>(
             &mut self,
             reader: &R,
-            output: DeserializerOutput<'de, super::AnyElement>,
+            output: DeserializerOutput<'de, AnyElement>,
             fallback: &mut Option<FooTypeDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -455,10 +458,9 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any0(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
-                            let output =
-                                <super::AnyElement as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             match self.handle_any_0(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -498,10 +500,9 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Any1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         if is_any_retry {
-                            let output =
-                                <super::AnyElement as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
                             match self.handle_any_1(reader, output, &mut fallback)? {
                                 ElementHandlerOutput::Continue { event, allow_any } => {
                                     allow_any_element = allow_any_element || allow_any;
@@ -562,7 +563,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ChoiceTypeDeserializer {
-        any_attribute: super::AnyAttributes,
+        any_attribute: AnyAttributes,
         content: Option<super::ChoiceTypeContent>,
         state: Box<ChoiceTypeDeserializerState>,
     }
@@ -578,7 +579,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let mut any_attribute = super::AnyAttributes::default();
+            let mut any_attribute = AnyAttributes::default();
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 any_attribute.push(attrib)?;
@@ -730,8 +731,8 @@ pub mod quick_xml_deserialize {
             Option<<String as WithDeserializer>::Deserializer>,
         ),
         Any(
-            Option<super::AnyElement>,
-            Option<<super::AnyElement as WithDeserializer>::Deserializer>,
+            Option<AnyElement>,
+            Option<<AnyElement as WithDeserializer>::Deserializer>,
         ),
         Done__(super::ChoiceTypeContent),
         Unknown__,
@@ -757,7 +758,7 @@ pub mod quick_xml_deserialize {
                 }
                 event = {
                     let output =
-                        <super::AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
+                        <AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
                     match self.handle_any(reader, Default::default(), output, &mut *fallback)? {
                         ElementHandlerOutput::Continue { event, .. } => event,
                         output => {
@@ -810,10 +811,7 @@ pub mod quick_xml_deserialize {
             *values = Some(value);
             Ok(())
         }
-        fn store_any(
-            values: &mut Option<super::AnyElement>,
-            value: super::AnyElement,
-        ) -> Result<(), Error> {
+        fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"any2")))?;
             }
@@ -874,8 +872,8 @@ pub mod quick_xml_deserialize {
         fn handle_any<'de, R>(
             &mut self,
             reader: &R,
-            mut values: Option<super::AnyElement>,
-            output: DeserializerOutput<'de, super::AnyElement>,
+            mut values: Option<AnyElement>,
+            output: DeserializerOutput<'de, AnyElement>,
             fallback: &mut Option<ChoiceTypeContentDeserializerState>,
         ) -> Result<ElementHandlerOutput<'de>, Error>
         where
@@ -1003,9 +1001,8 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Any(values, None), event) => {
-                        let output = <super::AnyElement as WithDeserializer>::Deserializer::init(
-                            reader, event,
-                        )?;
+                        let output =
+                            <AnyElement as WithDeserializer>::Deserializer::init(reader, event)?;
                         match self.handle_any(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1041,8 +1038,9 @@ pub mod quick_xml_deserialize {
 }
 pub mod quick_xml_serialize {
     use core::iter::Iterator;
-    use xsd_parser::quick_xml::{
-        BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer,
+    use xsd_parser::{
+        quick_xml::{BytesEnd, BytesStart, Error, Event, IterSerializer, WithSerializer},
+        xml::AnyElement,
     };
     #[derive(Debug)]
     pub struct FooTypeSerializer<'ser> {
@@ -1055,9 +1053,9 @@ pub mod quick_xml_serialize {
     pub(super) enum FooTypeSerializerState<'ser> {
         Init__,
         Name(<String as WithSerializer>::Serializer<'ser>),
-        Any0(IterSerializer<'ser, &'ser [super::AnyElement], super::AnyElement>),
+        Any0(IterSerializer<'ser, &'ser [AnyElement], AnyElement>),
         Choice(IterSerializer<'ser, &'ser [super::ChoiceType], super::ChoiceType>),
-        Any1(IterSerializer<'ser, &'ser [super::AnyElement], super::AnyElement>),
+        Any1(IterSerializer<'ser, &'ser [AnyElement], AnyElement>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -1202,7 +1200,7 @@ pub mod quick_xml_serialize {
     pub(super) enum ChoiceTypeContentSerializerState<'ser> {
         Init__,
         Name(<String as WithSerializer>::Serializer<'ser>),
-        Any(<super::AnyElement as WithSerializer>::Serializer<'ser>),
+        Any(<AnyElement as WithSerializer>::Serializer<'ser>),
         Done__,
         Phantom__(&'ser ()),
     }

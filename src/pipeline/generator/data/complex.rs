@@ -541,8 +541,8 @@ impl<'types> ComplexDataElement<'types> {
                     return Ok(None);
                 };
 
-                let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
-                let target_type = PathData::from_path(target_type);
+                let target_type = IdentPath::from_ident(type_.ident().clone());
+                let target_type = PathData::from_path(target_type).with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
 
@@ -670,8 +670,8 @@ impl<'types> ComplexDataAttribute<'types> {
                     return Ok(None);
                 };
 
-                let target_type = IdentPath::from_ident(type_.ident().clone()).with_path([]);
-                let target_type = PathData::from_path(target_type);
+                let target_type = IdentPath::from_ident(type_.ident().clone());
+                let target_type = PathData::from_path(target_type).with_using(format!("{type_}"));
 
                 (target_type, None)
             }

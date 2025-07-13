@@ -1,5 +1,5 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use quote::{format_ident, quote};
 
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
@@ -469,15 +469,6 @@ impl ComplexDataAttribute<'_> {
         let name = prefixed_name(ctx, &self.meta.ident, s_name);
         let name = format!("@{name}");
 
-        if let Some(ty) = self
-            .meta
-            .is_any()
-            .then_some(())
-            .and(ctx.any_attribute_type.as_ref())
-        {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
-
         quote! {
             #docs
             #[serde(#default rename = #name)]
@@ -516,15 +507,6 @@ impl ComplexDataElement<'_> {
             Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
             Occurs::Optional | Occurs::DynamicList => quote!(default,),
         };
-
-        if let Some(ty) = self
-            .meta()
-            .is_any()
-            .then_some(())
-            .and(ctx.any_type.as_ref())
-        {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
 
         quote! {
             #docs

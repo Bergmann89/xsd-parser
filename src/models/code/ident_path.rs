@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 
@@ -185,6 +186,18 @@ impl FromStr for IdentPath {
             ident: ident.ok_or_else(|| InvalidIdentPath(s.into()))?,
             path: Some(path),
         })
+    }
+}
+
+impl Display for IdentPath {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        if let Some(path) = &self.path {
+            for module in &path.0 {
+                write!(f, "{module}::")?;
+            }
+        }
+
+        write!(f, "{}", self.ident)
     }
 }
 
