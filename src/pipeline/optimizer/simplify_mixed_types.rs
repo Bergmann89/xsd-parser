@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::mem::take;
 
 use smallvec::{smallvec, SmallVec};
@@ -71,7 +72,10 @@ impl Optimizer {
                     return Err(Error::ExpectedUnboundContent(ident));
                 }
 
-                gi.elements.push(ElementMeta::text(Ident::element("text")));
+                let need_text_element = !gi.elements.iter().any(|e| e.is_any() || e.is_text());
+                if need_text_element {
+                    gi.elements.push(ElementMeta::text(Ident::element("text")));
+                }
             }
             MetaTypeVariant::Sequence(gi) => {
                 let mut text_before = ElementMeta::text(Ident::element("text_before"));
@@ -79,7 +83,7 @@ impl Optimizer {
 
                 let pairs = take(&mut gi.elements.0).into_iter().map(
                     |e| -> SmallVec<[Result<ElementMeta, Error>; 2]> {
-                        if e.min_occurs != 1 || e.max_occurs != MaxOccurs::Bounded(1) {
+                        if e.min_occurs > 1 || e.max_occurs != MaxOccurs::Bounded(1) {
                             return smallvec![Err(Error::UnexpectedElementInContent(
                                 ident.clone()
                             ))];
@@ -146,7 +150,7 @@ impl Optimizer {
                 None
             })
             .cloned()
-            .collect::<Vec<_>>();
+            .collect::<HashSet<_>>();
 
         for ident in idents {
             self = self.simplify_mixed_type(ident).unwrap();
