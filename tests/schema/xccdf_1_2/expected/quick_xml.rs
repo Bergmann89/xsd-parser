@@ -275,6 +275,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     impl HtmlTextWithSubType {
         #[must_use]
@@ -2140,6 +2141,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     impl WarningType {
         #[must_use]
@@ -2625,6 +2627,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     impl WithSerializer for ProfileNoteType {
         type Serializer<'x> = quick_xml_serialize::ProfileNoteTypeSerializer<'x>;
@@ -2702,6 +2705,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     impl FixTextType {
         #[must_use]
@@ -3772,6 +3776,7 @@ pub mod cdf {
     #[derive(Debug)]
     pub enum CheckContentTypeContent {
         Any(AnyElement),
+        Text(Text),
     }
     impl WithSerializer for CheckContentType {
         type Serializer<'x> = quick_xml_serialize::CheckContentTypeSerializer<'x>;
@@ -7550,6 +7555,10 @@ pub mod cdf {
                 Option<AnyElement>,
                 Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
             Done__(super::HtmlTextWithSubTypeContent),
             Unknown__,
         }
@@ -7585,10 +7594,8 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(HtmlTextWithSubTypeContentDeserializerState::Init__);
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                self.handle_text(reader, Default::default(), output, &mut *fallback)
             }
             fn finish_state<R>(
                 reader: &R,
@@ -7618,6 +7625,15 @@ pub mod cdf {
                             || ErrorKind::MissingElement("any17".into()),
                         )?))
                     }
+                    S::Text(mut values, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(reader)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::HtmlTextWithSubTypeContent::Text(
+                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        ))
+                    }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
                 }
@@ -7637,6 +7653,13 @@ pub mod cdf {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"any17",
                     )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
                 }
                 *values = Some(value);
                 Ok(())
@@ -7761,6 +7784,66 @@ pub mod cdf {
                     }
                 })
             }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                mut values: Option<Text>,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<HtmlTextWithSubTypeContentDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state = match fallback.take() {
+                        None => HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
+                        Some(HtmlTextWithSubTypeContentDeserializerState::Text(
+                            _,
+                            Some(deserializer),
+                        )) => HtmlTextWithSubTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        ),
+                        _ => unreachable!(),
+                    };
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+                match fallback.take() {
+                    None => (),
+                    Some(HtmlTextWithSubTypeContentDeserializerState::Text(
+                        _,
+                        Some(deserializer),
+                    )) => {
+                        let data = deserializer.finish(reader)?;
+                        Self::store_text(&mut values, data)?;
+                    }
+                    Some(_) => unreachable!(),
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(
+                            reader,
+                            HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
+                        )?;
+                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        ElementHandlerOutput::Break { event, allow_any }
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        );
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    }
+                })
+            }
         }
         impl<'de> Deserializer<'de, super::HtmlTextWithSubTypeContent>
             for HtmlTextWithSubTypeContentDeserializer
@@ -7821,6 +7904,15 @@ pub mod cdf {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
+                        (S::Text(values, Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -7854,6 +7946,16 @@ pub mod cdf {
                                 reader, event,
                             )?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -23790,6 +23892,10 @@ pub mod cdf {
                 Option<AnyElement>,
                 Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
             Done__(super::WarningTypeContent),
             Unknown__,
         }
@@ -23825,10 +23931,8 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(WarningTypeContentDeserializerState::Init__);
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                self.handle_text(reader, Default::default(), output, &mut *fallback)
             }
             fn finish_state<R>(
                 reader: &R,
@@ -23858,6 +23962,15 @@ pub mod cdf {
                             ErrorKind::MissingElement("any17".into())
                         })?))
                     }
+                    S::Text(mut values, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(reader)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::WarningTypeContent::Text(
+                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        ))
+                    }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
                 }
@@ -23877,6 +23990,13 @@ pub mod cdf {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"any17",
                     )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
                 }
                 *values = Some(value);
                 Ok(())
@@ -23983,6 +24103,57 @@ pub mod cdf {
                     }
                 })
             }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                mut values: Option<Text>,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<WarningTypeContentDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state = match fallback.take() {
+                        None => WarningTypeContentDeserializerState::Text(values, None),
+                        Some(WarningTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                            WarningTypeContentDeserializerState::Text(values, Some(deserializer))
+                        }
+                        _ => unreachable!(),
+                    };
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+                match fallback.take() {
+                    None => (),
+                    Some(WarningTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                        let data = deserializer.finish(reader)?;
+                        Self::store_text(&mut values, data)?;
+                    }
+                    Some(_) => unreachable!(),
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(
+                            reader,
+                            WarningTypeContentDeserializerState::Text(values, None),
+                        )?;
+                        *self.state = WarningTypeContentDeserializerState::Done__(data);
+                        ElementHandlerOutput::Break { event, allow_any }
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state =
+                            WarningTypeContentDeserializerState::Text(values, Some(deserializer));
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    }
+                })
+            }
         }
         impl<'de> Deserializer<'de, super::WarningTypeContent> for WarningTypeContentDeserializer {
             fn init<R>(
@@ -24038,6 +24209,15 @@ pub mod cdf {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
+                        (S::Text(values, Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -24071,6 +24251,16 @@ pub mod cdf {
                                 reader, event,
                             )?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -25752,6 +25942,10 @@ pub mod cdf {
                 Option<AnyElement>,
                 Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
             Done__(super::ProfileNoteTypeContent),
             Unknown__,
         }
@@ -25787,10 +25981,8 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(ProfileNoteTypeContentDeserializerState::Init__);
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                self.handle_text(reader, Default::default(), output, &mut *fallback)
             }
             fn finish_state<R>(
                 reader: &R,
@@ -25820,6 +26012,15 @@ pub mod cdf {
                             || ErrorKind::MissingElement("any19".into()),
                         )?))
                     }
+                    S::Text(mut values, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(reader)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::ProfileNoteTypeContent::Text(
+                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        ))
+                    }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
                 }
@@ -25839,6 +26040,13 @@ pub mod cdf {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"any19",
                     )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
                 }
                 *values = Some(value);
                 Ok(())
@@ -25955,6 +26163,63 @@ pub mod cdf {
                     }
                 })
             }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                mut values: Option<Text>,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<ProfileNoteTypeContentDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state = match fallback.take() {
+                        None => ProfileNoteTypeContentDeserializerState::Text(values, None),
+                        Some(ProfileNoteTypeContentDeserializerState::Text(
+                            _,
+                            Some(deserializer),
+                        )) => ProfileNoteTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        ),
+                        _ => unreachable!(),
+                    };
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+                match fallback.take() {
+                    None => (),
+                    Some(ProfileNoteTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                        let data = deserializer.finish(reader)?;
+                        Self::store_text(&mut values, data)?;
+                    }
+                    Some(_) => unreachable!(),
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(
+                            reader,
+                            ProfileNoteTypeContentDeserializerState::Text(values, None),
+                        )?;
+                        *self.state = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        ElementHandlerOutput::Break { event, allow_any }
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state = ProfileNoteTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        );
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    }
+                })
+            }
         }
         impl<'de> Deserializer<'de, super::ProfileNoteTypeContent> for ProfileNoteTypeContentDeserializer {
             fn init<R>(
@@ -26010,6 +26275,15 @@ pub mod cdf {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
+                        (S::Text(values, Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -26043,6 +26317,16 @@ pub mod cdf {
                                 reader, event,
                             )?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -26313,6 +26597,10 @@ pub mod cdf {
                 Option<AnyElement>,
                 Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
             Done__(super::FixTextTypeContent),
             Unknown__,
         }
@@ -26348,10 +26636,8 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(FixTextTypeContentDeserializerState::Init__);
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                self.handle_text(reader, Default::default(), output, &mut *fallback)
             }
             fn finish_state<R>(
                 reader: &R,
@@ -26381,6 +26667,15 @@ pub mod cdf {
                             ErrorKind::MissingElement("any17".into())
                         })?))
                     }
+                    S::Text(mut values, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(reader)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::FixTextTypeContent::Text(
+                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        ))
+                    }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
                 }
@@ -26400,6 +26695,13 @@ pub mod cdf {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"any17",
                     )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
                 }
                 *values = Some(value);
                 Ok(())
@@ -26506,6 +26808,57 @@ pub mod cdf {
                     }
                 })
             }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                mut values: Option<Text>,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<FixTextTypeContentDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state = match fallback.take() {
+                        None => FixTextTypeContentDeserializerState::Text(values, None),
+                        Some(FixTextTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                            FixTextTypeContentDeserializerState::Text(values, Some(deserializer))
+                        }
+                        _ => unreachable!(),
+                    };
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+                match fallback.take() {
+                    None => (),
+                    Some(FixTextTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                        let data = deserializer.finish(reader)?;
+                        Self::store_text(&mut values, data)?;
+                    }
+                    Some(_) => unreachable!(),
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(
+                            reader,
+                            FixTextTypeContentDeserializerState::Text(values, None),
+                        )?;
+                        *self.state = FixTextTypeContentDeserializerState::Done__(data);
+                        ElementHandlerOutput::Break { event, allow_any }
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state =
+                            FixTextTypeContentDeserializerState::Text(values, Some(deserializer));
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    }
+                })
+            }
         }
         impl<'de> Deserializer<'de, super::FixTextTypeContent> for FixTextTypeContentDeserializer {
             fn init<R>(
@@ -26561,6 +26914,15 @@ pub mod cdf {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
+                        (S::Text(values, Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -26594,6 +26956,16 @@ pub mod cdf {
                                 reader, event,
                             )?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -31726,6 +32098,10 @@ pub mod cdf {
                 Option<AnyElement>,
                 Option<<AnyElement as WithDeserializer>::Deserializer>,
             ),
+            Text(
+                Option<Text>,
+                Option<<Text as WithDeserializer>::Deserializer>,
+            ),
             Done__(super::CheckContentTypeContent),
             Unknown__,
         }
@@ -31752,10 +32128,8 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(CheckContentTypeContentDeserializerState::Init__);
-                Ok(ElementHandlerOutput::return_to_parent(event, false))
+                let output = <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                self.handle_text(reader, Default::default(), output, &mut *fallback)
             }
             fn finish_state<R>(
                 reader: &R,
@@ -31776,6 +32150,15 @@ pub mod cdf {
                             || ErrorKind::MissingElement("any38".into()),
                         )?))
                     }
+                    S::Text(mut values, deserializer) => {
+                        if let Some(deserializer) = deserializer {
+                            let value = deserializer.finish(reader)?;
+                            Self::store_text(&mut values, value)?;
+                        }
+                        Ok(super::CheckContentTypeContent::Text(
+                            values.ok_or_else(|| ErrorKind::MissingElement("text".into()))?,
+                        ))
+                    }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
                 }
@@ -31785,6 +32168,13 @@ pub mod cdf {
                     Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
                         b"any38",
                     )))?;
+                }
+                *values = Some(value);
+                Ok(())
+            }
+            fn store_text(values: &mut Option<Text>, value: Text) -> Result<(), Error> {
+                if values.is_some() {
+                    Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(b"text")))?;
                 }
                 *values = Some(value);
                 Ok(())
@@ -31846,6 +32236,63 @@ pub mod cdf {
                     }
                 })
             }
+            fn handle_text<'de, R>(
+                &mut self,
+                reader: &R,
+                mut values: Option<Text>,
+                output: DeserializerOutput<'de, Text>,
+                fallback: &mut Option<CheckContentTypeContentDeserializerState>,
+            ) -> Result<ElementHandlerOutput<'de>, Error>
+            where
+                R: DeserializeReader,
+            {
+                let DeserializerOutput {
+                    artifact,
+                    event,
+                    allow_any,
+                } = output;
+                if artifact.is_none() {
+                    *self.state = match fallback.take() {
+                        None => CheckContentTypeContentDeserializerState::Text(values, None),
+                        Some(CheckContentTypeContentDeserializerState::Text(
+                            _,
+                            Some(deserializer),
+                        )) => CheckContentTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        ),
+                        _ => unreachable!(),
+                    };
+                    return Ok(ElementHandlerOutput::break_(event, allow_any));
+                }
+                match fallback.take() {
+                    None => (),
+                    Some(CheckContentTypeContentDeserializerState::Text(_, Some(deserializer))) => {
+                        let data = deserializer.finish(reader)?;
+                        Self::store_text(&mut values, data)?;
+                    }
+                    Some(_) => unreachable!(),
+                }
+                Ok(match artifact {
+                    DeserializerArtifact::None => unreachable!(),
+                    DeserializerArtifact::Data(data) => {
+                        Self::store_text(&mut values, data)?;
+                        let data = Self::finish_state(
+                            reader,
+                            CheckContentTypeContentDeserializerState::Text(values, None),
+                        )?;
+                        *self.state = CheckContentTypeContentDeserializerState::Done__(data);
+                        ElementHandlerOutput::Break { event, allow_any }
+                    }
+                    DeserializerArtifact::Deserializer(deserializer) => {
+                        *self.state = CheckContentTypeContentDeserializerState::Text(
+                            values,
+                            Some(deserializer),
+                        );
+                        ElementHandlerOutput::from_event_end(event, allow_any)
+                    }
+                })
+            }
         }
         impl<'de> Deserializer<'de, super::CheckContentTypeContent>
             for CheckContentTypeContentDeserializer
@@ -31897,6 +32344,15 @@ pub mod cdf {
                                 ElementHandlerOutput::Continue { event, .. } => event,
                             }
                         }
+                        (S::Text(values, Some(deserializer)), event) => {
+                            let output = deserializer.next(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
                         (state, event @ Event::End(_)) => {
                             return Ok(DeserializerOutput {
                                 artifact: DeserializerArtifact::Data(Self::finish_state(
@@ -31919,6 +32375,16 @@ pub mod cdf {
                                 reader, event,
                             )?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
+                                ElementHandlerOutput::Continue { event, .. } => event,
+                            }
+                        }
+                        (S::Text(values, None), event) => {
+                            let output =
+                                <Text as WithDeserializer>::Deserializer::init(reader, event)?;
+                            match self.handle_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
                                 }
@@ -33546,6 +34012,7 @@ pub mod cdf {
             Init__,
             Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -33564,6 +34031,11 @@ pub mod cdf {
                                     WithSerializer::serializer(x, Some("any17"), false)?,
                                 )
                             }
+                            super::HtmlTextWithSubTypeContent::Text(x) => {
+                                *self.state = HtmlTextWithSubTypeContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                )
+                            }
                         },
                         HtmlTextWithSubTypeContentSerializerState::Sub(x) => {
                             match x.next().transpose()? {
@@ -33574,6 +34046,14 @@ pub mod cdf {
                             }
                         }
                         HtmlTextWithSubTypeContentSerializerState::Any(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = HtmlTextWithSubTypeContentSerializerState::Done__
+                                }
+                            }
+                        }
+                        HtmlTextWithSubTypeContentSerializerState::Text(x) => {
                             match x.next().transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {
@@ -36501,6 +36981,7 @@ pub mod cdf {
             Init__,
             Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -36519,6 +37000,11 @@ pub mod cdf {
                                     WithSerializer::serializer(x, Some("any17"), false)?,
                                 )
                             }
+                            super::WarningTypeContent::Text(x) => {
+                                *self.state = WarningTypeContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                )
+                            }
                         },
                         WarningTypeContentSerializerState::Sub(x) => match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
@@ -36528,6 +37014,12 @@ pub mod cdf {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = WarningTypeContentSerializerState::Done__,
                         },
+                        WarningTypeContentSerializerState::Text(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = WarningTypeContentSerializerState::Done__,
+                            }
+                        }
                         WarningTypeContentSerializerState::Done__ => return Ok(None),
                         WarningTypeContentSerializerState::Phantom__(_) => unreachable!(),
                     }
@@ -37182,6 +37674,7 @@ pub mod cdf {
             Init__,
             Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -37200,6 +37693,11 @@ pub mod cdf {
                                     WithSerializer::serializer(x, Some("any19"), false)?,
                                 )
                             }
+                            super::ProfileNoteTypeContent::Text(x) => {
+                                *self.state = ProfileNoteTypeContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                )
+                            }
                         },
                         ProfileNoteTypeContentSerializerState::Sub(x) => {
                             match x.next().transpose()? {
@@ -37208,6 +37706,12 @@ pub mod cdf {
                             }
                         }
                         ProfileNoteTypeContentSerializerState::Any(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = ProfileNoteTypeContentSerializerState::Done__,
+                            }
+                        }
+                        ProfileNoteTypeContentSerializerState::Text(x) => {
                             match x.next().transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => *self.state = ProfileNoteTypeContentSerializerState::Done__,
@@ -37314,6 +37818,7 @@ pub mod cdf {
             Init__,
             Sub(<super::SubType as WithSerializer>::Serializer<'ser>),
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -37332,6 +37837,11 @@ pub mod cdf {
                                     WithSerializer::serializer(x, Some("any17"), false)?,
                                 )
                             }
+                            super::FixTextTypeContent::Text(x) => {
+                                *self.state = FixTextTypeContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                )
+                            }
                         },
                         FixTextTypeContentSerializerState::Sub(x) => match x.next().transpose()? {
                             Some(event) => return Ok(Some(event)),
@@ -37341,6 +37851,12 @@ pub mod cdf {
                             Some(event) => return Ok(Some(event)),
                             None => *self.state = FixTextTypeContentSerializerState::Done__,
                         },
+                        FixTextTypeContentSerializerState::Text(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => *self.state = FixTextTypeContentSerializerState::Done__,
+                            }
+                        }
                         FixTextTypeContentSerializerState::Done__ => return Ok(None),
                         FixTextTypeContentSerializerState::Phantom__(_) => unreachable!(),
                     }
@@ -38753,6 +39269,7 @@ pub mod cdf {
         pub(super) enum CheckContentTypeContentSerializerState<'ser> {
             Init__,
             Any(<AnyElement as WithSerializer>::Serializer<'ser>),
+            Text(<Text as WithSerializer>::Serializer<'ser>),
             Done__,
             Phantom__(&'ser ()),
         }
@@ -38766,8 +39283,21 @@ pub mod cdf {
                                     WithSerializer::serializer(x, Some("any38"), false)?,
                                 )
                             }
+                            super::CheckContentTypeContent::Text(x) => {
+                                *self.state = CheckContentTypeContentSerializerState::Text(
+                                    WithSerializer::serializer(x, Some("text"), false)?,
+                                )
+                            }
                         },
                         CheckContentTypeContentSerializerState::Any(x) => {
+                            match x.next().transpose()? {
+                                Some(event) => return Ok(Some(event)),
+                                None => {
+                                    *self.state = CheckContentTypeContentSerializerState::Done__
+                                }
+                            }
+                        }
+                        CheckContentTypeContentSerializerState::Text(x) => {
                             match x.next().transpose()? {
                                 Some(event) => return Ok(Some(event)),
                                 None => {

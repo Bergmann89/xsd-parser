@@ -158,6 +158,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     ///Data type for an xccdf:notice element.
     ///xccdf:notice elements are used to include legal notices (licensing
@@ -1263,6 +1264,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     /// This type is for an element that has string content
     ///and a @selector attribute for use in tailoring.
@@ -1462,6 +1464,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     /// Data type for the xccdf:fixtext element, which
     ///contains data that describes how to bring a target system into compliance with an
@@ -1503,6 +1506,7 @@ pub mod cdf {
         ///substitution
         Sub(SubType),
         Any(AnyElement),
+        Text(Text),
     }
     /// Data type for the xccdf:fix element. The body
     ///of this element contains a command string, script, or other system modification
@@ -2019,6 +2023,7 @@ pub mod cdf {
     #[derive(Debug)]
     pub enum CheckContentTypeContent {
         Any(AnyElement),
+        Text(Text),
     }
     /// The type for the allowed @operator names for the
     ///xccdf:complex-check operator attribute. Only AND and OR operators are

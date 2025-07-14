@@ -72,7 +72,7 @@ impl Optimizer {
                     return Err(Error::ExpectedUnboundContent(ident));
                 }
 
-                let need_text_element = !gi.elements.iter().any(|e| e.is_any() || e.is_text());
+                let need_text_element = !gi.elements.iter().any(ElementMeta::is_text);
                 if need_text_element {
                     gi.elements.push(ElementMeta::text(Ident::element("text")));
                 }
