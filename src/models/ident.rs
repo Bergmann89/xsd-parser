@@ -50,6 +50,8 @@ pub enum IdentType {
 
 #[allow(missing_docs)]
 impl Ident {
+    pub const UNKNOWN: Self = Self::type_("UNKNOWN");
+
     pub const U8: Self = Self::build_in("u8");
     pub const U16: Self = Self::build_in("u16");
     pub const U32: Self = Self::build_in("u32");

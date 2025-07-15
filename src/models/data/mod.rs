@@ -14,6 +14,7 @@ mod custom;
 mod dynamic;
 mod enumeration;
 mod occurs;
+mod path_data;
 mod reference;
 mod type_;
 mod types;
@@ -22,12 +23,13 @@ mod union;
 pub use self::build_in::BuildInData;
 pub use self::complex::{
     ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
-    ComplexDataEnum, ComplexDataStruct, StructMode,
+    ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, StructMode,
 };
 pub use self::custom::CustomData;
 pub use self::dynamic::{DerivedType, DynamicData};
 pub use self::enumeration::{EnumerationData, EnumerationTypeVariant};
 pub use self::occurs::Occurs;
+pub use self::path_data::PathData;
 pub use self::reference::ReferenceData;
 pub use self::type_::{DataType, DataTypeVariant};
 pub use self::types::DataTypes;

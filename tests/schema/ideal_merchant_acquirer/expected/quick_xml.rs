@@ -2883,71 +2883,102 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(KeyInfoTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"KeyName")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_key_name(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"KeyValue")
-            ) {
-                let output =
-                    <super::KeyValueType as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_key_value(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"RetrievalMethod")
-            ) {
-                let output = <super::RetrievalMethodType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                return self.handle_retrieval_method(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509Data")
-            ) {
-                let output =
-                    <super::X509DataType as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x509_data(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"PGPData")
-            ) {
-                let output =
-                    <super::PgpDataType as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_pgp_data(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"SPKIData")
-            ) {
-                let output =
-                    <super::SpkiDataType as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_spki_data(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"MgmtData")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_mgmt_data(reader, Default::default(), output, &mut *fallback);
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"KeyName")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_key_name(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"KeyValue")
+                ) {
+                    let output = <super::KeyValueType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_key_value(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"RetrievalMethod")
+                ) {
+                    let output =
+                        <super::RetrievalMethodType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    return self.handle_retrieval_method(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509Data")
+                ) {
+                    let output = <super::X509DataType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_x509_data(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"PGPData")
+                ) {
+                    let output = <super::PgpDataType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_pgp_data(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"SPKIData")
+                ) {
+                    let output = <super::SpkiDataType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_spki_data(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"MgmtData")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_mgmt_data(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()
@@ -4733,39 +4764,35 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(KeyValueTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"DSAKeyValue")
-            ) {
-                let output = <super::DsaKeyValueType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                return self.handle_dsa_key_value(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"RSAKeyValue")
-            ) {
-                let output = <super::RsaKeyValueType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                return self.handle_rsa_key_value(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"DSAKeyValue")
+                ) {
+                    let output = <super::DsaKeyValueType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_dsa_key_value(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"RSAKeyValue")
+                ) {
+                    let output = <super::RsaKeyValueType as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    return self.handle_rsa_key_value(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()
@@ -5844,41 +5871,50 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(_) | Event::Empty(_)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(PgpDataTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
+            let mut event = event;
             let mut allow_any_element = false;
-            let event = {
-                let output = <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                match self.handle_content_47(reader, Default::default(), output, &mut *fallback)? {
-                    ElementHandlerOutput::Continue { event, allow_any } => {
-                        allow_any_element = allow_any_element || allow_any;
-                        event
+            if let Event::Start(_) | Event::Empty(_) = &event {
+                event = {
+                    let output =
+                        <super::PgpDataContent47Type as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    match self.handle_content_47(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    )? {
+                        ElementHandlerOutput::Continue { event, allow_any } => {
+                            allow_any_element = allow_any_element || allow_any;
+                            event
+                        }
+                        output => {
+                            return Ok(output);
+                        }
                     }
-                    output => {
-                        return Ok(output);
+                };
+                event = {
+                    let output =
+                        <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    match self.handle_content_49(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    )? {
+                        ElementHandlerOutput::Continue { event, allow_any } => {
+                            allow_any_element = allow_any_element || allow_any;
+                            event
+                        }
+                        output => {
+                            return Ok(output);
+                        }
                     }
-                }
-            };
-            let event = {
-                let output = <super::PgpDataContent49Type as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                match self.handle_content_49(reader, Default::default(), output, &mut *fallback)? {
-                    ElementHandlerOutput::Continue { event, allow_any } => {
-                        allow_any_element = allow_any_element || allow_any;
-                        event
-                    }
-                    output => {
-                        return Ok(output);
-                    }
-                }
-            };
+                };
+            }
             *self.state = fallback
                 .take()
                 .unwrap_or(PgpDataTypeContentDeserializerState::Init__);
@@ -7912,63 +7948,70 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(X509DataContent43TypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509IssuerSerial")
-            ) {
-                let output = <super::X509IssuerSerialType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                return self.handle_x509_issuer_serial(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509SKI")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x509_ski(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509SubjectName")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x509_subject_name(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509Certificate")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x509_certificate(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"X509CRL")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x509_crl(reader, Default::default(), output, &mut *fallback);
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509IssuerSerial")
+                ) {
+                    let output =
+                        <super::X509IssuerSerialType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    return self.handle_x509_issuer_serial(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509SKI")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_x509_ski(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509SubjectName")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_x509_subject_name(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509Certificate")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_x509_certificate(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"X509CRL")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_x509_crl(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()
@@ -9330,18 +9373,14 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(TransformTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, true));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DS),
-                Some(b"XPath")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_x_path(reader, Default::default(), output, &mut *fallback);
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DS),
+                    Some(b"XPath")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_x_path(reader, Default::default(), output, &mut *fallback);
+                }
             }
             *self.state = fallback
                 .take()

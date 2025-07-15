@@ -23,6 +23,21 @@ macro_rules! unreachable {
     }};
 }
 
+macro_rules! assert {
+    ($x:expr $(,)?) => {{
+        if !$x {
+            tracing::error!(x = stringify!($x), "assertion failed");
+            core::assert!($x);
+        }
+    }};
+    ($x:expr, $($arg:tt)+) => {{
+        if !$x {
+            tracing::error!(x = stringify!($x), message = format!($($arg)+));
+            core::assert!($x, $b, $($arg)+);
+        }
+    }};
+}
+
 macro_rules! assert_eq {
     ($a:expr, $b:expr $(,)?) => {{
         if $a != $b {
@@ -38,5 +53,6 @@ macro_rules! assert_eq {
     }};
 }
 
+pub(crate) use assert;
 pub(crate) use assert_eq;
 pub(crate) use unreachable;

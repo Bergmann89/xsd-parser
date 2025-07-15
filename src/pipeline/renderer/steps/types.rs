@@ -1,5 +1,5 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
+use quote::quote;
 
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::data::{
@@ -341,15 +341,6 @@ impl ComplexDataAttribute<'_> {
             &self.meta.documentation[..],
         );
 
-        if let Some(ty) = self
-            .meta
-            .is_any()
-            .then_some(())
-            .and(ctx.any_attribute_type.as_ref())
-        {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
-
         quote! {
             #docs
             pub #field_ident: #target_type,
@@ -369,12 +360,8 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
-
-        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
 
         quote! {
             #docs
@@ -390,7 +377,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         quote! {

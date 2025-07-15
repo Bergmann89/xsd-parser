@@ -511,10 +511,10 @@ where
     where
         R: XmlReader,
     {
-        let text = dbg!(from_utf8(&self.data[..])?);
-        let text = dbg!(BytesText::from_escaped(text));
-        let text = dbg!(text.decode()?);
-        let text = dbg!(unescape(&text)?);
+        let text = from_utf8(&self.data[..])?;
+        let text = BytesText::from_escaped(text);
+        let text = text.decode()?;
+        let text = unescape(&text)?;
 
         T::deserialize_bytes(reader, text.as_bytes().trim_ascii())
     }

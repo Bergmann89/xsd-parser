@@ -7,5 +7,6 @@ mod ideal_merchant_acquirer;
 mod shiporder;
 mod sitemap;
 mod xcb;
+mod xccdf_1_2;
 mod xml_catalogs;
 mod xml_schema;

@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::ops::{Deref, DerefMut};
 use std::str::FromStr;
 
@@ -18,7 +19,7 @@ use super::format_module_ident;
 ///
 /// The identifier path contains two parts:
 /// - The identifier itself, which is more or less the name of the object to identify, and
-/// - the math of the module the object is provided at.
+/// - the path of the module the object is provided at.
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct IdentPath {
     path: Option<ModulePath>,
@@ -89,7 +90,7 @@ impl IdentPath {
         &self.ident
     }
 
-    /// Creates a new [`IdentPath`] that is relative to the passed `dst` module path.
+    /// Creates a [`TokenStream`] that is relative to the passed `dst` module path.
     ///
     /// This uses the `super` keyword to create a relative path from the passed `dst` module path
     /// and this identifier path. The relative path is returned as token stream.
@@ -185,6 +186,18 @@ impl FromStr for IdentPath {
             ident: ident.ok_or_else(|| InvalidIdentPath(s.into()))?,
             path: Some(path),
         })
+    }
+}
+
+impl Display for IdentPath {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        if let Some(path) = &self.path {
+            for module in &path.0 {
+                write!(f, "{module}::")?;
+            }
+        }
+
+        write!(f, "{}", self.ident)
     }
 }
 

@@ -3955,65 +3955,59 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(BmecatElementTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"HEADER")
-            ) {
-                let output = <super::HeaderElementType as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                return self.handle_header(reader, Default::default(), output, &mut *fallback);
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"T_NEW_CATALOG")
-            ) {
-                let output =
-                    <super::TNewCatalogElementType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                return self.handle_t_new_catalog(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"T_UPDATE_PRODUCTS")
-            ) {
-                let output =
-                    <super::TUpdateProductsElementType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                return self.handle_t_update_products(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"T_UPDATE_PRICES")
-            ) {
-                let output =
-                    <super::TUpdatePricesElementType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                return self.handle_t_update_prices(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"HEADER")
+                ) {
+                    let output =
+                        <super::HeaderElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    return self.handle_header(reader, Default::default(), output, &mut *fallback);
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"T_NEW_CATALOG")
+                ) {
+                    let output =
+                        <super::TNewCatalogElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    return self.handle_t_new_catalog(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"T_UPDATE_PRODUCTS")
+                ) {
+                    let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                    return self.handle_t_update_products(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"T_UPDATE_PRICES")
+                ) {
+                    let output =
+                        <super::TUpdatePricesElementType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                    return self.handle_t_update_prices(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()
@@ -22266,35 +22260,31 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(UdxEdxfDiscountGroupElementTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_discount_group_manufacturer(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_discount_group_supplier(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_discount_group_manufacturer(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_discount_group_supplier(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()
@@ -26972,144 +26962,140 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(x) | Event::Empty(x)) = &event else {
-                *self.state = fallback
-                    .take()
-                    .unwrap_or(UdxEdxfSurchargeElementTypeContentDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.SURCHARGE_TYPE")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_surcharge_type(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.SURCHARGE_MANNER")
-            ) {
-                let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_surcharge_manner(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_surcharge_percentage(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_surcharge_price_amount(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_surcharge_calculation(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis_weight(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
-            ) {
-                let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis_surcharge_threshold(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis_surcharge_shutter(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
-            ) {
-                let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis_surcharge_credit(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
-            }
-            if matches!(
-                reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
-                Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
-            ) {
-                let output =
-                    <super::DtMlstring as WithDeserializer>::Deserializer::init(reader, event)?;
-                return self.handle_udx_edxf_material_basis_surcharge_table(
-                    reader,
-                    Default::default(),
-                    output,
-                    &mut *fallback,
-                );
+            if let Event::Start(x) | Event::Empty(x) = &event {
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.SURCHARGE_TYPE")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_surcharge_type(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.SURCHARGE_MANNER")
+                ) {
+                    let output = <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_surcharge_manner(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.SURCHARGE_PERCENTAGE")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_surcharge_percentage(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_surcharge_price_amount(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.SURCHARGE_CALCULATION")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_surcharge_calculation(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS_WEIGHT")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis_weight(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD")
+                ) {
+                    let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis_surcharge_threshold(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis_surcharge_shutter(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT")
+                ) {
+                    let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis_surcharge_credit(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
+                if matches!(
+                    reader.resolve_local_name(x.name(), &super::NS_DEFAULT),
+                    Some(b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE")
+                ) {
+                    let output =
+                        <super::DtMlstring as WithDeserializer>::Deserializer::init(reader, event)?;
+                    return self.handle_udx_edxf_material_basis_surcharge_table(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    );
+                }
             }
             *self.state = fallback
                 .take()

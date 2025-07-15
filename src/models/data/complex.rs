@@ -3,12 +3,11 @@ use std::ops::Deref;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    code::IdentPath,
     meta::{AttributeMeta, ElementMeta},
     schema::{MaxOccurs, MinOccurs},
 };
 
-use super::Occurs;
+use super::{Occurs, PathData};
 
 /// Contains additional information for the rendering process of a
 /// [`MetaTypeVariant::All`](crate::models::meta::MetaTypeVariant::All),
@@ -30,6 +29,7 @@ use super::Occurs;
 /// Additional improvements may be applied to the type, to reduce the complexity
 /// of the generated type (for example flattening the content if possible).
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum ComplexData<'types> {
     /// The type represents an enumeration.
     ///
@@ -57,6 +57,7 @@ pub enum ComplexData<'types> {
 /// Contains basic information for that is shared between [`ComplexDataEnum`]
 /// and [`ComplexDataStruct`].
 #[derive(Debug)]
+#[allow(clippy::struct_excessive_bools)]
 pub struct ComplexBase {
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
@@ -75,6 +76,9 @@ pub struct ComplexBase {
 
     /// `true` if the type is dynamic, `false` otherwise.
     pub is_dynamic: bool,
+
+    /// `true` if the type has mixed content, `false` otherwise.
+    pub is_mixed: bool,
 
     /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,
@@ -136,6 +140,7 @@ pub struct ComplexDataStruct<'types> {
 /// Used by [`ComplexDataStruct`] to tell how the actual content of the struct
 /// should be rendered.
 #[derive(Debug)]
+#[allow(clippy::large_enum_variant)]
 pub enum StructMode<'types> {
     /// The struct does not contain any `xs:element`s.
     Empty {
@@ -194,7 +199,7 @@ pub struct ComplexDataContent {
     pub max_occurs: MaxOccurs,
 
     /// Actual target type of the content.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 }
 
 /// Contains the details of an XML element.
@@ -202,8 +207,8 @@ pub struct ComplexDataContent {
 /// Is used in [`ComplexDataEnum`] or [`StructMode`].
 #[derive(Debug)]
 pub struct ComplexDataElement<'types> {
-    /// Reference to the original type information.
-    pub meta: &'types ElementMeta,
+    /// Origin of the element
+    pub origin: ComplexDataElementOrigin<'types>,
 
     /// Occurrence of the element within it's parent type.
     pub occurs: Occurs,
@@ -224,7 +229,7 @@ pub struct ComplexDataElement<'types> {
     pub variant_ident: Ident2,
 
     /// Actual target type of the element.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// `true` if this element needs some indirection
     /// (like a `Box` or a `Vec`), `false` otherwise.
@@ -233,6 +238,16 @@ pub struct ComplexDataElement<'types> {
     /// `true` if the target type of this element is dynamic,
     /// `false` otherwise.
     pub target_is_dynamic: bool,
+}
+
+/// Origin of a [`ComplexDataElement`].
+#[derive(Debug)]
+pub enum ComplexDataElementOrigin<'types> {
+    /// The element was created from a corresponding [`ElementMeta`]
+    Meta(&'types ElementMeta),
+
+    /// The element was generated as text element.
+    Generated(Box<ElementMeta>),
 }
 
 /// Contains the details of an XML attribute.
@@ -259,7 +274,7 @@ pub struct ComplexDataAttribute<'types> {
     pub is_option: bool,
 
     /// The actual target type of the attribute.
-    pub target_type: IdentPath,
+    pub target_type: PathData,
 
     /// The default value of the attribute.
     pub default_value: Option<TokenStream>,
@@ -352,5 +367,17 @@ impl Deref for ComplexDataStruct<'_> {
 
     fn deref(&self) -> &Self::Target {
         &self.base
+    }
+}
+
+impl ComplexDataElement<'_> {
+    /// Returns the [`ElementMeta`] this element was created for.
+    #[inline]
+    #[must_use]
+    pub fn meta(&self) -> &ElementMeta {
+        match &self.origin {
+            ComplexDataElementOrigin::Generated(meta) => meta,
+            ComplexDataElementOrigin::Meta(meta) => meta,
+        }
     }
 }

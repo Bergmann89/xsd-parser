@@ -116,6 +116,13 @@ bitflags! {
         ///
         /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
         const FLATTEN_STRUCT_CONTENT = 1 << 2;
+
+        /// Enable support for mixed types.
+        ///
+        /// This will enable code generation for mixed types. This feature needs
+        /// to be used with caution, because support for mixed types when using
+        /// `serde` is quite limited.
+        const MIXED_TYPE_SUPPORT = 1 << 3;
     }
 }
 

@@ -680,158 +680,178 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let (Event::Start(x) | Event::Empty(x)) = &event else {
-                    *self.state = fallback
-                        .take()
-                        .unwrap_or(CatalogTypeContentDeserializerState::Init__);
-                    return Ok(ElementHandlerOutput::return_to_parent(event, true));
-                };
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"public")
-                ) {
-                    let output =
-                        <super::PublicType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_public(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"system")
-                ) {
-                    let output =
-                        <super::SystemType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_system(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"uri")
-                ) {
-                    let output =
-                        <super::UriType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_uri(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"rewriteSystem")
-                ) {
-                    let output =
-                        <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"public")
+                    ) {
+                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_rewrite_system(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"rewriteURI")
-                ) {
-                    let output = <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_rewrite_uri(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"uriSuffix")
-                ) {
-                    let output = <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_uri_suffix(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"systemSuffix")
-                ) {
-                    let output = <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_system_suffix(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegatePublic")
-                ) {
-                    let output =
-                        <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
+                        return self.handle_public(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"system")
+                    ) {
+                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_delegate_public(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegateSystem")
-                ) {
-                    let output =
-                        <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
+                        return self.handle_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"uri")
+                    ) {
+                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_delegate_system(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegateURI")
-                ) {
-                    let output = <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_delegate_uri(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"nextCatalog")
-                ) {
-                    let output = <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_next_catalog(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"group")
-                ) {
-                    let output =
-                        <super::GroupType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_group(reader, Default::default(), output, &mut *fallback);
+                        return self.handle_uri(reader, Default::default(), output, &mut *fallback);
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"rewriteSystem")
+                    ) {
+                        let output =
+                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_rewrite_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"rewriteURI")
+                    ) {
+                        let output =
+                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_rewrite_uri(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"uriSuffix")
+                    ) {
+                        let output =
+                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_uri_suffix(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"systemSuffix")
+                    ) {
+                        let output =
+                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_system_suffix(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegatePublic")
+                    ) {
+                        let output =
+                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_public(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegateSystem")
+                    ) {
+                        let output =
+                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegateURI")
+                    ) {
+                        let output =
+                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_uri(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"nextCatalog")
+                    ) {
+                        let output =
+                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_next_catalog(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"group")
+                    ) {
+                        let output = <super::GroupType as WithDeserializer>::Deserializer::init(
+                            reader, event,
+                        )?;
+                        return self.handle_group(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
                 }
                 *self.state = fallback
                     .take()
@@ -2741,150 +2761,164 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let (Event::Start(x) | Event::Empty(x)) = &event else {
-                    *self.state = fallback
-                        .take()
-                        .unwrap_or(GroupTypeContentDeserializerState::Init__);
-                    return Ok(ElementHandlerOutput::return_to_parent(event, true));
-                };
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"public")
-                ) {
-                    let output =
-                        <super::PublicType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_public(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"system")
-                ) {
-                    let output =
-                        <super::SystemType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_system(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"uri")
-                ) {
-                    let output =
-                        <super::UriType as WithDeserializer>::Deserializer::init(reader, event)?;
-                    return self.handle_uri(reader, Default::default(), output, &mut *fallback);
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"rewriteSystem")
-                ) {
-                    let output =
-                        <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
+                if let Event::Start(x) | Event::Empty(x) = &event {
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"public")
+                    ) {
+                        let output = <super::PublicType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_rewrite_system(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"rewriteURI")
-                ) {
-                    let output = <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_rewrite_uri(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"uriSuffix")
-                ) {
-                    let output = <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_uri_suffix(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"systemSuffix")
-                ) {
-                    let output = <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_system_suffix(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegatePublic")
-                ) {
-                    let output =
-                        <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
+                        return self.handle_public(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"system")
+                    ) {
+                        let output = <super::SystemType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_delegate_public(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegateSystem")
-                ) {
-                    let output =
-                        <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
+                        return self.handle_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"uri")
+                    ) {
+                        let output = <super::UriType as WithDeserializer>::Deserializer::init(
                             reader, event,
                         )?;
-                    return self.handle_delegate_system(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"delegateURI")
-                ) {
-                    let output = <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_delegate_uri(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
-                }
-                if matches!(
-                    reader.resolve_local_name(x.name(), &super::super::NS_ER),
-                    Some(b"nextCatalog")
-                ) {
-                    let output = <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                        reader, event,
-                    )?;
-                    return self.handle_next_catalog(
-                        reader,
-                        Default::default(),
-                        output,
-                        &mut *fallback,
-                    );
+                        return self.handle_uri(reader, Default::default(), output, &mut *fallback);
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"rewriteSystem")
+                    ) {
+                        let output =
+                            <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_rewrite_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"rewriteURI")
+                    ) {
+                        let output =
+                            <super::RewriteUriType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_rewrite_uri(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"uriSuffix")
+                    ) {
+                        let output =
+                            <super::UriSuffixType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_uri_suffix(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"systemSuffix")
+                    ) {
+                        let output =
+                            <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_system_suffix(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegatePublic")
+                    ) {
+                        let output =
+                            <super::DelegatePublicType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_public(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegateSystem")
+                    ) {
+                        let output =
+                            <super::DelegateSystemType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_system(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"delegateURI")
+                    ) {
+                        let output =
+                            <super::DelegateUriType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_delegate_uri(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
+                    if matches!(
+                        reader.resolve_local_name(x.name(), &super::super::NS_ER),
+                        Some(b"nextCatalog")
+                    ) {
+                        let output =
+                            <super::NextCatalogType as WithDeserializer>::Deserializer::init(
+                                reader, event,
+                            )?;
+                        return self.handle_next_catalog(
+                            reader,
+                            Default::default(),
+                            output,
+                            &mut *fallback,
+                        );
+                    }
                 }
                 *self.state = fallback
                     .take()

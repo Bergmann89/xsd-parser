@@ -290,6 +290,18 @@ impl Config {
 
         self
     }
+
+    /// Set the types to use to handle `xs:any` and `xs:anyAttribute` elements.
+    pub fn with_any_support<S, T>(mut self, any_type: S, any_attribute_type: T) -> Self
+    where
+        S: Into<String>,
+        T: Into<String>,
+    {
+        self.generator.any_type = Some(any_type.into());
+        self.generator.any_attribute_type = Some(any_attribute_type.into());
+
+        self
+    }
 }
 
 /// Identifier that is used inside the config.

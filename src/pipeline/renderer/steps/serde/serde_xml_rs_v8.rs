@@ -1,5 +1,5 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use quote::{format_ident, quote};
 
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
@@ -469,15 +469,6 @@ impl ComplexDataAttribute<'_> {
         let name = prefixed_name(ctx, &self.meta.ident, s_name);
         let name = format!("@{name}");
 
-        if let Some(ty) = self
-            .meta
-            .is_any()
-            .then_some(())
-            .and(ctx.any_attribute_type.as_ref())
-        {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
-
         quote! {
             #docs
             #[serde(#default rename = #name)]
@@ -494,7 +485,11 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
-        let name = prefixed_name(ctx, &self.meta.ident, s_name);
+        let name = if self.meta().is_text() {
+            "#text".into()
+        } else {
+            prefixed_name(ctx, &self.meta().ident, s_name)
+        };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
@@ -505,17 +500,13 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         let default = match self.occurs.array_to_vec() {
             Occurs::None | Occurs::Single | Occurs::StaticList(_) => quote!(),
             Occurs::Optional | Occurs::DynamicList => quote!(default,),
         };
-
-        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
 
         quote! {
             #docs
@@ -531,7 +522,11 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
-        let name = prefixed_name(ctx, &self.meta.ident, s_name);
+        let name = if self.meta().is_text() {
+            "#text".into()
+        } else {
+            prefixed_name(ctx, &self.meta().ident, s_name)
+        };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
@@ -541,7 +536,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         quote! {

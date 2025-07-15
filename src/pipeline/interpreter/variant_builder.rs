@@ -7,8 +7,9 @@ use tracing::instrument;
 
 use crate::models::{
     meta::{
-        AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta, ElementMode,
-        EnumerationMetaVariant, MetaType, MetaTypeVariant, ReferenceMeta, UnionMetaType,
+        AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
+        ElementMetaVariant, ElementMode, EnumerationMetaVariant, MetaType, MetaTypeVariant,
+        ReferenceMeta, UnionMetaType,
     },
     schema::{
         xs::{
@@ -340,7 +341,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         self.type_mode = TypeMode::Complex;
         self.content_mode = ContentMode::Complex;
 
-        get_or_init_any!(self, ComplexType);
+        let ci = get_or_init_any!(self, ComplexType);
+        if let Some(mixed) = ty.mixed {
+            ci.is_mixed = mixed;
+        }
 
         for c in &ty.content {
             match c {
@@ -386,7 +390,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
         use crate::models::schema::xs::ComplexContentContent as C;
 
-        get_or_init_any!(self, ComplexType);
+        let ci = get_or_init_any!(self, ComplexType);
+        if let Some(mixed) = ty.mixed {
+            ci.is_mixed = mixed;
+        }
 
         for c in &ty.content {
             match c {
@@ -592,7 +599,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element = ci.elements.find_or_insert(ident, |ident| {
                     ElementMeta::new(ident, type_, ElementMode::Element)
                 });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
+                crate::assert!(matches!(
+                    element.variant,
+                    ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+                ));
                 element.update(ty);
 
                 element
@@ -625,7 +638,13 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
                     ElementMeta::new(ident, type_, ElementMode::Element)
                 });
-                crate::assert_eq!(element.element_mode, ElementMode::Element);
+                crate::assert!(matches!(
+                    element.variant,
+                    ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+                ));
                 element.update(ty);
 
                 element

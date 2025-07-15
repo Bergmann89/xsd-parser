@@ -110,39 +110,48 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let (Event::Start(_) | Event::Empty(_)) = &event else {
-                *self.state = fallback.take().unwrap_or(FooTypeDeserializerState::Init__);
-                return Ok(ElementHandlerOutput::return_to_parent(event, false));
-            };
+            let mut event = event;
             let mut allow_any_element = false;
-            let event = {
-                let output = <super::FooContent2Type as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                match self.handle_content_2(reader, Default::default(), output, &mut *fallback)? {
-                    ElementHandlerOutput::Continue { event, allow_any } => {
-                        allow_any_element = allow_any_element || allow_any;
-                        event
+            if let Event::Start(_) | Event::Empty(_) = &event {
+                event = {
+                    let output = <super::FooContent2Type as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    match self.handle_content_2(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    )? {
+                        ElementHandlerOutput::Continue { event, allow_any } => {
+                            allow_any_element = allow_any_element || allow_any;
+                            event
+                        }
+                        output => {
+                            return Ok(output);
+                        }
                     }
-                    output => {
-                        return Ok(output);
+                };
+                event = {
+                    let output = <super::FooContent3Type as WithDeserializer>::Deserializer::init(
+                        reader, event,
+                    )?;
+                    match self.handle_content_3(
+                        reader,
+                        Default::default(),
+                        output,
+                        &mut *fallback,
+                    )? {
+                        ElementHandlerOutput::Continue { event, allow_any } => {
+                            allow_any_element = allow_any_element || allow_any;
+                            event
+                        }
+                        output => {
+                            return Ok(output);
+                        }
                     }
-                }
-            };
-            let event = {
-                let output = <super::FooContent3Type as WithDeserializer>::Deserializer::init(
-                    reader, event,
-                )?;
-                match self.handle_content_3(reader, Default::default(), output, &mut *fallback)? {
-                    ElementHandlerOutput::Continue { event, allow_any } => {
-                        allow_any_element = allow_any_element || allow_any;
-                        event
-                    }
-                    output => {
-                        return Ok(output);
-                    }
-                }
-            };
+                };
+            }
             *self.state = fallback.take().unwrap_or(FooTypeDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(
                 event,

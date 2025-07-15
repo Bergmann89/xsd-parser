@@ -1,5 +1,5 @@
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{quote, ToTokens};
+use quote::quote;
 
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::{
@@ -392,15 +392,6 @@ impl ComplexDataAttribute<'_> {
             &self.meta.documentation[..],
         );
 
-        if let Some(ty) = self
-            .meta
-            .is_any()
-            .then_some(())
-            .and(ctx.any_attribute_type.as_ref())
-        {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
-
         quote! {
             #docs
             #[serde(#default rename = #name)]
@@ -417,6 +408,12 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
+        let name = if self.meta().is_text() {
+            "$text"
+        } else {
+            s_name
+        };
+
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self
             .occurs
@@ -425,7 +422,7 @@ impl ComplexDataElement<'_> {
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         let default = match self.occurs {
@@ -433,13 +430,9 @@ impl ComplexDataElement<'_> {
             Occurs::Optional | Occurs::DynamicList => quote!(default,),
         };
 
-        if let Some(ty) = self.meta.is_any().then_some(()).and(ctx.any_type.as_ref()) {
-            ctx.add_usings([ty.to_token_stream()]);
-        }
-
         quote! {
             #docs
-            #[serde(#default rename = #s_name)]
+            #[serde(#default rename = #name)]
             pub #field_ident: #target_type,
         }
     }
@@ -451,17 +444,23 @@ impl ComplexDataElement<'_> {
             ..
         } = self;
 
+        let name = if self.meta().is_text() {
+            "$text"
+        } else {
+            s_name
+        };
+
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(&target_type, self.need_indirection);
 
         let docs = ctx.render_docs(
             RendererFlags::RENDER_ELEMENT_DOCS,
-            &self.meta.documentation[..],
+            &self.meta().documentation[..],
         );
 
         quote! {
             #docs
-            #[serde(rename = #s_name)]
+            #[serde(rename = #name)]
             #variant_ident(#target_type),
         }
     }

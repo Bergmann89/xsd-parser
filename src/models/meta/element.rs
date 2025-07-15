@@ -28,9 +28,6 @@ pub struct ElementMeta {
     /// Maximum occurrence of the field.
     pub max_occurs: MaxOccurs,
 
-    /// Mode of the element.
-    pub element_mode: ElementMode,
-
     /// Name of the element to use inside the generated code.
     pub display_name: Option<String>,
 
@@ -43,11 +40,23 @@ pub struct ElementMeta {
 /// Either it's any element or it has a specific type.
 #[derive(Debug, Clone)]
 pub enum ElementMetaVariant {
+    /// Represents any text value in the XML
+    Text,
+
     /// The element is a `xs:any`.
-    Any(AnyMeta),
+    Any {
+        /// Meta information for the `xs:any` element.
+        meta: AnyMeta,
+    },
 
     /// The element has a specific type.
-    Type(Ident),
+    Type {
+        /// Identifier for the type of the element
+        type_: Ident,
+
+        /// Mode if the element
+        mode: ElementMode,
+    },
 }
 
 /// Contains information about elements that may occur in the XML file that
@@ -82,11 +91,10 @@ impl ElementMeta {
     /// Create a new [`ElementMeta`] instance from the passed `name`, `type_`
     /// and `element_mode`.
     #[must_use]
-    pub fn new(ident: Ident, type_: Ident, element_mode: ElementMode) -> Self {
+    pub fn new(ident: Ident, type_: Ident, mode: ElementMode) -> Self {
         Self {
             ident,
-            variant: ElementMetaVariant::Type(type_),
-            element_mode,
+            variant: ElementMetaVariant::Type { type_, mode },
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -96,11 +104,10 @@ impl ElementMeta {
 
     /// Create a new [`ElementMeta`] instance for an `xs:any` element.
     #[must_use]
-    pub fn any(ident: Ident, any: AnyMeta) -> Self {
+    pub fn any(ident: Ident, meta: AnyMeta) -> Self {
         Self {
             ident,
-            variant: ElementMetaVariant::Any(any),
-            element_mode: ElementMode::Element,
+            variant: ElementMetaVariant::Any { meta },
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -108,17 +115,36 @@ impl ElementMeta {
         }
     }
 
+    /// Create a new [`ElementMeta`] instance for a text.
+    #[must_use]
+    pub fn text(ident: Ident) -> Self {
+        Self {
+            ident,
+            variant: ElementMetaVariant::Text,
+            min_occurs: 1,
+            max_occurs: MaxOccurs::Bounded(1),
+            display_name: None,
+            documentation: Vec::new(),
+        }
+    }
+
+    /// Returns `true` if this element represents a text, `false` otherwise.
+    #[must_use]
+    pub fn is_text(&self) -> bool {
+        matches!(&self.variant, ElementMetaVariant::Text)
+    }
+
     /// Returns `true` if this element represents an `xs:any` element, `false` otherwise.
     #[must_use]
     pub fn is_any(&self) -> bool {
-        matches!(&self.variant, ElementMetaVariant::Any(_))
+        matches!(&self.variant, ElementMetaVariant::Any { .. })
     }
 
     /// Returns the [`AnyMeta`] if this element is a `xs:any`.
     #[must_use]
     pub fn as_any(&self) -> Option<&AnyMeta> {
-        if let ElementMetaVariant::Any(any) = &self.variant {
-            Some(any)
+        if let ElementMetaVariant::Any { meta } = &self.variant {
+            Some(meta)
         } else {
             None
         }
@@ -130,7 +156,6 @@ impl TypeEq for ElementMeta {
         let Self {
             ident,
             variant: type_,
-            element_mode,
             min_occurs,
             max_occurs,
             display_name,
@@ -139,7 +164,6 @@ impl TypeEq for ElementMeta {
 
         ident.hash(hasher);
         type_.type_hash(hasher, types);
-        element_mode.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         display_name.hash(hasher);
@@ -150,7 +174,6 @@ impl TypeEq for ElementMeta {
         let Self {
             ident,
             variant: type_,
-            element_mode,
             min_occurs,
             max_occurs,
             display_name,
@@ -159,7 +182,6 @@ impl TypeEq for ElementMeta {
 
         ident.eq(&other.ident)
             && type_.type_eq(&other.variant, types)
-            && element_mode.eq(&other.element_mode)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && display_name.eq(&other.display_name)
@@ -222,21 +244,32 @@ impl TypeEq for ElementsMeta {
 impl TypeEq for ElementMetaVariant {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         match self {
-            Self::Any(x) => {
+            Self::Any { meta } => {
                 hasher.write_u8(0);
-                x.hash(hasher);
+                meta.hash(hasher);
             }
-            Self::Type(x) => {
+            Self::Type { type_, mode } => {
                 hasher.write_u8(1);
-                x.type_hash(hasher, types);
+                type_.type_hash(hasher, types);
+                mode.hash(hasher);
             }
+            Self::Text => hasher.write_u8(2),
         }
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         match (self, other) {
-            (Self::Any(a), Self::Any(b)) => a.eq(b),
-            (Self::Type(a), Self::Type(b)) => a.type_eq(b, types),
+            (Self::Any { meta: a }, Self::Any { meta: b }) => a.eq(b),
+            (
+                Self::Type {
+                    type_: type_a,
+                    mode: mode_a,
+                },
+                Self::Type {
+                    type_: type_b,
+                    mode: mode_b,
+                },
+            ) => mode_a.eq(mode_b) && type_a.type_eq(type_b, types),
             (_, _) => false,
         }
     }
