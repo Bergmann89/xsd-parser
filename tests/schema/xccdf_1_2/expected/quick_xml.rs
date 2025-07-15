@@ -335,7 +335,7 @@ pub mod cdf {
         pub base: Option<String>,
         pub lang: Option<String>,
         pub text_before: Option<Text>,
-        pub any: Vec<AnyElement>,
+        pub any: Vec<Mixed<AnyElement>>,
     }
     impl WithSerializer for NoticeType {
         type Serializer<'x> = quick_xml_serialize::NoticeTypeSerializer<'x>;
@@ -371,7 +371,7 @@ pub mod cdf {
         ///processing.
         pub override_: Option<bool>,
         pub text_before: Option<Text>,
-        pub any: Vec<AnyElement>,
+        pub any: Vec<Mixed<AnyElement>>,
     }
     impl WithSerializer for ReferenceType {
         type Serializer<'x> = quick_xml_serialize::ReferenceTypeSerializer<'x>;
@@ -7993,14 +7993,14 @@ pub mod cdf {
             base: Option<String>,
             lang: Option<String>,
             text_before: Option<Text>,
-            any: Vec<AnyElement>,
+            any: Vec<Mixed<AnyElement>>,
             state: Box<NoticeTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum NoticeTypeDeserializerState {
             Init__,
             TextBefore(Option<<Text as WithDeserializer>::Deserializer>),
-            Any(Option<<AnyElement as WithDeserializer>::Deserializer>),
+            Any(Option<<Mixed<AnyElement> as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -8069,7 +8069,7 @@ pub mod cdf {
                 self.text_before = Some(value);
                 Ok(())
             }
-            fn store_any(&mut self, value: AnyElement) -> Result<(), Error> {
+            fn store_any(&mut self, value: Mixed<AnyElement>) -> Result<(), Error> {
                 self.any.push(value);
                 Ok(())
             }
@@ -8123,7 +8123,7 @@ pub mod cdf {
             fn handle_any<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, AnyElement>,
+                output: DeserializerOutput<'de, Mixed<AnyElement>>,
                 fallback: &mut Option<NoticeTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -8245,9 +8245,10 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                                let output =
+                                    <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
+                                        reader, event,
+                                    )?;
                                 match self.handle_any(reader, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -8309,14 +8310,14 @@ pub mod cdf {
             href: Option<String>,
             override_: Option<bool>,
             text_before: Option<Text>,
-            any: Vec<AnyElement>,
+            any: Vec<Mixed<AnyElement>>,
             state: Box<ReferenceTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ReferenceTypeDeserializerState {
             Init__,
             TextBefore(Option<<Text as WithDeserializer>::Deserializer>),
-            Any(Option<<AnyElement as WithDeserializer>::Deserializer>),
+            Any(Option<<Mixed<AnyElement> as WithDeserializer>::Deserializer>),
             Done__,
             Unknown__,
         }
@@ -8378,7 +8379,7 @@ pub mod cdf {
                 self.text_before = Some(value);
                 Ok(())
             }
-            fn store_any(&mut self, value: AnyElement) -> Result<(), Error> {
+            fn store_any(&mut self, value: Mixed<AnyElement>) -> Result<(), Error> {
                 self.any.push(value);
                 Ok(())
             }
@@ -8432,7 +8433,7 @@ pub mod cdf {
             fn handle_any<'de, R>(
                 &mut self,
                 reader: &R,
-                output: DeserializerOutput<'de, AnyElement>,
+                output: DeserializerOutput<'de, Mixed<AnyElement>>,
                 fallback: &mut Option<ReferenceTypeDeserializerState>,
             ) -> Result<ElementHandlerOutput<'de>, Error>
             where
@@ -8558,9 +8559,10 @@ pub mod cdf {
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             if is_any_retry {
-                                let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                                let output =
+                                    <Mixed<AnyElement> as WithDeserializer>::Deserializer::init(
+                                        reader, event,
+                                    )?;
                                 match self.handle_any(reader, output, &mut fallback)? {
                                     ElementHandlerOutput::Continue { event, allow_any } => {
                                         allow_any_element = allow_any_element || allow_any;
@@ -34091,7 +34093,7 @@ pub mod cdf {
         pub(super) enum NoticeTypeSerializerState<'ser> {
             Init__,
             TextBefore(IterSerializer<'ser, Option<&'ser Text>, Text>),
-            Any(IterSerializer<'ser, &'ser [AnyElement], AnyElement>),
+            Any(IterSerializer<'ser, &'ser [Mixed<AnyElement>], Mixed<AnyElement>>),
             End__,
             Done__,
             Phantom__(&'ser ()),
@@ -34171,7 +34173,7 @@ pub mod cdf {
         pub(super) enum ReferenceTypeSerializerState<'ser> {
             Init__,
             TextBefore(IterSerializer<'ser, Option<&'ser Text>, Text>),
-            Any(IterSerializer<'ser, &'ser [AnyElement], AnyElement>),
+            Any(IterSerializer<'ser, &'ser [Mixed<AnyElement>], Mixed<AnyElement>>),
             End__,
             Done__,
             Phantom__(&'ser ()),

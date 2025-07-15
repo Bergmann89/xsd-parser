@@ -337,13 +337,14 @@ impl<'types> ComplexData<'types> {
             )
             .transpose()
         });
-        let elements = text_before
-            .into_iter()
-            .map(Ok)
-            .chain(normal_fields)
-            .collect::<Result<Vec<_>, _>>()?;
 
         if flatten {
+            let elements = text_before
+                .into_iter()
+                .map(Ok)
+                .chain(normal_fields)
+                .collect::<Result<Vec<_>, _>>()?;
+
             let mode = match type_mode {
                 _ if elements.is_empty() => StructMode::Empty { allow_any },
                 TypeMode::All => StructMode::All {
@@ -371,6 +372,7 @@ impl<'types> ComplexData<'types> {
             });
         }
 
+        let elements = normal_fields.collect::<Result<Vec<_>, _>>()?;
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
         let has_content = occurs.is_some() && !elements.is_empty();
@@ -406,7 +408,19 @@ impl<'types> ComplexData<'types> {
             })
         });
 
-        let mode = if has_content {
+        let mode = if !has_content {
+            StructMode::Empty { allow_any }
+        } else if let Some(text_before) = text_before {
+            let elements = vec![
+                text_before,
+                ComplexDataElement::new_content(ctx, min_occurs, max_occurs, content_ident),
+            ];
+
+            StructMode::Sequence {
+                elements,
+                allow_any: false,
+            }
+        } else {
             let type_ref = ctx.current_type_ref();
 
             let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
@@ -421,8 +435,6 @@ impl<'types> ComplexData<'types> {
             };
 
             StructMode::Content { content }
-        } else {
-            StructMode::Empty { allow_any }
         };
 
         let type_ = ComplexDataStruct {
@@ -542,7 +554,8 @@ impl<'types> ComplexDataElement<'types> {
                 };
 
                 let target_type = IdentPath::from_ident(type_.ident().clone());
-                let target_type = PathData::from_path(target_type).with_using(format!("{type_}"));
+                let target_type =
+                    PathData::mixed(mixed, target_type).with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
 

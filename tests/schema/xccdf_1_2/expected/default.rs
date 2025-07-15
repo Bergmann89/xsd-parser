@@ -174,7 +174,7 @@ pub mod cdf {
         pub base: Option<String>,
         pub lang: Option<String>,
         pub text_before: Option<Text>,
-        pub any: Vec<AnyElement>,
+        pub any: Vec<Mixed<AnyElement>>,
     }
     /// This element provides supplementary descriptive text
     ///for a XCCDF elements. When used, it has either a simple string value or a value
@@ -192,7 +192,7 @@ pub mod cdf {
         ///processing.
         pub override_: Option<bool>,
         pub text_before: Option<Text>,
-        pub any: Vec<AnyElement>,
+        pub any: Vec<Mixed<AnyElement>>,
     }
     ///The data type for an xccdf:plain-text element,
     ///which is a reusable text block for reference by the xccdf:sub element. This

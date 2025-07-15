@@ -1,30 +1,30 @@
 use xsd_parser::{
-    config::{Generate, GeneratorFlags, IdentTriple, OptimizerFlags, ParserFlags, Resolver},
+    config::{GeneratorFlags, OptimizerFlags, ParserFlags, RendererFlags},
     Config, IdentType,
 };
 
 use crate::utils::generate_test;
 
+fn config() -> Config {
+    Config::default()
+        .with_quick_xml_deserialize()
+        .with_parser_flags(ParserFlags::all())
+        .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::SIMPLIFY_MIXED_TYPES)
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::USE_MODULES)
+        .with_renderer_flags(RendererFlags::RENDER_DOCS)
+        .with_any_support(
+            "xsd_parser::xml::AnyElement",
+            "xsd_parser::xml::AnyAttributes",
+        )
+        .with_generate([(IdentType::Element, "xs:schema")])
+}
+
 #[test]
 fn generate_quick_xml() {
-    let mut config = Config::default().with_quick_xml_deserialize();
-
-    config.parser.flags = ParserFlags::all();
-    config.parser.resolver = vec![Resolver::File];
-
-    config.optimizer.flags = OptimizerFlags::all() - OptimizerFlags::SIMPLIFY_MIXED_TYPES;
-
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;
-    config.generator.any_type = Some("xsd_parser::xml::AnyElement".into());
-    config.generator.any_attribute_type = Some("xsd_parser::xml::AnyAttributes".into());
-    config.generator.generate =
-        Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
-
     generate_test(
         "schema/XMLSchema.xsd",
         "tests/schema/xml_schema/expected/quick_xml.rs",
-        config,
+        config(),
     );
 }
 
