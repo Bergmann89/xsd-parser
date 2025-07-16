@@ -40,6 +40,9 @@ pub struct ComplexMeta {
 /// This is usually a `xs:all`, `xs:choice` or `xs:sequence`.
 #[derive(Default, Debug, Clone)]
 pub struct GroupMeta {
+    /// Wether the content of this type is mixed (contains also text) or not.
+    pub is_mixed: bool,
+
     /// List of elements defined in this group.
     pub elements: ElementsMeta,
 }
@@ -48,15 +51,16 @@ pub struct GroupMeta {
 
 impl TypeEq for GroupMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
-        let Self { elements } = self;
+        let Self { is_mixed, elements } = self;
 
+        is_mixed.hash(hasher);
         elements.type_hash(hasher, types);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
-        let Self { elements } = self;
+        let Self { is_mixed, elements } = self;
 
-        elements.type_eq(&other.elements, types)
+        is_mixed.eq(&other.is_mixed) && elements.type_eq(&other.elements, types)
     }
 }
 

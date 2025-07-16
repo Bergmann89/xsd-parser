@@ -201,6 +201,7 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("display_name={:?}", &ty.display_name);
+                indentln!("is_mixed={:?}", x.is_mixed);
 
                 for x in &*x.elements {
                     indentln!("element:");

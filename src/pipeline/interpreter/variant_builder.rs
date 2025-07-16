@@ -344,29 +344,44 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
+            self.state.type_stack.push(StackEntry::Mixed(mixed));
         }
 
+        let mut ret = Ok(());
+
         for c in &ty.content {
-            match c {
-                C::OpenContent(_) | C::Assert(_) => (),
+            ret = match c {
+                C::OpenContent(_) | C::Assert(_) => Ok(()),
                 C::ComplexContent(x) => {
                     let ci = get_or_init_any!(self, ComplexType);
                     ci.is_dynamic = ty.abstract_;
-                    self.apply_complex_content(x)?;
+
+                    self.apply_complex_content(x)
                 }
-                C::SimpleContent(x) => self.apply_simple_content(x)?,
-                C::All(x) => self.apply_all(x)?,
-                C::Choice(x) => self.apply_choice(x)?,
-                C::Sequence(x) => self.apply_sequence(x)?,
-                C::Attribute(x) => self.apply_attribute_ref(x)?,
-                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
-                C::Group(x) => self.apply_group_ref(x)?,
-                C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
-                C::Annotation(x) => self.apply_annotation(x),
+                C::SimpleContent(x) => self.apply_simple_content(x),
+                C::All(x) => self.apply_all(x),
+                C::Choice(x) => self.apply_choice(x),
+                C::Sequence(x) => self.apply_sequence(x),
+                C::Attribute(x) => self.apply_attribute_ref(x),
+                C::AnyAttribute(x) => self.apply_any_attribute(x),
+                C::Group(x) => self.apply_group_ref(x),
+                C::AttributeGroup(x) => self.apply_attribute_group_ref(x),
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        if ty.mixed.is_some() {
+            self.state.type_stack.pop();
+        }
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -393,17 +408,31 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
+            self.state.type_stack.push(StackEntry::Mixed(mixed));
         }
 
+        let mut ret = Ok(());
+
         for c in &ty.content {
-            match c {
-                C::Annotation(x) => self.apply_annotation(x),
-                C::Extension(x) => self.apply_complex_content_extension(x)?,
-                C::Restriction(x) => self.apply_complex_content_restriction(x)?,
+            ret = match c {
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+                C::Extension(x) => self.apply_complex_content_extension(x),
+                C::Restriction(x) => self.apply_complex_content_restriction(x),
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        if ty.mixed.is_some() {
+            self.state.type_stack.pop();
+        }
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -563,6 +592,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     fn apply_group(&mut self, ty: &GroupType) -> Result<(), Error> {
         use crate::models::schema::xs::GroupTypeContent as C;
+
+        let is_mixed = self.state.is_mixed();
+        if let Some(
+            MetaTypeVariant::All(gi) | MetaTypeVariant::Choice(gi) | MetaTypeVariant::Sequence(gi),
+        ) = &mut self.variant
+        {
+            gi.is_mixed = is_mixed;
+        }
 
         self.state.type_stack.push(StackEntry::Group);
 

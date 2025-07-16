@@ -1,1 +1,2 @@
 tests/feature/mixed_content/example/*.xml text eol=lf
+tests/feature/mixed_content_groups/example/*.xml text eol=lf

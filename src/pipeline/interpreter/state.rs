@@ -25,6 +25,7 @@ pub(super) struct State<'a> {
 pub(super) enum StackEntry {
     Type(Ident, HashMap<Ident, Ident>),
     NamedGroup(Ident),
+    Mixed(bool),
     Group,
 }
 
@@ -90,6 +91,20 @@ impl<'a> State<'a> {
         } else {
             None
         }
+    }
+
+    pub(super) fn is_mixed(&self) -> bool {
+        self.type_stack
+            .iter()
+            .rev()
+            .find_map(|x| {
+                if let StackEntry::Mixed(x) = x {
+                    Some(*x)
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_default()
     }
 
     pub(super) fn name_builder(&mut self) -> NameBuilder {

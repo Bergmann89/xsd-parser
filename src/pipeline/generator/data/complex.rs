@@ -28,6 +28,13 @@ enum TypeMode {
     Simple { target_type: IdentPath },
 }
 
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+enum MixedMode {
+    None,
+    Group,
+    Complex,
+}
+
 impl<'types> ComplexData<'types> {
     pub(super) fn new_all(
         meta: &'types GroupMeta,
@@ -36,7 +43,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::All,
-            false,
+            ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -51,7 +58,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::Choice,
-            false,
+            ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -66,7 +73,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             TypeMode::Sequence,
-            false,
+            ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
             &[],
@@ -111,7 +118,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             type_mode,
-            meta.is_mixed && ctx.check_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT),
+            ctx.mixed_mode(meta.is_mixed, MixedMode::Complex),
             meta.min_occurs,
             meta.max_occurs,
             &meta.attributes,
@@ -123,7 +130,7 @@ impl<'types> ComplexData<'types> {
     fn new(
         ctx: &mut Context<'_, 'types>,
         type_mode: TypeMode,
-        is_mixed: bool,
+        mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
@@ -133,11 +140,11 @@ impl<'types> ComplexData<'types> {
             TypeMode::Simple { target_type } => {
                 Self::new_simple(ctx, target_type, min_occurs, max_occurs, attributes)
             }
-            TypeMode::Choice => {
-                Self::new_enum(ctx, is_mixed, min_occurs, max_occurs, attributes, elements)
-            }
+            TypeMode::Choice => Self::new_enum(
+                ctx, mixed_mode, min_occurs, max_occurs, attributes, elements,
+            ),
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
-                ctx, &type_mode, is_mixed, min_occurs, max_occurs, attributes, elements,
+                ctx, &type_mode, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
         }
     }
@@ -149,7 +156,7 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false, false)?;
+        let base = ComplexBase::new(ctx, false)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let target_type = PathData::from_path(target_type);
 
@@ -184,14 +191,14 @@ impl<'types> ComplexData<'types> {
 
     fn new_enum(
         ctx: &mut Context<'_, 'types>,
-        is_mixed: bool,
+        mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, is_mixed)?;
+        let mut base = ComplexBase::new(ctx, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -211,14 +218,14 @@ impl<'types> ComplexData<'types> {
                     ctx,
                     &mut allow_any,
                     occurs.is_direct(),
-                    is_mixed,
+                    mixed_mode != MixedMode::None,
                 )
                 .transpose()
             })
             .collect::<Result<Vec<_>, _>>()?;
 
         let flatten = occurs == Occurs::Single
-            && !is_mixed
+            && mixed_mode != MixedMode::Complex
             && attributes.is_empty()
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_ENUM_CONTENT);
 
@@ -242,11 +249,7 @@ impl<'types> ComplexData<'types> {
 
         let content_type = has_content.then(|| {
             let type_ = ComplexDataEnum {
-                base: ComplexBase::new_empty(
-                    content_ident.clone(),
-                    take(&mut base.has_any),
-                    is_mixed,
-                ),
+                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
                 elements: take(&mut elements),
                 allow_any,
                 allow_any_attribute,
@@ -260,7 +263,7 @@ impl<'types> ComplexData<'types> {
 
         let mode = if !has_content {
             StructMode::Empty { allow_any }
-        } else if is_mixed {
+        } else if mixed_mode == MixedMode::Complex {
             let elements = vec![
                 ComplexDataElement::new_text_before(),
                 ComplexDataElement::new_content(ctx, min_occurs, max_occurs, content_ident),
@@ -305,14 +308,14 @@ impl<'types> ComplexData<'types> {
     fn new_struct(
         ctx: &mut Context<'_, 'types>,
         type_mode: &TypeMode,
-        is_mixed: bool,
+        mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, is_mixed)?;
+        let mut base = ComplexBase::new(ctx, has_any)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -326,14 +329,15 @@ impl<'types> ComplexData<'types> {
             .collect::<Result<Vec<_>, _>>()?;
 
         let mut allow_any = false;
-        let text_before = is_mixed.then(ComplexDataElement::new_text_before);
+        let text_before =
+            (mixed_mode == MixedMode::Complex).then(ComplexDataElement::new_text_before);
         let normal_fields = elements.iter().filter_map(|meta| {
             ComplexDataElement::new_field(
                 ComplexDataElementOrigin::Meta(meta),
                 ctx,
                 &mut allow_any,
                 occurs.is_direct(),
-                is_mixed,
+                mixed_mode != MixedMode::None,
             )
             .transpose()
         });
@@ -391,11 +395,7 @@ impl<'types> ComplexData<'types> {
             };
 
             let type_ = ComplexDataStruct {
-                base: ComplexBase::new_empty(
-                    content_ident.clone(),
-                    take(&mut base.has_any),
-                    is_mixed,
-                ),
+                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
                 mode,
 
                 attributes: Vec::new(),
@@ -453,11 +453,11 @@ impl<'types> ComplexData<'types> {
 }
 
 impl ComplexBase {
-    fn new(ctx: &mut Context<'_, '_>, has_any: bool, is_mixed: bool) -> Result<Self, Error> {
+    fn new(ctx: &mut Context<'_, '_>, has_any: bool) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.type_ident.clone();
 
-        let mut ret = Self::new_empty(type_ident, has_any, is_mixed);
+        let mut ret = Self::new_empty(type_ident, has_any);
         ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident));
         ret.trait_impls = ctx.make_trait_impls()?;
 
@@ -469,7 +469,7 @@ impl ComplexBase {
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2, has_any: bool, is_mixed: bool) -> Self {
+    fn new_empty(type_ident: Ident2, has_any: bool) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -485,7 +485,6 @@ impl ComplexBase {
 
             is_complex: false,
             is_dynamic: false,
-            is_mixed,
 
             serializer_ident,
             serializer_state_ident,
@@ -561,11 +560,12 @@ impl<'types> ComplexDataElement<'types> {
 
                 (target_type, target_is_dynamic)
             }
-            ElementMetaVariant::Type { type_, .. } => {
+            ElementMetaVariant::Type { type_, mode } => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
 
                 let target_type = target_ref.to_ident_path();
-                let target_type = PathData::mixed(mixed, target_type);
+                let target_type =
+                    PathData::mixed(mixed && *mode == ElementMode::Element, target_type);
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
@@ -768,5 +768,15 @@ impl PathData {
         let target_type = IdentPath::from_ident(target_type);
 
         Self::from_path(target_type).with_using("xsd_parser::xml::Text")
+    }
+}
+
+impl Context<'_, '_> {
+    fn mixed_mode(&self, is_mixed: bool, mode: MixedMode) -> MixedMode {
+        if is_mixed && self.check_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT) {
+            mode
+        } else {
+            MixedMode::None
+        }
     }
 }

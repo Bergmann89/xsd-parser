@@ -77,9 +77,6 @@ pub struct ComplexBase {
     /// `true` if the type is dynamic, `false` otherwise.
     pub is_dynamic: bool,
 
-    /// `true` if the type has mixed content, `false` otherwise.
-    pub is_mixed: bool,
-
     /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,
 
