@@ -3,7 +3,7 @@ pub type Foo = FooType;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct FooType {
     #[serde(rename = "$value")]
-    pub content: FooTypeContent,
+    pub content: [FooTypeContent; 4usize],
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub enum FooTypeContent {
@@ -11,4 +11,8 @@ pub enum FooTypeContent {
     Bar(String),
     #[serde(rename = "Baz")]
     Baz(i32),
+    #[serde(rename = "Fizz")]
+    Fizz(String),
+    #[serde(rename = "Buzz")]
+    Buzz(i32),
 }

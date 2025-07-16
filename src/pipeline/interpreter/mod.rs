@@ -47,7 +47,7 @@ use crate::models::{
 pub use error::Error;
 
 use self::schema::SchemaInterpreter;
-use self::state::{Node, State};
+use self::state::{Node, StackEntry, State};
 use self::variant_builder::VariantBuilder;
 
 /// The `Interpreter` transforms raw parsed XML schema data into semantically

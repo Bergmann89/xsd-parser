@@ -138,11 +138,7 @@ impl NameBuilder {
         T: NameFallback,
     {
         if self.name.is_none() {
-            if let Some((generated, name)) = fallback().resolve() {
-                self.name = Some(name);
-                self.with_id = false;
-                self.generated = generated;
-            }
+            fallback().apply(&mut self);
         }
 
         self
@@ -201,75 +197,105 @@ impl NameBuilder {
 /// [`NameBuilder::or_else`]
 pub trait NameFallback {
     /// Create the fallback value.
-    fn resolve(self) -> Option<(bool, String)>;
+    fn apply(self, builder: &mut NameBuilder);
+}
+
+impl NameFallback for NameBuilder {
+    #[inline]
+    fn apply(self, builder: &mut NameBuilder) {
+        if let Some(name) = self.name {
+            builder.name.get_or_insert(name);
+            builder.with_id = self.with_id;
+            builder.generated = self.generated;
+
+            if let Some(id) = self.my_id {
+                builder.with_id = self.with_id;
+                builder.my_id.get_or_insert(id);
+            }
+
+            if let Some(ext) = self.extension {
+                builder.extension.get_or_insert(ext);
+            }
+        }
+    }
 }
 
 impl NameFallback for Name {
     #[inline]
-    fn resolve(self) -> Option<(bool, String)> {
-        (&self).resolve()
+    fn apply(self, builder: &mut NameBuilder) {
+        (&self).apply(builder);
     }
 }
 
 impl NameFallback for &Name {
     #[inline]
-    fn resolve(self) -> Option<(bool, String)> {
-        Some((self.is_generated(), self.as_str().to_owned()))
+    fn apply(self, builder: &mut NameBuilder) {
+        builder.name = Some(self.as_str().to_owned());
+        builder.generated = self.is_generated();
+        builder.with_id = false;
     }
 }
 
 impl NameFallback for Option<&Name> {
     #[inline]
-    fn resolve(self) -> Option<(bool, String)> {
-        self.and_then(NameFallback::resolve)
+    fn apply(self, builder: &mut NameBuilder) {
+        if let Some(x) = self {
+            x.apply(builder);
+        }
     }
 }
 
 impl NameFallback for Option<Name> {
     #[inline]
-    fn resolve(self) -> Option<(bool, String)> {
-        self.as_ref().resolve()
+    fn apply(self, builder: &mut NameBuilder) {
+        self.as_ref().apply(builder);
     }
 }
 
 impl NameFallback for &Option<Name> {
-    fn resolve(self) -> Option<(bool, String)> {
-        self.as_ref().resolve()
+    fn apply(self, builder: &mut NameBuilder) {
+        self.as_ref().apply(builder);
     }
 }
 
 impl NameFallback for &String {
-    fn resolve(self) -> Option<(bool, String)> {
-        Some((false, self.to_owned()))
+    fn apply(self, builder: &mut NameBuilder) {
+        builder.name = Some(self.to_owned());
+        builder.with_id = false;
     }
 }
 
 impl NameFallback for Option<&String> {
-    fn resolve(self) -> Option<(bool, String)> {
-        self.and_then(NameFallback::resolve)
+    fn apply(self, builder: &mut NameBuilder) {
+        if let Some(x) = self {
+            x.apply(builder);
+        }
     }
 }
 
 impl NameFallback for Option<String> {
-    fn resolve(self) -> Option<(bool, String)> {
-        self.as_ref().resolve()
+    fn apply(self, builder: &mut NameBuilder) {
+        self.as_ref().apply(builder);
     }
 }
 
 impl NameFallback for &Option<String> {
-    fn resolve(self) -> Option<(bool, String)> {
-        self.as_ref().resolve()
+    fn apply(self, builder: &mut NameBuilder) {
+        self.as_ref().apply(builder);
     }
 }
 
 impl NameFallback for &str {
-    fn resolve(self) -> Option<(bool, String)> {
-        Some((false, self.to_owned()))
+    fn apply(self, builder: &mut NameBuilder) {
+        builder.name = Some(self.to_owned());
+        builder.with_id = false;
     }
 }
 
 impl NameFallback for Option<&str> {
-    fn resolve(self) -> Option<(bool, String)> {
-        self.and_then(NameFallback::resolve)
+    fn apply(self, builder: &mut NameBuilder) {
+        if let Some(x) = self {
+            x.apply(builder);
+        }
     }
 }

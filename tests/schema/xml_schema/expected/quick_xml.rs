@@ -624,13 +624,13 @@ pub struct WildcardType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
-    pub process_contents: ProcessContentsType,
+    pub process_contents: WildcardProcessContentsType,
     pub annotation: Option<AnnotationElementType>,
 }
 impl WildcardType {
     #[must_use]
-    pub fn default_process_contents() -> ProcessContentsType {
-        ProcessContentsType::Strict
+    pub fn default_process_contents() -> WildcardProcessContentsType {
+        WildcardProcessContentsType::Strict
     }
 }
 impl WithDeserializer for WildcardType {
@@ -787,14 +787,14 @@ pub struct AnyAttributeElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
-    pub process_contents: ProcessContentsType,
+    pub process_contents: WildcardProcessContentsType,
     pub not_q_name: Option<QnameListAType>,
     pub annotation: Option<AnnotationElementType>,
 }
 impl AnyAttributeElementType {
     #[must_use]
-    pub fn default_process_contents() -> ProcessContentsType {
-        ProcessContentsType::Strict
+    pub fn default_process_contents() -> WildcardProcessContentsType {
+        WildcardProcessContentsType::Strict
     }
 }
 impl WithDeserializer for AnyAttributeElementType {
@@ -835,7 +835,7 @@ pub struct AnyElementType {
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
     pub not_namespace: Option<BasicNamespaceListType>,
-    pub process_contents: ProcessContentsType,
+    pub process_contents: WildcardProcessContentsType,
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: usize,
     pub max_occurs: AllNniType,
@@ -843,8 +843,8 @@ pub struct AnyElementType {
 }
 impl AnyElementType {
     #[must_use]
-    pub fn default_process_contents() -> ProcessContentsType {
-        ProcessContentsType::Strict
+    pub fn default_process_contents() -> WildcardProcessContentsType {
+        WildcardProcessContentsType::Strict
     }
     #[must_use]
     pub fn default_min_occurs() -> usize {
@@ -994,12 +994,12 @@ impl DeserializeBytes for BasicNamespaceListType {
     }
 }
 #[derive(Debug)]
-pub enum ProcessContentsType {
+pub enum WildcardProcessContentsType {
     Skip,
     Lax,
     Strict,
 }
-impl DeserializeBytes for ProcessContentsType {
+impl DeserializeBytes for WildcardProcessContentsType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
@@ -13314,7 +13314,7 @@ pub mod quick_xml_deserialize {
         fn store_any(&mut self, value: Mixed<AnyElement>) -> Result<(), Error> {
             if self.any.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"any163",
+                    b"any120",
                 )))?;
             }
             self.any = Some(value);
@@ -13504,7 +13504,7 @@ pub mod quick_xml_deserialize {
             Ok(super::AppinfoElementTypeContent {
                 any: self
                     .any
-                    .ok_or_else(|| ErrorKind::MissingElement("any163".into()))?,
+                    .ok_or_else(|| ErrorKind::MissingElement("any120".into()))?,
             })
         }
     }
@@ -13854,7 +13854,7 @@ pub mod quick_xml_deserialize {
         fn store_any(&mut self, value: Mixed<AnyElement>) -> Result<(), Error> {
             if self.any.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"any165",
+                    b"any122",
                 )))?;
             }
             self.any = Some(value);
@@ -14048,7 +14048,7 @@ pub mod quick_xml_deserialize {
             Ok(super::DocumentationElementTypeContent {
                 any: self
                     .any
-                    .ok_or_else(|| ErrorKind::MissingElement("any165".into()))?,
+                    .ok_or_else(|| ErrorKind::MissingElement("any122".into()))?,
             })
         }
     }
@@ -14058,7 +14058,7 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
-        process_contents: super::ProcessContentsType,
+        process_contents: super::WildcardProcessContentsType,
         annotation: Option<super::AnnotationElementType>,
         state: Box<WildcardTypeDeserializerState>,
     }
@@ -14078,7 +14078,7 @@ pub mod quick_xml_deserialize {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
-            let mut process_contents: Option<super::ProcessContentsType> = None;
+            let mut process_contents: Option<super::WildcardProcessContentsType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
@@ -14630,7 +14630,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::RestrictionElementTypeContent::Any(
-                        values.ok_or_else(|| ErrorKind::MissingElement("any181".into()))?,
+                        values.ok_or_else(|| ErrorKind::MissingElement("any134".into()))?,
                     ))
                 }
                 S::Done__(data) => Ok(data),
@@ -14676,7 +14676,7 @@ pub mod quick_xml_deserialize {
         fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"any181",
+                    b"any134",
                 )))?;
             }
             *values = Some(value);
@@ -17436,7 +17436,7 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
-        process_contents: super::ProcessContentsType,
+        process_contents: super::WildcardProcessContentsType,
         not_q_name: Option<super::QnameListAType>,
         annotation: Option<super::AnnotationElementType>,
         state: Box<AnyAttributeElementTypeDeserializerState>,
@@ -17457,7 +17457,7 @@ pub mod quick_xml_deserialize {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
-            let mut process_contents: Option<super::ProcessContentsType> = None;
+            let mut process_contents: Option<super::WildcardProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListAType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -17934,7 +17934,7 @@ pub mod quick_xml_deserialize {
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
         not_namespace: Option<super::BasicNamespaceListType>,
-        process_contents: super::ProcessContentsType,
+        process_contents: super::WildcardProcessContentsType,
         not_q_name: Option<super::QnameListType>,
         min_occurs: usize,
         max_occurs: super::AllNniType,
@@ -17957,7 +17957,7 @@ pub mod quick_xml_deserialize {
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
             let mut not_namespace: Option<super::BasicNamespaceListType> = None;
-            let mut process_contents: Option<super::ProcessContentsType> = None;
+            let mut process_contents: Option<super::WildcardProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListType> = None;
             let mut min_occurs: Option<usize> = None;
             let mut max_occurs: Option<super::AllNniType> = None;
@@ -22205,7 +22205,7 @@ pub mod quick_xml_deserialize {
                         Self::store_any(&mut values, value)?;
                     }
                     Ok(super::RestrictionTypeContent::Any(values.ok_or_else(
-                        || ErrorKind::MissingElement("any54".into()),
+                        || ErrorKind::MissingElement("any37".into()),
                     )?))
                 }
                 S::Attribute(mut values, deserializer) => {
@@ -22345,7 +22345,7 @@ pub mod quick_xml_deserialize {
         fn store_any(values: &mut Option<AnyElement>, value: AnyElement) -> Result<(), Error> {
             if values.is_some() {
                 Err(ErrorKind::DuplicateElement(RawByteStr::from_slice(
-                    b"any54",
+                    b"any37",
                 )))?;
             }
             *values = Some(value);

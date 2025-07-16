@@ -3,16 +3,28 @@
     xmlns:tns="http://example.com"
     targetNamespace="http://example.com"
     elementFormDefault="qualified">
-    <xs:group name="FooGroup">
-		<xs:choice>
+
+    <xs:group name="Inner">
+        <xs:sequence>
+            <xs:element name="Fizz" type="xs:string" />
+            <xs:element name="Buzz" type="xs:int" />
+        </xs:sequence>
+    </xs:group>
+
+    <xs:group name="Outer">
+        <xs:choice>
             <xs:element name="Bar" type="xs:string" />
             <xs:element name="Baz" type="xs:int" />
-		</xs:choice>
-	</xs:group>
+            <xs:group ref="tns:Inner" />
+        </xs:choice>
+    </xs:group>
 
     <xs:element name="Foo">
         <xs:complexType>
-            <xs:group ref="tns:FooGroup" />
+            <xs:sequence>
+                <xs:group ref="tns:Outer" />
+                <xs:group ref="tns:Outer" />
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
 </xs:schema>

@@ -1,4 +1,4 @@
-use std::collections::{btree_map::Entry, BTreeMap};
+use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
 use crate::models::{
     meta::{MetaType, MetaTypes, NameBuilder},
@@ -18,7 +18,14 @@ use super::Error;
 pub(super) struct State<'a> {
     pub types: MetaTypes,
     pub node_cache: BTreeMap<Ident, Node<'a>>,
-    pub type_stack: Vec<Option<Ident>>,
+    pub type_stack: Vec<StackEntry>,
+}
+
+#[derive(Debug)]
+pub(super) enum StackEntry {
+    Type(Ident, HashMap<Ident, Ident>),
+    NamedGroup(Ident),
+    Group,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -32,23 +39,57 @@ pub(super) enum Node<'a> {
 
 impl<'a> State<'a> {
     pub(super) fn current_ident(&self) -> Option<&Ident> {
-        self.type_stack.iter().rev().flatten().next()
+        self.type_stack.iter().rev().find_map(|x| {
+            if let StackEntry::Type(x, _) = x {
+                Some(x)
+            } else {
+                None
+            }
+        })
+    }
+
+    pub(super) fn group_cache(&self) -> Option<&HashMap<Ident, Ident>> {
+        self.type_stack.iter().rev().find_map(|x| {
+            if let StackEntry::Type(_, cache) = x {
+                Some(cache)
+            } else {
+                None
+            }
+        })
+    }
+
+    pub(super) fn group_cache_mut(&mut self) -> Option<&mut HashMap<Ident, Ident>> {
+        self.type_stack.iter_mut().rev().find_map(|x| {
+            if let StackEntry::Type(_, cache) = x {
+                Some(cache)
+            } else {
+                None
+            }
+        })
     }
 
     pub(super) fn current_ns(&self) -> Option<NamespaceId> {
         self.current_ident().and_then(|x| x.ns)
     }
 
-    pub(super) fn last_named_type(&self, stop_at_group: bool) -> Option<&str> {
+    pub(super) fn last_named_type(&self, stop_at_named_group: bool) -> Option<&str> {
         for x in self.type_stack.iter().rev() {
             match x {
-                Some(x) if x.name.is_named() => return Some(x.name.as_str()),
-                None if stop_at_group => return None,
+                StackEntry::Type(x, _) if x.name.is_named() => return Some(x.name.as_str()),
+                StackEntry::NamedGroup(_) if stop_at_named_group => return None,
                 _ => (),
             }
         }
 
         None
+    }
+
+    pub(super) fn named_group(&self) -> Option<&str> {
+        if let StackEntry::NamedGroup(x) = self.type_stack.last()? {
+            Some(x.name.as_str())
+        } else {
+            None
+        }
     }
 
     pub(super) fn name_builder(&mut self) -> NameBuilder {
