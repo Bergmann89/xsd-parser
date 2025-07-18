@@ -24,7 +24,8 @@ pub(super) struct State<'a> {
 #[derive(Debug)]
 pub(super) enum StackEntry {
     Type(Ident, HashMap<Ident, Ident>),
-    NamedGroup(Ident),
+    GroupRef(Ident),
+    AttributeGroupRef,
     Mixed(bool),
     Group,
 }
@@ -73,11 +74,13 @@ impl<'a> State<'a> {
         self.current_ident().and_then(|x| x.ns)
     }
 
-    pub(super) fn last_named_type(&self, stop_at_named_group: bool) -> Option<&str> {
+    pub(super) fn last_named_type(&self, stop_at_group_ref: bool) -> Option<&str> {
         for x in self.type_stack.iter().rev() {
             match x {
                 StackEntry::Type(x, _) if x.name.is_named() => return Some(x.name.as_str()),
-                StackEntry::NamedGroup(_) if stop_at_named_group => return None,
+                StackEntry::GroupRef(_) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
+                    return None
+                }
                 _ => (),
             }
         }
@@ -86,7 +89,7 @@ impl<'a> State<'a> {
     }
 
     pub(super) fn named_group(&self) -> Option<&str> {
-        if let StackEntry::NamedGroup(x) = self.type_stack.last()? {
+        if let StackEntry::GroupRef(x) = self.type_stack.last()? {
             Some(x.name.as_str())
         } else {
             None

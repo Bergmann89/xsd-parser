@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use proc_macro2::TokenStream;
 use quote::quote;
 use smallvec::{smallvec, SmallVec};
@@ -47,6 +49,19 @@ impl PathData {
         self
     }
 
+    /// Make the path data to an included path data instead of a absolute one.
+    #[must_use]
+    pub fn into_included(self) -> Self {
+        if self.path.module().is_some() {
+            let using = format!("{}", &self.path);
+            let (ident, _) = self.path.into_parts();
+
+            Self::from_path(IdentPath::from_ident(ident)).with_using(using)
+        } else {
+            self
+        }
+    }
+
     /// Resolves the target type relative to the passed module `path` and
     /// returns the rendered type as [`TokenStream`].
     #[must_use]
@@ -64,5 +79,13 @@ impl PathData {
         }
 
         ret
+    }
+}
+
+impl Deref for PathData {
+    type Target = IdentPath;
+
+    fn deref(&self) -> &Self::Target {
+        &self.path
     }
 }

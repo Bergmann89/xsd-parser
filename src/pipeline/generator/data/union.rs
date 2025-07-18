@@ -2,7 +2,7 @@ use proc_macro2::Literal;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{PathData, UnionData, UnionTypeVariant},
+    data::{UnionData, UnionTypeVariant},
     meta::{UnionMeta, UnionMetaType},
 };
 
@@ -13,7 +13,7 @@ impl<'types> UnionData<'types> {
         meta: &'types UnionMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
-        let type_ident = ctx.current_type_ref().type_ident.clone();
+        let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_impls = ctx.make_trait_impls()?;
         let variants = meta
             .types
@@ -39,10 +39,7 @@ impl UnionMetaType {
         let b_name = Literal::byte_string(s_name.as_bytes());
 
         let type_ref = ctx.get_or_create_type_ref(&self.type_)?;
-
-        let target_type = type_ref.to_ident_path();
-        let target_type = PathData::from_path(target_type);
-
+        let target_type = type_ref.path.clone();
         let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
 
         Ok(UnionTypeVariant {

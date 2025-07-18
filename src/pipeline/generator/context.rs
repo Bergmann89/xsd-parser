@@ -69,8 +69,8 @@ impl<'a, 'types> Context<'a, 'types> {
             .into_iter()
             .map(|ident| {
                 let type_ref = self.get_or_create_type_ref(&ident)?;
-                let ident = format_ident!("{}Trait", type_ref.type_ident);
-                let trait_type = type_ref.to_ident_path().with_ident(ident);
+                let ident = format_ident!("{}Trait", type_ref.path.ident());
+                let trait_type = (*type_ref.path).clone().with_ident(ident);
                 let trait_ident = trait_type.relative_to(&module_path);
 
                 Ok(trait_ident)
@@ -137,7 +137,7 @@ impl<'a, 'types> Context<'a, 'types> {
 
             MetaTypeVariant::Enumeration(ei) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = type_ref.to_ident_path().relative_to(&module_path);
+                let target_type = type_ref.path.relative_to(&module_path);
 
                 for var in &*ei.variants {
                     if var.type_.is_none() && var.ident.name.as_str() == default {
@@ -151,7 +151,7 @@ impl<'a, 'types> Context<'a, 'types> {
                         if let Ok(default) = self.get_default(current_ns, default, target_ident) {
                             let variant_ident = match self.state.cache.get(target_ident) {
                                 Some(type_ref) if var.ident.name.is_generated() => {
-                                    type_ref.type_ident.clone()
+                                    type_ref.path.ident().clone()
                                 }
                                 _ => format_variant_ident(
                                     &var.ident.name,
@@ -167,13 +167,13 @@ impl<'a, 'types> Context<'a, 'types> {
 
             MetaTypeVariant::Union(ui) => {
                 let module_path = ModulePath::from_namespace(current_ns, types);
-                let target_type = type_ref.to_ident_path().relative_to(&module_path);
+                let target_type = type_ref.path.relative_to(&module_path);
 
                 for ty in &*ui.types {
                     if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
                         let variant_ident = match self.state.cache.get(&ty.type_) {
                             Some(type_ref) if ty.type_.name.is_generated() => {
-                                type_ref.type_ident.clone()
+                                type_ref.path.ident().clone()
                             }
                             _ => format_variant_ident(&ty.type_.name, ty.display_name.as_deref()),
                         };
@@ -190,7 +190,7 @@ impl<'a, 'types> Context<'a, 'types> {
                     Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
                     Occurs::DynamicList if default.is_empty() => {
                         let module_path = ModulePath::from_namespace(current_ns, types);
-                        let target_type = type_ref.to_ident_path().relative_to(&module_path);
+                        let target_type = type_ref.path.relative_to(&module_path);
 
                         return Ok(quote! { #target_type(Vec::new()) });
                     }

@@ -1,10 +1,8 @@
 use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
 use std::ops::Deref;
 
-use proc_macro2::Ident as Ident2;
-
 use crate::models::{
-    code::IdentPath,
+    data::PathData,
     meta::{DynamicMeta, MetaType, MetaTypeVariant, MetaTypes},
     Ident,
 };
@@ -30,20 +28,8 @@ pub(super) struct PendingType<'types> {
 
 #[derive(Debug)]
 pub(super) struct TypeRef {
-    pub ident: Ident,
-    pub type_ident: Ident2,
-    pub module_ident: Option<Ident2>,
+    pub path: PathData,
     pub boxed_elements: HashSet<Ident>,
-}
-
-impl TypeRef {
-    pub(super) fn to_ident_path(&self) -> IdentPath {
-        if self.ident.is_build_in() {
-            IdentPath::from_ident(self.type_ident.clone())
-        } else {
-            IdentPath::from_ident(self.type_ident.clone()).with_path(self.module_ident.clone())
-        }
-    }
 }
 
 /* TraitInfos */

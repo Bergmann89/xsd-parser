@@ -3,11 +3,10 @@ use quote::format_ident;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{EnumerationData, EnumerationTypeVariant, PathData},
+    data::{EnumerationData, EnumerationTypeVariant},
     meta::{EnumerationMeta, EnumerationMetaVariant},
     schema::xs::Use,
 };
-use crate::pipeline::generator::TypeRef;
 
 use super::super::{Context, Error};
 
@@ -17,7 +16,7 @@ impl<'types> EnumerationData<'types> {
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
         let mut unknown = 0usize;
-        let type_ident = ctx.current_type_ref().type_ident.clone();
+        let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_impls = ctx.make_trait_impls()?;
 
         let variants = meta
@@ -56,7 +55,7 @@ impl EnumerationMetaVariant {
                 let variant_ident = if let Some(display_name) = self.display_name.as_deref() {
                     format_ident!("{display_name}")
                 } else if let (Some(type_ref), true) = (type_ref, self.ident.name.is_generated()) {
-                    type_ref.type_ident.clone()
+                    type_ref.path.ident().clone()
                 } else if self.ident.name.as_str().is_empty() {
                     *unknown += 1;
 
@@ -67,9 +66,7 @@ impl EnumerationMetaVariant {
 
                 let s_name = self.ident.name.to_string();
                 let b_name = Literal::byte_string(s_name.as_bytes());
-
-                let target_type = type_ref.map(TypeRef::to_ident_path);
-                let target_type = target_type.map(PathData::from_path);
+                let target_type = type_ref.map(|x| x.path.clone());
 
                 Some(Ok(EnumerationTypeVariant {
                     meta: self,

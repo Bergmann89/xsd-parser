@@ -1,4 +1,4 @@
-use std::mem::take;
+use std::mem::{swap, take};
 
 use proc_macro2::{Ident as Ident2, Literal};
 use quote::format_ident;
@@ -102,12 +102,12 @@ impl<'types> ComplexData<'types> {
                 ident,
             )) => {
                 let content_ref = ctx.get_or_create_type_ref(ident)?;
-                let target_type = content_ref.to_ident_path();
+                let target_type = (*content_ref.path).clone();
 
                 (TypeMode::Simple { target_type }, &[][..])
             }
             Some((x, _)) => {
-                let ident = &ctx.current_type_ref().type_ident;
+                let ident = ctx.current_type_ref().path.ident();
 
                 tracing::warn!("Complex type has unexpected content: ident={ident}, meta={meta:#?}, content={x:#?}!");
 
@@ -276,7 +276,7 @@ impl<'types> ComplexData<'types> {
         } else {
             let type_ref = ctx.current_type_ref();
 
-            let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
+            let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
             let target_type = PathData::from_path(target_type);
 
             let content = ComplexDataContent {
@@ -423,7 +423,7 @@ impl<'types> ComplexData<'types> {
         } else {
             let type_ref = ctx.current_type_ref();
 
-            let target_type = type_ref.to_ident_path().with_ident(content_ident.clone());
+            let target_type = (*type_ref.path).clone().with_ident(content_ident.clone());
             let target_type = PathData::from_path(target_type);
 
             let content = ComplexDataContent {
@@ -455,7 +455,7 @@ impl<'types> ComplexData<'types> {
 impl ComplexBase {
     fn new(ctx: &mut Context<'_, '_>, has_any: bool) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
-        let type_ident = type_ref.type_ident.clone();
+        let type_ident = type_ref.path.ident().clone();
 
         let mut ret = Self::new_empty(type_ident, has_any);
         ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident));
@@ -552,9 +552,9 @@ impl<'types> ComplexDataElement<'types> {
                     return Ok(None);
                 };
 
-                let target_type = IdentPath::from_ident(type_.ident().clone());
-                let target_type =
-                    PathData::mixed(mixed, target_type).with_using(format!("{type_}"));
+                let target_type = PathData::from_path(type_.clone()).into_included();
+                let target_type = PathData::from_path_data_mixed(mixed, target_type)
+                    .with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
 
@@ -563,9 +563,11 @@ impl<'types> ComplexDataElement<'types> {
             ElementMetaVariant::Type { type_, mode } => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
 
-                let target_type = target_ref.to_ident_path();
-                let target_type =
-                    PathData::mixed(mixed && *mode == ElementMode::Element, target_type);
+                let target_type = target_ref.path.clone();
+                let target_type = PathData::from_path_data_mixed(
+                    mixed && *mode == ElementMode::Element,
+                    target_type,
+                );
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
@@ -644,7 +646,7 @@ impl<'types> ComplexDataElement<'types> {
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let type_ref = ctx.current_type_ref();
 
-        let target_type = type_ref.to_ident_path().with_ident(content_ident);
+        let target_type = (*type_ref.path).clone().with_ident(content_ident);
         let target_type = PathData::from_path(target_type);
 
         Self {
@@ -690,9 +692,7 @@ impl<'types> ComplexDataAttribute<'types> {
             }
             AttributeMetaVariant::Type(type_) => {
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
-
-                let target_type = target_ref.to_ident_path();
-                let target_type = PathData::from_path(target_type);
+                let target_type = target_ref.path.clone();
 
                 let default_value = meta
                     .default
@@ -751,15 +751,15 @@ fn make_tag_name(types: &MetaTypes, ident: &Ident) -> String {
 }
 
 impl PathData {
-    fn mixed(is_mixed: bool, path: IdentPath) -> PathData {
+    fn from_path_data_mixed(is_mixed: bool, mut path: PathData) -> PathData {
         if is_mixed {
-            let mixed = IdentPath::from_ident(format_ident!("Mixed"));
+            let mut tmp = IdentPath::from_ident(format_ident!("Mixed"));
 
-            PathData::from_path(mixed)
-                .with_generic(path)
-                .with_using("xsd_parser::xml::Mixed")
+            swap(&mut path.path, &mut tmp);
+
+            path.with_generic(tmp).with_using("xsd_parser::xml::Mixed")
         } else {
-            PathData::from_path(path)
+            path
         }
     }
 
