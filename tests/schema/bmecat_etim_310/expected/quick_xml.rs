@@ -3821,7 +3821,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 4usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {

@@ -146,6 +146,29 @@ impl AsRef<str> for Name {
     }
 }
 
+impl AsMut<String> for Name {
+    fn as_mut(&mut self) -> &mut String {
+        let x = match self {
+            Self::Named(x) => {
+                *x = Cow::Owned((**x).to_owned());
+
+                x
+            }
+            Self::Generated(x) => {
+                *x = Cow::Owned((**x).to_owned());
+
+                x
+            }
+        };
+
+        let Cow::Owned(x) = x else {
+            unreachable!();
+        };
+
+        x
+    }
+}
+
 impl Display for Name {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {

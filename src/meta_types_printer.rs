@@ -201,6 +201,7 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("display_name={:?}", &ty.display_name);
+                indentln!("is_mixed={:?}", x.is_mixed);
 
                 for x in &*x.elements {
                     indentln!("element:");
@@ -267,6 +268,7 @@ impl<'a> MetaTypesPrinter<'a> {
                 indentln!("min_occurs={}", x.min_occurs);
                 indentln!("max_occurs={:?}", x.max_occurs);
                 indentln!("is_dynamic={}", x.is_dynamic);
+                indentln!("is_mixed={:?}", x.is_mixed);
 
                 for x in &*x.attributes {
                     indentln!("attribute:");

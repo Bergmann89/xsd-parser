@@ -1,5 +1,10 @@
+use std::borrow::Cow;
+
 use crate::models::{
-    meta::{ElementMeta, ElementMetaVariant, ElementMode, GroupMeta, MetaType, MetaTypeVariant},
+    meta::{
+        ElementMeta, ElementMetaVariant, ElementMode, ElementsMeta, GroupMeta, MetaType,
+        MetaTypeVariant, MetaTypes,
+    },
     schema::{MaxOccurs, MinOccurs},
     Ident,
 };
@@ -35,37 +40,7 @@ impl Optimizer {
     pub fn flatten_complex_type(mut self, ident: Ident) -> Result<Self, Error> {
         tracing::debug!("flatten_complex_type(ident={ident:?})");
 
-        let Some(ty) = self.types.items.get(&ident) else {
-            return Err(Error::UnknownType(ident));
-        };
-
-        let MetaTypeVariant::ComplexType(ci) = &ty.variant else {
-            return Err(Error::ExpectedComplexType(ident));
-        };
-
-        let Some(content_ident) = ci.content.clone() else {
-            return Err(Error::MissingContentType(ident));
-        };
-
-        let mut ctx = Context::default();
-
-        self.flatten_complex_type_impl(&content_ident, 1, MaxOccurs::Bounded(1), &mut ctx);
-
-        if ctx.count > 1 {
-            let variant = match ctx.mode {
-                Mode::Unknown => unreachable!(),
-                Mode::Sequence => MetaTypeVariant::Sequence(ctx.meta),
-                Mode::Mixed | Mode::Choice => MetaTypeVariant::Choice(ctx.meta),
-            };
-            let type_ = MetaType::new(variant);
-
-            self.types.items.insert(content_ident, type_);
-
-            if let Some(MetaTypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
-                ci.min_occurs *= ctx.occurs.min;
-                ci.max_occurs *= ctx.occurs.max;
-            }
-        }
+        self.flatten_complex_type_impl(ident)?;
 
         Ok(self)
     }
@@ -91,174 +66,346 @@ impl Optimizer {
             .collect::<Vec<_>>();
 
         for ident in idents {
-            self = self.flatten_complex_type(ident).unwrap();
+            let _ = self.flatten_complex_type_impl(ident);
         }
 
         self
     }
 
-    fn flatten_complex_type_impl(
-        &self,
-        ident: &Ident,
-        min: MinOccurs,
-        max: MaxOccurs,
-        ctx: &mut Context,
-    ) {
-        let Some(type_) = self.types.items.get(ident) else {
-            return;
+    fn flatten_complex_type_impl(&mut self, ident: Ident) -> Result<(), Error> {
+        tracing::debug!("flatten_complex_type_impl(ident={ident:?})");
+
+        let Some(ty) = self.types.items.get(&ident) else {
+            return Err(Error::UnknownType(ident));
         };
 
-        let si = match &type_.variant {
-            MetaTypeVariant::Choice(si) => {
-                ctx.set_mode(Mode::Choice);
-
-                si
-            }
-            MetaTypeVariant::All(si) | MetaTypeVariant::Sequence(si) => {
-                if max > MaxOccurs::Bounded(1) {
-                    ctx.set_mode(Mode::Choice);
-                } else {
-                    ctx.set_mode(Mode::Sequence);
-                }
-
-                si
-            }
-            MetaTypeVariant::Reference(ti) if ti.is_single() => {
-                self.flatten_complex_type_impl(
-                    &ti.type_,
-                    min * ti.min_occurs,
-                    max * ti.max_occurs,
-                    ctx,
-                );
-
-                return;
-            }
-            x => crate::unreachable!("{x:#?}"),
+        let MetaTypeVariant::ComplexType(ci) = &ty.variant else {
+            return Err(Error::ExpectedComplexType(ident));
         };
 
-        ctx.count += 1;
+        let Some(content_ident) = ci.content.clone() else {
+            return Err(Error::MissingContentType(ident));
+        };
 
-        for x in &*si.elements {
-            match &x.variant {
+        if let Some((occurs, variant)) = Flatten::new(&self.types, usize::MAX, true)
+            .exec(&content_ident, 0)?
+            .into_variant()
+        {
+            let type_ = MetaType::new(variant);
+
+            self.types.items.insert(content_ident, type_);
+
+            if let Some(MetaTypeVariant::ComplexType(ci)) = self.types.get_variant_mut(&ident) {
+                ci.min_occurs *= occurs.min;
+                ci.max_occurs *= occurs.max;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+#[derive(Debug)]
+struct Flatten<'types> {
+    types: &'types MetaTypes,
+    max_depth: usize,
+    flatten_named_groups: bool,
+}
+
+#[derive(Debug)]
+struct Builder<'types> {
+    mode_old: Mode,
+    mode_new: Mode,
+    meta_old: &'types GroupMeta,
+    meta_new: Option<GroupMeta>,
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Occurs {
+    min: MinOccurs,
+    max: MaxOccurs,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Mode {
+    All,
+    Choice,
+    Sequence,
+    Mixed(Occurs),
+}
+
+impl<'types> Flatten<'types> {
+    fn new(types: &'types MetaTypes, max_depth: usize, flatten_named_groups: bool) -> Self {
+        Self {
+            types,
+            max_depth,
+            flatten_named_groups,
+        }
+    }
+
+    fn exec(&self, ident: &Ident, depth: usize) -> Result<Builder<'types>, Error> {
+        let Some(ty) = self.types.items.get(ident) else {
+            return Err(Error::UnknownType(ident.clone()));
+        };
+
+        let (mode, gi) = match &ty.variant {
+            MetaTypeVariant::All(gi) => (Mode::All, gi),
+            MetaTypeVariant::Choice(gi) => (Mode::Choice, gi),
+            MetaTypeVariant::Sequence(gi) => (Mode::Sequence, gi),
+            _ => return Err(Error::ExpectedChoiceContent(ident.clone())),
+        };
+
+        let mut builder = Builder::new(mode, gi);
+        if depth >= self.max_depth {
+            return Ok(builder);
+        }
+
+        for (index, element) in gi.elements.0.iter().enumerate() {
+            match &element.variant {
                 ElementMetaVariant::Type {
                     mode: ElementMode::Element,
                     ..
                 }
                 | ElementMetaVariant::Any { .. }
-                | ElementMetaVariant::Text => {
-                    let mut element = x.clone();
-
-                    element.min_occurs *= min;
-                    element.max_occurs *= max;
-
-                    ctx.add_element(element);
-                }
+                | ElementMetaVariant::Text => builder.add_element(true, Cow::Borrowed(element))?,
                 ElementMetaVariant::Type {
                     type_,
                     mode: ElementMode::Group,
                 } => {
-                    self.flatten_complex_type_impl(
-                        type_,
-                        min * x.min_occurs,
-                        max * x.max_occurs,
-                        ctx,
-                    );
+                    let flatten = element.ident.name.is_generated() || self.flatten_named_groups;
+                    if flatten {
+                        let inner = self.exec(type_, depth + 1)?;
+
+                        builder = builder.merge(element, &gi.elements[0..index], inner)?;
+                    } else {
+                        builder.add_element(true, Cow::Borrowed(element))?;
+                    }
                 }
             }
         }
+
+        Ok(builder)
     }
 }
 
-#[derive(Debug, Default)]
-struct Context {
-    meta: GroupMeta,
-    mode: Mode,
-    count: usize,
-    occurs: ContextOccurs,
-}
+impl<'types> Builder<'types> {
+    fn new(mode: Mode, meta_old: &'types GroupMeta) -> Self {
+        Self {
+            mode_old: mode,
+            mode_new: mode,
+            meta_old,
+            meta_new: None,
+        }
+    }
 
-#[derive(Debug)]
-struct ContextOccurs {
-    min: usize,
-    max: MaxOccurs,
-}
+    fn into_mixed(mut self) -> Self {
+        let meta_new = self.meta_new.get_or_insert_with(|| self.meta_old.clone());
 
-#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
-enum Mode {
-    #[default]
-    Unknown,
-    Mixed,
-    Choice,
-    Sequence,
-}
+        self.mode_new = match self.mode_new {
+            Mode::All | Mode::Sequence => {
+                let mut occurs = Occurs {
+                    min: 0,
+                    max: MaxOccurs::Bounded(0),
+                };
 
-impl Context {
-    fn set_mode(&mut self, mode: Mode) {
-        let new_mode = match (self.mode, mode) {
-            (Mode::Unknown, mode) => mode,
-            (Mode::Choice, Mode::Choice) => Mode::Choice,
-            (Mode::Sequence, Mode::Sequence) => Mode::Sequence,
-            (_, _) => Mode::Mixed,
-        };
+                for element in &mut *meta_new.elements {
+                    occurs.min += element.min_occurs;
+                    occurs.max += element.max_occurs;
 
-        self.mode = match (self.mode, new_mode) {
-            (Mode::Unknown, mode) => mode,
-            (_, Mode::Mixed) => {
-                self.occurs.min = 0;
-                self.occurs.max = MaxOccurs::Bounded(0);
-
-                for element in &mut *self.meta.elements {
-                    self.occurs.update(element);
+                    element.reset_occurs();
                 }
 
-                Mode::Mixed
+                Mode::Mixed(occurs)
             }
-            (_, mode) => mode,
+            Mode::Choice => {
+                let mut occurs = Occurs {
+                    min: 1,
+                    max: MaxOccurs::Bounded(1),
+                };
+
+                for element in &mut *meta_new.elements {
+                    occurs.min = occurs.min.min(element.min_occurs);
+                    occurs.max = occurs.max.max(element.max_occurs);
+
+                    element.reset_occurs();
+                }
+
+                Mode::Mixed(occurs)
+            }
+            mode => mode,
         };
+
+        self
     }
 
-    fn add_element(&mut self, mut element: ElementMeta) {
-        let existing = self
-            .meta
+    fn into_meta(self) -> (Mode, GroupMeta) {
+        let Self {
+            mode_old: _,
+            mode_new,
+            meta_old,
+            meta_new,
+        } = self;
+
+        let meta = meta_new.unwrap_or_else(|| meta_old.clone());
+
+        (mode_new, meta)
+    }
+
+    fn into_variant(self) -> Option<(Occurs, MetaTypeVariant)> {
+        let Self {
+            mode_old: _,
+            mode_new,
+            meta_old: _,
+            meta_new,
+        } = self;
+
+        let meta = meta_new?;
+
+        let variant = match &mode_new {
+            Mode::All => MetaTypeVariant::All(meta),
+            Mode::Sequence => MetaTypeVariant::Sequence(meta),
+            Mode::Choice | Mode::Mixed(_) => MetaTypeVariant::Choice(meta),
+        };
+
+        let occurs = match mode_new {
+            Mode::All | Mode::Choice | Mode::Sequence => Occurs {
+                min: 1,
+                max: MaxOccurs::Bounded(1),
+            },
+            Mode::Mixed(occurs) => occurs,
+        };
+
+        Some((occurs, variant))
+    }
+
+    fn add_element(
+        &mut self,
+        update_occurs: bool,
+        element: Cow<'_, ElementMeta>,
+    ) -> Result<(), Error> {
+        let Some(meta_new) = &mut self.meta_new else {
+            return Ok(());
+        };
+
+        let existing = meta_new
             .elements
             .iter_mut()
             .find(|x| x.ident == element.ident);
-
         if let Some(existing) = existing {
-            if self.mode == Mode::Mixed {
-                self.occurs.update(&mut element);
-            } else {
-                existing.min_occurs += element.min_occurs;
-                existing.max_occurs += element.max_occurs;
+            match (&existing.variant, &element.variant) {
+                (ElementMetaVariant::Text, ElementMetaVariant::Text)
+                | (ElementMetaVariant::Any { .. }, ElementMetaVariant::Any { .. }) => (),
+                (
+                    ElementMetaVariant::Type { type_: a, .. },
+                    ElementMetaVariant::Type { type_: b, .. },
+                ) if a == b => (),
+                (a, b) => {
+                    return Err(Error::Custom(format!(
+                        "Mismatching element variants: {a:?} != {b:?}"
+                    )))
+                }
             }
 
-            self.set_mode(Mode::Choice);
+            if update_occurs {
+                if let Mode::Mixed(occurs) = &mut self.mode_new {
+                    occurs.update(&self.mode_old, element.min_occurs, element.max_occurs);
+                } else {
+                    existing.min_occurs += element.min_occurs;
+                    existing.max_occurs += element.max_occurs;
+                }
+            }
         } else {
-            if self.mode == Mode::Mixed {
-                self.occurs.update(&mut element);
+            let mut element = element.into_owned();
+
+            if update_occurs {
+                if let Mode::Mixed(occurs) = &mut self.mode_new {
+                    occurs.update(&self.mode_old, element.min_occurs, element.max_occurs);
+                    element.reset_occurs();
+                }
             }
 
-            self.meta.elements.push(element);
+            meta_new.elements.push(element);
+        }
+
+        Ok(())
+    }
+
+    fn merge(
+        mut self,
+        el: &ElementMeta,
+        prev: &[ElementMeta],
+        mut other: Self,
+    ) -> Result<Self, Error> {
+        self.meta_new.get_or_insert_with(|| GroupMeta {
+            is_mixed: self.meta_old.is_mixed,
+            elements: ElementsMeta(prev.to_vec()),
+        });
+
+        match (self.mode_new, other.mode_new) {
+            (Mode::All, Mode::All) => (),
+            (Mode::Choice, Mode::Choice) if el.max_occurs <= MaxOccurs::Bounded(1) => (),
+            (Mode::Sequence, Mode::Sequence) if el.max_occurs <= MaxOccurs::Bounded(1) => (),
+            (_, _) => {
+                self = self.into_mixed();
+                other = other.into_mixed();
+            }
+        }
+
+        let (mode, meta) = other.into_meta();
+        let meta_new = self.meta_new.as_mut().unwrap();
+
+        meta_new.is_mixed = meta_new.is_mixed || meta.is_mixed;
+
+        let mixed_mode = match (&mut self.mode_new, mode) {
+            (Mode::All, Mode::All)
+            | (Mode::Choice, Mode::Choice)
+            | (Mode::Sequence, Mode::Sequence) => false,
+            (Mode::Mixed(a), Mode::Mixed(mut b)) => {
+                b.min *= el.min_occurs;
+                b.max *= el.max_occurs;
+
+                a.update(&self.mode_old, b.min, b.max);
+
+                true
+            }
+            (_, _) => unreachable!(),
+        };
+
+        for mut element in meta.elements.0 {
+            if mixed_mode {
+                element.reset_occurs();
+            } else {
+                element.min_occurs *= el.min_occurs;
+                element.max_occurs *= el.max_occurs;
+            }
+
+            self.add_element(!mixed_mode, Cow::Owned(element))?;
+        }
+
+        Ok(self)
+    }
+}
+
+impl Occurs {
+    fn update(&mut self, mode: &Mode, min: MinOccurs, max: MaxOccurs) {
+        match mode {
+            Mode::All | Mode::Sequence => {
+                self.min += min;
+                self.max += max;
+            }
+            Mode::Choice => {
+                self.min = self.min.min(min);
+                self.max = self.max.max(max);
+            }
+            Mode::Mixed(_) => unreachable!(),
         }
     }
 }
 
-impl ContextOccurs {
-    fn update(&mut self, element: &mut ElementMeta) {
-        self.min += element.min_occurs;
-        self.max += element.max_occurs;
-
-        element.min_occurs = 1;
-        element.max_occurs = MaxOccurs::Bounded(1);
-    }
-}
-
-impl Default for ContextOccurs {
-    fn default() -> Self {
-        Self {
-            min: 1,
-            max: MaxOccurs::Bounded(1),
-        }
+impl ElementMeta {
+    fn reset_occurs(&mut self) {
+        self.min_occurs = 1;
+        self.max_occurs = MaxOccurs::Bounded(1);
     }
 }
 
@@ -348,7 +495,7 @@ mod tests {
     }
 
     #[test]
-    fn sequence_with_choice_expect_choice() {
+    fn sequence_with_choice_expect_mixed() {
         let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
@@ -374,8 +521,8 @@ mod tests {
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
-        assert_eq!(main.min_occurs, 4);
-        assert_eq!(main.max_occurs, MaxOccurs::Bounded(5));
+        assert_eq!(main.min_occurs, 2);
+        assert_eq!(main.max_occurs, MaxOccurs::Bounded(3));
 
         let mut it = content.elements.iter();
 
@@ -440,7 +587,7 @@ mod tests {
     }
 
     #[test]
-    fn nested_sequences_expect_choice() {
+    fn nested_sequences_expect_mixed() {
         let mut types = MetaTypes::default();
         make_type!(types, "main", ComplexType("content"));
         make_type!(
@@ -514,6 +661,57 @@ mod tests {
             Choice {
                 element_info!("ch0", "ch0", Group {}),
                 element_info!("ch1", "ch1", Group { min: 0 }),
+            }
+        );
+        make_type!(
+            types,
+            "ch0",
+            Choice {
+                element_info!("a", "a", Element { min: 0 }),
+                element_info!("b", "b", Element {}),
+                element_info!("c", "c", Element { max: Unbounded }),
+            }
+        );
+        make_type!(
+            types,
+            "ch1",
+            Choice {
+                element_info!("d", "d", Element { min: 0 }),
+                element_info!("e", "e", Element {}),
+                element_info!("f", "f", Element { max: Unbounded }),
+            }
+        );
+
+        let types = Optimizer::new(types).flatten_complex_types().finish();
+
+        let (main, content) = assert_type!(types, "main", Choice("content"));
+
+        assert_eq!(main.min_occurs, 1);
+        assert_eq!(main.max_occurs, MaxOccurs::Bounded(1));
+
+        let mut it = content.elements.iter();
+
+        assert_element!(it, "a", 0, 1);
+        assert_element!(it, "b", 1, 1);
+        assert_element!(it, "c", 1, Unbounded);
+
+        assert_element!(it, "d", 0, 1);
+        assert_element!(it, "e", 0, 1);
+        assert_element!(it, "f", 0, Unbounded);
+
+        assert!(it.next().is_none());
+    }
+
+    #[test]
+    fn nested_choices_expect_mixed() {
+        let mut types = MetaTypes::default();
+        make_type!(types, "main", ComplexType("content"));
+        make_type!(
+            types,
+            "content",
+            Choice {
+                element_info!("ch0", "ch0", Group {}),
+                element_info!("ch1", "ch1", Group { min: 0 }),
                 element_info!("ch2", "ch2", Group { max: Unbounded }),
             }
         );
@@ -549,22 +747,72 @@ mod tests {
 
         let (main, content) = assert_type!(types, "main", Choice("content"));
 
-        assert_eq!(main.min_occurs, 1);
-        assert_eq!(main.max_occurs, MaxOccurs::Bounded(1));
+        assert_eq!(main.min_occurs, 0);
+        assert_eq!(main.max_occurs, MaxOccurs::Unbounded);
 
         let mut it = content.elements.iter();
 
-        assert_element!(it, "a", 0, 1);
+        assert_element!(it, "a", 1, 1);
         assert_element!(it, "b", 1, 1);
-        assert_element!(it, "c", 1, Unbounded);
+        assert_element!(it, "c", 1, 1);
 
-        assert_element!(it, "d", 0, 1);
-        assert_element!(it, "e", 0, 1);
-        assert_element!(it, "f", 0, Unbounded);
+        assert_element!(it, "d", 1, 1);
+        assert_element!(it, "e", 1, 1);
+        assert_element!(it, "f", 1, 1);
 
-        assert_element!(it, "g", 0, Unbounded);
-        assert_element!(it, "h", 1, Unbounded);
-        assert_element!(it, "i", 1, Unbounded);
+        assert_element!(it, "g", 1, 1);
+        assert_element!(it, "h", 1, 1);
+        assert_element!(it, "i", 1, 1);
+
+        assert!(it.next().is_none());
+    }
+
+    #[test]
+    fn group_with_mixed_content_is_referenced_twice_expect_mixed() {
+        let mut types = MetaTypes::default();
+
+        make_type!(types, "main", ComplexType("content"));
+        make_type!(
+            types,
+            "content",
+            Sequence {
+                element_info!("some", "some", Element { }),
+                element_info!("group_1", "group", Group { }),
+                element_info!("group_2", "group", Group { }),
+            }
+        );
+        make_type!(
+            types,
+            "group",
+            Choice {
+                element_info!("bar", "bar", Element { }),
+                element_info!("baz", "baz", Element { }),
+                element_info!("subgroup", "subgroup", Group { }),
+            }
+        );
+        make_type!(
+            types,
+            "subgroup",
+            Sequence {
+                element_info!("fizz", "fizz", Element { }),
+                element_info!("buzz", "buzz", Element { }),
+            }
+        );
+
+        let types = Optimizer::new(types).flatten_complex_types().finish();
+
+        let (main, content) = assert_type!(types, "main", Choice("content"));
+
+        assert_eq!(main.min_occurs, 3);
+        assert_eq!(main.max_occurs, MaxOccurs::Bounded(5));
+
+        let mut it = content.elements.iter();
+
+        assert_element!(it, "some", 1, 1);
+        assert_element!(it, "bar", 1, 1);
+        assert_element!(it, "baz", 1, 1);
+        assert_element!(it, "fizz", 1, 1);
+        assert_element!(it, "buzz", 1, 1);
 
         assert!(it.next().is_none());
     }

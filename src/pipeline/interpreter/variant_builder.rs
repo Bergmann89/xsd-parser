@@ -8,8 +8,8 @@ use tracing::instrument;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
-        ElementMetaVariant, ElementMode, EnumerationMetaVariant, MetaType, MetaTypeVariant,
-        ReferenceMeta, UnionMetaType,
+        ElementMetaVariant, ElementMode, ElementsMeta, EnumerationMetaVariant, MetaType,
+        MetaTypeVariant, ReferenceMeta, UnionMetaType,
     },
     schema::{
         xs::{
@@ -23,7 +23,7 @@ use crate::models::{
 };
 use crate::traits::VecHelper;
 
-use super::{Error, SchemaInterpreter};
+use super::{Error, SchemaInterpreter, StackEntry};
 
 #[derive(Debug)]
 pub(super) struct VariantBuilder<'a, 'schema, 'state> {
@@ -344,29 +344,44 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
+            self.state.type_stack.push(StackEntry::Mixed(mixed));
         }
 
+        let mut ret = Ok(());
+
         for c in &ty.content {
-            match c {
-                C::OpenContent(_) | C::Assert(_) => (),
+            ret = match c {
+                C::OpenContent(_) | C::Assert(_) => Ok(()),
                 C::ComplexContent(x) => {
                     let ci = get_or_init_any!(self, ComplexType);
                     ci.is_dynamic = ty.abstract_;
-                    self.apply_complex_content(x)?;
+
+                    self.apply_complex_content(x)
                 }
-                C::SimpleContent(x) => self.apply_simple_content(x)?,
-                C::All(x) => self.apply_all(x)?,
-                C::Choice(x) => self.apply_choice(x)?,
-                C::Sequence(x) => self.apply_sequence(x)?,
-                C::Attribute(x) => self.apply_attribute_ref(x)?,
-                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
-                C::Group(x) => self.apply_group_ref(x)?,
-                C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
-                C::Annotation(x) => self.apply_annotation(x),
+                C::SimpleContent(x) => self.apply_simple_content(x),
+                C::All(x) => self.apply_all(x),
+                C::Choice(x) => self.apply_choice(x),
+                C::Sequence(x) => self.apply_sequence(x),
+                C::Attribute(x) => self.apply_attribute_ref(x),
+                C::AnyAttribute(x) => self.apply_any_attribute(x),
+                C::Group(x) => self.apply_group_ref(x),
+                C::AttributeGroup(x) => self.apply_attribute_group_ref(x),
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        if ty.mixed.is_some() {
+            self.state.type_stack.pop();
+        }
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -393,17 +408,31 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ci = get_or_init_any!(self, ComplexType);
         if let Some(mixed) = ty.mixed {
             ci.is_mixed = mixed;
+            self.state.type_stack.push(StackEntry::Mixed(mixed));
         }
 
+        let mut ret = Ok(());
+
         for c in &ty.content {
-            match c {
-                C::Annotation(x) => self.apply_annotation(x),
-                C::Extension(x) => self.apply_complex_content_extension(x)?,
-                C::Restriction(x) => self.apply_complex_content_restriction(x)?,
+            ret = match c {
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+                C::Extension(x) => self.apply_complex_content_extension(x),
+                C::Restriction(x) => self.apply_complex_content_restriction(x),
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        if ty.mixed.is_some() {
+            self.state.type_stack.pop();
+        }
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -516,7 +545,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_all(&mut self, ty: &GroupType) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
-        self.create_subtype_builder(
+        self.complex_content_builder(
             field_name,
             ty.min_occurs,
             ty.max_occurs,
@@ -532,7 +561,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_choice(&mut self, ty: &GroupType) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
-        self.create_subtype_builder(
+        self.complex_content_builder(
             field_name,
             ty.min_occurs,
             ty.max_occurs,
@@ -548,7 +577,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_sequence(&mut self, ty: &GroupType) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
-        self.create_subtype_builder(
+        self.complex_content_builder(
             field_name,
             ty.min_occurs,
             ty.max_occurs,
@@ -564,19 +593,40 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_group(&mut self, ty: &GroupType) -> Result<(), Error> {
         use crate::models::schema::xs::GroupTypeContent as C;
 
+        let is_mixed = self.state.is_mixed();
+        if let Some(
+            MetaTypeVariant::All(gi) | MetaTypeVariant::Choice(gi) | MetaTypeVariant::Sequence(gi),
+        ) = &mut self.variant
+        {
+            gi.is_mixed = is_mixed;
+        }
+
+        self.state.type_stack.push(StackEntry::Group);
+
+        let mut ret = Ok(());
+
         for c in &ty.content {
-            match c {
-                C::Annotation(x) => self.apply_annotation(x),
-                C::All(x) => self.apply_all(x)?,
-                C::Choice(x) => self.apply_choice(x)?,
-                C::Sequence(x) => self.apply_sequence(x)?,
-                C::Any(x) => self.apply_any(x)?,
-                C::Group(x) => self.apply_group_ref(x)?,
-                C::Element(x) => self.apply_element_ref(x)?,
+            ret = match c {
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+                C::All(x) => self.apply_all(x),
+                C::Choice(x) => self.apply_choice(x),
+                C::Sequence(x) => self.apply_sequence(x),
+                C::Any(x) => self.apply_any(x),
+                C::Group(x) => self.apply_group_ref(x),
+                C::Element(x) => self.apply_element_ref(x),
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        self.state.type_stack.pop();
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -672,25 +722,31 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let ref_ = self.parse_qname(ref_)?.with_type(IdentType::Group);
         let group = self
             .find_group(ref_.clone())
-            .ok_or(Error::UnknownElement(ref_))?;
+            .ok_or(Error::UnknownElement(ref_.clone()))?;
 
-        self.state.type_stack.push(None);
+        let mut ret = Ok(());
+
+        self.state.type_stack.push(StackEntry::NamedGroup(ref_));
 
         for c in &group.content {
-            match c {
-                C::Annotation(x) => self.apply_annotation(x),
-                C::Any(x) => self.apply_any(x)?,
-                C::All(x) => self.apply_all(&x.patch(ty))?,
-                C::Choice(x) => self.apply_choice(&x.patch(ty))?,
-                C::Sequence(x) => self.apply_sequence(&x.patch(ty))?,
-                C::Group(x) => self.apply_group_ref(x)?,
-                C::Element(x) => self.apply_element_ref(x)?,
+            ret = match c {
+                C::Annotation(_) => Ok(()),
+                C::Any(x) => self.apply_any(x),
+                C::All(x) => self.apply_all(&x.patch(ty)),
+                C::Choice(x) => self.apply_choice(&x.patch(ty)),
+                C::Sequence(x) => self.apply_sequence(&x.patch(ty)),
+                C::Group(x) => self.apply_group_ref(x),
+                C::Element(x) => self.apply_element_ref(x),
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
         self.state.type_stack.pop();
 
-        Ok(())
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -703,8 +759,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .find_attribute_group(ref_.clone())
             .ok_or(Error::UnknownElement(ref_))?;
 
-        self.state.type_stack.push(None);
-
         for c in &group.content {
             match c {
                 C::Annotation(x) => self.apply_annotation(x),
@@ -713,8 +767,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
             }
         }
-
-        self.state.type_stack.pop();
 
         Ok(())
     }
@@ -1154,7 +1206,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[allow(clippy::too_many_lines)]
     #[instrument(err, level = "trace", skip(self, f))]
-    fn create_subtype_builder<F>(
+    fn complex_content_builder<F>(
         &mut self,
         field_name: Name,
         min_occurs: MinOccurs,
@@ -1171,6 +1223,24 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             Update,
             Append,
         }
+
+        enum Output {
+            Type(MetaType),
+            Cached(Ident),
+        }
+
+        let group_ident = self.state.type_stack.last().and_then(|x| {
+            if let StackEntry::NamedGroup(x) = x {
+                Some(x.clone())
+            } else {
+                None
+            }
+        });
+        let mut cached_ident = group_ident
+            .clone()
+            .and_then(|x| self.state.group_cache()?.get(&x))
+            .cloned();
+        let is_cached = cached_ident.is_some();
 
         let mut variant = None;
         let mut update_content_mode = UpdateContentMode::Unknown;
@@ -1190,6 +1260,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     | (ComplexContentType::Choice, MetaTypeVariant::Choice(_))
                     | (ComplexContentType::Sequence, MetaTypeVariant::Sequence(_)) => {
                         variant = Some(content_ty.variant.clone());
+                        cached_ident = None;
                         update_content_mode = UpdateContentMode::Update;
                     }
                     (_, _) => update_content_mode = UpdateContentMode::Append,
@@ -1197,43 +1268,60 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
         }
 
-        let variant = variant.unwrap_or_else(|| match complex_content_type {
-            ComplexContentType::All => MetaTypeVariant::All(Default::default()),
-            ComplexContentType::Choice => MetaTypeVariant::Choice(Default::default()),
-            ComplexContentType::Sequence => MetaTypeVariant::Sequence(Default::default()),
-        });
+        let output = if let Some(cached_ident) = cached_ident {
+            Output::Cached(cached_ident)
+        } else {
+            let variant = variant.unwrap_or_else(|| match complex_content_type {
+                ComplexContentType::All => MetaTypeVariant::All(Default::default()),
+                ComplexContentType::Choice => MetaTypeVariant::Choice(Default::default()),
+                ComplexContentType::Sequence => MetaTypeVariant::Sequence(Default::default()),
+            });
 
-        let mut builder = VariantBuilder::new(&mut *self.owner);
-        builder.type_mode = self.type_mode;
-        builder.variant = Some(variant);
+            let mut builder = VariantBuilder::new(&mut *self.owner);
+            builder.type_mode = self.type_mode;
+            builder.variant = Some(variant);
 
-        f(&mut builder)?;
+            f(&mut builder)?;
 
-        let ty = builder.finish()?;
+            let ty = builder.finish()?;
 
-        let (MetaTypeVariant::All(si)
-        | MetaTypeVariant::Choice(si)
-        | MetaTypeVariant::Sequence(si)) = &ty.variant
-        else {
-            return Err(Error::ExpectedGroupType);
+            let (MetaTypeVariant::All(si)
+            | MetaTypeVariant::Choice(si)
+            | MetaTypeVariant::Sequence(si)) = &ty.variant
+            else {
+                return Err(Error::ExpectedGroupType);
+            };
+
+            if si.elements.is_empty() {
+                return Ok(());
+            }
+
+            Output::Type(ty)
         };
-
-        if si.elements.is_empty() {
-            return Ok(());
-        }
 
         let ns = self.state.current_ns();
 
         match &mut self.variant {
             Some(MetaTypeVariant::ComplexType(ci)) => match update_content_mode {
                 UpdateContentMode::Unknown => {
-                    self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                    let content_ident = match output {
+                        Output::Cached(ident) => ident,
+                        Output::Type(ty) => {
+                            self.owner.state.add_type(type_ident.clone(), ty, false)?;
 
-                    ci.content = Some(type_ident);
+                            type_ident.clone()
+                        }
+                    };
+
+                    ci.content = Some(content_ident);
                     ci.min_occurs = ci.min_occurs.min(min_occurs);
                     ci.max_occurs = ci.max_occurs.max(max_occurs);
                 }
                 UpdateContentMode::Update => {
+                    let Output::Type(ty) = output else {
+                        unreachable!();
+                    };
+
                     let content_ident = ci.content.as_ref().unwrap();
 
                     self.owner
@@ -1246,7 +1334,14 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     ci.max_occurs = ci.max_occurs.max(max_occurs);
                 }
                 UpdateContentMode::Append => {
-                    self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                    let element_ident = match output {
+                        Output::Cached(ident) => ident,
+                        Output::Type(ty) => {
+                            self.owner.state.add_type(type_ident.clone(), ty, false)?;
+
+                            type_ident.clone()
+                        }
+                    };
 
                     let content_ident = ci.content.as_ref().unwrap();
                     let content_type = self.owner.state.types.items.get_mut(content_ident).unwrap();
@@ -1262,8 +1357,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     let ident = Ident::new(field_name)
                         .with_ns(ns)
                         .with_type(IdentType::Group);
-                    let element = si.elements.find_or_insert(ident, |ident| {
-                        ElementMeta::new(ident, type_ident, ElementMode::Group)
+                    let element = si.elements.insert_checked(ident, |ident| {
+                        ElementMeta::new(ident, element_ident, ElementMode::Group)
                     });
 
                     element.min_occurs = element.min_occurs.min(min_occurs);
@@ -1275,28 +1370,48 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 | MetaTypeVariant::Choice(si)
                 | MetaTypeVariant::Sequence(si),
             ) => {
-                self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                let element_ident = match output {
+                    Output::Cached(ident) => ident,
+                    Output::Type(ty) => {
+                        self.owner.state.add_type(type_ident.clone(), ty, false)?;
+
+                        type_ident.clone()
+                    }
+                };
 
                 let ident = Ident::new(field_name)
                     .with_ns(ns)
                     .with_type(IdentType::Group);
-                let element = si.elements.find_or_insert(ident, |ident| {
-                    ElementMeta::new(ident, type_ident, ElementMode::Group)
+                let element = si.elements.insert_checked(ident, |ident| {
+                    ElementMeta::new(ident, element_ident, ElementMode::Group)
                 });
 
                 element.min_occurs = element.min_occurs.min(min_occurs);
                 element.max_occurs = element.max_occurs.max(max_occurs);
             }
             None => {
-                self.owner.state.add_type(type_ident.clone(), ty, false)?;
+                let content_ident = match output {
+                    Output::Cached(ident) => ident,
+                    Output::Type(ty) => {
+                        self.owner.state.add_type(type_ident.clone(), ty, false)?;
+
+                        type_ident.clone()
+                    }
+                };
 
                 let ci = get_or_init_any!(self, ComplexType);
 
-                ci.content = Some(type_ident);
+                ci.content = Some(content_ident);
                 ci.min_occurs = ci.min_occurs.min(min_occurs);
                 ci.max_occurs = ci.max_occurs.max(max_occurs);
             }
             e => crate::unreachable!("{:?}", e),
+        }
+
+        if !is_cached {
+            if let (Some(cache), Some(group_ident)) = (self.state.group_cache_mut(), group_ident) {
+                cache.insert(group_ident, type_ident);
+            }
         }
 
         Ok(())
@@ -1306,17 +1421,24 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         let name = self
             .state
             .name_builder()
-            .generate_id()
             .or(ty.name.clone())
+            .or_else(|| self.state.named_group())
             .remove_suffix("Type")
-            .remove_suffix("Content");
-        let field_name = name.clone().shared_name("Content").finish();
-        let type_name = name
+            .remove_suffix("Content")
+            .or_else(|| {
+                self.state
+                    .name_builder()
+                    .generate_id()
+                    .shared_name("Content")
+            });
+        let field_name = name.clone().finish();
+        let type_name = self
+            .state
+            .name_builder()
             .auto_extend(false, true, self.state)
             .remove_suffix("Type")
             .remove_suffix("Content")
-            .shared_name("Content")
-            .with_id(true)
+            .or(name)
             .finish();
         let type_ = Ident::new(type_name).with_ns(self.state.current_ns());
 
@@ -1335,6 +1457,41 @@ impl<'schema, 'state> Deref for VariantBuilder<'_, 'schema, 'state> {
 impl DerefMut for VariantBuilder<'_, '_, '_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.owner
+    }
+}
+
+/* ElementsMeta */
+
+impl ElementsMeta {
+    fn insert_checked<F>(&mut self, ident: Ident, f: F) -> &mut ElementMeta
+    where
+        F: FnOnce(Ident) -> ElementMeta,
+    {
+        let vec = &mut **self;
+
+        let Some(index) = vec.iter().position(|x| x.ident == ident) else {
+            vec.push(f(ident));
+
+            return vec.last_mut().unwrap();
+        };
+
+        if vec[index].display_name.is_none() {
+            vec[index].display_name = Some(format!("{}_1", ident.name.as_str()));
+        }
+
+        let mut next = 1;
+        loop {
+            next += next;
+
+            let mut new_ident = ident.clone();
+            *new_ident.name.as_mut() = format!("{}_{next}", ident.name.as_str());
+
+            if !vec.iter().any(|x| x.ident == new_ident) {
+                vec.push(f(new_ident));
+
+                return vec.last_mut().unwrap();
+            }
+        }
     }
 }
 

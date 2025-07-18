@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::str::from_utf8;
 
 use tracing::instrument;
@@ -14,7 +15,7 @@ use crate::models::{
     Ident, IdentType, Name, RawByteStr,
 };
 
-use super::{Error, Node, State, VariantBuilder};
+use super::{state::StackEntry, Error, Node, State, VariantBuilder};
 
 #[derive(Debug)]
 pub(super) struct SchemaInterpreter<'schema, 'state> {
@@ -243,17 +244,21 @@ impl SchemaInterpreter<'_, '_> {
                 .state
                 .type_stack
                 .iter()
-                .any(|x| x.as_ref() == Some(&ident))
+                .any(|x| matches!(x, StackEntry::Type(x, _) if *x == ident))
         {
             return Ok(ident);
         }
 
-        self.state.type_stack.push(Some(ident));
+        self.state
+            .type_stack
+            .push(StackEntry::Type(ident, HashMap::new()));
 
         let mut builder = VariantBuilder::new(self);
         let type_ = f(&mut builder).and_then(|()| builder.finish());
 
-        let ident = self.state.type_stack.pop().unwrap().unwrap();
+        let StackEntry::Type(ident, _) = self.state.type_stack.pop().unwrap() else {
+            unreachable!("Unexpected stack entry!");
+        };
 
         self.state.add_type(ident.clone(), type_?, false)?;
 
