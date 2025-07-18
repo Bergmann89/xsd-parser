@@ -1481,22 +1481,17 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 13usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state =
+                                SchemaElementTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(SchemaElementTypeDeserializerState::Content__(
                                 deserializer,
                             ));
                             *self.state = SchemaElementTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state =
-                                SchemaElementTypeDeserializerState::Content__(deserializer);
                         }
                     }
                     ret
@@ -6889,7 +6884,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 4usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
@@ -15822,7 +15817,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 3usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
@@ -16511,7 +16506,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 3usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
@@ -18310,7 +18305,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 3usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {

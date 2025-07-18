@@ -61,7 +61,7 @@ pub struct RequestType {
     pub opcode: i32,
     #[serde(default, rename = "@combine-adjacent")]
     pub combine_adjacent: Option<bool>,
-    #[serde(rename = "#content")]
+    #[serde(default, rename = "#content")]
     pub content: Vec<RequestTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -352,7 +352,7 @@ pub enum RequestReplyTypeContent {
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DocType {
-    #[serde(rename = "#content")]
+    #[serde(default, rename = "#content")]
     pub content: Vec<DocTypeContent>,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -415,7 +415,7 @@ pub struct UnopType {
     #[serde(rename = "@op")]
     pub op: String,
     #[serde(rename = "#content")]
-    pub content: Vec<UnopTypeContent>,
+    pub content: UnopTypeContent,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub enum UnopTypeContent {

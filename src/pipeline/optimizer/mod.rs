@@ -109,6 +109,10 @@ pub enum Error {
     /// expectations.
     #[error("Complex type {0} contains an unexpected element in it's content type!")]
     UnexpectedElementInContent(Ident),
+
+    /// Custom Error
+    #[error("{0}")]
+    Custom(String),
 }
 
 macro_rules! get_bases {

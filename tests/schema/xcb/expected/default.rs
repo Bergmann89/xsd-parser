@@ -237,7 +237,7 @@ pub enum EnumItemTypeContent {
 #[derive(Debug)]
 pub struct OpType {
     pub op: String,
-    pub content: [OpTypeContent; 8usize],
+    pub content: [OpTypeContent; 2usize],
 }
 #[derive(Debug)]
 pub enum OpTypeContent {
@@ -253,7 +253,7 @@ pub enum OpTypeContent {
 #[derive(Debug)]
 pub struct UnopType {
     pub op: String,
-    pub content: [UnopTypeContent; 8usize],
+    pub content: UnopTypeContent,
 }
 #[derive(Debug)]
 pub enum UnopTypeContent {

@@ -829,7 +829,7 @@ impl WithDeserializer for EnumItemTypeContent {
 #[derive(Debug)]
 pub struct OpType {
     pub op: String,
-    pub content: [OpTypeContent; 8usize],
+    pub content: [OpTypeContent; 2usize],
 }
 #[derive(Debug)]
 pub enum OpTypeContent {
@@ -881,7 +881,7 @@ impl WithDeserializer for OpTypeContent {
 #[derive(Debug)]
 pub struct UnopType {
     pub op: String,
-    pub content: [UnopTypeContent; 8usize],
+    pub content: UnopTypeContent,
 }
 #[derive(Debug)]
 pub enum UnopTypeContent {
@@ -2815,21 +2815,16 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 9usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = RequestTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(RequestTypeDeserializerState::Content__(
                                 deserializer,
                             ));
                             *self.state = RequestTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = RequestTypeDeserializerState::Content__(deserializer);
                         }
                     }
                     ret
@@ -5647,21 +5642,16 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 5usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = StructTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(StructTypeDeserializerState::Content__(
                                 deserializer,
                             ));
                             *self.state = StructTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = StructTypeDeserializerState::Content__(deserializer);
                         }
                     }
                     ret
@@ -9848,21 +9838,16 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 13usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state = SwitchexprTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(SwitchexprTypeDeserializerState::Content__(
                                 deserializer,
                             ));
                             *self.state = SwitchexprTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = SwitchexprTypeDeserializerState::Content__(deserializer);
                         }
                     }
                     ret
@@ -11449,22 +11434,17 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 7usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
+                    let ret = ElementHandlerOutput::from_event(event, allow_any);
+                    match &ret {
+                        ElementHandlerOutput::Break { .. } => {
+                            *self.state =
+                                RequestReplyTypeDeserializerState::Content__(deserializer);
+                        }
+                        ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(RequestReplyTypeDeserializerState::Content__(
                                 deserializer,
                             ));
                             *self.state = RequestReplyTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state =
-                                RequestReplyTypeDeserializerState::Content__(deserializer);
                         }
                     }
                     ret
@@ -13812,7 +13792,7 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 8usize;
+                    let can_have_more = self.content.len().saturating_add(1) < 2usize;
                     let ret = if can_have_more {
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
@@ -13903,8 +13883,8 @@ pub mod quick_xml_deserialize {
                 op: self.op,
                 content: self.content.try_into().map_err(|vec: Vec<_>| {
                     ErrorKind::InsufficientSize {
-                        min: 8usize,
-                        max: 8usize,
+                        min: 2usize,
+                        max: 2usize,
                         actual: vec.len(),
                     }
                 })?,
@@ -14823,7 +14803,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct UnopTypeDeserializer {
         op: String,
-        content: Vec<super::UnopTypeContent>,
+        content: Option<super::UnopTypeContent>,
         state: Box<UnopTypeDeserializerState>,
     }
     #[derive(Debug)]
@@ -14849,7 +14829,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 op: op.ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("op".into())))?,
-                content: Vec::new(),
+                content: None,
                 state: Box::new(UnopTypeDeserializerState::Init__),
             })
         }
@@ -14867,7 +14847,10 @@ pub mod quick_xml_deserialize {
             Ok(())
         }
         fn store_content(&mut self, value: super::UnopTypeContent) -> Result<(), Error> {
-            self.content.push(value);
+            if self.content.is_some() {
+                Err(ErrorKind::DuplicateContent)?;
+            }
+            self.content = Some(value);
             Ok(())
         }
         fn handle_content<'de, R>(
@@ -14899,23 +14882,8 @@ pub mod quick_xml_deserialize {
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    let can_have_more = self.content.len().saturating_add(1) < 8usize;
-                    let ret = if can_have_more {
-                        ElementHandlerOutput::from_event(event, allow_any)
-                    } else {
-                        ElementHandlerOutput::from_event_end(event, allow_any)
-                    };
-                    match (can_have_more, &ret) {
-                        (true, ElementHandlerOutput::Continue { .. }) => {
-                            fallback
-                                .get_or_insert(UnopTypeDeserializerState::Content__(deserializer));
-                            *self.state = UnopTypeDeserializerState::Next__;
-                        }
-                        (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = UnopTypeDeserializerState::Content__(deserializer);
-                        }
-                    }
-                    ret
+                    *self.state = UnopTypeDeserializerState::Content__(deserializer);
+                    ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
         }
@@ -14988,13 +14956,7 @@ pub mod quick_xml_deserialize {
             self.finish_state(reader, state)?;
             Ok(super::UnopType {
                 op: self.op,
-                content: self.content.try_into().map_err(|vec: Vec<_>| {
-                    ErrorKind::InsufficientSize {
-                        min: 8usize,
-                        max: 8usize,
-                        actual: vec.len(),
-                    }
-                })?,
+                content: self.content.ok_or_else(|| ErrorKind::MissingContent)?,
             })
         }
     }
@@ -21506,7 +21468,7 @@ pub mod quick_xml_serialize {
     #[derive(Debug)]
     pub(super) enum UnopTypeSerializerState<'ser> {
         Init__,
-        Content__(IterSerializer<'ser, &'ser [super::UnopTypeContent], super::UnopTypeContent>),
+        Content__(<super::UnopTypeContent as WithSerializer>::Serializer<'ser>),
         End__,
         Done__,
         Phantom__(&'ser ()),
@@ -21516,11 +21478,9 @@ pub mod quick_xml_serialize {
             loop {
                 match &mut *self.state {
                     UnopTypeSerializerState::Init__ => {
-                        *self.state = UnopTypeSerializerState::Content__(IterSerializer::new(
-                            &self.value.content[..],
-                            None,
-                            false,
-                        ));
+                        *self.state = UnopTypeSerializerState::Content__(
+                            WithSerializer::serializer(&self.value.content, None, false)?,
+                        );
                         let mut bytes = BytesStart::new(self.name);
                         write_attrib(&mut bytes, "op", &self.value.op)?;
                         return Ok(Some(Event::Start(bytes)));
