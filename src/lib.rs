@@ -348,7 +348,7 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
             }
             RenderStep::Defaults => renderer = renderer.with_step(DefaultsRenderStep),
             RenderStep::NamespaceConstants => {
-                renderer = renderer.with_step(NamespaceConstantsRenderStep);
+                renderer = renderer.with_step(NamespaceConstantsRenderStep::default());
             }
             RenderStep::WithNamespaceTrait => {
                 renderer = renderer.with_step(WithNamespaceTraitRenderStep);

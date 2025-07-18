@@ -90,6 +90,12 @@ impl IdentPath {
         &self.ident
     }
 
+    /// Returns the module path for this identifier path.
+    #[must_use]
+    pub fn module(&self) -> Option<&ModulePath> {
+        self.path.as_ref()
+    }
+
     /// Creates a [`TokenStream`] that is relative to the passed `dst` module path.
     ///
     /// This uses the `super` keyword to create a relative path from the passed `dst` module path

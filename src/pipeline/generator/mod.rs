@@ -36,7 +36,7 @@ use tracing::instrument;
 use crate::config::{BoxFlags, GeneratorFlags, TypedefMode};
 use crate::models::{
     code::{format_module_ident, format_type_ident, IdentPath},
-    data::{DataType, DataTypes},
+    data::{DataType, DataTypes, PathData},
     meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes},
     schema::{MaxOccurs, NamespaceId},
     Ident, IdentType, Name,
@@ -207,11 +207,10 @@ impl<'types> Generator<'types> {
     pub fn with_type(mut self, ident: Ident) -> Result<Self, Error> {
         let module_ident = format_module(self.meta.types, ident.ns)?;
         let type_ident = format_ident!("{}", ident.name.to_string());
+        let path = PathData::from_path(IdentPath::from_parts(module_ident, type_ident));
 
         let type_ref = TypeRef {
-            ident: ident.clone(),
-            module_ident,
-            type_ident,
+            path,
             boxed_elements: HashSet::new(),
         };
         self.state.cache.insert(ident, type_ref);
@@ -391,16 +390,28 @@ impl<'types> State<'types> {
                 .get(ident)
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
             let name = make_type_name(&meta.postfixes, ty, ident);
-            let (module_ident, type_ident) = match &ty.variant {
-                MetaTypeVariant::BuildIn(x) => (None, format_ident!("{x}")),
-                MetaTypeVariant::Custom(x) => (None, format_ident!("{}", x.name())),
+            let path = match &ty.variant {
+                MetaTypeVariant::BuildIn(x) => {
+                    PathData::from_path(IdentPath::from_ident(format_ident!("{x}")))
+                }
+                MetaTypeVariant::Custom(x) => {
+                    let path = IdentPath::from_ident(format_ident!("{}", x.name()));
+
+                    if let Some(using) = x.include() {
+                        PathData::from_path(path).with_using(using)
+                    } else {
+                        PathData::from_path(path.with_path(None))
+                    }
+                }
                 _ => {
                     let use_modules = meta.flags.intersects(GeneratorFlags::USE_MODULES);
                     let module_ident =
                         format_module(meta.types, use_modules.then_some(ident.ns).flatten())?;
                     let type_ident = format_type_ident(&name, ty.display_name.as_deref());
 
-                    (module_ident, type_ident)
+                    let path = IdentPath::from_parts(module_ident, type_ident);
+
+                    PathData::from_path(path)
                 }
             };
 
@@ -413,9 +424,7 @@ impl<'types> State<'types> {
             });
 
             let type_ref = TypeRef {
-                ident: ident.clone(),
-                type_ident,
-                module_ident,
+                path,
                 boxed_elements,
             };
 

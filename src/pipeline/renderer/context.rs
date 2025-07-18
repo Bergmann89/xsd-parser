@@ -63,6 +63,16 @@ impl<'a, 'types> Context<'a, 'types> {
         Self::main_module(self.module_path.last(), &mut root).usings(usings);
     }
 
+    /// Add using directives to the root module.
+    pub fn add_root_usings<I>(&self, usings: I)
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let usings = self.patch_usings(usings);
+        self.module.lock().usings(usings);
+    }
+
     /// Returns a mutable reference to the module of the current rendered type.
     pub fn module(&mut self) -> &mut Module {
         let root = self.module.get_mut();

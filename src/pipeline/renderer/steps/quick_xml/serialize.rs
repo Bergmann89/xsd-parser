@@ -57,11 +57,12 @@ impl UnionData<'_> {
             .map(UnionTypeVariant::render_serializer_variant)
             .collect::<Vec<_>>();
 
-        let usings = [
+        ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::SerializeBytes",
-        ];
+        ]);
+
         let code = quote! {
             impl SerializeBytes for #type_ident {
                 fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -72,7 +73,7 @@ impl UnionData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -92,11 +93,12 @@ impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self { type_ident, .. } = self;
 
-        let usings = [
+        ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::WithSerializer",
             "xsd_parser::quick_xml::BoxedSerializer",
-        ];
+        ]);
+
         let code = quote! {
             impl WithSerializer for #type_ident {
                 type Serializer<'x> = BoxedSerializer<'x>;
@@ -113,7 +115,7 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -170,11 +172,12 @@ impl ReferenceData<'_> {
             }
         };
 
-        let usings = [
+        ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::SerializeBytes",
-        ];
+        ]);
+
         let code = quote! {
             impl SerializeBytes for #type_ident {
                 fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -183,7 +186,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -201,11 +204,12 @@ impl EnumerationData<'_> {
             .iter()
             .map(EnumerationTypeVariant::render_serializer_variant);
 
-        let usings = [
+        ctx.add_usings([
             "std::borrow::Cow",
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::SerializeBytes",
-        ];
+        ]);
+
         let code = quote! {
             impl SerializeBytes for #type_ident {
                 fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
@@ -216,7 +220,7 @@ impl EnumerationData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -284,10 +288,11 @@ impl ComplexBase {
             self.render_with_serializer_for_content()
         };
 
-        let usings = [
+        ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::WithSerializer",
-        ];
+        ]);
+
         let code = quote! {
             impl WithSerializer for #type_ident {
                 type Serializer<'x> = quick_xml_serialize::#serializer_ident<'x>;
@@ -302,7 +307,7 @@ impl ComplexBase {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 
     fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {
@@ -503,11 +508,12 @@ impl ComplexDataEnum<'_> {
             .serializer_need_end_state()
             .then(|| self.render_serializer_handle_state_end(ctx));
 
-        let usings = [
+        ctx.add_quick_xml_serialize_usings([
             "core::iter::Iterator",
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
-        ];
+        ]);
+
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
                 fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
@@ -543,7 +549,7 @@ impl ComplexDataEnum<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().usings(usings).append(code);
+        ctx.quick_xml_serialize().append(code);
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -676,11 +682,12 @@ impl ComplexDataStruct<'_> {
             .serializer_need_end_state()
             .then(|| self.render_serializer_handle_state_end(ctx));
 
-        let usings = [
+        ctx.add_quick_xml_serialize_usings([
             "core::iter::Iterator",
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
-        ];
+        ]);
+
         let code = quote! {
             impl<'ser> #serializer_ident<'ser> {
                 fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error>
@@ -718,7 +725,7 @@ impl ComplexDataStruct<'_> {
             }
         };
 
-        ctx.quick_xml_serialize().usings(usings).append(code);
+        ctx.quick_xml_serialize().append(code);
     }
 
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {

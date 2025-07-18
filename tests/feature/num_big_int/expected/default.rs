@@ -1,9 +1,9 @@
-use num::BigInt;
 pub mod tns {
+    use num::BigInt;
     pub type Foo = FooType;
     #[derive(Debug)]
     pub struct FooType {
-        pub a_int: super::BigInt,
-        pub b_int: super::BigInt,
+        pub a_int: BigInt,
+        pub b_int: BigInt,
     }
 }

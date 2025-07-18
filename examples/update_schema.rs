@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
     // it defaults to schema/XMLSchema.xsd.
     let output = match args.next() {
         Some(output) => PathBuf::from(output),
-        None => cwd.join("src/schema/xs_generated_new.rs"),
+        None => cwd.join("src/models/schema/xs_generated_new.rs"),
     };
 
     tracing::info!("Generate Code for {input:#?} to {output:#?}");
@@ -74,19 +74,23 @@ fn main() -> Result<(), Error> {
     config.interpreter.types = vec![
         (
             IdentTriple::from((IdentType::Type, "xs:allNNI")),
-            MetaType::from(CustomMeta::new("MaxOccurs").with_default(max_occurs_default)),
+            MetaType::from(
+                CustomMeta::new("MaxOccurs")
+                    .include_from("crate::models::schema::MaxOccurs")
+                    .with_default(max_occurs_default),
+            ),
         ),
         (
             IdentTriple::from((IdentType::Type, "xs:QName")),
-            MetaType::from(CustomMeta::new("QName")),
+            MetaType::from(CustomMeta::new("QName").include_from("crate::models::schema::QName")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:appinfo")),
-            MetaType::from(CustomMeta::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement").include_from("crate::xml::AnyElement")),
         ),
         (
             IdentTriple::from((IdentType::Element, "xs:documentation")),
-            MetaType::from(CustomMeta::new("AnyElement")),
+            MetaType::from(CustomMeta::new("AnyElement").include_from("crate::xml::AnyElement")),
         ),
     ];
 
@@ -107,8 +111,10 @@ fn main() -> Result<(), Error> {
         GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
-    config.generator.generate =
-        Generate::Types(vec![IdentTriple::from((IdentType::Element, "xs:schema"))]);
+    config.generator.generate = Generate::Types(vec![IdentTriple::from((
+        IdentType::ElementType,
+        "xs:schema",
+    ))]);
     config.renderer.xsd_parser = "crate".into();
     config.renderer.derive = Some(
         ["Debug", "Clone", "Eq", "PartialEq"]

@@ -4,8 +4,8 @@ use quote::quote;
 use crate::config::{RendererFlags, TypedefMode};
 use crate::models::data::{
     ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-    ComplexDataStruct, CustomData, DynamicData, EnumerationData, EnumerationTypeVariant, Occurs,
-    ReferenceData, UnionData, UnionTypeVariant,
+    ComplexDataStruct, DynamicData, EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData,
+    UnionData, UnionTypeVariant,
 };
 
 use super::super::{Context, DataTypeVariant, RenderStep};
@@ -18,26 +18,13 @@ pub struct TypesRenderStep;
 impl RenderStep for TypesRenderStep {
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
-            DataTypeVariant::BuildIn(_) => (),
-            DataTypeVariant::Custom(x) => x.render_types(ctx),
+            DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
             DataTypeVariant::Union(x) => x.render_types(ctx),
             DataTypeVariant::Dynamic(x) => x.render_types(ctx),
             DataTypeVariant::Reference(x) => x.render_types(ctx),
             DataTypeVariant::Enumeration(x) => x.render_types(ctx),
             DataTypeVariant::Complex(x) => x.render_types(ctx),
         }
-    }
-}
-
-/* CustomType */
-
-impl CustomData<'_> {
-    fn render_types(&self, ctx: &mut Context<'_, '_>) {
-        let Some(include) = self.meta.include() else {
-            return;
-        };
-
-        ctx.module().usings([include]);
     }
 }
 

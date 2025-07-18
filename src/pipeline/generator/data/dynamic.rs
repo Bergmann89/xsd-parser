@@ -15,7 +15,7 @@ impl<'types> DynamicData<'types> {
         meta: &'types DynamicMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
-        let type_ident = ctx.current_type_ref().type_ident.clone();
+        let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_ident = format_ident!("{type_ident}Trait");
         let ident = ctx.ident.clone();
         let sub_traits = ctx
@@ -27,9 +27,9 @@ impl<'types> DynamicData<'types> {
                     .iter()
                     .map(|ident| {
                         ctx.get_or_create_type_ref(ident).map(|x| {
-                            let ident = format_ident!("{}Trait", x.type_ident);
+                            let ident = format_ident!("{}Trait", x.path.ident());
 
-                            let target_type = x.to_ident_path().with_ident(ident);
+                            let target_type = (*x.path).clone().with_ident(ident);
 
                             PathData::from_path(target_type)
                         })
@@ -68,18 +68,16 @@ fn make_derived_type_data<'types>(
         .items
         .get(ident)
         .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+
     let base_ident = if let MetaTypeVariant::Dynamic(di) = &ty.variant {
         di.type_.clone()
     } else {
         None
     };
+
     let ident = base_ident.unwrap_or(ident.clone());
-
     let target_ref = ctx.get_or_create_type_ref(&ident)?;
-
-    let target_type = target_ref.to_ident_path();
-    let target_type = PathData::from_path(target_type);
-
+    let target_type = target_ref.path.clone();
     let variant_ident = format_variant_ident(&ident.name, None);
 
     Ok(DerivedType {

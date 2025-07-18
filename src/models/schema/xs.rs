@@ -20,9 +20,6 @@ use quick_xml::{events::Event, Writer};
 use unindent::unindent;
 
 use crate::quick_xml::WithSerializer;
-use crate::xml::AnyElement;
-
-use super::{MaxOccurs, QName};
 
 pub type Use = AttributeUseType;
 

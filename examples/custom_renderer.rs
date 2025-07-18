@@ -168,7 +168,7 @@ impl CustomRenderStep {
             return;
         };
 
-        ctx.module().usings([include]);
+        ctx.add_usings([include]);
     }
 
     /* Union */

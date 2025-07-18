@@ -726,7 +726,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let mut ret = Ok(());
 
-        self.state.type_stack.push(StackEntry::NamedGroup(ref_));
+        self.state.type_stack.push(StackEntry::GroupRef(ref_));
 
         for c in &group.content {
             ret = match c {
@@ -759,16 +759,29 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .find_attribute_group(ref_.clone())
             .ok_or(Error::UnknownElement(ref_))?;
 
+        self.state.type_stack.push(StackEntry::AttributeGroupRef);
+
+        let mut ret = Ok(());
+
         for c in &group.content {
-            match c {
-                C::Annotation(x) => self.apply_annotation(x),
-                C::Attribute(x) => self.apply_attribute_ref(x)?,
-                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
-                C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
+            ret = match c {
+                C::Annotation(x) => {
+                    self.apply_annotation(x);
+                    Ok(())
+                }
+                C::Attribute(x) => self.apply_attribute_ref(x),
+                C::AnyAttribute(x) => self.apply_any_attribute(x),
+                C::AttributeGroup(x) => self.apply_attribute_group_ref(x),
+            };
+
+            if ret.is_err() {
+                break;
             }
         }
 
-        Ok(())
+        self.state.type_stack.pop();
+
+        ret
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -1230,7 +1243,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         let group_ident = self.state.type_stack.last().and_then(|x| {
-            if let StackEntry::NamedGroup(x) = x {
+            if let StackEntry::GroupRef(x) = x {
                 Some(x.clone())
             } else {
                 None

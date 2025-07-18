@@ -1,24 +1,24 @@
-use num::BigInt;
 use xsd_parser::models::schema::Namespace;
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
 pub const NS_TNS: Namespace = Namespace::new_const(b"http://example.com");
 pub mod tns {
+    use num::BigInt;
     use xsd_parser::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Foo = FooType;
     #[derive(Debug)]
     pub struct FooType {
-        pub a_int: super::BigInt,
-        pub b_int: super::BigInt,
+        pub a_int: BigInt,
+        pub b_int: BigInt,
     }
     impl FooType {
         #[must_use]
-        pub fn default_a_int() -> super::BigInt {
+        pub fn default_a_int() -> BigInt {
             use core::str::FromStr;
             num::BigInt::from_str("123").unwrap()
         }
         #[must_use]
-        pub fn default_b_int() -> super::BigInt {
+        pub fn default_b_int() -> BigInt {
             use core::str::FromStr;
             num::BigInt::from_str("456").unwrap()
         }
@@ -43,6 +43,7 @@ pub mod tns {
     }
     pub mod quick_xml_deserialize {
         use core::mem::replace;
+        use num::BigInt;
         use xsd_parser::quick_xml::{
             filter_xmlns_attributes, BytesStart, DeserializeReader, Deserializer,
             DeserializerArtifact, DeserializerEvent, DeserializerOutput, DeserializerResult, Error,
@@ -50,8 +51,8 @@ pub mod tns {
         };
         #[derive(Debug)]
         pub struct FooTypeDeserializer {
-            a_int: super::super::BigInt,
-            b_int: super::super::BigInt,
+            a_int: BigInt,
+            b_int: BigInt,
             state: Box<FooTypeDeserializerState>,
         }
         #[derive(Debug)]
@@ -64,8 +65,8 @@ pub mod tns {
             where
                 R: DeserializeReader,
             {
-                let mut a_int: Option<super::super::BigInt> = None;
-                let mut b_int: Option<super::super::BigInt> = None;
+                let mut a_int: Option<BigInt> = None;
+                let mut b_int: Option<BigInt> = None;
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(

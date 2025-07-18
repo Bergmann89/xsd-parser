@@ -71,12 +71,13 @@ impl UnionData<'_> {
             .iter()
             .map(|var| var.render_deserializer_variant(ctx));
 
-        let usings = [
+        ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::ErrorKind",
             "xsd_parser::quick_xml::DeserializeBytes",
             "xsd_parser::quick_xml::XmlReader",
-        ];
+        ]);
+
         let code = quote! {
             impl DeserializeBytes for #type_ident {
                 fn deserialize_bytes<R>(
@@ -95,7 +96,7 @@ impl UnionData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -141,14 +142,15 @@ impl DynamicData<'_> {
             quote!(quick_xml_deserialize::#deserializer_ident)
         };
 
-        let usings = ["xsd_parser::quick_xml::WithDeserializer"];
+        ctx.add_usings(["xsd_parser::quick_xml::WithDeserializer"]);
+
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = #deserializer_type;
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 
     fn render_deserializer_types(&self, ctx: &mut Context<'_, '_>) {
@@ -167,7 +169,8 @@ impl DynamicData<'_> {
             }
         });
 
-        let usings = ["xsd_parser::quick_xml::WithDeserializer"];
+        ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::WithDeserializer"]);
+
         let code = quote! {
             #[derive(Debug)]
             pub enum #deserializer_ident {
@@ -175,7 +178,7 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).append(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_impls(&self, ctx: &mut Context<'_, '_>) {
@@ -210,7 +213,7 @@ impl DynamicData<'_> {
             }
         });
 
-        let usings = [
+        ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::Deserializer",
@@ -219,7 +222,8 @@ impl DynamicData<'_> {
             "xsd_parser::quick_xml::DeserializerResult",
             "xsd_parser::quick_xml::DeserializerOutput",
             "xsd_parser::quick_xml::DeserializerArtifact",
-        ];
+        ]);
+
         let code = quote! {
             impl<'de> Deserializer<'de, super::#type_ident> for #deserializer_type {
                 fn init<R>(
@@ -274,7 +278,7 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).append(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 }
 
@@ -457,11 +461,12 @@ impl ReferenceData<'_> {
             }
         };
 
-        let usings = [
+        ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::DeserializeBytes",
             "xsd_parser::quick_xml::DeserializeReader",
-        ];
+        ]);
+
         let code = quote! {
             impl DeserializeBytes for #type_ident {
                 fn deserialize_bytes<R>(
@@ -476,7 +481,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -513,11 +518,12 @@ impl EnumerationData<'_> {
             }
         });
 
-        let usings = [
+        ctx.add_usings([
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::DeserializeBytes",
             "xsd_parser::quick_xml::DeserializeReader",
-        ];
+        ]);
+
         let code = quote! {
             impl DeserializeBytes for #type_ident {
                 fn deserialize_bytes<R>(
@@ -535,7 +541,7 @@ impl EnumerationData<'_> {
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 }
 
@@ -622,14 +628,15 @@ impl ComplexBase {
             quote!(quick_xml_deserialize::#deserializer_ident)
         };
 
-        let usings = ["xsd_parser::quick_xml::WithDeserializer"];
+        ctx.add_usings(["xsd_parser::quick_xml::WithDeserializer"]);
+
         let code = quote! {
             impl WithDeserializer for #type_ident {
                 type Deserializer = #deserializer_type;
             }
         };
 
-        ctx.module().usings(usings).append(code);
+        ctx.module().append(code);
     }
 
     fn render_deserializer_impl(
@@ -650,13 +657,13 @@ impl ComplexBase {
         };
         let mut_ = finish_mut_self.then(|| quote!(mut));
 
-        let usings = [
+        ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
             "xsd_parser::quick_xml::Error",
             "xsd_parser::quick_xml::Deserializer",
             "xsd_parser::quick_xml::DeserializeReader",
             "xsd_parser::quick_xml::DeserializerResult",
-        ];
+        ]);
 
         let code = quote! {
             impl<'de> Deserializer<'de, super::#type_ident> for #deserializer_type {
@@ -690,7 +697,7 @@ impl ComplexBase {
             }
         };
 
-        ctx.quick_xml_deserialize().usings(usings).append(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_fn_init_for_element(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -1191,6 +1198,8 @@ impl ComplexDataStruct<'_> {
             }
         };
 
+        ctx.add_quick_xml_deserialize_usings(use_with_deserializer);
+
         let code = quote! {
             #[derive(Debug)]
             enum #deserializer_state_ident {
@@ -1198,9 +1207,7 @@ impl ComplexDataStruct<'_> {
             }
         };
 
-        ctx.quick_xml_deserialize()
-            .usings(use_with_deserializer)
-            .append(code);
+        ctx.quick_xml_deserialize().append(code);
     }
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
