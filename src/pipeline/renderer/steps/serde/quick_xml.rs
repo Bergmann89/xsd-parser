@@ -8,7 +8,7 @@ use crate::models::{
         ComplexDataStruct, CustomData, DynamicData, EnumerationData, EnumerationTypeVariant,
         Occurs, ReferenceData, UnionData, UnionTypeVariant,
     },
-    schema::xs::Use,
+    schema::Use,
 };
 
 use super::super::super::{Context, DataTypeVariant, RenderStep};

@@ -35,7 +35,7 @@ pub use self::type_eq::TypeEq;
 pub use self::types::{MetaTypes, ModuleMeta};
 pub use self::union::{UnionMeta, UnionMetaType, UnionMetaTypes};
 
-use crate::models::schema::xs::Use;
+use crate::models::schema::Use;
 
 fn use_hash<H: Hasher>(use_: &Use, hasher: &mut H) {
     match use_ {

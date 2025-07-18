@@ -5,8 +5,9 @@ use std::ops::{Deref, DerefMut};
 
 use crate::models::{
     meta::{MetaTypes, TypeEq},
-    schema::xs::{
-        BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListAType, Use,
+    schema::{
+        xs::{BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListAType},
+        Use,
     },
     Ident,
 };

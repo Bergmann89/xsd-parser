@@ -3,7 +3,7 @@ use std::collections::{BTreeMap, HashSet};
 use crate::models::{
     data::Occurs,
     meta::{ComplexMeta, ElementMetaVariant, MetaTypeVariant, MetaTypes},
-    schema::xs::Use,
+    schema::Use,
     Ident,
 };
 

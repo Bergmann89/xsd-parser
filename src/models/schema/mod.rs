@@ -6,22 +6,40 @@
 //!
 //! It manages the resolution of namespaces and tracks schema documents across multiple sources.
 
-pub mod xs;
-
 mod namespace;
 mod namespace_prefix;
 mod occurs;
 mod qname;
+mod xs_extra;
+
+#[allow(
+    unused_mut,
+    missing_docs,
+    unused_variables,
+    clippy::len_zero,
+    clippy::single_match,
+    clippy::needless_pass_by_value,
+    clippy::unused_self,
+    clippy::unnecessary_wraps,
+    clippy::redundant_else,
+    clippy::redundant_field_names,
+    clippy::too_many_lines,
+    clippy::large_enum_variant,
+    clippy::semicolon_if_nothing_returned
+)]
+mod generated;
 
 use std::borrow::Cow;
 use std::collections::btree_map::{BTreeMap, Entry, Iter, IterMut};
 
-use self::xs::Schema;
+pub use generated::*;
 
-pub use namespace::Namespace;
-pub use namespace_prefix::NamespacePrefix;
-pub use occurs::{MaxOccurs, MinOccurs};
-pub use qname::QName;
+pub use self::namespace::Namespace;
+pub use self::namespace_prefix::NamespacePrefix;
+pub use self::occurs::{MaxOccurs, MinOccurs};
+pub use self::qname::QName;
+pub use self::sch::Schema as Schematron;
+pub use self::xs::{AttributeUseType as Use, Schema};
 
 /// Top-level structure for managing loaded XML schema files and associated namespaces.
 ///

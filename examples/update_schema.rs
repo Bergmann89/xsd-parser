@@ -7,7 +7,6 @@
 #![allow(missing_docs)]
 
 use std::env::{args, current_dir};
-use std::fs::write;
 use std::path::PathBuf;
 
 use anyhow::Error;
@@ -15,12 +14,12 @@ use proc_macro2::TokenStream;
 use quote::quote;
 use tracing_subscriber::{fmt, EnvFilter};
 
-use xsd_parser::config::GeneratorFlags;
 use xsd_parser::config::{
-    Config, Generate, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags, Resolver, Schema,
+    Config, Generate, GeneratorFlags, IdentTriple, InterpreterFlags, OptimizerFlags, ParserFlags,
+    Resolver, Schema,
 };
 use xsd_parser::models::meta::{CustomMeta, MetaType};
-use xsd_parser::{generate, IdentType};
+use xsd_parser::{generate_modules, IdentType};
 
 fn main() -> Result<(), Error> {
     // Initialize the logging framework. Log output can be controlled using the
@@ -39,21 +38,22 @@ fn main() -> Result<(), Error> {
     let cwd = current_dir()?;
     let mut args = args().skip(1);
 
-    // Use the first command line parameter as input for the schema. If it is not set
-    // we will fall back to `schema/XMLSchema.xsd`.
-    let input = match args.next() {
-        Some(input) => PathBuf::from(input),
-        None => cwd.join("schema/XMLSchema.xsd").canonicalize()?,
-    };
-
-    // Uses the first command-line parameter as the schema input. If not provided,
-    // it defaults to schema/XMLSchema.xsd.
+    // Uses the first command-line parameter as outout. If not provided,
+    // it defaults to `src/schema/xs_generated_new.rs``.
     let output = match args.next() {
         Some(output) => PathBuf::from(output),
-        None => cwd.join("src/models/schema/xs_generated_new.rs"),
+        None => cwd.join("src/models/schema/generated"),
     };
 
-    tracing::info!("Generate Code for {input:#?} to {output:#?}");
+    // Use the remaining parameters to define the input for the schema.
+    // If it is not set we will fall back to [`schema/XMLSchema.xsd`, `schema/schematron.xsd`].
+    let mut inputs = args.map(PathBuf::from).collect::<Vec<_>>();
+    if inputs.is_empty() {
+        inputs.push(cwd.join("schema/XMLSchema.xsd").canonicalize()?);
+        inputs.push(cwd.join("schema/schematron.xsd").canonicalize()?);
+    }
+
+    tracing::info!("Generate Code for {inputs:#?} to {output:#?}");
 
     // Creates the default configuration and enables code generation for
     // `quick_xml` deserialization.
@@ -62,7 +62,7 @@ fn main() -> Result<(), Error> {
     // Enables all parser flags (see the flags documentation for details), sets
     // the input file, and activates file resolvers to handle imports and includes.
     config.parser.flags = ParserFlags::all();
-    config.parser.schemas = vec![Schema::File(input)];
+    config.parser.schemas = inputs.into_iter().map(Schema::File).collect();
     config.parser.resolver = vec![Resolver::File];
 
     // Enables all interpreter flags (refer to the flags documentation for details)
@@ -107,14 +107,13 @@ fn main() -> Result<(), Error> {
     //   -  Instructs the generator to produce code for the xs:schema element and
     //      its dependent types.
     //   -  Derives the generated types from `Debug`, `Clone`, `Eq`, and `PartialEq`.
-    config.generator.flags =
-        GeneratorFlags::all() - GeneratorFlags::USE_MODULES - GeneratorFlags::MIXED_TYPE_SUPPORT;
+    config.generator.flags = GeneratorFlags::all() - GeneratorFlags::MIXED_TYPE_SUPPORT;
     config.generator.type_postfix.element = String::default();
     config.generator.type_postfix.element_type = String::default();
-    config.generator.generate = Generate::Types(vec![IdentTriple::from((
-        IdentType::ElementType,
-        "xs:schema",
-    ))]);
+    config.generator.generate = Generate::Types(vec![
+        IdentTriple::from((IdentType::ElementType, "xs:schema")),
+        IdentTriple::from((IdentType::ElementType, "sch:schema")),
+    ]);
     config.renderer.xsd_parser = "crate".into();
     config.renderer.derive = Some(
         ["Debug", "Clone", "Eq", "PartialEq"]
@@ -128,10 +127,10 @@ fn main() -> Result<(), Error> {
     // config.interpreter.debug_output = Some(PathBuf::from("./interpreter.log"));
     // config.optimizer.debug_output = Some(PathBuf::from("./optimizer.log"));
 
-    let code = generate(config)?;
+    let modules = generate_modules(config)?;
 
     tracing::info!("Write Code");
-    write(output, code.to_string())?;
+    modules.write_to_files(output)?;
 
     Ok(())
 }

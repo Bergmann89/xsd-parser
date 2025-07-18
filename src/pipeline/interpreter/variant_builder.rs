@@ -15,9 +15,9 @@ use crate::models::{
         xs::{
             Annotation, Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType,
             ComplexContent, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
-            QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+            QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union,
         },
-        MaxOccurs, MinOccurs, Namespace,
+        MaxOccurs, MinOccurs, Namespace, Use,
     },
     Ident, IdentType, Name,
 };

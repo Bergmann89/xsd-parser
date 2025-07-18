@@ -15,7 +15,7 @@ use crate::models::{
         UnionTypeVariant,
     },
     meta::{ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes},
-    schema::{xs::Use, MaxOccurs},
+    schema::{MaxOccurs, Use},
     Ident,
 };
 

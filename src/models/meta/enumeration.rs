@@ -3,7 +3,7 @@
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
-use crate::models::{schema::xs::Use, Ident};
+use crate::models::{schema::Use, Ident};
 
 use super::{use_hash, Base, MetaTypes, TypeEq};
 

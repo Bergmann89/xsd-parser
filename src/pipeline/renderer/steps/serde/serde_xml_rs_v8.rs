@@ -9,7 +9,7 @@ use crate::models::{
         Occurs, ReferenceData, UnionData, UnionTypeVariant,
     },
     meta::{MetaType, MetaTypeVariant},
-    schema::xs::Use,
+    schema::Use,
     Ident, Name,
 };
 

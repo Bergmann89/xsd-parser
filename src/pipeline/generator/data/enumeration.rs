@@ -5,7 +5,7 @@ use crate::models::{
     code::format_variant_ident,
     data::{EnumerationData, EnumerationTypeVariant},
     meta::{EnumerationMeta, EnumerationMetaVariant},
-    schema::xs::Use,
+    schema::Use,
 };
 
 use super::super::{Context, Error};

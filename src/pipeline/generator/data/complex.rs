@@ -14,7 +14,7 @@ use crate::models::{
         AttributeMeta, AttributeMetaVariant, ComplexMeta, ElementMeta, ElementMetaVariant,
         ElementMode, GroupMeta, MetaTypeVariant, MetaTypes,
     },
-    schema::{xs::Use, MaxOccurs, MinOccurs},
+    schema::{MaxOccurs, MinOccurs, Use},
     Ident,
 };
 
