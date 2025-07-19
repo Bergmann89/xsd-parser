@@ -20,6 +20,9 @@ web-resolver = [ "reqwest" ]
 # Helper feature to automatically update all code expectations of the tests
 update-expectations = [ ]
 
+# Enables debug output for `xpath` module
+xpath-debug = [ ]
+
 [dependencies]
 anyhow = "1.0"
 bitflags = "2.7"
@@ -27,6 +30,7 @@ encoding_rs = "0.8"
 futures = "0.3"
 indexmap = "2.9"
 Inflector = "0.11"
+nom = "8.0"
 num = { version = "0.4", optional = true }
 parking_lot = "0.12"
 proc-macro2 = "1.0"

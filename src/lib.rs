@@ -6,6 +6,7 @@ pub mod models;
 pub mod pipeline;
 pub mod quick_xml;
 pub mod xml;
+pub mod xpath;
 
 mod macros;
 mod meta_types_printer;
