@@ -81,7 +81,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:Foo",
+        "Foo",
         "tests/feature/extension_simple_content/example/default.xml",
     );
 }
@@ -91,9 +91,9 @@ fn write_quick_xml() {
 fn read_serde_xml_rs() {
     use serde_xml_rs::{EnumTypeValue, Foo};
 
-    let obj = dbg!(crate::utils::serde_xml_rs_read_test::<Foo, _>(
+    let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>(
         "tests/feature/extension_simple_content/example/default.xml",
-    ));
+    );
 
     assert_eq!(obj.value.as_deref(), Some("an attribute value"));
     assert_eq!(obj.another_value.as_deref(), Some("more attribute data"));

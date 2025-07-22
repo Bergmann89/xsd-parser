@@ -33366,12 +33366,12 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "cdf:resolved", &self.value.resolved)?;
-                            write_attrib_opt(&mut bytes, "cdf:style", &self.value.style)?;
-                            write_attrib_opt(&mut bytes, "cdf:style-href", &self.value.style_href)?;
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "resolved", &self.value.resolved)?;
+                            write_attrib_opt(&mut bytes, "style", &self.value.style)?;
+                            write_attrib_opt(&mut bytes, "style-href", &self.value.style_href)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         BenchmarkElementTypeSerializerState::Content__(x) => {
@@ -33769,7 +33769,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:date", &self.value.date)?;
+                            write_attrib_opt(&mut bytes, "date", &self.value.date)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         StatusElementTypeSerializerState::Content__(x) => {
@@ -33900,8 +33900,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TextTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -33971,8 +33971,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         HtmlTextWithSubTypeSerializerState::Content__(x) => {
@@ -34120,9 +34120,9 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         NoticeTypeSerializerState::TextBefore(x) => match x.next().transpose()? {
@@ -34200,8 +34200,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "cdf:override", &self.value.override_)?;
+                            write_attrib_opt(&mut bytes, "href", &self.value.href)?;
+                            write_attrib_opt(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ReferenceTypeSerializerState::TextBefore(x) => {
@@ -34278,7 +34278,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PlainTextTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -34338,7 +34338,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         Cpe2IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -34394,8 +34394,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:time", &self.value.time)?;
-                            write_attrib_opt(&mut bytes, "cdf:update", &self.value.update)?;
+                            write_attrib_opt(&mut bytes, "time", &self.value.time)?;
+                            write_attrib_opt(&mut bytes, "update", &self.value.update)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         VersionTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -34527,7 +34527,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:system", &self.value.system)?;
+                            write_attrib(&mut bytes, "system", &self.value.system)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ModelElementTypeSerializerState::Param(x) => match x.next().transpose()? {
@@ -34593,17 +34593,17 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
                             write_attrib(
                                 &mut bytes,
-                                "cdf:prohibitChanges",
+                                "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib(&mut bytes, "cdf:abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cdf:note-tag", &self.value.note_tag)?;
-                            write_attrib_opt(&mut bytes, "cdf:extends", &self.value.extends)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            write_attrib_opt(&mut bytes, "note-tag", &self.value.note_tag)?;
+                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -34881,25 +34881,25 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cdf:cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "cdf:extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "cdf:hidden", &self.value.hidden)?;
+                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
+                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
                             write_attrib(
                                 &mut bytes,
-                                "cdf:prohibitChanges",
+                                "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib(&mut bytes, "cdf:type", &self.value.type_)?;
-                            write_attrib(&mut bytes, "cdf:operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "cdf:interactive", &self.value.interactive)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            write_attrib(&mut bytes, "type", &self.value.type_)?;
+                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            write_attrib(&mut bytes, "interactive", &self.value.interactive)?;
                             write_attrib_opt(
                                 &mut bytes,
-                                "cdf:interfaceHint",
+                                "interfaceHint",
                                 &self.value.interface_hint,
                             )?;
                             return Ok(Some(Event::Start(bytes)));
@@ -35235,21 +35235,21 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cdf:cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "cdf:extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "cdf:hidden", &self.value.hidden)?;
+                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
+                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
                             write_attrib(
                                 &mut bytes,
-                                "cdf:prohibitChanges",
+                                "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "cdf:selected", &self.value.selected)?;
-                            write_attrib(&mut bytes, "cdf:weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
+                            write_attrib(&mut bytes, "weight", &self.value.weight)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         GroupTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -35547,24 +35547,24 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:abstract", &self.value.abstract_)?;
-                            write_attrib_opt(&mut bytes, "cdf:cluster-id", &self.value.cluster_id)?;
-                            write_attrib_opt(&mut bytes, "cdf:extends", &self.value.extends)?;
-                            write_attrib(&mut bytes, "cdf:hidden", &self.value.hidden)?;
+                            write_attrib(&mut bytes, "abstract", &self.value.abstract_)?;
+                            write_attrib_opt(&mut bytes, "cluster-id", &self.value.cluster_id)?;
+                            write_attrib_opt(&mut bytes, "extends", &self.value.extends)?;
+                            write_attrib(&mut bytes, "hidden", &self.value.hidden)?;
                             write_attrib(
                                 &mut bytes,
-                                "cdf:prohibitChanges",
+                                "prohibitChanges",
                                 &self.value.prohibit_changes,
                             )?;
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
-                            write_attrib(&mut bytes, "cdf:selected", &self.value.selected)?;
-                            write_attrib(&mut bytes, "cdf:weight", &self.value.weight)?;
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib(&mut bytes, "cdf:role", &self.value.role)?;
-                            write_attrib(&mut bytes, "cdf:severity", &self.value.severity)?;
-                            write_attrib(&mut bytes, "cdf:multiple", &self.value.multiple)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
+                            write_attrib(&mut bytes, "weight", &self.value.weight)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            write_attrib(&mut bytes, "role", &self.value.role)?;
+                            write_attrib(&mut bytes, "severity", &self.value.severity)?;
+                            write_attrib(&mut bytes, "multiple", &self.value.multiple)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         RuleTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -35920,16 +35920,12 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "cdf:start-time", &self.value.start_time)?;
-                            write_attrib(&mut bytes, "cdf:end-time", &self.value.end_time)?;
-                            write_attrib_opt(
-                                &mut bytes,
-                                "cdf:test-system",
-                                &self.value.test_system,
-                            )?;
-                            write_attrib_opt(&mut bytes, "cdf:version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "cdf:Id", &self.value.xml_id)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "start-time", &self.value.start_time)?;
+                            write_attrib(&mut bytes, "end-time", &self.value.end_time)?;
+                            write_attrib_opt(&mut bytes, "test-system", &self.value.test_system)?;
+                            write_attrib_opt(&mut bytes, "version", &self.value.version)?;
+                            write_attrib_opt(&mut bytes, "Id", &self.value.xml_id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TestResultTypeSerializerState::Content__(x) => {
@@ -36336,8 +36332,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "cdf:use", &self.value.use_)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "use", &self.value.use_)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SubTypeSerializerState::Done__ => return Ok(None),
@@ -36393,7 +36389,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:name", &self.value.name)?;
+                            write_attrib(&mut bytes, "name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ParamTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -36461,8 +36457,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TextWithSubTypeSerializerState::TextBefore(x) => {
@@ -36535,8 +36531,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         OverrideableCpe2IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -36595,8 +36591,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib(&mut bytes, "cdf:selected", &self.value.selected)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "selected", &self.value.selected)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSelectTypeSerializerState::Remark(x) => {
@@ -36662,7 +36658,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSetComplexValueTypeSerializerState::Item(x) => match x
@@ -36729,7 +36725,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileSetValueTypeSerializerState::Content__(x) => {
@@ -36798,9 +36794,9 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "cdf:selector", &self.value.selector)?;
-                            write_attrib_opt(&mut bytes, "cdf:operator", &self.value.operator)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib_opt(&mut bytes, "selector", &self.value.selector)?;
+                            write_attrib_opt(&mut bytes, "operator", &self.value.operator)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileRefineValueTypeSerializerState::Remark(x) => {
@@ -36869,11 +36865,11 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "cdf:weight", &self.value.weight)?;
-                            write_attrib_opt(&mut bytes, "cdf:selector", &self.value.selector)?;
-                            write_attrib_opt(&mut bytes, "cdf:severity", &self.value.severity)?;
-                            write_attrib_opt(&mut bytes, "cdf:role", &self.value.role)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
+                            write_attrib_opt(&mut bytes, "selector", &self.value.selector)?;
+                            write_attrib_opt(&mut bytes, "severity", &self.value.severity)?;
+                            write_attrib_opt(&mut bytes, "role", &self.value.role)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileRefineRuleTypeSerializerState::Remark(x) => {
@@ -36941,9 +36937,9 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
-                            write_attrib(&mut bytes, "cdf:category", &self.value.category)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            write_attrib(&mut bytes, "category", &self.value.category)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         WarningTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -37075,7 +37071,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:selector", &self.value.selector)?;
+                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelStringTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -37139,7 +37135,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:selector", &self.value.selector)?;
+                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelComplexValueTypeSerializerState::Item(x) => {
@@ -37205,7 +37201,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:selector", &self.value.selector)?;
+                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelNumTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -37275,8 +37271,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:mustMatch", &self.value.must_match)?;
-                            write_attrib(&mut bytes, "cdf:selector", &self.value.selector)?;
+                            write_attrib_opt(&mut bytes, "mustMatch", &self.value.must_match)?;
+                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         SelChoicesTypeSerializerState::Content__(x) => {
@@ -37402,7 +37398,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:uri", &self.value.uri)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriRefTypeSerializerState::Done__ => return Ok(None),
@@ -37454,7 +37450,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         IdrefListTypeSerializerState::Done__ => return Ok(None),
@@ -37506,7 +37502,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         IdrefTypeSerializerState::Done__ => return Ok(None),
@@ -37562,7 +37558,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:system", &self.value.system)?;
+                            write_attrib(&mut bytes, "system", &self.value.system)?;
                             bytes.extend_attributes(self.value.any_attribute.attributes());
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -37633,8 +37629,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:tag", &self.value.tag)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "tag", &self.value.tag)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ProfileNoteTypeSerializerState::Content__(x) => {
@@ -37774,13 +37770,13 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
-                            write_attrib(&mut bytes, "cdf:override", &self.value.override_)?;
-                            write_attrib_opt(&mut bytes, "cdf:fixref", &self.value.fixref)?;
-                            write_attrib(&mut bytes, "cdf:reboot", &self.value.reboot)?;
-                            write_attrib(&mut bytes, "cdf:strategy", &self.value.strategy)?;
-                            write_attrib(&mut bytes, "cdf:disruption", &self.value.disruption)?;
-                            write_attrib(&mut bytes, "cdf:complexity", &self.value.complexity)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
+                            write_attrib(&mut bytes, "override", &self.value.override_)?;
+                            write_attrib_opt(&mut bytes, "fixref", &self.value.fixref)?;
+                            write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
+                            write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
+                            write_attrib(&mut bytes, "disruption", &self.value.disruption)?;
+                            write_attrib(&mut bytes, "complexity", &self.value.complexity)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         FixTextTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -37914,13 +37910,13 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib(&mut bytes, "cdf:reboot", &self.value.reboot)?;
-                            write_attrib(&mut bytes, "cdf:strategy", &self.value.strategy)?;
-                            write_attrib(&mut bytes, "cdf:disruption", &self.value.disruption)?;
-                            write_attrib(&mut bytes, "cdf:complexity", &self.value.complexity)?;
-                            write_attrib_opt(&mut bytes, "cdf:system", &self.value.system)?;
-                            write_attrib_opt(&mut bytes, "cdf:platform", &self.value.platform)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            write_attrib(&mut bytes, "reboot", &self.value.reboot)?;
+                            write_attrib(&mut bytes, "strategy", &self.value.strategy)?;
+                            write_attrib(&mut bytes, "disruption", &self.value.disruption)?;
+                            write_attrib(&mut bytes, "complexity", &self.value.complexity)?;
+                            write_attrib_opt(&mut bytes, "system", &self.value.system)?;
+                            write_attrib_opt(&mut bytes, "platform", &self.value.platform)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         FixTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -38074,12 +38070,12 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:system", &self.value.system)?;
-                            write_attrib(&mut bytes, "cdf:negate", &self.value.negate)?;
-                            write_attrib_opt(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib(&mut bytes, "cdf:selector", &self.value.selector)?;
-                            write_attrib(&mut bytes, "cdf:multi-check", &self.value.multi_check)?;
-                            write_attrib_opt(&mut bytes, "xml:base", &self.value.base)?;
+                            write_attrib(&mut bytes, "system", &self.value.system)?;
+                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            write_attrib(&mut bytes, "selector", &self.value.selector)?;
+                            write_attrib(&mut bytes, "multi-check", &self.value.multi_check)?;
+                            write_attrib_opt(&mut bytes, "base", &self.value.base)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CheckTypeSerializerState::CheckImport(x) => match x.next().transpose()? {
@@ -38184,8 +38180,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "cdf:negate", &self.value.negate)?;
+                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ComplexCheckTypeSerializerState::Content__(x) => {
@@ -38315,8 +38311,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "cdf:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "href", &self.value.href)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         BenchmarkReferenceTypeSerializerState::Done__ => return Ok(None),
@@ -38368,10 +38364,10 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:href", &self.value.href)?;
-                            write_attrib(&mut bytes, "cdf:id", &self.value.id)?;
-                            write_attrib(&mut bytes, "cdf:version", &self.value.version)?;
-                            write_attrib(&mut bytes, "cdf:time", &self.value.time)?;
+                            write_attrib(&mut bytes, "href", &self.value.href)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
+                            write_attrib(&mut bytes, "version", &self.value.version)?;
+                            write_attrib(&mut bytes, "time", &self.value.time)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         TailoringReferenceTypeSerializerState::Done__ => return Ok(None),
@@ -38427,12 +38423,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(
-                                &mut bytes,
-                                "cdf:authenticated",
-                                &self.value.authenticated,
-                            )?;
-                            write_attrib(&mut bytes, "cdf:privileged", &self.value.privileged)?;
+                            write_attrib(&mut bytes, "authenticated", &self.value.authenticated)?;
+                            write_attrib(&mut bytes, "privileged", &self.value.privileged)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         IdentityTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -38555,9 +38547,9 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:system", &self.value.system)?;
-                            write_attrib(&mut bytes, "cdf:href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "cdf:name", &self.value.name)?;
+                            write_attrib(&mut bytes, "system", &self.value.system)?;
+                            write_attrib(&mut bytes, "href", &self.value.href)?;
+                            write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         TargetIdRefTypeSerializerState::Done__ => return Ok(None),
@@ -38619,12 +38611,12 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:idref", &self.value.idref)?;
-                            write_attrib_opt(&mut bytes, "cdf:role", &self.value.role)?;
-                            write_attrib_opt(&mut bytes, "cdf:severity", &self.value.severity)?;
-                            write_attrib_opt(&mut bytes, "cdf:time", &self.value.time)?;
-                            write_attrib_opt(&mut bytes, "cdf:version", &self.value.version)?;
-                            write_attrib_opt(&mut bytes, "cdf:weight", &self.value.weight)?;
+                            write_attrib(&mut bytes, "idref", &self.value.idref)?;
+                            write_attrib_opt(&mut bytes, "role", &self.value.role)?;
+                            write_attrib_opt(&mut bytes, "severity", &self.value.severity)?;
+                            write_attrib_opt(&mut bytes, "time", &self.value.time)?;
+                            write_attrib_opt(&mut bytes, "version", &self.value.version)?;
+                            write_attrib_opt(&mut bytes, "weight", &self.value.weight)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         RuleResultTypeSerializerState::Content__(x) => {
@@ -38838,8 +38830,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "cdf:system", &self.value.system)?;
-                            write_attrib_opt(&mut bytes, "cdf:maximum", &self.value.maximum)?;
+                            write_attrib_opt(&mut bytes, "system", &self.value.system)?;
+                            write_attrib_opt(&mut bytes, "maximum", &self.value.maximum)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         ScoreTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -38962,7 +38954,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:context", &self.value.context)?;
+                            write_attrib(&mut bytes, "context", &self.value.context)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         InstanceFixTypeSerializerState::Done__ => return Ok(None),
@@ -39023,12 +39015,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:import-name", &self.value.import_name)?;
-                            write_attrib_opt(
-                                &mut bytes,
-                                "cdf:import-xpath",
-                                &self.value.import_xpath,
-                            )?;
+                            write_attrib(&mut bytes, "import-name", &self.value.import_name)?;
+                            write_attrib_opt(&mut bytes, "import-xpath", &self.value.import_xpath)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CheckImportTypeSerializerState::TextBefore(x) => {
@@ -39115,8 +39103,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:value-id", &self.value.value_id)?;
-                            write_attrib(&mut bytes, "cdf:export-name", &self.value.export_name)?;
+                            write_attrib(&mut bytes, "value-id", &self.value.value_id)?;
+                            write_attrib(&mut bytes, "export-name", &self.value.export_name)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckExportTypeSerializerState::Done__ => return Ok(None),
@@ -39168,8 +39156,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:href", &self.value.href)?;
-                            write_attrib_opt(&mut bytes, "cdf:name", &self.value.name)?;
+                            write_attrib(&mut bytes, "href", &self.value.href)?;
+                            write_attrib_opt(&mut bytes, "name", &self.value.name)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckContentRefTypeSerializerState::Done__ => return Ok(None),
@@ -39360,8 +39348,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:name", &self.value.name)?;
-                            write_attrib(&mut bytes, "cdf:type", &self.value.type_)?;
+                            write_attrib(&mut bytes, "name", &self.value.name)?;
+                            write_attrib(&mut bytes, "type", &self.value.type_)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         FactTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -39430,8 +39418,8 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:time", &self.value.time)?;
-                            write_attrib(&mut bytes, "cdf:authority", &self.value.authority)?;
+                            write_attrib(&mut bytes, "time", &self.value.time)?;
+                            write_attrib(&mut bytes, "authority", &self.value.authority)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         OverrideTypeSerializerState::OldResult(x) => match x.next().transpose()? {
@@ -39518,7 +39506,7 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:severity", &self.value.severity)?;
+                            write_attrib(&mut bytes, "severity", &self.value.severity)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         MessageTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -39582,10 +39570,10 @@ pub mod cdf {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cdf:context", &self.value.context)?;
+                            write_attrib(&mut bytes, "context", &self.value.context)?;
                             write_attrib_opt(
                                 &mut bytes,
-                                "cdf:parentContext",
+                                "parentContext",
                                 &self.value.parent_context,
                             )?;
                             return Ok(Some(Event::Start(bytes)));
@@ -41381,7 +41369,7 @@ pub mod cpe {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cpe:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         PlatformTypeSerializerState::Title(x) => match x.next().transpose()? {
@@ -41470,7 +41458,7 @@ pub mod cpe {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(&mut bytes, "xml:lang", &self.value.lang)?;
+                            write_attrib_opt(&mut bytes, "lang", &self.value.lang)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         TextTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -41543,8 +41531,8 @@ pub mod cpe {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib(&mut bytes, "cpe:operator", &self.value.operator)?;
-                            write_attrib(&mut bytes, "cpe:negate", &self.value.negate)?;
+                            write_attrib(&mut bytes, "operator", &self.value.operator)?;
+                            write_attrib(&mut bytes, "negate", &self.value.negate)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         LogicalTestTypeSerializerState::LogicalTest(x) => {
@@ -41632,12 +41620,8 @@ pub mod cpe {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(
-                                &mut bytes,
-                                "cpe:description",
-                                &self.value.description,
-                            )?;
-                            write_attrib(&mut bytes, "cpe:name", &self.value.name)?;
+                            write_attrib_opt(&mut bytes, "description", &self.value.description)?;
+                            write_attrib(&mut bytes, "name", &self.value.name)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CpeFactRefTypeSerializerState::Done__ => return Ok(None),
@@ -41689,14 +41673,10 @@ pub mod cpe {
                                     &super::super::NS_CPE_4[..],
                                 ));
                             }
-                            write_attrib_opt(
-                                &mut bytes,
-                                "cpe:description",
-                                &self.value.description,
-                            )?;
-                            write_attrib(&mut bytes, "cpe:system", &self.value.system)?;
-                            write_attrib(&mut bytes, "cpe:href", &self.value.href)?;
-                            write_attrib(&mut bytes, "cpe:id-ref", &self.value.id_ref)?;
+                            write_attrib_opt(&mut bytes, "description", &self.value.description)?;
+                            write_attrib(&mut bytes, "system", &self.value.system)?;
+                            write_attrib(&mut bytes, "href", &self.value.href)?;
+                            write_attrib(&mut bytes, "id-ref", &self.value.id_ref)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         CheckFactRefTypeSerializerState::Done__ => return Ok(None),

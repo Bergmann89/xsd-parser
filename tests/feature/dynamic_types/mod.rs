@@ -70,7 +70,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:List",
+        "List",
         "tests/feature/dynamic_types/example/default.xml",
     );
 }

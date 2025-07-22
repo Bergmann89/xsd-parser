@@ -24,10 +24,10 @@ impl<'types> DataType<'types> {
             M::Dynamic(x) => D::Dynamic(DynamicData::new(x, ctx)?),
             M::Reference(x) => D::Reference(ReferenceData::new(x, ctx)?),
             M::Enumeration(x) => D::Enumeration(EnumerationData::new(x, ctx)?),
-            M::All(x) => D::Complex(ComplexData::new_all(x, ctx)?),
-            M::Choice(x) => D::Complex(ComplexData::new_choice(x, ctx)?),
-            M::Sequence(x) => D::Complex(ComplexData::new_sequence(x, ctx)?),
-            M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx)?),
+            M::All(x) => D::Complex(ComplexData::new_all(x, ctx, meta.form())?),
+            M::Choice(x) => D::Complex(ComplexData::new_choice(x, ctx, meta.form())?),
+            M::Sequence(x) => D::Complex(ComplexData::new_sequence(x, ctx, meta.form())?),
+            M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx, meta.form())?),
         };
 
         Ok(Self {

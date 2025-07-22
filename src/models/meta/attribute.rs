@@ -6,12 +6,11 @@ use std::ops::{Deref, DerefMut};
 use crate::models::{
     meta::{MetaTypes, TypeEq},
     schema::xs::{
-        BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListAType, Use,
+        BasicNamespaceListType, FormChoiceType, NamespaceListType, ProcessContentsType,
+        QnameListAType, Use,
     },
     Ident,
 };
-
-use super::use_hash;
 
 /// Type information that contains data about attribute definitions.
 #[derive(Debug, Clone)]
@@ -24,6 +23,9 @@ pub struct AttributeMeta {
 
     /// Usage of the attribute.
     pub use_: Use,
+
+    /// The form of this attribute.
+    pub form: FormChoiceType,
 
     /// Default value of the attribute.
     pub default: Option<String>,
@@ -68,11 +70,12 @@ pub struct AttributesMeta(Vec<AttributeMeta>);
 impl AttributeMeta {
     /// Create a new [`AttributeMeta`] instance from the passed `name` and `type_`.
     #[must_use]
-    pub fn new(ident: Ident, type_: Ident) -> Self {
+    pub fn new(ident: Ident, type_: Ident, form: FormChoiceType) -> Self {
         Self {
             ident,
             variant: AttributeMetaVariant::Type(type_),
             use_: Use::Optional,
+            form,
             default: None,
             display_name: None,
             documentation: Vec::new(),
@@ -86,6 +89,7 @@ impl AttributeMeta {
             ident,
             variant: AttributeMetaVariant::Any(any),
             use_: Use::Required,
+            form: FormChoiceType::Unqualified,
             default: None,
             display_name: None,
             documentation: Vec::new(),
@@ -121,16 +125,18 @@ impl TypeEq for AttributeMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             ident,
-            variant: type_,
+            variant,
             use_,
+            form,
             default,
             display_name,
             documentation,
         } = self;
 
         ident.hash(hasher);
-        type_.type_hash(hasher, types);
-        use_hash(use_, hasher);
+        variant.type_hash(hasher, types);
+        use_.hash(hasher);
+        form.hash(hasher);
         default.hash(hasher);
         display_name.hash(hasher);
         documentation.hash(hasher);
@@ -141,6 +147,7 @@ impl TypeEq for AttributeMeta {
             ident,
             variant: type_,
             use_,
+            form,
             default,
             display_name,
             documentation,
@@ -149,6 +156,7 @@ impl TypeEq for AttributeMeta {
         ident.eq(&other.ident)
             && type_.type_eq(&other.variant, types)
             && use_.eq(&other.use_)
+            && form.eq(&other.form)
             && default.eq(&other.default)
             && display_name.eq(&other.display_name)
             && documentation.eq(&other.documentation)

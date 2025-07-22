@@ -14,7 +14,10 @@
     clippy::semicolon_if_nothing_returned
 )]
 
-use std::str::from_utf8;
+use std::{
+    hash::{Hash, Hasher},
+    str::from_utf8,
+};
 
 use quick_xml::{events::Event, Writer};
 use unindent::unindent;
@@ -24,6 +27,29 @@ use crate::quick_xml::WithSerializer;
 pub type Use = AttributeUseType;
 
 include!("./xs_generated.rs");
+
+impl Copy for FormChoiceType {}
+
+impl Hash for FormChoiceType {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            Self::Qualified => state.write_u8(0),
+            Self::Unqualified => state.write_u8(1),
+        }
+    }
+}
+
+impl Copy for AttributeUseType {}
+
+impl Hash for AttributeUseType {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        match self {
+            Self::Prohibited => state.write_u8(0),
+            Self::Optional => state.write_u8(1),
+            Self::Required => state.write_u8(2),
+        }
+    }
+}
 
 impl Annotation {
     /// Extract the `xs:documentation` nodes from this `xs:annotation` node.

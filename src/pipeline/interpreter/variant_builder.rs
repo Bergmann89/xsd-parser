@@ -14,8 +14,9 @@ use crate::models::{
     schema::{
         xs::{
             Annotation, Any, AnyAttribute, AttributeGroupType, AttributeType, ComplexBaseType,
-            ComplexContent, ElementType, ExtensionType, Facet, FacetType, GroupType, List,
-            QNameList, Restriction, RestrictionType, SimpleBaseType, SimpleContent, Union, Use,
+            ComplexContent, ElementType, ExtensionType, Facet, FacetType, FormChoiceType,
+            GroupType, List, QNameList, Restriction, RestrictionType, SimpleBaseType,
+            SimpleContent, Union, Use,
         },
         MaxOccurs, MinOccurs, Namespace,
     },
@@ -146,9 +147,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     pub(super) fn finish(self) -> Result<MetaType, Error> {
-        let variant = self.variant.ok_or(Error::NoType)?;
+        let Self { variant, owner, .. } = self;
+        let variant = variant.ok_or(Error::NoType)?;
 
         let mut type_ = MetaType::new(variant);
+        type_.form = Some(owner.schema.element_form_default);
         type_.documentation = self.documentation;
 
         Ok(type_)
@@ -644,10 +647,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
                     .with_type(IdentType::Element);
+                let form = ty.form.unwrap_or(self.schema.element_form_default);
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(ident, |ident| {
-                    ElementMeta::new(ident, type_, ElementMode::Element)
+                    ElementMeta::new(ident, type_, ElementMode::Element, form)
                 });
                 crate::assert!(matches!(
                     element.variant,
@@ -683,10 +687,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 } else {
                     self.create_element(ns, Some(type_name), ty, false)?
                 };
+                let form = ty.form.unwrap_or(self.schema.element_form_default);
 
                 let ci = get_or_init_type!(self, Sequence);
                 let element = ci.elements.find_or_insert(field_ident, |ident| {
-                    ElementMeta::new(ident, type_, ElementMode::Element)
+                    ElementMeta::new(ident, type_, ElementMode::Element, form)
                 });
                 crate::assert!(matches!(
                     element.variant,
@@ -695,11 +700,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         ..
                     }
                 ));
-                element.update(ty);
 
                 element
             }
         };
+
+        element.update(ty);
 
         for content in &ty.content {
             if let C::Annotation(x) = content {
@@ -797,14 +803,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
+                let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
-                let ci = get_or_init_any!(self, ComplexType);
-                let attribute = ci
+                get_or_init_any!(self, ComplexType)
                     .attributes
-                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_));
-                attribute.update(ty);
-
-                attribute
+                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_, form))
             }
             AttributeType {
                 ref_: Some(ref_),
@@ -816,14 +819,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ident = Ident::new(name)
                     .with_ns(type_.ns)
                     .with_type(IdentType::Attribute);
+                let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
-                let ci = get_or_init_any!(self, ComplexType);
-                let attribute = ci
+                get_or_init_any!(self, ComplexType)
                     .attributes
-                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_));
-                attribute.update(ty);
-
-                attribute
+                    .find_or_insert(ident, |ident| AttributeMeta::new(ident, type_, form))
             }
             AttributeType {
                 name: Some(name),
@@ -848,17 +848,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let ident = Ident::new(name)
                     .with_ns(self.state.current_ns())
                     .with_type(IdentType::Attribute);
+                let form = ty.form.unwrap_or(self.schema.attribute_form_default);
 
-                let ci = get_or_init_any!(self, ComplexType);
-                let attribute = ci.attributes.find_or_insert(ident, |ident| {
-                    AttributeMeta::new(ident, type_.unwrap_or(Ident::STRING))
-                });
-                attribute.update(ty);
-
-                attribute
+                get_or_init_any!(self, ComplexType)
+                    .attributes
+                    .find_or_insert(ident, |ident| {
+                        AttributeMeta::new(ident, type_.unwrap_or(Ident::STRING), form)
+                    })
             }
             e => return Err(Error::InvalidAttributeReference(Box::new(e.clone()))),
         };
+
+        attribute.update(ty);
 
         if let Some(x) = &ty.annotation {
             if let Err(error) = x.extract_documentation_into(&mut attribute.documentation) {
@@ -1371,7 +1372,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         .with_ns(ns)
                         .with_type(IdentType::Group);
                     let element = si.elements.insert_checked(ident, |ident| {
-                        ElementMeta::new(ident, element_ident, ElementMode::Group)
+                        ElementMeta::new(
+                            ident,
+                            element_ident,
+                            ElementMode::Group,
+                            FormChoiceType::Unqualified,
+                        )
                     });
 
                     element.min_occurs = element.min_occurs.min(min_occurs);
@@ -1396,7 +1402,12 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .with_ns(ns)
                     .with_type(IdentType::Group);
                 let element = si.elements.insert_checked(ident, |ident| {
-                    ElementMeta::new(ident, element_ident, ElementMode::Group)
+                    ElementMeta::new(
+                        ident,
+                        element_ident,
+                        ElementMode::Group,
+                        FormChoiceType::Unqualified,
+                    )
                 });
 
                 element.min_occurs = element.min_occurs.min(min_occurs);
@@ -1546,7 +1557,7 @@ impl Update<ElementType> for ElementMeta {
 
 impl Update<AttributeType> for AttributeMeta {
     fn update(&mut self, other: &AttributeType) {
-        self.use_ = other.use_.clone();
+        self.use_ = other.use_;
         self.default.update(&other.default);
     }
 }

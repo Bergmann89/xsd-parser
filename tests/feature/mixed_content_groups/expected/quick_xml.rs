@@ -1411,7 +1411,7 @@ pub mod quick_xml_serialize {
                     NormalTypeSerializerState::Init__ => {
                         *self.state = NormalTypeSerializerState::Group(WithSerializer::serializer(
                             &self.value.group,
-                            Some("tns:Group"),
+                            Some("Group"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
@@ -1553,7 +1553,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 MixedTypeSerializerState::Group(WithSerializer::serializer(
                                     &self.value.group,
-                                    Some("tns:Group"),
+                                    Some("Group"),
                                     false,
                                 )?)
                         }

@@ -14,7 +14,10 @@ use crate::models::{
         AttributeMeta, AttributeMetaVariant, ComplexMeta, ElementMeta, ElementMetaVariant,
         ElementMode, GroupMeta, MetaTypeVariant, MetaTypes,
     },
-    schema::{xs::Use, MaxOccurs, MinOccurs},
+    schema::{
+        xs::{FormChoiceType, Use},
+        MaxOccurs, MinOccurs,
+    },
     Ident,
 };
 
@@ -39,9 +42,11 @@ impl<'types> ComplexData<'types> {
     pub(super) fn new_all(
         meta: &'types GroupMeta,
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
     ) -> Result<Self, Error> {
         Self::new(
             ctx,
+            form,
             TypeMode::All,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
@@ -54,9 +59,11 @@ impl<'types> ComplexData<'types> {
     pub(super) fn new_choice(
         meta: &'types GroupMeta,
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
     ) -> Result<Self, Error> {
         Self::new(
             ctx,
+            form,
             TypeMode::Choice,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
@@ -69,9 +76,11 @@ impl<'types> ComplexData<'types> {
     pub(super) fn new_sequence(
         meta: &'types GroupMeta,
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
     ) -> Result<Self, Error> {
         Self::new(
             ctx,
+            form,
             TypeMode::Sequence,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
@@ -84,6 +93,7 @@ impl<'types> ComplexData<'types> {
     pub(super) fn new_complex(
         meta: &'types ComplexMeta,
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
     ) -> Result<Self, Error> {
         let (type_mode, elements) = match meta.content.as_ref().and_then(|ident| {
             ctx.types
@@ -117,6 +127,7 @@ impl<'types> ComplexData<'types> {
 
         Self::new(
             ctx,
+            form,
             type_mode,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Complex),
             meta.min_occurs,
@@ -129,6 +140,7 @@ impl<'types> ComplexData<'types> {
     #[allow(clippy::too_many_arguments)]
     fn new(
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
         type_mode: TypeMode,
         mixed_mode: MixedMode,
         min_occurs: MinOccurs,
@@ -138,25 +150,26 @@ impl<'types> ComplexData<'types> {
     ) -> Result<Self, Error> {
         match type_mode {
             TypeMode::Simple { target_type } => {
-                Self::new_simple(ctx, target_type, min_occurs, max_occurs, attributes)
+                Self::new_simple(ctx, form, target_type, min_occurs, max_occurs, attributes)
             }
             TypeMode::Choice => Self::new_enum(
-                ctx, mixed_mode, min_occurs, max_occurs, attributes, elements,
+                ctx, form, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
-                ctx, &type_mode, mixed_mode, min_occurs, max_occurs, attributes, elements,
+                ctx, form, &type_mode, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
         }
     }
 
     fn new_simple(
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
         target_type: IdentPath,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false)?;
+        let base = ComplexBase::new(ctx, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let target_type = PathData::from_path(target_type);
 
@@ -191,6 +204,7 @@ impl<'types> ComplexData<'types> {
 
     fn new_enum(
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
         mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
@@ -198,7 +212,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any)?;
+        let mut base = ComplexBase::new(ctx, has_any, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -307,6 +321,7 @@ impl<'types> ComplexData<'types> {
     #[allow(clippy::too_many_lines, clippy::too_many_arguments)]
     fn new_struct(
         ctx: &mut Context<'_, 'types>,
+        form: FormChoiceType,
         type_mode: &TypeMode,
         mixed_mode: MixedMode,
         min_occurs: MinOccurs,
@@ -315,7 +330,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any)?;
+        let mut base = ComplexBase::new(ctx, has_any, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -453,12 +468,12 @@ impl<'types> ComplexData<'types> {
 }
 
 impl ComplexBase {
-    fn new(ctx: &mut Context<'_, '_>, has_any: bool) -> Result<Self, Error> {
+    fn new(ctx: &mut Context<'_, '_>, has_any: bool, form: FormChoiceType) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.path.ident().clone();
 
         let mut ret = Self::new_empty(type_ident, has_any);
-        ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident));
+        ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident, form));
         ret.trait_impls = ctx.make_trait_impls()?;
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = ctx.types.get_variant(ctx.ident) {
@@ -538,7 +553,7 @@ impl<'types> ComplexDataElement<'types> {
             return Ok(None);
         }
 
-        let tag_name = make_tag_name(ctx.types, &meta.ident);
+        let tag_name = make_tag_name(ctx.types, &meta.ident, meta.form);
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let field_ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
@@ -603,6 +618,7 @@ impl<'types> ComplexDataElement<'types> {
         let meta = ElementMeta {
             ident: Ident::element("text_before"),
             variant: ElementMetaVariant::Text,
+            form: FormChoiceType::Unqualified,
             min_occurs: 0,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -636,6 +652,7 @@ impl<'types> ComplexDataElement<'types> {
                 type_: Ident::UNKNOWN,
                 mode: ElementMode::Group,
             },
+            form: FormChoiceType::Unqualified,
             min_occurs,
             max_occurs,
             display_name: None,
@@ -706,7 +723,7 @@ impl<'types> ComplexDataAttribute<'types> {
 
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let tag_name = make_tag_name(ctx.types, &meta.ident);
+        let tag_name = make_tag_name(ctx.types, &meta.ident, meta.form);
         let is_option = matches!((&meta.use_, &default_value), (Use::Optional, None));
 
         Ok(Some(Self {
@@ -735,19 +752,21 @@ fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
     }
 }
 
-fn make_tag_name(types: &MetaTypes, ident: &Ident) -> String {
+fn make_tag_name(types: &MetaTypes, ident: &Ident, form: FormChoiceType) -> String {
     let name = ident.name.to_string();
 
-    if let Some(module) = ident
-        .ns
-        .as_ref()
-        .and_then(|ns| types.modules.get(ns))
-        .and_then(|module| module.prefix.as_ref())
-    {
-        format!("{module}:{name}")
-    } else {
-        name
+    if form == FormChoiceType::Qualified {
+        if let Some(module) = ident
+            .ns
+            .as_ref()
+            .and_then(|ns| types.modules.get(ns))
+            .and_then(|module| module.prefix.as_ref())
+        {
+            return format!("{module}:{name}");
+        }
     }
+
+    name
 }
 
 impl PathData {

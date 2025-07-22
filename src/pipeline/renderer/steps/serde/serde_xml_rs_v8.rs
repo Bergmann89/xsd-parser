@@ -10,7 +10,7 @@ use crate::models::{
     },
     meta::{MetaType, MetaTypeVariant},
     schema::xs::Use,
-    Ident, Name,
+    Ident,
 };
 
 use super::super::super::{Context, DataTypeVariant, RenderStep};
@@ -439,7 +439,7 @@ impl ComplexDataAttribute<'_> {
         type_ident: &Ident2,
     ) -> TokenStream {
         let Self {
-            s_name,
+            tag_name,
             ident: field_ident,
             ..
         } = self;
@@ -466,8 +466,7 @@ impl ComplexDataAttribute<'_> {
             &self.meta.documentation[..],
         );
 
-        let name = prefixed_name(ctx, &self.meta.ident, s_name);
-        let name = format!("@{name}");
+        let name = format!("@{tag_name}");
 
         quote! {
             #docs
@@ -480,15 +479,15 @@ impl ComplexDataAttribute<'_> {
 impl ComplexDataElement<'_> {
     fn render_field_serde_xml_rs_v8(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
-            s_name,
+            tag_name,
             field_ident,
             ..
         } = self;
 
         let name = if self.meta().is_text() {
-            "#text".into()
+            "#text"
         } else {
-            prefixed_name(ctx, &self.meta().ident, s_name)
+            tag_name
         };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
@@ -517,15 +516,15 @@ impl ComplexDataElement<'_> {
 
     fn render_variant_serde_xml_rs_v8(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let Self {
-            s_name,
+            tag_name,
             variant_ident,
             ..
         } = self;
 
         let name = if self.meta().is_text() {
-            "#text".into()
+            "#text"
         } else {
-            prefixed_name(ctx, &self.meta().ident, s_name)
+            tag_name
         };
 
         let target_type = ctx.resolve_type_for_module(&self.target_type);
@@ -544,21 +543,6 @@ impl ComplexDataElement<'_> {
             #[serde(rename = #name)]
             #variant_ident(#target_type),
         }
-    }
-}
-
-fn prefixed_name(ctx: &Context<'_, '_>, ident: &Ident, name: &str) -> String {
-    let prefix = ident
-        .ns
-        .as_ref()
-        .and_then(|ns| ctx.meta.modules.get(ns))
-        .and_then(|x| x.prefix.as_ref())
-        .map(Name::as_str);
-
-    if let Some(prefix) = prefix {
-        format!("{prefix}:{name}")
-    } else {
-        name.to_string()
     }
 }
 

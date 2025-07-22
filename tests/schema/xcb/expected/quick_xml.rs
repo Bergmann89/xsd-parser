@@ -536,7 +536,7 @@ impl WithSerializer for AnyType {
         Ok(quick_xml_serialize::AnyTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
-            name: name.unwrap_or("xs:anyType"),
+            name: name.unwrap_or("anyType"),
             is_root,
         })
     }

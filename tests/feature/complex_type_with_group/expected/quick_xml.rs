@@ -1117,7 +1117,7 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Init__ => {
                         *self.state = FooTypeSerializerState::Outer1(WithSerializer::serializer(
                             &self.value.outer_1,
-                            Some("tns:Outer"),
+                            Some("Outer"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
@@ -1132,7 +1132,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 FooTypeSerializerState::Outer2(WithSerializer::serializer(
                                     &self.value.outer_2,
-                                    Some("tns:Outer_2"),
+                                    Some("Outer_2"),
                                     false,
                                 )?)
                         }
@@ -1195,7 +1195,7 @@ pub mod quick_xml_serialize {
                         }
                         super::FooOuterType::Inner(x) => {
                             *self.state = FooOuterTypeSerializerState::Inner(
-                                WithSerializer::serializer(x, Some("tns:Inner"), false)?,
+                                WithSerializer::serializer(x, Some("Inner"), false)?,
                             )
                         }
                     },

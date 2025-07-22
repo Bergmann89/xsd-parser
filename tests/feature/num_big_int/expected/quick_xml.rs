@@ -169,8 +169,8 @@ pub mod tns {
                                 bytes
                                     .push_attribute((&b"xmlns:tns"[..], &super::super::NS_TNS[..]));
                             }
-                            write_attrib(&mut bytes, "tns:a-int", &self.value.a_int)?;
-                            write_attrib(&mut bytes, "tns:b-int", &self.value.b_int)?;
+                            write_attrib(&mut bytes, "a-int", &self.value.a_int)?;
+                            write_attrib(&mut bytes, "b-int", &self.value.b_int)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         FooTypeSerializerState::Done__ => return Ok(None),

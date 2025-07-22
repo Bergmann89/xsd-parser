@@ -4,6 +4,8 @@ use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use crate::models::schema::xs::FormChoiceType;
+
 use super::{
     ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
     TypeEq, UnionMeta,
@@ -18,6 +20,9 @@ use super::{
 pub struct MetaType {
     /// Actual data type this type represents.
     pub variant: MetaTypeVariant,
+
+    /// Form for elements of this type.
+    pub form: Option<FormChoiceType>,
 
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
@@ -112,9 +117,16 @@ impl MetaType {
     pub fn new(variant: MetaTypeVariant) -> Self {
         Self {
             variant,
+            form: None,
             display_name: None,
             documentation: Vec::new(),
         }
+    }
+
+    /// Returns the form element of this type should have.
+    #[must_use]
+    pub fn form(&self) -> FormChoiceType {
+        self.form.unwrap_or(FormChoiceType::Unqualified)
     }
 }
 

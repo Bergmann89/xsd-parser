@@ -5,7 +5,10 @@ use std::ops::{Deref, DerefMut};
 
 use crate::models::{
     schema::{
-        xs::{BasicNamespaceListType, NamespaceListType, ProcessContentsType, QnameListType},
+        xs::{
+            BasicNamespaceListType, FormChoiceType, NamespaceListType, ProcessContentsType,
+            QnameListType,
+        },
         MaxOccurs, MinOccurs,
     },
     Ident,
@@ -21,6 +24,9 @@ pub struct ElementMeta {
 
     /// Type of the element.
     pub variant: ElementMetaVariant,
+
+    /// The form of this element.
+    pub form: FormChoiceType,
 
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
@@ -91,10 +97,11 @@ impl ElementMeta {
     /// Create a new [`ElementMeta`] instance from the passed `name`, `type_`
     /// and `element_mode`.
     #[must_use]
-    pub fn new(ident: Ident, type_: Ident, mode: ElementMode) -> Self {
+    pub fn new(ident: Ident, type_: Ident, mode: ElementMode, form: FormChoiceType) -> Self {
         Self {
             ident,
             variant: ElementMetaVariant::Type { type_, mode },
+            form,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -108,6 +115,7 @@ impl ElementMeta {
         Self {
             ident,
             variant: ElementMetaVariant::Any { meta },
+            form: FormChoiceType::Unqualified,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -121,6 +129,7 @@ impl ElementMeta {
         Self {
             ident,
             variant: ElementMetaVariant::Text,
+            form: FormChoiceType::Unqualified,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -155,7 +164,8 @@ impl TypeEq for ElementMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             ident,
-            variant: type_,
+            variant,
+            form,
             min_occurs,
             max_occurs,
             display_name,
@@ -163,7 +173,8 @@ impl TypeEq for ElementMeta {
         } = self;
 
         ident.hash(hasher);
-        type_.type_hash(hasher, types);
+        variant.type_hash(hasher, types);
+        form.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         display_name.hash(hasher);
@@ -173,7 +184,8 @@ impl TypeEq for ElementMeta {
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             ident,
-            variant: type_,
+            variant,
+            form,
             min_occurs,
             max_occurs,
             display_name,
@@ -181,7 +193,8 @@ impl TypeEq for ElementMeta {
         } = self;
 
         ident.eq(&other.ident)
-            && type_.type_eq(&other.variant, types)
+            && variant.type_eq(&other.variant, types)
+            && form.eq(&other.form)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && display_name.eq(&other.display_name)

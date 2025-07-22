@@ -17280,7 +17280,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
                             bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
                         }
-                        write_attrib_opt(&mut bytes, "udt:schemeID", &self.value.scheme_id)?;
+                        write_attrib_opt(&mut bytes, "schemeID", &self.value.scheme_id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     IdTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -17772,7 +17772,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
                             bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
                         }
-                        write_attrib(&mut bytes, "udt:format", &self.value.format)?;
+                        write_attrib(&mut bytes, "format", &self.value.format)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     DateTimeTypeDateTimeStringTypeSerializerState::Content__(x) => match x
@@ -19607,7 +19607,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
                             bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
                         }
-                        write_attrib_opt(&mut bytes, "udt:currencyID", &self.value.currency_id)?;
+                        write_attrib_opt(&mut bytes, "currencyID", &self.value.currency_id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     AmountTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -20136,7 +20136,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns:ram"[..], &super::NS_RAM[..]));
                             bytes.push_attribute((&b"xmlns:udt"[..], &super::NS_UDT[..]));
                         }
-                        write_attrib(&mut bytes, "qdt:format", &self.value.format)?;
+                        write_attrib(&mut bytes, "format", &self.value.format)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FormattedDateTimeTypeDateTimeStringTypeSerializerState::Content__(x) => {

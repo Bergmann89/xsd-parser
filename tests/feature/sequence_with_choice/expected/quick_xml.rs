@@ -1044,7 +1044,7 @@ pub mod quick_xml_serialize {
                     FooTypeSerializerState::Init__ => {
                         *self.state = FooTypeSerializerState::Content2(WithSerializer::serializer(
                             &self.value.content_2,
-                            Some("tns:Content2"),
+                            Some("Content2"),
                             false,
                         )?);
                         let mut bytes = BytesStart::new(self.name);
@@ -1059,7 +1059,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 FooTypeSerializerState::Content3(WithSerializer::serializer(
                                     &self.value.content_3,
-                                    Some("tns:Content3"),
+                                    Some("Content3"),
                                     false,
                                 )?)
                         }

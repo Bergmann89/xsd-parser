@@ -80,7 +80,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:Foo",
+        "Foo",
         "tests/feature/simple_content/example/default.xml",
     );
 }
