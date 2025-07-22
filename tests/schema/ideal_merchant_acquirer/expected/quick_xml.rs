@@ -10725,7 +10725,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SignatureTypeSerializerState::SignedInfo(x) => match x.next().transpose()? {
@@ -10826,7 +10826,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SignedInfoTypeSerializerState::CanonicalizationMethod(x) => {
@@ -10911,7 +10911,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SignatureValueTypeSerializerState::Content__(x) => {
@@ -10975,7 +10975,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     KeyInfoTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -11145,9 +11145,9 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        write_attrib_opt(&mut bytes, "ds:MimeType", &self.value.mime_type)?;
-                        write_attrib_opt(&mut bytes, "ds:Encoding", &self.value.encoding)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "MimeType", &self.value.mime_type)?;
+                        write_attrib_opt(&mut bytes, "Encoding", &self.value.encoding)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     ObjectTypeSerializerState::Done__ => return Ok(None),
@@ -11193,7 +11193,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        write_attrib(&mut bytes, "Algorithm", &self.value.algorithm)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     CanonicalizationMethodTypeSerializerState::Done__ => return Ok(None),
@@ -11247,7 +11247,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        write_attrib(&mut bytes, "Algorithm", &self.value.algorithm)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     SignatureMethodTypeSerializerState::HmacOutputLength(x) => {
@@ -11314,9 +11314,9 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:Id", &self.value.id)?;
-                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
-                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
+                        write_attrib_opt(&mut bytes, "Id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "URI", &self.value.uri)?;
+                        write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     ReferenceTypeSerializerState::Transforms(x) => match x.next().transpose()? {
@@ -11520,8 +11520,8 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "ds:URI", &self.value.uri)?;
-                        write_attrib_opt(&mut bytes, "ds:Type", &self.value.type_)?;
+                        write_attrib_opt(&mut bytes, "URI", &self.value.uri)?;
+                        write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     RetrievalMethodTypeSerializerState::Transforms(x) => {
@@ -11634,7 +11634,7 @@ pub mod quick_xml_serialize {
                         *self.state = X509DataTypeContentSerializerState::Content43(
                             WithSerializer::serializer(
                                 &self.value.content_43,
-                                Some("ds:Content43"),
+                                Some("Content43"),
                                 false,
                             )?,
                         );
@@ -11741,12 +11741,12 @@ pub mod quick_xml_serialize {
                     PgpDataTypeContentSerializerState::Init__ => match self.value {
                         super::PgpDataTypeContent::Content47(x) => {
                             *self.state = PgpDataTypeContentSerializerState::Content47(
-                                WithSerializer::serializer(x, Some("ds:Content47"), false)?,
+                                WithSerializer::serializer(x, Some("Content47"), false)?,
                             )
                         }
                         super::PgpDataTypeContent::Content49(x) => {
                             *self.state = PgpDataTypeContentSerializerState::Content49(
-                                WithSerializer::serializer(x, Some("ds:Content49"), false)?,
+                                WithSerializer::serializer(x, Some("Content49"), false)?,
                             )
                         }
                     },
@@ -11976,7 +11976,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        write_attrib(&mut bytes, "Algorithm", &self.value.algorithm)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     DigestMethodTypeSerializerState::Done__ => return Ok(None),
@@ -12037,7 +12037,7 @@ pub mod quick_xml_serialize {
                         *self.state =
                             DsaKeyValueTypeSerializerState::Content60(IterSerializer::new(
                                 self.value.content_60.as_ref(),
-                                Some("ds:Content60"),
+                                Some("Content60"),
                                 false,
                             ));
                         let mut bytes = BytesStart::new(self.name);
@@ -12081,7 +12081,7 @@ pub mod quick_xml_serialize {
                             *self.state =
                                 DsaKeyValueTypeSerializerState::Content61(IterSerializer::new(
                                     self.value.content_61.as_ref(),
-                                    Some("ds:Content61"),
+                                    Some("Content61"),
                                     false,
                                 ))
                         }
@@ -12500,7 +12500,7 @@ pub mod quick_xml_serialize {
                             bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
                             bytes.push_attribute((&b"xmlns:ds"[..], &super::NS_DS[..]));
                         }
-                        write_attrib(&mut bytes, "ds:Algorithm", &self.value.algorithm)?;
+                        write_attrib(&mut bytes, "Algorithm", &self.value.algorithm)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     TransformTypeSerializerState::Content__(x) => match x.next().transpose()? {

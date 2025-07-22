@@ -52,7 +52,7 @@ fn write_quick_xml() {
         ]),
     };
 
-    crate::utils::quick_xml_write_test(&obj, "tns:Foo", "tests/feature/list/example/default.xml");
+    crate::utils::quick_xml_write_test(&obj, "Foo", "tests/feature/list/example/default.xml");
 }
 
 #[cfg(not(feature = "update-expectations"))]

@@ -78,7 +78,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:Array",
+        "Array",
         "tests/feature/static_list/example/default.xml",
     );
 }

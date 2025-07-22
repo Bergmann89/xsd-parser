@@ -1066,12 +1066,12 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::FooType::Content2(x) => {
                                 *self.state = FooTypeSerializerState::Content2(
-                                    WithSerializer::serializer(x, Some("tns:Content2"), false)?,
+                                    WithSerializer::serializer(x, Some("Content2"), false)?,
                                 )
                             }
                             super::FooType::Content3(x) => {
                                 *self.state = FooTypeSerializerState::Content3(
-                                    WithSerializer::serializer(x, Some("tns:Content3"), false)?,
+                                    WithSerializer::serializer(x, Some("Content3"), false)?,
                                 )
                             }
                         }

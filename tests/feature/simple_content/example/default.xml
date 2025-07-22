@@ -1,1 +1,1 @@
-<tns:Foo xmlns:tns="http://example.com" tns:value="an attribute value">AUTO</tns:Foo>
+<Foo xmlns:tns="http://example.com" value="an attribute value">AUTO</Foo>

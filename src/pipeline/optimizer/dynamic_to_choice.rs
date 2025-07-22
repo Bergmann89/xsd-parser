@@ -50,6 +50,7 @@ impl Optimizer {
             let content_ident = Ident::new(content_name).with_ns(ident.ns);
 
             let type_ = self.types.items.get_mut(&ident).unwrap();
+            let form = type_.form();
             let MetaTypeVariant::Dynamic(x) = &mut type_.variant else {
                 crate::unreachable!();
             };
@@ -57,7 +58,7 @@ impl Optimizer {
             let mut si = GroupMeta::default();
             for derived in &x.derived_types {
                 si.elements.find_or_insert(derived.clone(), |ident| {
-                    ElementMeta::new(ident, derived.clone(), ElementMode::Element)
+                    ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
                 });
             }
 

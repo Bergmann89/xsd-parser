@@ -64,7 +64,7 @@ fn write_quick_xml() {
         union_: UnionType::String("string".into()),
     };
 
-    crate::utils::quick_xml_write_test(&obj, "tns:Foo", "tests/feature/union/example/default.xml");
+    crate::utils::quick_xml_write_test(&obj, "Foo", "tests/feature/union/example/default.xml");
 }
 
 #[cfg(not(feature = "update-expectations"))]

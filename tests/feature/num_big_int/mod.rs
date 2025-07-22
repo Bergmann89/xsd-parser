@@ -64,7 +64,7 @@ fn write_quick_xml() {
 
     crate::utils::quick_xml_write_test(
         &obj,
-        "tns:Foo",
+        "Foo",
         "tests/feature/num_big_int/example/serialize.xml",
     );
 }

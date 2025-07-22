@@ -209,6 +209,7 @@ impl<'a> MetaTypesPrinter<'a> {
                     s.level += 1;
 
                     indentln!("name={}", x.ident.name);
+                    indentln!("form={:?}", x.form);
                     indentln!("min_occurs={}", x.min_occurs);
                     indentln!("max_occurs={:?}", x.max_occurs);
 
@@ -277,6 +278,7 @@ impl<'a> MetaTypesPrinter<'a> {
 
                     indentln!("name={}", x.ident.name);
                     indentln!("use={:?}", x.use_);
+                    indentln!("form={:?}", x.form);
                     indentln!("default={:?}", x.default);
 
                     match &x.variant {

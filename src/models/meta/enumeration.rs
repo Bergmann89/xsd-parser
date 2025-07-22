@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 
 use crate::models::{schema::xs::Use, Ident};
 
-use super::{use_hash, Base, MetaTypes, TypeEq};
+use super::{Base, MetaTypes, TypeEq};
 
 /// Type information that defines an enumeration type.
 #[derive(Default, Debug, Clone)]
@@ -92,7 +92,7 @@ impl TypeEq for EnumerationMetaVariant {
         } = self;
 
         ident.hash(hasher);
-        use_hash(use_, hasher);
+        use_.hash(hasher);
         type_.type_hash(hasher, types);
         display_name.hash(hasher);
         documentation.hash(hasher);

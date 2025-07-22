@@ -1,1 +1,1 @@
-<tns:Foo xmlns:tns="http://example.com" tns:b-int="1000000000000000000000000" />
+<Foo xmlns:tns="http://example.com" b-int="1000000000000000000000000" />

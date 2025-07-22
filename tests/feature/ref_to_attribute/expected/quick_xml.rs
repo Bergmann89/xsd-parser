@@ -142,7 +142,7 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "tns:id", &self.value.id)?;
+                        write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),

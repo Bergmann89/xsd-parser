@@ -179,7 +179,7 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        write_attrib(&mut bytes, "tns:union", &self.value.union_)?;
+                        write_attrib(&mut bytes, "union", &self.value.union_)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FooTypeSerializerState::Done__ => return Ok(None),

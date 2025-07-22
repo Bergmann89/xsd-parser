@@ -19,8 +19,6 @@ mod type_eq;
 mod types;
 mod union;
 
-use std::hash::Hasher;
-
 pub use self::attribute::{AnyAttributeMeta, AttributeMeta, AttributeMetaVariant, AttributesMeta};
 pub use self::base::Base;
 pub use self::complex::{ComplexMeta, GroupMeta};
@@ -34,13 +32,3 @@ pub use self::type_::{BuildInMeta, MetaType, MetaTypeVariant};
 pub use self::type_eq::TypeEq;
 pub use self::types::{MetaTypes, ModuleMeta};
 pub use self::union::{UnionMeta, UnionMetaType, UnionMetaTypes};
-
-use crate::models::schema::xs::Use;
-
-fn use_hash<H: Hasher>(use_: &Use, hasher: &mut H) {
-    match use_ {
-        Use::Prohibited => hasher.write_u8(0),
-        Use::Optional => hasher.write_u8(1),
-        Use::Required => hasher.write_u8(2),
-    }
-}

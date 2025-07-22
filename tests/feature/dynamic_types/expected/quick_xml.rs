@@ -22,7 +22,7 @@ impl WithSerializer for ListType {
         Ok(quick_xml_serialize::ListTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ListTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:list"),
+            name: name.unwrap_or("list"),
             is_root,
         })
     }
@@ -64,7 +64,7 @@ impl WithSerializer for IntermediateType {
         Ok(quick_xml_serialize::IntermediateTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::IntermediateTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:intermediate"),
+            name: name.unwrap_or("intermediate"),
             is_root,
         })
     }
@@ -90,7 +90,7 @@ impl WithSerializer for FinalType {
         Ok(quick_xml_serialize::FinalTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FinalTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:final"),
+            name: name.unwrap_or("final"),
             is_root,
         })
     }
@@ -746,7 +746,7 @@ pub mod quick_xml_serialize {
                     ListTypeSerializerState::Init__ => {
                         *self.state = ListTypeSerializerState::Base(IterSerializer::new(
                             &self.value.base[..],
-                            Some("tns:base"),
+                            Some("base"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);
@@ -805,10 +805,10 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
+                        write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
                         write_attrib_opt(
                             &mut bytes,
-                            "tns:intermediateValue",
+                            "intermediateValue",
                             &self.value.intermediate_value,
                         )?;
                         return Ok(Some(Event::Empty(bytes)));
@@ -855,13 +855,13 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "tns:baseValue", &self.value.base_value)?;
+                        write_attrib_opt(&mut bytes, "baseValue", &self.value.base_value)?;
                         write_attrib_opt(
                             &mut bytes,
-                            "tns:intermediateValue",
+                            "intermediateValue",
                             &self.value.intermediate_value,
                         )?;
-                        write_attrib_opt(&mut bytes, "tns:finalValue", &self.value.final_value)?;
+                        write_attrib_opt(&mut bytes, "finalValue", &self.value.final_value)?;
                         return Ok(Some(Event::Empty(bytes)));
                     }
                     FinalTypeSerializerState::Done__ => return Ok(None),

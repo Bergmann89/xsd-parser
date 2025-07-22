@@ -362,7 +362,7 @@ impl ComplexDataAttribute<'_> {
         type_ident: &Ident2,
     ) -> TokenStream {
         let Self {
-            s_name,
+            tag_name,
             ident: field_ident,
             ..
         } = self;
@@ -391,7 +391,7 @@ impl ComplexDataAttribute<'_> {
 
         quote! {
             #docs
-            #[serde(#default rename = #s_name)]
+            #[serde(#default rename = #tag_name)]
             pub #field_ident: #target_type,
         }
     }

@@ -5016,8 +5016,8 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
-                            write_attrib_opt(&mut bytes, "er:prefer", &self.value.prefer)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         CatalogTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -5258,11 +5258,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:publicIdStartString",
+                                "publicIdStartString",
                                 &self.value.public_id_start_string,
                             )?;
-                            write_attrib(&mut bytes, "er:catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegatePublicTypeSerializerState::Done__ => return Ok(None),
@@ -5309,11 +5309,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:systemIdStartString",
+                                "systemIdStartString",
                                 &self.value.system_id_start_string,
                             )?;
-                            write_attrib(&mut bytes, "er:catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegateSystemTypeSerializerState::Done__ => return Ok(None),
@@ -5360,11 +5360,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:uriStartString",
+                                "uriStartString",
                                 &self.value.uri_start_string,
                             )?;
-                            write_attrib(&mut bytes, "er:catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         DelegateUriTypeSerializerState::Done__ => return Ok(None),
@@ -5417,8 +5417,8 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib_opt(&mut bytes, "er:prefer", &self.value.prefer)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib_opt(&mut bytes, "prefer", &self.value.prefer)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
                         }
                         GroupTypeSerializerState::Content__(x) => match x.next().transpose()? {
@@ -5645,8 +5645,8 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib(&mut bytes, "er:catalog", &self.value.catalog)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "catalog", &self.value.catalog)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         NextCatalogTypeSerializerState::Done__ => return Ok(None),
@@ -5691,9 +5691,9 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib(&mut bytes, "er:publicId", &self.value.public_id)?;
-                            write_attrib(&mut bytes, "er:uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "publicId", &self.value.public_id)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         PublicTypeSerializerState::Done__ => return Ok(None),
@@ -5740,15 +5740,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:systemIdStartString",
+                                "systemIdStartString",
                                 &self.value.system_id_start_string,
                             )?;
-                            write_attrib(
-                                &mut bytes,
-                                "er:rewritePrefix",
-                                &self.value.rewrite_prefix,
-                            )?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "rewritePrefix", &self.value.rewrite_prefix)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         RewriteSystemTypeSerializerState::Done__ => return Ok(None),
@@ -5795,15 +5791,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:uriStartString",
+                                "uriStartString",
                                 &self.value.uri_start_string,
                             )?;
-                            write_attrib(
-                                &mut bytes,
-                                "er:rewritePrefix",
-                                &self.value.rewrite_prefix,
-                            )?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "rewritePrefix", &self.value.rewrite_prefix)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         RewriteUriTypeSerializerState::Done__ => return Ok(None),
@@ -5848,9 +5840,9 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib(&mut bytes, "er:systemId", &self.value.system_id)?;
-                            write_attrib(&mut bytes, "er:uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "systemId", &self.value.system_id)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SystemTypeSerializerState::Done__ => return Ok(None),
@@ -5897,11 +5889,11 @@ pub mod er {
                             }
                             write_attrib(
                                 &mut bytes,
-                                "er:systemIdSuffix",
+                                "systemIdSuffix",
                                 &self.value.system_id_suffix,
                             )?;
-                            write_attrib(&mut bytes, "er:uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         SystemSuffixTypeSerializerState::Done__ => return Ok(None),
@@ -5946,9 +5938,9 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib(&mut bytes, "er:name", &self.value.name)?;
-                            write_attrib(&mut bytes, "er:uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "name", &self.value.name)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriTypeSerializerState::Done__ => return Ok(None),
@@ -5993,9 +5985,9 @@ pub mod er {
                             if self.is_root {
                                 bytes.push_attribute((&b"xmlns:er"[..], &super::super::NS_ER[..]));
                             }
-                            write_attrib(&mut bytes, "er:uriSuffix", &self.value.uri_suffix)?;
-                            write_attrib(&mut bytes, "er:uri", &self.value.uri)?;
-                            write_attrib_opt(&mut bytes, "er:id", &self.value.id)?;
+                            write_attrib(&mut bytes, "uriSuffix", &self.value.uri_suffix)?;
+                            write_attrib(&mut bytes, "uri", &self.value.uri)?;
+                            write_attrib_opt(&mut bytes, "id", &self.value.id)?;
                             return Ok(Some(Event::Empty(bytes)));
                         }
                         UriSuffixTypeSerializerState::Done__ => return Ok(None),
@@ -6080,7 +6072,7 @@ pub mod xs {
             Ok(quick_xml_serialize::AnyTypeSerializer {
                 value: self,
                 state: Box::new(quick_xml_serialize::AnyTypeSerializerState::Init__),
-                name: name.unwrap_or("xs:anyType"),
+                name: name.unwrap_or("anyType"),
                 is_root,
             })
         }

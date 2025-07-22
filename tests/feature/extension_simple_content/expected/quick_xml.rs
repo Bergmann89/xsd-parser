@@ -253,12 +253,8 @@ pub mod quick_xml_serialize {
                         if self.is_root {
                             bytes.push_attribute((&b"xmlns:tns"[..], &super::NS_TNS[..]));
                         }
-                        write_attrib_opt(&mut bytes, "tns:value", &self.value.value)?;
-                        write_attrib_opt(
-                            &mut bytes,
-                            "tns:anotherValue",
-                            &self.value.another_value,
-                        )?;
+                        write_attrib_opt(&mut bytes, "value", &self.value.value)?;
+                        write_attrib_opt(&mut bytes, "anotherValue", &self.value.another_value)?;
                         return Ok(Some(Event::Start(bytes)));
                     }
                     FooTypeSerializerState::Content__(x) => match x.next().transpose()? {

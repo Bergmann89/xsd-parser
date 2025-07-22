@@ -20,7 +20,7 @@ impl WithSerializer for ArrayType {
         Ok(quick_xml_serialize::ArrayTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::ArrayTypeSerializerState::Init__),
-            name: name.unwrap_or("tns:ArrayType"),
+            name: name.unwrap_or("ArrayType"),
             is_root,
         })
     }
@@ -252,7 +252,7 @@ pub mod quick_xml_serialize {
                     ArrayTypeSerializerState::Init__ => {
                         *self.state = ArrayTypeSerializerState::Item(IterSerializer::new(
                             &self.value.item[..],
-                            Some("tns:Item"),
+                            Some("Item"),
                             false,
                         ));
                         let mut bytes = BytesStart::new(self.name);

@@ -1,6 +1,6 @@
-<tns:Foo
+<Foo
     xmlns:tns="http://example.com"
-    tns:value="an attribute value"
-    tns:anotherValue="more attribute data">
+    value="an attribute value"
+    anotherValue="more attribute data">
     AUTO
-</tns:Foo>
+</Foo>

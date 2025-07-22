@@ -413,6 +413,7 @@ impl ElementMeta {
 mod tests {
     use crate::models::{
         meta::{ElementMeta, ElementMode, ElementsMeta, MetaType, MetaTypeVariant, MetaTypes},
+        schema::xs::FormChoiceType,
         schema::MaxOccurs,
         Ident,
     };
@@ -448,8 +449,15 @@ mod tests {
     macro_rules! element_info {
         ($element_name:literal, $type_name:literal, $type:ident { $( $field:ident: $value:tt ),* $(,)? }) => {{
             let type_ident = element_info!(__type_ident $type $type_name);
+
             #[allow(unused_mut)]
-            let mut element = ElementMeta::new(Ident::name($element_name), type_ident, ElementMode::$type);
+            let mut element = ElementMeta::new(
+                Ident::name($element_name),
+                type_ident,
+                ElementMode::$type,
+                FormChoiceType::Unqualified,
+            );
+
             $(
                 element_info!(__set_field element.$field $value);
             )*
