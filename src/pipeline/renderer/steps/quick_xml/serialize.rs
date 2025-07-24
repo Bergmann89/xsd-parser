@@ -786,7 +786,7 @@ impl ComplexDataStruct<'_> {
     }
 }
 
-impl ComplexDataContent {
+impl ComplexDataContent<'_> {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let serializer = self
             .occurs

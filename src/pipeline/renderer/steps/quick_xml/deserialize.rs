@@ -1504,7 +1504,7 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_deserializer_fn_init(&self, ctx: &mut Context<'_, '_>) -> TokenStream {
-        if matches!(&self.mode, StructMode::Content { content } if content.is_simple) {
+        if matches!(&self.mode, StructMode::Content { content } if content.is_simple()) {
             self.render_deserializer_fn_init_simple(ctx)
         } else if self.represents_element() {
             self.render_deserializer_fn_init_for_element(ctx)
@@ -1586,7 +1586,7 @@ impl ComplexDataStruct<'_> {
                 self.render_deserializer_fn_next_empty(ctx, *allow_any)
             }
             StructMode::Content { content } => {
-                if content.is_simple {
+                if content.is_simple() {
                     self.render_deserializer_fn_next_content_simple(ctx)
                 } else {
                     self.render_deserializer_fn_next_content_complex(ctx, content)
@@ -1658,7 +1658,7 @@ impl ComplexDataStruct<'_> {
     fn render_deserializer_fn_next_content_complex(
         &self,
         ctx: &Context<'_, '_>,
-        content: &ComplexDataContent,
+        content: &ComplexDataContent<'_>,
     ) -> TokenStream {
         let target_type = ctx.resolve_type_for_deserialize_module(&content.target_type);
         let (event_at, return_end_event) = self.return_end_event(ctx);
@@ -1944,13 +1944,13 @@ impl ComplexDataStruct<'_> {
     }
 }
 
-impl ComplexDataContent {
+impl ComplexDataContent<'_> {
     fn need_next_state(&self) -> bool {
-        !self.is_simple
+        !self.is_simple()
     }
 
     fn need_done_state(&self, represents_element: bool) -> bool {
-        !self.is_simple && !represents_element && self.max_occurs.is_bounded()
+        !self.is_simple() && !represents_element && self.max_occurs.is_bounded()
     }
 
     fn deserializer_field_decl(&self, ctx: &Context<'_, '_>) -> TokenStream {
@@ -2045,7 +2045,7 @@ impl ComplexDataContent {
         represents_element: bool,
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
-        if self.is_simple {
+        if self.is_simple() {
             self.deserializer_struct_field_fn_handle_simple(
                 ctx,
                 type_ident,

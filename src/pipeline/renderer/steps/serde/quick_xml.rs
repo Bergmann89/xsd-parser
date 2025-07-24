@@ -341,13 +341,14 @@ impl ComplexDataStruct<'_> {
     }
 }
 
-impl ComplexDataContent {
+impl ComplexDataContent<'_> {
     fn render_field_serde_quick_xml(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.make_type(&target_type, false)?;
 
-        let default = (self.min_occurs == 0).then(|| quote!(default,));
-        let name = if self.is_simple { "$text" } else { "$value" };
+        let default =
+            (self.is_empty_string_content(ctx) || self.min_occurs == 0).then(|| quote!(default,));
+        let name = if self.is_simple() { "$text" } else { "$value" };
 
         Some(quote! {
             #[serde(#default rename = #name)]

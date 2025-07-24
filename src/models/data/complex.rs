@@ -5,6 +5,7 @@ use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use crate::models::{
     meta::{AttributeMeta, ElementMeta},
     schema::{MaxOccurs, MinOccurs},
+    Ident,
 };
 
 use super::{Occurs, PathData};
@@ -151,7 +152,7 @@ pub enum StructMode<'types> {
     /// the actual data.
     Content {
         /// Information about the content of the struct.
-        content: ComplexDataContent,
+        content: ComplexDataContent<'types>,
     },
 
     /// The content of the struct is a `xs:all` group.
@@ -181,13 +182,13 @@ pub enum StructMode<'types> {
 ///
 /// Is used by [`StructMode`] to define the content of a struct.
 #[derive(Debug)]
-pub struct ComplexDataContent {
+pub struct ComplexDataContent<'types> {
     /// Occurrence of the content within this struct.
     pub occurs: Occurs,
 
-    /// `true` if the content is a simple type (e.g. a enum, union, string,
-    /// integer, ...), `false` otherwise.
-    pub is_simple: bool,
+    /// Type identifier of the content type if this `ComplexDataContent` was
+    /// constructed from a complex type with simple content.
+    pub simple_type: Option<&'types Ident>,
 
     /// Minimum occurrence.
     pub min_occurs: MinOccurs,
@@ -299,7 +300,7 @@ impl Deref for ComplexDataEnum<'_> {
     }
 }
 
-impl ComplexDataStruct<'_> {
+impl<'types> ComplexDataStruct<'types> {
     /// Returns `true` if this struct is a unit struct, `false` otherwise.
     #[must_use]
     pub fn is_unit_struct(&self) -> bool {
@@ -350,7 +351,7 @@ impl ComplexDataStruct<'_> {
 
     /// Returns the content type if this struct has one.
     #[must_use]
-    pub fn content(&self) -> Option<&ComplexDataContent> {
+    pub fn content(&self) -> Option<&ComplexDataContent<'types>> {
         if let StructMode::Content { content, .. } = &self.mode {
             Some(content)
         } else {
@@ -376,5 +377,14 @@ impl ComplexDataElement<'_> {
             ComplexDataElementOrigin::Generated(meta) => meta,
             ComplexDataElementOrigin::Meta(meta) => meta,
         }
+    }
+}
+
+impl ComplexDataContent<'_> {
+    /// returns `true` if the content is a simple type (e.g. a enum, union,
+    /// string, integer, ...), `false` otherwise.
+    #[must_use]
+    pub fn is_simple(&self) -> bool {
+        self.simple_type.is_some()
     }
 }
