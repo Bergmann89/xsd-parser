@@ -359,6 +359,7 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
             RenderStep::QuickXmlDeserialize { boxed_deserializer } => {
                 renderer = renderer.with_step(QuickXmlDeserializeRenderStep { boxed_deserializer });
             }
+            RenderStep::Custom(x) => renderer = renderer.with_step_boxed(x.into_boxed()),
         }
     }
 

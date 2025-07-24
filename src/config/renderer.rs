@@ -1,6 +1,9 @@
+use std::any::Any;
+
 use bitflags::bitflags;
 
 use crate::models::code::IdentPath;
+use crate::pipeline::renderer::RenderStep as RenderStepTrait;
 
 /// Configuration for the actual code rendering.
 #[derive(Debug, Clone)]
@@ -110,7 +113,7 @@ bitflags! {
 /// one `TypesXXX` step should be used, because they render the general type
 /// structure). While other render steps depend on each other (e.g. `QuickXmlXXX`
 /// depends on `Types` and `NamespaceConstants`).
-#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub enum RenderStep {
     /// Step to render the pure types.
     Types,
@@ -147,6 +150,62 @@ pub enum RenderStep {
         /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
     },
+
+    /// Custom defined render step that should be added to the renderer.
+    Custom(CustomRenderStep),
+}
+
+/// Wrapper for a type that implements [`CustomRenderStepImpl`] to be added
+/// to [`RenderStep`] as [`Custom`](RenderStep::Custom) render step.
+#[derive(Debug)]
+pub struct CustomRenderStep(Box<dyn CustomRenderStepImpl>);
+
+/// Helper trait to deal with custom render steps.
+pub trait CustomRenderStepImpl: RenderStepTrait + Any + 'static {
+    /// Returns `true`, if `other` is equal to `self`, false otherwise.
+    fn eq(&self, other: &dyn CustomRenderStepImpl) -> bool;
+
+    /// Returns a boxed clone of the current object.
+    fn clone(&self) -> Box<dyn CustomRenderStepImpl>;
+}
+
+impl CustomRenderStep {
+    /// Converts this instance into a boxed [`RenderStepTrait`].
+    #[must_use]
+    pub fn into_boxed(self) -> Box<dyn RenderStepTrait + 'static> {
+        self.0
+    }
+}
+
+impl Clone for CustomRenderStep {
+    fn clone(&self) -> Self {
+        Self(self.0.clone())
+    }
+}
+
+impl PartialEq for CustomRenderStep {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(other.0.as_ref())
+    }
+}
+
+impl Eq for CustomRenderStep {}
+
+impl<X> CustomRenderStepImpl for X
+where
+    X: RenderStepTrait + Clone + Eq + Any + 'static,
+{
+    fn eq(&self, other: &dyn CustomRenderStepImpl) -> bool {
+        if let Some(other) = (other as &dyn Any).downcast_ref() {
+            PartialEq::eq(self, other)
+        } else {
+            false
+        }
+    }
+
+    fn clone(&self) -> Box<dyn CustomRenderStepImpl> {
+        Box::new(self.clone())
+    }
 }
 
 impl RenderStep {
@@ -165,6 +224,14 @@ impl RenderStep {
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. }) => true,
             (_, _) => false,
         }
+    }
+
+    /// Create a custom render step ([`RenderStep::Custom`]) from the passed `step`.
+    pub fn custom<T>(step: T) -> Self
+    where
+        T: CustomRenderStepImpl,
+    {
+        Self::Custom(CustomRenderStep(Box::new(step)))
     }
 }
 
