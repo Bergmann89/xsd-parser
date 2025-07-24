@@ -73,7 +73,7 @@ impl UnionData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -124,7 +124,7 @@ impl DynamicData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -171,7 +171,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -205,7 +205,7 @@ impl EnumerationData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -292,7 +292,7 @@ impl ComplexDataEnum<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -337,7 +337,7 @@ impl ComplexDataStruct<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
