@@ -86,11 +86,16 @@ impl<'types> Renderer<'types> {
     }
 
     /// Add a [`RenderStep`] to the renderer.
-    pub fn with_step<X>(mut self, step: X) -> Self
+    pub fn with_step<X>(self, step: X) -> Self
     where
         X: RenderStep + 'types,
     {
-        self.steps.push(Box::new(step));
+        self.with_step_boxed(Box::new(step))
+    }
+
+    /// Add an already boxed [`RenderStep`] to the renderer.
+    pub fn with_step_boxed(mut self, step: Box<dyn RenderStep + 'types>) -> Self {
+        self.steps.push(step);
 
         self
     }

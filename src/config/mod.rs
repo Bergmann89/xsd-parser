@@ -22,7 +22,8 @@ pub use self::interpreter::{InterpreterConfig, InterpreterFlags};
 pub use self::optimizer::{OptimizerConfig, OptimizerFlags};
 pub use self::parser::{ParserConfig, ParserFlags, Resolver, Schema};
 pub use self::renderer::{
-    DynTypeTraits, RenderStep, RendererConfig, RendererFlags, SerdeXmlRsVersion,
+    CustomRenderStep, CustomRenderStepImpl, DynTypeTraits, RenderStep, RendererConfig,
+    RendererFlags, SerdeXmlRsVersion,
 };
 
 /// Configuration structure for the [`generate`](super::generate) method.
