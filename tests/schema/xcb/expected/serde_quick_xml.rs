@@ -440,7 +440,7 @@ pub enum UnopTypeContent {
 pub struct EnumrefType {
     #[serde(rename = "@ref")]
     pub ref_: String,
-    #[serde(rename = "$text")]
+    #[serde(default, rename = "$text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
@@ -512,14 +512,14 @@ pub enum CaseexprTypeContent {
 pub struct FieldType {
     #[serde(default, rename = "@name")]
     pub name: Option<String>,
-    #[serde(rename = "$text")]
+    #[serde(default, rename = "$text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ErrorType {
     #[serde(default, rename = "@type")]
     pub type_: Option<String>,
-    #[serde(rename = "$text")]
+    #[serde(default, rename = "$text")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]

@@ -482,7 +482,7 @@ impl CustomRenderStep {
 
     fn render_complex_struct_content(
         &self,
-        content: &ComplexDataContent,
+        content: &ComplexDataContent<'_>,
         ctx: &Context<'_, '_>,
     ) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&content.target_type);

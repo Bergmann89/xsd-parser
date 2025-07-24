@@ -46,7 +46,7 @@ pub struct SignedInfoType {
 pub struct SignatureValueType {
     #[serde(default, rename = "Id")]
     pub id: Option<String>,
-    #[serde(rename = "$value")]
+    #[serde(default, rename = "$value")]
     pub content: String,
 }
 #[derive(Debug, Serialize, Deserialize)]

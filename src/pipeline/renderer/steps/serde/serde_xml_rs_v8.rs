@@ -399,12 +399,13 @@ impl ComplexDataStruct<'_> {
     }
 }
 
-impl ComplexDataContent {
+impl ComplexDataContent<'_> {
     fn render_field_serde_xml_rs_v8(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = self.occurs.array_to_vec().make_type(&target_type, false)?;
 
-        let default = (self.min_occurs == 0).then(|| quote!(default,));
+        let default =
+            (self.is_empty_string_content(ctx) || self.min_occurs == 0).then(|| quote!(default,));
 
         match ctx
             .get_resolved_complex_content()

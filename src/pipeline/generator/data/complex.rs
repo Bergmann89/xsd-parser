@@ -24,11 +24,11 @@ use crate::models::{
 use super::super::{Context, Error};
 
 #[derive(Debug, Clone)]
-enum TypeMode {
+enum TypeMode<'types> {
     All,
     Choice,
     Sequence,
-    Simple { target_type: IdentPath },
+    Simple { simple_type: &'types Ident },
 }
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
@@ -47,7 +47,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             form,
-            TypeMode::All,
+            &TypeMode::All,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
@@ -64,7 +64,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             form,
-            TypeMode::Choice,
+            &TypeMode::Choice,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
@@ -81,7 +81,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             form,
-            TypeMode::Sequence,
+            &TypeMode::Sequence,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Group),
             1,
             MaxOccurs::Bounded(1),
@@ -110,12 +110,7 @@ impl<'types> ComplexData<'types> {
                 | MetaTypeVariant::Enumeration(_)
                 | MetaTypeVariant::Reference(_),
                 ident,
-            )) => {
-                let content_ref = ctx.get_or_create_type_ref(ident)?;
-                let target_type = (*content_ref.path).clone();
-
-                (TypeMode::Simple { target_type }, &[][..])
-            }
+            )) => (TypeMode::Simple { simple_type: ident }, &[][..]),
             Some((x, _)) => {
                 let ident = ctx.current_type_ref().path.ident();
 
@@ -128,7 +123,7 @@ impl<'types> ComplexData<'types> {
         Self::new(
             ctx,
             form,
-            type_mode,
+            &type_mode,
             ctx.mixed_mode(meta.is_mixed, MixedMode::Complex),
             meta.min_occurs,
             meta.max_occurs,
@@ -141,7 +136,7 @@ impl<'types> ComplexData<'types> {
     fn new(
         ctx: &mut Context<'_, 'types>,
         form: FormChoiceType,
-        type_mode: TypeMode,
+        type_mode: &TypeMode<'types>,
         mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
@@ -149,14 +144,14 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         match type_mode {
-            TypeMode::Simple { target_type } => {
-                Self::new_simple(ctx, form, target_type, min_occurs, max_occurs, attributes)
+            TypeMode::Simple { simple_type } => {
+                Self::new_simple(ctx, form, simple_type, min_occurs, max_occurs, attributes)
             }
             TypeMode::Choice => Self::new_enum(
                 ctx, form, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
             TypeMode::All | TypeMode::Sequence => Self::new_struct(
-                ctx, form, &type_mode, mixed_mode, min_occurs, max_occurs, attributes, elements,
+                ctx, form, type_mode, mixed_mode, min_occurs, max_occurs, attributes, elements,
             ),
         }
     }
@@ -164,14 +159,16 @@ impl<'types> ComplexData<'types> {
     fn new_simple(
         ctx: &mut Context<'_, 'types>,
         form: FormChoiceType,
-        target_type: IdentPath,
+        simple_type: &'types Ident,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
         let base = ComplexBase::new(ctx, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
-        let target_type = PathData::from_path(target_type);
+
+        let content_ref = ctx.get_or_create_type_ref(simple_type)?;
+        let target_type = content_ref.path.clone();
 
         let mut allow_any_attribute = false;
         let attributes = attributes
@@ -183,7 +180,7 @@ impl<'types> ComplexData<'types> {
 
         let content = ComplexDataContent {
             occurs,
-            is_simple: true,
+            simple_type: Some(simple_type),
             min_occurs,
             max_occurs,
             target_type,
@@ -295,7 +292,7 @@ impl<'types> ComplexData<'types> {
 
             let content = ComplexDataContent {
                 occurs,
-                is_simple: false,
+                simple_type: None,
                 min_occurs,
                 max_occurs,
                 target_type,
@@ -322,7 +319,7 @@ impl<'types> ComplexData<'types> {
     fn new_struct(
         ctx: &mut Context<'_, 'types>,
         form: FormChoiceType,
-        type_mode: &TypeMode,
+        type_mode: &TypeMode<'types>,
         mixed_mode: MixedMode,
         min_occurs: MinOccurs,
         max_occurs: MaxOccurs,
@@ -443,7 +440,7 @@ impl<'types> ComplexData<'types> {
 
             let content = ComplexDataContent {
                 occurs,
-                is_simple: false,
+                simple_type: None,
                 min_occurs,
                 max_occurs,
                 target_type,
