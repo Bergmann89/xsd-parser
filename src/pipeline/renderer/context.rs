@@ -60,7 +60,7 @@ impl<'a, 'types> Context<'a, 'types> {
     {
         let usings = self.patch_usings(usings);
         let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root).usings(usings);
+        Self::get_current_module(self.module_path.last(), &mut root).usings(usings);
     }
 
     /// Add using directives to the root module.
@@ -73,11 +73,19 @@ impl<'a, 'types> Context<'a, 'types> {
         self.module.lock().usings(usings);
     }
 
+    /// Returns a mutable reference to the main module.
+    ///
+    /// This might be useful if you need to add code anywhere to the generated
+    /// result.
+    pub fn main_module(&mut self) -> &mut Module {
+        self.module.get_mut()
+    }
+
     /// Returns a mutable reference to the module of the current rendered type.
-    pub fn module(&mut self) -> &mut Module {
+    pub fn current_module(&mut self) -> &mut Module {
         let root = self.module.get_mut();
 
-        Self::main_module(self.module_path.last(), root)
+        Self::get_current_module(self.module_path.last(), root)
     }
 
     /// Set a `value` for the specified key `K`.
@@ -111,6 +119,35 @@ impl<'a, 'types> Context<'a, 'types> {
         self.values.remove(&TypeId::of::<K>());
     }
 
+    /// Takes an iterator of usings (anything that implements `ToString`) and
+    /// replaces the `xsd_parser::` in the path with the configured name for
+    /// `xsd-parser`.
+    ///
+    /// See [`Renderer::xsd_parser_crate`](crate::pipeline::Renderer::xsd_parser_crate)
+    /// for details.
+    ///
+    /// This should be used before you add using directives to a module manually.
+    /// Normally you should use [`add_usings`](Self::add_usings) which does the
+    /// patching automatically, but if you want to add code somewhere in the module
+    /// tree, this might be useful.
+    pub fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, I>
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let xsd_parser = &self.xsd_parser_crate;
+
+        usings.into_iter().map(move |s| {
+            let s = s.to_string();
+
+            if let Some(s) = s.strip_prefix("xsd_parser::") {
+                format!("{xsd_parser}::{s}")
+            } else {
+                s
+            }
+        })
+    }
+
     pub(crate) fn resolve_type_for_serialize_module(&self, target_type: &PathData) -> TokenStream {
         self.add_quick_xml_serialize_usings(&target_type.usings);
 
@@ -127,11 +164,11 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(crate) fn quick_xml_serialize(&mut self) -> &mut Module {
-        self.module().module_mut("quick_xml_serialize")
+        self.current_module().module_mut("quick_xml_serialize")
     }
 
     pub(crate) fn quick_xml_deserialize(&mut self) -> &mut Module {
-        self.module().module_mut("quick_xml_deserialize")
+        self.current_module().module_mut("quick_xml_deserialize")
     }
 
     pub(crate) fn add_quick_xml_serialize_usings<I>(&self, usings: I)
@@ -142,7 +179,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let usings = self.patch_usings(usings);
 
         let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root)
+        Self::get_current_module(self.module_path.last(), &mut root)
             .module_mut("quick_xml_serialize")
             .usings(usings);
     }
@@ -155,7 +192,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let usings = self.patch_usings(usings);
 
         let mut root = self.module.lock();
-        Self::main_module(self.module_path.last(), &mut root)
+        Self::get_current_module(self.module_path.last(), &mut root)
             .module_mut("quick_xml_deserialize")
             .usings(usings);
     }
@@ -192,30 +229,12 @@ impl<'a, 'types> Context<'a, 'types> {
         }
     }
 
-    fn main_module<'x>(ident: Option<&Ident2>, root: &'x mut Module) -> &'x mut Module {
+    fn get_current_module<'x>(ident: Option<&Ident2>, root: &'x mut Module) -> &'x mut Module {
         if let Some(ident) = ident {
             root.module_mut(ident.to_string())
         } else {
             root
         }
-    }
-
-    fn patch_usings<I>(&self, usings: I) -> impl Iterator<Item = String> + use<'_, I>
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
-        let xsd_parser = &self.xsd_parser_crate;
-
-        usings.into_iter().map(move |s| {
-            let s = s.to_string();
-
-            if let Some(s) = s.strip_prefix("xsd_parser::") {
-                format!("{xsd_parser}::{s}")
-            } else {
-                s
-            }
-        })
     }
 }
 

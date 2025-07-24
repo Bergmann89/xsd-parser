@@ -172,6 +172,9 @@ impl<'types> Renderer<'types> {
 
     /// Set the name of the `xsd-parser` create that the generator should use for
     /// generating the code.
+    ///
+    /// This is useful if the `xsd-parser` create can not be resolved by the default
+    /// name in your environment. You can just set a name that suites your needs.
     pub fn xsd_parser_crate<S: Display>(mut self, value: S) -> Self {
         self.meta.xsd_parser_crate = format_ident!("{value}");
 

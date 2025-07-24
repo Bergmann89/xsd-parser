@@ -73,7 +73,7 @@ impl UnionData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -115,7 +115,7 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -186,7 +186,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -220,7 +220,7 @@ impl EnumerationData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -307,7 +307,7 @@ impl ComplexBase {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_with_serializer_for_element(&self, tag_name: &str) -> TokenStream {

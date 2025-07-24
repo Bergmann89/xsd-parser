@@ -62,7 +62,7 @@ impl ComplexDataStruct<'_> {
         };
 
         if has_attributes {
-            ctx.module().append(impl_);
+            ctx.current_module().append(impl_);
         }
     }
 }

@@ -196,7 +196,7 @@ impl CustomRenderStep {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_union_variant(
@@ -243,7 +243,7 @@ impl CustomRenderStep {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     /* Reference */
@@ -283,7 +283,7 @@ impl CustomRenderStep {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     /* Enumeration */
@@ -313,7 +313,7 @@ impl CustomRenderStep {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_enum_variant(
@@ -384,7 +384,7 @@ impl CustomRenderStep {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_complex_enum_variant(
@@ -440,7 +440,7 @@ impl CustomRenderStep {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_complex_struct_attrib(

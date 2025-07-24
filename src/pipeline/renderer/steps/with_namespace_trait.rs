@@ -31,7 +31,7 @@ impl RenderStep for WithNamespaceTraitRenderStep {
 impl UnionData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -41,7 +41,7 @@ impl UnionData<'_> {
 impl DynamicData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -51,7 +51,7 @@ impl DynamicData<'_> {
 impl ReferenceData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -61,7 +61,7 @@ impl ReferenceData<'_> {
 impl EnumerationData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -98,7 +98,7 @@ impl ComplexData<'_> {
 impl ComplexDataEnum<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -106,7 +106,7 @@ impl ComplexDataEnum<'_> {
 impl ComplexDataStruct<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
