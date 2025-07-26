@@ -21,11 +21,11 @@ use crate::models::{
 
 use super::super::super::{
     context::{Context, ValueKey},
-    RenderStep,
+    RenderStep, RenderStepType,
 };
 
 /// Implements a [`RenderStep`] that renders the code for the `quick_xml` deserialization.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct QuickXmlDeserializeRenderStep {
     /// Whether to box the deserializer or not.
     ///
@@ -41,6 +41,10 @@ impl ValueKey for BoxedDeserializer {
 }
 
 impl RenderStep for QuickXmlDeserializeRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         ctx.set::<BoxedDeserializer>(self.boxed_deserializer);
 
@@ -96,7 +100,7 @@ impl UnionData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -150,7 +154,7 @@ impl DynamicData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_deserializer_types(&self, ctx: &mut Context<'_, '_>) {
@@ -481,7 +485,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -541,7 +545,7 @@ impl EnumerationData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -636,7 +640,7 @@ impl ComplexBase {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 
     fn render_deserializer_impl(

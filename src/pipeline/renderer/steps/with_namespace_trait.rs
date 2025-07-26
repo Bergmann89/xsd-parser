@@ -6,14 +6,18 @@ use crate::models::data::{
     UnionData,
 };
 
-use super::super::{Context, DataTypeVariant, RenderStep};
+use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 
 /// Implements a [`RenderStep`] that renders the [`WithNamespace`](crate::WithNamespace)
 /// trait for each type defined in the schema.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct WithNamespaceTraitRenderStep;
 
 impl RenderStep for WithNamespaceTraitRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
@@ -31,7 +35,7 @@ impl RenderStep for WithNamespaceTraitRenderStep {
 impl UnionData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -41,7 +45,7 @@ impl UnionData<'_> {
 impl DynamicData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -51,7 +55,7 @@ impl DynamicData<'_> {
 impl ReferenceData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -61,7 +65,7 @@ impl ReferenceData<'_> {
 impl EnumerationData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -98,7 +102,7 @@ impl ComplexData<'_> {
 impl ComplexDataEnum<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }
@@ -106,7 +110,7 @@ impl ComplexDataEnum<'_> {
 impl ComplexDataStruct<'_> {
     fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
         if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
-            ctx.module().append(code);
+            ctx.current_module().append(code);
         }
     }
 }

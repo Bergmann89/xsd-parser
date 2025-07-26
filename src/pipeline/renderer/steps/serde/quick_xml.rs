@@ -11,16 +11,20 @@ use crate::models::{
     schema::xs::Use,
 };
 
-use super::super::super::{Context, DataTypeVariant, RenderStep};
+use super::super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::super::{format_traits, render_trait_impls};
 use super::{get_derive, get_dyn_type_traits};
 
 /// Implements a [`RenderStep`] that renders rust types of the types defined in
 /// the schema with `quick-xml` support.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SerdeQuickXmlTypesRenderStep;
 
 impl RenderStep for SerdeQuickXmlTypesRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::Types
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) => (),
@@ -73,7 +77,7 @@ impl UnionData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -124,7 +128,7 @@ impl DynamicData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -171,7 +175,7 @@ impl ReferenceData<'_> {
             }
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -205,7 +209,7 @@ impl EnumerationData<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -292,7 +296,7 @@ impl ComplexDataEnum<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 
@@ -337,7 +341,7 @@ impl ComplexDataStruct<'_> {
             #( #trait_impls )*
         };
 
-        ctx.module().append(code);
+        ctx.current_module().append(code);
     }
 }
 

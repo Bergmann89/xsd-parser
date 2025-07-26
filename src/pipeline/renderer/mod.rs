@@ -30,10 +30,9 @@ use inflector::Inflector;
 use quote::format_ident;
 
 use crate::config::{DynTypeTraits, RendererFlags};
-use crate::models::data::PathData;
 use crate::models::{
     code::{IdentPath, Module},
-    data::{DataTypeVariant, DataTypes},
+    data::{DataTypeVariant, DataTypes, PathData},
     meta::ModuleMeta,
 };
 
@@ -86,11 +85,16 @@ impl<'types> Renderer<'types> {
     }
 
     /// Add a [`RenderStep`] to the renderer.
-    pub fn with_step<X>(mut self, step: X) -> Self
+    pub fn with_step<X>(self, step: X) -> Self
     where
         X: RenderStep + 'types,
     {
-        self.steps.push(Box::new(step));
+        self.with_step_boxed(Box::new(step))
+    }
+
+    /// Add an already boxed [`RenderStep`] to the renderer.
+    pub fn with_step_boxed(mut self, step: Box<dyn RenderStep + 'types>) -> Self {
+        self.steps.push(step);
 
         self
     }
@@ -172,6 +176,9 @@ impl<'types> Renderer<'types> {
 
     /// Set the name of the `xsd-parser` create that the generator should use for
     /// generating the code.
+    ///
+    /// This is useful if the `xsd-parser` create can not be resolved by the default
+    /// name in your environment. You can just set a name that suites your needs.
     pub fn xsd_parser_crate<S: Display>(mut self, value: S) -> Self {
         self.meta.xsd_parser_crate = format_ident!("{value}");
 
@@ -234,6 +241,9 @@ impl<'types> Renderer<'types> {
 /// used by the user to compose different render steps depending on his needs, or
 /// he could even implement customized steps on his own.
 pub trait RenderStep: Debug {
+    /// Returns the type of the render step.
+    fn render_step_type(&self) -> RenderStepType;
+
     /// Initialized the renderer.
     ///
     /// This is called once for each renderer when the generator is initialized.
@@ -255,6 +265,40 @@ pub trait RenderStep: Debug {
     fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
         let _meta = meta;
         let _module = module;
+    }
+}
+
+/// Defines the type of the render step.
+///
+/// This defines the type of a render steps and is used to manage mutually
+/// exclusive render steps. For example the renderer pipeline should only
+/// contain one single render step of type [`Types`](RenderStepType::Types).
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum RenderStepType {
+    /// Render step that renders the actual types defined in the schema.
+    /// This type of render step should only exists once in the whole renderer pipeline.
+    Types,
+
+    /// Render step that renders additional type definitions they are not conflicting
+    /// with the actual types defined in the schema.
+    ExtraTypes,
+
+    /// Render step that renders additional implementation blocks or trait implementations
+    /// for types defined in a different render step.
+    ExtraImpls,
+
+    /// The type of this render step is undefined.
+    /// If you are implementing a custom render step and you are not sure what type
+    /// to use, then use this one.
+    #[default]
+    Undefined,
+}
+
+impl RenderStepType {
+    /// Returns `true` if the two types are mutual exclusive to each other, `false` otherwise.
+    #[must_use]
+    pub fn is_mutual_exclusive_to(&self, other: Self) -> bool {
+        matches!((self, other), (Self::Types, Self::Types))
     }
 }
 
