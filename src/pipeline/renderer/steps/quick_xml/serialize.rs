@@ -12,13 +12,17 @@ use crate::models::{
     schema::Namespace,
 };
 
-use super::super::super::{Context, MetaData, RenderStep};
+use super::super::super::{Context, MetaData, RenderStep, RenderStepType};
 
 /// Implements a [`RenderStep`] that renders the code for the `quick_xml` serialization.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct QuickXmlSerializeRenderStep;
 
 impl RenderStep for QuickXmlSerializeRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn initialize(&mut self, meta: &mut MetaData<'_>) {
         let ident = IdentPath::from_parts(
             [meta.xsd_parser_crate.clone(), format_ident!("quick_xml")],

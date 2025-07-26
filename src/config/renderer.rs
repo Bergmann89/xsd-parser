@@ -1,15 +1,16 @@
-use std::any::Any;
+use std::any::{Any, TypeId};
+use std::fmt::Debug;
 
 use bitflags::bitflags;
 
 use crate::models::code::IdentPath;
-use crate::pipeline::renderer::RenderStep as RenderStepTrait;
+use crate::pipeline::renderer::{RenderStep as RenderStepTrait, RenderStepType};
 
 /// Configuration for the actual code rendering.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct RendererConfig {
     /// List of renderers to use for code rendering.
-    pub steps: Vec<RenderStep>,
+    pub steps: Vec<Box<dyn RenderStepConfig>>,
 
     /// Additional flags to control the renderer.
     pub flags: RendererFlags,
@@ -31,11 +32,23 @@ pub struct RendererConfig {
 impl Default for RendererConfig {
     fn default() -> Self {
         Self {
-            steps: vec![RenderStep::Types],
+            steps: vec![Box::new(RenderStep::Types)],
             flags: RendererFlags::empty(),
             derive: None,
             xsd_parser: "xsd_parser".into(),
             dyn_type_traits: None,
+        }
+    }
+}
+
+impl Clone for RendererConfig {
+    fn clone(&self) -> Self {
+        Self {
+            steps: self.steps.iter().map(|x| x.boxed_clone()).collect(),
+            flags: self.flags,
+            derive: self.derive.clone(),
+            xsd_parser: self.xsd_parser.clone(),
+            dyn_type_traits: self.dyn_type_traits.clone(),
         }
     }
 }
@@ -113,7 +126,7 @@ bitflags! {
 /// one `TypesXXX` step should be used, because they render the general type
 /// structure). While other render steps depend on each other (e.g. `QuickXmlXXX`
 /// depends on `Types` and `NamespaceConstants`).
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone)]
 pub enum RenderStep {
     /// Step to render the pure types.
     Types,
@@ -150,61 +163,148 @@ pub enum RenderStep {
         /// For more details have a look at [`QuickXmlDeserializeRenderer::boxed_deserializer`](crate::pipeline::renderer::QuickXmlDeserializeRenderStep::boxed_deserializer).
         boxed_deserializer: bool,
     },
-
-    /// Custom defined render step that should be added to the renderer.
-    Custom(CustomRenderStep),
 }
-
-/// Wrapper for a type that implements [`CustomRenderStepImpl`] to be added
-/// to [`RenderStep`] as [`Custom`](RenderStep::Custom) render step.
-#[derive(Debug)]
-pub struct CustomRenderStep(Box<dyn CustomRenderStepImpl>);
 
 /// Helper trait to deal with custom render steps.
-pub trait CustomRenderStepImpl: RenderStepTrait + Any + 'static {
-    /// Returns `true`, if `other` is equal to `self`, false otherwise.
-    fn eq(&self, other: &dyn CustomRenderStepImpl) -> bool;
-
+pub trait RenderStepConfig: Debug + Any {
     /// Returns a boxed clone of the current object.
-    fn clone(&self) -> Box<dyn CustomRenderStepImpl>;
-}
+    fn boxed_clone(&self) -> Box<dyn RenderStepConfig>;
 
-impl CustomRenderStep {
-    /// Converts this instance into a boxed [`RenderStepTrait`].
-    #[must_use]
-    pub fn into_boxed(self) -> Box<dyn RenderStepTrait + 'static> {
-        self.0
+    /// Creates the actual render step and returned it as a box.
+    fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait>;
+
+    /// Returns the type of this render step.
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::Undefined
+    }
+
+    /// Returns `true` if `self` is mutual exclusive to `other`, `false` otherwise.
+    fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
+        self.type_id() == other.type_id()
+            || self
+                .render_step_type()
+                .is_mutual_exclusive_to(other.render_step_type())
     }
 }
 
-impl Clone for CustomRenderStep {
-    fn clone(&self) -> Self {
-        Self(self.0.clone())
-    }
-}
-
-impl PartialEq for CustomRenderStep {
-    fn eq(&self, other: &Self) -> bool {
-        self.0.eq(other.0.as_ref())
-    }
-}
-
-impl Eq for CustomRenderStep {}
-
-impl<X> CustomRenderStepImpl for X
+impl<X> RenderStepConfig for X
 where
-    X: RenderStepTrait + Clone + Eq + Any + 'static,
+    X: RenderStepTrait + Clone + Any + 'static,
 {
-    fn eq(&self, other: &dyn CustomRenderStepImpl) -> bool {
-        if let Some(other) = (other as &dyn Any).downcast_ref() {
-            PartialEq::eq(self, other)
-        } else {
-            false
+    fn render_step_type(&self) -> RenderStepType {
+        X::render_step_type(self)
+    }
+
+    fn boxed_clone(&self) -> Box<dyn RenderStepConfig> {
+        Box::new(self.clone())
+    }
+
+    fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
+        self
+    }
+}
+
+impl RenderStepConfig for RenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        match self {
+            Self::Types => RenderStepType::Types,
+            Self::TypesSerdeXmlRs { .. } => RenderStepType::Types,
+            Self::TypesSerdeQuickXml => RenderStepType::Types,
+            Self::Defaults => RenderStepType::ExtraImpls,
+            Self::NamespaceConstants => RenderStepType::ExtraImpls,
+            Self::WithNamespaceTrait => RenderStepType::ExtraImpls,
+            Self::QuickXmlSerialize => RenderStepType::ExtraImpls,
+            Self::QuickXmlDeserialize { .. } => RenderStepType::ExtraImpls,
         }
     }
 
-    fn clone(&self) -> Box<dyn CustomRenderStepImpl> {
+    fn boxed_clone(&self) -> Box<dyn RenderStepConfig> {
         Box::new(self.clone())
+    }
+
+    fn into_render_step(self: Box<Self>) -> Box<dyn RenderStepTrait> {
+        use crate::pipeline::renderer::{
+            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
+            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
+            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+        };
+
+        match *self {
+            Self::Types => Box::new(TypesRenderStep),
+            Self::TypesSerdeXmlRs {
+                version: SerdeXmlRsVersion::Version07AndBelow,
+            } => Box::new(SerdeXmlRsV7TypesRenderStep),
+            Self::TypesSerdeXmlRs {
+                version: SerdeXmlRsVersion::Version08AndAbove,
+            } => Box::new(SerdeXmlRsV8TypesRenderStep),
+            Self::TypesSerdeQuickXml => Box::new(SerdeQuickXmlTypesRenderStep),
+            Self::Defaults => Box::new(DefaultsRenderStep),
+            Self::NamespaceConstants => Box::new(NamespaceConstantsRenderStep::default()),
+            Self::WithNamespaceTrait => Box::new(WithNamespaceTraitRenderStep),
+            Self::QuickXmlSerialize => Box::new(QuickXmlSerializeRenderStep),
+            Self::QuickXmlDeserialize { boxed_deserializer } => {
+                Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
+            }
+        }
+    }
+
+    fn is_mutual_exclusive_to(&self, other: &dyn RenderStepConfig) -> bool {
+        use crate::pipeline::renderer::{
+            DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
+            QuickXmlSerializeRenderStep, SerdeQuickXmlTypesRenderStep, SerdeXmlRsV7TypesRenderStep,
+            SerdeXmlRsV8TypesRenderStep, TypesRenderStep, WithNamespaceTraitRenderStep,
+        };
+
+        if self
+            .render_step_type()
+            .is_mutual_exclusive_to(other.render_step_type())
+        {
+            return true;
+        }
+
+        let other_id = other.type_id();
+        let other = (other as &dyn Any).downcast_ref::<Self>();
+
+        match (self, other) {
+            (Self::Types, Some(Self::Types)) => true,
+            (Self::TypesSerdeXmlRs { .. }, Some(Self::TypesSerdeXmlRs { .. })) => true,
+            (Self::TypesSerdeQuickXml, Some(Self::TypesSerdeQuickXml)) => true,
+            (Self::Defaults, Some(Self::Defaults)) => true,
+            (Self::NamespaceConstants, Some(Self::NamespaceConstants)) => true,
+            (Self::WithNamespaceTrait, Some(Self::WithNamespaceTrait)) => true,
+            (Self::QuickXmlSerialize, Some(Self::QuickXmlSerialize)) => true,
+            (Self::QuickXmlDeserialize { .. }, Some(Self::QuickXmlDeserialize { .. })) => true,
+            (Self::Types, None) => other_id == TypeId::of::<TypesRenderStep>(),
+            (
+                Self::TypesSerdeXmlRs {
+                    version: SerdeXmlRsVersion::Version07AndBelow,
+                },
+                None,
+            ) => other_id == TypeId::of::<SerdeXmlRsV7TypesRenderStep>(),
+            (
+                Self::TypesSerdeXmlRs {
+                    version: SerdeXmlRsVersion::Version08AndAbove,
+                },
+                None,
+            ) => other_id == TypeId::of::<SerdeXmlRsV8TypesRenderStep>(),
+            (Self::TypesSerdeQuickXml, None) => {
+                other_id == TypeId::of::<SerdeQuickXmlTypesRenderStep>()
+            }
+            (Self::Defaults, None) => other_id == TypeId::of::<DefaultsRenderStep>(),
+            (Self::NamespaceConstants, None) => {
+                other_id == TypeId::of::<NamespaceConstantsRenderStep>()
+            }
+            (Self::WithNamespaceTrait, None) => {
+                other_id == TypeId::of::<WithNamespaceTraitRenderStep>()
+            }
+            (Self::QuickXmlSerialize, None) => {
+                other_id == TypeId::of::<QuickXmlSerializeRenderStep>()
+            }
+            (Self::QuickXmlDeserialize { .. }, None) => {
+                other_id == TypeId::of::<QuickXmlDeserializeRenderStep>()
+            }
+            _ => false,
+        }
     }
 }
 
@@ -224,14 +324,6 @@ impl RenderStep {
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. }) => true,
             (_, _) => false,
         }
-    }
-
-    /// Create a custom render step ([`RenderStep::Custom`]) from the passed `step`.
-    pub fn custom<T>(step: T) -> Self
-    where
-        T: CustomRenderStepImpl,
-    {
-        Self::Custom(CustomRenderStep(Box::new(step)))
     }
 }
 

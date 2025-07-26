@@ -43,7 +43,7 @@ pub use self::pipeline::{
     parser::Parser,
     renderer::{
         DefaultsRenderStep, NamespaceConstantsRenderStep, QuickXmlDeserializeRenderStep,
-        QuickXmlSerializeRenderStep, Renderer, SerdeQuickXmlTypesRenderStep,
+        QuickXmlSerializeRenderStep, RenderStep, Renderer, SerdeQuickXmlTypesRenderStep,
         SerdeXmlRsV7TypesRenderStep, SerdeXmlRsV8TypesRenderStep, TypesRenderStep,
         WithNamespaceTraitRenderStep,
     },
@@ -58,8 +58,7 @@ use tracing::instrument;
 
 use self::config::{
     Generate, GeneratorConfig, InterpreterConfig, InterpreterFlags, OptimizerConfig,
-    OptimizerFlags, ParserConfig, ParserFlags, RenderStep, RendererConfig, Resolver, Schema,
-    SerdeXmlRsVersion,
+    OptimizerFlags, ParserConfig, ParserFlags, RendererConfig, Resolver, Schema,
 };
 use self::macros::{assert, assert_eq, unreachable};
 use self::pipeline::parser::resolver::{FileResolver, ManyResolver};
@@ -335,32 +334,7 @@ pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Modu
     }
 
     for step in config.steps {
-        match step {
-            RenderStep::Types => renderer = renderer.with_step(TypesRenderStep),
-            RenderStep::TypesSerdeXmlRs {
-                version: SerdeXmlRsVersion::Version07AndBelow,
-            } => renderer = renderer.with_step(SerdeXmlRsV7TypesRenderStep),
-            RenderStep::TypesSerdeXmlRs {
-                version: SerdeXmlRsVersion::Version08AndAbove,
-            } => renderer = renderer.with_step(SerdeXmlRsV8TypesRenderStep),
-            RenderStep::TypesSerdeQuickXml => {
-                renderer = renderer.with_step(SerdeQuickXmlTypesRenderStep);
-            }
-            RenderStep::Defaults => renderer = renderer.with_step(DefaultsRenderStep),
-            RenderStep::NamespaceConstants => {
-                renderer = renderer.with_step(NamespaceConstantsRenderStep::default());
-            }
-            RenderStep::WithNamespaceTrait => {
-                renderer = renderer.with_step(WithNamespaceTraitRenderStep);
-            }
-            RenderStep::QuickXmlSerialize => {
-                renderer = renderer.with_step(QuickXmlSerializeRenderStep);
-            }
-            RenderStep::QuickXmlDeserialize { boxed_deserializer } => {
-                renderer = renderer.with_step(QuickXmlDeserializeRenderStep { boxed_deserializer });
-            }
-            RenderStep::Custom(x) => renderer = renderer.with_step_boxed(x.into_boxed()),
-        }
+        renderer = renderer.with_step_boxed(step.into_render_step());
     }
 
     let module = renderer.finish();

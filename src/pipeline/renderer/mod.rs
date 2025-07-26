@@ -30,10 +30,9 @@ use inflector::Inflector;
 use quote::format_ident;
 
 use crate::config::{DynTypeTraits, RendererFlags};
-use crate::models::data::PathData;
 use crate::models::{
     code::{IdentPath, Module},
-    data::{DataTypeVariant, DataTypes},
+    data::{DataTypeVariant, DataTypes, PathData},
     meta::ModuleMeta,
 };
 
@@ -242,6 +241,9 @@ impl<'types> Renderer<'types> {
 /// used by the user to compose different render steps depending on his needs, or
 /// he could even implement customized steps on his own.
 pub trait RenderStep: Debug {
+    /// Returns the type of the render step.
+    fn render_step_type(&self) -> RenderStepType;
+
     /// Initialized the renderer.
     ///
     /// This is called once for each renderer when the generator is initialized.
@@ -263,6 +265,40 @@ pub trait RenderStep: Debug {
     fn finish(&mut self, meta: &MetaData<'_>, module: &mut Module) {
         let _meta = meta;
         let _module = module;
+    }
+}
+
+/// Defines the type of the render step.
+///
+/// This defines the type of a render steps and is used to manage mutually
+/// exclusive render steps. For example the renderer pipeline should only
+/// contain one single render step of type [`Types`](RenderStepType::Types).
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum RenderStepType {
+    /// Render step that renders the actual types defined in the schema.
+    /// This type of render step should only exists once in the whole renderer pipeline.
+    Types,
+
+    /// Render step that renders additional type definitions they are not conflicting
+    /// with the actual types defined in the schema.
+    ExtraTypes,
+
+    /// Render step that renders additional implementation blocks or trait implementations
+    /// for types defined in a different render step.
+    ExtraImpls,
+
+    /// The type of this render step is undefined.
+    /// If you are implementing a custom render step and you are not sure what type
+    /// to use, then use this one.
+    #[default]
+    Undefined,
+}
+
+impl RenderStepType {
+    /// Returns `true` if the two types are mutual exclusive to each other, `false` otherwise.
+    #[must_use]
+    pub fn is_mutual_exclusive_to(&self, other: Self) -> bool {
+        matches!((self, other), (Self::Types, Self::Types))
     }
 }
 

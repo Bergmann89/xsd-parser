@@ -3,14 +3,18 @@ use quote::{format_ident, quote};
 
 use crate::models::data::{ComplexData, ComplexDataAttribute, ComplexDataStruct, DataTypeVariant};
 
-use super::super::{Context, RenderStep};
+use super::super::{Context, RenderStep, RenderStepType};
 
 /// Implements a [`RenderStep`] that renders associated methods that return the default
 /// values of the different attributes and elements according to the schema.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct DefaultsRenderStep;
 
 impl RenderStep for DefaultsRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         if let DataTypeVariant::Complex(x) = &ctx.data.variant {
             x.render_defaults(ctx);
