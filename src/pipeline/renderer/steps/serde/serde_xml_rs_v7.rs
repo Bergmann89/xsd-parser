@@ -11,16 +11,20 @@ use crate::models::{
     schema::xs::Use,
 };
 
-use super::super::super::{Context, DataTypeVariant, RenderStep};
+use super::super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::super::{format_traits, render_trait_impls};
 use super::{get_derive, get_dyn_type_traits};
 
 /// Implements a [`RenderStep`] that renders rust types of the types defined in
 /// the schema with `serde-xml-rs <= 0.7` support.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SerdeXmlRsV7TypesRenderStep;
 
 impl RenderStep for SerdeXmlRsV7TypesRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::Types
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) => (),

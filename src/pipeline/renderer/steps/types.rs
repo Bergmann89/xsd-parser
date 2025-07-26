@@ -8,14 +8,18 @@ use crate::models::data::{
     UnionData, UnionTypeVariant,
 };
 
-use super::super::{Context, DataTypeVariant, RenderStep};
+use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::{format_traits, get_derive, get_dyn_type_traits, render_trait_impls};
 
 /// Implements a [`RenderStep`] that renders the actual rust types of the types defined in the schema.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct TypesRenderStep;
 
 impl RenderStep for TypesRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::Types
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),

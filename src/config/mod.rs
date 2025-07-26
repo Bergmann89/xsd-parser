@@ -12,7 +12,6 @@ pub use crate::models::{
     Ident, IdentType, Name,
 };
 
-use crate::models::schema::Schemas;
 use crate::InterpreterError;
 
 pub use self::generator::{
@@ -22,9 +21,10 @@ pub use self::interpreter::{InterpreterConfig, InterpreterFlags};
 pub use self::optimizer::{OptimizerConfig, OptimizerFlags};
 pub use self::parser::{ParserConfig, ParserFlags, Resolver, Schema};
 pub use self::renderer::{
-    CustomRenderStep, CustomRenderStepImpl, DynTypeTraits, RenderStep, RendererConfig,
-    RendererFlags, SerdeXmlRsVersion,
+    DynTypeTraits, RenderStep, RenderStepConfig, RendererConfig, RendererFlags, SerdeXmlRsVersion,
 };
+
+use crate::models::schema::Schemas;
 
 /// Configuration structure for the [`generate`](super::generate) method.
 #[must_use]
@@ -47,6 +47,25 @@ pub struct Config {
 }
 
 impl Config {
+    /// Adds the passed `schema` to the list of schemas to parse.
+    pub fn with_schema(mut self, schema: Schema) -> Self {
+        self.parser.schemas.push(schema);
+
+        self
+    }
+
+    /// Adds the passed `schemas` to the list of schemas to parse.
+    pub fn with_schemas<I>(mut self, schemas: I) -> Self
+    where
+        I: IntoIterator<Item = Schema>,
+    {
+        for schema in schemas {
+            self = self.with_schema(schema);
+        }
+
+        self
+    }
+
     /// Set parser flags to the config.
     pub fn set_parser_flags(mut self, flags: ParserFlags) -> Self {
         self.parser.flags = flags;
@@ -177,9 +196,31 @@ impl Config {
     ///
     /// If the same type of renderer was already added,
     /// it is replaced by the new one.
-    pub fn with_render_step(mut self, step: RenderStep) -> Self {
-        if let Some(index) = self.renderer.steps.iter().position(|x| x.is_same(&step)) {
-            self.renderer.steps[index] = step;
+    pub fn with_render_step<T>(mut self, step: T) -> Self
+    where
+        T: RenderStepConfig + 'static,
+    {
+        let step = Box::new(step);
+        let mut index = 0;
+        let mut position = None;
+
+        // Find the position to place the new step and remove any other mutual exclusive step
+        self.renderer.steps.retain(|x| {
+            let mut remove = x.is_mutual_exclusive_to(&*step) || step.is_mutual_exclusive_to(&**x);
+
+            if remove && position.is_none() {
+                remove = false;
+                position = Some(index);
+            }
+
+            index += 1;
+
+            !remove
+        });
+
+        // Insert at the found position or append
+        if let Some(pos) = position {
+            self.renderer.steps[pos] = step;
         } else {
             self.renderer.steps.push(step);
         }
@@ -192,7 +233,8 @@ impl Config {
     /// See [`with_render_step`](Self::with_render_step) for details.
     pub fn with_render_steps<I>(mut self, steps: I) -> Self
     where
-        I: IntoIterator<Item = RenderStep>,
+        I: IntoIterator,
+        I::Item: RenderStepConfig + 'static,
     {
         for step in steps {
             self = self.with_render_step(step);

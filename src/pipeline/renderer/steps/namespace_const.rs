@@ -1,9 +1,7 @@
 use proc_macro2::Literal;
 use quote::quote;
 
-use crate::pipeline::renderer::Context;
-
-use super::super::{MetaData, Module, RenderStep};
+use super::super::{Context, MetaData, Module, RenderStep, RenderStepType};
 
 /// Implements a [`RenderStep`] that renders constants for the different namespaces
 /// used in the schema.
@@ -13,6 +11,10 @@ pub struct NamespaceConstantsRenderStep {
 }
 
 impl RenderStep for NamespaceConstantsRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn initialize(&mut self, meta: &mut MetaData<'_>) {
         self.using_added = meta.types.meta.types.modules.is_empty();
     }

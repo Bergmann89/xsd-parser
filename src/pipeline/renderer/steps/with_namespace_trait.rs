@@ -6,14 +6,18 @@ use crate::models::data::{
     UnionData,
 };
 
-use super::super::{Context, DataTypeVariant, RenderStep};
+use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 
 /// Implements a [`RenderStep`] that renders the [`WithNamespace`](crate::WithNamespace)
 /// trait for each type defined in the schema.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct WithNamespaceTraitRenderStep;
 
 impl RenderStep for WithNamespaceTraitRenderStep {
+    fn render_step_type(&self) -> RenderStepType {
+        RenderStepType::ExtraImpls
+    }
+
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
