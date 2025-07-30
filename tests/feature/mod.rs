@@ -21,6 +21,7 @@ mod extension_base_two_files;
 mod extension_simple_content;
 mod extra_derive;
 mod globally_allowed_attribute;
+mod include_target_namespace;
 mod list;
 mod mixed_content;
 mod mixed_content_groups;
