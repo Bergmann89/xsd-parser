@@ -38,6 +38,7 @@ use crate::models::schema::{
     xs::{Import, Include, Schema, SchemaContent},
     Namespace, NamespacePrefix, Schemas,
 };
+use crate::pipeline::parser::resolver::ResolveRequestType;
 use crate::quick_xml::{
     DeserializeSync, Error as QuickXmlError, IoReader, SliceReader, XmlReader, XmlReaderSync,
 };
@@ -261,7 +262,7 @@ where
     /// parsed.
     #[instrument(err, level = "trace", skip(self))]
     pub fn add_schema_from_url(mut self, url: Url) -> Result<Self, Error<TResolver::Error>> {
-        let req = ResolveRequest::new(url);
+        let req = ResolveRequest::new(url, ResolveRequestType::UserDefined);
 
         self.resolve_location(req)?;
         self.resolve_pending()?;
@@ -298,7 +299,16 @@ where
         let reader = SchemaReader::new(reader);
         let mut reader = reader.with_error_info();
 
-        let schema = Schema::deserialize(&mut reader)?;
+        let mut schema = Schema::deserialize(&mut reader)?;
+
+        if schema.target_namespace.is_none()
+            && ResolveRequestType::IncludeRequest == req.request_type
+        {
+            if let Some(current_ns) = req.current_ns {
+                let inherited_ns = current_ns.to_string();
+                schema.target_namespace = Some(inherited_ns);
+            }
+        }
 
         let reader = reader.into_inner();
 
@@ -415,7 +425,7 @@ fn import_req(
 ) -> Option<ResolveRequest> {
     let location = import.schema_location.as_ref()?;
 
-    let mut req = ResolveRequest::new(location);
+    let mut req = ResolveRequest::new(location, ResolveRequestType::ImportRequest);
 
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);
@@ -437,7 +447,7 @@ fn include_req(
     current_ns: Option<Namespace>,
     current_location: Option<&Url>,
 ) -> ResolveRequest {
-    let mut req = ResolveRequest::new(&include.schema_location);
+    let mut req = ResolveRequest::new(&include.schema_location, ResolveRequestType::IncludeRequest);
 
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);

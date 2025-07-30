@@ -60,17 +60,34 @@ pub struct ResolveRequest {
 
     /// Namespace of the current processed schema.
     pub current_ns: Option<Namespace>,
+
+    /// Indicates wether the request was initiated
+    /// by the user, an import or an include.
+    pub request_type: ResolveRequestType,
+}
+
+/// Distinction of included vs imported schemas
+#[derive(Default, Debug, Clone, Copy, Eq, PartialEq)]
+pub enum ResolveRequestType {
+    /// Schema was added directly by the user
+    #[default]
+    UserDefined,
+    /// Schema has been included
+    IncludeRequest,
+    /// Schema has been imported
+    ImportRequest,
 }
 
 impl ResolveRequest {
-    /// Create a new [`ResolveRequest`] instance from the passed `requested_location`.
-    pub fn new<X: Into<String>>(requested_location: X) -> Self {
+    /// Create a new [`ResolveRequest`] instance from the passed `requested_location` and `request_type`.
+    pub fn new<X: Into<String>>(requested_location: X, request_type: ResolveRequestType) -> Self {
         Self {
             requested_location: requested_location.into(),
             requested_ns: None,
 
             current_location: None,
             current_ns: None,
+            request_type,
         }
     }
 
