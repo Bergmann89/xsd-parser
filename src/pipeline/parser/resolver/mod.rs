@@ -60,6 +60,18 @@ pub struct ResolveRequest {
 
     /// Namespace of the current processed schema.
     pub current_ns: Option<Namespace>,
+
+    /// Import or Include
+    pub request_type: Option<ResolveRequestType>,
+}
+
+/// Distinction of included vs imported schemas
+#[derive(Debug)]
+pub enum ResolveRequestType {
+    /// Schema has been included
+    IncludeRequest,
+    /// Schema has been imported
+    ImportRequest,
 }
 
 impl ResolveRequest {
@@ -71,6 +83,7 @@ impl ResolveRequest {
 
             current_location: None,
             current_ns: None,
+            request_type: None,
         }
     }
 
@@ -91,6 +104,13 @@ impl ResolveRequest {
     /// Set the `current_location` field of this [`ResolveRequest`] instance.
     pub fn current_location<X: Into<Url>>(mut self, location: X) -> Self {
         self.current_location = Some(location.into());
+
+        self
+    }
+
+    /// Set the `request_type` field of this [`ResolveRequest`] instance.
+    pub fn request_type(mut self, req_type: ResolveRequestType) -> Self {
+        self.request_type = Some(req_type);
 
         self
     }
