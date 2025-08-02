@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns="http://example.com" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://example.com">
+
+    <xs:include schemaLocation="include.xsd"/>
+    
+    <xs:element name="EnumType" >
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="EnumList">
+                    <xs:attribute name="refname">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:token">
+                                <xs:enumeration value="EnumType"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

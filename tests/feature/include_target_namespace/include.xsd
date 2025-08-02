@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:simpleType name="EnumList">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="01">
+			</xs:enumeration>
+			<xs:enumeration value="02">
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

@@ -38,6 +38,7 @@ use crate::models::schema::{
     xs::{Import, Include, Schema, SchemaContent},
     Namespace, NamespacePrefix, Schemas,
 };
+use crate::pipeline::parser::resolver::ResolveRequestType;
 use crate::quick_xml::{
     DeserializeSync, Error as QuickXmlError, IoReader, SliceReader, XmlReader, XmlReaderSync,
 };
@@ -298,7 +299,14 @@ where
         let reader = SchemaReader::new(reader);
         let mut reader = reader.with_error_info();
 
-        let schema = Schema::deserialize(&mut reader)?;
+        let mut schema = Schema::deserialize(&mut reader)?;
+
+        if let Some(ResolveRequestType::IncludeRequest) = req.request_type {
+            if let Some(current_ns) = req.current_ns {
+                let inherited_ns = current_ns.to_string();
+                schema.target_namespace = Some(inherited_ns);
+            }
+        }
 
         let reader = reader.into_inner();
 
@@ -417,6 +425,8 @@ fn import_req(
 
     let mut req = ResolveRequest::new(location);
 
+    req = req.request_type(ResolveRequestType::ImportRequest);
+
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);
     }
@@ -438,6 +448,8 @@ fn include_req(
     current_location: Option<&Url>,
 ) -> ResolveRequest {
     let mut req = ResolveRequest::new(&include.schema_location);
+
+    req = req.request_type(ResolveRequestType::IncludeRequest);
 
     if let Some(ns) = current_ns {
         req = req.current_ns(ns);
