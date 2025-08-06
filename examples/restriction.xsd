@@ -1,0 +1,12 @@
+<xs:schema targetNamespace="http://www.example.com/signtype" 
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xml:lang="en">
+
+  <simpleType name="SignType">
+    <restriction base="xs:string">
+        <enumeration value="-"/>
+        <enumeration value="+"/>
+    </restriction>
+  </simpleType>
+
+</xs:schema>
