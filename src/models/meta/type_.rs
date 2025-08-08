@@ -8,7 +8,7 @@ use crate::models::schema::xs::FormChoiceType;
 
 use super::{
     ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
-    TypeEq, UnionMeta,
+    SimpleMeta, TypeEq, UnionMeta,
 };
 
 /// Represents a fully interpreted type from an XML schema.
@@ -63,6 +63,9 @@ pub enum MetaTypeVariant {
 
     /// Represents a complex type
     ComplexType(ComplexMeta),
+
+    /// Represents a simple type with additional restrictions
+    SimpleType(SimpleMeta),
 }
 
 /// Union that defined the build in types of the rust language or
@@ -162,6 +165,7 @@ impl TypeEq for MetaType {
             Choice(x) => x.type_hash(hasher, types),
             Sequence(x) => x.type_hash(hasher, types),
             ComplexType(x) => x.type_hash(hasher, types),
+            SimpleType(x) => x.type_hash(hasher, types),
         }
     }
 
@@ -183,6 +187,7 @@ impl TypeEq for MetaType {
             (Choice(x), Choice(y)) => x.type_eq(y, types),
             (Sequence(x), Sequence(y)) => x.type_eq(y, types),
             (ComplexType(x), ComplexType(y)) => x.type_eq(y, types),
+            (SimpleType(x), SimpleType(y)) => x.type_eq(y, types),
             (_, _) => false,
         }
     }

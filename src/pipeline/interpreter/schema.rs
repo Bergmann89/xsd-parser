@@ -128,7 +128,8 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::BuildIn(_)
                 | MetaTypeVariant::Custom(_)
                 | MetaTypeVariant::Union(_)
-                | MetaTypeVariant::Reference(_)),
+                | MetaTypeVariant::Reference(_)
+                | MetaTypeVariant::SimpleType(_)),
             ) => Ok(ty),
         }
     }
@@ -154,7 +155,8 @@ impl SchemaInterpreter<'_, '_> {
                 | MetaTypeVariant::BuildIn(_)
                 | MetaTypeVariant::Custom(_)
                 | MetaTypeVariant::Union(_)
-                | MetaTypeVariant::Reference(_),
+                | MetaTypeVariant::Reference(_)
+                | MetaTypeVariant::SimpleType(_),
             ) => Err(Error::UnknownType(ident.clone())),
             Some(
                 ty @ (MetaTypeVariant::ComplexType(_)

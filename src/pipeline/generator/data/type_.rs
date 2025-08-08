@@ -28,6 +28,7 @@ impl<'types> DataType<'types> {
             M::Choice(x) => D::Complex(ComplexData::new_choice(x, ctx, meta.form())?),
             M::Sequence(x) => D::Complex(ComplexData::new_sequence(x, ctx, meta.form())?),
             M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx, meta.form())?),
+            M::SimpleType(_) => unimplemented!(),
         };
 
         Ok(Self {

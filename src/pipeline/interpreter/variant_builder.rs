@@ -928,6 +928,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
+        dbg!(&self.variant);
+
         match ty {
             Facet::Enumeration(x) => self.apply_enumeration(x)?,
             x => tracing::warn!("Unknown facet: {x:#?}"),
@@ -1238,6 +1240,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             Append,
         }
 
+        #[allow(clippy::large_enum_variant)]
         enum Output {
             Type(MetaType),
             Cached(Ident),
