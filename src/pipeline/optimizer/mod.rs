@@ -32,6 +32,8 @@ use crate::models::{meta::MetaTypes, Ident};
 
 use self::misc::{BaseMap, TypedefMap};
 
+pub use self::unrestricted_base::UnrestrictedBaseFlags;
+
 /// Optimizes a [`MetaTypes`] structure by reducing redundant or verbose type definitions.
 ///
 /// The [`Optimizer`] performs various semantic transformations on a type graph,

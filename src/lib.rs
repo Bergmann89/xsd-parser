@@ -61,7 +61,10 @@ use self::config::{
     OptimizerFlags, ParserConfig, ParserFlags, RendererConfig, Resolver, Schema,
 };
 use self::macros::{assert, assert_eq, unreachable};
-use self::pipeline::parser::resolver::{FileResolver, ManyResolver};
+use self::pipeline::{
+    optimizer::UnrestrictedBaseFlags,
+    parser::resolver::{FileResolver, ManyResolver},
+};
 
 /// Generates rust code from a XML schema using the passed `config`.
 ///
@@ -217,6 +220,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
     tracing::info!("Optimize Types");
 
     let mut optimizer = Optimizer::new(types);
+    let mut unrestricted_base = UnrestrictedBaseFlags::empty();
 
     macro_rules! exec {
         ($flag:ident, $method:ident) => {
@@ -226,7 +230,23 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
         };
     }
 
-    exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
+    macro_rules! unrestricted_base {
+        ($a:ident, $b:ident) => {
+            if config.flags.contains(OptimizerFlags::$a) {
+                unrestricted_base |= UnrestrictedBaseFlags::$b;
+            }
+        };
+    }
+
+    unrestricted_base!(USE_UNRESTRICTED_BASE_TYPE_COMPLEX, COMPLEX);
+    unrestricted_base!(USE_UNRESTRICTED_BASE_TYPE_SIMPLE, SIMPLE);
+    unrestricted_base!(USE_UNRESTRICTED_BASE_TYPE_ENUM, ENUM);
+    unrestricted_base!(USE_UNRESTRICTED_BASE_TYPE_UNION, UNION);
+
+    if !unrestricted_base.is_empty() {
+        optimizer = optimizer.use_unrestricted_base_type(unrestricted_base);
+    }
+
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
     exec!(

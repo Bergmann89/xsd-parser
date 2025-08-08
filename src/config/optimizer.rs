@@ -19,7 +19,8 @@ impl Default for OptimizerConfig {
             flags: OptimizerFlags::REMOVE_EMPTY_ENUM_VARIANTS
                 | OptimizerFlags::REMOVE_EMPTY_ENUMS
                 | OptimizerFlags::REMOVE_DUPLICATE_UNION_VARIANTS
-                | OptimizerFlags::REMOVE_EMPTY_UNIONS,
+                | OptimizerFlags::REMOVE_EMPTY_UNIONS
+                | OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE,
         }
     }
 }
@@ -51,37 +52,53 @@ bitflags! {
         /// Whether to use the unrestricted base type of a type or not.
         ///
         /// See [`use_unrestricted_base_type`](crate::Optimizer::use_unrestricted_base_type) for details.
-        const USE_UNRESTRICTED_BASE_TYPE = 1 << 4;
+        const USE_UNRESTRICTED_BASE_TYPE =
+            Self::USE_UNRESTRICTED_BASE_TYPE_COMPLEX.bits()
+            | Self::USE_UNRESTRICTED_BASE_TYPE_SIMPLE.bits()
+            | Self::USE_UNRESTRICTED_BASE_TYPE_ENUM.bits()
+            | Self::USE_UNRESTRICTED_BASE_TYPE_UNION.bits();
+
+        /// Like [`USE_UNRESTRICTED_BASE_TYPE`](Self::USE_UNRESTRICTED_BASE_TYPE) but for complex types only.
+        const USE_UNRESTRICTED_BASE_TYPE_COMPLEX = 1 << 4;
+
+        /// Like [`USE_UNRESTRICTED_BASE_TYPE`](Self::USE_UNRESTRICTED_BASE_TYPE) but for simple types only.
+        const USE_UNRESTRICTED_BASE_TYPE_SIMPLE = 1 << 5;
+
+        /// Like [`USE_UNRESTRICTED_BASE_TYPE`](Self::USE_UNRESTRICTED_BASE_TYPE) but for enum types only.
+        const USE_UNRESTRICTED_BASE_TYPE_ENUM = 1 << 6;
+
+        /// Like [`USE_UNRESTRICTED_BASE_TYPE`](Self::USE_UNRESTRICTED_BASE_TYPE) but for union types only.
+        const USE_UNRESTRICTED_BASE_TYPE_UNION = 1 << 7;
 
         /// Whether to convert dynamic types to choices or not.
         ///
         /// See [`convert_dynamic_to_choice`](crate::Optimizer::convert_dynamic_to_choice) for details.
-        const CONVERT_DYNAMIC_TO_CHOICE = 1 << 5;
+        const CONVERT_DYNAMIC_TO_CHOICE = 1 << 8;
 
         /// Whether to flatten the content of complex types or not.
         ///
         /// See [`flatten_complex_types`](crate::Optimizer::flatten_complex_types) for details.
-        const FLATTEN_COMPLEX_TYPES = 1 << 6;
+        const FLATTEN_COMPLEX_TYPES = 1 << 9;
 
         /// Whether to flatten unions or not.
         ///
         /// See [`flatten_unions`](crate::Optimizer::flatten_unions) for details.
-        const FLATTEN_UNIONS = 1 << 7;
+        const FLATTEN_UNIONS = 1 << 10;
 
         /// Whether to merge enumerations and unions or not.
         ///
         /// See [`merge_enum_unions`](crate::Optimizer::merge_enum_unions) for details.
-        const MERGE_ENUM_UNIONS = 1 << 8;
+        const MERGE_ENUM_UNIONS = 1 << 11;
 
         /// Whether to resolve type definitions or not.
         ///
         /// See [`resolve_typedefs`](crate::Optimizer::resolve_typedefs) for details.
-        const RESOLVE_TYPEDEFS = 1 << 9;
+        const RESOLVE_TYPEDEFS = 1 << 12;
 
         /// Whether to remove duplicate types or not.
         ///
         /// See [`remove_duplicates`](crate::Optimizer::remove_duplicates) for details.
-        const REMOVE_DUPLICATES = 1 << 10;
+        const REMOVE_DUPLICATES = 1 << 13;
 
         /// Group that contains all necessary optimization that should be applied
         /// if code with [`serde`] support should be rendered.
@@ -92,11 +109,11 @@ bitflags! {
         /// Wether to merge the cardinality of a complex choice type or not.
         ///
         /// See [`merge_choice_cardinalities`](crate::Optimizer::merge_choice_cardinalities) for details.
-        const MERGE_CHOICE_CARDINALITIES = 1 << 11;
+        const MERGE_CHOICE_CARDINALITIES = 1 << 14;
 
         /// Wether to simplify complex mixed types or not.
         ///
         /// See [`simplify_mixed_types`](crate::Optimizer::simplify_mixed_types) for details.
-        const SIMPLIFY_MIXED_TYPES = 1 << 12;
+        const SIMPLIFY_MIXED_TYPES = 1 << 15;
     }
 }

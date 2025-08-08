@@ -1,6 +1,26 @@
+use bitflags::bitflags;
+
 use crate::models::meta::{MetaTypeVariant, ReferenceMeta};
 
 use super::{get_bases, Optimizer};
+
+bitflags! {
+    /// Flags to control the [`Optimizer::use_unrestricted_base_type`].
+    #[derive(Debug, Clone, Copy)]
+    pub struct UnrestrictedBaseFlags: u32 {
+        /// Use the unrestricted base type for complex types.
+        const COMPLEX = 1 << 0;
+
+        /// Use the unrestricted base type for simple types.
+        const SIMPLE = 1 << 1;
+
+        /// Use the unrestricted base type for enum types.
+        const ENUM = 1 << 2;
+
+        /// Use the unrestricted base type for union types.
+        const UNION = 1 << 3;
+    }
+}
 
 impl Optimizer {
     /// This will use the unrestricted base type instead the restricted version
@@ -28,24 +48,26 @@ impl Optimizer {
     /// ```rust
     #[doc = include_str!("../../../tests/optimizer/expected1/use_unrestricted_base_type.rs")]
     /// ```
-    pub fn use_unrestricted_base_type(mut self) -> Self {
+    pub fn use_unrestricted_base_type(mut self, flags: UnrestrictedBaseFlags) -> Self {
         tracing::debug!("use_unrestricted_base_type");
 
         let bases = get_bases!(self);
 
         for (ident, type_) in &mut self.types.items {
-            match &type_.variant {
-                MetaTypeVariant::ComplexType(_)
-                | MetaTypeVariant::SimpleType(_)
-                | MetaTypeVariant::Enumeration(_)
-                | MetaTypeVariant::Union(_) => {
-                    let base = bases.get_unrestricted(ident).clone();
-                    if *ident != base {
-                        self.typedefs = None;
-                        type_.variant = MetaTypeVariant::Reference(ReferenceMeta::new(base));
-                    }
+            let replace = match &type_.variant {
+                MetaTypeVariant::ComplexType(_) => flags.intersects(UnrestrictedBaseFlags::COMPLEX),
+                MetaTypeVariant::SimpleType(_) => flags.intersects(UnrestrictedBaseFlags::SIMPLE),
+                MetaTypeVariant::Enumeration(_) => flags.intersects(UnrestrictedBaseFlags::ENUM),
+                MetaTypeVariant::Union(_) => flags.intersects(UnrestrictedBaseFlags::UNION),
+                _ => false,
+            };
+
+            if replace {
+                let base = bases.get_unrestricted(ident).clone();
+                if *ident != base {
+                    self.typedefs = None;
+                    type_.variant = MetaTypeVariant::Reference(ReferenceMeta::new(base));
                 }
-                _ => (),
             }
         }
 
