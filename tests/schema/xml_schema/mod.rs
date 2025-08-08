@@ -9,7 +9,11 @@ fn config() -> Config {
     Config::default()
         .with_quick_xml_deserialize()
         .with_parser_flags(ParserFlags::all())
-        .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::SIMPLIFY_MIXED_TYPES)
+        .with_optimizer_flags(
+            OptimizerFlags::all()
+                - OptimizerFlags::SIMPLIFY_MIXED_TYPES
+                - OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE,
+        )
         .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::USE_MODULES)
         .with_renderer_flags(RendererFlags::RENDER_DOCS)
         .with_any_support(

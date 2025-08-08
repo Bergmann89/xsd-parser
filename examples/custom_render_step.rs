@@ -122,6 +122,7 @@ impl RenderStep for CustomRenderStep {
             DataTypeVariant::Dynamic(ty) => self.render_dynamic(ty, ctx),
             DataTypeVariant::Reference(ty) => self.render_reference(ty, ctx),
             DataTypeVariant::Enumeration(ty) => self.render_enumeration(ty, ctx),
+            DataTypeVariant::Simple(_) => unimplemented!(), // TODO
             DataTypeVariant::Complex(ty) => self.render_complex(ty, ctx),
         }
     }
