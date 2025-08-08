@@ -30,6 +30,9 @@ impl BaseMap {
                         ret.insert(ident.clone(), ei.base.clone());
                     }
                 }
+                MetaTypeVariant::SimpleType(si) => {
+                    ret.insert(ident.clone(), Base::Restriction(si.base.clone()));
+                }
                 MetaTypeVariant::ComplexType(ci) => {
                     if matches!(
                         ci.base.as_ident().and_then(|base| types.get_variant(base)),

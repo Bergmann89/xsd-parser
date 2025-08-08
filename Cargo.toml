@@ -32,6 +32,7 @@ parking_lot = "0.12"
 proc-macro2 = "1.0"
 quick-xml = { version = "0.38", features = [ "async-tokio", "encoding", "serialize" ] }
 quote = "1.0"
+regex = "1.11"
 reqwest = { version = "0.12", features = [ "blocking" ], optional = true }
 serde = { version = "1.0", features = [ "derive" ] }
 smallvec = "1.13"

@@ -112,6 +112,10 @@ pub enum Kind {
     #[error("Invalid data: `{0}`")]
     InvalidData(RawByteStr),
 
+    /// Invalid value.
+    #[error("Invalid value `{0}`: {1}")]
+    InvalidValue(RawByteStr, ValidateError),
+
     /// Missing content.
     ///
     /// The element was expected to have some content, but it haven't.
@@ -180,6 +184,58 @@ pub enum Kind {
     UnexpectedEof,
 }
 
+/// Error raised by different XML value validation functions.
+#[derive(Debug, Error)]
+pub enum ValidateError {
+    /// Value is not a valid decimal.
+    #[error("Value is not a valid decimal!")]
+    InvalidDecimalValue,
+
+    /// The string value is too short.
+    #[error("Value is shorter then {0} characters!")]
+    MinLength(usize),
+
+    /// The string value is too large.
+    #[error("Value is longer than {0} characters!")]
+    MaxLength(usize),
+
+    /// The string value does not match the expected pattern.
+    #[error("Value does not match the expected pattern `{0}`!")]
+    Pattern(&'static str),
+
+    /// The decimal value has too much total digits.
+    #[error("Value has more then {0} total digits!")]
+    TotalDigits(usize),
+
+    /// The decimal value has too much fraction digits.
+    #[error("Value has more then {0} fraction digits!")]
+    FractionDigits(usize),
+
+    /// The decimal value is less than the expected range.
+    ///
+    /// Range is defined by `xs:minInclusive`.
+    #[error("Value is less then `{0}`!")]
+    LessThan(&'static str),
+
+    /// The decimal value is less or equal than the expected range.
+    ///
+    /// Range is defined by `xs:minExclusive`.
+    #[error("Value is less or equal then `{0}`!")]
+    LessEqualThan(&'static str),
+
+    /// The decimal value is greater than the expected range.
+    ///
+    /// Range is defined by `xs:maxInclusive`.
+    #[error("Value is greater then `{0}`!")]
+    GraterThan(&'static str),
+
+    /// The decimal value is greater or equal than the expected range.
+    ///
+    /// Range is defined by `xs:maxExclusive`.
+    #[error("Value is greater equal then `{0}`!")]
+    GraterEqualThan(&'static str),
+}
+
 impl Error {
     /// Create a new error that uses [`Kind::Custom`] to store the passed `error`.
     pub fn custom<E: StdError + Send + Sync + 'static>(error: E) -> Self {
@@ -216,6 +272,12 @@ where
 {
     fn from(error: E) -> Self {
         Self::new(error)
+    }
+}
+
+impl<'a> From<(&'a [u8], ValidateError)> for Error {
+    fn from((value, error): (&'a [u8], ValidateError)) -> Self {
+        Self::new(Kind::InvalidValue(RawByteStr::from_slice(value), error))
     }
 }
 

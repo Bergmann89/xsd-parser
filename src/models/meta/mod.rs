@@ -14,6 +14,7 @@ mod element;
 mod enumeration;
 mod name_builder;
 mod reference;
+mod simple;
 mod type_;
 mod type_eq;
 mod types;
@@ -28,6 +29,7 @@ pub use self::element::{AnyMeta, ElementMeta, ElementMetaVariant, ElementMode, E
 pub use self::enumeration::{EnumerationMeta, EnumerationMetaVariant, EnumerationMetaVariants};
 pub use self::name_builder::{NameBuilder, NameFallback};
 pub use self::reference::ReferenceMeta;
+pub use self::simple::{SimpleMeta, WhiteSpace};
 pub use self::type_::{BuildInMeta, MetaType, MetaTypeVariant};
 pub use self::type_eq::TypeEq;
 pub use self::types::{MetaTypes, ModuleMeta};

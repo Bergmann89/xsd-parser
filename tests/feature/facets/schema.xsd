@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:tns="http://example.com"
+           targetNamespace="http://example.com"
+           elementFormDefault="unqualified">
+
+    <xs:simpleType name="NegativeDecimal">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="-999999999.99"/>
+            <xs:maxExclusive value="0"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PositiveDecimal">
+        <xs:restriction base="xs:decimal">
+            <xs:minExclusive value="0"/>
+            <xs:maxInclusive value="999999999.99"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="RestrictedString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="5"/>
+            <xs:maxLength value="10"/>
+            <xs:pattern value="[A-Z][a-z]{4,9}"/>
+            <xs:whiteSpace value="collapse"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="NegativeDecimal" type="tns:NegativeDecimal" />
+                <xs:element name="PositiveDecimal" type="tns:PositiveDecimal" />
+                <xs:element name="RestrictedString" type="tns:RestrictedString" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

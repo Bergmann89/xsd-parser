@@ -24,6 +24,7 @@ impl ConfigEx for Config {
         let mut config = Config::default();
 
         config.optimizer.flags |= OptimizerFlags::RESOLVE_TYPEDEFS;
+        config.optimizer.flags |= OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE;
 
         config.generator.generate = Generate::Named;
         config.generator.type_postfix.element_type = "Type".into();

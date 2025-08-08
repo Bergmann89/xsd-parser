@@ -711,7 +711,7 @@ impl<'types> ComplexDataAttribute<'types> {
                 let default_value = meta
                     .default
                     .as_ref()
-                    .map(|default| ctx.get_default(current_module, default, type_))
+                    .map(|default| ctx.render_literal(current_module, default, type_))
                     .transpose()?;
 
                 (target_type, default_value)

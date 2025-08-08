@@ -22,7 +22,7 @@ impl RenderStep for DefaultsRenderStep {
     }
 }
 
-/* ComplexType */
+/* ComplexData */
 
 impl ComplexData<'_> {
     pub(crate) fn render_defaults(&self, ctx: &mut Context<'_, '_>) {

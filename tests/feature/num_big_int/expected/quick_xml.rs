@@ -14,13 +14,11 @@ pub mod tns {
     impl FooType {
         #[must_use]
         pub fn default_a_int() -> BigInt {
-            use core::str::FromStr;
-            num::BigInt::from_str("123").unwrap()
+            <num::BigInt as core::str::FromStr>::from_str("123").unwrap()
         }
         #[must_use]
         pub fn default_b_int() -> BigInt {
-            use core::str::FromStr;
-            num::BigInt::from_str("456").unwrap()
+            <num::BigInt as core::str::FromStr>::from_str("456").unwrap()
         }
     }
     impl WithSerializer for FooType {

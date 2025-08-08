@@ -3,7 +3,7 @@ use quote::quote;
 
 use crate::models::data::{
     ComplexData, ComplexDataEnum, ComplexDataStruct, DynamicData, EnumerationData, ReferenceData,
-    UnionData,
+    SimpleData, UnionData,
 };
 
 use super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
@@ -25,12 +25,13 @@ impl RenderStep for WithNamespaceTraitRenderStep {
             DataTypeVariant::Dynamic(x) => x.render_with_namespace_trait(ctx),
             DataTypeVariant::Reference(x) => x.render_with_namespace_trait(ctx),
             DataTypeVariant::Enumeration(x) => x.render_with_namespace_trait(ctx),
+            DataTypeVariant::Simple(x) => x.render_with_namespace_trait(ctx),
             DataTypeVariant::Complex(x) => x.render_with_namespace_trait(ctx),
         }
     }
 }
 
-/* UnionType */
+/* UnionData */
 
 impl UnionData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
@@ -40,7 +41,7 @@ impl UnionData<'_> {
     }
 }
 
-/* DynamicType */
+/* DynamicData */
 
 impl DynamicData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
@@ -50,7 +51,7 @@ impl DynamicData<'_> {
     }
 }
 
-/* ReferenceType */
+/* ReferenceData */
 
 impl ReferenceData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
@@ -60,7 +61,7 @@ impl ReferenceData<'_> {
     }
 }
 
-/* EnumerationType */
+/* EnumerationData */
 
 impl EnumerationData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
@@ -70,7 +71,17 @@ impl EnumerationData<'_> {
     }
 }
 
-/* ComplexType */
+/* SimpleData */
+
+impl SimpleData<'_> {
+    pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {
+        if let Some(code) = render_trait_with_namespace(ctx, &self.type_ident) {
+            ctx.current_module().append(code);
+        }
+    }
+}
+
+/* ComplexData */
 
 impl ComplexData<'_> {
     pub(crate) fn render_with_namespace_trait(&self, ctx: &mut Context<'_, '_>) {

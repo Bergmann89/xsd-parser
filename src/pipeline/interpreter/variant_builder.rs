@@ -1,15 +1,16 @@
 use std::borrow::Cow;
 use std::collections::btree_map::Entry;
-use std::ops::{Deref, DerefMut};
+use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
 
 use tracing::instrument;
 
+use crate::models::meta::WhiteSpace;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
         ElementMetaVariant, ElementMode, ElementsMeta, EnumerationMetaVariant, MetaType,
-        MetaTypeVariant, ReferenceMeta, UnionMetaType,
+        MetaTypeVariant, ReferenceMeta, SimpleMeta, UnionMetaType,
     },
     schema::{
         xs::{
@@ -326,7 +327,11 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         if let Some(base) = base {
             match &mut self.variant {
-                Some(MetaTypeVariant::BuildIn(_) | MetaTypeVariant::Reference(_)) => (),
+                Some(
+                    MetaTypeVariant::BuildIn(_)
+                    | MetaTypeVariant::Reference(_)
+                    | MetaTypeVariant::SimpleType(_),
+                ) => (),
                 Some(MetaTypeVariant::Union(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::Enumeration(e)) => e.base = Base::Extension(base),
                 Some(MetaTypeVariant::ComplexType(e)) => e.base = Base::Extension(base),
@@ -930,6 +935,17 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     fn apply_facet(&mut self, ty: &Facet) -> Result<(), Error> {
         match ty {
             Facet::Enumeration(x) => self.apply_enumeration(x)?,
+            x @ (Facet::MinExclusive(_)
+            | Facet::MinInclusive(_)
+            | Facet::MaxExclusive(_)
+            | Facet::MaxInclusive(_)
+            | Facet::TotalDigits(_)
+            | Facet::FractionDigits(_)
+            | Facet::Length(_)
+            | Facet::MinLength(_)
+            | Facet::MaxLength(_)
+            | Facet::WhiteSpace(_)
+            | Facet::Pattern(_)) => self.apply_simple_type_facet(x)?,
             x => tracing::warn!("Unknown facet: {x:#?}"),
         }
 
@@ -937,13 +953,92 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
+    fn apply_simple_type_facet(&mut self, ty: &Facet) -> Result<(), Error> {
+        self.simple_content_builder(|builder| {
+            let sm = match &mut builder.variant {
+                Some(MetaTypeVariant::SimpleType(x)) => x,
+                Some(MetaTypeVariant::Reference(x)) => {
+                    let base = x.type_.clone();
+
+                    init_any!(builder, SimpleType, SimpleMeta::new(base), true)
+                }
+                Some(MetaTypeVariant::Enumeration(_)) => return Ok(()),
+                Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
+                None => crate::unreachable!("Type variant is not set yet"),
+            };
+
+            match ty {
+                Facet::MinExclusive(x) => sm.range.start = Bound::Excluded(x.value.clone()),
+                Facet::MinInclusive(x) => sm.range.start = Bound::Included(x.value.clone()),
+                Facet::MaxExclusive(x) => sm.range.end = Bound::Excluded(x.value.clone()),
+                Facet::MaxInclusive(x) => sm.range.end = Bound::Included(x.value.clone()),
+                Facet::TotalDigits(x) => {
+                    sm.total_digits = Some(
+                        x.value
+                            .parse()
+                            .map_err(|_| Error::InvalidFacet(ty.clone()))?,
+                    );
+                }
+                Facet::FractionDigits(x) => {
+                    sm.fraction_digits = Some(
+                        x.value
+                            .parse()
+                            .map_err(|_| Error::InvalidFacet(ty.clone()))?,
+                    );
+                }
+                Facet::Length(x) => {
+                    let len = x
+                        .value
+                        .parse()
+                        .map_err(|_| Error::InvalidFacet(ty.clone()))?;
+
+                    sm.min_length = Some(len);
+                    sm.max_length = Some(len);
+                }
+                Facet::MinLength(x) => {
+                    sm.min_length = Some(
+                        x.value
+                            .parse()
+                            .map_err(|_| Error::InvalidFacet(ty.clone()))?,
+                    );
+                }
+                Facet::MaxLength(x) => {
+                    sm.max_length = Some(
+                        x.value
+                            .parse()
+                            .map_err(|_| Error::InvalidFacet(ty.clone()))?,
+                    );
+                }
+                Facet::WhiteSpace(x) => {
+                    sm.whitespace = match x.value.to_ascii_lowercase().as_str() {
+                        "preserve" => WhiteSpace::Preserve,
+                        "replace" => WhiteSpace::Replace,
+                        "collapse" => WhiteSpace::Collapse,
+                        _ => return Err(Error::InvalidFacet(ty.clone())),
+                    }
+                }
+                Facet::Pattern(x) => sm.pattern = Some(x.value.clone()),
+                _ => crate::unreachable!("Not a valid facet for a simple type!"),
+            }
+
+            Ok(())
+        })
+    }
+
+    #[instrument(err, level = "trace", skip(self))]
     fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
+        dbg!(ty);
+
         let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())
             .with_type(IdentType::Enumeration);
 
         self.simple_content_builder(|builder| {
+            if matches!(&builder.variant, Some(MetaTypeVariant::SimpleType(_))) {
+                init_any!(builder, Enumeration);
+            }
+
             let ei = get_or_init_any!(builder, Enumeration);
 
             let var = ei
@@ -1238,6 +1333,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             Append,
         }
 
+        #[allow(clippy::large_enum_variant)]
         enum Output {
             Type(MetaType),
             Cached(Ident),
