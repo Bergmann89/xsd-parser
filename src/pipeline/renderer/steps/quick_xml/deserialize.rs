@@ -11,10 +11,13 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataEnum, ComplexDataStruct, DataTypeVariant, DerivedType, DynamicData,
-        EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, StructMode, UnionData,
-        UnionTypeVariant,
+        EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, StructMode,
+        UnionData, UnionTypeVariant,
     },
-    meta::{ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes},
+    meta::{
+        ComplexMeta, ElementMeta, ElementMetaVariant, ElementMode, MetaTypeVariant, MetaTypes,
+        WhiteSpace,
+    },
     schema::{xs::Use, MaxOccurs},
     Ident,
 };
@@ -54,6 +57,7 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
             DataTypeVariant::Dynamic(x) => x.render_deserializer(ctx),
             DataTypeVariant::Reference(x) => x.render_deserializer(ctx),
             DataTypeVariant::Enumeration(x) => x.render_deserializer(ctx),
+            DataTypeVariant::Simple(x) => x.render_deserializer(ctx),
             DataTypeVariant::Complex(x) => x.render_deserializer(ctx),
         }
 
@@ -61,7 +65,7 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
     }
 }
 
-/* UnionType */
+/* UnionData */
 
 impl UnionData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
@@ -123,7 +127,7 @@ impl UnionTypeVariant<'_> {
     }
 }
 
-/* DynamicType */
+/* DynamicData */
 
 impl DynamicData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
@@ -390,7 +394,7 @@ impl DerivedType {
     }
 }
 
-/* ReferenceType */
+/* ReferenceData */
 
 impl ReferenceData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
@@ -489,7 +493,7 @@ impl ReferenceData<'_> {
     }
 }
 
-/* EnumerationType */
+/* EnumerationData */
 
 impl EnumerationData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
@@ -578,7 +582,100 @@ impl EnumerationTypeVariant<'_> {
     }
 }
 
-/* ComplexType */
+impl SimpleData<'_> {
+    pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            target_type,
+            ..
+        } = self;
+
+        let mut need_str = false;
+        let target_type = ctx.resolve_type_for_module(target_type);
+
+        ctx.add_usings([
+            "xsd_parser::quick_xml::ErrorKind",
+            "xsd_parser::quick_xml::DeserializeBytes",
+            "xsd_parser::quick_xml::DeserializeReader",
+        ]);
+
+        /* String Validation */
+
+        let validate_str = self.need_string_validation().then(|| {
+            need_str = true;
+
+            quote! {
+                Self::validate_str(s).map_err(|error| (bytes, error))?;
+            }
+        });
+
+        /* Whitespace */
+
+        let whitespace = match &self.meta.whitespace {
+            WhiteSpace::Preserve => None,
+            WhiteSpace::Replace => {
+                need_str = true;
+
+                ctx.add_usings(["xsd_parser::quick_xml::whitespace_replace"]);
+
+                Some(quote! {
+                    let buffer = whitespace_replace(s);
+                    let s = buffer.as_str();
+                })
+            }
+            WhiteSpace::Collapse => {
+                need_str = true;
+
+                ctx.add_usings(["xsd_parser::quick_xml::whitespace_collapse"]);
+
+                Some(quote! {
+                    let buffer = whitespace_collapse(s);
+                    let s = buffer.trim();
+                })
+            }
+        };
+
+        /* Actual Rendering */
+
+        let deserialize_inner = if need_str {
+            quote!(#target_type::deserialize_str(reader, s))
+        } else {
+            quote!(#target_type::deserialize_bytes(reader, bytes))
+        };
+
+        let need_str = need_str.then(|| {
+            ctx.add_usings(["std::str::from_utf8"]);
+
+            quote! {
+                let s = from_utf8(bytes).map_err(Error::from)?;
+            }
+        });
+
+        let code = quote! {
+            impl DeserializeBytes for #type_ident {
+                fn deserialize_bytes<R>(
+                    reader: &R,
+                    bytes: &[u8],
+                ) -> Result<Self, Error>
+                where
+                    R: DeserializeReader
+                {
+                    #need_str
+                    #whitespace
+                    #validate_str
+
+                    let inner = #deserialize_inner?;
+
+                    Ok(Self::new(inner).map_err(|error| (bytes, error))?)
+                }
+            }
+        };
+
+        ctx.current_module().append(code);
+    }
+}
+
+/* ComplexData */
 
 impl ComplexData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {

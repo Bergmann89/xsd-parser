@@ -36,6 +36,7 @@ impl Optimizer {
         for (ident, type_) in &mut self.types.items {
             match &type_.variant {
                 MetaTypeVariant::ComplexType(_)
+                | MetaTypeVariant::SimpleType(_)
                 | MetaTypeVariant::Enumeration(_)
                 | MetaTypeVariant::Union(_) => {
                     let base = bases.get_unrestricted(ident).clone();

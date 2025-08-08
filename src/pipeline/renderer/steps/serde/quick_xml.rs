@@ -6,7 +6,7 @@ use crate::models::{
     data::{
         ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
         ComplexDataStruct, CustomData, DynamicData, EnumerationData, EnumerationTypeVariant,
-        Occurs, ReferenceData, UnionData, UnionTypeVariant,
+        Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
     },
     schema::xs::Use,
 };
@@ -33,6 +33,7 @@ impl RenderStep for SerdeQuickXmlTypesRenderStep {
             DataTypeVariant::Dynamic(x) => x.render_type_serde_quick_xml(ctx),
             DataTypeVariant::Reference(x) => x.render_type_serde_quick_xml(ctx),
             DataTypeVariant::Enumeration(x) => x.render_type_serde_quick_xml(ctx),
+            DataTypeVariant::Simple(x) => x.render_type_serde_quick_xml(ctx),
             DataTypeVariant::Complex(x) => x.render_type_serde_quick_xml(ctx),
         }
     }
@@ -50,7 +51,7 @@ impl CustomData<'_> {
     }
 }
 
-/* UnionType */
+/* UnionData */
 
 impl UnionData<'_> {
     fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {
@@ -99,7 +100,7 @@ impl UnionTypeVariant<'_> {
     }
 }
 
-/* DynamicType */
+/* DynamicData */
 
 impl DynamicData<'_> {
     fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {
@@ -132,7 +133,7 @@ impl DynamicData<'_> {
     }
 }
 
-/* ReferenceType */
+/* ReferenceData */
 
 impl ReferenceData<'_> {
     fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {
@@ -179,7 +180,7 @@ impl ReferenceData<'_> {
     }
 }
 
-/* EnumerationType */
+/* EnumerationData */
 
 impl EnumerationData<'_> {
     fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {
@@ -245,7 +246,36 @@ impl EnumerationTypeVariant<'_> {
     }
 }
 
-/* ComplexType */
+impl SimpleData<'_> {
+    fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            type_ident,
+            target_type,
+            trait_impls,
+            ..
+        } = self;
+
+        let docs = ctx.render_type_docs();
+        let target_type = ctx.resolve_type_for_module(target_type);
+
+        let derive = get_derive(ctx, []);
+        let trait_impls = render_trait_impls(type_ident, trait_impls);
+
+        let code = quote! {
+            #docs
+            #derive
+            pub struct #type_ident(pub #target_type);
+
+            #( #trait_impls )*
+        };
+
+        ctx.current_module().append(code);
+
+        self.render_common_impls(ctx);
+    }
+}
+
+/* ComplexData */
 
 impl ComplexData<'_> {
     fn render_type_serde_quick_xml(&self, ctx: &mut Context<'_, '_>) {

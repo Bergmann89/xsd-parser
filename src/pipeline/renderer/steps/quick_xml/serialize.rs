@@ -7,7 +7,7 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
         ComplexDataStruct, DataTypeVariant, DynamicData, EnumerationData, EnumerationTypeVariant,
-        Occurs, ReferenceData, UnionData, UnionTypeVariant,
+        Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
     },
     schema::Namespace,
 };
@@ -41,12 +41,13 @@ impl RenderStep for QuickXmlSerializeRenderStep {
             DataTypeVariant::Dynamic(x) => x.render_serializer(ctx),
             DataTypeVariant::Reference(x) => x.render_serializer(ctx),
             DataTypeVariant::Enumeration(x) => x.render_serializer(ctx),
+            DataTypeVariant::Simple(x) => x.render_serializer(ctx),
             DataTypeVariant::Complex(x) => x.render_serializer(ctx),
         }
     }
 }
 
-/* UnionType */
+/* UnionData */
 
 impl UnionData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
@@ -91,7 +92,7 @@ impl UnionTypeVariant<'_> {
     }
 }
 
-/* DynamicType */
+/* DynamicData */
 
 impl DynamicData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
@@ -123,7 +124,7 @@ impl DynamicData<'_> {
     }
 }
 
-/* ReferenceType */
+/* ReferenceData */
 
 impl ReferenceData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
@@ -194,7 +195,7 @@ impl ReferenceData<'_> {
     }
 }
 
-/* EnumerationType */
+/* EnumerationData */
 
 impl EnumerationData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
@@ -249,7 +250,45 @@ impl EnumerationTypeVariant<'_> {
     }
 }
 
-/* ComplexType */
+/* SimpleData */
+
+impl SimpleData<'_> {
+    pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {
+        let Self { type_ident, .. } = self;
+
+        ctx.add_usings([
+            "std::borrow::Cow",
+            "xsd_parser::quick_xml::Error",
+            "xsd_parser::quick_xml::SerializeBytes",
+        ]);
+
+        let body = if let Some(digits) = self.meta.fraction_digits {
+            let format = format!("{{inner:.0{digits}}}");
+
+            quote! {
+                let Self(inner) = self;
+
+                Ok(Some(Cow::Owned(format!(#format))))
+            }
+        } else {
+            quote! {
+                self.0.serialize_bytes()
+            }
+        };
+
+        let code = quote! {
+            impl SerializeBytes for #type_ident {
+                fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
+                    #body
+                }
+            }
+        };
+
+        ctx.current_module().append(code);
+    }
+}
+
+/* ComplexData */
 
 impl ComplexData<'_> {
     pub(crate) fn render_serializer(&self, ctx: &mut Context<'_, '_>) {

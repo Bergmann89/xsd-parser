@@ -353,6 +353,18 @@ pub trait DeserializeBytes: Sized {
     ///
     /// Returns a suitable [`struct@Error`] if the deserialization was not successful.
     fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error>;
+
+    /// Optimized version of [`deserialize_bytes`](Self::deserialize_bytes) that
+    /// takes a string instead of a bytes slice.
+    ///
+    /// This is useful if previous checks on the string already did the UTF-8 conversion.
+    ///
+    /// # Errors
+    ///
+    /// Returns a suitable [`struct@Error`] if the deserialization was not successful.
+    fn deserialize_str<R: XmlReader>(reader: &R, s: &str) -> Result<Self, Error> {
+        Self::deserialize_bytes(reader, s.as_bytes())
+    }
 }
 
 /// Error that is raised by the [`DeserializeBytes`] trait if the type implements
@@ -389,8 +401,13 @@ where
     X::Err: std::error::Error + Send + Sync + 'static,
 {
     fn deserialize_bytes<R: XmlReader>(reader: &R, bytes: &[u8]) -> Result<Self, Error> {
-        let _reader = reader;
         let s = from_utf8(bytes).map_err(Error::from)?;
+
+        Self::deserialize_str(reader, s)
+    }
+
+    fn deserialize_str<R: XmlReader>(reader: &R, s: &str) -> Result<Self, Error> {
+        let _reader = reader;
 
         X::from_str(s).map_err(|error| {
             Error::custom(DeserializeStrError {

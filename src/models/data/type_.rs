@@ -6,7 +6,7 @@ use crate::models::meta::MetaType;
 
 use super::{
     BuildInData, ComplexData, ConfigValue, CustomData, DynamicData, EnumerationData, ReferenceData,
-    UnionData,
+    SimpleData, UnionData,
 };
 
 /// Represents a fully evaluated and enriched type definition used for rendering.
@@ -62,6 +62,9 @@ pub enum DataTypeVariant<'types> {
     /// [`MetaTypeVariant::Sequence`](crate::models::meta::MetaTypeVariant::Sequence) or
     /// [`MetaTypeVariant::ComplexType`](crate::models::meta::MetaTypeVariant::ComplexType).
     Complex(ComplexData<'types>),
+
+    /// Corresponds to [`MetaTypeVariant::SimpleType`](crate::models::meta::MetaTypeVariant::SimpleType).
+    Simple(SimpleData<'types>),
 }
 
 impl Deref for DataType<'_> {

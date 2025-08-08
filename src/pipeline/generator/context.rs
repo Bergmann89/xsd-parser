@@ -79,7 +79,7 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     #[allow(clippy::too_many_lines)]
-    pub(super) fn get_default(
+    pub(super) fn render_literal(
         &mut self,
         current_ns: Option<NamespaceId>,
         default: &str,
@@ -148,7 +148,8 @@ impl<'a, 'types> Context<'a, 'types> {
                     }
 
                     if let Some(target_ident) = &var.type_ {
-                        if let Ok(default) = self.get_default(current_ns, default, target_ident) {
+                        if let Ok(default) = self.render_literal(current_ns, default, target_ident)
+                        {
                             let variant_ident = match self.state.cache.get(target_ident) {
                                 Some(type_ref) if var.ident.name.is_generated() => {
                                     type_ref.path.ident().clone()
@@ -170,7 +171,7 @@ impl<'a, 'types> Context<'a, 'types> {
                 let target_type = type_ref.path.relative_to(&module_path);
 
                 for ty in &*ui.types {
-                    if let Ok(code) = self.get_default(current_ns, default, &ty.type_) {
+                    if let Ok(code) = self.render_literal(current_ns, default, &ty.type_) {
                         let variant_ident = match self.state.cache.get(&ty.type_) {
                             Some(type_ref) if ty.type_.name.is_generated() => {
                                 type_ref.path.ident().clone()
@@ -187,7 +188,7 @@ impl<'a, 'types> Context<'a, 'types> {
 
             MetaTypeVariant::Reference(ti) => {
                 match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
-                    Occurs::Single => return self.get_default(current_ns, default, &ti.type_),
+                    Occurs::Single => return self.render_literal(current_ns, default, &ti.type_),
                     Occurs::DynamicList if default.is_empty() => {
                         let module_path = ModulePath::from_namespace(current_ns, types);
                         let target_type = type_ref.path.relative_to(&module_path);
@@ -196,6 +197,14 @@ impl<'a, 'types> Context<'a, 'types> {
                     }
                     _ => (),
                 }
+            }
+
+            MetaTypeVariant::SimpleType(si) => {
+                let module_path = ModulePath::from_namespace(current_ns, types);
+                let target_type = type_ref.path.relative_to(&module_path);
+                let default = self.render_literal(current_ns, default, &si.base)?;
+
+                return Ok(quote! { #target_type(#default) });
             }
 
             _ => (),

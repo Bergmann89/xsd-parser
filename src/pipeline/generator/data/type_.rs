@@ -1,7 +1,7 @@
 use crate::models::{
     data::{
         BuildInData, ComplexData, ConfigValue, CustomData, DataType, DynamicData, EnumerationData,
-        ReferenceData, UnionData,
+        ReferenceData, SimpleData, UnionData,
     },
     meta::MetaType,
 };
@@ -28,7 +28,7 @@ impl<'types> DataType<'types> {
             M::Choice(x) => D::Complex(ComplexData::new_choice(x, ctx, meta.form())?),
             M::Sequence(x) => D::Complex(ComplexData::new_sequence(x, ctx, meta.form())?),
             M::ComplexType(x) => D::Complex(ComplexData::new_complex(x, ctx, meta.form())?),
-            M::SimpleType(_) => unimplemented!(),
+            M::SimpleType(x) => D::Simple(SimpleData::new(x, ctx)?),
         };
 
         Ok(Self {

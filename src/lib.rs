@@ -226,6 +226,7 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
         };
     }
 
+    exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
     exec!(REMOVE_EMPTY_ENUM_VARIANTS, remove_empty_enum_variants);
     exec!(REMOVE_EMPTY_ENUMS, remove_empty_enums);
     exec!(
@@ -233,7 +234,6 @@ pub fn exec_optimizer(config: OptimizerConfig, types: MetaTypes) -> Result<MetaT
         remove_duplicate_union_variants
     );
     exec!(REMOVE_EMPTY_UNIONS, remove_empty_unions);
-    exec!(USE_UNRESTRICTED_BASE_TYPE, use_unrestricted_base_type);
     exec!(CONVERT_DYNAMIC_TO_CHOICE, convert_dynamic_to_choice);
     exec!(FLATTEN_COMPLEX_TYPES, flatten_complex_types);
     exec!(FLATTEN_UNIONS, flatten_unions);
