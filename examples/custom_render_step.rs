@@ -38,7 +38,7 @@ use xsd_parser::{
     models::data::{
         ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
         ComplexDataStruct, CustomData, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationTypeVariant, Occurs, ReferenceData, UnionData, UnionTypeVariant,
+        EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
     },
     pipeline::renderer::{Context, RenderStep, RenderStepType},
     Config,
@@ -122,7 +122,7 @@ impl RenderStep for CustomRenderStep {
             DataTypeVariant::Dynamic(ty) => self.render_dynamic(ty, ctx),
             DataTypeVariant::Reference(ty) => self.render_reference(ty, ctx),
             DataTypeVariant::Enumeration(ty) => self.render_enumeration(ty, ctx),
-            DataTypeVariant::Simple(_) => unimplemented!(), // TODO
+            DataTypeVariant::Simple(ty) => self.render_simple(ty, ctx),
             DataTypeVariant::Complex(ty) => self.render_complex(ty, ctx),
         }
     }
@@ -305,6 +305,31 @@ impl CustomRenderStep {
         quote! {
             #variant_ident #target_type,
         }
+    }
+
+    /* Simple */
+
+    fn render_simple(&self, ty: &SimpleData<'_>, ctx: &mut Context<'_, '_>) {
+        let SimpleData {
+            type_ident,
+            target_type,
+            trait_impls,
+            ..
+        } = ty;
+
+        let target_type = ctx.resolve_type_for_module(target_type);
+
+        let derive = get_derive(ctx, Option::<String>::None);
+        let trait_impls = render_trait_impls(type_ident, trait_impls);
+
+        let code = quote! {
+            #derive
+            pub struct #type_ident(pub #target_type);
+
+            #( #trait_impls )*
+        };
+
+        ctx.current_module().append(code);
     }
 
     /* Complex */
