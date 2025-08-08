@@ -1,7 +1,10 @@
 use thiserror::Error;
 
 use crate::models::{
-    schema::{xs::AttributeType, Namespace, NamespacePrefix},
+    schema::{
+        xs::{AttributeType, Facet},
+        Namespace, NamespacePrefix,
+    },
     Ident, RawByteStr,
 };
 
@@ -82,6 +85,12 @@ pub enum Error {
     /// The attribute specified in the schema is missing some information.
     #[error("Invalid attribute reference: {0:#?}!")]
     InvalidAttributeReference(Box<AttributeType>),
+
+    /// Invalid facet.
+    ///
+    /// Is raised if the content of a facet could not be interpreted correctly.
+    #[error("Invalid facet: {0:?}")]
+    InvalidFacet(Facet),
 
     /// Unable to create type information.
     ///

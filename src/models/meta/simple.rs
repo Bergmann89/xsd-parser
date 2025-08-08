@@ -53,6 +53,26 @@ pub enum WhiteSpace {
     Collapse,
 }
 
+impl SimpleMeta {
+    /// Create a new [`SimpleMeta`] instance from the passed `base` identifier.
+    #[must_use]
+    pub fn new(base: Ident) -> Self {
+        Self {
+            base,
+            range: Range {
+                start: Bound::Unbounded,
+                end: Bound::Unbounded,
+            },
+            total_digits: None,
+            fraction_digits: None,
+            pattern: None,
+            min_length: None,
+            max_length: None,
+            whitespace: WhiteSpace::default(),
+        }
+    }
+}
+
 impl TypeEq for SimpleMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {

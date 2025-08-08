@@ -349,9 +349,7 @@ impl<'a> Interpreter<'a> {
             .include_from("num::BigInt")
             .with_default(|s: &str| {
                 let code = quote! {
-                    use core::str::FromStr;
-
-                    num::BigInt::from_str(#s).unwrap()
+                    <num::BigInt as core::str::FromStr>::from_str(#s).unwrap()
                 };
 
                 Some(code)
@@ -361,9 +359,7 @@ impl<'a> Interpreter<'a> {
             .include_from("num::BigUint")
             .with_default(|s: &str| {
                 let code = quote! {
-                    use core::str::FromStr;
-
-                    num::BigUint::from_str(#s).unwrap()
+                    <num::BigUint as core::str::FromStr>::from_str(#s).unwrap()
                 };
 
                 Some(code)
