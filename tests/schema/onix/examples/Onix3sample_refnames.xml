@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ONIXMessage release="3.1" xmlns="http://ns.editeur.org/onix/3.1/reference">
+	<Header>
+		<Sender>
+			<SenderName>Global Bookinfo</SenderName>
+			<ContactName>Jane King</ContactName>
+			<TelephoneNumber>+1 212 555 0123​</TelephoneNumber>
+			<EmailAddress>jbk@globalbookinfo.com</EmailAddress>
+		</Sender>
+		<Addressee>
+			<AddresseeName>BooksBooksBooks.com</AddresseeName>
+		</Addressee>
+		<MessageNumber>231</MessageNumber>
+		<SentDateTime>20100510T1115-0400</SentDateTime>
+		<MessageNote>Sample message</MessageNote>
+	</Header>
+	<!-- product record 1 of 1 in message -->
+	<Product>
+		<RecordReference>com.globalbookinfo.onix.01734529</RecordReference>
+		<NotificationType>03</NotificationType>
+		<RecordSourceType>04</RecordSourceType>
+		<RecordSourceIdentifier>
+			<RecordSourceIDType>06</RecordSourceIDType>
+			<IDValue>0614141800001</IDValue>
+		</RecordSourceIdentifier>
+		<RecordSourceName>Global Bookinfo</RecordSourceName>
+		<ProductIdentifier>
+			<ProductIDType>03</ProductIDType>
+			<IDValue>9780007232833</IDValue>
+		</ProductIdentifier>
+		<ProductIdentifier>
+			<ProductIDType>15</ProductIDType>
+			<IDValue>9780007232833</IDValue>
+		</ProductIdentifier>
+		<DescriptiveDetail>
+			<ProductComposition>00</ProductComposition>
+			<ProductForm>BC</ProductForm>
+			<ProductFormDetail>B105</ProductFormDetail>
+			<Measure>
+				<MeasureType>01</MeasureType>
+				<Measurement>197</Measurement>
+				<MeasureUnitCode>mm</MeasureUnitCode>
+			</Measure>
+			<Measure>
+				<MeasureType>02</MeasureType>
+				<Measurement>130</Measurement>
+				<MeasureUnitCode>mm</MeasureUnitCode>
+			</Measure>
+			<Measure>
+				<MeasureType>03</MeasureType>
+				<Measurement>18</Measurement>
+				<MeasureUnitCode>mm</MeasureUnitCode>
+			</Measure>
+			<Measure>
+				<MeasureType>08</MeasureType>
+				<Measurement>195</Measurement>
+				<MeasureUnitCode>gr</MeasureUnitCode>
+			</Measure>
+			<CountryOfManufacture>GB</CountryOfManufacture>
+			<ProductClassification>
+				<ProductClassificationType>03</ProductClassificationType>
+				<ProductClassificationCode>49019900</ProductClassificationCode>
+			</ProductClassification>
+			<Collection>
+				<CollectionType>10</CollectionType>
+				<TitleDetail>
+					<TitleType>01</TitleType>
+					<TitleElement>
+						<SequenceNumber>2</SequenceNumber>
+						<TitleElementLevel>02</TitleElementLevel>
+						<TitlePrefix textcase="01">The</TitlePrefix>
+						<TitleWithoutPrefix textcase="01">Martin Beck series</TitleWithoutPrefix>
+					</TitleElement>
+					<TitleElement>
+						<SequenceNumber>3</SequenceNumber>
+						<TitleElementLevel>01</TitleElementLevel>
+						<PartNumber>1</PartNumber>
+					</TitleElement>
+				</TitleDetail>
+			</Collection>
+			<TitleDetail>
+				<TitleType>01</TitleType>
+				<TitleElement>
+					<SequenceNumber>1</SequenceNumber>
+					<TitleElementLevel>01</TitleElementLevel>
+					<NoPrefix/>
+					<TitleWithoutPrefix textcase="01">Roseanna</TitleWithoutPrefix>
+				</TitleElement>
+			</TitleDetail>
+			<TitleDetail>
+				<TitleType>10</TitleType>
+				<TitleElement>
+					<TitleElementLevel>01</TitleElementLevel>
+					<TitleText>ROSEANNA (MARTIN BECK #1)</TitleText>
+				</TitleElement>
+			</TitleDetail>
+			<Contributor>
+				<SequenceNumber>1</SequenceNumber>
+				<ContributorRole>A01</ContributorRole>
+				<NameIdentifier>
+					<NameIDType>01</NameIDType>
+					<IDTypeName>HCP Author ID</IDTypeName>
+					<IDValue>7421</IDValue>
+				</NameIdentifier>
+				<NameIdentifier>
+					<NameIDType>16</NameIDType>
+					<IDValue>0000000121479135</IDValue>
+				</NameIdentifier>
+				<NamesBeforeKey>Maj</NamesBeforeKey>
+				<KeyNames>Sjöwall</KeyNames>
+				<BiographicalNote textformat="05"><p><strong>Maj Sjöwall</strong> was born in Stockholm in 1935. She is a poet, novelist and translator, and is best known for the ten <em>Martin Beck</em> novels she wrote with husband Per Wahlöö.</p></BiographicalNote>
+			</Contributor>
+			<Contributor>
+				<SequenceNumber>2</SequenceNumber>
+				<ContributorRole>A01</ContributorRole>
+				<NameIdentifier>
+					<NameIDType>01</NameIDType>
+					<IDTypeName>HCP Author ID</IDTypeName>
+					<IDValue>7422</IDValue>
+				</NameIdentifier>
+				<NameIdentifier>
+					<NameIDType>16</NameIDType>
+					<IDValue>0000000121222604</IDValue>
+				</NameIdentifier>
+				<NamesBeforeKey>Per</NamesBeforeKey>
+				<KeyNames>Wahlöö</KeyNames>
+				<BiographicalNote textformat="05"><p><strong>Per Wahlöö</strong> was born in Göteborg. After graduating from the University of Lund in 1946, he worked as a journalist, covering criminal and social issues for a number of newspapers and magazines. In the 1950s, Wahlöö became involved with radical political causes, activities that resulted in his deportation from Franco’s Spain in 1957. After returning to Sweden, he wrote a number of television and radio plays, and was managing editor of several magazines, before becoming a full-time writer.</p><p>He is best known for the series of ten <em>Martin Beck</em> novels he wrote with wife Maj Sjöwall, which they completed immediately before his death in 1975.</p></BiographicalNote>
+			</Contributor>
+			<Contributor>
+				<SequenceNumber>3</SequenceNumber>
+				<ContributorRole>B06</ContributorRole>
+				<FromLanguage>swe</FromLanguage>
+				<NameIdentifier>
+					<NameIDType>01</NameIDType>
+					<IDTypeName>HCP Author ID</IDTypeName>
+					<IDValue>11150</IDValue>
+				</NameIdentifier>
+				<NamesBeforeKey>Lois</NamesBeforeKey>
+				<KeyNames>Roth</KeyNames>
+			</Contributor>
+			<Contributor>
+				<SequenceNumber>4</SequenceNumber>
+				<ContributorRole>A24</ContributorRole>
+				<NameIdentifier>
+					<NameIDType>01</NameIDType>
+					<IDTypeName>HCP Author ID</IDTypeName>
+					<IDValue>11151</IDValue>
+				</NameIdentifier>
+				<NameIdentifier>
+					<NameIDType>16</NameIDType>
+					<IDValue>0000000122824957</IDValue>
+				</NameIdentifier>
+				<NamesBeforeKey>Henning</NamesBeforeKey>
+				<KeyNames>Mankell</KeyNames>
+			</Contributor>
+			<ContributorStatement>By Maj Sjöwall and Per Wahlöö, translated by Lois Roth and with an introduction by Henning Mankell</ContributorStatement>
+			<NoEdition/>
+			<Language>
+				<LanguageRole>01</LanguageRole>
+				<LanguageCode>eng</LanguageCode>
+			</Language>
+			<Language>
+				<LanguageRole>02</LanguageRole>
+				<LanguageCode>swe</LanguageCode>
+			</Language>
+			<Extent>
+				<ExtentType>00</ExtentType>
+				<ExtentValue>245</ExtentValue>
+				<ExtentUnit>03</ExtentUnit>
+			</Extent>
+			<Extent>
+				<ExtentType>04</ExtentType>
+				<ExtentValue>16</ExtentValue>
+				<ExtentUnit>03</ExtentUnit>
+			</Extent>
+			<Subject>
+				<MainSubject/>
+				<SubjectSchemeIdentifier>93</SubjectSchemeIdentifier>
+				<SubjectSchemeVersion>1.3</SubjectSchemeVersion>
+				<SubjectCode>FFP</SubjectCode>
+			</Subject>
+			<Subject>
+				<SubjectSchemeIdentifier>93</SubjectSchemeIdentifier>
+				<SubjectSchemeVersion>1.3</SubjectSchemeVersion>
+				<SubjectCode>FYT</SubjectCode>
+			</Subject>
+			<Subject>
+				<SubjectSchemeIdentifier>94</SubjectSchemeIdentifier>
+				<SubjectSchemeVersion>1.3</SubjectSchemeVersion>
+				<SubjectCode>1DNS</SubjectCode>
+			</Subject>
+			<Subject>
+				<SubjectSchemeIdentifier>96</SubjectSchemeIdentifier>
+				<SubjectSchemeVersion>1.3</SubjectSchemeVersion>
+				<SubjectCode>3MPQS</SubjectCode>
+			</Subject>
+			<Subject>
+				<MainSubject/>
+				<SubjectSchemeIdentifier>10</SubjectSchemeIdentifier>
+				<SubjectSchemeVersion>2017</SubjectSchemeVersion>
+				<SubjectCode>FIC022000</SubjectCode>
+			</Subject>
+			<Subject>
+				<SubjectSchemeIdentifier>20</SubjectSchemeIdentifier>
+				<SubjectHeadingText>Martin Beck; Roseanna McGraw; Lake Vättern; Stockholm; police procedural</SubjectHeadingText>
+			</Subject>
+			<Audience>
+				<AudienceCodeType>01</AudienceCodeType>
+				<AudienceCodeValue>01</AudienceCodeValue>
+			</Audience>
+			<Audience>
+				<AudienceCodeType>22</AudienceCodeType>
+				<AudienceCodeValue>01</AudienceCodeValue>
+			</Audience>
+		</DescriptiveDetail>
+		<CollateralDetail>
+			<TextContent>
+				<TextType>02</TextType>
+				<ContentAudience>00</ContentAudience>
+				<Text textformat="05"><p><strong>Perennial relaunches the first novel in the classic Martin Beck detective series from the 1960s</strong> – the novels that have inspired all crime fiction written ever since.</p></Text>
+			</TextContent>
+			<TextContent>
+				<TextType>03</TextType>
+				<ContentAudience>00</ContentAudience>
+				<Text textformat="05"><p>Widely recognised as the among the greatest crime fiction ever written, this is the first of a series of stories that pioneered the police procedural genre. The series was translated into 35 languages, sold over 10 million copies around the world, and inspired writers from Henning Mankell to Jonathan Franzen.</p><p>Written in 1965, <em>Roseanna</em> is the work of Maj Sjöwall and Per Wahlöö – a husband and wife team from Sweden, and this volume has a new introduction to help bring their work to a new audience. The novel follows the fortunes of the detective Martin Beck, whose enigmatic and taciturn character has inspired countless other policemen in crime fiction.</p><p><em>Roseanna</em> begins on a July afternoon: the body of a young woman is dredged from a canal near Sweden’s beautiful Lake Vättern. Three months later, all that Police Inspector Martin Beck knows is that her name is Roseanna, that she came from Lincoln, Nebraska, and that she could have been strangled by any one of eighty-five people.</p><p>With its authentically rendered settings and vividly realized characters, and its command over the intricately woven details of police detection, <em>Roseanna</em> is a masterpiece of suspense and sadness.</p></Text>
+			</TextContent>
+			<TextContent>
+				<SequenceNumber>1</SequenceNumber>
+				<TextType>06</TextType>
+				<ContentAudience>00</ContentAudience>
+				<Text textformat="05"><p>‘The writing is elegant and surprisingly humorous – if you haven’t come across Beck before, you’re in for a treat.’</p></Text>
+				<SourceTitle>The Guardian</SourceTitle>
+			</TextContent>
+			<TextContent>
+				<SequenceNumber>2</SequenceNumber>
+				<TextType>06</TextType>
+				<ContentAudience>00</ContentAudience>
+				<Text textformat="05"><p>‘Their mysteries don’t just read well; they reread even better. Witness, wife, petty cop or crook – they’re all real characters even if they get just a few sentences. The plots hold, because they’re ingenious but never inhuman.’</p></Text>
+				<SourceTitle>New York Times</SourceTitle>
+			</TextContent>
+			<TextContent>
+				<TextType>10</TextType>
+				<ContentAudience>00</ContentAudience>
+				<Text>One of the greatest masterpieces of crime fiction</Text>
+			</TextContent>
+			<CitedContent>
+				<CitedContentType>03</CitedContentType>
+				<ContentAudience>00</ContentAudience>
+				<SourceType>01</SourceType>
+				<SourceTitle>Observer Magazine</SourceTitle>
+				<CitationNote>Interview with Maj Sjöwall by Louise France</CitationNote>
+				<ResourceLink>https://www.guardian.co.uk/books/2009/nov/22/crime-thriller-maj-sjowall-sweden</ResourceLink>
+				<ContentDate>
+					<ContentDateRole>01</ContentDateRole>
+					<Date dateformat="00">20091122</Date>
+				</ContentDate>
+			</CitedContent>
+			<SupportingResource>
+				<ResourceContentType>01</ResourceContentType>
+				<ContentAudience>00</ContentAudience>	
+				<ResourceMode>03</ResourceMode>
+				<ResourceVersion>
+					<ResourceForm>02</ResourceForm>
+					<ResourceVersionFeature>
+						<ResourceVersionFeatureType>01</ResourceVersionFeatureType>
+						<FeatureValue>D502</FeatureValue>
+					</ResourceVersionFeature>
+					<ResourceVersionFeature>
+						<ResourceVersionFeatureType>02</ResourceVersionFeatureType>
+						<FeatureValue>341</FeatureValue>
+					</ResourceVersionFeature>
+					<ResourceVersionFeature>
+						<ResourceVersionFeatureType>03</ResourceVersionFeatureType>
+						<FeatureValue>222</FeatureValue>
+					</ResourceVersionFeature>
+					<ResourceLink>https://www.harpercollins.co.uk/covers/9780007232833.jpg</ResourceLink>
+					<ContentDate>
+						<ContentDateRole>17</ContentDateRole>
+						<Date dateformat="00">20060412</Date>
+					</ContentDate>
+				</ResourceVersion>
+			</SupportingResource>
+			<SupportingResource>
+				<ResourceContentType>15</ResourceContentType>
+				<ContentAudience>00</ContentAudience>
+				<ResourceMode>06</ResourceMode>
+				<ResourceVersion>
+					<ResourceForm>01</ResourceForm>
+					<ResourceLink>https://browseinside.harpercollins.co.uk/pageview?isbn=9780007232833</ResourceLink>
+				</ResourceVersion>
+			</SupportingResource>
+		</CollateralDetail>
+		<!-- there is no Block 3 or Block 7 -->
+		<PublishingDetail>
+			<Imprint>
+				<ImprintName>HarperPerennial</ImprintName>
+			</Imprint>
+			<Publisher>
+				<PublishingRole>01</PublishingRole>
+				<PublisherIdentifier>
+					<PublisherIDType>16</PublisherIDType>
+					<IDValue>0000000404222532</IDValue>
+				</PublisherIdentifier>
+				<PublisherName>HarperCollins Publishers</PublisherName>
+				<Website>
+					<WebsiteRole>01</WebsiteRole>
+					<WebsiteLink>https://www.harpercollins.co.uk</WebsiteLink>
+				</Website>
+			</Publisher>
+			<CityOfPublication>London</CityOfPublication>
+			<CountryOfPublication>GB</CountryOfPublication>
+			<PublishingStatus>04</PublishingStatus>
+			<PublishingDate>
+				<PublishingDateRole>01</PublishingDateRole>
+				<Date dateformat="00">20060807</Date>
+			</PublishingDate>
+			<PublishingDate>
+				<PublishingDateRole>11</PublishingDateRole>
+				<Date dateformat="05">1968</Date>
+			</PublishingDate>
+			<PublishingDate>
+				<PublishingDateRole>20</PublishingDateRole>
+				<Date dateformat="05">1965</Date>
+			</PublishingDate>
+			<SalesRights>
+				<SalesRightsType>01</SalesRightsType>
+				<Territory>
+					<CountriesIncluded>AG AI AU BB BD BM BN BS BW BZ CM CY DM EG FJ FK GB GD GG GH GI GM GY HK IE IL IM IN IO JE JM JO KE KI KN KW KY LC LK LS MT MU MV MW MY MZ NA NG NR NZ PG PK PN SB SC SD SG SH SL SO SZ TC TO TT TV TZ UG VC VG VU WS YE RS ME ZA ZM ZW</CountriesIncluded>
+				</Territory>
+			</SalesRights>
+			<SalesRights>
+				<SalesRightsType>06</SalesRightsType>
+				<Territory>
+					<CountriesIncluded>AS CA GU MP PH PR US VI</CountriesIncluded>
+				</Territory>
+			</SalesRights>
+			<SalesRights>
+				<SalesRightsType>02</SalesRightsType>
+				<Territory>
+					<RegionsIncluded>WORLD</RegionsIncluded>
+					<CountriesExcluded>AG AI AU BB BD BM BN BS BW BZ CM CY DM EG FJ FK GB GD GG GH GI GM GY HK IE IL IM IN IO JE JM JO KE KI KN KW KY LC LK LS MT MU MV MW MY MZ NA NG NR NZ PG PK PN SB SC SD SG SH SL SO SZ TC TO TT TV TZ UG VC VG VU WS YE RS ME ZA ZM ZW AS CA GU MP PH PR US VI</CountriesExcluded>
+				</Territory>
+			</SalesRights>
+			<!-- no ROW sales rights type needed -->
+		</PublishingDetail>
+		<RelatedMaterial>
+			<RelatedWork>
+				<WorkRelationCode>01</WorkRelationCode>
+				<WorkIdentifier>
+					<WorkIDType>11</WorkIDType>
+					<IDValue>A0220090000154FA</IDValue>
+				</WorkIdentifier>
+			</RelatedWork>
+			<RelatedProduct>
+				<ProductRelationCode>06</ProductRelationCode>
+				<ProductRelationCode>27</ProductRelationCode>
+				<ProductIdentifier>
+					<ProductIDType>03</ProductIDType>
+					<IDValue>9780007324378</IDValue>
+				</ProductIdentifier>
+				<ProductIdentifier>
+					<ProductIDType>15</ProductIDType>
+					<IDValue>9780007324378</IDValue>
+				</ProductIdentifier>
+			</RelatedProduct>
+		</RelatedMaterial>
+		<!-- there is no Block 8 -->
+		<ProductSupply>
+			<MarketReference>NAAU3</MarketReference>
+			<Market>
+				<Territory>
+					<RegionsIncluded>WORLD</RegionsIncluded>
+					<CountriesExcluded>AS AU CA GU MP NZ PH PR US VI ZA</CountriesExcluded>
+				</Territory>
+			</Market>
+			<MarketPublishingDetail>
+				<MarketPublishingStatus>04</MarketPublishingStatus>
+				<MarketDate>
+					<MarketDateRole>01</MarketDateRole>
+					<Date dateformat="00">20060807</Date>
+				</MarketDate>
+			</MarketPublishingDetail>
+			<SupplyDetail>
+				<Supplier>
+					<SupplierRole>01</SupplierRole>
+					<SupplierIdentifier>
+						<SupplierIDType>06</SupplierIDType>
+						<IDValue>5051366000000</IDValue>
+					</SupplierIdentifier>
+					<SupplierIdentifier>
+						<SupplierIDType>07</SupplierIDType>
+						<IDValue>0091073</IDValue>
+					</SupplierIdentifier>
+					<SupplierName>HarperCollins Publishers</SupplierName>
+					<TelephoneNumber>+44 1417 723200</TelephoneNumber>
+				</Supplier>
+				<ReturnsConditions>
+						<ReturnsCodeType>02</ReturnsCodeType>
+						<ReturnsCode>Y</ReturnsCode>
+				</ReturnsConditions>
+				<ProductAvailability>21</ProductAvailability>
+				<PackQuantity>16</PackQuantity>
+				<Price>
+					<PriceType>02</PriceType>
+					<DiscountCoded>
+						<DiscountCodeType>01</DiscountCodeType>
+						<DiscountCode>AHACP029</DiscountCode>
+					</DiscountCoded>
+					<PriceStatus>02</PriceStatus>
+					<PriceAmount>7.99</PriceAmount>
+					<Tax>
+						<TaxType>01</TaxType>
+						<TaxRateCode>Z</TaxRateCode>
+						<TaxRatePercent>0</TaxRatePercent>
+						<TaxableAmount>7.99</TaxableAmount>
+						<TaxAmount>0.00</TaxAmount>
+					</Tax>
+					<CurrencyCode>GBP</CurrencyCode>
+					<Territory>
+						<CountriesIncluded>GB</CountriesIncluded>
+					</Territory>
+					<PrintedOnProduct>02</PrintedOnProduct>
+					<PositionOnProduct>01</PositionOnProduct>
+				</Price>
+				<Price>
+					<PriceType>01</PriceType>
+					<Discount>
+						<DiscountPercent>37.5</DiscountPercent>
+					</Discount>
+					<PriceStatus>02</PriceStatus>
+					<PriceAmount>8.99</PriceAmount>
+					<CurrencyCode>EUR</CurrencyCode>
+					<Territory>
+						<CountriesIncluded>AT BE CY FI FR DE ES GR IE IT LU MT NL PT SI SK AD MC ME SM VA</CountriesIncluded>
+					</Territory>
+					<PrintedOnProduct>01</PrintedOnProduct>
+				</Price>
+				<Price>
+					<PriceType>01</PriceType>
+					<Discount>
+						<DiscountPercent>42.5</DiscountPercent>
+					</Discount>
+					<PriceStatus>02</PriceStatus>
+					<PriceAmount>7.99</PriceAmount>
+					<CurrencyCode>GBP</CurrencyCode>
+					<Territory>
+						<RegionsIncluded>WORLD</RegionsIncluded>
+						<CountriesExcluded>GB AT BE CY FI FR DE ES GR IE IT LU MT NL PT SI SK AD MC ME SM VA AS AU CA GU MP NZ PH PR US VI ZA</CountriesExcluded>
+					</Territory>
+					<PrintedOnProduct>01</PrintedOnProduct>
+				</Price>
+			</SupplyDetail>
+		</ProductSupply>
+		<!-- aggregator could add other ProductSupply sections here, for AU/NZ and ZA distributors -->
+	</Product>
+</ONIXMessage>

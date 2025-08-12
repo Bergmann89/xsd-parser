@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ONIXmessage release="3.1" xmlns="http://ns.editeur.org/onix/3.1/short">
+	<header>
+		<sender>
+			<x298>Global Bookinfo</x298>
+			<x299>Jane King</x299>
+			<j270>+1 212 555 0123</j270>
+			<j272>jbk@globalbookinfo.com</j272>
+		</sender>
+		<addressee>
+			<x300>BooksBooksBooks.com</x300>
+		</addressee>
+		<m180>231</m180>
+		<x307>20100510T1115-0400</x307>
+		<m183>Sample message</m183>
+	</header>
+	<!-- product record 1 of 1 in message -->
+	<product>
+		<a001>com.globalbookinfo.onix.01734529</a001>
+		<a002>03</a002>
+		<a194>04</a194>
+		<recordsourceidentifier>
+			<x311>06</x311>
+			<b244>0614141800001</b244>
+		</recordsourceidentifier>
+		<a197>Global Bookinfo</a197>
+		<productidentifier>
+			<b221>03</b221>
+			<b244>9780007232833</b244>
+		</productidentifier>
+		<productidentifier>
+			<b221>15</b221>
+			<b244>9780007232833</b244>
+		</productidentifier>
+		<descriptivedetail>
+			<x314>00</x314>
+			<b012>BC</b012>
+			<b333>B105</b333>
+			<measure>
+				<x315>01</x315>
+				<c094>197</c094>
+				<c095>mm</c095>
+			</measure>
+			<measure>
+				<x315>02</x315>
+				<c094>130</c094>
+				<c095>mm</c095>
+			</measure>
+			<measure>
+				<x315>03</x315>
+				<c094>18</c094>
+				<c095>mm</c095>
+			</measure>
+			<measure>
+				<x315>08</x315>
+				<c094>195</c094>
+				<c095>gr</c095>
+			</measure>
+			<x316>GB</x316>
+			<productclassification>
+				<b274>03</b274>
+				<b275>49019900</b275>
+			</productclassification>
+			<collection>
+				<x329>10</x329>
+				<titledetail>
+					<b202>01</b202>
+					<titleelement>
+						<b034>2</b034>
+						<x409>02</x409>
+						<b030 textcase="01">The</b030>
+						<b031 textcase="01">Martin Beck series</b031>
+					</titleelement>
+					<titleelement>
+						<b034>3</b034>
+						<x409>01</x409>
+						<x410>1</x410>
+					</titleelement>
+				</titledetail>
+			</collection>
+			<titledetail>
+				<b202>01</b202>
+				<titleelement>
+					<b034>1</b034>
+					<x409>01</x409>
+					<x501/>
+					<b031 textcase="01">Roseanna</b031>
+				</titleelement>
+			</titledetail>
+			<titledetail>
+				<b202>10</b202>
+				<titleelement>
+					<x409>01</x409>
+					<b203>ROSEANNA (MARTIN BECK #1)</b203>
+				</titleelement>
+			</titledetail>
+			<contributor>
+				<b034>1</b034>
+				<b035>A01</b035>
+				<nameidentifier>
+					<x415>01</x415>
+					<b233>HCP Author ID</b233>
+					<b244>7421</b244>
+				</nameidentifier>
+				<nameidentifier>
+					<x415>16</x415>
+					<b244>0000000121479135</b244>
+				</nameidentifier>
+				<b039>Maj</b039>
+				<b040>Sjöwall</b040>
+				<b044 textformat="05"><p><strong>Maj Sjöwall</strong> was born in Stockholm in 1935. She is a poet, novelist and translator, and is best known for the ten <em>Martin Beck</em> novels she wrote with husband Per Wahlöö.</p></b044>
+			</contributor>
+			<contributor>
+				<b034>2</b034>
+				<b035>A01</b035>
+				<nameidentifier>
+					<x415>01</x415>
+					<b233>HCP Author ID</b233>
+					<b244>7422</b244>
+				</nameidentifier>
+				<nameidentifier>
+					<x415>16</x415>
+					<b244>0000000121222604</b244>
+				</nameidentifier>
+				<b039>Per</b039>
+				<b040>Wahlöö</b040>
+				<b044 textformat="05"><p><strong>Per Wahlöö</strong> was born in Göteborg. After graduating from the University of Lund in 1946, he worked as a journalist, covering criminal and social issues for a number of newspapers and magazines. In the 1950s, Wahlöö became involved with radical political causes, activities that resulted in his deportation from Franco’s Spain in 1957. After returning to Sweden, he wrote a number of television and radio plays, and was managing editor of several magazines, before becoming a full-time writer.</p><p>He is best known for the series of ten <em>Martin Beck</em> novels he wrote with wife Maj Sjöwall, which they completed immediately before his death in 1975.</p></b044>
+			</contributor>
+			<contributor>
+				<b034>3</b034>
+				<b035>B06</b035>
+				<x412>swe</x412>
+				<nameidentifier>
+					<x415>01</x415>
+					<b233>HCP Author ID</b233>
+					<b244>11150</b244>
+				</nameidentifier>
+				<b039>Lois</b039>
+				<b040>Roth</b040>
+			</contributor>
+			<contributor>
+				<b034>4</b034>
+				<b035>A24</b035>
+				<nameidentifier>
+					<x415>01</x415>
+					<b233>HCP Author ID</b233>
+					<b244>11151</b244>
+				</nameidentifier>
+				<nameidentifier>
+					<x415>16</x415>
+					<b244>0000000122824957</b244>
+				</nameidentifier>
+				<b039>Henning</b039>
+				<b040>Mankell</b040>
+			</contributor>
+			<b049>By Maj Sjöwall and Per Wahlöö, translated by Lois Roth and with an introduction by Henning Mankell</b049>
+			<n386/>
+			<language>
+				<b253>01</b253>
+				<b252>eng</b252>
+			</language>
+			<language>
+				<b253>02</b253>
+				<b252>swe</b252>
+			</language>
+			<extent>
+				<b218>00</b218>
+				<b219>245</b219>
+				<b220>03</b220>
+			</extent>
+			<extent>
+				<b218>04</b218>
+				<b219>16</b219>
+				<b220>03</b220>
+			</extent>
+			<subject>
+				<x425/>
+				<b067>93</b067>
+				<b068>1.3</b068>
+				<b069>FFP</b069>
+			</subject>
+			<subject>
+				<b067>93</b067>
+				<b068>1.3</b068>
+				<b069>FYT</b069>
+			</subject>
+			<subject>
+				<b067>94</b067>
+				<b068>1.3</b068>
+				<b069>1DNS</b069>
+			</subject>
+			<subject>
+				<b067>96</b067>
+				<b068>1.3</b068>
+				<b069>3MPQS</b069>
+			</subject>
+			<subject>
+				<x425/>
+				<b067>10</b067>
+				<b068>2009</b068>
+				<b069>FIC022000</b069>
+			</subject>
+			<subject>
+				<b067>20</b067>
+				<b070>Martin Beck; Roseanna McGraw; Lake Vättern; Stockholm; police procedural</b070>
+			</subject>
+			<audience>
+				<b204>01</b204>
+				<b206>01</b206>
+			</audience>
+			<audience>
+				<b204>22</b204>
+				<b206>01</b206>
+			</audience>
+		</descriptivedetail>
+		<collateraldetail>
+			<textcontent>
+				<x426>02</x426>
+				<x427>00</x427>
+				<d104 textformat="05"><p><strong>Perennial relaunches the first novel in the classic Martin Beck detective series from the 1960s</strong> – the novels that have inspired all crime fiction written ever since.</p></d104>
+			</textcontent>
+			<textcontent>
+				<x426>03</x426>
+				<x427>00</x427>
+				<d104 textformat="05"><p>Widely recognised as the among the greatest crime fiction ever written, this is the first of a series of stories that pioneered the police procedural genre. The series was translated into 35 languages, sold over 10 million copies around the world, and inspired writers from Henning Mankell to Jonathan Franzen.</p><p>Written in 1965, <em>Roseanna</em> is the work of Maj Sjöwall and Per Wahlöö – a husband and wife team from Sweden, and this volume has a new introduction to help bring their work to a new audience. The novel follows the fortunes of the detective Martin Beck, whose enigmatic and taciturn character has inspired countless other policemen in crime fiction.</p><p><em>Roseanna</em> begins on a July afternoon: the body of a young woman is dredged from a canal near Sweden’s beautiful Lake Vättern. Three months later, all that Police Inspector Martin Beck knows is that her name is Roseanna, that she came from Lincoln, Nebraska, and that she could have been strangled by any one of eighty-five people.</p><p>With its authentically rendered settings and vividly realized characters, and its command over the intricately woven details of police detection, <em>Roseanna</em> is a masterpiece of suspense and sadness.</p></d104>
+			</textcontent>
+			<textcontent>
+				<b034>1</b034>
+				<x426>06</x426>
+				<x427>00</x427>
+				<d104 textformat="05"><p>‘The writing is elegant and surprisingly humorous – if you haven’t come across Beck before, you’re in for a treat.’</p></d104>
+				<x428>The Guardian</x428>
+			</textcontent>
+			<textcontent>
+				<b034>2</b034>
+				<x426>06</x426>
+				<x427>00</x427>
+				<d104 textformat="05"><p>‘Their mysteries don’t just read well; they reread even better. Witness, wife, petty cop or crook – they’re all real characters even if they get just a few sentences. The plots hold, because they’re ingenious but never inhuman.’</p></d104>
+				<x428>New York Times</x428>
+			</textcontent>
+			<textcontent>
+				<x426>10</x426>
+				<x427>00</x427>
+				<d104>One of the greatest masterpieces of crime fiction</d104>
+			</textcontent>
+			<citedcontent>
+				<x430>03</x430>
+				<x427>00</x427>
+				<x431>01</x431>
+				<x428>Observer Magazine</x428>
+				<x434>Interview with Maj Sjöwall by Louise France</x434>
+				<x435>https://www.guardian.co.uk/books/2009/nov/22/crime-thriller-maj-sjowall-sweden</x435>
+				<contentdate>
+					<x429>01</x429>
+					<b306 dateformat="00">20091122</b306>
+				</contentdate>
+			</citedcontent>
+			<supportingresource>
+				<x436>01</x436>
+				<x427>00</x427>
+				<x437>03</x437>
+				<resourceversion>
+					<x441>02</x441>
+					<resourceversionfeature>
+						<x442>01</x442>
+						<x439>D502</x439>
+					</resourceversionfeature>
+					<resourceversionfeature>
+						<x442>02</x442>
+						<x439>341</x439>
+					</resourceversionfeature>
+					<resourceversionfeature>
+						<x442>03</x442>
+						<x439>222</x439>
+					</resourceversionfeature>
+					<x435>https://www.harpercollins.co.uk/covers/9780007232833.jpg</x435>
+					<contentdate>
+						<x429>17</x429>
+						<b306 dateformat="00">20060412</b306>
+					</contentdate>
+				</resourceversion>
+			</supportingresource>
+			<supportingresource>
+				<x436>15</x436>
+				<x427>00</x427>
+				<x437>06</x437>
+				<resourceversion>
+					<x441>01</x441>
+					<x435>https://browseinside.harpercollins.co.uk/pageview?isbn=9780007232833</x435>
+				</resourceversion>
+			</supportingresource>
+		</collateraldetail>
+		<!-- there is no Block 3 or Block 7 -->
+		<publishingdetail>
+			<imprint>
+				<b079>HarperPerennial</b079>
+			</imprint>
+			<publisher>
+				<b291>01</b291>
+				<publisheridentifier>
+					<x447>16</x447>
+					<b244>0000000404222532</b244>
+				</publisheridentifier>
+				<b081>HarperCollins Publishers</b081>
+				<website>
+					<b367>01</b367>
+					<b295>https://www.harpercollins.co.uk</b295>
+				</website>
+			</publisher>
+			<b209>London</b209>
+			<b083>GB</b083>
+			<b394>04</b394>
+			<publishingdate>
+				<x448>01</x448>
+				<b306 dateformat="00">20060807</b306>
+			</publishingdate>
+			<publishingdate>
+				<x448>11</x448>
+				<b306 dateformat="05">1968</b306>
+			</publishingdate>
+			<publishingdate>
+				<x448>20</x448>
+				<b306 dateformat="05">1965</b306>
+			</publishingdate>
+			<salesrights>
+				<b089>01</b089>
+				<territory>
+					<x449>AG AI AU BB BD BM BN BS BW BZ CM CY DM EG FJ FK GB GD GG GH GI GM GY HK IE IL IM IN IO JE JM JO KE KI KN KW KY LC LK LS MT MU MV MW MY MZ NA NG NR NZ PG PK PN SB SC SD SG SH SL SO SZ TC TO TT TV TZ UG VC VG VU WS YE RS ME ZA ZM ZW</x449>
+				</territory>
+			</salesrights>
+			<salesrights>
+				<b089>06</b089>
+				<territory>
+					<x449>AS CA GU MP PH PR US VI</x449>
+				</territory>
+			</salesrights>
+			<salesrights>
+				<b089>02</b089>
+				<territory>
+					<x450>WORLD</x450>
+					<x451>AG AI AU BB BD BM BN BS BW BZ CM CY DM EG FJ FK GB GD GG GH GI GM GY HK IE IL IM IN IO JE JM JO KE KI KN KW KY LC LK LS MT MU MV MW MY MZ NA NG NR NZ PG PK PN SB SC SD SG SH SL SO SZ TC TO TT TV TZ UG VC VG VU WS YE RS ME ZA ZM ZW AS CA GU MP PH PR US VI</x451>
+				</territory>
+			</salesrights>
+			<!-- no ROW sales rights type needed -->
+		</publishingdetail>
+		<relatedmaterial>
+			<relatedwork>
+				<x454>01</x454>
+				<workidentifier>
+					<b201>11</b201>
+					<b244>A0220090000154FA</b244>
+				</workidentifier>
+			</relatedwork>
+			<relatedproduct>
+				<x455>06</x455>
+				<x455>27</x455>
+				<productidentifier>
+					<b221>03</b221>
+					<b244>9780007324378</b244>
+				</productidentifier>
+				<productidentifier>
+					<b221>15</b221>
+					<b244>9780007324378</b244>
+				</productidentifier>
+			</relatedproduct>
+		</relatedmaterial>
+		<!-- there is no Block 8 -->
+		<productsupply>
+			<x587>NAAU3</x587>
+			<market>
+				<territory>
+					<x450>WORLD</x450>
+					<x451>AS AU CA GU MP NZ PH PR US VI ZA</x451>
+				</territory>
+			</market>
+			<marketpublishingdetail>
+				<j407>04</j407>
+				<marketdate>
+					<j408>01</j408>
+					<b306 dateformat="00">20060807</b306>
+				</marketdate>
+			</marketpublishingdetail>
+			<supplydetail>
+				<supplier>
+					<j292>01</j292>
+					<supplieridentifier>
+						<j345>06</j345>
+						<b244>5051366000000</b244>
+					</supplieridentifier>
+					<supplieridentifier>
+						<j345>07</j345>
+						<b244>0091073</b244>
+					</supplieridentifier>
+					<j137>HarperCollins Publishers</j137>
+					<j270>+44 1417 723200</j270>
+				</supplier>
+				<returnsconditions>
+					<j268>02</j268>
+					<j269>Y</j269>
+				</returnsconditions>
+				<j396>21</j396>
+				<j145>15</j145>
+				<price>
+					<x462>02</x462>
+					<discountcoded>
+						<j363>01</j363>
+						<j364>AHACP029</j364>
+					</discountcoded>
+					<j266>02</j266>
+					<j151>7.99</j151>
+					<tax>
+						<x470>01</x470>
+						<x471>Z</x471>
+						<x472>0</x472>
+						<x473>7.99</x473>
+						<x474>0.00</x474>
+					</tax>
+					<j152>GBP</j152>
+					<territory>
+						<x449>GB</x449>
+					</territory>
+					<x301>02</x301>
+					<x313>01</x313>
+				</price>
+				<price>
+					<x462>01</x462>
+					<discount>
+						<j267>37.5</j267>
+					</discount>
+					<j266>02</j266>
+					<j151>8.99</j151>
+					<j152>EUR</j152>
+					<territory>
+						<x449>AT BE CY FI FR DE ES GR IE IT LU MT NL PT SI SK AD MC ME SM VA</x449>
+					</territory>
+					<x301>01</x301>
+				</price>
+				<price>
+					<x462>01</x462>
+					<discount>
+						<j267>42.5</j267>
+					</discount>
+					<j266>02</j266>
+					<j151>7.99</j151>
+					<j152>GBP</j152>
+					<territory>
+						<x450>WORLD</x450>
+						<x451>GB AT BE CY FI FR DE ES GR IE IT LU MT NL PT SI SK AD MC ME SM VA AS AU CA GU MP NZ PH PR US VI ZA</x451>
+					</territory>
+					<x301>01</x301>
+				</price>
+			</supplydetail>
+		</productsupply>
+		<!-- aggregator could add other ProductSupply sections here, for AU/NZ and ZA distributors -->
+	</product>
+</ONIXmessage>
