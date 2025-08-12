@@ -663,7 +663,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Element1(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element1",
+                            false,
+                        )?;
                         match self.handle_element_1(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -672,8 +677,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Element2(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element2",
+                            false,
+                        )?;
                         match self.handle_element_2(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -990,7 +999,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Element3(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element3",
+                            false,
+                        )?;
                         match self.handle_element_3(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -999,8 +1013,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Element4(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element4",
+                            false,
+                        )?;
                         match self.handle_element_4(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

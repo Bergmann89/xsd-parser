@@ -4375,7 +4375,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::DateTimeString(values, None), event) => {
-                        let output = < super :: DateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_UDT),
+                            b"DateTimeString",
+                            false,
+                        )?;
                         match self.handle_date_time_string(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -24800,7 +24805,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::DateString(values, None), event) => {
-                        let output = < super :: DateTypeDateStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_UDT),
+                            b"DateString",
+                            false,
+                        )?;
                         match self.handle_date_string(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -25452,7 +25462,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Indicator(values, None), event) => {
-                        let output = <bool as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_UDT),
+                            b"Indicator",
+                            false,
+                        )?;
                         match self.handle_indicator(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

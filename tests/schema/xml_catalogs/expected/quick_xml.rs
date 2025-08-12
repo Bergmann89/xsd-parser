@@ -2045,10 +2045,12 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event) => {
-                            let output =
-                                <super::PublicType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"public",
+                                false,
+                            )?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2057,10 +2059,12 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event) => {
-                            let output =
-                                <super::SystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
                             match self.handle_system(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2069,8 +2073,11 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event) => {
-                            let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
                             )?;
                             match self.handle_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -2080,10 +2087,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, None), event) => {
-                            let output =
-                                <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteSystem",
+                                false,
+                            )?;
                             match self.handle_rewrite_system(
                                 reader,
                                 values,
@@ -2097,10 +2106,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, None), event) => {
-                            let output =
-                                <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteURI",
+                                false,
+                            )?;
                             match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2109,10 +2120,12 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, None), event) => {
-                            let output =
-                                <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uriSuffix",
+                                false,
+                            )?;
                             match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2121,10 +2134,12 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, None), event) => {
-                            let output =
-                                <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"systemSuffix",
+                                false,
+                            )?;
                             match self.handle_system_suffix(
                                 reader,
                                 values,
@@ -2138,7 +2153,12 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, None), event) => {
-                            let output = < super :: DelegatePublicType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegatePublic",
+                                false,
+                            )?;
                             match self.handle_delegate_public(
                                 reader,
                                 values,
@@ -2152,7 +2172,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, None), event) => {
-                            let output = < super :: DelegateSystemType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateSystem",
+                                false,
+                            )?;
                             match self.handle_delegate_system(
                                 reader,
                                 values,
@@ -2166,10 +2191,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, None), event) => {
-                            let output =
-                                <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateURI",
+                                false,
+                            )?;
                             match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2178,10 +2205,12 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, None), event) => {
-                            let output =
-                                <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"nextCatalog",
+                                false,
+                            )?;
                             match self.handle_next_catalog(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2190,10 +2219,12 @@ pub mod er {
                             }
                         }
                         (S::Group(values, None), event) => {
-                            let output =
-                                <super::GroupType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"group",
+                                true,
+                            )?;
                             match self.handle_group(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4054,10 +4085,12 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event) => {
-                            let output =
-                                <super::PublicType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"public",
+                                false,
+                            )?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4066,10 +4099,12 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event) => {
-                            let output =
-                                <super::SystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
                             match self.handle_system(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4078,8 +4113,11 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event) => {
-                            let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
                             )?;
                             match self.handle_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -4089,10 +4127,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, None), event) => {
-                            let output =
-                                <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteSystem",
+                                false,
+                            )?;
                             match self.handle_rewrite_system(
                                 reader,
                                 values,
@@ -4106,10 +4146,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, None), event) => {
-                            let output =
-                                <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteURI",
+                                false,
+                            )?;
                             match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4118,10 +4160,12 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, None), event) => {
-                            let output =
-                                <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uriSuffix",
+                                false,
+                            )?;
                             match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4130,10 +4174,12 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, None), event) => {
-                            let output =
-                                <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"systemSuffix",
+                                false,
+                            )?;
                             match self.handle_system_suffix(
                                 reader,
                                 values,
@@ -4147,7 +4193,12 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, None), event) => {
-                            let output = < super :: DelegatePublicType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegatePublic",
+                                false,
+                            )?;
                             match self.handle_delegate_public(
                                 reader,
                                 values,
@@ -4161,7 +4212,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, None), event) => {
-                            let output = < super :: DelegateSystemType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateSystem",
+                                false,
+                            )?;
                             match self.handle_delegate_system(
                                 reader,
                                 values,
@@ -4175,10 +4231,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, None), event) => {
-                            let output =
-                                <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateURI",
+                                false,
+                            )?;
                             match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4187,10 +4245,12 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, None), event) => {
-                            let output =
-                                <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"nextCatalog",
+                                false,
+                            )?;
                             match self.handle_next_catalog(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)

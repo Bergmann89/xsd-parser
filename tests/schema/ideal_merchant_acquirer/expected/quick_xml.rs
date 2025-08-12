@@ -3589,8 +3589,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::KeyName(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"KeyName",
+                            false,
+                        )?;
                         match self.handle_key_name(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -3599,8 +3603,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::KeyValue(values, None), event) => {
-                        let output = <super::KeyValueType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"KeyValue",
+                            true,
                         )?;
                         match self.handle_key_value(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -3610,10 +3617,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::RetrievalMethod(values, None), event) => {
-                        let output =
-                            <super::RetrievalMethodType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"RetrievalMethod",
+                            true,
+                        )?;
                         match self.handle_retrieval_method(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -3622,8 +3631,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::X509Data(values, None), event) => {
-                        let output = <super::X509DataType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509Data",
+                            true,
                         )?;
                         match self.handle_x509_data(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -3633,8 +3645,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PgpData(values, None), event) => {
-                        let output = <super::PgpDataType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"PGPData",
+                            false,
                         )?;
                         match self.handle_pgp_data(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -3644,8 +3659,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::SpkiData(values, None), event) => {
-                        let output = <super::SpkiDataType as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"SPKIData",
+                            false,
                         )?;
                         match self.handle_spki_data(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
@@ -3655,8 +3673,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::MgmtData(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"MgmtData",
+                            false,
+                        )?;
                         match self.handle_mgmt_data(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -4994,10 +5016,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::DsaKeyValue(values, None), event) => {
-                        let output =
-                            <super::DsaKeyValueType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"DSAKeyValue",
+                            false,
+                        )?;
                         match self.handle_dsa_key_value(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5006,10 +5030,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::RsaKeyValue(values, None), event) => {
-                        let output =
-                            <super::RsaKeyValueType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"RSAKeyValue",
+                            false,
+                        )?;
                         match self.handle_rsa_key_value(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -8520,10 +8546,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::X509IssuerSerial(values, None), event) => {
-                        let output =
-                            <super::X509IssuerSerialType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509IssuerSerial",
+                            false,
+                        )?;
                         match self.handle_x509_issuer_serial(
                             reader,
                             values,
@@ -8537,8 +8565,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::X509Ski(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509SKI",
+                            false,
+                        )?;
                         match self.handle_x509_ski(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -8547,8 +8579,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::X509SubjectName(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509SubjectName",
+                            false,
+                        )?;
                         match self.handle_x509_subject_name(
                             reader,
                             values,
@@ -8562,8 +8598,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::X509Certificate(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509Certificate",
+                            false,
+                        )?;
                         match self.handle_x509_certificate(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -8572,8 +8612,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::X509Crl(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"X509CRL",
+                            false,
+                        )?;
                         match self.handle_x509_crl(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -9489,8 +9533,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::XPath(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DS),
+                            b"XPath",
+                            false,
+                        )?;
                         match self.handle_x_path(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

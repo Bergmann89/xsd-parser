@@ -6002,10 +6002,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Header(values, None), event) => {
-                        let output =
-                            <super::HeaderElementType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"HEADER",
+                            false,
+                        )?;
                         match self.handle_header(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6014,7 +6016,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewCatalog(values, None), event) => {
-                        let output = < super :: TNewCatalogElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_NEW_CATALOG",
+                            false,
+                        )?;
                         match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6023,7 +6030,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdateProducts(values, None), event) => {
-                        let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_UPDATE_PRODUCTS",
+                            false,
+                        )?;
                         match self.handle_t_update_products(
                             reader,
                             values,
@@ -6037,7 +6049,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdatePrices(values, None), event) => {
-                        let output = < super :: TUpdatePricesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_UPDATE_PRICES",
+                            false,
+                        )?;
                         match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6046,7 +6063,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewProductdata(values, None), event) => {
-                        let output = < super :: TNewProductdataElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_NEW_PRODUCTDATA",
+                            false,
+                        )?;
                         match self.handle_t_new_productdata(
                             reader,
                             values,
@@ -26487,8 +26509,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfDiscountGroupManufacturer(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_discount_group_manufacturer(
                             reader,
                             values,
@@ -26502,8 +26528,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiscountGroupSupplier(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_discount_group_supplier(
                             reader,
                             values,
@@ -37700,8 +37730,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfSurchargeType(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_TYPE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_type(
                             reader,
                             values,
@@ -37715,8 +37749,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeClass(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_CLASS",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_class(
                             reader,
                             values,
@@ -37730,7 +37768,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeManner(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeMannerElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_MANNER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_manner(
                             reader,
                             values,
@@ -37744,7 +37787,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePercentage(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_PERCENTAGE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_percentage(
                             reader,
                             values,
@@ -37758,7 +37806,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePriceAmount(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_price_amount(
                             reader,
                             values,
@@ -37772,7 +37825,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeCalculation(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_CALCULATION",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_calculation(
                             reader,
                             values,
@@ -37786,7 +37844,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasis(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis(
                             reader,
                             values,
@@ -37800,7 +37863,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisWeight(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_WEIGHT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_weight(
                             reader,
                             values,
@@ -37814,7 +37882,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeThreshold(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_threshold(
                             reader,
                             values,
@@ -37828,7 +37901,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeShutter(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_shutter(
                             reader,
                             values,
@@ -37842,7 +37920,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeCredit(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_credit(
                             reader,
                             values,
@@ -37856,8 +37939,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeTable(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE",
+                            false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_table(
                             reader,
@@ -39002,7 +39088,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfPortcode(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PORTCODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_portcode(
                             reader,
                             values,
@@ -39016,8 +39107,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfFname(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.FNAME",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_fname(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -39026,8 +39121,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfFvalue(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.FVALUE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_fvalue(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -39036,7 +39135,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateX(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_X",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_x(
                             reader,
                             values,
@@ -39050,7 +39154,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateY(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_Y",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_y(
                             reader,
                             values,
@@ -39064,7 +39173,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateZ(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_Z",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_z(
                             reader,
                             values,
@@ -39078,7 +39192,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMatrixValues(values, None), event) => {
-                        let output = < super :: UdxEdxfMatrixValuesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATRIX_VALUES",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_matrix_values(
                             reader,
                             values,
@@ -40398,8 +40517,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfProductCharacteristicCode(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_code(
                             reader,
                             values,
@@ -40413,8 +40536,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicName(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_name(
                             reader,
@@ -40429,8 +40555,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueBoolean(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_boolean(
                             reader,
                             values,
@@ -40444,7 +40574,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueNumeric(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_numeric(
                             reader,
                             values,
@@ -40458,7 +40593,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueRangeFrom(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_range_from(
                             reader,
                             values,
@@ -40472,7 +40612,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueRangeTo(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_range_to(
                             reader,
                             values,
@@ -40486,8 +40631,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueString(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_value_string(
                             reader,
@@ -40502,8 +40650,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueSet(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_value_set(
                             reader,
@@ -40518,8 +40669,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueSelect(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_select(
                             reader,
                             values,
@@ -40533,8 +40688,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueUnitCode(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_unit_code(
                             reader,
                             values,
@@ -40548,8 +40707,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicReferenceGtin(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_reference_gtin(
                             reader,
                             values,

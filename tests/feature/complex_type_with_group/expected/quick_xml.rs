@@ -753,8 +753,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Bar(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
                         match self.handle_bar(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -763,7 +767,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Baz(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Baz",
+                            false,
+                        )?;
                         match self.handle_baz(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

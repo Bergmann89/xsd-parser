@@ -829,10 +829,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::NegativeDecimal(values, None), event) => {
-                        let output =
-                            <super::NegativeDecimalType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"NegativeDecimal",
+                            false,
+                        )?;
                         match self.handle_negative_decimal(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -841,10 +843,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PositiveDecimal(values, None), event) => {
-                        let output =
-                            <super::PositiveDecimalType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"PositiveDecimal",
+                            false,
+                        )?;
                         match self.handle_positive_decimal(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -853,10 +857,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::RestrictedString(values, None), event) => {
-                        let output =
-                            <super::RestrictedStringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"RestrictedString",
+                            false,
+                        )?;
                         match self.handle_restricted_string(
                             reader,
                             values,

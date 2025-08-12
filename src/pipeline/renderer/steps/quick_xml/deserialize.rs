@@ -3032,12 +3032,42 @@ impl ComplexDataElement<'_> {
     }
 
     fn deserializer_enum_variant_fn_next_create(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let name = &self.b_name;
+        let allow_any = self.target_type_allows_any(ctx.types.meta.types);
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::WithDeserializer"]);
 
         let matcher = quote!(None);
-        let output = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event));
+
+        let need_name_matcher = !self.target_is_dynamic
+            && matches!(
+                &self.meta().variant,
+                ElementMetaVariant::Any { .. }
+                    | ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+            );
+
+        let output = if need_name_matcher {
+            let ns_name = self
+                .meta()
+                .ident
+                .ns
+                .as_ref()
+                .and_then(|ns| ctx.types.meta.types.modules.get(ns))
+                .map(|module| ctx.resolve_type_for_deserialize_module(&module.make_ns_const()))
+                .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
+
+            quote! {
+                reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)
+            }
+        } else {
+            quote! {
+                <#target_type as WithDeserializer>::Deserializer::init(reader, event)
+            }
+        };
 
         self.deserializer_enum_variant_fn_next(ctx, &matcher, &output)
     }
