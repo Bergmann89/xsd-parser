@@ -546,7 +546,7 @@ impl<'types> ComplexDataElement<'types> {
             ComplexDataElementOrigin::Generated(meta) => &**meta,
         };
 
-        let occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
+        let mut occurs = Occurs::from_occurs(meta.min_occurs, meta.max_occurs);
         if occurs == Occurs::None {
             return Ok(None);
         }
@@ -581,6 +581,10 @@ impl<'types> ComplexDataElement<'types> {
                     mixed && *mode == ElementMode::Element,
                     target_type,
                 );
+
+                if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
+                    occurs = Occurs::Optional;
+                }
 
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
@@ -794,6 +798,41 @@ impl Context<'_, '_> {
             mode
         } else {
             MixedMode::None
+        }
+    }
+}
+
+impl MetaTypes {
+    fn group_has_only_optional_elements(&self, ident: &Ident) -> bool {
+        fn check_element(types: &MetaTypes, element: &ElementMeta) -> bool {
+            match &element.variant {
+                ElementMetaVariant::Any { .. } => element.min_occurs == 0,
+                ElementMetaVariant::Text => element.min_occurs == 0,
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Element,
+                    ..
+                } => element.min_occurs == 0,
+                ElementMetaVariant::Type {
+                    mode: ElementMode::Group,
+                    type_,
+                } => element.min_occurs == 0 || types.group_has_only_optional_elements(type_),
+            }
+        }
+
+        let Some(ty) = self.items.get(ident) else {
+            return false;
+        };
+
+        match &ty.variant {
+            MetaTypeVariant::Choice(gi) => gi
+                .elements
+                .iter()
+                .any(|element| check_element(self, element)),
+            MetaTypeVariant::All(gi) | MetaTypeVariant::Sequence(gi) => gi
+                .elements
+                .iter()
+                .all(|element| check_element(self, element)),
+            _ => false,
         }
     }
 }
