@@ -2165,21 +2165,20 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Fuu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Fuu") {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_fuu(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Fuu",
+                            false,
+                        )?;
+                        match self.handle_fuu(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TextAfterFuu(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TextAfterFuu(None), event) => {
@@ -2195,21 +2194,20 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Bar(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Bar") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_bar(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
+                        match self.handle_bar(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TextAfterBar(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TextAfterBar(None), event) => {

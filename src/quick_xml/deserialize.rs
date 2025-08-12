@@ -645,6 +645,37 @@ pub trait DeserializeReader: XmlReader {
         }
     }
 
+    /// Try to initialize a deserializer for the given `event` if it is a start
+    /// or empty tag that matches the passed `ns` and `name`.
+    ///
+    /// If the event does not match the expectations, the returned `DeserializerResult`
+    /// will indicate continuation.
+    ///
+    /// # Errors
+    ///
+    /// Raises an error if the deserializer could not be initialized.
+    #[inline]
+    fn init_start_tag_deserializer<'a, T>(
+        &self,
+        event: Event<'a>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+        allow_any: bool,
+    ) -> DeserializerResult<'a, T>
+    where
+        T: WithDeserializer,
+    {
+        if self.check_start_tag_name(&event, ns, name) {
+            <T as WithDeserializer>::Deserializer::init(self, event)
+        } else {
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::None,
+                event: DeserializerEvent::Continue(event),
+                allow_any,
+            })
+        }
+    }
+
     /// Try to extract the type name of a dynamic type from the passed event.
     ///
     /// This method will try to extract the name of a dynamic type from

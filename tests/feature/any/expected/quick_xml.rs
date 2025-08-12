@@ -439,21 +439,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Name") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Name",
+                            false,
+                        )?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Any0(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Any0(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -477,25 +476,20 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Choice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Choice") {
-                            let output =
-                                <super::ChoiceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_choice(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Choice",
+                            true,
+                        )?;
+                        match self.handle_choice(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Any1(None);
-                            allow_any_element = true;
-                            fallback.get_or_insert(S::Choice(None));
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Any1(None), event @ (Event::Start(_) | Event::Empty(_))) => {

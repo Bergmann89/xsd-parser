@@ -2001,77 +2001,65 @@ pub mod quick_xml_deserialize {
                         S::ExchangedDocumentContext(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RSM),
                             b"ExchangedDocumentContext",
-                        ) {
-                            let output = < super :: ExchangedDocumentContextType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_exchanged_document_context(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_exchanged_document_context(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ExchangedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ExchangedDocument(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RSM),
                             b"ExchangedDocument",
-                        ) {
-                            let output = < super :: ExchangedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_exchanged_document(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_exchanged_document(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SupplyChainTradeTransaction(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SupplyChainTradeTransaction(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RSM),
                             b"SupplyChainTradeTransaction",
-                        ) {
-                            let output = < super :: SupplyChainTradeTransactionType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_supply_chain_trade_transaction(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supply_chain_trade_transaction(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -2380,57 +2368,48 @@ pub mod quick_xml_deserialize {
                         S::BusinessProcessSpecifiedDocumentContextParameter(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BusinessProcessSpecifiedDocumentContextParameter",
-                        ) {
-                            let output = < super :: DocumentContextParameterType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self
-                                .handle_business_process_specified_document_context_parameter(
-                                    reader,
-                                    output,
-                                    &mut fallback,
-                                )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_business_process_specified_document_context_parameter(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::GuidelineSpecifiedDocumentContextParameter(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::GuidelineSpecifiedDocumentContextParameter(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"GuidelineSpecifiedDocumentContextParameter",
-                        ) {
-                            let output = < super :: DocumentContextParameterType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_guideline_specified_document_context_parameter(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_guideline_specified_document_context_parameter(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -2869,89 +2848,71 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TypeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"TypeCode") {
-                            let output =
-                                <super::DocumentCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"TypeCode",
+                            false,
+                        )?;
+                        match self.handle_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::IssueDateTime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::IssueDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"IssueDateTime",
-                        ) {
-                            let output =
-                                <super::DateTimeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_issue_date_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_issue_date_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::IncludedNote(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::IncludedNote(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"IncludedNote",
-                        ) {
-                            let output = <super::NoteType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_included_note(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_included_note(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -3425,112 +3386,96 @@ pub mod quick_xml_deserialize {
                         S::IncludedSupplyChainTradeLineItem(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"IncludedSupplyChainTradeLineItem",
-                        ) {
-                            let output = < super :: SupplyChainTradeLineItemType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_included_supply_chain_trade_line_item(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_included_supply_chain_trade_line_item(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableHeaderTradeAgreement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ApplicableHeaderTradeAgreement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeAgreement",
-                        ) {
-                            let output = < super :: HeaderTradeAgreementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applicable_header_trade_agreement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_header_trade_agreement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableHeaderTradeDelivery(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ApplicableHeaderTradeDelivery(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeDelivery",
-                        ) {
-                            let output = < super :: HeaderTradeDeliveryType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applicable_header_trade_delivery(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_header_trade_delivery(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableHeaderTradeSettlement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ApplicableHeaderTradeSettlement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableHeaderTradeSettlement",
-                        ) {
-                            let output = < super :: HeaderTradeSettlementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applicable_header_trade_settlement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_header_trade_settlement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -3741,22 +3686,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -4689,42 +4632,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Content") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_content(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Content",
+                            false,
+                        )?;
+                        match self.handle_content(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SubjectCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::SubjectCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"SubjectCode")
-                        {
-                            let output = <super::CodeType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_subject_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"SubjectCode",
+                            false,
+                        )?;
+                        match self.handle_subject_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -5308,143 +5246,116 @@ pub mod quick_xml_deserialize {
                         S::AssociatedDocumentLineDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AssociatedDocumentLineDocument",
-                        ) {
-                            let output = < super :: DocumentLineDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_associated_document_line_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_associated_document_line_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeProduct(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeProduct(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeProduct",
-                        ) {
-                            let output =
-                                <super::TradeProductType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_specified_trade_product(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_product(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedLineTradeAgreement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedLineTradeAgreement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedLineTradeAgreement",
-                        ) {
-                            let output = < super :: LineTradeAgreementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_line_trade_agreement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_line_trade_agreement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedLineTradeDelivery(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedLineTradeDelivery(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedLineTradeDelivery",
-                        ) {
-                            let output = < super :: LineTradeDeliveryType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_line_trade_delivery(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_line_trade_delivery(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedLineTradeSettlement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedLineTradeSettlement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedLineTradeSettlement",
-                        ) {
-                            let output = < super :: LineTradeSettlementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_line_trade_settlement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_line_trade_settlement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -6337,245 +6248,198 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::BuyerReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BuyerReference",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_buyer_reference(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_reference(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SellerTradeParty(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::SellerTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SellerTradeParty",
-                        ) {
-                            let output =
-                                <super::TradePartyType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_seller_trade_party(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_seller_trade_party(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BuyerTradeParty(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BuyerTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BuyerTradeParty",
-                        ) {
-                            let output =
-                                <super::TradePartyType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_buyer_trade_party(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_trade_party(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SellerTaxRepresentativeTradeParty(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SellerTaxRepresentativeTradeParty(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SellerTaxRepresentativeTradeParty",
-                        ) {
-                            let output =
-                                <super::TradePartyType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_seller_tax_representative_trade_party(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_seller_tax_representative_trade_party(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SellerOrderReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SellerOrderReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SellerOrderReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_seller_order_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_seller_order_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BuyerOrderReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::BuyerOrderReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BuyerOrderReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_buyer_order_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_order_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ContractReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ContractReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ContractReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_contract_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_contract_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AdditionalReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::AdditionalReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AdditionalReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_additional_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_additional_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedProcuringProject(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedProcuringProject(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedProcuringProject",
-                        ) {
-                            let output = < super :: ProcuringProjectType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_procuring_project(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_procuring_project(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -7052,111 +6916,92 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ShipToTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ShipToTradeParty",
-                        ) {
-                            let output =
-                                <super::TradePartyType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_ship_to_trade_party(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_ship_to_trade_party(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ActualDeliverySupplyChainEvent(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ActualDeliverySupplyChainEvent(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ActualDeliverySupplyChainEvent",
-                        ) {
-                            let output = < super :: SupplyChainEventType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_actual_delivery_supply_chain_event(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_actual_delivery_supply_chain_event(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DespatchAdviceReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::DespatchAdviceReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DespatchAdviceReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_despatch_advice_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_despatch_advice_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReceivingAdviceReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ReceivingAdviceReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ReceivingAdviceReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_receiving_advice_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_receiving_advice_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -8338,349 +8183,269 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CreditorReferenceId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CreditorReferenceID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_creditor_reference_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_creditor_reference_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PaymentReference(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PaymentReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PaymentReference",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_payment_reference(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_payment_reference(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TaxCurrencyCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TaxCurrencyCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TaxCurrencyCode",
-                        ) {
-                            let output =
-                                <super::CurrencyCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_tax_currency_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_tax_currency_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::InvoiceCurrencyCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::InvoiceCurrencyCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"InvoiceCurrencyCode",
-                        ) {
-                            let output =
-                                <super::CurrencyCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_invoice_currency_code(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_invoice_currency_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PayeeTradeParty(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PayeeTradeParty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PayeeTradeParty",
-                        ) {
-                            let output =
-                                <super::TradePartyType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_payee_trade_party(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_payee_trade_party(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeSettlementPaymentMeans(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeSettlementPaymentMeans(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeSettlementPaymentMeans",
-                        ) {
-                            let output = < super :: TradeSettlementPaymentMeansType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_settlement_payment_means(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_settlement_payment_means(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableTradeTax(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ApplicableTradeTax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableTradeTax",
-                        ) {
-                            let output =
-                                <super::TradeTaxType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_applicable_trade_tax(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_trade_tax(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BillingSpecifiedPeriod(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::BillingSpecifiedPeriod(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BillingSpecifiedPeriod",
-                        ) {
-                            let output = < super :: SpecifiedPeriodType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_billing_specified_period(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_billing_specified_period(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeAllowanceCharge(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeAllowanceCharge(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeAllowanceCharge",
-                        ) {
-                            let output = < super :: TradeAllowanceChargeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_allowance_charge(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_allowance_charge(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradePaymentTerms(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradePaymentTerms(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradePaymentTerms",
-                        ) {
-                            let output = < super :: TradePaymentTermsType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_payment_terms(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_payment_terms(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeSettlementHeaderMonetarySummation(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeSettlementHeaderMonetarySummation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeSettlementHeaderMonetarySummation",
-                        ) {
-                            let output = < super :: TradeSettlementHeaderMonetarySummationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_settlement_header_monetary_summation(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_settlement_header_monetary_summation(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::InvoiceReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::InvoiceReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"InvoiceReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_invoice_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_invoice_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReceivableSpecifiedTradeAccountingAccount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ReceivableSpecifiedTradeAccountingAccount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ReceivableSpecifiedTradeAccountingAccount",
-                        ) {
-                            let output = < super :: TradeAccountingAccountType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_receivable_specified_trade_accounting_account(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_receivable_specified_trade_accounting_account(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -9417,45 +9182,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::LineId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"LineID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_line_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"LineID",
+                            false,
+                        )?;
+                        match self.handle_line_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::IncludedNote(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::IncludedNote(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"IncludedNote",
-                        ) {
-                            let output = <super::NoteType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_included_note(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_included_note(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -10213,187 +9970,153 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::GlobalId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"GlobalID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_global_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"GlobalID",
+                            false,
+                        )?;
+                        match self.handle_global_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SellerAssignedId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::SellerAssignedId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SellerAssignedID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_seller_assigned_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_seller_assigned_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BuyerAssignedId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BuyerAssignedId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BuyerAssignedID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_buyer_assigned_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_assigned_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Name(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Name") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Name",
+                            false,
+                        )?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Description(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Description(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Description")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_description(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Description",
+                            false,
+                        )?;
+                        match self.handle_description(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableProductCharacteristic(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ApplicableProductCharacteristic(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableProductCharacteristic",
-                        ) {
-                            let output = < super :: ProductCharacteristicType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applicable_product_characteristic(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_product_characteristic(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DesignatedProductClassification(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::DesignatedProductClassification(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DesignatedProductClassification",
-                        ) {
-                            let output = < super :: ProductClassificationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_designated_product_classification(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_designated_product_classification(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::OriginTradeCountry(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::OriginTradeCountry(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"OriginTradeCountry",
-                        ) {
-                            let output =
-                                <super::TradeCountryType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_origin_trade_country(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_origin_trade_country(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -10790,90 +10513,72 @@ pub mod quick_xml_deserialize {
                         S::BuyerOrderReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BuyerOrderReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_buyer_order_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_order_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::GrossPriceProductTradePrice(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::GrossPriceProductTradePrice(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"GrossPriceProductTradePrice",
-                        ) {
-                            let output =
-                                <super::TradePriceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_gross_price_product_trade_price(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_gross_price_product_trade_price(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::NetPriceProductTradePrice(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::NetPriceProductTradePrice(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"NetPriceProductTradePrice",
-                        ) {
-                            let output =
-                                <super::TradePriceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_net_price_product_trade_price(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_net_price_product_trade_price(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -11077,27 +10782,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::BilledQuantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BilledQuantity",
-                        ) {
-                            let output =
-                                <super::QuantityType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_billed_quantity(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_billed_quantity(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -11745,167 +11443,136 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ApplicableTradeTax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableTradeTax",
-                        ) {
-                            let output =
-                                <super::TradeTaxType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_applicable_trade_tax(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_trade_tax(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BillingSpecifiedPeriod(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::BillingSpecifiedPeriod(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BillingSpecifiedPeriod",
-                        ) {
-                            let output = < super :: SpecifiedPeriodType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_billing_specified_period(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_billing_specified_period(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeAllowanceCharge(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeAllowanceCharge(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeAllowanceCharge",
-                        ) {
-                            let output = < super :: TradeAllowanceChargeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_allowance_charge(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_allowance_charge(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTradeSettlementLineMonetarySummation(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTradeSettlementLineMonetarySummation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTradeSettlementLineMonetarySummation",
-                        ) {
-                            let output = < super :: TradeSettlementLineMonetarySummationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_trade_settlement_line_monetary_summation(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_trade_settlement_line_monetary_summation(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AdditionalReferencedDocument(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::AdditionalReferencedDocument(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AdditionalReferencedDocument",
-                        ) {
-                            let output = < super :: ReferencedDocumentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_additional_referenced_document(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_additional_referenced_document(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReceivableSpecifiedTradeAccountingAccount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ReceivableSpecifiedTradeAccountingAccount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ReceivableSpecifiedTradeAccountingAccount",
-                        ) {
-                            let output = < super :: TradeAccountingAccountType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_receivable_specified_trade_accounting_account(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_receivable_specified_trade_accounting_account(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -12741,216 +12408,177 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::GlobalId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::GlobalId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"GlobalID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_global_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"GlobalID",
+                            false,
+                        )?;
+                        match self.handle_global_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Name(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Name") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Name",
+                            false,
+                        )?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Description(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Description(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Description")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_description(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Description",
+                            false,
+                        )?;
+                        match self.handle_description(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedLegalOrganization(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedLegalOrganization(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedLegalOrganization",
-                        ) {
-                            let output = < super :: LegalOrganizationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_legal_organization(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_legal_organization(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DefinedTradeContact(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DefinedTradeContact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DefinedTradeContact",
-                        ) {
-                            let output =
-                                <super::TradeContactType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_defined_trade_contact(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_defined_trade_contact(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PostalTradeAddress(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PostalTradeAddress(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PostalTradeAddress",
-                        ) {
-                            let output =
-                                <super::TradeAddressType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_postal_trade_address(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_postal_trade_address(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UriUniversalCommunication(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UriUniversalCommunication(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"URIUniversalCommunication",
-                        ) {
-                            let output = < super :: UniversalCommunicationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_uri_universal_communication(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_uri_universal_communication(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecifiedTaxRegistration(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecifiedTaxRegistration(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"SpecifiedTaxRegistration",
-                        ) {
-                            let output = < super :: TaxRegistrationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_specified_tax_registration(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_specified_tax_registration(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -13708,186 +13336,149 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::IssuerAssignedId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"IssuerAssignedID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_issuer_assigned_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_issuer_assigned_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Uriid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Uriid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"URIID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_uriid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"URIID",
+                            false,
+                        )?;
+                        match self.handle_uriid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::LineId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::LineId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"LineID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_line_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"LineID",
+                            false,
+                        )?;
+                        match self.handle_line_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TypeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"TypeCode") {
-                            let output =
-                                <super::DocumentCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"TypeCode",
+                            false,
+                        )?;
+                        match self.handle_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Name(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Name") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Name",
+                            false,
+                        )?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AttachmentBinaryObject(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::AttachmentBinaryObject(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AttachmentBinaryObject",
-                        ) {
-                            let output =
-                                <super::BinaryObjectType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_attachment_binary_object(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_attachment_binary_object(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReferenceTypeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ReferenceTypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ReferenceTypeCode",
-                        ) {
-                            let output =
-                                <super::ReferenceCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_reference_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_reference_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::FormattedIssueDateTime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::FormattedIssueDateTime(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"FormattedIssueDateTime",
-                        ) {
-                            let output = < super :: FormattedDateTimeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_formatted_issue_date_time(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_formatted_issue_date_time(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -14160,41 +13751,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Name(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Name") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Name",
+                            false,
+                        )?;
+                        match self.handle_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -14400,27 +13987,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::OccurrenceDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"OccurrenceDateTime",
-                        ) {
-                            let output =
-                                <super::DateTimeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_occurrence_date_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_occurrence_date_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -15172,152 +14752,133 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"TypeCode") {
-                            let output = < super :: PaymentMeansCodeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"TypeCode",
+                            false,
+                        )?;
+                        match self.handle_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Information(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Information(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Information")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_information(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Information",
+                            false,
+                        )?;
+                        match self.handle_information(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ApplicableTradeSettlementFinancialCard(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ApplicableTradeSettlementFinancialCard(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ApplicableTradeSettlementFinancialCard",
-                        ) {
-                            let output = < super :: TradeSettlementFinancialCardType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applicable_trade_settlement_financial_card(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applicable_trade_settlement_financial_card(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PayerPartyDebtorFinancialAccount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::PayerPartyDebtorFinancialAccount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PayerPartyDebtorFinancialAccount",
-                        ) {
-                            let output = < super :: DebtorFinancialAccountType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_payer_party_debtor_financial_account(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_payer_party_debtor_financial_account(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PayeePartyCreditorFinancialAccount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::PayeePartyCreditorFinancialAccount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PayeePartyCreditorFinancialAccount",
-                        ) {
-                            let output = < super :: CreditorFinancialAccountType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_payee_party_creditor_financial_account(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_payee_party_creditor_financial_account(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PayeeSpecifiedCreditorFinancialInstitution(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::PayeeSpecifiedCreditorFinancialInstitution(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PayeeSpecifiedCreditorFinancialInstitution",
-                        ) {
-                            let output = < super :: CreditorFinancialInstitutionType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_payee_specified_creditor_financial_institution(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_payee_specified_creditor_financial_institution(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -16128,214 +15689,159 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CalculatedAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CalculatedAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_calculated_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_calculated_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TypeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"TypeCode") {
-                            let output =
-                                <super::TaxTypeCodeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"TypeCode",
+                            false,
+                        )?;
+                        match self.handle_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ExemptionReason(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ExemptionReason(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ExemptionReason",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_exemption_reason(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_exemption_reason(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BasisAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BasisAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"BasisAmount")
-                        {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_basis_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"BasisAmount",
+                            false,
+                        )?;
+                        match self.handle_basis_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CategoryCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CategoryCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CategoryCode",
-                        ) {
-                            let output = < super :: TaxCategoryCodeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_category_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_category_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ExemptionReasonCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ExemptionReasonCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ExemptionReasonCode",
-                        ) {
-                            let output = <super::CodeType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_exemption_reason_code(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_exemption_reason_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TaxPointDate(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TaxPointDate(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TaxPointDate",
-                        ) {
-                            let output = <super::DateType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_tax_point_date(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_tax_point_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DueDateTypeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DueDateTypeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DueDateTypeCode",
-                        ) {
-                            let output = < super :: TimeReferenceCodeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_due_date_type_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_due_date_type_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::RateApplicablePercent(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::RateApplicablePercent(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"RateApplicablePercent",
-                        ) {
-                            let output =
-                                <super::PercentType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_rate_applicable_percent(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_rate_applicable_percent(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -16614,48 +16120,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::StartDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"StartDateTime",
-                        ) {
-                            let output =
-                                <super::DateTimeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_start_date_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_start_date_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::EndDateTime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::EndDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"EndDateTime")
-                        {
-                            let output =
-                                <super::DateTimeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_end_date_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"EndDateTime",
+                            false,
+                        )?;
+                        match self.handle_end_date_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -17346,157 +16841,122 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ChargeIndicator(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ChargeIndicator",
-                        ) {
-                            let output =
-                                <super::IndicatorType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_charge_indicator(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_charge_indicator(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CalculationPercent(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CalculationPercent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CalculationPercent",
-                        ) {
-                            let output =
-                                <super::PercentType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_calculation_percent(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_calculation_percent(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BasisAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BasisAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"BasisAmount")
-                        {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_basis_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"BasisAmount",
+                            false,
+                        )?;
+                        match self.handle_basis_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ActualAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ActualAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ActualAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_actual_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_actual_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReasonCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ReasonCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ReasonCode")
-                        {
-                            let output = < super :: AllowanceChargeReasonCodeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_reason_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ReasonCode",
+                            false,
+                        )?;
+                        match self.handle_reason_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Reason(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Reason(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Reason") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_reason(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Reason",
+                            false,
+                        )?;
+                        match self.handle_reason(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CategoryTradeTax(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CategoryTradeTax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CategoryTradeTax",
-                        ) {
-                            let output =
-                                <super::TradeTaxType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_category_trade_tax(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_category_trade_tax(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -17861,77 +17321,57 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Description(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Description")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_description(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Description",
+                            false,
+                        )?;
+                        match self.handle_description(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DueDateDateTime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DueDateDateTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DueDateDateTime",
-                        ) {
-                            let output =
-                                <super::DateTimeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_due_date_date_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_due_date_date_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DirectDebitMandateId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::DirectDebitMandateId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DirectDebitMandateID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_direct_debit_mandate_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_direct_debit_mandate_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -18745,230 +18185,159 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::LineTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"LineTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_line_total_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_line_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ChargeTotalAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ChargeTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ChargeTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_charge_total_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_charge_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AllowanceTotalAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::AllowanceTotalAmount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AllowanceTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_allowance_total_amount(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_allowance_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TaxBasisTotalAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TaxBasisTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TaxBasisTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_tax_basis_total_amount(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_tax_basis_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TaxTotalAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TaxTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TaxTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_tax_total_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_tax_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::RoundingAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::RoundingAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"RoundingAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_rounding_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_rounding_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::GrandTotalAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::GrandTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"GrandTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_grand_total_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_grand_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TotalPrepaidAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TotalPrepaidAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TotalPrepaidAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_total_prepaid_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_total_prepaid_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DuePayableAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DuePayableAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DuePayableAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_due_payable_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_due_payable_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -19180,22 +18549,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -19479,42 +18846,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Description(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Description")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_description(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Description",
+                            false,
+                        )?;
+                        match self.handle_description(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Value(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Value(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"Value") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_value(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"Value",
+                            false,
+                        )?;
+                        match self.handle_value(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -19714,22 +19076,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ClassCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ClassCode") {
-                            let output = <super::CodeType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_class_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ClassCode",
+                            false,
+                        )?;
+                        match self.handle_class_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -19919,23 +19279,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output =
-                                <super::CountryIdType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -20294,79 +19651,61 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ChargeAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ChargeAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_charge_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_charge_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BasisQuantity(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BasisQuantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"BasisQuantity",
-                        ) {
-                            let output =
-                                <super::QuantityType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_basis_quantity(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_basis_quantity(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AppliedTradeAllowanceCharge(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::AppliedTradeAllowanceCharge(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"AppliedTradeAllowanceCharge",
-                        ) {
-                            let output = < super :: TradeAllowanceChargeType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_applied_trade_allowance_charge(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_applied_trade_allowance_charge(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -20711,27 +20050,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::LineTotalAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"LineTotalAmount",
-                        ) {
-                            let output =
-                                <super::AmountType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_line_total_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_line_total_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -21003,49 +20335,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TradingBusinessName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TradingBusinessName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TradingBusinessName",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_trading_business_name(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_trading_business_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -21501,102 +20821,85 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::PersonName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"PersonName")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_person_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"PersonName",
+                            false,
+                        )?;
+                        match self.handle_person_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DepartmentName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DepartmentName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"DepartmentName",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_department_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_department_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TelephoneUniversalCommunication(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::TelephoneUniversalCommunication(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"TelephoneUniversalCommunication",
-                        ) {
-                            let output = < super :: UniversalCommunicationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_telephone_universal_communication(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_telephone_universal_communication(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::EmailUriUniversalCommunication(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::EmailUriUniversalCommunication(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"EmailURIUniversalCommunication",
-                        ) {
-                            let output = < super :: UniversalCommunicationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_email_uri_universal_communication(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_email_uri_universal_communication(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -22248,152 +21551,129 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::PostcodeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"PostcodeCode",
-                        ) {
-                            let output = <super::CodeType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_postcode_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_postcode_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::LineOne(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::LineOne(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"LineOne") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_line_one(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"LineOne",
+                            false,
+                        )?;
+                        match self.handle_line_one(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::LineTwo(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::LineTwo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"LineTwo") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_line_two(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"LineTwo",
+                            false,
+                        )?;
+                        match self.handle_line_two(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::LineThree(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::LineThree(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"LineThree") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_line_three(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"LineThree",
+                            false,
+                        )?;
+                        match self.handle_line_three(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CityName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CityName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"CityName") {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_city_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"CityName",
+                            false,
+                        )?;
+                        match self.handle_city_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CountryId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CountryId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"CountryID") {
-                            let output =
-                                <super::CountryIdType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_country_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"CountryID",
+                            false,
+                        )?;
+                        match self.handle_country_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CountrySubDivisionName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::CountrySubDivisionName(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CountrySubDivisionName",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_country_sub_division_name(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_country_sub_division_name(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -22675,45 +21955,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Uriid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"URIID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_uriid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"URIID",
+                            false,
+                        )?;
+                        match self.handle_uriid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CompleteNumber(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CompleteNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CompleteNumber",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_complete_number(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_complete_number(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -22905,22 +22177,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -23427,24 +22697,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::DateTimeString(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_QDT),
                             b"DateTimeString",
-                        ) {
-                            let output = < super :: FormattedDateTimeTypeDateTimeStringType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_date_time_string(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_date_time_string(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -23865,45 +23131,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Id(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"ID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"ID",
+                            false,
+                        )?;
+                        match self.handle_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CardholderName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CardholderName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"CardholderName",
-                        ) {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_cardholder_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_cardholder_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -24105,22 +23363,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Ibanid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"IBANID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_ibanid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"IBANID",
+                            false,
+                        )?;
+                        match self.handle_ibanid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -24478,65 +23734,54 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Ibanid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"IBANID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_ibanid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"IBANID",
+                            false,
+                        )?;
+                        match self.handle_ibanid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::AccountName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::AccountName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"AccountName")
-                        {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_account_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"AccountName",
+                            false,
+                        )?;
+                        match self.handle_account_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProprietaryId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProprietaryId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_RAM),
                             b"ProprietaryID",
-                        ) {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_proprietary_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_proprietary_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -24739,22 +23984,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Bicid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_RAM), b"BICID") {
-                            let output = <super::IdType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_bicid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_RAM),
+                            b"BICID",
+                            false,
+                        )?;
+                        match self.handle_bicid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {

@@ -3540,12 +3540,6 @@ impl ComplexDataElement<'_> {
         };
 
         let allow_any = allow_any || self.target_type_allows_any(ctx.types.meta.types);
-        let allow_any = allow_any.then(|| {
-            quote! {
-                allow_any_element = true;
-                fallback.get_or_insert(S::#variant_ident(None));
-            }
-        });
 
         let need_name_matcher = !self.target_is_dynamic
             && matches!(
@@ -3592,14 +3586,14 @@ impl ComplexDataElement<'_> {
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             body = quote! {
-                if reader.check_start_tag_name(&event, #ns_name, #name) {
-                    #body
-                } else {
-                    *self.state = #next_state;
+                let output = reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)?;
+                match self.#handler_ident(reader, output, &mut fallback)? {
+                    ElementHandlerOutput::Continue { event, allow_any } => {
+                        allow_any_element = allow_any_element || allow_any;
 
-                    #allow_any
-
-                    event
+                        event
+                    },
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }

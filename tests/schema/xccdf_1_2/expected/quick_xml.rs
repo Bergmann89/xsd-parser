@@ -9373,27 +9373,20 @@ pub mod cdf {
                             event
                         }
                         (S::Param(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"param",
-                            ) {
-                                let output =
-                                    <super::ParamType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_param(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_param(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -22435,24 +22428,20 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"sub",
-                            ) {
-                                let output = < Mixed < super :: SubType > as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_sub(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_sub(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -22765,27 +22754,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -22988,26 +22970,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -23374,27 +23350,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -23629,27 +23598,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -24595,26 +24557,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -28059,93 +28015,71 @@ pub mod cdf {
                             event
                         }
                         (S::CheckImport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-import",
-                            ) {
-                                let output = < super :: CheckImportType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_import(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_import(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckExport(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckExport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-export",
-                            ) {
-                                let output = < super :: CheckExportType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_export(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_export(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckContentRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckContentRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-content-ref",
-                            ) {
-                                let output = < super :: CheckContentRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_content_ref(
-                                    reader,
-                                    output,
-                                    &mut fallback,
-                                )? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_content_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckContent(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-content",
-                            ) {
-                                let output = < super :: CheckContentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_content(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                true,
+                            )?;
+                            match self.handle_check_content(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                allow_any_element = true;
-                                fallback.get_or_insert(S::CheckContent(None));
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -29286,27 +29220,20 @@ pub mod cdf {
                             event
                         }
                         (S::Fact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"fact",
-                            ) {
-                                let output =
-                                    <super::FactType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_fact(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_fact(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -31158,26 +31085,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -32909,69 +32830,54 @@ pub mod cdf {
                             event
                         }
                         (S::OldResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"old-result",
-                            ) {
-                                let output = < super :: ResultEnumType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_old_result(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_old_result(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::NewResult(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::NewResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"new-result",
-                            ) {
-                                let output = < super :: ResultEnumType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_new_result(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_new_result(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Remark(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40007,27 +39913,20 @@ pub mod cpe {
                             event
                         }
                         (S::Platform(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"platform",
-                            ) {
-                                let output =
-                                    <super::PlatformType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_platform(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_platform(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40372,72 +40271,54 @@ pub mod cpe {
                             event
                         }
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"title",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_title(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_title(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Remark(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::LogicalTest(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"logical-test",
-                            ) {
-                                let output = < super :: LogicalTestType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_logical_test(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_logical_test(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40935,66 +40816,54 @@ pub mod cpe {
                             event
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"logical-test",
-                            ) {
-                                let output = < super :: LogicalTestType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_logical_test(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_logical_test(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::FactRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::FactRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"fact-ref",
-                            ) {
-                                let output = < super :: CpeFactRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_fact_ref(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_fact_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckFactRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckFactRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"check-fact-ref",
-                            ) {
-                                let output = < super :: CheckFactRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_fact_ref(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_fact_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
