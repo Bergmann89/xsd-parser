@@ -53,32 +53,14 @@ impl SimpleData<'_> {
     #[allow(clippy::too_many_lines)]
     fn render_common_impls(&self, ctx: &mut Context<'_, '_>) {
         let Self {
+            occurs,
             type_ident,
             target_type,
             ..
         } = self;
 
         let target_type = ctx.resolve_type_for_module(target_type);
-
-        /* Min Length */
-
-        let min_length = self.meta.min_length.as_ref().map(|x| {
-            quote! {
-                if s.len() < #x {
-                    return Err(ValidateError::MinLength(#x));
-                }
-            }
-        });
-
-        /* Max Length */
-
-        let max_length = self.meta.max_length.as_ref().map(|x| {
-            quote! {
-                if s.len() > #x {
-                    return Err(ValidateError::MaxLength(#x));
-                }
-            }
-        });
+        let target_type = occurs.make_type(&target_type, false);
 
         /* Pattern */
 
@@ -112,6 +94,26 @@ impl SimpleData<'_> {
 
             quote! {
                 fraction_digits(s, #x)?;
+            }
+        });
+
+        /* Min Length */
+
+        let min_length = self.meta.min_length.as_ref().map(|x| {
+            quote! {
+                if value.len() < #x {
+                    return Err(ValidateError::MinLength(#x));
+                }
+            }
+        });
+
+        /* Max Length */
+
+        let max_length = self.meta.max_length.as_ref().map(|x| {
+            quote! {
+                if value.len() > #x {
+                    return Err(ValidateError::MaxLength(#x));
+                }
             }
         });
 
@@ -177,8 +179,6 @@ impl SimpleData<'_> {
             quote! {
                 pub fn validate_str(s: &str) -> Result<(), ValidateError> {
                     #pattern
-                    #min_length
-                    #max_length
                     #total_digits
                     #fraction_digits
 
@@ -194,6 +194,8 @@ impl SimpleData<'_> {
                 pub fn validate_value(value: &#target_type) -> Result<(), ValidateError> {
                     #range_start
                     #range_end
+                    #min_length
+                    #max_length
 
                     Ok(())
                 }

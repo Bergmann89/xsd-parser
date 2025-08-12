@@ -56,7 +56,9 @@ impl Optimizer {
         for (ident, type_) in &mut self.types.items {
             let replace = match &type_.variant {
                 MetaTypeVariant::ComplexType(_) => flags.intersects(UnrestrictedBaseFlags::COMPLEX),
-                MetaTypeVariant::SimpleType(_) => flags.intersects(UnrestrictedBaseFlags::SIMPLE),
+                MetaTypeVariant::SimpleType(x) => {
+                    !x.is_list && flags.intersects(UnrestrictedBaseFlags::SIMPLE)
+                }
                 MetaTypeVariant::Enumeration(_) => flags.intersects(UnrestrictedBaseFlags::ENUM),
                 MetaTypeVariant::Union(_) => flags.intersects(UnrestrictedBaseFlags::UNION),
                 _ => false,

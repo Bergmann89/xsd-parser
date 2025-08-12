@@ -105,9 +105,9 @@ fn read_serde_xml_rs() {
 fn read_serde_xml_rs_v7() {
     use serde_xml_rs_v7::{EnumType, Foo};
 
-    let obj = dbg!(crate::utils::serde_xml_rs_v7_read_test::<Foo, _>(
+    let obj = crate::utils::serde_xml_rs_v7_read_test::<Foo, _>(
         "tests/feature/extension_simple_content/example/default.xml",
-    ));
+    );
 
     assert_eq!(obj.value.as_deref(), Some("an attribute value"));
     assert_eq!(obj.another_value.as_deref(), Some("more attribute data"));

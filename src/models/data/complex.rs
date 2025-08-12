@@ -282,7 +282,9 @@ impl ComplexBase {
     /// Returns the name of the element tag, if type is represented by a XML element.
     #[must_use]
     pub fn element_tag(&self) -> Option<&String> {
-        self.is_complex.then_some(self.tag_name.as_ref()).flatten()
+        (self.is_complex && !self.is_dynamic)
+            .then_some(self.tag_name.as_ref())
+            .flatten()
     }
 
     /// Returns `true` if this type represents an element, `false` otherwise.

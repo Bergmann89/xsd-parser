@@ -1,6 +1,9 @@
 use std::ops::{Bound, Range};
 
-use crate::models::{data::SimpleData, meta::SimpleMeta};
+use crate::models::{
+    data::{Occurs, SimpleData},
+    meta::SimpleMeta,
+};
 
 use super::super::{Context, Error};
 
@@ -28,6 +31,12 @@ impl<'types> SimpleData<'types> {
         };
         let range = Range { start, end };
 
+        let occurs = if meta.is_list {
+            Occurs::DynamicList
+        } else {
+            Occurs::Single
+        };
+
         let target_ref = ctx.get_or_create_type_ref(&meta.base)?;
         let target_type = target_ref.path.clone();
 
@@ -36,6 +45,7 @@ impl<'types> SimpleData<'types> {
         Ok(Self {
             meta,
             range,
+            occurs,
             type_ident,
             target_type,
             trait_impls,

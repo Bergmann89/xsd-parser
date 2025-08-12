@@ -1,7 +1,9 @@
+use core::ops::Deref;
 use xsd_parser::{
     models::schema::Namespace,
     quick_xml::{
-        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, WithDeserializer,
+        DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, ValidateError,
+        WithDeserializer,
     },
     xml::{AnyAttributes, AnyElement, Mixed, Text},
 };
@@ -623,7 +625,7 @@ pub struct WildcardType {
     pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<BasicNamespaceListItemType>,
+    pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
     pub annotation: Option<AnnotationElementType>,
 }
@@ -786,7 +788,7 @@ pub struct AnyAttributeElementType {
     pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<BasicNamespaceListItemType>,
+    pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListAType>,
     pub annotation: Option<AnnotationElementType>,
@@ -834,7 +836,7 @@ pub struct AnyElementType {
     pub any_attribute: AnyAttributes,
     pub id: Option<String>,
     pub namespace: Option<NamespaceListType>,
-    pub not_namespace: Option<BasicNamespaceListItemType>,
+    pub not_namespace: Option<NotNamespaceType>,
     pub process_contents: ProcessContentsType,
     pub not_q_name: Option<QnameListType>,
     pub min_occurs: usize,
@@ -978,21 +980,49 @@ impl DeserializeBytes for NamespaceListType {
     }
 }
 #[derive(Debug)]
-pub enum BasicNamespaceListItemType {
-    String(String),
-    TargetNamespace,
-    Local,
+pub struct NotNamespaceType(pub Vec<BasicNamespaceListItemType>);
+impl NotNamespaceType {
+    pub fn new(inner: Vec<BasicNamespaceListItemType>) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
+        Ok(Self(inner))
+    }
+    pub fn into_inner(self) -> Vec<BasicNamespaceListItemType> {
+        self.0
+    }
+    pub fn validate_value(value: &Vec<BasicNamespaceListItemType>) -> Result<(), ValidateError> {
+        if value.len() < 1usize {
+            return Err(ValidateError::MinLength(1usize));
+        }
+        Ok(())
+    }
 }
-impl DeserializeBytes for BasicNamespaceListItemType {
+impl From<NotNamespaceType> for Vec<BasicNamespaceListItemType> {
+    fn from(value: NotNamespaceType) -> Vec<BasicNamespaceListItemType> {
+        value.0
+    }
+}
+impl TryFrom<Vec<BasicNamespaceListItemType>> for NotNamespaceType {
+    type Error = ValidateError;
+    fn try_from(value: Vec<BasicNamespaceListItemType>) -> Result<Self, ValidateError> {
+        Self::new(value)
+    }
+}
+impl Deref for NotNamespaceType {
+    type Target = Vec<BasicNamespaceListItemType>;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl DeserializeBytes for NotNamespaceType {
     fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
     where
         R: DeserializeReader,
     {
-        match bytes {
-            b"##targetNamespace" => Ok(Self::TargetNamespace),
-            b"##local" => Ok(Self::Local),
-            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
-        }
+        let inner = bytes
+            .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+            .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(reader, bytes))
+            .collect::<Result<Vec<_>, _>>()?;
+        Ok(Self::new(inner).map_err(|error| (bytes, error))?)
     }
 }
 #[derive(Debug)]
@@ -1199,6 +1229,24 @@ impl DeserializeBytes for BasicNamespaceListType {
                 .map(|bytes| BasicNamespaceListItemType::deserialize_bytes(reader, bytes))
                 .collect::<Result<Vec<_>, _>>()?,
         ))
+    }
+}
+#[derive(Debug)]
+pub enum BasicNamespaceListItemType {
+    String(String),
+    TargetNamespace,
+    Local,
+}
+impl DeserializeBytes for BasicNamespaceListItemType {
+    fn deserialize_bytes<R>(reader: &R, bytes: &[u8]) -> Result<Self, Error>
+    where
+        R: DeserializeReader,
+    {
+        match bytes {
+            b"##targetNamespace" => Ok(Self::TargetNamespace),
+            b"##local" => Ok(Self::Local),
+            x => Ok(Self::String(String::deserialize_bytes(reader, x)?)),
+        }
     }
 }
 #[derive(Debug)]
@@ -14052,7 +14100,7 @@ pub mod quick_xml_deserialize {
         any_attribute: AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::BasicNamespaceListItemType>,
+        not_namespace: Option<super::NotNamespaceType>,
         process_contents: super::ProcessContentsType,
         annotation: Option<super::AnnotationElementType>,
         state: Box<WildcardTypeDeserializerState>,
@@ -14072,7 +14120,7 @@ pub mod quick_xml_deserialize {
             let mut any_attribute = AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::BasicNamespaceListItemType> = None;
+            let mut not_namespace: Option<super::NotNamespaceType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
@@ -17430,7 +17478,7 @@ pub mod quick_xml_deserialize {
         any_attribute: AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::BasicNamespaceListItemType>,
+        not_namespace: Option<super::NotNamespaceType>,
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListAType>,
         annotation: Option<super::AnnotationElementType>,
@@ -17451,7 +17499,7 @@ pub mod quick_xml_deserialize {
             let mut any_attribute = AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::BasicNamespaceListItemType> = None;
+            let mut not_namespace: Option<super::NotNamespaceType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListAType> = None;
             for attrib in filter_xmlns_attributes(bytes_start) {
@@ -17928,7 +17976,7 @@ pub mod quick_xml_deserialize {
         any_attribute: AnyAttributes,
         id: Option<String>,
         namespace: Option<super::NamespaceListType>,
-        not_namespace: Option<super::BasicNamespaceListItemType>,
+        not_namespace: Option<super::NotNamespaceType>,
         process_contents: super::ProcessContentsType,
         not_q_name: Option<super::QnameListType>,
         min_occurs: usize,
@@ -17951,7 +17999,7 @@ pub mod quick_xml_deserialize {
             let mut any_attribute = AnyAttributes::default();
             let mut id: Option<String> = None;
             let mut namespace: Option<super::NamespaceListType> = None;
-            let mut not_namespace: Option<super::BasicNamespaceListItemType> = None;
+            let mut not_namespace: Option<super::NotNamespaceType> = None;
             let mut process_contents: Option<super::ProcessContentsType> = None;
             let mut not_q_name: Option<super::QnameListType> = None;
             let mut min_occurs: Option<usize> = None;

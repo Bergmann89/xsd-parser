@@ -585,6 +585,7 @@ impl EnumerationTypeVariant<'_> {
 impl SimpleData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
+            occurs,
             type_ident,
             target_type,
             ..
@@ -598,16 +599,6 @@ impl SimpleData<'_> {
             "xsd_parser::quick_xml::DeserializeBytes",
             "xsd_parser::quick_xml::DeserializeReader",
         ]);
-
-        /* String Validation */
-
-        let validate_str = self.need_string_validation().then(|| {
-            need_str = true;
-
-            quote! {
-                Self::validate_str(s).map_err(|error| (bytes, error))?;
-            }
-        });
 
         /* Whitespace */
 
@@ -635,13 +626,17 @@ impl SimpleData<'_> {
             }
         };
 
-        /* Actual Rendering */
+        /* String Validation */
 
-        let deserialize_inner = if need_str {
-            quote!(#target_type::deserialize_str(reader, s))
-        } else {
-            quote!(#target_type::deserialize_bytes(reader, bytes))
-        };
+        let validate_str = self.need_string_validation().then(|| {
+            need_str = true;
+
+            quote! {
+                Self::validate_str(s).map_err(|error| (bytes, error))?;
+            }
+        });
+
+        /* Actual Rendering */
 
         let need_str = need_str.then(|| {
             ctx.add_usings(["std::str::from_utf8"]);
@@ -650,6 +645,30 @@ impl SimpleData<'_> {
                 let s = from_utf8(bytes).map_err(Error::from)?;
             }
         });
+
+        let body = match (need_str.is_some(), occurs) {
+            (true, Occurs::Single) => {
+                quote! {
+                    let inner = #target_type::deserialize_str(reader, s)?;
+                }
+            }
+            (false, Occurs::Single) => {
+                quote! {
+                    let inner = #target_type::deserialize_bytes(reader, bytes)?;
+                }
+            }
+            (false, Occurs::DynamicList) => {
+                quote! {
+                    let inner = bytes
+                        .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                        .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
+                        .collect::<Result<Vec<_>, _>>()?;
+                }
+            }
+            (need_str, occurs) => {
+                unreachable!("Invalid (`need_str`, `occurs`) combination: ({need_str}, {occurs:?})")
+            }
+        };
 
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -664,7 +683,7 @@ impl SimpleData<'_> {
                     #whitespace
                     #validate_str
 
-                    let inner = #deserialize_inner?;
+                    #body
 
                     Ok(Self::new(inner).map_err(|error| (bytes, error))?)
                 }
