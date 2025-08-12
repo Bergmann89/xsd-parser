@@ -1144,6 +1144,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Public(values, None),
                         Some(CatalogTypeContentDeserializerState::Public(
                             _,
@@ -1198,6 +1202,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::System(values, None),
                         Some(CatalogTypeContentDeserializerState::System(
                             _,
@@ -1252,6 +1260,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Uri(values, None),
                         Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Uri(values, Some(deserializer))
@@ -1303,6 +1315,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteSystem(
                             _,
@@ -1363,6 +1379,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::RewriteUri(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteUri(
                             _,
@@ -1423,6 +1443,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::UriSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::UriSuffix(
                             _,
@@ -1480,6 +1504,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::SystemSuffix(
                             _,
@@ -1540,6 +1568,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegatePublic(
                             _,
@@ -1600,6 +1632,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateSystem(
                             _,
@@ -1660,6 +1696,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegateUri(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateUri(
                             _,
@@ -1720,6 +1760,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::NextCatalog(values, None),
                         Some(CatalogTypeContentDeserializerState::NextCatalog(
                             _,
@@ -1780,6 +1824,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Group(values, None),
                         Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -3185,6 +3233,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Public(values, None),
                         Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Public(values, Some(deserializer))
@@ -3236,6 +3288,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::System(values, None),
                         Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::System(values, Some(deserializer))
@@ -3287,6 +3343,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Uri(values, None),
                         Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Uri(values, Some(deserializer))
@@ -3338,6 +3398,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteSystem(
                             _,
@@ -3398,6 +3462,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::RewriteUri(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteUri(
                             _,
@@ -3455,6 +3523,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::UriSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::UriSuffix(
                             _,
@@ -3511,6 +3583,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::SystemSuffix(
                             _,
@@ -3571,6 +3647,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(GroupTypeContentDeserializerState::DelegatePublic(
                             _,
@@ -3631,6 +3711,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateSystem(
                             _,
@@ -3691,6 +3775,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegateUri(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateUri(
                             _,
@@ -3748,6 +3836,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::NextCatalog(values, None),
                         Some(GroupTypeContentDeserializerState::NextCatalog(
                             _,

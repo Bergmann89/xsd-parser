@@ -5128,6 +5128,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Status(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Status(
                             _,
@@ -5188,6 +5192,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::DcStatus(values, None)
                         }
@@ -5250,6 +5258,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Title(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Title(
                             _,
@@ -5310,6 +5322,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Description(values, None)
                         }
@@ -5372,6 +5388,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Notice(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Notice(
                             _,
@@ -5432,6 +5452,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::FrontMatter(values, None)
                         }
@@ -5494,6 +5518,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::RearMatter(values, None)
                         }
@@ -5556,6 +5584,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Reference(values, None)
                         }
@@ -5618,6 +5650,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::PlainText(values, None)
                         }
@@ -5680,6 +5716,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::PlatformSpecification(
                                 values, None,
@@ -5749,6 +5789,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Platform(values, None)
                         }
@@ -5811,6 +5855,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Version(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Version(
                             _,
@@ -5871,6 +5919,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Metadata(values, None)
                         }
@@ -5933,6 +5985,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Model(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Model(
                             _,
@@ -5993,6 +6049,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Profile(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Profile(
                             _,
@@ -6053,6 +6113,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Value(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Value(
                             _,
@@ -6113,6 +6177,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Group(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Group(
                             _,
@@ -6173,6 +6241,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Rule(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Rule(
                             _,
@@ -6233,6 +6305,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::TestResult(values, None)
                         }
@@ -6295,6 +6371,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Signature(values, None)
                         }
@@ -7681,6 +7761,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Sub(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Sub(
                             _,
@@ -7741,6 +7825,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Any(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Any(
                             _,
@@ -7801,6 +7889,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Text(
                             _,
@@ -10263,6 +10355,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Status(values, None),
                         Some(ProfileTypeContentDeserializerState::Status(
                             _,
@@ -10317,6 +10413,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::DcStatus(values, None),
                         Some(ProfileTypeContentDeserializerState::DcStatus(
                             _,
@@ -10374,6 +10474,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Version(values, None),
                         Some(ProfileTypeContentDeserializerState::Version(
                             _,
@@ -10430,6 +10534,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Title(values, None),
                         Some(ProfileTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             ProfileTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -10481,6 +10589,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Description(values, None),
                         Some(ProfileTypeContentDeserializerState::Description(
                             _,
@@ -10541,6 +10653,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Reference(values, None),
                         Some(ProfileTypeContentDeserializerState::Reference(
                             _,
@@ -10598,6 +10714,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Platform(values, None),
                         Some(ProfileTypeContentDeserializerState::Platform(
                             _,
@@ -10655,6 +10775,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Select(values, None),
                         Some(ProfileTypeContentDeserializerState::Select(
                             _,
@@ -10709,6 +10833,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::SetComplexValue(values, None),
                         Some(ProfileTypeContentDeserializerState::SetComplexValue(
                             _,
@@ -10769,6 +10897,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::SetValue(values, None),
                         Some(ProfileTypeContentDeserializerState::SetValue(
                             _,
@@ -10826,6 +10958,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::RefineValue(values, None),
                         Some(ProfileTypeContentDeserializerState::RefineValue(
                             _,
@@ -10886,6 +11022,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::RefineRule(values, None),
                         Some(ProfileTypeContentDeserializerState::RefineRule(
                             _,
@@ -10946,6 +11086,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Metadata(values, None),
                         Some(ProfileTypeContentDeserializerState::Metadata(
                             _,
@@ -11003,6 +11147,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Signature(values, None),
                         Some(ProfileTypeContentDeserializerState::Signature(
                             _,
@@ -12506,6 +12654,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Status(values, None),
                         Some(ValueTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -12557,6 +12709,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::DcStatus(values, None),
                         Some(ValueTypeContentDeserializerState::DcStatus(
                             _,
@@ -12611,6 +12767,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Version(values, None),
                         Some(ValueTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -12662,6 +12822,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Title(values, None),
                         Some(ValueTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -12713,6 +12877,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Description(values, None),
                         Some(ValueTypeContentDeserializerState::Description(
                             _,
@@ -12770,6 +12938,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Warning(values, None),
                         Some(ValueTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -12821,6 +12993,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Question(values, None),
                         Some(ValueTypeContentDeserializerState::Question(
                             _,
@@ -12875,6 +13051,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Reference(values, None),
                         Some(ValueTypeContentDeserializerState::Reference(
                             _,
@@ -12931,6 +13111,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Metadata(values, None),
                         Some(ValueTypeContentDeserializerState::Metadata(
                             _,
@@ -12985,6 +13169,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Value(values, None),
                         Some(ValueTypeContentDeserializerState::Value(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Value(values, Some(deserializer))
@@ -13036,6 +13224,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::ComplexValue(values, None),
                         Some(ValueTypeContentDeserializerState::ComplexValue(
                             _,
@@ -13096,6 +13288,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Default(values, None),
                         Some(ValueTypeContentDeserializerState::Default(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Default(values, Some(deserializer))
@@ -13147,6 +13343,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::ComplexDefault(values, None),
                         Some(ValueTypeContentDeserializerState::ComplexDefault(
                             _,
@@ -13207,6 +13407,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Match(values, None),
                         Some(ValueTypeContentDeserializerState::Match(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Match(values, Some(deserializer))
@@ -13258,6 +13462,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::LowerBound(values, None),
                         Some(ValueTypeContentDeserializerState::LowerBound(
                             _,
@@ -13315,6 +13523,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::UpperBound(values, None),
                         Some(ValueTypeContentDeserializerState::UpperBound(
                             _,
@@ -13372,6 +13584,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Choices(values, None),
                         Some(ValueTypeContentDeserializerState::Choices(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Choices(values, Some(deserializer))
@@ -13423,6 +13639,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Source(values, None),
                         Some(ValueTypeContentDeserializerState::Source(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Source(values, Some(deserializer))
@@ -13474,6 +13694,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Signature(values, None),
                         Some(ValueTypeContentDeserializerState::Signature(
                             _,
@@ -14995,6 +15219,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Status(values, None),
                         Some(GroupTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -15046,6 +15274,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DcStatus(values, None),
                         Some(GroupTypeContentDeserializerState::DcStatus(
                             _,
@@ -15100,6 +15332,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Version(values, None),
                         Some(GroupTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -15151,6 +15387,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Title(values, None),
                         Some(GroupTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -15202,6 +15442,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Description(values, None),
                         Some(GroupTypeContentDeserializerState::Description(
                             _,
@@ -15259,6 +15503,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Warning(values, None),
                         Some(GroupTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -15310,6 +15558,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Question(values, None),
                         Some(GroupTypeContentDeserializerState::Question(
                             _,
@@ -15364,6 +15616,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Reference(values, None),
                         Some(GroupTypeContentDeserializerState::Reference(
                             _,
@@ -15420,6 +15676,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Metadata(values, None),
                         Some(GroupTypeContentDeserializerState::Metadata(
                             _,
@@ -15474,6 +15734,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Rationale(values, None),
                         Some(GroupTypeContentDeserializerState::Rationale(
                             _,
@@ -15530,6 +15794,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Platform(values, None),
                         Some(GroupTypeContentDeserializerState::Platform(
                             _,
@@ -15584,6 +15852,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Requires(values, None),
                         Some(GroupTypeContentDeserializerState::Requires(
                             _,
@@ -15638,6 +15910,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Conflicts(values, None),
                         Some(GroupTypeContentDeserializerState::Conflicts(
                             _,
@@ -15694,6 +15970,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Value(values, None),
                         Some(GroupTypeContentDeserializerState::Value(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Value(values, Some(deserializer))
@@ -15745,6 +16025,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Group(values, None),
                         Some(GroupTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -15796,6 +16080,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Rule(values, None),
                         Some(GroupTypeContentDeserializerState::Rule(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Rule(values, Some(deserializer))
@@ -15847,6 +16135,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Signature(values, None),
                         Some(GroupTypeContentDeserializerState::Signature(
                             _,
@@ -17482,6 +17774,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Status(values, None),
                         Some(RuleTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -17533,6 +17829,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::DcStatus(values, None),
                         Some(RuleTypeContentDeserializerState::DcStatus(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::DcStatus(values, Some(deserializer))
@@ -17584,6 +17884,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Version(values, None),
                         Some(RuleTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -17635,6 +17939,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Title(values, None),
                         Some(RuleTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -17686,6 +17994,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Description(values, None),
                         Some(RuleTypeContentDeserializerState::Description(
                             _,
@@ -17743,6 +18055,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Warning(values, None),
                         Some(RuleTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -17794,6 +18110,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Question(values, None),
                         Some(RuleTypeContentDeserializerState::Question(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Question(values, Some(deserializer))
@@ -17845,6 +18165,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Reference(values, None),
                         Some(RuleTypeContentDeserializerState::Reference(
                             _,
@@ -17899,6 +18223,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Metadata(values, None),
                         Some(RuleTypeContentDeserializerState::Metadata(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Metadata(values, Some(deserializer))
@@ -17950,6 +18278,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Rationale(values, None),
                         Some(RuleTypeContentDeserializerState::Rationale(
                             _,
@@ -18004,6 +18336,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Platform(values, None),
                         Some(RuleTypeContentDeserializerState::Platform(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Platform(values, Some(deserializer))
@@ -18055,6 +18391,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Requires(values, None),
                         Some(RuleTypeContentDeserializerState::Requires(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Requires(values, Some(deserializer))
@@ -18106,6 +18446,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Conflicts(values, None),
                         Some(RuleTypeContentDeserializerState::Conflicts(
                             _,
@@ -18160,6 +18504,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Ident(values, None),
                         Some(RuleTypeContentDeserializerState::Ident(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Ident(values, Some(deserializer))
@@ -18211,6 +18559,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ImpactMetric(values, None),
                         Some(RuleTypeContentDeserializerState::ImpactMetric(
                             _,
@@ -18268,6 +18620,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ProfileNote(values, None),
                         Some(RuleTypeContentDeserializerState::ProfileNote(
                             _,
@@ -18325,6 +18681,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Fixtext(values, None),
                         Some(RuleTypeContentDeserializerState::Fixtext(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Fixtext(values, Some(deserializer))
@@ -18376,6 +18736,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Fix(values, None),
                         Some(RuleTypeContentDeserializerState::Fix(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Fix(values, Some(deserializer))
@@ -18427,6 +18791,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Check(values, None),
                         Some(RuleTypeContentDeserializerState::Check(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Check(values, Some(deserializer))
@@ -18478,6 +18846,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ComplexCheck(values, None),
                         Some(RuleTypeContentDeserializerState::ComplexCheck(
                             _,
@@ -18535,6 +18907,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Signature(values, None),
                         Some(RuleTypeContentDeserializerState::Signature(
                             _,
@@ -20116,6 +20492,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Benchmark(values, None),
                         Some(TestResultTypeContentDeserializerState::Benchmark(
                             _,
@@ -20176,6 +20556,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TailoringFile(values, None),
                         Some(TestResultTypeContentDeserializerState::TailoringFile(
                             _,
@@ -20236,6 +20620,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Title(values, None),
                         Some(TestResultTypeContentDeserializerState::Title(
                             _,
@@ -20293,6 +20681,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Remark(values, None),
                         Some(TestResultTypeContentDeserializerState::Remark(
                             _,
@@ -20350,6 +20742,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Organization(values, None),
                         Some(TestResultTypeContentDeserializerState::Organization(
                             _,
@@ -20410,6 +20806,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Identity(values, None),
                         Some(TestResultTypeContentDeserializerState::Identity(
                             _,
@@ -20470,6 +20870,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Profile(values, None),
                         Some(TestResultTypeContentDeserializerState::Profile(
                             _,
@@ -20530,6 +20934,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Target(values, None),
                         Some(TestResultTypeContentDeserializerState::Target(
                             _,
@@ -20587,6 +20995,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetAddress(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetAddress(
                             _,
@@ -20647,6 +21059,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetFacts(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetFacts(
                             _,
@@ -20707,6 +21123,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetIdRef(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetIdRef(
                             _,
@@ -20767,6 +21187,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Any(values, None),
                         Some(TestResultTypeContentDeserializerState::Any(
                             _,
@@ -20821,6 +21245,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Platform(values, None),
                         Some(TestResultTypeContentDeserializerState::Platform(
                             _,
@@ -20881,6 +21309,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::SetValue(values, None),
                         Some(TestResultTypeContentDeserializerState::SetValue(
                             _,
@@ -20941,6 +21373,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             TestResultTypeContentDeserializerState::SetComplexValue(values, None)
                         }
@@ -21003,6 +21439,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::RuleResult(values, None),
                         Some(TestResultTypeContentDeserializerState::RuleResult(
                             _,
@@ -21063,6 +21503,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Score(values, None),
                         Some(TestResultTypeContentDeserializerState::Score(
                             _,
@@ -21120,6 +21564,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Metadata(values, None),
                         Some(TestResultTypeContentDeserializerState::Metadata(
                             _,
@@ -21180,6 +21628,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Signature(values, None),
                         Some(TestResultTypeContentDeserializerState::Signature(
                             _,
@@ -23982,6 +24434,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Sub(values, None),
                         Some(WarningTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -24033,6 +24489,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Any(values, None),
                         Some(WarningTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -24084,6 +24544,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Text(values, None),
                         Some(WarningTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -25068,6 +25532,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => SelChoicesTypeContentDeserializerState::Choice(values, None),
                         Some(SelChoicesTypeContentDeserializerState::Choice(
                             _,
@@ -25125,6 +25593,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => SelChoicesTypeContentDeserializerState::ComplexChoice(values, None),
                         Some(SelChoicesTypeContentDeserializerState::ComplexChoice(
                             _,
@@ -26026,6 +26498,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Sub(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Sub(
                             _,
@@ -26082,6 +26558,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Any(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Any(
                             _,
@@ -26138,6 +26618,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Text(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Text(
                             _,
@@ -26681,6 +27165,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Sub(values, None),
                         Some(FixTextTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -26732,6 +27220,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Any(values, None),
                         Some(FixTextTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -26783,6 +27275,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Text(values, None),
                         Some(FixTextTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -27328,6 +27824,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Sub(values, None),
                         Some(FixTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -27379,6 +27879,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Instance(values, None),
                         Some(FixTypeContentDeserializerState::Instance(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Instance(values, Some(deserializer))
@@ -27430,6 +27934,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Text(values, None),
                         Some(FixTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -28451,6 +28959,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ComplexCheckTypeContentDeserializerState::Check(values, None),
                         Some(ComplexCheckTypeContentDeserializerState::Check(
                             _,
@@ -28511,6 +29023,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             ComplexCheckTypeContentDeserializerState::ComplexCheck(values, None)
                         }
@@ -30006,6 +30522,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Result(values, None),
                         Some(RuleResultTypeContentDeserializerState::Result(
                             _,
@@ -30063,6 +30583,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Override(values, None),
                         Some(RuleResultTypeContentDeserializerState::Override(
                             _,
@@ -30123,6 +30647,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Ident(values, None),
                         Some(RuleResultTypeContentDeserializerState::Ident(
                             _,
@@ -30180,6 +30708,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Metadata(values, None),
                         Some(RuleResultTypeContentDeserializerState::Metadata(
                             _,
@@ -30240,6 +30772,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Message(values, None),
                         Some(RuleResultTypeContentDeserializerState::Message(
                             _,
@@ -30300,6 +30836,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Instance(values, None),
                         Some(RuleResultTypeContentDeserializerState::Instance(
                             _,
@@ -30360,6 +30900,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Fix(values, None),
                         Some(RuleResultTypeContentDeserializerState::Fix(
                             _,
@@ -30414,6 +30958,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Check(values, None),
                         Some(RuleResultTypeContentDeserializerState::Check(
                             _,
@@ -30471,6 +31019,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::ComplexCheck(values, None),
                         Some(RuleResultTypeContentDeserializerState::ComplexCheck(
                             _,
@@ -32119,6 +32671,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CheckContentTypeContentDeserializerState::Any(values, None),
                         Some(CheckContentTypeContentDeserializerState::Any(
                             _,
@@ -32176,6 +32732,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CheckContentTypeContentDeserializerState::Text(values, None),
                         Some(CheckContentTypeContentDeserializerState::Text(
                             _,

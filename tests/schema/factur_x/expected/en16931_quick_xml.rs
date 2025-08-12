@@ -4266,6 +4266,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = DateTimeTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => DateTimeTypeContentDeserializerState::DateTimeString(values, None),
                     Some(DateTimeTypeContentDeserializerState::DateTimeString(
                         _,
@@ -24699,6 +24703,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = DateTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => DateTypeContentDeserializerState::DateString(values, None),
                     Some(DateTypeContentDeserializerState::DateString(_, Some(deserializer))) => {
                         DateTypeContentDeserializerState::DateString(values, Some(deserializer))
@@ -25339,6 +25347,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = IndicatorTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => IndicatorTypeContentDeserializerState::Indicator(values, None),
                     Some(IndicatorTypeContentDeserializerState::Indicator(
                         _,

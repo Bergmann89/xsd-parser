@@ -502,6 +502,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooContent2TypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooContent2TypeDeserializerState::Element1(values, None),
                     Some(FooContent2TypeDeserializerState::Element1(_, Some(deserializer))) => {
                         FooContent2TypeDeserializerState::Element1(values, Some(deserializer))
@@ -553,6 +557,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooContent2TypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooContent2TypeDeserializerState::Element2(values, None),
                     Some(FooContent2TypeDeserializerState::Element2(_, Some(deserializer))) => {
                         FooContent2TypeDeserializerState::Element2(values, Some(deserializer))
@@ -821,6 +829,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooContent3TypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooContent3TypeDeserializerState::Element3(values, None),
                     Some(FooContent3TypeDeserializerState::Element3(_, Some(deserializer))) => {
                         FooContent3TypeDeserializerState::Element3(values, Some(deserializer))
@@ -872,6 +884,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooContent3TypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooContent3TypeDeserializerState::Element4(values, None),
                     Some(FooContent3TypeDeserializerState::Element4(_, Some(deserializer))) => {
                         FooContent3TypeDeserializerState::Element4(values, Some(deserializer))

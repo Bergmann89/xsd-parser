@@ -2859,6 +2859,21 @@ impl ComplexDataElement<'_> {
             Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
         };
+        let fallback_to_init_check = match self.occurs {
+            Occurs::Single => Some(quote!(values.is_none())),
+            Occurs::DynamicList | Occurs::StaticList(_) if self.meta().min_occurs > 0 => {
+                Some(quote!(values.is_empty()))
+            }
+            _ => None,
+        };
+        let fallback_to_init = fallback_to_init_check.map(|values_are_empty| {
+            quote! {
+                None if #values_are_empty => {
+                    *self.state = #deserializer_state_ident::Init__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                },
+            }
+        });
 
         // Handler for `DeserializerArtifact::Data`
         let data_handler = match (represents_element, self.occurs, self.meta().max_occurs) {
@@ -2976,6 +2991,7 @@ impl ComplexDataElement<'_> {
 
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        #fallback_to_init
                         None => #deserializer_state_ident::#variant_ident(values, None),
                         Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => #deserializer_state_ident::#variant_ident(values, Some(deserializer)),
                         _ => unreachable!(),

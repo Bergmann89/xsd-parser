@@ -829,6 +829,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ChoiceTypeContentDeserializerState::Name(values, None),
                     Some(ChoiceTypeContentDeserializerState::Name(_, Some(deserializer))) => {
                         ChoiceTypeContentDeserializerState::Name(values, Some(deserializer))
@@ -880,6 +884,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ChoiceTypeContentDeserializerState::Any(values, None),
                     Some(ChoiceTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                         ChoiceTypeContentDeserializerState::Any(values, Some(deserializer))

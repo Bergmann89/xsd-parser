@@ -581,6 +581,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::NegativeDecimal(values, None),
                     Some(RootTypeContentDeserializerState::NegativeDecimal(
                         _,
@@ -638,6 +642,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::PositiveDecimal(values, None),
                     Some(RootTypeContentDeserializerState::PositiveDecimal(
                         _,
@@ -695,6 +703,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::RestrictedString(values, None),
                     Some(RootTypeContentDeserializerState::RestrictedString(
                         _,

@@ -531,6 +531,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooOuterTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooOuterTypeDeserializerState::Bar(values, None),
                     Some(FooOuterTypeDeserializerState::Bar(_, Some(deserializer))) => {
                         FooOuterTypeDeserializerState::Bar(values, Some(deserializer))
@@ -581,6 +585,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooOuterTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooOuterTypeDeserializerState::Baz(values, None),
                     Some(FooOuterTypeDeserializerState::Baz(_, Some(deserializer))) => {
                         FooOuterTypeDeserializerState::Baz(values, Some(deserializer))
@@ -631,6 +639,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooOuterTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooOuterTypeDeserializerState::Inner(values, None),
                     Some(FooOuterTypeDeserializerState::Inner(_, Some(deserializer))) => {
                         FooOuterTypeDeserializerState::Inner(values, Some(deserializer))

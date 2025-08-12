@@ -319,6 +319,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Bar(values, None),
                     Some(FooTypeContentDeserializerState::Bar(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Bar(values, Some(deserializer))
@@ -369,6 +373,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Baz(values, None),
                     Some(FooTypeContentDeserializerState::Baz(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Baz(values, Some(deserializer))

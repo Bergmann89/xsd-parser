@@ -2183,6 +2183,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Include(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Include(
                         _,
@@ -2240,6 +2244,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Import(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Import(
                         _,
@@ -2297,6 +2305,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Redefine(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Redefine(
                         _,
@@ -2357,6 +2369,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Override(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Override(
                         _,
@@ -2417,6 +2433,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Annotation(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Annotation(
                         _,
@@ -2477,6 +2497,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         SchemaElementTypeContentDeserializerState::DefaultOpenContent(values, None)
                     }
@@ -2539,6 +2563,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::SimpleType(values, None),
                     Some(SchemaElementTypeContentDeserializerState::SimpleType(
                         _,
@@ -2599,6 +2627,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::ComplexType(values, None),
                     Some(SchemaElementTypeContentDeserializerState::ComplexType(
                         _,
@@ -2659,6 +2691,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Group(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Group(
                         _,
@@ -2715,6 +2751,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::AttributeGroup(values, None),
                     Some(SchemaElementTypeContentDeserializerState::AttributeGroup(
                         _,
@@ -2775,6 +2815,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Element(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Element(
                         _,
@@ -2832,6 +2876,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Attribute(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Attribute(
                         _,
@@ -2892,6 +2940,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SchemaElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SchemaElementTypeContentDeserializerState::Notation(values, None),
                     Some(SchemaElementTypeContentDeserializerState::Notation(
                         _,
@@ -4198,6 +4250,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RedefineElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RedefineElementTypeContentDeserializerState::Annotation(values, None),
                     Some(RedefineElementTypeContentDeserializerState::Annotation(
                         _,
@@ -4258,6 +4314,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RedefineElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RedefineElementTypeContentDeserializerState::SimpleType(values, None),
                     Some(RedefineElementTypeContentDeserializerState::SimpleType(
                         _,
@@ -4318,6 +4378,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RedefineElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RedefineElementTypeContentDeserializerState::ComplexType(values, None),
                     Some(RedefineElementTypeContentDeserializerState::ComplexType(
                         _,
@@ -4378,6 +4442,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RedefineElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RedefineElementTypeContentDeserializerState::Group(values, None),
                     Some(RedefineElementTypeContentDeserializerState::Group(
                         _,
@@ -4435,6 +4503,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RedefineElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         RedefineElementTypeContentDeserializerState::AttributeGroup(values, None)
                     }
@@ -5220,6 +5292,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::Annotation(values, None),
                     Some(OverrideElementTypeContentDeserializerState::Annotation(
                         _,
@@ -5280,6 +5356,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::SimpleType(values, None),
                     Some(OverrideElementTypeContentDeserializerState::SimpleType(
                         _,
@@ -5340,6 +5420,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::ComplexType(values, None),
                     Some(OverrideElementTypeContentDeserializerState::ComplexType(
                         _,
@@ -5400,6 +5484,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::Group(values, None),
                     Some(OverrideElementTypeContentDeserializerState::Group(
                         _,
@@ -5457,6 +5545,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         OverrideElementTypeContentDeserializerState::AttributeGroup(values, None)
                     }
@@ -5519,6 +5611,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::Element(values, None),
                     Some(OverrideElementTypeContentDeserializerState::Element(
                         _,
@@ -5579,6 +5675,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::Attribute(values, None),
                     Some(OverrideElementTypeContentDeserializerState::Attribute(
                         _,
@@ -5639,6 +5739,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = OverrideElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => OverrideElementTypeContentDeserializerState::Notation(values, None),
                     Some(OverrideElementTypeContentDeserializerState::Notation(
                         _,
@@ -6247,6 +6351,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AnnotationElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AnnotationElementTypeContentDeserializerState::Appinfo(values, None),
                     Some(AnnotationElementTypeContentDeserializerState::Appinfo(
                         _,
@@ -6307,6 +6415,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AnnotationElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         AnnotationElementTypeContentDeserializerState::Documentation(values, None)
                     }
@@ -7222,6 +7334,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SimpleBaseTypeContentDeserializerState::Annotation(values, None),
                     Some(SimpleBaseTypeContentDeserializerState::Annotation(
                         _,
@@ -7279,6 +7395,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SimpleBaseTypeContentDeserializerState::Restriction(values, None),
                     Some(SimpleBaseTypeContentDeserializerState::Restriction(
                         _,
@@ -7339,6 +7459,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SimpleBaseTypeContentDeserializerState::List(values, None),
                     Some(SimpleBaseTypeContentDeserializerState::List(_, Some(deserializer))) => {
                         SimpleBaseTypeContentDeserializerState::List(values, Some(deserializer))
@@ -7390,6 +7514,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => SimpleBaseTypeContentDeserializerState::Union(values, None),
                     Some(SimpleBaseTypeContentDeserializerState::Union(_, Some(deserializer))) => {
                         SimpleBaseTypeContentDeserializerState::Union(values, Some(deserializer))
@@ -8324,6 +8452,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Annotation(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Annotation(
                         _,
@@ -8384,6 +8516,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::SimpleContent(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::SimpleContent(
                         _,
@@ -8444,6 +8580,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::ComplexContent(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::ComplexContent(
                         _,
@@ -8504,6 +8644,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::OpenContent(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::OpenContent(
                         _,
@@ -8564,6 +8708,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Group(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                         ComplexBaseTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -8615,6 +8763,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::All(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::All(_, Some(deserializer))) => {
                         ComplexBaseTypeContentDeserializerState::All(values, Some(deserializer))
@@ -8666,6 +8818,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Choice(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Choice(
                         _,
@@ -8720,6 +8876,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Sequence(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Sequence(
                         _,
@@ -8777,6 +8937,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Attribute(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Attribute(
                         _,
@@ -8834,6 +8998,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::AttributeGroup(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::AttributeGroup(
                         _,
@@ -8894,6 +9062,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::AnyAttribute(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::AnyAttribute(
                         _,
@@ -8954,6 +9126,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexBaseTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ComplexBaseTypeContentDeserializerState::Assert(values, None),
                     Some(ComplexBaseTypeContentDeserializerState::Assert(
                         _,
@@ -9815,6 +9991,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Annotation(values, None),
                     Some(GroupTypeContentDeserializerState::Annotation(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Annotation(values, Some(deserializer))
@@ -9866,6 +10046,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Element(values, None),
                     Some(GroupTypeContentDeserializerState::Element(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Element(values, Some(deserializer))
@@ -9917,6 +10101,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Group(values, None),
                     Some(GroupTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -9968,6 +10156,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::All(values, None),
                     Some(GroupTypeContentDeserializerState::All(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::All(values, Some(deserializer))
@@ -10019,6 +10211,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Choice(values, None),
                     Some(GroupTypeContentDeserializerState::Choice(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Choice(values, Some(deserializer))
@@ -10070,6 +10266,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Sequence(values, None),
                     Some(GroupTypeContentDeserializerState::Sequence(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Sequence(values, Some(deserializer))
@@ -10121,6 +10321,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = GroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => GroupTypeContentDeserializerState::Any(values, None),
                     Some(GroupTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                         GroupTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -10790,6 +10994,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AttributeGroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AttributeGroupTypeContentDeserializerState::Annotation(values, None),
                     Some(AttributeGroupTypeContentDeserializerState::Annotation(
                         _,
@@ -10850,6 +11058,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AttributeGroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AttributeGroupTypeContentDeserializerState::Attribute(values, None),
                     Some(AttributeGroupTypeContentDeserializerState::Attribute(
                         _,
@@ -10910,6 +11122,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AttributeGroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         AttributeGroupTypeContentDeserializerState::AttributeGroup(values, None)
                     }
@@ -10972,6 +11188,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AttributeGroupTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AttributeGroupTypeContentDeserializerState::AnyAttribute(values, None),
                     Some(AttributeGroupTypeContentDeserializerState::AnyAttribute(
                         _,
@@ -11800,6 +12020,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::Annotation(values, None),
                     Some(ElementTypeContentDeserializerState::Annotation(
                         _,
@@ -11854,6 +12078,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::SimpleType(values, None),
                     Some(ElementTypeContentDeserializerState::SimpleType(
                         _,
@@ -11908,6 +12136,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::ComplexType(values, None),
                     Some(ElementTypeContentDeserializerState::ComplexType(
                         _,
@@ -11964,6 +12196,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::Alternative(values, None),
                     Some(ElementTypeContentDeserializerState::Alternative(
                         _,
@@ -12020,6 +12256,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::Unique(values, None),
                     Some(ElementTypeContentDeserializerState::Unique(_, Some(deserializer))) => {
                         ElementTypeContentDeserializerState::Unique(values, Some(deserializer))
@@ -12071,6 +12311,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::Key(values, None),
                     Some(ElementTypeContentDeserializerState::Key(_, Some(deserializer))) => {
                         ElementTypeContentDeserializerState::Key(values, Some(deserializer))
@@ -12122,6 +12366,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ElementTypeContentDeserializerState::Keyref(values, None),
                     Some(ElementTypeContentDeserializerState::Keyref(_, Some(deserializer))) => {
                         ElementTypeContentDeserializerState::Keyref(values, Some(deserializer))
@@ -14720,6 +14968,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         RestrictionElementTypeContentDeserializerState::Annotation(values, None)
                     }
@@ -14782,6 +15034,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         RestrictionElementTypeContentDeserializerState::SimpleType(values, None)
                     }
@@ -14844,6 +15100,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionElementTypeContentDeserializerState::Facet(values, None),
                     Some(RestrictionElementTypeContentDeserializerState::Facet(
                         _,
@@ -14904,6 +15164,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionElementTypeContentDeserializerState::Any(values, None),
                     Some(RestrictionElementTypeContentDeserializerState::Any(
                         _,
@@ -16106,6 +16370,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         SimpleContentElementTypeContentDeserializerState::Annotation(values, None)
                     }
@@ -16168,6 +16436,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         SimpleContentElementTypeContentDeserializerState::Restriction(values, None)
                     }
@@ -16230,6 +16502,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = SimpleContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         SimpleContentElementTypeContentDeserializerState::Extension(values, None)
                     }
@@ -16796,6 +17072,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         ComplexContentElementTypeContentDeserializerState::Annotation(values, None)
                     }
@@ -16858,6 +17138,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         ComplexContentElementTypeContentDeserializerState::Restriction(values, None)
                     }
@@ -16922,6 +17206,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ComplexContentElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         ComplexContentElementTypeContentDeserializerState::Extension(values, None)
                     }
@@ -18577,6 +18865,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AltTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AltTypeContentDeserializerState::Annotation(values, None),
                     Some(AltTypeContentDeserializerState::Annotation(_, Some(deserializer))) => {
                         AltTypeContentDeserializerState::Annotation(values, Some(deserializer))
@@ -18628,6 +18920,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AltTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AltTypeContentDeserializerState::SimpleType(values, None),
                     Some(AltTypeContentDeserializerState::SimpleType(_, Some(deserializer))) => {
                         AltTypeContentDeserializerState::SimpleType(values, Some(deserializer))
@@ -18679,6 +18975,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = AltTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => AltTypeContentDeserializerState::ComplexType(values, None),
                     Some(AltTypeContentDeserializerState::ComplexType(_, Some(deserializer))) => {
                         AltTypeContentDeserializerState::ComplexType(values, Some(deserializer))
@@ -20617,6 +20917,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MinExclusive(values, None),
                     Some(FacetDeserializerState::MinExclusive(_, Some(deserializer))) => {
                         FacetDeserializerState::MinExclusive(values, Some(deserializer))
@@ -20667,6 +20971,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MinInclusive(values, None),
                     Some(FacetDeserializerState::MinInclusive(_, Some(deserializer))) => {
                         FacetDeserializerState::MinInclusive(values, Some(deserializer))
@@ -20717,6 +21025,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MaxExclusive(values, None),
                     Some(FacetDeserializerState::MaxExclusive(_, Some(deserializer))) => {
                         FacetDeserializerState::MaxExclusive(values, Some(deserializer))
@@ -20767,6 +21079,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MaxInclusive(values, None),
                     Some(FacetDeserializerState::MaxInclusive(_, Some(deserializer))) => {
                         FacetDeserializerState::MaxInclusive(values, Some(deserializer))
@@ -20817,6 +21133,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::TotalDigits(values, None),
                     Some(FacetDeserializerState::TotalDigits(_, Some(deserializer))) => {
                         FacetDeserializerState::TotalDigits(values, Some(deserializer))
@@ -20867,6 +21187,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::FractionDigits(values, None),
                     Some(FacetDeserializerState::FractionDigits(_, Some(deserializer))) => {
                         FacetDeserializerState::FractionDigits(values, Some(deserializer))
@@ -20918,6 +21242,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::Length(values, None),
                     Some(FacetDeserializerState::Length(_, Some(deserializer))) => {
                         FacetDeserializerState::Length(values, Some(deserializer))
@@ -20966,6 +21294,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MinLength(values, None),
                     Some(FacetDeserializerState::MinLength(_, Some(deserializer))) => {
                         FacetDeserializerState::MinLength(values, Some(deserializer))
@@ -21016,6 +21348,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::MaxLength(values, None),
                     Some(FacetDeserializerState::MaxLength(_, Some(deserializer))) => {
                         FacetDeserializerState::MaxLength(values, Some(deserializer))
@@ -21066,6 +21402,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::Enumeration(values, None),
                     Some(FacetDeserializerState::Enumeration(_, Some(deserializer))) => {
                         FacetDeserializerState::Enumeration(values, Some(deserializer))
@@ -21116,6 +21456,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::WhiteSpace(values, None),
                     Some(FacetDeserializerState::WhiteSpace(_, Some(deserializer))) => {
                         FacetDeserializerState::WhiteSpace(values, Some(deserializer))
@@ -21166,6 +21510,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::Pattern(values, None),
                     Some(FacetDeserializerState::Pattern(_, Some(deserializer))) => {
                         FacetDeserializerState::Pattern(values, Some(deserializer))
@@ -21214,6 +21562,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::Assertion(values, None),
                     Some(FacetDeserializerState::Assertion(_, Some(deserializer))) => {
                         FacetDeserializerState::Assertion(values, Some(deserializer))
@@ -21264,6 +21616,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FacetDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FacetDeserializerState::ExplicitTimezone(values, None),
                     Some(FacetDeserializerState::ExplicitTimezone(_, Some(deserializer))) => {
                         FacetDeserializerState::ExplicitTimezone(values, Some(deserializer))
@@ -22386,6 +22742,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Annotation(values, None),
                     Some(RestrictionTypeContentDeserializerState::Annotation(
                         _,
@@ -22446,6 +22806,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::OpenContent(values, None),
                     Some(RestrictionTypeContentDeserializerState::OpenContent(
                         _,
@@ -22506,6 +22870,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Group(values, None),
                     Some(RestrictionTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                         RestrictionTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -22557,6 +22925,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::All(values, None),
                     Some(RestrictionTypeContentDeserializerState::All(_, Some(deserializer))) => {
                         RestrictionTypeContentDeserializerState::All(values, Some(deserializer))
@@ -22608,6 +22980,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Choice(values, None),
                     Some(RestrictionTypeContentDeserializerState::Choice(
                         _,
@@ -22662,6 +23038,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Sequence(values, None),
                     Some(RestrictionTypeContentDeserializerState::Sequence(
                         _,
@@ -22719,6 +23099,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::SimpleType(values, None),
                     Some(RestrictionTypeContentDeserializerState::SimpleType(
                         _,
@@ -22779,6 +23163,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Facet(values, None),
                     Some(RestrictionTypeContentDeserializerState::Facet(_, Some(deserializer))) => {
                         RestrictionTypeContentDeserializerState::Facet(values, Some(deserializer))
@@ -22830,6 +23218,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Any(values, None),
                     Some(RestrictionTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                         RestrictionTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -22881,6 +23273,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Attribute(values, None),
                     Some(RestrictionTypeContentDeserializerState::Attribute(
                         _,
@@ -22938,6 +23334,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::AttributeGroup(values, None),
                     Some(RestrictionTypeContentDeserializerState::AttributeGroup(
                         _,
@@ -22998,6 +23398,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::AnyAttribute(values, None),
                     Some(RestrictionTypeContentDeserializerState::AnyAttribute(
                         _,
@@ -23058,6 +23462,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RestrictionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RestrictionTypeContentDeserializerState::Assert(values, None),
                     Some(RestrictionTypeContentDeserializerState::Assert(
                         _,
@@ -24044,6 +24452,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Annotation(values, None),
                     Some(ExtensionTypeContentDeserializerState::Annotation(
                         _,
@@ -24101,6 +24513,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::OpenContent(values, None),
                     Some(ExtensionTypeContentDeserializerState::OpenContent(
                         _,
@@ -24158,6 +24574,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Group(values, None),
                     Some(ExtensionTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                         ExtensionTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -24209,6 +24629,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::All(values, None),
                     Some(ExtensionTypeContentDeserializerState::All(_, Some(deserializer))) => {
                         ExtensionTypeContentDeserializerState::All(values, Some(deserializer))
@@ -24260,6 +24684,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Choice(values, None),
                     Some(ExtensionTypeContentDeserializerState::Choice(_, Some(deserializer))) => {
                         ExtensionTypeContentDeserializerState::Choice(values, Some(deserializer))
@@ -24311,6 +24739,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Sequence(values, None),
                     Some(ExtensionTypeContentDeserializerState::Sequence(
                         _,
@@ -24365,6 +24797,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Attribute(values, None),
                     Some(ExtensionTypeContentDeserializerState::Attribute(
                         _,
@@ -24421,6 +24857,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::AttributeGroup(values, None),
                     Some(ExtensionTypeContentDeserializerState::AttributeGroup(
                         _,
@@ -24481,6 +24921,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::AnyAttribute(values, None),
                     Some(ExtensionTypeContentDeserializerState::AnyAttribute(
                         _,
@@ -24541,6 +24985,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = ExtensionTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => ExtensionTypeContentDeserializerState::Assert(values, None),
                     Some(ExtensionTypeContentDeserializerState::Assert(_, Some(deserializer))) => {
                         ExtensionTypeContentDeserializerState::Assert(values, Some(deserializer))

@@ -914,6 +914,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceTypeContentDeserializerState::Fuu(values, None),
                     Some(MixedChoiceTypeContentDeserializerState::Fuu(_, Some(deserializer))) => {
                         MixedChoiceTypeContentDeserializerState::Fuu(values, Some(deserializer))
@@ -965,6 +969,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceTypeContentDeserializerState::Bar(values, None),
                     Some(MixedChoiceTypeContentDeserializerState::Bar(_, Some(deserializer))) => {
                         MixedChoiceTypeContentDeserializerState::Bar(values, Some(deserializer))
@@ -1407,6 +1415,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Fuu(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Fuu(
                         _,
@@ -1463,6 +1475,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Bar(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Bar(
                         _,
@@ -1519,6 +1535,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Text(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Text(
                         _,

@@ -356,6 +356,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MyChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MyChoiceTypeContentDeserializerState::Once(values, None),
                     Some(MyChoiceTypeContentDeserializerState::Once(_, Some(deserializer))) => {
                         MyChoiceTypeContentDeserializerState::Once(values, Some(deserializer))
@@ -458,6 +462,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MyChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MyChoiceTypeContentDeserializerState::OnceSpecify(values, None),
                     Some(MyChoiceTypeContentDeserializerState::OnceSpecify(
                         _,
@@ -515,6 +523,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_empty() => {
+                        *self.state = MyChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MyChoiceTypeContentDeserializerState::TwiceOrMore(values, None),
                     Some(MyChoiceTypeContentDeserializerState::TwiceOrMore(
                         _,

@@ -214,6 +214,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeDeserializerState::Once(values, None),
                     Some(FooTypeDeserializerState::Once(_, Some(deserializer))) => {
                         FooTypeDeserializerState::Once(values, Some(deserializer))
@@ -306,6 +310,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeDeserializerState::OnceSpecify(values, None),
                     Some(FooTypeDeserializerState::OnceSpecify(_, Some(deserializer))) => {
                         FooTypeDeserializerState::OnceSpecify(values, Some(deserializer))
@@ -352,6 +360,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_empty() => {
+                        *self.state = FooTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeDeserializerState::TwiceOrMore(values, None),
                     Some(FooTypeDeserializerState::TwiceOrMore(_, Some(deserializer))) => {
                         FooTypeDeserializerState::TwiceOrMore(values, Some(deserializer))

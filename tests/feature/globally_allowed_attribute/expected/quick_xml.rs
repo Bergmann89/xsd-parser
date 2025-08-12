@@ -378,6 +378,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Once(values, None),
                     Some(FooTypeContentDeserializerState::Once(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Once(values, Some(deserializer))
@@ -479,6 +483,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::OnceSpecify(values, None),
                     Some(FooTypeContentDeserializerState::OnceSpecify(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::OnceSpecify(values, Some(deserializer))
@@ -530,6 +538,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_empty() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::TwiceOrMore(values, None),
                     Some(FooTypeContentDeserializerState::TwiceOrMore(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::TwiceOrMore(values, Some(deserializer))
