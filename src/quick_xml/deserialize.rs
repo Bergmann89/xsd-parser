@@ -131,9 +131,7 @@ impl<'a> ElementHandlerOutput<'a> {
     pub fn from_event_end(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
         match event {
             DeserializerEvent::Continue(event @ Event::End(_)) => Self::continue_(event, allow_any),
-            DeserializerEvent::Continue(event) => {
-                Self::break_(DeserializerEvent::Break(event), allow_any)
-            }
+            DeserializerEvent::Continue(event) => Self::return_to_parent(event, allow_any),
             event => Self::break_(event, allow_any),
         }
     }
