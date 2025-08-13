@@ -243,6 +243,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeDeserializerState::Content2(values, None),
                     Some(FooTypeDeserializerState::Content2(_, Some(deserializer))) => {
                         FooTypeDeserializerState::Content2(values, Some(deserializer))
@@ -289,6 +293,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeDeserializerState::Content3(values, None),
                     Some(FooTypeDeserializerState::Content3(_, Some(deserializer))) => {
                         FooTypeDeserializerState::Content3(values, Some(deserializer))
@@ -656,39 +664,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Element1(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Element1") {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_element_1(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element1",
+                            false,
+                        )?;
+                        match self.handle_element_1(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Element2(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Element2(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Element2") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_element_2(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element2",
+                            false,
+                        )?;
+                        match self.handle_element_2(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -964,39 +970,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Element3(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Element3") {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_element_3(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element3",
+                            false,
+                        )?;
+                        match self.handle_element_3(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Element4(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Element4(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Element4") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_element_4(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Element4",
+                            false,
+                        )?;
+                        match self.handle_element_4(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {

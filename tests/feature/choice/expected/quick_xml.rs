@@ -319,6 +319,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Bar(values, None),
                     Some(FooTypeContentDeserializerState::Bar(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Bar(values, Some(deserializer))
@@ -369,6 +373,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Baz(values, None),
                     Some(FooTypeContentDeserializerState::Baz(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Baz(values, Some(deserializer))
@@ -470,8 +478,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Bar(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
                         match self.handle_bar(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -480,7 +492,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Baz(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Baz",
+                            false,
+                        )?;
                         match self.handle_baz(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)

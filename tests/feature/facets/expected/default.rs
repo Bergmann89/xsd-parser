@@ -99,6 +99,7 @@ impl Deref for PositiveDecimalType {
 pub struct RestrictedStringType(pub String);
 impl RestrictedStringType {
     pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     pub fn into_inner(self) -> String {
@@ -109,10 +110,13 @@ impl RestrictedStringType {
         if !PATTERN.is_match(s) {
             return Err(ValidateError::Pattern("[A-Z][a-z]{4,9}"));
         }
-        if s.len() < 5usize {
+        Ok(())
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        if value.len() < 5usize {
             return Err(ValidateError::MinLength(5usize));
         }
-        if s.len() > 10usize {
+        if value.len() > 10usize {
             return Err(ValidateError::MaxLength(10usize));
         }
         Ok(())

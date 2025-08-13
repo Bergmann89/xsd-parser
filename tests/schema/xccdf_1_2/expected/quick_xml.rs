@@ -5128,6 +5128,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Status(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Status(
                             _,
@@ -5188,6 +5192,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::DcStatus(values, None)
                         }
@@ -5250,6 +5258,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Title(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Title(
                             _,
@@ -5310,6 +5322,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Description(values, None)
                         }
@@ -5372,6 +5388,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Notice(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Notice(
                             _,
@@ -5432,6 +5452,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::FrontMatter(values, None)
                         }
@@ -5494,6 +5518,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::RearMatter(values, None)
                         }
@@ -5556,6 +5584,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Reference(values, None)
                         }
@@ -5618,6 +5650,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::PlainText(values, None)
                         }
@@ -5680,6 +5716,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::PlatformSpecification(
                                 values, None,
@@ -5749,6 +5789,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Platform(values, None)
                         }
@@ -5811,6 +5855,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Version(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Version(
                             _,
@@ -5871,6 +5919,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Metadata(values, None)
                         }
@@ -5933,6 +5985,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Model(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Model(
                             _,
@@ -5993,6 +6049,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Profile(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Profile(
                             _,
@@ -6053,6 +6113,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Value(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Value(
                             _,
@@ -6113,6 +6177,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Group(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Group(
                             _,
@@ -6173,6 +6241,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => BenchmarkElementTypeContentDeserializerState::Rule(values, None),
                         Some(BenchmarkElementTypeContentDeserializerState::Rule(
                             _,
@@ -6233,6 +6305,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::TestResult(values, None)
                         }
@@ -6295,6 +6371,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             BenchmarkElementTypeContentDeserializerState::Signature(values, None)
                         }
@@ -6585,10 +6665,12 @@ pub mod cdf {
                             }
                         }
                         (S::Status(values, None), event) => {
-                            let output =
-                                <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"status",
+                                false,
+                            )?;
                             match self.handle_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6597,10 +6679,12 @@ pub mod cdf {
                             }
                         }
                         (S::DcStatus(values, None), event) => {
-                            let output =
-                                <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"dc-status",
+                                true,
+                            )?;
                             match self.handle_dc_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6609,8 +6693,11 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
                             )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -6620,7 +6707,12 @@ pub mod cdf {
                             }
                         }
                         (S::Description(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"description",
+                                true,
+                            )?;
                             match self.handle_description(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6629,10 +6721,12 @@ pub mod cdf {
                             }
                         }
                         (S::Notice(values, None), event) => {
-                            let output =
-                                <super::NoticeType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"notice",
+                                true,
+                            )?;
                             match self.handle_notice(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6641,7 +6735,12 @@ pub mod cdf {
                             }
                         }
                         (S::FrontMatter(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"front-matter",
+                                true,
+                            )?;
                             match self.handle_front_matter(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6650,7 +6749,12 @@ pub mod cdf {
                             }
                         }
                         (S::RearMatter(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"rear-matter",
+                                true,
+                            )?;
                             match self.handle_rear_matter(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6659,10 +6763,12 @@ pub mod cdf {
                             }
                         }
                         (S::Reference(values, None), event) => {
-                            let output =
-                                <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"reference",
+                                true,
+                            )?;
                             match self.handle_reference(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6671,10 +6777,12 @@ pub mod cdf {
                             }
                         }
                         (S::PlainText(values, None), event) => {
-                            let output =
-                                <super::PlainTextType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"plain-text",
+                                false,
+                            )?;
                             match self.handle_plain_text(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6683,7 +6791,12 @@ pub mod cdf {
                             }
                         }
                         (S::PlatformSpecification(values, None), event) => {
-                            let output = < super :: super :: cpe :: PlatformSpecificationType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CPE),
+                                b"platform-specification",
+                                false,
+                            )?;
                             match self.handle_platform_specification(
                                 reader,
                                 values,
@@ -6697,10 +6810,12 @@ pub mod cdf {
                             }
                         }
                         (S::Platform(values, None), event) => {
-                            let output =
-                                <super::Cpe2IdrefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"platform",
+                                false,
+                            )?;
                             match self.handle_platform(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6709,10 +6824,12 @@ pub mod cdf {
                             }
                         }
                         (S::Version(values, None), event) => {
-                            let output =
-                                <super::VersionType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"version",
+                                false,
+                            )?;
                             match self.handle_version(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6721,10 +6838,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6733,10 +6852,12 @@ pub mod cdf {
                             }
                         }
                         (S::Model(values, None), event) => {
-                            let output =
-                                <super::ModelElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"model",
+                                false,
+                            )?;
                             match self.handle_model(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6745,10 +6866,12 @@ pub mod cdf {
                             }
                         }
                         (S::Profile(values, None), event) => {
-                            let output =
-                                <super::ProfileType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Profile",
+                                true,
+                            )?;
                             match self.handle_profile(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6757,10 +6880,12 @@ pub mod cdf {
                             }
                         }
                         (S::Value(values, None), event) => {
-                            let output =
-                                <super::ValueType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Value",
+                                true,
+                            )?;
                             match self.handle_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6769,10 +6894,12 @@ pub mod cdf {
                             }
                         }
                         (S::Group(values, None), event) => {
-                            let output =
-                                <super::GroupType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Group",
+                                true,
+                            )?;
                             match self.handle_group(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6781,8 +6908,11 @@ pub mod cdf {
                             }
                         }
                         (S::Rule(values, None), event) => {
-                            let output = <super::RuleType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Rule",
+                                true,
                             )?;
                             match self.handle_rule(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -6792,10 +6922,12 @@ pub mod cdf {
                             }
                         }
                         (S::TestResult(values, None), event) => {
-                            let output =
-                                <super::TestResultType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"TestResult",
+                                true,
+                            )?;
                             match self.handle_test_result(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -6804,10 +6936,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -7681,6 +7815,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Sub(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Sub(
                             _,
@@ -7741,6 +7879,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Any(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Any(
                             _,
@@ -7801,6 +7943,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
                         Some(HtmlTextWithSubTypeContentDeserializerState::Text(
                             _,
@@ -7931,8 +8077,11 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(values, None), event) => {
-                            let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
                             )?;
                             match self.handle_sub(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -7942,9 +8091,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any17", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -9373,27 +9521,20 @@ pub mod cdf {
                             event
                         }
                         (S::Param(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"param",
-                            ) {
-                                let output =
-                                    <super::ParamType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_param(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_param(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -10270,6 +10411,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Status(values, None),
                         Some(ProfileTypeContentDeserializerState::Status(
                             _,
@@ -10324,6 +10469,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::DcStatus(values, None),
                         Some(ProfileTypeContentDeserializerState::DcStatus(
                             _,
@@ -10381,6 +10530,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Version(values, None),
                         Some(ProfileTypeContentDeserializerState::Version(
                             _,
@@ -10437,6 +10590,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Title(values, None),
                         Some(ProfileTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             ProfileTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -10488,6 +10645,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Description(values, None),
                         Some(ProfileTypeContentDeserializerState::Description(
                             _,
@@ -10548,6 +10709,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Reference(values, None),
                         Some(ProfileTypeContentDeserializerState::Reference(
                             _,
@@ -10605,6 +10770,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Platform(values, None),
                         Some(ProfileTypeContentDeserializerState::Platform(
                             _,
@@ -10662,6 +10831,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Select(values, None),
                         Some(ProfileTypeContentDeserializerState::Select(
                             _,
@@ -10716,6 +10889,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::SetComplexValue(values, None),
                         Some(ProfileTypeContentDeserializerState::SetComplexValue(
                             _,
@@ -10776,6 +10953,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::SetValue(values, None),
                         Some(ProfileTypeContentDeserializerState::SetValue(
                             _,
@@ -10833,6 +11014,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::RefineValue(values, None),
                         Some(ProfileTypeContentDeserializerState::RefineValue(
                             _,
@@ -10893,6 +11078,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::RefineRule(values, None),
                         Some(ProfileTypeContentDeserializerState::RefineRule(
                             _,
@@ -10953,6 +11142,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Metadata(values, None),
                         Some(ProfileTypeContentDeserializerState::Metadata(
                             _,
@@ -11010,6 +11203,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileTypeContentDeserializerState::Signature(values, None),
                         Some(ProfileTypeContentDeserializerState::Signature(
                             _,
@@ -11236,10 +11433,12 @@ pub mod cdf {
                             }
                         }
                         (S::Status(values, None), event) => {
-                            let output =
-                                <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"status",
+                                false,
+                            )?;
                             match self.handle_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11248,10 +11447,12 @@ pub mod cdf {
                             }
                         }
                         (S::DcStatus(values, None), event) => {
-                            let output =
-                                <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"dc-status",
+                                true,
+                            )?;
                             match self.handle_dc_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11260,10 +11461,12 @@ pub mod cdf {
                             }
                         }
                         (S::Version(values, None), event) => {
-                            let output =
-                                <super::VersionType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"version",
+                                false,
+                            )?;
                             match self.handle_version(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11272,10 +11475,12 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output =
-                                <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
+                            )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11284,7 +11489,12 @@ pub mod cdf {
                             }
                         }
                         (S::Description(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"description",
+                                true,
+                            )?;
                             match self.handle_description(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11293,10 +11503,12 @@ pub mod cdf {
                             }
                         }
                         (S::Reference(values, None), event) => {
-                            let output =
-                                <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"reference",
+                                true,
+                            )?;
                             match self.handle_reference(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11305,7 +11517,12 @@ pub mod cdf {
                             }
                         }
                         (S::Platform(values, None), event) => {
-                            let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"platform",
+                                false,
+                            )?;
                             match self.handle_platform(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11314,10 +11531,12 @@ pub mod cdf {
                             }
                         }
                         (S::Select(values, None), event) => {
-                            let output =
-                                <super::ProfileSelectType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"select",
+                                false,
+                            )?;
                             match self.handle_select(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11326,7 +11545,12 @@ pub mod cdf {
                             }
                         }
                         (S::SetComplexValue(values, None), event) => {
-                            let output = < super :: ProfileSetComplexValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"set-complex-value",
+                                false,
+                            )?;
                             match self.handle_set_complex_value(
                                 reader,
                                 values,
@@ -11340,7 +11564,12 @@ pub mod cdf {
                             }
                         }
                         (S::SetValue(values, None), event) => {
-                            let output = < super :: ProfileSetValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"set-value",
+                                false,
+                            )?;
                             match self.handle_set_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11349,7 +11578,12 @@ pub mod cdf {
                             }
                         }
                         (S::RefineValue(values, None), event) => {
-                            let output = < super :: ProfileRefineValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"refine-value",
+                                false,
+                            )?;
                             match self.handle_refine_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11358,7 +11592,12 @@ pub mod cdf {
                             }
                         }
                         (S::RefineRule(values, None), event) => {
-                            let output = < super :: ProfileRefineRuleType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"refine-rule",
+                                false,
+                            )?;
                             match self.handle_refine_rule(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11367,10 +11606,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -11379,10 +11620,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -12513,6 +12756,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Status(values, None),
                         Some(ValueTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -12564,6 +12811,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::DcStatus(values, None),
                         Some(ValueTypeContentDeserializerState::DcStatus(
                             _,
@@ -12618,6 +12869,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Version(values, None),
                         Some(ValueTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -12669,6 +12924,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Title(values, None),
                         Some(ValueTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -12720,6 +12979,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Description(values, None),
                         Some(ValueTypeContentDeserializerState::Description(
                             _,
@@ -12777,6 +13040,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Warning(values, None),
                         Some(ValueTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -12828,6 +13095,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Question(values, None),
                         Some(ValueTypeContentDeserializerState::Question(
                             _,
@@ -12882,6 +13153,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Reference(values, None),
                         Some(ValueTypeContentDeserializerState::Reference(
                             _,
@@ -12938,6 +13213,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Metadata(values, None),
                         Some(ValueTypeContentDeserializerState::Metadata(
                             _,
@@ -12992,6 +13271,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Value(values, None),
                         Some(ValueTypeContentDeserializerState::Value(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Value(values, Some(deserializer))
@@ -13043,6 +13326,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::ComplexValue(values, None),
                         Some(ValueTypeContentDeserializerState::ComplexValue(
                             _,
@@ -13103,6 +13390,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Default(values, None),
                         Some(ValueTypeContentDeserializerState::Default(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Default(values, Some(deserializer))
@@ -13154,6 +13445,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::ComplexDefault(values, None),
                         Some(ValueTypeContentDeserializerState::ComplexDefault(
                             _,
@@ -13214,6 +13509,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Match(values, None),
                         Some(ValueTypeContentDeserializerState::Match(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Match(values, Some(deserializer))
@@ -13265,6 +13564,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::LowerBound(values, None),
                         Some(ValueTypeContentDeserializerState::LowerBound(
                             _,
@@ -13322,6 +13625,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::UpperBound(values, None),
                         Some(ValueTypeContentDeserializerState::UpperBound(
                             _,
@@ -13379,6 +13686,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Choices(values, None),
                         Some(ValueTypeContentDeserializerState::Choices(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Choices(values, Some(deserializer))
@@ -13430,6 +13741,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Source(values, None),
                         Some(ValueTypeContentDeserializerState::Source(_, Some(deserializer))) => {
                             ValueTypeContentDeserializerState::Source(values, Some(deserializer))
@@ -13481,6 +13796,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ValueTypeContentDeserializerState::Signature(values, None),
                         Some(ValueTypeContentDeserializerState::Signature(
                             _,
@@ -13756,10 +14075,12 @@ pub mod cdf {
                             }
                         }
                         (S::Status(values, None), event) => {
-                            let output =
-                                <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"status",
+                                false,
+                            )?;
                             match self.handle_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13768,10 +14089,12 @@ pub mod cdf {
                             }
                         }
                         (S::DcStatus(values, None), event) => {
-                            let output =
-                                <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"dc-status",
+                                true,
+                            )?;
                             match self.handle_dc_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13780,10 +14103,12 @@ pub mod cdf {
                             }
                         }
                         (S::Version(values, None), event) => {
-                            let output =
-                                <super::VersionType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"version",
+                                false,
+                            )?;
                             match self.handle_version(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13792,10 +14117,12 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output =
-                                <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
+                            )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13804,7 +14131,12 @@ pub mod cdf {
                             }
                         }
                         (S::Description(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"description",
+                                true,
+                            )?;
                             match self.handle_description(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13813,10 +14145,12 @@ pub mod cdf {
                             }
                         }
                         (S::Warning(values, None), event) => {
-                            let output =
-                                <super::WarningType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"warning",
+                                true,
+                            )?;
                             match self.handle_warning(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13825,8 +14159,11 @@ pub mod cdf {
                             }
                         }
                         (S::Question(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"question",
+                                false,
                             )?;
                             match self.handle_question(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -13836,10 +14173,12 @@ pub mod cdf {
                             }
                         }
                         (S::Reference(values, None), event) => {
-                            let output =
-                                <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"reference",
+                                true,
+                            )?;
                             match self.handle_reference(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13848,10 +14187,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13860,10 +14201,12 @@ pub mod cdf {
                             }
                         }
                         (S::Value(values, None), event) => {
-                            let output =
-                                <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"value",
+                                false,
+                            )?;
                             match self.handle_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13872,7 +14215,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexValue(values, None), event) => {
-                            let output = < super :: SelComplexValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-value",
+                                false,
+                            )?;
                             match self.handle_complex_value(
                                 reader,
                                 values,
@@ -13886,10 +14234,12 @@ pub mod cdf {
                             }
                         }
                         (S::Default(values, None), event) => {
-                            let output =
-                                <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"default",
+                                false,
+                            )?;
                             match self.handle_default(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13898,7 +14248,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexDefault(values, None), event) => {
-                            let output = < super :: SelComplexValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-default",
+                                false,
+                            )?;
                             match self.handle_complex_default(
                                 reader,
                                 values,
@@ -13912,10 +14267,12 @@ pub mod cdf {
                             }
                         }
                         (S::Match(values, None), event) => {
-                            let output =
-                                <super::SelStringType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"match",
+                                false,
+                            )?;
                             match self.handle_match_(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13924,10 +14281,12 @@ pub mod cdf {
                             }
                         }
                         (S::LowerBound(values, None), event) => {
-                            let output =
-                                <super::SelNumType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"lower-bound",
+                                false,
+                            )?;
                             match self.handle_lower_bound(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13936,10 +14295,12 @@ pub mod cdf {
                             }
                         }
                         (S::UpperBound(values, None), event) => {
-                            let output =
-                                <super::SelNumType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"upper-bound",
+                                false,
+                            )?;
                             match self.handle_upper_bound(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13948,10 +14309,12 @@ pub mod cdf {
                             }
                         }
                         (S::Choices(values, None), event) => {
-                            let output =
-                                <super::SelChoicesType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"choices",
+                                false,
+                            )?;
                             match self.handle_choices(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13960,10 +14323,12 @@ pub mod cdf {
                             }
                         }
                         (S::Source(values, None), event) => {
-                            let output =
-                                <super::UriRefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"source",
+                                false,
+                            )?;
                             match self.handle_source(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -13972,10 +14337,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -15002,6 +15369,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Status(values, None),
                         Some(GroupTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -15053,6 +15424,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DcStatus(values, None),
                         Some(GroupTypeContentDeserializerState::DcStatus(
                             _,
@@ -15107,6 +15482,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Version(values, None),
                         Some(GroupTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -15158,6 +15537,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Title(values, None),
                         Some(GroupTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -15209,6 +15592,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Description(values, None),
                         Some(GroupTypeContentDeserializerState::Description(
                             _,
@@ -15266,6 +15653,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Warning(values, None),
                         Some(GroupTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -15317,6 +15708,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Question(values, None),
                         Some(GroupTypeContentDeserializerState::Question(
                             _,
@@ -15371,6 +15766,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Reference(values, None),
                         Some(GroupTypeContentDeserializerState::Reference(
                             _,
@@ -15427,6 +15826,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Metadata(values, None),
                         Some(GroupTypeContentDeserializerState::Metadata(
                             _,
@@ -15481,6 +15884,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Rationale(values, None),
                         Some(GroupTypeContentDeserializerState::Rationale(
                             _,
@@ -15537,6 +15944,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Platform(values, None),
                         Some(GroupTypeContentDeserializerState::Platform(
                             _,
@@ -15591,6 +16002,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Requires(values, None),
                         Some(GroupTypeContentDeserializerState::Requires(
                             _,
@@ -15645,6 +16060,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Conflicts(values, None),
                         Some(GroupTypeContentDeserializerState::Conflicts(
                             _,
@@ -15701,6 +16120,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Value(values, None),
                         Some(GroupTypeContentDeserializerState::Value(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Value(values, Some(deserializer))
@@ -15752,6 +16175,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Group(values, None),
                         Some(GroupTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -15803,6 +16230,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Rule(values, None),
                         Some(GroupTypeContentDeserializerState::Rule(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Rule(values, Some(deserializer))
@@ -15854,6 +16285,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Signature(values, None),
                         Some(GroupTypeContentDeserializerState::Signature(
                             _,
@@ -16101,10 +16536,12 @@ pub mod cdf {
                             }
                         }
                         (S::Status(values, None), event) => {
-                            let output =
-                                <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"status",
+                                false,
+                            )?;
                             match self.handle_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16113,10 +16550,12 @@ pub mod cdf {
                             }
                         }
                         (S::DcStatus(values, None), event) => {
-                            let output =
-                                <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"dc-status",
+                                true,
+                            )?;
                             match self.handle_dc_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16125,10 +16564,12 @@ pub mod cdf {
                             }
                         }
                         (S::Version(values, None), event) => {
-                            let output =
-                                <super::VersionType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"version",
+                                false,
+                            )?;
                             match self.handle_version(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16137,10 +16578,12 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output =
-                                <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
+                            )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16149,7 +16592,12 @@ pub mod cdf {
                             }
                         }
                         (S::Description(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"description",
+                                true,
+                            )?;
                             match self.handle_description(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16158,10 +16606,12 @@ pub mod cdf {
                             }
                         }
                         (S::Warning(values, None), event) => {
-                            let output =
-                                <super::WarningType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"warning",
+                                true,
+                            )?;
                             match self.handle_warning(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16170,8 +16620,11 @@ pub mod cdf {
                             }
                         }
                         (S::Question(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"question",
+                                false,
                             )?;
                             match self.handle_question(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -16181,10 +16634,12 @@ pub mod cdf {
                             }
                         }
                         (S::Reference(values, None), event) => {
-                            let output =
-                                <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"reference",
+                                true,
+                            )?;
                             match self.handle_reference(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16193,10 +16648,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16205,7 +16662,12 @@ pub mod cdf {
                             }
                         }
                         (S::Rationale(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"rationale",
+                                true,
+                            )?;
                             match self.handle_rationale(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16214,7 +16676,12 @@ pub mod cdf {
                             }
                         }
                         (S::Platform(values, None), event) => {
-                            let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"platform",
+                                false,
+                            )?;
                             match self.handle_platform(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16223,10 +16690,12 @@ pub mod cdf {
                             }
                         }
                         (S::Requires(values, None), event) => {
-                            let output =
-                                <super::IdrefListType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"requires",
+                                false,
+                            )?;
                             match self.handle_requires(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16235,10 +16704,12 @@ pub mod cdf {
                             }
                         }
                         (S::Conflicts(values, None), event) => {
-                            let output =
-                                <super::IdrefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"conflicts",
+                                false,
+                            )?;
                             match self.handle_conflicts(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16247,10 +16718,12 @@ pub mod cdf {
                             }
                         }
                         (S::Value(values, None), event) => {
-                            let output =
-                                <super::ValueType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Value",
+                                true,
+                            )?;
                             match self.handle_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16259,10 +16732,12 @@ pub mod cdf {
                             }
                         }
                         (S::Group(values, None), event) => {
-                            let output =
-                                <super::GroupType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Group",
+                                true,
+                            )?;
                             match self.handle_group(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -16271,8 +16746,11 @@ pub mod cdf {
                             }
                         }
                         (S::Rule(values, None), event) => {
-                            let output = <super::RuleType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"Rule",
+                                true,
                             )?;
                             match self.handle_rule(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -16282,10 +16760,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -17489,6 +17969,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Status(values, None),
                         Some(RuleTypeContentDeserializerState::Status(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Status(values, Some(deserializer))
@@ -17540,6 +18024,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::DcStatus(values, None),
                         Some(RuleTypeContentDeserializerState::DcStatus(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::DcStatus(values, Some(deserializer))
@@ -17591,6 +18079,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Version(values, None),
                         Some(RuleTypeContentDeserializerState::Version(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Version(values, Some(deserializer))
@@ -17642,6 +18134,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Title(values, None),
                         Some(RuleTypeContentDeserializerState::Title(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Title(values, Some(deserializer))
@@ -17693,6 +18189,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Description(values, None),
                         Some(RuleTypeContentDeserializerState::Description(
                             _,
@@ -17750,6 +18250,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Warning(values, None),
                         Some(RuleTypeContentDeserializerState::Warning(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Warning(values, Some(deserializer))
@@ -17801,6 +18305,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Question(values, None),
                         Some(RuleTypeContentDeserializerState::Question(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Question(values, Some(deserializer))
@@ -17852,6 +18360,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Reference(values, None),
                         Some(RuleTypeContentDeserializerState::Reference(
                             _,
@@ -17906,6 +18418,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Metadata(values, None),
                         Some(RuleTypeContentDeserializerState::Metadata(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Metadata(values, Some(deserializer))
@@ -17957,6 +18473,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Rationale(values, None),
                         Some(RuleTypeContentDeserializerState::Rationale(
                             _,
@@ -18011,6 +18531,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Platform(values, None),
                         Some(RuleTypeContentDeserializerState::Platform(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Platform(values, Some(deserializer))
@@ -18062,6 +18586,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Requires(values, None),
                         Some(RuleTypeContentDeserializerState::Requires(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Requires(values, Some(deserializer))
@@ -18113,6 +18641,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Conflicts(values, None),
                         Some(RuleTypeContentDeserializerState::Conflicts(
                             _,
@@ -18167,6 +18699,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Ident(values, None),
                         Some(RuleTypeContentDeserializerState::Ident(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Ident(values, Some(deserializer))
@@ -18218,6 +18754,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ImpactMetric(values, None),
                         Some(RuleTypeContentDeserializerState::ImpactMetric(
                             _,
@@ -18275,6 +18815,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ProfileNote(values, None),
                         Some(RuleTypeContentDeserializerState::ProfileNote(
                             _,
@@ -18332,6 +18876,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Fixtext(values, None),
                         Some(RuleTypeContentDeserializerState::Fixtext(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Fixtext(values, Some(deserializer))
@@ -18383,6 +18931,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Fix(values, None),
                         Some(RuleTypeContentDeserializerState::Fix(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Fix(values, Some(deserializer))
@@ -18434,6 +18986,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Check(values, None),
                         Some(RuleTypeContentDeserializerState::Check(_, Some(deserializer))) => {
                             RuleTypeContentDeserializerState::Check(values, Some(deserializer))
@@ -18485,6 +19041,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::ComplexCheck(values, None),
                         Some(RuleTypeContentDeserializerState::ComplexCheck(
                             _,
@@ -18542,6 +19102,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleTypeContentDeserializerState::Signature(values, None),
                         Some(RuleTypeContentDeserializerState::Signature(
                             _,
@@ -18833,10 +19397,12 @@ pub mod cdf {
                             }
                         }
                         (S::Status(values, None), event) => {
-                            let output =
-                                <super::StatusElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"status",
+                                false,
+                            )?;
                             match self.handle_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18845,10 +19411,12 @@ pub mod cdf {
                             }
                         }
                         (S::DcStatus(values, None), event) => {
-                            let output =
-                                <super::DcStatusType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"dc-status",
+                                true,
+                            )?;
                             match self.handle_dc_status(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18857,10 +19425,12 @@ pub mod cdf {
                             }
                         }
                         (S::Version(values, None), event) => {
-                            let output =
-                                <super::VersionType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"version",
+                                false,
+                            )?;
                             match self.handle_version(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18869,10 +19439,12 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output =
-                                <super::TextWithSubType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
+                            )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18881,7 +19453,12 @@ pub mod cdf {
                             }
                         }
                         (S::Description(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"description",
+                                true,
+                            )?;
                             match self.handle_description(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18890,10 +19467,12 @@ pub mod cdf {
                             }
                         }
                         (S::Warning(values, None), event) => {
-                            let output =
-                                <super::WarningType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"warning",
+                                true,
+                            )?;
                             match self.handle_warning(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18902,8 +19481,11 @@ pub mod cdf {
                             }
                         }
                         (S::Question(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"question",
+                                false,
                             )?;
                             match self.handle_question(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -18913,10 +19495,12 @@ pub mod cdf {
                             }
                         }
                         (S::Reference(values, None), event) => {
-                            let output =
-                                <super::ReferenceType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"reference",
+                                true,
+                            )?;
                             match self.handle_reference(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18925,10 +19509,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18937,7 +19523,12 @@ pub mod cdf {
                             }
                         }
                         (S::Rationale(values, None), event) => {
-                            let output = < super :: HtmlTextWithSubType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"rationale",
+                                true,
+                            )?;
                             match self.handle_rationale(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18946,7 +19537,12 @@ pub mod cdf {
                             }
                         }
                         (S::Platform(values, None), event) => {
-                            let output = < super :: OverrideableCpe2IdrefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"platform",
+                                false,
+                            )?;
                             match self.handle_platform(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18955,10 +19551,12 @@ pub mod cdf {
                             }
                         }
                         (S::Requires(values, None), event) => {
-                            let output =
-                                <super::IdrefListType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"requires",
+                                false,
+                            )?;
                             match self.handle_requires(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18967,10 +19565,12 @@ pub mod cdf {
                             }
                         }
                         (S::Conflicts(values, None), event) => {
-                            let output =
-                                <super::IdrefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"conflicts",
+                                false,
+                            )?;
                             match self.handle_conflicts(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18979,10 +19579,12 @@ pub mod cdf {
                             }
                         }
                         (S::Ident(values, None), event) => {
-                            let output =
-                                <super::IdentType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"ident",
+                                false,
+                            )?;
                             match self.handle_ident(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -18991,8 +19593,12 @@ pub mod cdf {
                             }
                         }
                         (S::ImpactMetric(values, None), event) => {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"impact-metric",
+                                false,
+                            )?;
                             match self.handle_impact_metric(
                                 reader,
                                 values,
@@ -19006,10 +19612,12 @@ pub mod cdf {
                             }
                         }
                         (S::ProfileNote(values, None), event) => {
-                            let output =
-                                <super::ProfileNoteType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"profile-note",
+                                true,
+                            )?;
                             match self.handle_profile_note(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -19018,10 +19626,12 @@ pub mod cdf {
                             }
                         }
                         (S::Fixtext(values, None), event) => {
-                            let output =
-                                <super::FixTextType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"fixtext",
+                                true,
+                            )?;
                             match self.handle_fixtext(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -19030,8 +19640,11 @@ pub mod cdf {
                             }
                         }
                         (S::Fix(values, None), event) => {
-                            let output = <super::FixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"fix",
+                                false,
                             )?;
                             match self.handle_fix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -19041,10 +19654,12 @@ pub mod cdf {
                             }
                         }
                         (S::Check(values, None), event) => {
-                            let output =
-                                <super::CheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"check",
+                                false,
+                            )?;
                             match self.handle_check(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -19053,10 +19668,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexCheck(values, None), event) => {
-                            let output =
-                                <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-check",
+                                false,
+                            )?;
                             match self.handle_complex_check(
                                 reader,
                                 values,
@@ -19070,10 +19687,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -20123,6 +20742,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Benchmark(values, None),
                         Some(TestResultTypeContentDeserializerState::Benchmark(
                             _,
@@ -20183,6 +20806,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TailoringFile(values, None),
                         Some(TestResultTypeContentDeserializerState::TailoringFile(
                             _,
@@ -20243,6 +20870,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Title(values, None),
                         Some(TestResultTypeContentDeserializerState::Title(
                             _,
@@ -20300,6 +20931,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Remark(values, None),
                         Some(TestResultTypeContentDeserializerState::Remark(
                             _,
@@ -20357,6 +20992,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Organization(values, None),
                         Some(TestResultTypeContentDeserializerState::Organization(
                             _,
@@ -20417,6 +21056,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Identity(values, None),
                         Some(TestResultTypeContentDeserializerState::Identity(
                             _,
@@ -20477,6 +21120,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Profile(values, None),
                         Some(TestResultTypeContentDeserializerState::Profile(
                             _,
@@ -20537,6 +21184,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Target(values, None),
                         Some(TestResultTypeContentDeserializerState::Target(
                             _,
@@ -20594,6 +21245,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetAddress(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetAddress(
                             _,
@@ -20654,6 +21309,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetFacts(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetFacts(
                             _,
@@ -20714,6 +21373,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::TargetIdRef(values, None),
                         Some(TestResultTypeContentDeserializerState::TargetIdRef(
                             _,
@@ -20774,6 +21437,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Any(values, None),
                         Some(TestResultTypeContentDeserializerState::Any(
                             _,
@@ -20828,6 +21495,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Platform(values, None),
                         Some(TestResultTypeContentDeserializerState::Platform(
                             _,
@@ -20888,6 +21559,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::SetValue(values, None),
                         Some(TestResultTypeContentDeserializerState::SetValue(
                             _,
@@ -20948,6 +21623,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             TestResultTypeContentDeserializerState::SetComplexValue(values, None)
                         }
@@ -21010,6 +21689,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::RuleResult(values, None),
                         Some(TestResultTypeContentDeserializerState::RuleResult(
                             _,
@@ -21070,6 +21753,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Score(values, None),
                         Some(TestResultTypeContentDeserializerState::Score(
                             _,
@@ -21127,6 +21814,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Metadata(values, None),
                         Some(TestResultTypeContentDeserializerState::Metadata(
                             _,
@@ -21187,6 +21878,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => TestResultTypeContentDeserializerState::Signature(values, None),
                         Some(TestResultTypeContentDeserializerState::Signature(
                             _,
@@ -21476,7 +22171,12 @@ pub mod cdf {
                             }
                         }
                         (S::Benchmark(values, None), event) => {
-                            let output = < super :: BenchmarkReferenceType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"benchmark",
+                                false,
+                            )?;
                             match self.handle_benchmark(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21485,7 +22185,12 @@ pub mod cdf {
                             }
                         }
                         (S::TailoringFile(values, None), event) => {
-                            let output = < super :: TailoringReferenceType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"tailoring-file",
+                                false,
+                            )?;
                             match self.handle_tailoring_file(
                                 reader,
                                 values,
@@ -21499,8 +22204,11 @@ pub mod cdf {
                             }
                         }
                         (S::Title(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"title",
+                                false,
                             )?;
                             match self.handle_title(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -21510,8 +22218,11 @@ pub mod cdf {
                             }
                         }
                         (S::Remark(values, None), event) => {
-                            let output = <super::TextType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"remark",
+                                false,
                             )?;
                             match self.handle_remark(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -21521,8 +22232,12 @@ pub mod cdf {
                             }
                         }
                         (S::Organization(values, None), event) => {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"organization",
+                                false,
+                            )?;
                             match self.handle_organization(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21531,10 +22246,12 @@ pub mod cdf {
                             }
                         }
                         (S::Identity(values, None), event) => {
-                            let output =
-                                <super::IdentityType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"identity",
+                                false,
+                            )?;
                             match self.handle_identity(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21543,10 +22260,12 @@ pub mod cdf {
                             }
                         }
                         (S::Profile(values, None), event) => {
-                            let output =
-                                <super::IdrefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"profile",
+                                false,
+                            )?;
                             match self.handle_profile(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21555,8 +22274,12 @@ pub mod cdf {
                             }
                         }
                         (S::Target(values, None), event) => {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"target",
+                                false,
+                            )?;
                             match self.handle_target(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21565,8 +22288,12 @@ pub mod cdf {
                             }
                         }
                         (S::TargetAddress(values, None), event) => {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"target-address",
+                                false,
+                            )?;
                             match self.handle_target_address(
                                 reader,
                                 values,
@@ -21580,10 +22307,12 @@ pub mod cdf {
                             }
                         }
                         (S::TargetFacts(values, None), event) => {
-                            let output =
-                                <super::TargetFactsType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"target-facts",
+                                false,
+                            )?;
                             match self.handle_target_facts(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21592,10 +22321,12 @@ pub mod cdf {
                             }
                         }
                         (S::TargetIdRef(values, None), event) => {
-                            let output =
-                                <super::TargetIdRefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"target-id-ref",
+                                false,
+                            )?;
                             match self.handle_target_id_ref(
                                 reader,
                                 values,
@@ -21609,9 +22340,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any54", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21620,10 +22350,12 @@ pub mod cdf {
                             }
                         }
                         (S::Platform(values, None), event) => {
-                            let output =
-                                <super::Cpe2IdrefType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"platform",
+                                false,
+                            )?;
                             match self.handle_platform(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21632,7 +22364,12 @@ pub mod cdf {
                             }
                         }
                         (S::SetValue(values, None), event) => {
-                            let output = < super :: ProfileSetValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"set-value",
+                                false,
+                            )?;
                             match self.handle_set_value(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21641,7 +22378,12 @@ pub mod cdf {
                             }
                         }
                         (S::SetComplexValue(values, None), event) => {
-                            let output = < super :: ProfileSetComplexValueType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"set-complex-value",
+                                false,
+                            )?;
                             match self.handle_set_complex_value(
                                 reader,
                                 values,
@@ -21655,10 +22397,12 @@ pub mod cdf {
                             }
                         }
                         (S::RuleResult(values, None), event) => {
-                            let output =
-                                <super::RuleResultType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"rule-result",
+                                true,
+                            )?;
                             match self.handle_rule_result(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21667,10 +22411,12 @@ pub mod cdf {
                             }
                         }
                         (S::Score(values, None), event) => {
-                            let output =
-                                <super::ScoreType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"score",
+                                false,
+                            )?;
                             match self.handle_score(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21679,10 +22425,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -21691,10 +22439,12 @@ pub mod cdf {
                             }
                         }
                         (S::Signature(values, None), event) => {
-                            let output =
-                                <super::SignatureType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"signature",
+                                true,
+                            )?;
                             match self.handle_signature(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -22435,24 +23185,20 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"sub",
-                            ) {
-                                let output = < Mixed < super :: SubType > as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_sub(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_sub(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -22765,27 +23511,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -22988,26 +23727,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -23374,27 +24107,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -23629,27 +24355,20 @@ pub mod cdf {
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -24020,6 +24739,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Sub(values, None),
                         Some(WarningTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -24071,6 +24794,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Any(values, None),
                         Some(WarningTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -24122,6 +24849,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => WarningTypeContentDeserializerState::Text(values, None),
                         Some(WarningTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             WarningTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -24238,8 +24969,11 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(values, None), event) => {
-                            let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
                             )?;
                             match self.handle_sub(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -24249,9 +24983,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any17", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -24595,26 +25328,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -25112,6 +25839,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => SelChoicesTypeContentDeserializerState::Choice(values, None),
                         Some(SelChoicesTypeContentDeserializerState::Choice(
                             _,
@@ -25169,6 +25900,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => SelChoicesTypeContentDeserializerState::ComplexChoice(values, None),
                         Some(SelChoicesTypeContentDeserializerState::ComplexChoice(
                             _,
@@ -25290,8 +26025,12 @@ pub mod cdf {
                             }
                         }
                         (S::Choice(values, None), event) => {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"choice",
+                                false,
+                            )?;
                             match self.handle_choice(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -25300,10 +26039,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexChoice(values, None), event) => {
-                            let output =
-                                <super::ComplexValueType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-choice",
+                                false,
+                            )?;
                             match self.handle_complex_choice(
                                 reader,
                                 values,
@@ -26070,6 +26811,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Sub(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Sub(
                             _,
@@ -26126,6 +26871,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Any(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Any(
                             _,
@@ -26182,6 +26931,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ProfileNoteTypeContentDeserializerState::Text(values, None),
                         Some(ProfileNoteTypeContentDeserializerState::Text(
                             _,
@@ -26304,8 +27057,11 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(values, None), event) => {
-                            let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
                             )?;
                             match self.handle_sub(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -26315,9 +27071,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any19", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -26725,6 +27480,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Sub(values, None),
                         Some(FixTextTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -26776,6 +27535,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Any(values, None),
                         Some(FixTextTypeContentDeserializerState::Any(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Any(values, Some(deserializer))
@@ -26827,6 +27590,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTextTypeContentDeserializerState::Text(values, None),
                         Some(FixTextTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             FixTextTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -26943,8 +27710,11 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(values, None), event) => {
-                            let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
                             )?;
                             match self.handle_sub(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -26954,9 +27724,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any17", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -27372,6 +28141,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Sub(values, None),
                         Some(FixTypeContentDeserializerState::Sub(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Sub(values, Some(deserializer))
@@ -27423,6 +28196,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Instance(values, None),
                         Some(FixTypeContentDeserializerState::Instance(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Instance(values, Some(deserializer))
@@ -27474,6 +28251,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = FixTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => FixTypeContentDeserializerState::Text(values, None),
                         Some(FixTypeContentDeserializerState::Text(_, Some(deserializer))) => {
                             FixTypeContentDeserializerState::Text(values, Some(deserializer))
@@ -27590,8 +28371,11 @@ pub mod cdf {
                             }
                         }
                         (S::Sub(values, None), event) => {
-                            let output = <super::SubType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"sub",
+                                false,
                             )?;
                             match self.handle_sub(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -27601,10 +28385,12 @@ pub mod cdf {
                             }
                         }
                         (S::Instance(values, None), event) => {
-                            let output =
-                                <super::InstanceFixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"instance",
+                                false,
+                            )?;
                             match self.handle_instance(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28059,93 +28845,71 @@ pub mod cdf {
                             event
                         }
                         (S::CheckImport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-import",
-                            ) {
-                                let output = < super :: CheckImportType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_import(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_import(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckExport(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckExport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-export",
-                            ) {
-                                let output = < super :: CheckExportType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_export(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_export(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckContentRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckContentRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-content-ref",
-                            ) {
-                                let output = < super :: CheckContentRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_content_ref(
-                                    reader,
-                                    output,
-                                    &mut fallback,
-                                )? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_content_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckContent(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"check-content",
-                            ) {
-                                let output = < super :: CheckContentType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_content(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                true,
+                            )?;
+                            match self.handle_check_content(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                allow_any_element = true;
-                                fallback.get_or_insert(S::CheckContent(None));
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -28517,6 +29281,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => ComplexCheckTypeContentDeserializerState::Check(values, None),
                         Some(ComplexCheckTypeContentDeserializerState::Check(
                             _,
@@ -28577,6 +29345,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => {
                             ComplexCheckTypeContentDeserializerState::ComplexCheck(values, None)
                         }
@@ -28705,10 +29477,12 @@ pub mod cdf {
                             }
                         }
                         (S::Check(values, None), event) => {
-                            let output =
-                                <super::CheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"check",
+                                false,
+                            )?;
                             match self.handle_check(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -28717,10 +29491,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexCheck(values, None), event) => {
-                            let output =
-                                <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-check",
+                                false,
+                            )?;
                             match self.handle_complex_check(
                                 reader,
                                 values,
@@ -29286,27 +30062,20 @@ pub mod cdf {
                             event
                         }
                         (S::Fact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"fact",
-                            ) {
-                                let output =
-                                    <super::FactType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_fact(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_fact(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -30079,6 +30848,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Result(values, None),
                         Some(RuleResultTypeContentDeserializerState::Result(
                             _,
@@ -30136,6 +30909,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Override(values, None),
                         Some(RuleResultTypeContentDeserializerState::Override(
                             _,
@@ -30196,6 +30973,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Ident(values, None),
                         Some(RuleResultTypeContentDeserializerState::Ident(
                             _,
@@ -30253,6 +31034,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Metadata(values, None),
                         Some(RuleResultTypeContentDeserializerState::Metadata(
                             _,
@@ -30313,6 +31098,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Message(values, None),
                         Some(RuleResultTypeContentDeserializerState::Message(
                             _,
@@ -30373,6 +31162,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Instance(values, None),
                         Some(RuleResultTypeContentDeserializerState::Instance(
                             _,
@@ -30433,6 +31226,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Fix(values, None),
                         Some(RuleResultTypeContentDeserializerState::Fix(
                             _,
@@ -30487,6 +31284,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::Check(values, None),
                         Some(RuleResultTypeContentDeserializerState::Check(
                             _,
@@ -30544,6 +31345,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => RuleResultTypeContentDeserializerState::ComplexCheck(values, None),
                         Some(RuleResultTypeContentDeserializerState::ComplexCheck(
                             _,
@@ -30728,10 +31533,12 @@ pub mod cdf {
                             }
                         }
                         (S::Result(values, None), event) => {
-                            let output =
-                                <super::ResultEnumType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"result",
+                                false,
+                            )?;
                             match self.handle_result(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30740,10 +31547,12 @@ pub mod cdf {
                             }
                         }
                         (S::Override(values, None), event) => {
-                            let output =
-                                <super::OverrideType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"override",
+                                false,
+                            )?;
                             match self.handle_override_(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30752,10 +31561,12 @@ pub mod cdf {
                             }
                         }
                         (S::Ident(values, None), event) => {
-                            let output =
-                                <super::IdentType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"ident",
+                                false,
+                            )?;
                             match self.handle_ident(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30764,10 +31575,12 @@ pub mod cdf {
                             }
                         }
                         (S::Metadata(values, None), event) => {
-                            let output =
-                                <super::MetadataType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"metadata",
+                                true,
+                            )?;
                             match self.handle_metadata(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30776,10 +31589,12 @@ pub mod cdf {
                             }
                         }
                         (S::Message(values, None), event) => {
-                            let output =
-                                <super::MessageType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"message",
+                                false,
+                            )?;
                             match self.handle_message(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30788,7 +31603,12 @@ pub mod cdf {
                             }
                         }
                         (S::Instance(values, None), event) => {
-                            let output = < super :: InstanceResultType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"instance",
+                                false,
+                            )?;
                             match self.handle_instance(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30797,8 +31617,11 @@ pub mod cdf {
                             }
                         }
                         (S::Fix(values, None), event) => {
-                            let output = <super::FixType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"fix",
+                                false,
                             )?;
                             match self.handle_fix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -30808,10 +31631,12 @@ pub mod cdf {
                             }
                         }
                         (S::Check(values, None), event) => {
-                            let output =
-                                <super::CheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"check",
+                                false,
+                            )?;
                             match self.handle_check(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -30820,10 +31645,12 @@ pub mod cdf {
                             }
                         }
                         (S::ComplexCheck(values, None), event) => {
-                            let output =
-                                <super::ComplexCheckType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_CDF),
+                                b"complex-check",
+                                false,
+                            )?;
                             match self.handle_complex_check(
                                 reader,
                                 values,
@@ -31158,26 +31985,20 @@ pub mod cdf {
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"item",
-                            ) {
-                                let output = <String as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                                match self.handle_item(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_item(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -32198,6 +33019,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CheckContentTypeContentDeserializerState::Any(values, None),
                         Some(CheckContentTypeContentDeserializerState::Any(
                             _,
@@ -32255,6 +33080,10 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CheckContentTypeContentDeserializerState::Text(values, None),
                         Some(CheckContentTypeContentDeserializerState::Text(
                             _,
@@ -32373,9 +33202,8 @@ pub mod cdf {
                             }
                         }
                         (S::Any(values, None), event) => {
-                            let output = <AnyElement as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                            let output =
+                                reader.init_start_tag_deserializer(event, None, b"any38", true)?;
                             match self.handle_any(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -32909,69 +33737,54 @@ pub mod cdf {
                             event
                         }
                         (S::OldResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"old-result",
-                            ) {
-                                let output = < super :: ResultEnumType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_old_result(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_old_result(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::NewResult(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::NewResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"new-result",
-                            ) {
-                                let output = < super :: ResultEnumType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_new_result(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_new_result(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Remark(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CDF),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40007,27 +40820,20 @@ pub mod cpe {
                             event
                         }
                         (S::Platform(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"platform",
-                            ) {
-                                let output =
-                                    <super::PlatformType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_platform(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_platform(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40372,72 +41178,54 @@ pub mod cpe {
                             event
                         }
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"title",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_title(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_title(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Remark(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"remark",
-                            ) {
-                                let output =
-                                    <super::TextType as WithDeserializer>::Deserializer::init(
-                                        reader, event,
-                                    )?;
-                                match self.handle_remark(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_remark(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::LogicalTest(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"logical-test",
-                            ) {
-                                let output = < super :: LogicalTestType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_logical_test(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_logical_test(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {
@@ -40935,66 +41723,54 @@ pub mod cpe {
                             event
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"logical-test",
-                            ) {
-                                let output = < super :: LogicalTestType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_logical_test(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_logical_test(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::FactRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::FactRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"fact-ref",
-                            ) {
-                                let output = < super :: CpeFactRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_fact_ref(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_fact_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::CheckFactRef(None);
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::CheckFactRef(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                            if reader.check_start_tag_name(
-                                &event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
                                 Some(&super::super::NS_CPE),
                                 b"check-fact-ref",
-                            ) {
-                                let output = < super :: CheckFactRefType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                                match self.handle_check_fact_ref(reader, output, &mut fallback)? {
-                                    ElementHandlerOutput::Continue { event, allow_any } => {
-                                        allow_any_element = allow_any_element || allow_any;
-                                        event
-                                    }
-                                    ElementHandlerOutput::Break { event, allow_any } => {
-                                        break (event, allow_any)
-                                    }
+                                false,
+                            )?;
+                            match self.handle_check_fact_ref(reader, output, &mut fallback)? {
+                                ElementHandlerOutput::Continue { event, allow_any } => {
+                                    allow_any_element = allow_any_element || allow_any;
+                                    event
                                 }
-                            } else {
-                                *self.state = S::Done__;
-                                event
+                                ElementHandlerOutput::Break { event, allow_any } => {
+                                    break (event, allow_any)
+                                }
                             }
                         }
                         (S::Done__, event) => {

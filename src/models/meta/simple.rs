@@ -16,6 +16,9 @@ pub struct SimpleMeta {
     /// Type that is referenced.
     pub base: Ident,
 
+    /// `true` if this simple type is a list, `false` otherwise.
+    pub is_list: bool,
+
     /// Range the value should be in.
     pub range: Range<Bound<String>>,
 
@@ -59,6 +62,7 @@ impl SimpleMeta {
     pub fn new(base: Ident) -> Self {
         Self {
             base,
+            is_list: false,
             range: Range {
                 start: Bound::Unbounded,
                 end: Bound::Unbounded,
@@ -77,6 +81,7 @@ impl TypeEq for SimpleMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             base,
+            is_list,
             range,
             total_digits,
             fraction_digits,
@@ -87,6 +92,7 @@ impl TypeEq for SimpleMeta {
         } = self;
 
         base.type_hash(hasher, types);
+        is_list.hash(hasher);
         range.hash(hasher);
         total_digits.hash(hasher);
         fraction_digits.hash(hasher);
@@ -99,6 +105,7 @@ impl TypeEq for SimpleMeta {
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             base,
+            is_list,
             range,
             total_digits,
             fraction_digits,
@@ -109,6 +116,7 @@ impl TypeEq for SimpleMeta {
         } = self;
 
         base.type_eq(&other.base, types)
+            && is_list.eq(&other.is_list)
             && range.eq(&other.range)
             && total_digits.eq(&other.total_digits)
             && fraction_digits.eq(&other.fraction_digits)

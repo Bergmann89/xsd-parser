@@ -251,6 +251,7 @@ impl EnumerationTypeVariant<'_> {
 impl SimpleData<'_> {
     fn render_type_serde_xml_rs_v7(&self, ctx: &mut Context<'_, '_>) {
         let Self {
+            occurs,
             type_ident,
             target_type,
             trait_impls,
@@ -259,6 +260,7 @@ impl SimpleData<'_> {
 
         let docs = ctx.render_type_docs();
         let target_type = ctx.resolve_type_for_module(target_type);
+        let target_type = occurs.make_type(&target_type, false);
 
         let derive = get_derive(ctx, []);
         let trait_impls = render_trait_impls(type_ident, trait_impls);

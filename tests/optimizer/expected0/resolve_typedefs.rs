@@ -1,7 +1,7 @@
 pub struct MyComplexType {
     pub element_a: Vec<StringType>,
     pub element_b: Vec<IntType>,
-    pub content_2: MyComplexContent2Type,
+    pub content_2: Option<MyComplexContent2Type>,
 }
 pub type StringType = String;
 pub type IntType = i32;

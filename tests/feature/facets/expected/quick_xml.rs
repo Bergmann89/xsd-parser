@@ -178,6 +178,7 @@ impl DeserializeBytes for PositiveDecimalType {
 pub struct RestrictedStringType(pub String);
 impl RestrictedStringType {
     pub fn new(inner: String) -> Result<Self, ValidateError> {
+        Self::validate_value(&inner)?;
         Ok(Self(inner))
     }
     pub fn into_inner(self) -> String {
@@ -188,10 +189,13 @@ impl RestrictedStringType {
         if !PATTERN.is_match(s) {
             return Err(ValidateError::Pattern("[A-Z][a-z]{4,9}"));
         }
-        if s.len() < 5usize {
+        Ok(())
+    }
+    pub fn validate_value(value: &String) -> Result<(), ValidateError> {
+        if value.len() < 5usize {
             return Err(ValidateError::MinLength(5usize));
         }
-        if s.len() > 10usize {
+        if value.len() > 10usize {
             return Err(ValidateError::MaxLength(10usize));
         }
         Ok(())
@@ -577,6 +581,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::NegativeDecimal(values, None),
                     Some(RootTypeContentDeserializerState::NegativeDecimal(
                         _,
@@ -634,6 +642,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::PositiveDecimal(values, None),
                     Some(RootTypeContentDeserializerState::PositiveDecimal(
                         _,
@@ -691,6 +703,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = RootTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => RootTypeContentDeserializerState::RestrictedString(values, None),
                     Some(RootTypeContentDeserializerState::RestrictedString(
                         _,
@@ -813,10 +829,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::NegativeDecimal(values, None), event) => {
-                        let output =
-                            <super::NegativeDecimalType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"NegativeDecimal",
+                            false,
+                        )?;
                         match self.handle_negative_decimal(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -825,10 +843,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::PositiveDecimal(values, None), event) => {
-                        let output =
-                            <super::PositiveDecimalType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"PositiveDecimal",
+                            false,
+                        )?;
                         match self.handle_positive_decimal(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -837,10 +857,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::RestrictedString(values, None), event) => {
-                        let output =
-                            <super::RestrictedStringType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"RestrictedString",
+                            false,
+                        )?;
                         match self.handle_restricted_string(
                             reader,
                             values,

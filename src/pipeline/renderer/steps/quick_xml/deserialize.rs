@@ -585,6 +585,7 @@ impl EnumerationTypeVariant<'_> {
 impl SimpleData<'_> {
     pub(crate) fn render_deserializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
+            occurs,
             type_ident,
             target_type,
             ..
@@ -598,16 +599,6 @@ impl SimpleData<'_> {
             "xsd_parser::quick_xml::DeserializeBytes",
             "xsd_parser::quick_xml::DeserializeReader",
         ]);
-
-        /* String Validation */
-
-        let validate_str = self.need_string_validation().then(|| {
-            need_str = true;
-
-            quote! {
-                Self::validate_str(s).map_err(|error| (bytes, error))?;
-            }
-        });
 
         /* Whitespace */
 
@@ -635,13 +626,17 @@ impl SimpleData<'_> {
             }
         };
 
-        /* Actual Rendering */
+        /* String Validation */
 
-        let deserialize_inner = if need_str {
-            quote!(#target_type::deserialize_str(reader, s))
-        } else {
-            quote!(#target_type::deserialize_bytes(reader, bytes))
-        };
+        let validate_str = self.need_string_validation().then(|| {
+            need_str = true;
+
+            quote! {
+                Self::validate_str(s).map_err(|error| (bytes, error))?;
+            }
+        });
+
+        /* Actual Rendering */
 
         let need_str = need_str.then(|| {
             ctx.add_usings(["std::str::from_utf8"]);
@@ -650,6 +645,30 @@ impl SimpleData<'_> {
                 let s = from_utf8(bytes).map_err(Error::from)?;
             }
         });
+
+        let body = match (need_str.is_some(), occurs) {
+            (true, Occurs::Single) => {
+                quote! {
+                    let inner = #target_type::deserialize_str(reader, s)?;
+                }
+            }
+            (false, Occurs::Single) => {
+                quote! {
+                    let inner = #target_type::deserialize_bytes(reader, bytes)?;
+                }
+            }
+            (false, Occurs::DynamicList) => {
+                quote! {
+                    let inner = bytes
+                        .split(|b| *b == b' ' || *b == b'|' || *b == b',' || *b == b';')
+                        .map(|bytes| #target_type::deserialize_bytes(reader, bytes))
+                        .collect::<Result<Vec<_>, _>>()?;
+                }
+            }
+            (need_str, occurs) => {
+                unreachable!("Invalid (`need_str`, `occurs`) combination: ({need_str}, {occurs:?})")
+            }
+        };
 
         let code = quote! {
             impl DeserializeBytes for #type_ident {
@@ -664,7 +683,7 @@ impl SimpleData<'_> {
                     #whitespace
                     #validate_str
 
-                    let inner = #deserialize_inner?;
+                    #body
 
                     Ok(Self::new(inner).map_err(|error| (bytes, error))?)
                 }
@@ -900,6 +919,10 @@ impl ComplexDataEnum<'_> {
         let allow_any = self.allow_any;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let text = self
+            .elements
+            .iter()
+            .find_map(|x| x.deserializer_enum_variant_init_text(ctx));
         let elements = self
             .elements
             .iter()
@@ -908,7 +931,9 @@ impl ComplexDataEnum<'_> {
         let groups = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, !allow_any))
+            .filter_map(|x| {
+                x.deserializer_enum_variant_init_group(ctx, !allow_any && text.is_none())
+            })
             .collect::<Vec<_>>();
         let any = self
             .elements
@@ -924,7 +949,8 @@ impl ComplexDataEnum<'_> {
 
         let event_decl =
             (!groups.is_empty() || !any.is_empty()).then(|| quote!(let mut event = event;));
-        let (allow_any_result, allow_any_decl) = if groups.is_empty() || allow_any {
+        let (allow_any_result, allow_any_decl) = if groups.is_empty() || text.is_some() || allow_any
+        {
             (quote!(#allow_any), None)
         } else {
             (
@@ -933,17 +959,13 @@ impl ComplexDataEnum<'_> {
             )
         };
 
-        let fallback = self
-            .elements
-            .iter()
-            .find_map(|x| x.deserializer_enum_variant_init_text(ctx))
-            .unwrap_or_else(|| {
-                quote! {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+        let fallback = text.unwrap_or_else(|| {
+            quote! {
+                *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
-                    Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
-                }
-            });
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+            }
+        });
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
@@ -1895,6 +1917,7 @@ impl ComplexDataStruct<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let elements = self.elements();
+        let text_only = elements.iter().all(|el| el.meta().is_text());
         let first = elements
             .first()
             .expect("`Sequence` should always have at least one element!");
@@ -1957,6 +1980,15 @@ impl ComplexDataStruct<'_> {
             };
         }
 
+        let handler_fallback = text_only.not().then(|| {
+            quote! {
+                (state, event) => {
+                    *self.state = state;
+                    break (DeserializerEvent::Break(event), false);
+                }
+            }
+        });
+
         quote! {
             use #deserializer_state_ident as S;
 
@@ -1995,10 +2027,7 @@ impl ComplexDataStruct<'_> {
                         #handle_done
                     },
                     (S::Unknown__, _) => unreachable!(),
-                    (state, event) => {
-                        *self.state = state;
-                        break (DeserializerEvent::Break(event), false);
-                    }
+                    #handler_fallback
                 }
             };
 
@@ -2840,6 +2869,21 @@ impl ComplexDataElement<'_> {
             Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
         };
+        let fallback_to_init_check = match self.occurs {
+            Occurs::Single => Some(quote!(values.is_none())),
+            Occurs::DynamicList | Occurs::StaticList(_) if self.meta().min_occurs > 0 => {
+                Some(quote!(values.is_empty()))
+            }
+            _ => None,
+        };
+        let fallback_to_init = fallback_to_init_check.map(|values_are_empty| {
+            quote! {
+                None if #values_are_empty => {
+                    *self.state = #deserializer_state_ident::Init__;
+                    return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                },
+            }
+        });
 
         // Handler for `DeserializerArtifact::Data`
         let data_handler = match (represents_element, self.occurs, self.meta().max_occurs) {
@@ -2957,6 +3001,7 @@ impl ComplexDataElement<'_> {
 
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        #fallback_to_init
                         None => #deserializer_state_ident::#variant_ident(values, None),
                         Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => #deserializer_state_ident::#variant_ident(values, Some(deserializer)),
                         _ => unreachable!(),
@@ -2997,12 +3042,42 @@ impl ComplexDataElement<'_> {
     }
 
     fn deserializer_enum_variant_fn_next_create(&self, ctx: &Context<'_, '_>) -> TokenStream {
+        let name = &self.b_name;
+        let allow_any = self.target_type_allows_any(ctx.types.meta.types);
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
 
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::WithDeserializer"]);
 
         let matcher = quote!(None);
-        let output = quote!(<#target_type as WithDeserializer>::Deserializer::init(reader, event));
+
+        let need_name_matcher = !self.target_is_dynamic
+            && matches!(
+                &self.meta().variant,
+                ElementMetaVariant::Any { .. }
+                    | ElementMetaVariant::Type {
+                        mode: ElementMode::Element,
+                        ..
+                    }
+            );
+
+        let output = if need_name_matcher {
+            let ns_name = self
+                .meta()
+                .ident
+                .ns
+                .as_ref()
+                .and_then(|ns| ctx.types.meta.types.modules.get(ns))
+                .map(|module| ctx.resolve_type_for_deserialize_module(&module.make_ns_const()))
+                .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
+
+            quote! {
+                reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)
+            }
+        } else {
+            quote! {
+                <#target_type as WithDeserializer>::Deserializer::init(reader, event)
+            }
+        };
 
         self.deserializer_enum_variant_fn_next(ctx, &matcher, &output)
     }
@@ -3521,12 +3596,6 @@ impl ComplexDataElement<'_> {
         };
 
         let allow_any = allow_any || self.target_type_allows_any(ctx.types.meta.types);
-        let allow_any = allow_any.then(|| {
-            quote! {
-                allow_any_element = true;
-                fallback.get_or_insert(S::#variant_ident(None));
-            }
-        });
 
         let need_name_matcher = !self.target_is_dynamic
             && matches!(
@@ -3573,14 +3642,14 @@ impl ComplexDataElement<'_> {
                 .map_or_else(|| quote!(None), |ns_name| quote!(Some(&#ns_name)));
 
             body = quote! {
-                if reader.check_start_tag_name(&event, #ns_name, #name) {
-                    #body
-                } else {
-                    *self.state = #next_state;
+                let output = reader.init_start_tag_deserializer(event, #ns_name, #name, #allow_any)?;
+                match self.#handler_ident(reader, output, &mut fallback)? {
+                    ElementHandlerOutput::Continue { event, allow_any } => {
+                        allow_any_element = allow_any_element || allow_any;
 
-                    #allow_any
-
-                    event
+                        event
+                    },
+                    ElementHandlerOutput::Break { event, allow_any } => break (event, allow_any),
                 }
             }
         }

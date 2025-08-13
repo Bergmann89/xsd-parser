@@ -5588,6 +5588,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = BmecatElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => BmecatElementTypeContentDeserializerState::Header(values, None),
                     Some(BmecatElementTypeContentDeserializerState::Header(
                         _,
@@ -5645,6 +5649,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = BmecatElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => BmecatElementTypeContentDeserializerState::TNewCatalog(values, None),
                     Some(BmecatElementTypeContentDeserializerState::TNewCatalog(
                         _,
@@ -5705,6 +5713,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = BmecatElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         BmecatElementTypeContentDeserializerState::TUpdateProducts(values, None)
                     }
@@ -5767,6 +5779,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = BmecatElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => BmecatElementTypeContentDeserializerState::TUpdatePrices(values, None),
                     Some(BmecatElementTypeContentDeserializerState::TUpdatePrices(
                         _,
@@ -5827,6 +5843,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = BmecatElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         BmecatElementTypeContentDeserializerState::TNewProductdata(values, None)
                     }
@@ -5982,10 +6002,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Header(values, None), event) => {
-                        let output =
-                            <super::HeaderElementType as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"HEADER",
+                            false,
+                        )?;
                         match self.handle_header(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -5994,7 +6016,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewCatalog(values, None), event) => {
-                        let output = < super :: TNewCatalogElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_NEW_CATALOG",
+                            false,
+                        )?;
                         match self.handle_t_new_catalog(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6003,7 +6030,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdateProducts(values, None), event) => {
-                        let output = < super :: TUpdateProductsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_UPDATE_PRODUCTS",
+                            false,
+                        )?;
                         match self.handle_t_update_products(
                             reader,
                             values,
@@ -6017,7 +6049,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TUpdatePrices(values, None), event) => {
-                        let output = < super :: TUpdatePricesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_UPDATE_PRICES",
+                            false,
+                        )?;
                         match self.handle_t_update_prices(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -6026,7 +6063,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TNewProductdata(values, None), event) => {
-                        let output = < super :: TNewProductdataElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"T_NEW_PRODUCTDATA",
+                            false,
+                        )?;
                         match self.handle_t_new_productdata(
                             reader,
                             values,
@@ -6540,115 +6582,91 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::GeneratorInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"GENERATOR_INFO",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_generator_info(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_generator_info(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Catalog(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Catalog(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"CATALOG")
-                        {
-                            let output = < super :: CatalogElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_catalog(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"CATALOG",
+                            false,
+                        )?;
+                        match self.handle_catalog(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Buyer(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Buyer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"BUYER") {
-                            let output =
-                                <super::BuyerElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_buyer(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"BUYER",
+                            false,
+                        )?;
+                        match self.handle_buyer(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Supplier(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Supplier(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER",
-                        ) {
-                            let output = < super :: SupplierElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_supplier(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UserDefinedExtensions(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"USER_DEFINED_EXTENSIONS",
-                        ) {
-                            let output =
-                                <super::UdxHeader as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_user_defined_extensions(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -6861,21 +6879,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
-                        {
-                            let output = < super :: TNewCatalogProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"PRODUCT",
+                            false,
+                        )?;
+                        match self.handle_product(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -7093,21 +7110,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
-                        {
-                            let output = < super :: TUpdateProductsProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"PRODUCT",
+                            false,
+                        )?;
+                        match self.handle_product(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -7324,21 +7340,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
-                        {
-                            let output = < super :: TUpdatePricesProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"PRODUCT",
+                            false,
+                        )?;
+                        match self.handle_product(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -7545,21 +7560,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Product(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"PRODUCT")
-                        {
-                            let output = < super :: TNewProductdataProductElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"PRODUCT",
+                            false,
+                        )?;
+                        match self.handle_product(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -8291,183 +8305,139 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Language(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"LANGUAGE",
-                        ) {
-                            let output = < super :: LanguageElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_language(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_language(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CatalogId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CATALOG_ID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_catalog_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CatalogVersion(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CATALOG_VERSION",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_catalog_version(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CatalogName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CatalogName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CATALOG_NAME",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_catalog_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_catalog_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Datetime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DATETIME",
-                        ) {
-                            let output = < super :: CatalogDatetimeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_datetime(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_datetime(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Territory(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"TERRITORY",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_territory(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_territory(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Currency(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Currency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CURRENCY",
-                        ) {
-                            let output =
-                                <super::DtCurrencies as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_currency(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_currency(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::MimeRoot(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::MimeRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MIME_ROOT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_mime_root(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_mime_root(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -8748,49 +8718,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::BuyerId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"BUYER_ID",
-                        ) {
-                            let output =
-                                <super::TypePartyId as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_buyer_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BuyerName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BuyerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"BUYER_NAME",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_buyer_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -9216,88 +9174,71 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_ID",
-                        ) {
-                            let output =
-                                <super::TypePartyId as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_supplier_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SupplierName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::SupplierName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_NAME",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Address(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Address(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"ADDRESS")
-                        {
-                            let output = < super :: SupplierAddressElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_address(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"ADDRESS",
+                            false,
+                        )?;
+                        match self.handle_address(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::MimeInfo(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::MimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MIME_INFO",
-                        ) {
-                            let output = < super :: MimeInfoElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_mime_info(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_mime_info(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -9497,24 +9438,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.VERSION",
-                        ) {
-                            let output = < super :: TypeBmEcatEtimVersion as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_version(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_version(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -10358,197 +10295,145 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_DETAILS",
-                        ) {
-                            let output = < super :: ProductDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_details(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductFeatures(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_FEATURES",
-                        ) {
-                            let output = < super :: ProductFeaturesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_features(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_features(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductOrderDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_ORDER_DETAILS",
-                        ) {
-                            let output = < super :: ProductOrderDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_order_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductPriceDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_PRICE_DETAILS",
-                        ) {
-                            let output = < super :: ProductPriceDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_price_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UserDefinedExtensions(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"USER_DEFINED_EXTENSIONS",
-                        ) {
-                            let output =
-                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_user_defined_extensions(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductReference(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_REFERENCE",
-                        ) {
-                            let output = < super :: ProductReferenceElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_reference(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductLogisticDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_LOGISTIC_DETAILS",
-                        ) {
-                            let output = < super :: ProductLogisticDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_logistic_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -11386,197 +11271,145 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_DETAILS",
-                        ) {
-                            let output = < super :: ProductDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_details(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductFeatures(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_FEATURES",
-                        ) {
-                            let output = < super :: ProductFeaturesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_features(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_features(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductOrderDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductOrderDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_ORDER_DETAILS",
-                        ) {
-                            let output = < super :: ProductOrderDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_order_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_order_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductPriceDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_PRICE_DETAILS",
-                        ) {
-                            let output = < super :: ProductPriceDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_price_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UserDefinedExtensions(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"USER_DEFINED_EXTENSIONS",
-                        ) {
-                            let output =
-                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_user_defined_extensions(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductReference(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_REFERENCE",
-                        ) {
-                            let output = < super :: ProductReferenceElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_reference(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductLogisticDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_LOGISTIC_DETAILS",
-                        ) {
-                            let output = < super :: ProductLogisticDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_logistic_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_logistic_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -11970,81 +11803,57 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductPriceDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductPriceDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_PRICE_DETAILS",
-                        ) {
-                            let output = < super :: ProductPriceDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_price_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_price_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UserDefinedExtensions(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"USER_DEFINED_EXTENSIONS",
-                        ) {
-                            let output =
-                                <super::UdxProduct as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_user_defined_extensions(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -12602,119 +12411,91 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::SupplierPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_DETAILS",
-                        ) {
-                            let output = < super :: ProductDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_details(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductFeatures(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductFeatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_FEATURES",
-                        ) {
-                            let output = < super :: ProductFeaturesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_features(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_features(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UserDefinedExtensions(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UserDefinedExtensions(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"USER_DEFINED_EXTENSIONS",
-                        ) {
-                            let output =
-                                <super::UdxProductdata as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_user_defined_extensions(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_user_defined_extensions(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductReference(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductReference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_REFERENCE",
-                        ) {
-                            let output = < super :: ProductReferenceElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_reference(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_reference(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -13223,21 +13004,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"DATE") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_date(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"DATE",
+                            false,
+                        )?;
+                        match self.handle_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -14097,161 +13877,139 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Contact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"CONTACT")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_contact(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"CONTACT",
+                            false,
+                        )?;
+                        match self.handle_contact(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Street(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Street(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"STREET")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_street(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"STREET",
+                            false,
+                        )?;
+                        match self.handle_street(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Zip(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Zip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"ZIP") {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_zip(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"ZIP",
+                            false,
+                        )?;
+                        match self.handle_zip(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::City(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::City(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"CITY") {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_city(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"CITY",
+                            false,
+                        )?;
+                        match self.handle_city(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Country(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Country(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"COUNTRY")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_country(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"COUNTRY",
+                            false,
+                        )?;
+                        match self.handle_country(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::VatId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::VatId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"VAT_ID")
-                        {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_vat_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"VAT_ID",
+                            false,
+                        )?;
+                        match self.handle_vat_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Email(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Email(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"EMAIL") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_email(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"EMAIL",
+                            false,
+                        )?;
+                        match self.handle_email(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Url(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"URL") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_url(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"URL",
+                            false,
+                        )?;
+                        match self.handle_url(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -14453,23 +14211,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Mime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"MIME") {
-                            let output =
-                                <super::MimeElementType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_mime(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"MIME",
+                            false,
+                        )?;
+                        match self.handle_mime(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -15718,324 +15473,247 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::DescriptionShort(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DESCRIPTION_SHORT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_description_short(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_description_short(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DescriptionLong(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DescriptionLong(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DESCRIPTION_LONG",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_description_long(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_description_long(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::InternationalPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::InternationalPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"INTERNATIONAL_PID",
-                        ) {
-                            let output = < super :: InternationalPidElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_international_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_international_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SupplierAltPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::SupplierAltPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SUPPLIER_ALT_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_supplier_alt_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_supplier_alt_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::BuyerPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::BuyerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"BUYER_PID",
-                        ) {
-                            let output = < super :: BuyerPidElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_buyer_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_buyer_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ManufacturerPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ManufacturerPid(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MANUFACTURER_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_manufacturer_pid(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_manufacturer_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ManufacturerName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ManufacturerName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MANUFACTURER_NAME",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_manufacturer_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_manufacturer_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ManufacturerTypeDescr(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ManufacturerTypeDescr(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MANUFACTURER_TYPE_DESCR",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_manufacturer_type_descr(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_manufacturer_type_descr(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DeliveryTime(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DeliveryTime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DELIVERY_TIME",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_delivery_time(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_delivery_time(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::SpecialTreatmentClass(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::SpecialTreatmentClass(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"SPECIAL_TREATMENT_CLASS",
-                        ) {
-                            let output = < super :: SpecialTreatmentClassElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_special_treatment_class(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_special_treatment_class(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Keyword(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"KEYWORD")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_keyword(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"KEYWORD",
+                            false,
+                        )?;
+                        match self.handle_keyword(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Remarks(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Remarks(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"REMARKS")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_remarks(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"REMARKS",
+                            false,
+                        )?;
+                        match self.handle_remarks(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductStatus(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductStatus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_STATUS",
-                        ) {
-                            let output = < super :: ProductStatusElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_status(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_status(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductType(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductType(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_TYPE",
-                        ) {
-                            let output = < super :: ProductTypeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_type(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_type(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -16423,75 +16101,65 @@ pub mod quick_xml_deserialize {
                         S::ReferenceFeatureSystemName(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"REFERENCE_FEATURE_SYSTEM_NAME",
-                        ) {
-                            let output = < super :: TypeClassificationSystemName as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_reference_feature_system_name(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_reference_feature_system_name(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReferenceFeatureGroupId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::ReferenceFeatureGroupId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"REFERENCE_FEATURE_GROUP_ID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_reference_feature_group_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_reference_feature_group_id(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Feature(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Feature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FEATURE")
-                        {
-                            let output = < super :: FeatureElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_feature(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"FEATURE",
+                            false,
+                        )?;
+                        match self.handle_feature(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -17122,137 +16790,105 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::OrderUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"ORDER_UNIT",
-                        ) {
-                            let output = <super::DtUnit as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_order_unit(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_order_unit(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ContentUnit(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ContentUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CONTENT_UNIT",
-                        ) {
-                            let output = <super::DtUnit as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_content_unit(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_content_unit(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::NoCuPerOu(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::NoCuPerOu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"NO_CU_PER_OU",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_no_cu_per_ou(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_no_cu_per_ou(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PriceQuantity(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PriceQuantity(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_QUANTITY",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_price_quantity(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_quantity(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::QuantityMin(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::QuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"QUANTITY_MIN",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_quantity_min(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_quantity_min(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::QuantityInterval(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::QuantityInterval(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"QUANTITY_INTERVAL",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_quantity_interval(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_quantity_interval(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -17737,88 +17373,71 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Datetime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DATETIME",
-                        ) {
-                            let output = < super :: ProductPriceDetailsDatetimeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_datetime(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_datetime(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::DailyPrice(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::DailyPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"DAILY_PRICE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_daily_price(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_daily_price(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ProductPrice(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ProductPrice(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRODUCT_PRICE",
-                        ) {
-                            let output = < super :: ProductPriceElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_product_price(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_product_price(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PriceBase(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PriceBase(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_BASE",
-                        ) {
-                            let output = < super :: PriceBaseElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_price_base(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_base(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -20239,785 +19858,619 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfMimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_INFO",
-                        ) {
-                            let output = < super :: UdxEdxfMimeInfoElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_mime_info(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_info(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfManufacturerAcronym(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfManufacturerAcronym(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MANUFACTURER_ACRONYM",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_manufacturer_acronym(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_manufacturer_acronym(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfDescriptionVeryShort(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfDescriptionVeryShort(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_description_very_short(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_description_very_short(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBrandName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfBrandName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BRAND_NAME",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfTenderText(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfTenderText(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.TENDER_TEXT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfValidFrom(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfValidFrom(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.VALID_FROM",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfExpirationDate(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfExpirationDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.EXPIRATION_DATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_expiration_date(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_expiration_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfDiscountGroup(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfDiscountGroup(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.DISCOUNT_GROUP",
-                        ) {
-                            let output = < super :: UdxEdxfDiscountGroupElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_discount_group(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_discount_group(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBonusGroupSupplier(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfBonusGroupSupplier(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BONUS_GROUP_SUPPLIER",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_bonus_group_supplier(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_bonus_group_supplier(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfAdditionalFactors(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfAdditionalFactors(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.ADDITIONAL_FACTORS",
-                        ) {
-                            let output = < super :: UdxEdxfAdditionalFactorsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_additional_factors(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_additional_factors(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductToStock(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductToStock(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_TO_STOCK",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_product_to_stock(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_to_stock(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductSeries(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductSeries(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_SERIES",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_product_series(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_series(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductVariation(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductVariation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_VARIATION",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_product_variation(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_variation(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPredecessorPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfPredecessorPid(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PREDECESSOR_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_predecessor_pid(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_predecessor_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfCountryBranchNumbers(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfCountryBranchNumbers(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchNumbersElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_numbers(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_numbers(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfCountryBranchSupplierIds(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfCountryBranchSupplierIds(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchSupplierIdsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_supplier_ids(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_supplier_ids(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackingUnits(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfPackingUnits(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_UNITS",
-                        ) {
-                            let output = < super :: UdxEdxfPackingUnitsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_packing_units(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_units(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductLogisticDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductLogisticDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_LOGISTIC_DETAILS",
-                        ) {
-                            let output = < super :: UdxEdxfProductLogisticDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_logistic_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_logistic_details(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfShelfLifePeriod(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfShelfLifePeriod(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SHELF_LIFE_PERIOD",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_shelf_life_period(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_shelf_life_period(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBatteryContained(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfBatteryContained(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BATTERY_CONTAINED",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_battery_contained(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_battery_contained(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfRohsIndicator(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfRohsIndicator(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.ROHS_INDICATOR",
-                        ) {
-                            let output = < super :: UdxEdxfRohsIndicatorElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_rohs_indicator(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_rohs_indicator(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfCeMarking(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfCeMarking(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.CE_MARKING",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_ce_marking(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_ce_marking(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfReach(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfReach(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REACH",
-                        ) {
-                            let output = < super :: UdxEdxfReachElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_reach(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_reach(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfSpecialTreatmentClassDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfSpecialTreatmentClassDetails(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SPECIAL_TREATMENT_CLASS_DETAILS",
-                        ) {
-                            let output = < super :: UdxEdxfSpecialTreatmentClassDetailsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_special_treatment_class_details(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_special_treatment_class_details(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfSurchargeList(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfSurchargeList(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SURCHARGE_LIST",
-                        ) {
-                            let output = < super :: UdxEdxfSurchargeListElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_surcharge_list(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_surcharge_list(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfWarranty(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfWarranty(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.WARRANTY",
-                        ) {
-                            let output = < super :: UdxEdxfWarrantyElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_warranty(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_warranty(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductEtimDynamic(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductEtimDynamic(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC",
-                        ) {
-                            let output = < super :: UdxEdxfProductEtimDynamicElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_etim_dynamic(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_etim_dynamic(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductFeaturesMc(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductFeaturesMc(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_FEATURES_MC",
-                        ) {
-                            let output = < super :: UdxEdxfProductFeaturesMcElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_features_mc(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_features_mc(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductCharacteristics(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductCharacteristics(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTICS",
-                        ) {
-                            let output = < super :: UdxEdxfProductCharacteristicsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_characteristics(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_characteristics(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -21505,93 +20958,71 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::ProdIdTo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PROD_ID_TO",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_prod_id_to(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_prod_id_to(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CatalogId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CatalogId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CATALOG_ID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_catalog_id(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_catalog_id(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CatalogVersion(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CatalogVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CATALOG_VERSION",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_catalog_version(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_catalog_version(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::ReferenceDescr(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::ReferenceDescr(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"REFERENCE_DESCR",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_reference_descr(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_reference_descr(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -21953,72 +21384,54 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CustomsTariffNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CUSTOMS_TARIFF_NUMBER",
-                        ) {
-                            let output = < super :: CustomsTariffNumberElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_customs_tariff_number(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_customs_tariff_number(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::StatisticsFactor(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::StatisticsFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"STATISTICS_FACTOR",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_statistics_factor(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_statistics_factor(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::CountryOfOrigin(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::CountryOfOrigin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"COUNTRY_OF_ORIGIN",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_country_of_origin(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_country_of_origin(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -23350,412 +22763,323 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfMimeInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_INFO",
-                        ) {
-                            let output = < super :: UdxEdxfMimeInfoElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_mime_info(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_info(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfManufacturerAcronym(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfManufacturerAcronym(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MANUFACTURER_ACRONYM",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_manufacturer_acronym(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_manufacturer_acronym(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfDescriptionVeryShort(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfDescriptionVeryShort(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.DESCRIPTION_VERY_SHORT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_description_very_short(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_description_very_short(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBrandName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfBrandName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BRAND_NAME",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_brand_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfTenderText(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfTenderText(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.TENDER_TEXT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_tender_text(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfValidFrom(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfValidFrom(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.VALID_FROM",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_valid_from(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfExpirationDate(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfExpirationDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.EXPIRATION_DATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_expiration_date(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_expiration_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductSeries(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductSeries(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_SERIES",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_product_series(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_series(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductVariation(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductVariation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_VARIATION",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_product_variation(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_variation(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPredecessorPid(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfPredecessorPid(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PREDECESSOR_PID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_predecessor_pid(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_predecessor_pid(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfCountryBranchNumbers(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfCountryBranchNumbers(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBERS",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchNumbersElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_numbers(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_numbers(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfCountryBranchSupplierIds(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfCountryBranchSupplierIds(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_IDS",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchSupplierIdsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_supplier_ids(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_supplier_ids(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductEtimDynamic(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductEtimDynamic(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_ETIM_DYNAMIC",
-                        ) {
-                            let output = < super :: UdxEdxfProductEtimDynamicElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_etim_dynamic(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_etim_dynamic(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductFeaturesMc(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductFeaturesMc(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_FEATURES_MC",
-                        ) {
-                            let output = < super :: UdxEdxfProductFeaturesMcElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_features_mc(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_features_mc(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfProductCharacteristics(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfProductCharacteristics(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTICS",
-                        ) {
-                            let output = < super :: UdxEdxfProductCharacteristicsElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_characteristics(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_characteristics(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -24095,75 +23419,54 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::MimeSource(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MIME_SOURCE",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_mime_source(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_mime_source(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::MimeDescr(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::MimeDescr(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MIME_DESCR",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_mime_descr(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_mime_descr(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::MimeAlt(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::MimeAlt(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"MIME_ALT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_mime_alt(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_mime_alt(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -25188,86 +24491,71 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Fname(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FNAME") {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_fname(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"FNAME",
+                            false,
+                        )?;
+                        match self.handle_fname(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Fvalue(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Fvalue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FVALUE")
-                        {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_fvalue(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"FVALUE",
+                            false,
+                        )?;
+                        match self.handle_fvalue(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Funit(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Funit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"FUNIT") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_funit(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"FUNIT",
+                            false,
+                        )?;
+                        match self.handle_funit(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::FvalueDetails(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::FvalueDetails(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"FVALUE_DETAILS",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_fvalue_details(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_fvalue_details(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -25483,21 +24771,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::Date(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"DATE") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_date(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"DATE",
+                            false,
+                        )?;
+                        match self.handle_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -26094,133 +25381,105 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::PriceAmount(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_AMOUNT",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_price_amount(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PriceCurrency(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PriceCurrency(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_CURRENCY",
-                        ) {
-                            let output =
-                                <super::DtCurrencies as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_price_currency(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_currency(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Tax(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Tax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_DEFAULT), b"TAX") {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_tax(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"TAX",
+                            false,
+                        )?;
+                        match self.handle_tax(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PriceFactor(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PriceFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_FACTOR",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_price_factor(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_factor(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::LowerBound(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::LowerBound(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"LOWER_BOUND",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_lower_bound(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_lower_bound(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Territory(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Territory(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"TERRITORY",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_territory(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_territory(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -26505,48 +25764,37 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::PriceUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_UNIT",
-                        ) {
-                            let output = <super::DtUnit as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_price_unit(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_unit(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::PriceUnitFactor(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::PriceUnitFactor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"PRICE_UNIT_FACTOR",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_price_unit_factor(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_price_unit_factor(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -26755,24 +26003,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfMime(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME",
-                        ) {
-                            let output = < super :: UdxEdxfMimeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_mime(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -27125,7 +26369,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupManufacturer (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_manufacturer (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -27160,7 +26404,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfDiscountGroupElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , None) , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfDiscountGroupElementTypeContentDeserializerState :: UdxEdxfDiscountGroupSupplier (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_discount_group_supplier (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -27265,8 +26509,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfDiscountGroupManufacturer(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.DISCOUNT_GROUP_MANUFACTURER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_discount_group_manufacturer(
                             reader,
                             values,
@@ -27280,8 +26528,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfDiscountGroupSupplier(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.DISCOUNT_GROUP_SUPPLIER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_discount_group_supplier(
                             reader,
                             values,
@@ -27570,60 +26822,48 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfAdditionalPriceFactor(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.ADDITIONAL_PRICE_FACTOR",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_additional_price_factor(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_additional_price_factor(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfAdditionalFactorInfo(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfAdditionalFactorInfo(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.ADDITIONAL_FACTOR_INFO",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_additional_factor_info(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_additional_factor_info(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -27836,28 +27076,24 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchNumber(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_NUMBER",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchNumbersUdxEdxfCountryBranchNumberElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_number(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_number(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -28071,28 +27307,24 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfCountryBranchSupplierId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.COUNTRY_BRANCH_SUPPLIER_ID",
-                        ) {
-                            let output = < super :: UdxEdxfCountryBranchSupplierIdsUdxEdxfCountryBranchSupplierIdElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_country_branch_supplier_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_country_branch_supplier_id(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -28308,28 +27540,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfPackingUnit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_UNIT",
-                        ) {
-                            let output = < super :: UdxEdxfPackingUnitElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_packing_unit(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_unit(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -29000,164 +28224,129 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfNetvolume(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETVOLUME",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netvolume(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netvolume(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetweight(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNetweight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETWEIGHT",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netweight(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netweight(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetlength(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNetlength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETLENGTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netlength(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netlength(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetwidth(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNetwidth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETWIDTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netwidth(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netwidth(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetdepth(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNetdepth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETDEPTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netdepth(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netdepth(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetdiameter(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNetdiameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NETDIAMETER",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_netdiameter(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_netdiameter(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfRegionOfOrigin(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfRegionOfOrigin(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REGION_OF_ORIGIN",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_region_of_origin(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_region_of_origin(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -29620,94 +28809,71 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfReachListdate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REACH.LISTDATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_reach_listdate(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_reach_listdate(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfReachInfo(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfReachInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REACH.INFO",
-                        ) {
-                            let output = < super :: UdxEdxfReachInfoElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_reach_info(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_reach_info(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfScipNumber(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfScipNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SCIP_NUMBER",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_scip_number(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_scip_number(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfUfiCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfUfiCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.UFI_CODE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_ufi_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_ufi_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -31517,630 +30683,480 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfHazardousSubstances(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.HAZARDOUS_SUBSTANCES",
-                        ) {
-                            let output = < super :: UdxEdxfHazardousSubstancesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_hazardous_substances(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_hazardous_substances(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfShippingName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfShippingName(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SHIPPING_NAME",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_shipping_name(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_shipping_name(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackingGroup(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfPackingGroup(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_GROUP",
-                        ) {
-                            let output = < super :: UdxEdxfPackingGroupElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_packing_group(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_group(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfTransportCategory(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfTransportCategory(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.TRANSPORT_CATEGORY",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_transport_category(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_transport_category(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMultiplicationFactor(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfMultiplicationFactor(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MULTIPLICATION_FACTOR",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_multiplication_factor(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_multiplication_factor(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfLimitedQuantities(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfLimitedQuantities(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.LIMITED_QUANTITIES",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_limited_quantities(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_limited_quantities(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfExceptedQuantities(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfExceptedQuantities(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.EXCEPTED_QUANTITIES",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_excepted_quantities(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_excepted_quantities(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfAggregationState(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfAggregationState(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.AGGREGATION_STATE",
-                        ) {
-                            let output = < super :: UdxEdxfAggregationStateElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_aggregation_state(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_aggregation_state(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfSpecialProvisionId(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfSpecialProvisionId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SPECIAL_PROVISION_ID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_special_provision_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_special_provision_id(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfHazardClass(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfHazardClass(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.HAZARD_CLASS",
-                        ) {
-                            let output = < super :: UdxEdxfHazardClassElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_hazard_class(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_hazard_class(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfClassificationCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfClassificationCode(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.CLASSIFICATION_CODE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_classification_code(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_classification_code(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfHazardLabel(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfHazardLabel(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.HAZARD_LABEL",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_hazard_label(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_hazard_label(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfEnvironmentalHazards(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfEnvironmentalHazards(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.ENVIRONMENTAL_HAZARDS",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_environmental_hazards(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_environmental_hazards(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfTunnelCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfTunnelCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.TUNNEL_CODE",
-                        ) {
-                            let output = < super :: UdxEdxfTunnelCodeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_tunnel_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_tunnel_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfGhsLabelCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfGhsLabelCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.GHS_LABEL_CODE",
-                        ) {
-                            let output = < super :: UdxEdxfGhsLabelCodeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_ghs_label_code(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_ghs_label_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfGhsSignalWord(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfGhsSignalWord(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.GHS_SIGNAL_WORD",
-                        ) {
-                            let output = < super :: UdxEdxfGhsSignalWordElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_ghs_signal_word(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_ghs_signal_word(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfHazardStatement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfHazardStatement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.HAZARD_STATEMENT",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_hazard_statement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_hazard_statement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPrecautionaryStatement(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfPrecautionaryStatement(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRECAUTIONARY_STATEMENT",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_precautionary_statement(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_precautionary_statement(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfLiIonTested(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfLiIonTested(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.LI-ION_TESTED",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_li_ion_tested(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_li_ion_tested(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfLithiumAmount(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfLithiumAmount(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.LITHIUM_AMOUNT",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_lithium_amount(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_lithium_amount(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBatteryEnergy(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfBatteryEnergy(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BATTERY_ENERGY",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_battery_energy(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_battery_energy(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNos274(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfNos274(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NOS_274",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_nos_274(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_nos_274(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfHazardTrigger(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfHazardTrigger(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.HAZARD_TRIGGER",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_hazard_trigger(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_hazard_trigger(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -32378,24 +31394,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfSurcharge(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.SURCHARGE",
-                        ) {
-                            let output = < super :: UdxEdxfSurchargeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_surcharge(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_surcharge(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -32675,58 +31687,48 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfWarrantyBusiness(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.WARRANTY_BUSINESS",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_warranty_business(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_warranty_business(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfWarrantyConsumer(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfWarrantyConsumer(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.WARRANTY_CONSUMER",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_warranty_consumer(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_warranty_consumer(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -32929,29 +31931,24 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductEtimReleaseDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_ETIM_RELEASE_DATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_product_etim_release_date(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_etim_release_date(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -33418,100 +32415,82 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfReferenceFeatureMcId(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REFERENCE_FEATURE_MC_ID",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_reference_feature_mc_id(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_reference_feature_mc_id(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfReferenceFeatureMcVersion(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfReferenceFeatureMcVersion(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.REFERENCE_FEATURE_MC_VERSION",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_reference_feature_mc_version(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_reference_feature_mc_version(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfBimStatus(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfBimStatus(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.BIM_STATUS",
-                        ) {
-                            let output = < super :: UdxEdxfBimStatusElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_bim_status(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_bim_status(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfFeatureMc(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfFeatureMc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.FEATURE_MC",
-                        ) {
-                            let output = < super :: UdxEdxfFeatureMcElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_feature_mc(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_feature_mc(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -33733,28 +32712,24 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfProductCharacteristic(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PRODUCT_CHARACTERISTIC",
-                        ) {
-                            let output = < super :: UdxEdxfProductCharacteristicElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_product_characteristic(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_product_characteristic(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -33962,25 +32937,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::CustomsNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"CUSTOMS_NUMBER",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_customs_number(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_customs_number(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -34765,211 +33735,156 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfMimeSource(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_SOURCE",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_mime_source(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_source(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfMimeCode(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_CODE",
-                        ) {
-                            let output = < super :: UdxEdxfMimeCodeElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_mime_code(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_code(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeFilename(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfMimeFilename(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_FILENAME",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_mime_filename(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_filename(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeDesignation(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfMimeDesignation(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_DESIGNATION",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_mime_designation(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_designation(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeAlt(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfMimeAlt(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_ALT",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_mime_alt(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_alt(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeIssueDate(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfMimeIssueDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_ISSUE_DATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_mime_issue_date(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_issue_date(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeExpiryDate(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfMimeExpiryDate(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_EXPIRY_DATE",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_mime_expiry_date(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_expiry_date(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMimeOrder(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfMimeOrder(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MIME_ORDER",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_mime_order(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_mime_order(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -36597,344 +35512,255 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfQuantityMin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.QUANTITY_MIN",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_quantity_min(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_quantity_min(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfQuantityMax(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfQuantityMax(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.QUANTITY_MAX",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_quantity_max(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_quantity_max(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackingUnitCode(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfPackingUnitCode(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_UNIT_CODE",
-                        ) {
-                            let output = <super::DtPunit as WithDeserializer>::Deserializer::init(
-                                reader, event,
-                            )?;
-                            match self.handle_udx_edxf_packing_unit_code(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_unit_code(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackingUnitName(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfPackingUnitName(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_UNIT_NAME",
-                        ) {
-                            let output =
-                                <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
-                            match self.handle_udx_edxf_packing_unit_name(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_unit_name(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackageBreak(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfPackageBreak(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKAGE_BREAK",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_package_break(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_package_break(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfPackingParts(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfPackingParts(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.PACKING_PARTS",
-                        ) {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_packing_parts(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_packing_parts(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfVolume(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfVolume(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.VOLUME",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_volume(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_volume(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfWeight(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfWeight(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.WEIGHT",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_weight(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_weight(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfLength(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfLength(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.LENGTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_length(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_length(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfWidth(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfWidth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.WIDTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_width(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_width(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfDepth(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfDepth(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.DEPTH",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_depth(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_depth(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfDiameter(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfDiameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.DIAMETER",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_diameter(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_diameter(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfGtin(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfGtin(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.GTIN",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_gtin(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_gtin(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfGs1128(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::UdxEdxfGs1128(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.GS1_128",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_gs_1128(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_gs_1128(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -37312,83 +36138,68 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfUnNumber(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.UN_NUMBER",
-                        ) {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_un_number(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_un_number(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfNetWeightOfHazardousSubstance(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfNetWeightOfHazardousSubstance(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.NET_WEIGHT_OF_HAZARDOUS_SUBSTANCE",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_net_weight_of_hazardous_substance(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_net_weight_of_hazardous_substance(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfVolumeOfHazardousSubstances(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfVolumeOfHazardousSubstances(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.VOLUME_OF_HAZARDOUS_SUBSTANCES",
-                        ) {
-                            let output =
-                                <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_volume_of_hazardous_substances(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_volume_of_hazardous_substances(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -38091,6 +36902,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfSurchargeElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeType(
                             values, None,
@@ -38162,6 +36977,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfSurchargeElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeClass(
                             values, None,
@@ -38235,6 +37054,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfSurchargeElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfSurchargeManner(
                             values, None,
@@ -38307,7 +37130,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePercentage (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback.take() {
@@ -38353,7 +37176,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargePriceAmount (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_price_amount (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38390,7 +37213,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfSurchargeCalculation (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_surcharge_calculation (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38425,6 +37248,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfSurchargeElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfSurchargeElementTypeContentDeserializerState::UdxEdxfMaterialBasis(
                             values, None,
@@ -38495,7 +37322,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisWeight (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback.take() {
@@ -38541,7 +37368,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeThreshold (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_threshold (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38580,7 +37407,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeShutter (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_shutter (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38619,7 +37446,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeCredit (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_credit (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38653,7 +37480,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfSurchargeElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , None) , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfSurchargeElementTypeContentDeserializerState :: UdxEdxfMaterialBasisSurchargeTable (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_material_basis_surcharge_table (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -38903,8 +37730,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfSurchargeType(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_TYPE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_type(
                             reader,
                             values,
@@ -38918,8 +37749,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeClass(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_CLASS",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_class(
                             reader,
                             values,
@@ -38933,7 +37768,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeManner(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeMannerElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_MANNER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_manner(
                             reader,
                             values,
@@ -38947,7 +37787,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePercentage(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_PERCENTAGE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_percentage(
                             reader,
                             values,
@@ -38961,7 +37806,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargePriceAmount(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_PRICE_AMOUNT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_price_amount(
                             reader,
                             values,
@@ -38975,7 +37825,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfSurchargeCalculation(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfSurchargeCalculationElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.SURCHARGE_CALCULATION",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_surcharge_calculation(
                             reader,
                             values,
@@ -38989,7 +37844,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasis(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis(
                             reader,
                             values,
@@ -39003,7 +37863,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisWeight(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_WEIGHT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_weight(
                             reader,
                             values,
@@ -39017,7 +37882,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeThreshold(values, None), event) => {
-                        let output = <f64 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_THRESHOLD",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_threshold(
                             reader,
                             values,
@@ -39031,7 +37901,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeShutter(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeShutterElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_SHUTTER",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_shutter(
                             reader,
                             values,
@@ -39045,7 +37920,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeCredit(values, None), event) => {
-                        let output = < super :: UdxEdxfSurchargeUdxEdxfMaterialBasisSurchargeCreditElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_CREDIT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_material_basis_surcharge_credit(
                             reader,
                             values,
@@ -39059,8 +37939,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMaterialBasisSurchargeTable(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATERIAL_BASIS_SURCHARGE_TABLE",
+                            false,
                         )?;
                         match self.handle_udx_edxf_material_basis_surcharge_table(
                             reader,
@@ -39578,6 +38461,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfPortcode(
                         values, None,
                     ),
@@ -39643,6 +38530,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFname(
                         values, None,
                     ),
@@ -39707,6 +38598,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfFvalue(
                         values, None,
                     ),
@@ -39772,6 +38667,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateX(
                             values, None,
@@ -39841,6 +38740,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateY(
                             values, None,
@@ -39910,6 +38813,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfCoordinateZ(
                             values, None,
@@ -39979,6 +38886,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = UdxEdxfFeatureMcElementTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => {
                         UdxEdxfFeatureMcElementTypeContentDeserializerState::UdxEdxfMatrixValues(
                             values, None,
@@ -40177,7 +39088,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfPortcode(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PORTCODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_portcode(
                             reader,
                             values,
@@ -40191,8 +39107,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfFname(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.FNAME",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_fname(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -40201,8 +39121,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfFvalue(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.FVALUE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_fvalue(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -40211,7 +39135,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateX(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_X",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_x(
                             reader,
                             values,
@@ -40225,7 +39154,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateY(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_Y",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_y(
                             reader,
                             values,
@@ -40239,7 +39173,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfCoordinateZ(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.COORDINATE_Z",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_coordinate_z(
                             reader,
                             values,
@@ -40253,7 +39192,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfMatrixValues(values, None), event) => {
-                        let output = < super :: UdxEdxfMatrixValuesElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.MATRIX_VALUES",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_matrix_values(
                             reader,
                             values,
@@ -40938,7 +39882,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicCode (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_code (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -40975,7 +39919,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicName (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_name (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41012,7 +39956,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueBoolean (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_boolean (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41049,7 +39993,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueNumeric (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_numeric (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41086,7 +40030,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeFrom (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_range_from (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41126,7 +40070,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueRangeTo (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_range_to (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41163,7 +40107,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueString (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_string (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41200,7 +40144,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSet (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_set (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41237,7 +40181,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueSelect (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_select (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41274,7 +40218,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicValueUnitCode (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_value_unit_code (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41311,7 +40255,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                * self . state = match fallback . take () { None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                * self . state = match fallback . take () { None if values . is_none () => { * self . state = UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , None) , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (values , Some (deserializer)) , _ => unreachable ! () , } ;
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             match fallback . take () { None => () , Some (UdxEdxfProductCharacteristicElementTypeContentDeserializerState :: UdxEdxfProductCharacteristicReferenceGtin (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_udx_edxf_product_characteristic_reference_gtin (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -41573,8 +40517,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::UdxEdxfProductCharacteristicCode(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_CODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_code(
                             reader,
                             values,
@@ -41588,8 +40536,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicName(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_NAME",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_name(
                             reader,
@@ -41604,8 +40555,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueBoolean(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_BOOLEAN",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_boolean(
                             reader,
                             values,
@@ -41619,7 +40574,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueNumeric(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_NUMERIC",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_numeric(
                             reader,
                             values,
@@ -41633,7 +40593,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueRangeFrom(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_FROM",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_range_from(
                             reader,
                             values,
@@ -41647,7 +40612,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueRangeTo(values, None), event) => {
-                        let output = <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_RANGE_TO",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_range_to(
                             reader,
                             values,
@@ -41661,8 +40631,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueString(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_STRING",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_value_string(
                             reader,
@@ -41677,8 +40650,11 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueSet(values, None), event) => {
-                        let output = <super::DtMlstring as WithDeserializer>::Deserializer::init(
-                            reader, event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SET",
+                            false,
                         )?;
                         match self.handle_udx_edxf_product_characteristic_value_set(
                             reader,
@@ -41693,8 +40669,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueSelect(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_SELECT",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_select(
                             reader,
                             values,
@@ -41708,8 +40688,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicValueUnitCode(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_VALUE_UNIT_CODE",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_value_unit_code(
                             reader,
                             values,
@@ -41723,8 +40707,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::UdxEdxfProductCharacteristicReferenceGtin(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_DEFAULT),
+                            b"UDX.EDXF.PRODUCT_CHARACTERISTIC_REFERENCE_GTIN",
+                            false,
+                        )?;
                         match self.handle_udx_edxf_product_characteristic_reference_gtin(
                             reader,
                             values,
@@ -41941,28 +40929,20 @@ pub mod quick_xml_deserialize {
                         event
                     }
                     (S::UdxEdxfMatrixValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MATRIX_VALUE",
-                        ) {
-                            let output = < super :: UdxEdxfMatrixValueElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
-                            match self.handle_udx_edxf_matrix_value(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_matrix_value(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {
@@ -42263,58 +41243,48 @@ pub mod quick_xml_deserialize {
                         S::UdxEdxfMatrixSourceValue(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MATRIX_SOURCE_VALUE",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_matrix_source_value(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_matrix_source_value(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::UdxEdxfMatrixResultValue(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (
                         S::UdxEdxfMatrixResultValue(None),
                         event @ (Event::Start(_) | Event::Empty(_)),
                     ) => {
-                        if reader.check_start_tag_name(
-                            &event,
+                        let output = reader.init_start_tag_deserializer(
+                            event,
                             Some(&super::NS_DEFAULT),
                             b"UDX.EDXF.MATRIX_RESULT_VALUE",
-                        ) {
-                            let output =
-                                <f32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_udx_edxf_matrix_result_value(
-                                reader,
-                                output,
-                                &mut fallback,
-                            )? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                            false,
+                        )?;
+                        match self.handle_udx_edxf_matrix_result_value(
+                            reader,
+                            output,
+                            &mut fallback,
+                        )? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::Done__;
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::Done__, event) => {

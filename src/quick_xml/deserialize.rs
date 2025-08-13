@@ -131,9 +131,7 @@ impl<'a> ElementHandlerOutput<'a> {
     pub fn from_event_end(event: DeserializerEvent<'a>, allow_any: bool) -> Self {
         match event {
             DeserializerEvent::Continue(event @ Event::End(_)) => Self::continue_(event, allow_any),
-            DeserializerEvent::Continue(event) => {
-                Self::break_(DeserializerEvent::Break(event), allow_any)
-            }
+            DeserializerEvent::Continue(event) => Self::return_to_parent(event, allow_any),
             event => Self::break_(event, allow_any),
         }
     }
@@ -642,6 +640,37 @@ pub trait DeserializeReader: XmlReader {
             matches!(self.resolve_local_name(x.name(), ns), Some(x) if x == name)
         } else {
             x.name().local_name().as_ref() == name
+        }
+    }
+
+    /// Try to initialize a deserializer for the given `event` if it is a start
+    /// or empty tag that matches the passed `ns` and `name`.
+    ///
+    /// If the event does not match the expectations, the returned `DeserializerResult`
+    /// will indicate continuation.
+    ///
+    /// # Errors
+    ///
+    /// Raises an error if the deserializer could not be initialized.
+    #[inline]
+    fn init_start_tag_deserializer<'a, T>(
+        &self,
+        event: Event<'a>,
+        ns: Option<&[u8]>,
+        name: &[u8],
+        allow_any: bool,
+    ) -> DeserializerResult<'a, T>
+    where
+        T: WithDeserializer,
+    {
+        if self.check_start_tag_name(&event, ns, name) {
+            <T as WithDeserializer>::Deserializer::init(self, event)
+        } else {
+            Ok(DeserializerOutput {
+                artifact: DeserializerArtifact::None,
+                event: DeserializerEvent::Continue(event),
+                allow_any,
+            })
         }
     }
 

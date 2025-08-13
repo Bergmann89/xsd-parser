@@ -914,6 +914,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceTypeContentDeserializerState::Fuu(values, None),
                     Some(MixedChoiceTypeContentDeserializerState::Fuu(_, Some(deserializer))) => {
                         MixedChoiceTypeContentDeserializerState::Fuu(values, Some(deserializer))
@@ -965,6 +969,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceTypeContentDeserializerState::Bar(values, None),
                     Some(MixedChoiceTypeContentDeserializerState::Bar(_, Some(deserializer))) => {
                         MixedChoiceTypeContentDeserializerState::Bar(values, Some(deserializer))
@@ -1070,8 +1078,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Fuu(values, None), event) => {
-                        let output =
-                            <Mixed<i32> as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Fuu",
+                            false,
+                        )?;
                         match self.handle_fuu(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1080,8 +1092,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Bar(values, None), event) => {
-                        let output =
-                            <Mixed<String> as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
                         match self.handle_bar(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1407,6 +1423,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Fuu(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Fuu(
                         _,
@@ -1463,6 +1483,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Bar(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Bar(
                         _,
@@ -1519,6 +1543,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => MixedChoiceListTypeContentDeserializerState::Text(values, None),
                     Some(MixedChoiceListTypeContentDeserializerState::Text(
                         _,
@@ -1644,7 +1672,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Fuu(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Fuu",
+                            false,
+                        )?;
                         match self.handle_fuu(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -1653,8 +1686,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Bar(values, None), event) => {
-                        let output =
-                            <String as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
                         match self.handle_bar(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -2165,21 +2202,20 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Fuu(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Fuu") {
-                            let output =
-                                <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_fuu(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Fuu",
+                            false,
+                        )?;
+                        match self.handle_fuu(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TextAfterFuu(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TextAfterFuu(None), event) => {
@@ -2195,21 +2231,20 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Bar(None), event @ (Event::Start(_) | Event::Empty(_))) => {
-                        if reader.check_start_tag_name(&event, Some(&super::NS_TNS), b"Bar") {
-                            let output =
-                                <String as WithDeserializer>::Deserializer::init(reader, event)?;
-                            match self.handle_bar(reader, output, &mut fallback)? {
-                                ElementHandlerOutput::Continue { event, allow_any } => {
-                                    allow_any_element = allow_any_element || allow_any;
-                                    event
-                                }
-                                ElementHandlerOutput::Break { event, allow_any } => {
-                                    break (event, allow_any)
-                                }
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Bar",
+                            false,
+                        )?;
+                        match self.handle_bar(reader, output, &mut fallback)? {
+                            ElementHandlerOutput::Continue { event, allow_any } => {
+                                allow_any_element = allow_any_element || allow_any;
+                                event
                             }
-                        } else {
-                            *self.state = S::TextAfterBar(None);
-                            event
+                            ElementHandlerOutput::Break { event, allow_any } => {
+                                break (event, allow_any)
+                            }
                         }
                     }
                     (S::TextAfterBar(None), event) => {

@@ -270,6 +270,25 @@ impl SimpleData<'_> {
 
                 Ok(Some(Cow::Owned(format!(#format))))
             }
+        } else if self.meta.is_list {
+            quote! {
+                if self.0.is_empty() {
+                    return Ok(None);
+                }
+
+                let mut data = String::new();
+                for item in &self.0 {
+                    if let Some(bytes) = item.serialize_bytes()? {
+                        if !data.is_empty() {
+                            data.push(' ');
+                        }
+
+                        data.push_str(&bytes);
+                    }
+                }
+
+                Ok(Some(Cow::Owned(data)))
+            }
         } else {
             quote! {
                 self.0.serialize_bytes()

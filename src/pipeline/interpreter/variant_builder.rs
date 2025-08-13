@@ -959,8 +959,24 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 Some(MetaTypeVariant::SimpleType(x)) => x,
                 Some(MetaTypeVariant::Reference(x)) => {
                     let base = x.type_.clone();
+                    let min = x.min_occurs;
+                    let max = x.max_occurs;
 
-                    init_any!(builder, SimpleType, SimpleMeta::new(base), true)
+                    let si = init_any!(builder, SimpleType, SimpleMeta::new(base), true);
+
+                    if min != 1 {
+                        si.is_list = true;
+                        si.min_length = Some(min);
+                    }
+
+                    if max != MaxOccurs::Bounded(1) {
+                        si.is_list = true;
+                        if let MaxOccurs::Bounded(max) = max {
+                            si.max_length = Some(max);
+                        }
+                    }
+
+                    si
                 }
                 Some(MetaTypeVariant::Enumeration(_)) => return Ok(()),
                 Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
@@ -1027,8 +1043,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     fn apply_enumeration(&mut self, ty: &FacetType) -> Result<(), Error> {
-        dbg!(ty);
-
         let name = Name::from(ty.value.trim().to_owned());
         let ident = Ident::new(name)
             .with_ns(self.state.current_ns())

@@ -1144,6 +1144,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Public(values, None),
                         Some(CatalogTypeContentDeserializerState::Public(
                             _,
@@ -1198,6 +1202,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::System(values, None),
                         Some(CatalogTypeContentDeserializerState::System(
                             _,
@@ -1252,6 +1260,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Uri(values, None),
                         Some(CatalogTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Uri(values, Some(deserializer))
@@ -1303,6 +1315,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteSystem(
                             _,
@@ -1363,6 +1379,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::RewriteUri(values, None),
                         Some(CatalogTypeContentDeserializerState::RewriteUri(
                             _,
@@ -1423,6 +1443,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::UriSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::UriSuffix(
                             _,
@@ -1480,6 +1504,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(CatalogTypeContentDeserializerState::SystemSuffix(
                             _,
@@ -1540,6 +1568,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegatePublic(
                             _,
@@ -1600,6 +1632,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateSystem(
                             _,
@@ -1660,6 +1696,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::DelegateUri(values, None),
                         Some(CatalogTypeContentDeserializerState::DelegateUri(
                             _,
@@ -1720,6 +1760,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::NextCatalog(values, None),
                         Some(CatalogTypeContentDeserializerState::NextCatalog(
                             _,
@@ -1780,6 +1824,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => CatalogTypeContentDeserializerState::Group(values, None),
                         Some(CatalogTypeContentDeserializerState::Group(_, Some(deserializer))) => {
                             CatalogTypeContentDeserializerState::Group(values, Some(deserializer))
@@ -1997,10 +2045,12 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event) => {
-                            let output =
-                                <super::PublicType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"public",
+                                false,
+                            )?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2009,10 +2059,12 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event) => {
-                            let output =
-                                <super::SystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
                             match self.handle_system(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2021,8 +2073,11 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event) => {
-                            let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
                             )?;
                             match self.handle_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -2032,10 +2087,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, None), event) => {
-                            let output =
-                                <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteSystem",
+                                false,
+                            )?;
                             match self.handle_rewrite_system(
                                 reader,
                                 values,
@@ -2049,10 +2106,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, None), event) => {
-                            let output =
-                                <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteURI",
+                                false,
+                            )?;
                             match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2061,10 +2120,12 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, None), event) => {
-                            let output =
-                                <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uriSuffix",
+                                false,
+                            )?;
                             match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2073,10 +2134,12 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, None), event) => {
-                            let output =
-                                <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"systemSuffix",
+                                false,
+                            )?;
                             match self.handle_system_suffix(
                                 reader,
                                 values,
@@ -2090,7 +2153,12 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, None), event) => {
-                            let output = < super :: DelegatePublicType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegatePublic",
+                                false,
+                            )?;
                             match self.handle_delegate_public(
                                 reader,
                                 values,
@@ -2104,7 +2172,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, None), event) => {
-                            let output = < super :: DelegateSystemType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateSystem",
+                                false,
+                            )?;
                             match self.handle_delegate_system(
                                 reader,
                                 values,
@@ -2118,10 +2191,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, None), event) => {
-                            let output =
-                                <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateURI",
+                                false,
+                            )?;
                             match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2130,10 +2205,12 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, None), event) => {
-                            let output =
-                                <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"nextCatalog",
+                                false,
+                            )?;
                             match self.handle_next_catalog(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -2142,10 +2219,12 @@ pub mod er {
                             }
                         }
                         (S::Group(values, None), event) => {
-                            let output =
-                                <super::GroupType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"group",
+                                true,
+                            )?;
                             match self.handle_group(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -3185,6 +3264,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Public(values, None),
                         Some(GroupTypeContentDeserializerState::Public(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Public(values, Some(deserializer))
@@ -3236,6 +3319,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::System(values, None),
                         Some(GroupTypeContentDeserializerState::System(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::System(values, Some(deserializer))
@@ -3287,6 +3374,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::Uri(values, None),
                         Some(GroupTypeContentDeserializerState::Uri(_, Some(deserializer))) => {
                             GroupTypeContentDeserializerState::Uri(values, Some(deserializer))
@@ -3338,6 +3429,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::RewriteSystem(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteSystem(
                             _,
@@ -3398,6 +3493,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::RewriteUri(values, None),
                         Some(GroupTypeContentDeserializerState::RewriteUri(
                             _,
@@ -3455,6 +3554,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::UriSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::UriSuffix(
                             _,
@@ -3511,6 +3614,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::SystemSuffix(values, None),
                         Some(GroupTypeContentDeserializerState::SystemSuffix(
                             _,
@@ -3571,6 +3678,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegatePublic(values, None),
                         Some(GroupTypeContentDeserializerState::DelegatePublic(
                             _,
@@ -3631,6 +3742,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegateSystem(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateSystem(
                             _,
@@ -3691,6 +3806,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::DelegateUri(values, None),
                         Some(GroupTypeContentDeserializerState::DelegateUri(
                             _,
@@ -3748,6 +3867,10 @@ pub mod er {
                 } = output;
                 if artifact.is_none() {
                     *self.state = match fallback.take() {
+                        None if values.is_none() => {
+                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                        }
                         None => GroupTypeContentDeserializerState::NextCatalog(values, None),
                         Some(GroupTypeContentDeserializerState::NextCatalog(
                             _,
@@ -3962,10 +4085,12 @@ pub mod er {
                             }
                         }
                         (S::Public(values, None), event) => {
-                            let output =
-                                <super::PublicType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"public",
+                                false,
+                            )?;
                             match self.handle_public(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -3974,10 +4099,12 @@ pub mod er {
                             }
                         }
                         (S::System(values, None), event) => {
-                            let output =
-                                <super::SystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"system",
+                                false,
+                            )?;
                             match self.handle_system(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -3986,8 +4113,11 @@ pub mod er {
                             }
                         }
                         (S::Uri(values, None), event) => {
-                            let output = <super::UriType as WithDeserializer>::Deserializer::init(
-                                reader, event,
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uri",
+                                false,
                             )?;
                             match self.handle_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
@@ -3997,10 +4127,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteSystem(values, None), event) => {
-                            let output =
-                                <super::RewriteSystemType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteSystem",
+                                false,
+                            )?;
                             match self.handle_rewrite_system(
                                 reader,
                                 values,
@@ -4014,10 +4146,12 @@ pub mod er {
                             }
                         }
                         (S::RewriteUri(values, None), event) => {
-                            let output =
-                                <super::RewriteUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"rewriteURI",
+                                false,
+                            )?;
                             match self.handle_rewrite_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4026,10 +4160,12 @@ pub mod er {
                             }
                         }
                         (S::UriSuffix(values, None), event) => {
-                            let output =
-                                <super::UriSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"uriSuffix",
+                                false,
+                            )?;
                             match self.handle_uri_suffix(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4038,10 +4174,12 @@ pub mod er {
                             }
                         }
                         (S::SystemSuffix(values, None), event) => {
-                            let output =
-                                <super::SystemSuffixType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"systemSuffix",
+                                false,
+                            )?;
                             match self.handle_system_suffix(
                                 reader,
                                 values,
@@ -4055,7 +4193,12 @@ pub mod er {
                             }
                         }
                         (S::DelegatePublic(values, None), event) => {
-                            let output = < super :: DelegatePublicType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegatePublic",
+                                false,
+                            )?;
                             match self.handle_delegate_public(
                                 reader,
                                 values,
@@ -4069,7 +4212,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateSystem(values, None), event) => {
-                            let output = < super :: DelegateSystemType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateSystem",
+                                false,
+                            )?;
                             match self.handle_delegate_system(
                                 reader,
                                 values,
@@ -4083,10 +4231,12 @@ pub mod er {
                             }
                         }
                         (S::DelegateUri(values, None), event) => {
-                            let output =
-                                <super::DelegateUriType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"delegateURI",
+                                false,
+                            )?;
                             match self.handle_delegate_uri(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)
@@ -4095,10 +4245,12 @@ pub mod er {
                             }
                         }
                         (S::NextCatalog(values, None), event) => {
-                            let output =
-                                <super::NextCatalogType as WithDeserializer>::Deserializer::init(
-                                    reader, event,
-                                )?;
+                            let output = reader.init_start_tag_deserializer(
+                                event,
+                                Some(&super::super::NS_ER),
+                                b"nextCatalog",
+                                false,
+                            )?;
                             match self.handle_next_catalog(reader, values, output, &mut fallback)? {
                                 ElementHandlerOutput::Break { event, allow_any } => {
                                     break (event, allow_any)

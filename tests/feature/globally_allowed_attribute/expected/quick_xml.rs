@@ -378,6 +378,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::Once(values, None),
                     Some(FooTypeContentDeserializerState::Once(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::Once(values, Some(deserializer))
@@ -479,6 +483,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_none() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::OnceSpecify(values, None),
                     Some(FooTypeContentDeserializerState::OnceSpecify(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::OnceSpecify(values, Some(deserializer))
@@ -530,6 +538,10 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 *self.state = match fallback.take() {
+                    None if values.is_empty() => {
+                        *self.state = FooTypeContentDeserializerState::Init__;
+                        return Ok(ElementHandlerOutput::from_event(event, allow_any));
+                    }
                     None => FooTypeContentDeserializerState::TwiceOrMore(values, None),
                     Some(FooTypeContentDeserializerState::TwiceOrMore(_, Some(deserializer))) => {
                         FooTypeContentDeserializerState::TwiceOrMore(values, Some(deserializer))
@@ -661,7 +673,12 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { event, .. } => event,
                     },
                     (S::Once(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Once",
+                            false,
+                        )?;
                         match self.handle_once(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -670,7 +687,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::Optional(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"Optional",
+                            false,
+                        )?;
                         match self.handle_optional(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -679,7 +701,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::OnceSpecify(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"OnceSpecify",
+                            false,
+                        )?;
                         match self.handle_once_specify(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
@@ -688,7 +715,12 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (S::TwiceOrMore(values, None), event) => {
-                        let output = <i32 as WithDeserializer>::Deserializer::init(reader, event)?;
+                        let output = reader.init_start_tag_deserializer(
+                            event,
+                            Some(&super::NS_TNS),
+                            b"TwiceOrMore",
+                            false,
+                        )?;
                         match self.handle_twice_or_more(reader, values, output, &mut fallback)? {
                             ElementHandlerOutput::Break { event, allow_any } => {
                                 break (event, allow_any)
