@@ -24412,7 +24412,7 @@ pub mod onix {
         pub title: Option<String>,
         pub lang: Option<String>,
         pub dir: Option<Dir>,
-        pub text_before: Option<Text>,
+        pub text: Option<Text>,
     }
     #[derive(Debug)]
     pub enum PersonNameInvertedRefname {

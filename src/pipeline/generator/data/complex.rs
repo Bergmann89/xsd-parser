@@ -277,7 +277,7 @@ impl<'types> ComplexData<'types> {
             StructMode::Empty { allow_any }
         } else if mixed_mode == MixedMode::Complex {
             let elements = vec![
-                ComplexDataElement::new_text_before(),
+                ComplexDataElement::new_text_before("text_before"),
                 ComplexDataElement::new_content(ctx, min_occurs, max_occurs, content_ident),
             ];
 
@@ -342,25 +342,32 @@ impl<'types> ComplexData<'types> {
             .collect::<Result<Vec<_>, _>>()?;
 
         let mut allow_any = false;
-        let text_before =
-            (mixed_mode == MixedMode::Complex).then(ComplexDataElement::new_text_before);
-        let normal_fields = elements.iter().filter_map(|meta| {
-            ComplexDataElement::new_field(
-                ComplexDataElementOrigin::Meta(meta),
-                ctx,
-                &mut allow_any,
-                occurs.is_direct(),
-                mixed_mode != MixedMode::None,
-            )
-            .transpose()
+        let normal_fields = elements
+            .iter()
+            .filter_map(|meta| {
+                ComplexDataElement::new_field(
+                    ComplexDataElementOrigin::Meta(meta),
+                    ctx,
+                    &mut allow_any,
+                    occurs.is_direct(),
+                    mixed_mode != MixedMode::None,
+                )
+                .transpose()
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+        let text_before = (mixed_mode == MixedMode::Complex).then(|| {
+            ComplexDataElement::new_text_before(if normal_fields.is_empty() {
+                "text"
+            } else {
+                "text_before"
+            })
         });
 
         if flatten {
-            let elements = text_before
-                .into_iter()
-                .map(Ok)
-                .chain(normal_fields)
-                .collect::<Result<Vec<_>, _>>()?;
+            let mut elements = normal_fields;
+            if let Some(text_before) = text_before {
+                elements.insert(0, text_before);
+            }
 
             let mode = match type_mode {
                 _ if elements.is_empty() => StructMode::Empty { allow_any },
@@ -389,7 +396,7 @@ impl<'types> ComplexData<'types> {
             });
         }
 
-        let elements = normal_fields.collect::<Result<Vec<_>, _>>()?;
+        let elements = normal_fields;
         let type_ident = &base.type_ident;
         let content_ident = format_ident!("{type_ident}Content");
         let has_content = occurs.is_some() && !elements.is_empty();
@@ -616,9 +623,9 @@ impl<'types> ComplexDataElement<'types> {
         }))
     }
 
-    fn new_text_before() -> Self {
+    fn new_text_before(ident: &'static str) -> Self {
         let meta = ElementMeta {
-            ident: Ident::element("text_before"),
+            ident: Ident::element(ident),
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
             min_occurs: 0,
@@ -626,16 +633,19 @@ impl<'types> ComplexDataElement<'types> {
             display_name: None,
             documentation: Vec::new(),
         };
+
+        let field_ident = format_field_ident(&meta.ident.name, None);
+        let variant_ident = format_variant_ident(&meta.ident.name, None);
         let origin = ComplexDataElementOrigin::Generated(Box::new(meta));
 
         Self {
             origin,
             occurs: Occurs::Optional,
-            s_name: "text_before".into(),
-            b_name: Literal::byte_string(b"text_before"),
+            s_name: ident.into(),
+            b_name: Literal::byte_string(ident.as_bytes()),
             tag_name: String::new(),
-            field_ident: format_ident!("text_before"),
-            variant_ident: format_ident!("TextBefore"),
+            field_ident,
+            variant_ident,
             target_type: PathData::text(),
             need_indirection: false,
             target_is_dynamic: false,

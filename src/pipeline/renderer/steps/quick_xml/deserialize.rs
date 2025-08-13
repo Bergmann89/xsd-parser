@@ -919,6 +919,10 @@ impl ComplexDataEnum<'_> {
         let allow_any = self.allow_any;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
+        let text = self
+            .elements
+            .iter()
+            .find_map(|x| x.deserializer_enum_variant_init_text(ctx));
         let elements = self
             .elements
             .iter()
@@ -927,7 +931,9 @@ impl ComplexDataEnum<'_> {
         let groups = self
             .elements
             .iter()
-            .filter_map(|x| x.deserializer_enum_variant_init_group(ctx, !allow_any))
+            .filter_map(|x| {
+                x.deserializer_enum_variant_init_group(ctx, !allow_any && text.is_none())
+            })
             .collect::<Vec<_>>();
         let any = self
             .elements
@@ -943,7 +949,8 @@ impl ComplexDataEnum<'_> {
 
         let event_decl =
             (!groups.is_empty() || !any.is_empty()).then(|| quote!(let mut event = event;));
-        let (allow_any_result, allow_any_decl) = if groups.is_empty() || allow_any {
+        let (allow_any_result, allow_any_decl) = if groups.is_empty() || text.is_some() || allow_any
+        {
             (quote!(#allow_any), None)
         } else {
             (
@@ -952,17 +959,13 @@ impl ComplexDataEnum<'_> {
             )
         };
 
-        let fallback = self
-            .elements
-            .iter()
-            .find_map(|x| x.deserializer_enum_variant_init_text(ctx))
-            .unwrap_or_else(|| {
-                quote! {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+        let fallback = text.unwrap_or_else(|| {
+            quote! {
+                *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
-                    Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
-                }
-            });
+                Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
+            }
+        });
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Error",
@@ -1914,6 +1917,7 @@ impl ComplexDataStruct<'_> {
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let elements = self.elements();
+        let text_only = elements.iter().all(|el| el.meta().is_text());
         let first = elements
             .first()
             .expect("`Sequence` should always have at least one element!");
@@ -1976,6 +1980,15 @@ impl ComplexDataStruct<'_> {
             };
         }
 
+        let handler_fallback = text_only.not().then(|| {
+            quote! {
+                (state, event) => {
+                    *self.state = state;
+                    break (DeserializerEvent::Break(event), false);
+                }
+            }
+        });
+
         quote! {
             use #deserializer_state_ident as S;
 
@@ -2014,10 +2027,7 @@ impl ComplexDataStruct<'_> {
                         #handle_done
                     },
                     (S::Unknown__, _) => unreachable!(),
-                    (state, event) => {
-                        *self.state = state;
-                        break (DeserializerEvent::Break(event), false);
-                    }
+                    #handler_fallback
                 }
             };
 
