@@ -6,7 +6,7 @@ use std::io::{BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
-use quick_xml::Reader;
+use quick_xml::{escape::unescape, events::BytesText, Reader};
 use serde::Deserialize;
 
 use xsd_parser::{
@@ -178,15 +178,10 @@ where
     let mut writer = Writer::new(&mut content);
 
     let mut actual = value.serializer(Some(root), true).unwrap();
-    let mut expected = Reader::from_file(path).unwrap();
-    let mut buffer = Vec::new();
+    let mut expected = IterReader::from_file(path);
 
     let (actual, expected) = loop {
-        let expected = match expected.read_event_into(&mut buffer).unwrap() {
-            Event::Decl(_) => continue,
-            Event::Text(x) if x.trim_ascii_start().trim_ascii_end().is_empty() => continue,
-            expected => expected,
-        };
+        let expected = expected.next().unwrap_or(Event::Eof);
         let actual = actual.next().transpose().unwrap().unwrap_or(Event::Eof);
 
         match quick_xml_event_cmp(&actual, &expected) {
@@ -206,6 +201,62 @@ where
     println!("=== content: {content}");
 
     panic!("Unexpected event")
+}
+
+struct IterReader {
+    reader: Reader<BufReader<File>>,
+    buffer: Vec<u8>,
+    pending: Option<Event<'static>>,
+}
+
+impl IterReader {
+    fn from_file<P>(path: P) -> Self
+    where
+        P: AsRef<Path>,
+    {
+        Self {
+            reader: Reader::from_file(path).unwrap(),
+            buffer: Vec::new(),
+            pending: None,
+        }
+    }
+}
+
+impl Iterator for IterReader {
+    type Item = Event<'static>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut text = String::new();
+
+        loop {
+            match self
+                .pending
+                .take()
+                .unwrap_or_else(|| self.reader.read_event_into(&mut self.buffer).unwrap())
+            {
+                Event::Decl(_) if text.is_empty() => (),
+                Event::Decl(_) => (),
+                Event::Text(x) => {
+                    let x = x.decode().unwrap();
+
+                    text.push_str(&x);
+                }
+                Event::GeneralRef(x) => {
+                    use std::fmt::Write;
+
+                    let x = x.decode().unwrap();
+
+                    write!(text, "&{x};").unwrap();
+                }
+                event if text.trim().is_empty() => return Some(event.into_owned()),
+                event => {
+                    self.pending = Some(event.into_owned());
+
+                    return Some(Event::Text(BytesText::from_escaped(text)));
+                }
+            }
+        }
+    }
 }
 
 pub fn serde_quick_xml_read_test<T, P>(path: P) -> T
@@ -289,9 +340,19 @@ fn quick_xml_event_cmp(a: &Event<'_>, b: &Event<'_>) -> Option<bool> {
             Some(a.name() == b.name() && attribs_a == attribs_b)
         }
         (Event::End(a), Event::End(b)) => Some(a.name() == b.name()),
-        (Event::Text(a), Event::Text(b)) => Some(a.trim_ascii() == b.trim_ascii()),
+        (Event::Text(a), Event::Text(b)) => Some(quick_xml_bytes_text_cmp(a, b)),
         (Event::GeneralRef(a), Event::GeneralRef(b)) => Some(a.trim_ascii() == b.trim_ascii()),
         (Event::Eof, Event::Eof) => None,
         (_, _) => Some(false),
     }
+}
+
+fn quick_xml_bytes_text_cmp(a: &BytesText<'_>, b: &BytesText<'_>) -> bool {
+    let a = a.decode().unwrap();
+    let b = b.decode().unwrap();
+
+    let a = unescape(&a).unwrap();
+    let b = unescape(&b).unwrap();
+
+    a.trim() == b.trim()
 }
