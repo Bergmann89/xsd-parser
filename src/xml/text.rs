@@ -4,6 +4,7 @@ use std::mem::replace;
 use std::ops::{Deref, DerefMut};
 use std::str::from_utf8;
 
+use quick_xml::escape::{escape, unescape};
 use quick_xml::events::{BytesText, Event};
 
 use crate::quick_xml::{
@@ -106,7 +107,9 @@ impl<'ser> Iterator for TextSerializer<'ser> {
 
     fn next(&mut self) -> Option<Self::Item> {
         match replace(self, Self::Done) {
-            Self::Emit { value } => Some(Ok(Event::Text(BytesText::from_escaped(&value.0)))),
+            Self::Emit { value } => {
+                Some(Ok(Event::Text(BytesText::from_escaped(escape(&value.0)))))
+            }
             Self::Done => None,
         }
     }
@@ -180,6 +183,7 @@ impl<'de> Deserializer<'de, Text> for TextDeserializer {
             Self::Text { value } => value,
         };
 
+        let text = unescape(&text)?;
         value.0.push_str(&text);
 
         Ok(DeserializerOutput {

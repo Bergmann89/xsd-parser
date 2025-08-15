@@ -63,7 +63,7 @@ fn read_quick_xml_all() {
 
     assert_eq!(
         obj.text_before.as_ref().map(Text::as_str),
-        Some("\n    Text before\n    ")
+        Some("\n    Text before &\n    ")
     );
     assert_eq!(obj.fuu.value, 111);
     assert_eq!(
@@ -73,7 +73,7 @@ fn read_quick_xml_all() {
     assert_eq!(obj.bar.value, "Hello World");
     assert_eq!(
         obj.bar.text_after.as_ref().map(Text::as_str),
-        Some("\n    Text after\n")
+        Some("\n    Text after ä\n")
     );
 }
 
@@ -89,7 +89,7 @@ fn read_quick_xml_choice_single() {
 
     assert_eq!(
         obj.text_before.as_ref().map(Text::as_str),
-        Some("\n    Text before\n    ")
+        Some("\n    Text before &\n    ")
     );
 
     let MixedChoiceTypeContent::Fuu(mixed) = &obj.content else {
@@ -102,7 +102,7 @@ fn read_quick_xml_choice_single() {
     assert_eq!(mixed.value, 111);
     assert_eq!(
         mixed.text_after.as_ref().map(Text::as_str),
-        Some("\n    Text after\n")
+        Some("\n    Text after ä\n")
     );
 }
 
@@ -118,7 +118,7 @@ fn read_quick_xml_choice_list() {
     let mut it = obj.content.into_iter();
 
     assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before\n    ")
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before &\n    ")
     );
     assert!(matches!(
         it.next().unwrap(),
@@ -129,7 +129,7 @@ fn read_quick_xml_choice_list() {
     );
     assert!(matches!(it.next().unwrap(), MixedChoiceListTypeContent::Bar(x) if x == "Hello World"));
     assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after\n")
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after ä\n")
     );
     assert!(it.next().is_none());
 }
@@ -146,7 +146,7 @@ fn read_serde_quick_xml_choice_list() {
     let mut it = obj.content.into_iter();
 
     assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before\n    ")
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before &\n    ")
     );
     assert!(matches!(
         it.next().unwrap(),
@@ -157,7 +157,7 @@ fn read_serde_quick_xml_choice_list() {
     );
     assert!(matches!(it.next().unwrap(), MixedChoiceListTypeContent::Bar(x) if x == "Hello World"));
     assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after\n")
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after ä\n")
     );
     assert!(it.next().is_none());
 }
@@ -174,7 +174,7 @@ fn read_quick_xml_sequence() {
 
     assert_eq!(
         obj.text_before.as_ref().map(Text::as_str),
-        Some("\n    Text before\n    ")
+        Some("\n    Text before &\n    ")
     );
     assert_eq!(obj.fuu, 111);
     assert_eq!(
@@ -184,7 +184,7 @@ fn read_quick_xml_sequence() {
     assert_eq!(obj.bar, "Hello World");
     assert_eq!(
         obj.text_after_bar.as_ref().map(Text::as_str),
-        Some("\n    Text after\n")
+        Some("\n    Text after ä\n")
     );
 }
 
@@ -195,14 +195,14 @@ fn write_quick_xml_all() {
     use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedAll {
-        text_before: Some(Text::new("Text before")),
+        text_before: Some(Text::new("Text before &")),
         fuu: Mixed {
             value: 111,
             text_after: Some(Text::new("Text between")),
         },
         bar: Mixed {
             value: "Hello World".into(),
-            text_after: Some(Text::new("Text after")),
+            text_after: Some(Text::new("Text after ä")),
         },
     };
 
@@ -220,10 +220,10 @@ fn write_quick_xml_choice_single() {
     use xsd_parser::xml::{Mixed, Text};
 
     let obj = MixedChoice {
-        text_before: Some(Text::new("Text before")),
+        text_before: Some(Text::new("Text before &")),
         content: MixedChoiceTypeContent::Fuu(Mixed {
             value: 111,
-            text_after: Some(Text::new("Text after")),
+            text_after: Some(Text::new("Text after ä")),
         }),
     };
 
@@ -241,11 +241,11 @@ fn write_quick_xml_choice_list() {
 
     let obj = MixedChoiceList {
         content: vec![
-            MixedChoiceListTypeContent::Text("\n    Text before\n    ".into()),
+            MixedChoiceListTypeContent::Text("\n    Text before &\n    ".into()),
             MixedChoiceListTypeContent::Fuu(111),
             MixedChoiceListTypeContent::Text("\n    Text between\n    ".into()),
             MixedChoiceListTypeContent::Bar("Hello World".into()),
-            MixedChoiceListTypeContent::Text("\n    Text after\n".into()),
+            MixedChoiceListTypeContent::Text("\n    Text after ä\n".into()),
         ],
     };
 
@@ -263,11 +263,11 @@ fn write_quick_xml_sequence() {
     use xsd_parser::xml::Text;
 
     let obj = MixedSequence {
-        text_before: Some(Text::new("Text before")),
+        text_before: Some(Text::new("Text before &")),
         fuu: 111,
         text_after_fuu: Some(Text::new("Text between")),
         bar: "Hello World".into(),
-        text_after_bar: Some(Text::new("Text after")),
+        text_after_bar: Some(Text::new("Text after ä")),
     };
 
     crate::utils::quick_xml_write_test(

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tns:MixedAll xmlns:tns="http://example.com">
-    Text before
+    Text before &amp;
     <tns:Fuu>111</tns:Fuu>
     Text between
     <tns:Bar>Hello World</tns:Bar>
-    Text after
+    Text after &#228;
 </tns:MixedAll>
