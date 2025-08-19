@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <!--公用的简单类型定义。-->
+    <xs:simpleType name="ST_ID">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+    <xs:simpleType name="ST_RefID">
+        <xs:restriction base="xs:unsignedInt"/>
+    </xs:simpleType>
+    <xs:simpleType name="ST_Loc">
+        <xs:restriction base="xs:anyURI"/>
+    </xs:simpleType>
+    <xs:simpleType name="ST_Array">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="ST_Pos">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="ST_Box">
+        <xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    <!--公用的复杂类型定义。-->
+    <xs:complexType name="CT_Dest">
+        <xs:attribute name="Type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="XYZ"/>
+                    <xs:enumeration value="Fit"/>
+                    <xs:enumeration value="FitH"/>
+                    <xs:enumeration value="FitV"/>
+                    <xs:enumeration value="FitR"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="PageID" type="ST_RefID" use="required"/>
+        <xs:attribute name="Left" type="xs:double"/>
+        <xs:attribute name="Top" type="xs:double"/>
+        <xs:attribute name="Right" type="xs:double"/>
+        <xs:attribute name="Bottom" type="xs:double"/>
+        <xs:attribute name="Zoom" type="xs:double"/>
+    </xs:complexType>
+    <xs:complexType name="CT_PageArea">
+        <xs:sequence>
+            <xs:element name="PhysicalBox" type="ST_Box"/>
+            <xs:element name="ApplicationBox" type="ST_Box" minOccurs="0"/>
+            <xs:element name="ContentBox" type="ST_Box" minOccurs="0"/>
+            <xs:element name="BleedBox" type="ST_Box" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <!--动作及动作集定义。-->
+    <xs:complexType name="CT_Action">
+        <xs:sequence>
+            <xs:element name="Region" type="CT_Region" minOccurs="0"/>
+            <xs:choice>
+                <xs:element name="Goto">
+                    <xs:complexType>
+                        <xs:choice>
+                            <xs:element name="Dest" type="CT_Dest"/>
+                            <xs:element name="Bookmark">
+                                <xs:complexType>
+                                    <xs:attribute name="Name" type="xs:string" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:choice>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="URI">
+                    <xs:complexType>
+                        <xs:attribute name="URI" type="xs:string" use="required"/>
+                        <xs:attribute name="Base" type="xs:string"/>
+                        <xs:attribute name="Target" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="GotoA">
+                    <xs:complexType>
+                        <xs:attribute name="AttachID" type="xs:IDREF" use="required"/>
+                        <xs:attribute name="NewWindow" type="xs:boolean" default="true"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Sound">
+                    <xs:complexType>
+                        <xs:attribute name="ResourceID" type="ST_RefID" use="required"/>
+                        <xs:attribute name="Volume" type="xs:int"/>
+                        <xs:attribute name="Repeat" type="xs:boolean"/>
+                        <xs:attribute name="Synchronous" type="xs:boolean"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Movie">
+                    <xs:complexType>
+                        <xs:attribute name="ResourceID" type="ST_RefID" use="required"/>
+                        <xs:attribute name="Operator" default="Play">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="Play"/>
+                                    <xs:enumeration value="Stop"/>
+                                    <xs:enumeration value="Pause"/>
+                                    <xs:enumeration value="Resume"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="Event" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="DO"/>
+                    <xs:enumeration value="PO"/>
+                    <xs:enumeration value="CLICK"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="CT_Region">
+        <xs:sequence>
+            <xs:element name="Area" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:choice maxOccurs="unbounded">
+                        <xs:element name="Move">
+                            <xs:complexType>
+                                <xs:attribute name="Point1" type="ST_Pos" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="Line">
+                            <xs:complexType>
+                                <xs:attribute name="Point1" type="ST_Pos" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="OuadraticBezier">
+                            <xs:complexType>
+                                <xs:attribute name="Pointl" type="ST_Pos" use="required"/>
+                                <xs:attribute name="Point2" type="ST_Pos" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="CubicBezier">
+                            <xs:complexType>
+                                <xs:attribute name="Point1" type="ST_Pos"/>
+                                <xs:attribute name="Point2" type="ST_Pos"/>
+                                <xs:attribute name="Point3" type="ST_Pos" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="Arc">
+                            <xs:complexType>
+                                <xs:attribute name="SweepDirection" type="xs:boolean" use="required"/>
+                                <xs:attribute name="LargeArc" type="xs:boolean" use="required"/>
+                                <xs:attribute name="RotationAnglet" type="xs:double" use="required"/>
+                                <xs:attribute name="EllipseSize" type="ST_Array" use="required"/>
+                                <xs:attribute name="EndPoint" type="ST_Pos" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="Close"/>
+                    </xs:choice>
+                    <xs:attribute name="Start" type="ST_Pos" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

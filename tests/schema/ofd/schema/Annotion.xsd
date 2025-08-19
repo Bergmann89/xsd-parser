@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+    <xs:include schemaLocation="Page.xsd"/>
+    <!--注释文件单独存放,与被注释对象相分离。-->
+    <xs:element name="PageAnnot">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Annot" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Remark" type="xs:string" minOccurs="0"/>
+                            <xs:element name="Parameters" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Parameter" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:simpleContent>
+                                                    <xs:extension base="xs:string">
+                                                        <xs:attribute name="Name" type="xs:string" use="required"/>
+                                                    </xs:extension>
+                                                </xs:simpleContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Appearance">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_PageBlock">
+                                            <xs:attribute name="Boundary" type="ST_Box"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="ID" type="ST_ID" use="required"/>
+                        <xs:attribute name="Type" use="required">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="Link"/>
+                                    <xs:enumeration value="Path"/>
+                                    <xs:enumeration value="Highlight"/>
+                                    <xs:enumeration value="Stamp"/>
+                                    <xs:enumeration value="Watermark"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="Creator" type="xs:string" use="required"/>
+                        <xs:attribute name="LastModDate" type="xs:date" use="required"/>
+                        <xs:attribute name="Visible" type="xs:boolean" default="true"/>
+                        <xs:attribute name="Subtype" type="xs:string"/>
+                        <xs:attribute name="Print" type="xs:boolean" default="true"/>
+                        <xs:attribute name="NoZoom" type="xs:boolean" default="false"/>
+                        <xs:attribute name="NoRotate" type="xs:boolean" default="false"/>
+                        <xs:attribute name="ReadOnly" type="xs:boolean" default="true"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

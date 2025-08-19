@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+    <!--文档结构定义。-->
+    <xs:element name="Document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CommonData">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="MaxUnitID" type="ST_ID"/>
+                            <xs:element name="PageArea" type="CT_PageArea"/>
+                            <xs:element name="PublicRes" type="ST_Loc" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="DocumentRes" type="ST_Loc" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="TemplatePage" minOccurs="0" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="ID" type="ST_Loc" use="required"/>
+                                    <xs:attribute name="Name" type="xs:string"/>
+                                    <xs:attribute name="ZOrder">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="Background"/>
+                                                <xs:enumeration value="Foreground"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:attribute>
+                                    <xs:attribute name="BaseLoc" type="ST_Loc" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="DefaultCs" type="ST_RefID" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Pages">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Page" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                    <xs:attribute name="BaseLoc" type="ST_Loc" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Outlines" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="OutlineElem" type="CT_OutlineElem" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Permissions" type="CT_Permission" minOccurs="0"/>
+                <xs:element name="Actions" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Action" type="CT_Action" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="VPreferences" type="CT_VPreferences" minOccurs="0"/>
+                <xs:element name="Bookmarks" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Bookmark" type="CT_Bookmark" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Annotations" type="ST_Loc" minOccurs="0"/>
+                <xs:element name="CustomTags" type="ST_Loc" minOccurs="0"/>
+                <xs:element name="Attachments" type="ST_Loc" minOccurs="0"/>
+                <xs:element name="Extensions" type="ST_Loc" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!--文档全局设置-->
+    <xs:complexType name="CT_Permission">
+        <xs:sequence>
+            <xs:element name="Edit" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="Annot" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="Export" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="Signature" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="Watermark" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="PrintScreen" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="Print" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="Printable" type="xs:boolean" use="required"/>
+                    <xs:attribute name="Copies" type="xs:int" default="-1"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ValidPeriod" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="StartDate" type="xs:dateTime"/>
+                    <xs:attribute name="EndDate" type="xs:dateTime"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CT_VPreferences">
+        <xs:sequence>
+            <xs:element name="PageMode" default="None" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="None"/>
+                        <xs:enumeration value="FullScreen"/>
+                        <xs:enumeration value="UseOutlines"/>
+                        <xs:enumeration value="UseThumbs"/>
+                        <xs:enumeration value="UseCustomTags"/>
+                        <xs:enumeration value="UseLayers"/>
+                        <xs:enumeration value="UseAttatchs"/>
+                        <xs:enumeration value="UseBookmarks"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="PageLayout" default="OneColumn" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="OnePage"/>
+                        <xs:enumeration value="OneColumn"/>
+                        <xs:enumeration value="TwoPageL"/>
+                        <xs:enumeration value="TwoColumnL"/>
+                        <xs:enumeration value="TwoPageR"/>
+                        <xs:enumeration value="TwoColumnR"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="TabDisplay" default="DocTitle" minOccurs="0">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="DocTitle"/>
+                        <xs:enumeration value="FileName"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="HideToolbar" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="HideMenubar" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="HideWindowUI" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:choice minOccurs="0">
+                <xs:element name="ZoomMode">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="Default"/>
+                            <xs:enumeration value="FitHeight"/>
+                            <xs:enumeration value="FitWidth"/>
+                            <xs:enumeration value="FitRect"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="Zoom" type="xs:double"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+    <!--大纲相关结构类型-->
+    <xs:complexType name="CT_OutlineElem">
+        <xs:sequence>
+            <xs:element name="Actions" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Action" type="CT_Action" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="OutlineElem" type="CT_OutlineElem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Title" type="xs:string" use="required"/>
+        <xs:attribute name="Count" type="xs:int"/>
+        <xs:attribute name="Expanded" type="xs:boolean" default="true"/>
+    </xs:complexType>
+    <xs:complexType name="CT_Bookmark">
+        <xs:sequence>
+            <xs:element name="Dest" type="CT_Dest"/>
+        </xs:sequence>
+        <xs:attribute name="Name" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

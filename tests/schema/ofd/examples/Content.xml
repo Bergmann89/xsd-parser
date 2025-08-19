@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?><ofd:Page xmlns:ofd="http://www.ofdspec.org"><ofd:Area><ofd:PhysicalBox>0 0 210.209198 140.021896</ofd:PhysicalBox>
+</ofd:Area>
+<ofd:Content><ofd:Layer ID="2" Type="Body"><ofd:PathObject ID="3" Boundary="-1.7635 -1.763502 213.736206 143.548904" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 255 255"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="6" Boundary="0 0 210.209198 140.021896" Fill="true"><ofd:AbbreviatedData>M 1.7635 141.785 L 211.973 141.785 L 211.973 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000002 L 213.736 0.000002 L 213.736 143.549 L 0 143.549 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="7" Boundary="66.16317 17.987698 76.786308 3.777414" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="8" Boundary="0 0 73.259308 0.250414" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 75.0228 1.7635 L 75.0228 2.01391 L 1.7635 2.01391 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="9" Boundary="0 0 73.361603 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 75.1251 2.1162 L 75.1251 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 -0.000003 L 76.7863 -0.000003 L 76.7863 3.77741 L -0.000001 3.77741 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="10" Boundary="2.4689 28.12891 204.816422 3.777424" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="11" Boundary="0 0 201.289413 0.250425" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 203.053 1.7635 L 203.053 2.01393 L 1.7635 2.01393 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="12" Boundary="0 0 201.391693 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 203.155 2.1162 L 203.155 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000004 L 204.816 0.000004 L 204.816 3.77743 L 0 3.77743 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="13" Boundary="2.4689 28.215998 3.777417 97.595619" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="14" Boundary="0 0 0.250417 94.068611" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 95.8321 L 1.7635 95.8321 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="15" Boundary="0 0 0.3527 94.170898" Fill="true"><ofd:AbbreviatedData>M 1.7635 95.9344 L 2.1162 95.9344 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000002 L 3.77742 0.000002 L 3.77742 97.5956 L 0 97.5956 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="16" Boundary="203.507904 28.215998 3.77742 97.595619" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="17" Boundary="0 0 0.250427 94.068611" Fill="true"><ofd:AbbreviatedData>M 1.76349 1.7635 L 2.01392 1.7635 L 2.01392 95.8321 L 1.76349 95.8321 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="18" Boundary="0 0 0.352707 94.170898" Fill="true"><ofd:AbbreviatedData>M 1.76349 95.9344 L 2.11619 95.9344 L 2.11619 1.7635 L 1.76349 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000007 0.000002 L 3.77742 0.000002 L 3.77742 97.5956 L -0.000007 97.5956 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="19" Boundary="10.51046 28.215998 3.777416 25.644819" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="20" Boundary="0 0 0.250417 22.117819" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 23.8813 L 1.7635 23.8813 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="21" Boundary="0 0 0.3527 22.220098" Fill="true"><ofd:AbbreviatedData>M 1.7635 23.9836 L 2.1162 23.9836 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000002 L 3.77742 0.000002 L 3.77742 25.6448 L 0 25.6448 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="22" Boundary="10.51046 101.753944 3.777416 24.234016" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="23" Boundary="0 0 0.250417 20.707016" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 22.4705 L 1.7635 22.4705 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="24" Boundary="0 0 0.3527 20.63295" Fill="true"><ofd:AbbreviatedData>M 1.7635 22.3965 L 2.1162 22.3965 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000003 L 3.77742 0.000003 L 3.77742 24.234 L 0 24.234 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="25" Boundary="117.378555 101.753944 3.77742 24.234016" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="26" Boundary="0 0 0.250427 20.707016" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 22.4705 L 1.7635 22.4705 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="27" Boundary="0 0 0.352699 20.63295" Fill="true"><ofd:AbbreviatedData>M 1.7635 22.3965 L 2.1162 22.3965 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 0.000003 L 3.77742 0.000003 L 3.77742 24.234 L -0.000001 24.234 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="28" Boundary="122.140007 101.753944 3.77742 24.234016" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="29" Boundary="0 0 0.250427 20.707016" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 22.4705 L 1.7635 22.4705 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="30" Boundary="0 0 0.352699 20.63295" Fill="true"><ofd:AbbreviatedData>M 1.7635 22.3965 L 2.1162 22.3965 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000003 0.000003 L 3.77742 0.000003 L 3.77742 24.234 L -0.000003 24.234 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="31" Boundary="54.597961 50.083397 3.777412 55.271622" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="32" Boundary="0 0 0.250412 51.744617" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01391 1.7635 L 2.01391 53.5081 L 1.7635 53.5081 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="33" Boundary="0 0 0.352699 51.846897" Fill="true"><ofd:AbbreviatedData>M 1.7635 53.6104 L 2.1162 53.6104 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 0.000001 L 3.77741 0.000001 L 3.77741 55.2716 L -0.000001 55.2716 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="34" Boundary="80.415596 50.083397 3.77742 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="35" Boundary="0 0 0.250412 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="36" Boundary="0 0 0.352699 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000003 0.000001 L 3.77742 0.000001 L 3.77742 47.5122 L 0.000003 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="37" Boundary="92.231049 50.083397 3.777428 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="38" Boundary="0 0 0.250427 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="39" Boundary="0 0 0.352707 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000001 L 3.77742 0.000001 L 3.77742 47.5122 L 0 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="40" Boundary="112.1586 50.083397 3.77742 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="41" Boundary="0 0 0.250427 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="42" Boundary="0 0 0.352699 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 0.000001 L 3.77742 0.000001 L 3.77742 47.5122 L -0.000001 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="43" Boundary="132.086151 50.083397 3.77742 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="44" Boundary="0 0 0.250412 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01392 1.7635 L 2.01392 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="45" Boundary="0 0 0.352692 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000003 0.000001 L 3.77742 0.000001 L 3.77742 47.5122 L -0.000003 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="46" Boundary="161.889297 50.083397 3.77742 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="47" Boundary="0 0 0.250427 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01393 1.7635 L 2.01393 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="48" Boundary="0 0 0.352692 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000001 L 3.77743 0.000001 L 3.77743 47.5122 L 0 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="49" Boundary="172.999344 50.083397 3.777435 47.512222" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="50" Boundary="0 0 0.250427 43.985218" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01393 1.7635 L 2.01393 45.7487 L 1.7635 45.7487 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="51" Boundary="0 0 0.352707 44.087498" Fill="true"><ofd:AbbreviatedData>M 1.7635 45.851 L 2.1162 45.851 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000004 0.000001 L 3.77743 0.000001 L 3.77743 47.5122 L 0.000004 47.5122 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="52" Boundary="117.449097 28.215998 3.777428 25.644819" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="53" Boundary="0 0 0.25042 22.117819" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01393 1.7635 L 2.01393 23.8813 L 1.7635 23.8813 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="54" Boundary="0 0 0.352699 22.220098" Fill="true"><ofd:AbbreviatedData>M 1.7635 23.9836 L 2.1162 23.9836 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000002 0.000002 L 3.77743 0.000002 L 3.77743 25.6448 L 0.000002 25.6448 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="55" Boundary="122.034195 28.215998 3.777428 25.644819" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="56" Boundary="0 0 0.250427 22.117819" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 2.01393 1.7635 L 2.01393 23.8813 L 1.7635 23.8813 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="57" Boundary="0 0 0.352699 22.220098" Fill="true"><ofd:AbbreviatedData>M 1.7635 23.9836 L 2.1162 23.9836 L 2.1162 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000003 0.000002 L 3.77743 0.000002 L 3.77743 25.6448 L 0.000003 25.6448 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="58" Boundary="2.4689 50.083397 204.816422 3.77742" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="59" Boundary="0 0 201.289413 0.25042" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 203.053 1.7635 L 203.053 2.01392 L 1.7635 2.01392 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="60" Boundary="0 0 201.391693 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 203.155 2.1162 L 203.155 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000001 L 204.816 0.000001 L 204.816 3.77742 L 0 3.77742 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="61" Boundary="2.4689 93.818199 204.816422 3.77742" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="62" Boundary="0 0 201.289413 0.25042" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 203.053 1.7635 L 203.053 2.01392 L 1.7635 2.01392 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="63" Boundary="0 0 201.391693 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 203.155 2.1162 L 203.155 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 -0.000002 L 204.816 -0.000002 L 204.816 3.77742 L 0 3.77742 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="64" Boundary="2.4689 101.753944 204.816422 3.77742" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="65" Boundary="0 0 201.289413 0.25042" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 203.053 1.7635 L 203.053 2.01392 L 1.7635 2.01392 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="66" Boundary="0 0 201.391693 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 203.155 2.1162 L 203.155 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 0.000003 L 204.816 0.000003 L 204.816 3.77742 L 0 3.77742 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="67" Boundary="2.4689 122.175278 204.816422 3.777412" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="68" Boundary="0 0 201.289413 0.25042" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 203.053 1.7635 L 203.053 2.01392 L 1.7635 2.01392 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="69" Boundary="0 0 201.391693 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 203.155 2.1162 L 203.155 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0 -0.000001 L 204.816 -0.000001 L 204.816 3.77742 L 0 3.77742 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="70" Boundary="66.16317 16.929598 76.786308 3.777414" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="71" Boundary="0 0 73.259308 0.250414" Fill="true"><ofd:AbbreviatedData>M 1.7635 1.7635 L 75.0228 1.7635 L 75.0228 2.01392 L 1.7635 2.01392 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="72" Boundary="0 0 73.361603 0.352699" Fill="true"><ofd:AbbreviatedData>M 1.7635 2.1162 L 75.1251 2.1162 L 75.1251 1.7635 L 1.7635 1.7635 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 0.000002 L 76.7863 0.000002 L 76.7863 3.77742 L -0.000001 3.77742 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="73" Boundary="88.174957 7.759398 33.520607 23.522629" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="74" Boundary="0 0 29.993607 19.99563" Fill="true" Rule="Even-Odd"><ofd:AbbreviatedData>M 16.7603 1.7635 B 8.47786 1.7635 1.7635 6.23962 1.7635 11.7615 B 1.7635 17.283 8.47786 21.7591 16.7603 21.7591 B 25.0428 21.7591 31.7571 17.283 31.7571 11.7615 B 31.7571 6.23962 25.0428 1.7635 16.7603 1.7635 M 16.7603 2.7634 B 24.4781 2.7634 30.7572 6.7997 30.7572 11.7615 B 30.7572 16.7229 24.4781 20.7592 16.7603 20.7592 B 9.04218 20.7592 2.7634 16.7229 2.7634 11.7615 B 2.7634 6.7997 9.04218 2.7634 16.7603 2.7634</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="75" Boundary="0 0 210.209198 140.021896" Fill="true"><ofd:AbbreviatedData>M -88.175 132.263 L 122.034 132.263 L 122.034 -7.7594 L -88.175 -7.7594 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000004 -0.000001 L 33.5206 -0.000001 L 33.5206 23.5226 L 0.000004 23.5226 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="76" Boundary="89.549431 9.134001 30.771317 20.773327" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="77" Boundary="0 0 27.244324 17.246326" Fill="true" Rule="Even-Odd"><ofd:AbbreviatedData>M 15.3858 2.01358 B 11.6973 2.01358 8.25142 2.95668 5.6827 4.6687 B 3.31679 6.24598 2.01357 8.27681 2.01357 10.3867 B 2.01357 12.4965 3.31679 14.527 5.6827 16.1043 B 8.25107 17.817 11.6973 18.7598 15.3858 18.7598 B 19.0744 18.7598 22.5203 17.817 25.0886 16.1043 B 27.4549 14.527 28.7577 12.4965 28.7577 10.3867 B 28.7577 8.27681 27.4549 6.24598 25.0886 4.6687 B 22.5203 2.95668 19.0744 2.01358 15.3858 2.01358 M 15.3858 19.0098 B 11.6483 19.0098 8.15337 18.0519 5.5441 16.3124 B 3.10623 14.6871 1.7635 12.5829 1.7635 10.3867 B 1.7635 8.19076 3.10623 6.08619 5.5441 4.46061 B 8.15337 2.72144 11.6486 1.7635 15.3858 1.7635 B 19.123 1.7635 22.6179 2.72144 25.2272 4.46061 B 27.6651 6.08619 29.0078 8.19076 29.0078 10.3867 B 29.0078 12.5829 27.6651 14.6871 25.2276 16.3124 B 22.6183 18.0519 19.123 19.0098 15.3858 19.0098</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="78" Boundary="0 0 210.209198 140.021896" Fill="true"><ofd:AbbreviatedData>M -89.5494 130.888 L 120.66 130.888 L 120.66 -9.134 L -89.5494 -9.134 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M 0.000003 -0.000002 L 30.7713 -0.000002 L 30.7713 20.7733 L 0.000003 20.7733 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:PathObject ID="79" Boundary="53.290852 93.851357 11.925488 11.925484" LineWidth="0.3527" MiterLimit="3.527" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:Clips><ofd:Clip><ofd:Area><ofd:Path ID="80" Boundary="0 0 5.499928 5.286339" Fill="true"><ofd:AbbreviatedData>M 7.67242 4.18129 B 7.73567 4.24216 7.79633 4.30699 7.85403 4.37577 B 8.69494 5.37793 8.60362 6.85207 7.67235 7.74409 L 7.67582 7.74821 L 7.42363 7.95983 L 7.42018 7.95571 B 6.54167 8.59946 5.35826 8.58108 4.505 7.95606 L 4.50187 7.95983 L 4.41249 7.88485 B 4.38921 7.86602 4.36618 7.84668 4.34346 7.8269 L 4.24969 7.74821 L 4.25307 7.74419 B 4.18984 7.68332 4.12917 7.61849 4.07147 7.54971 B 3.19501 6.50519 3.33125 4.94792 4.37578 4.07146 B 5.26454 3.32567 6.52452 3.31312 7.4205 3.96942 L 7.42363 3.96565 L 7.51301 4.04063 B 7.53628 4.05947 7.55932 4.07879 7.58203 4.09858 L 7.67582 4.17727 C M 4.71718 7.70321 B 5.44946 8.22803 6.45466 8.24323 7.20803 7.70289 L 5.96275 6.2188 C M 4.46525 7.49131 L 5.74788 5.96274 L 4.46529 4.43421 B 3.67299 5.20874 3.59962 6.47528 4.32365 7.33813 B 4.36882 7.39198 4.41612 7.44306 4.46525 7.49131 C M 7.20831 4.22227 B 6.47603 3.69745 5.47084 3.68225 4.71747 4.22259 L 5.96275 5.70668 C M 7.46024 4.43417 L 6.17762 5.96274 L 7.46021 7.49128 B 8.25251 6.71674 8.32587 5.4502 7.60185 4.58735 B 7.55667 4.53349 7.50938 4.48242 7.46024 4.43417 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+<ofd:Clip><ofd:Area><ofd:Path ID="81" Boundary="0 0 7.053997 7.054001" Fill="true"><ofd:AbbreviatedData>M 2.43575 9.48974 L 9.48975 9.48974 L 9.48975 2.43574 L 2.43575 2.43574 C</ofd:AbbreviatedData>
+</ofd:Path>
+</ofd:Area>
+</ofd:Clip>
+</ofd:Clips>
+<ofd:AbbreviatedData>M -0.000001 5.44106 L 6.48443 -0.000002 L 11.9255 6.48442 L 5.44107 11.9255 C</ofd:AbbreviatedData>
+</ofd:PathObject>
+<ofd:TextObject ID="82" CTM="0.3527 0 0 0.3527 -20.605791 113.338371" Boundary="20.605791 26.330816 17.382471 2.21249" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="58" Y="-315" DeltaX="4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158">661614914438</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="84" CTM="0.3527 0 0 0.3527 -163.449295 129.562576" Boundary="163.449295 10.106616 17.245972 2.212491" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="463" Y="-361" DeltaX="4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158">013002020011</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="85" CTM="0.3527 0 0 0.3527 -163.449295 124.612076" Boundary="163.449295 15.057117 11.506836 2.199789" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="463" Y="-347" DeltaX="4.158 4.158 4.158 4.158 4.158 4.158 4.158">05277285</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="86" CTM="0.3527 0 0 0.3527 -163.46199 119.334274" Boundary="163.46199 20.334915 18.744232 2.237883" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="463" Y="-332" DeltaX="4.158 4.158 4.158 4.158 1.863 1.863 1.863 1.863 1.863 1.863 4.158 4.158 1.863 1.863 1.863 1.863 1.863 4.158">2021      03     19</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="87" CTM="0.3527 0 0 0.3527 -24.485491 13.940109" Boundary="24.485491 125.72908 9.24991 2.974319" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="69" Y="-32" DeltaX="9 9">董孜婵</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="88" CTM="0.3527 0 0 0.3527 -74.266983 13.914711" Boundary="74.266983 125.754478 9.19912 2.936226" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="210" Y="-32" DeltaX="9 9">张建春</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="89" CTM="0.3527 0 0 0.3527 -121.477989 13.90519" Boundary="121.477989 125.764 6.075607 2.914009" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="344" Y="-32" DeltaX="9">王娅</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="90" CTM="0.3527 0 0 0.3527 -35.131741 29.458908" Boundary="35.131741 110.210281 44.634884 3.144676" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-76" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">91130105MA07Q2NX72</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="92" CTM="0.3527 0 0 0.3527 -35.131741 102.820503" Boundary="35.131741 36.848686 44.719532 2.712963" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-284" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">911101075996632135</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="93" CTM="0.3527 0 0 0.3527 -163.487381 114.396469" Boundary="163.487381 25.272717 31.124008 2.237881" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="463" Y="-318" DeltaX="4.158 4.158 4.158 4.158 4.158 1.863 4.158 4.158 4.158 4.158 4.158 1.863 4.158 4.158 4.158 4.158 4.158 1.863 4.158 4.158 4.158 4.158">57190 84710 18940 73694</ofd:TextCode>
+</ofd:TextObject>
+<ofd:ImageObject ID="94" CTM="17.635 0 0 17.635 0 0" Boundary="8.4648 6.948193 17.635 17.635" ResourceID="95"/>
+<ofd:TextObject ID="96" CTM="0.3527 0 0 0.3527 -130.360733 109.032257" Boundary="130.360733 30.636936 67.527924 3.216621" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="368" Y="-301" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">9&gt;/9231+272&gt;05&gt;&lt;2&gt;&gt;&gt;7463/5/</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="97" CTM="0.3527 0 0 0.3527 -130.271851 103.741753" Boundary="130.271851 35.927437 67.616806 3.216621" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="368" Y="-286" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">8+3&lt;*97&lt;652-0899-//1&gt;219/+/</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="98" CTM="0.3527 0 0 0.3527 -130.229538 98.451256" Boundary="130.229538 41.217934 67.654907 3.216625" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="368" Y="-271" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">76-4+-2522/&gt;*02211682/&lt;3&lt;&lt;1</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="99" CTM="0.3527 0 0 0.3527 -130.195679 93.160751" Boundary="130.195679 46.508434 67.688766 3.216621" LineWidth="1" MiterLimit="3.527" Font="91" Size="12" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="368" Y="-256" DeltaX="7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2 7.2">3505&gt;81&gt;0/2744+76+99&gt;9&lt;7620</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="100" CTM="0.3527 0 0 0.3527 -61.833599 41.098007" Boundary="61.833599 98.571182 12.424213 2.974319" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="175" Y="-109" DeltaX="9 9 9">捌拾圆整</ofd:TextCode>
+</ofd:TextObject>
+<ofd:ImageObject ID="101" CTM="2.4689 0 0 2.4689 0 0" Boundary="169.29599 99.108696 2.468903 2.468903" ResourceID="102"/>
+<ofd:TextObject ID="103" CTM="0.3527 0 0 0.3527 -172.908707 40.524162" Boundary="172.908707 99.145027 10.766159 2.486885" LineWidth="1" MiterLimit="3.527" Font="91" Size="11" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="489" Y="-108" DeltaX="6.6 6.6 6.6 6.6">80.00</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="104" CTM="0.3527 0 0 0.3527 -153.470352 46.651627" Boundary="153.470352 93.017563 9.78743 2.260811" LineWidth="1" MiterLimit="3.527" Font="91" Size="10" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="434" Y="-126" DeltaX="6 6 6 6">80.00</ofd:TextCode>
+</ofd:TextObject>
+<ofd:ImageObject ID="105" CTM="2.4689 0 0 2.4689 0 0" Boundary="149.897491 92.760094 2.468903 2.468903" ResourceID="106"/>
+<ofd:TextObject ID="107" CTM="0.3527 0 0 0.3527 -199.554123 46.38604" Boundary="199.554123 93.28315 5.002701 1.142754" LineWidth="1" MiterLimit="3.527" Font="91" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="564.8" Y="-126" DeltaX="5.4 5.4">***</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="108" CTM="0.3527 0 0 0.3527 -5.0489 81.658508" Boundary="5.0489 58.010681 24.597651 2.983845" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="14" Y="-224" DeltaX="3.807 9 9 9 9 3.807 9 9">*医疗服务*检测费</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="109" CTM="0.3527 0 0 0.3527 -85.149895 81.63311" Boundary="85.149895 58.036079 6.0756 2.948921" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="241" Y="-224" DeltaX="9">人次</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="110" CTM="0.3527 0 0 0.3527 -112.81356 81.242676" Boundary="112.81356 58.426514 0.904678 2.187096" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="318.84" Y="-224">1</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="111" CTM="0.3527 0 0 0.3527 -127.542313 81.22998" Boundary="127.542313 58.439213 6.443832 2.21249" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="361.23" Y="-224" DeltaX="4.158 4.158 2.142 4.158">80.00</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="112" CTM="0.3527 0 0 0.3527 -157.169113 81.22998" Boundary="157.169113 58.439213 6.443832 2.21249" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="445.23" Y="-224" DeltaX="4.158 4.158 2.142 4.158">80.00</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="113" CTM="0.3527 0 0 0.3527 -168.085175 81.658508" Boundary="168.085175 58.010681 6.012131 2.961624" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="476" Y="-224" DeltaX="9">免税</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="114" CTM="0.3527 0 0 0.3527 -201.001968 80.97921" Boundary="201.001968 58.68998 4.037704 1.641113" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="569.58" Y="-224" DeltaX="3.807 3.807">***</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="115" CTM="0.3527 0 0 0.3527 -34.701096 107.758301" Boundary="34.701096 31.910889 43.86882 2.983837" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-298" DeltaX="9 9 9 9 9 9 9 9 9 9 9 9 9">英特智讯科技（北京）有限公司</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="116" CTM="0.3527 0 0 0.3527 -34.739185 97.164612" Boundary="34.739185 42.504578 74.189774 2.961624" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-268" DeltaX="9 9 9 9 9 9 9 9 9 4.158 4.158 9 9 9 9 6.15601 9 4.158 4.158 4.158 9 4.158 4.158 4.158 3.375 4.158 4.158 4.158 4.158 4.158 4.158 4.158">北京市海淀区联慧路99号海云轩A座062室010-53615855</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="117" CTM="0.3527 0 0 0.3527 -34.986782 91.886803" Boundary="34.986782 47.782387 70.107605 2.996536" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-253" DeltaX="9 9 9 9 9 9 9 9 9 9 9 9 9 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158 4.158">中国建设银行北京阜成路支行11001085400053002878</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="118" CTM="0.3527 0 0 0.3527 -34.675701 34.396706" Boundary="34.675701 105.272484 47.068516 3.03463" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-90" DeltaX="9 9 9 9 9 9 9 9 9 9 9 9 9 9">河北意和医学检验实验室有限公司</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="119" CTM="0.3527 0 0 0.3527 -34.701096 24.508408" Boundary="34.701096 115.160782 68.891846 3.009232" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-62" DeltaX="9 9 9 9 9 9 9 9 9 9 9 9 4.158 4.158 4.158 9.00001 4.158 9 4.158 4.158 4.158 4.158 3.375 4.158 4.158 4.158 4.158 4.158 4.158 4.158">石家庄市新华区中华北大街118号1楼0311-67696758</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="120" CTM="0.3527 0 0 0.3527 -34.916416 20.012192" Boundary="34.916416 119.656998 74.315628 2.468018" LineWidth="1" MiterLimit="3.527" Font="83" Size="7.5" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="0 0 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="98" Y="-50.5" DeltaX="7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 7.5 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465 3.465">中国建设银行股份有限公司石家庄新华支行13050161510800000896</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="121" CTM="0.3527 0 0 0.3527 -148.837631 129.965714" Boundary="148.837631 9.703478 13.465378 2.983839" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="421.5" Y="-361" DeltaX="9 9 9 9">发票代码:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="122" CTM="0.3527 0 0 0.3527 -148.837631 125.027908" Boundary="148.837631 14.641278 13.465378 2.961623" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="421.5" Y="-347" DeltaX="9 9 9 9">发票号码:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="123" CTM="0.3527 0 0 0.3527 -148.799545 119.737411" Boundary="148.799545 19.931778 13.503464 2.961622" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="421.5" Y="-332" DeltaX="9 9 9 9">开票日期:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="124" CTM="0.3527 0 0 0.3527 -169.432495 119.750099" Boundary="169.432495 19.919088 2.901306 2.974312" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="480" Y="-332">年</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="125" CTM="0.3527 0 0 0.3527 -176.549973 119.639008" Boundary="176.549973 20.030178 2.329941 2.863222" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="500" Y="-332">月</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="126" CTM="0.3527 0 0 0.3527 -182.662964 119.613609" Boundary="182.662964 20.05558 1.933167 2.748947" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="516" Y="-332">日</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="127" CTM="0.3527 0 0 0.3527 -148.799545 114.786911" Boundary="148.799545 24.882278 13.614578 2.936222" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="421.5" Y="-318" DeltaX="9 1.863 1.863 9 1.863 1.863 1.863 9">校  验   码:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="128" CTM="0.3527 0 0 0.3527 -13.740839 108.098312" Boundary="13.740839 31.570877 19.614 2.923531" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-299" DeltaX="9 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 9">名                   称:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="129" CTM="0.3527 0 0 0.3527 -13.728142 102.785583" Boundary="13.728142 36.883606 19.839375 2.926693" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-284" DeltaX="9 9 9 9 9 9">纳税人识别号:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="130" CTM="0.3527 0 0 0.3527 -13.702748 97.504608" Boundary="13.702748 42.164577 19.975868 2.910831" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-269" DeltaX="9 9 9 1.863 1.863 1.863 1.863 1.863 9 9">地址、     电话:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="131" CTM="0.3527 0 0 0.3527 -13.715446 92.226807" Boundary="13.715446 47.442379 19.85207 2.948925" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-254" DeltaX="9 9 9 9 9 9">开户行及账号:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="132" CTM="0.3527 0 0 0.3527 -6.976053 105.982117" Boundary="6.976053 33.687077 2.914008 2.948925" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-293">购</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="133" CTM="0.3527 0 0 0.3527 -7.125245 100.038757" Boundary="7.125245 39.630428 2.752119 2.847347" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-276.5">买</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="134" CTM="0.3527 0 0 0.3527 -7.014144 94.648094" Boundary="7.014144 45.021095 2.914008 2.888615" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-261">方</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="135" CTM="0.3527 0 0 0.3527 -9.899231 86.243607" Boundary="9.899231 53.425583 37.729729 3.009235" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="27.5" Y="-237" DeltaX="9 9 9 9 9 9 9 9 9 9 9">货物或应税劳务、服务名称</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="136" CTM="0.3527 0 0 0.3527 -63.44614 86.243607" Boundary="63.44614 53.425583 12.363903 2.974319" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="179.5" Y="-237" DeltaX="9 9 9">规格型号</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="137" CTM="0.3527 0 0 0.3527 -85.326241 86.243607" Boundary="85.326241 53.425583 6.075607 2.96162" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="241.5" Y="-237" DeltaX="9">单位</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="138" CTM="0.3527 0 0 0.3527 -99.786942 86.230911" Boundary="99.786942 53.438278 7.389771 2.961624" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="282.5" Y="-237" DeltaX="9 1.863 1.863">数  量</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="139" CTM="0.3527 0 0 0.3527 -143.169037 86.230911" Boundary="143.169037 53.438278 7.389771 2.983845" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="405.5" Y="-237" DeltaX="9 1.863 1.863">金  额</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="140" CTM="0.3527 0 0 0.3527 -166.761856 86.230911" Boundary="166.761856 53.438278 6.088303 2.961624" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="472.5" Y="-237" DeltaX="9">税率</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="141" CTM="0.3527 0 0 0.3527 -184.044144 86.208694" Boundary="184.044144 53.460499 7.427872 2.961624" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="521.5" Y="-237" DeltaX="9 1.863 1.863">税  额</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="142" CTM="0.3527 0 0 0.3527 -22.885645 47.421211" Boundary="22.885645 92.247978 11.332251 2.923531" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="64.5" Y="-127" DeltaX="9 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863">合        计</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="143" CTM="0.3527 0 0 0.3527 -18.300545 41.085312" Boundary="18.300545 98.583878 20.988472 2.983841" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="51.5" Y="-109" DeltaX="9 9 9 9 3.366 9 9">价税合计(大写)</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="144" CTM="0.3527 0 0 0.3527 -157.104919 41.050392" Boundary="157.104919 98.618797 7.745285 2.888611" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="443.5" Y="-109" DeltaX="3.366 9 9">(小写)</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="145" CTM="0.3527 0 0 0.3527 -13.740839 34.38401" Boundary="13.740839 105.285179 19.614 2.923531" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-90" DeltaX="9 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 1.863 9">名                   称:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="146" CTM="0.3527 0 0 0.3527 -13.728142 29.776688" Boundary="13.728142 109.892502 19.839375 2.926704" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-77" DeltaX="9 9 9 9 9 9">纳税人识别号:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="147" CTM="0.3527 0 0 0.3527 -13.702748 24.848412" Boundary="13.702748 114.820778 19.975868 2.910828" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-63" DeltaX="9 9 9 1.863 1.863 1.863 1.863 1.863 9 9">地址、     电话:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="148" CTM="0.3527 0 0 0.3527 -13.715446 19.923309" Boundary="13.715446 119.74588 19.85207 2.948921" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="38.5" Y="-49" DeltaX="9 9 9 9 9 9">开户行及账号:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="149" CTM="0.3527 0 0 0.3527 -8.170649 13.940109" Boundary="8.170649 125.72908 11.544928 2.974319" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="22.5" Y="-32" DeltaX="9 1.863 9 1.863 9">收 款 人:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="150" CTM="0.3527 0 0 0.3527 -63.51915 13.940109" Boundary="63.51915 125.72908 8.396027 2.983841" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="179.5" Y="-32" DeltaX="9 1.863 1.863 9">复  核:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="151" CTM="0.3527 0 0 0.3527 -105.770142 13.927406" Boundary="105.770142 125.741783 11.643326 2.961617" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="299.5" Y="-32" DeltaX="9 1.863 9 1.863 9">开 票 人:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="152" CTM="0.3527 0 0 0.3527 -153.913696 13.927406" Boundary="153.913696 125.741783 16.709518 2.971138" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="436" Y="-32" DeltaX="9 9 9 1.863 2.142 1.863 3.366 9">销售方 : (章)</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="153" CTM="0.3527 0 0 0.3527 -120.230843 105.969406" Boundary="120.230843 33.69978 2.840996 2.872738" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-293">密</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="154" CTM="0.3527 0 0 0.3527 -120.205452 100.05146" Boundary="120.205452 39.617729 2.901314 2.787037" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-276.5">码</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="155" CTM="0.3527 0 0 0.3527 -120.453041 94.610001" Boundary="120.453041 45.059189 2.542625 2.787037" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-261">区</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="156" CTM="0.3527 0 0 0.3527 -7.014144 31.902412" Boundary="7.014144 107.766777 2.802907 2.923531" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-83">销</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="157" CTM="0.3527 0 0 0.3527 -7.001448 26.788261" Boundary="7.001448 112.880928 2.875916 2.923531" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-68.5">售</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="158" CTM="0.3527 0 0 0.3527 -7.014144 21.639198" Boundary="7.014144 118.029991 2.914008 2.888618" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="19.5" Y="-54">方</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="159" CTM="0.3527 0 0 0.3527 -120.256241 31.915108" Boundary="120.256241 107.754082 2.863213 2.936226" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-83">备</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="160" CTM="0.3527 0 0 0.3527 -120.218147 21.6138" Boundary="120.218147 118.055389 2.888618 2.850517" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-54">注</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="161" CTM="0.3527 0 0 0.3527 -120.243546 86.243607" Boundary="120.243546 53.425583 7.377068 2.99654" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="340.5" Y="-237" DeltaX="9 1.863 1.863">单  价</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="162" CTM="0.3527 0 0 0.3527 -5.4016 113.754204" Boundary="5.4016 25.914988 13.528868 2.983839" LineWidth="1" MiterLimit="3.527" Font="83" Size="9" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="156 82 35"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="15" Y="-315" DeltaX="9 9 9 9">机器编号:</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="163" CTM="0.17635 -0.305449 0.305449 0.17635 -92.39286 123.159073" Boundary="92.08741 16.686481 3.031227 3.052931" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="428.313" Y="60.8635">全</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="164" CTM="0.305449 -0.17635 0.17635 0.305449 -94.684799 125.298103" Boundary="94.508446 14.418344 2.745529 2.87658" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="407.825" Y="-165.377">国</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="165" CTM="0.340683 -0.091286 0.091286 0.340683 -97.410332 126.745979" Boundary="97.319046 12.935234 2.710983 2.765091" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="358.923" Y="-268.278">统</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="166" CTM="0.347342 -0.061246 0.061246 0.347342 -100.506973 126.4431" Boundary="100.445724 13.231458 2.208961 0.636858" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="342.315" Y="-299.116">一</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="167" CTM="0.3527 0 0 0.3527 -103.723785 127.262619" Boundary="103.723785 12.406571 2.226944 2.293605" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="293.7" Y="-355">发</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="168" CTM="0.347342 0.061246 -0.061246 0.347342 -106.525124 127.216637" Boundary="106.586372 12.457925 2.602844 2.656918" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="235.592" Y="-402.033">票</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="169" CTM="0.340683 0.091286 -0.091286 0.340683 -109.313751 126.445549" Boundary="109.405037 13.235666 2.738815 2.670738" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="207.814" Y="-421.17">监</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="170" CTM="0.305449 0.17635 -0.17635 0.305449 -111.954445 125.209549" Boundary="112.130798 14.506895 3.004189 3.052996" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="99.8967" Y="-461.973">制</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="171" CTM="0.17635 0.305449 -0.305449 0.17635 -113.838333 123.079399" Boundary="114.143784 16.766153 3.053047 2.977144" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="-138.511" Y="-453.09">章</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="172" CTM="0.3527 0 0 0.3527 -97.330742 120.747536" Boundary="97.330742 18.921652 14.252953 2.313354" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="275" Y="-336.5" DeltaX="7 7 7 7 7">国家税务总局</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="173" CTM="0.331429 0.12063 -0.12063 0.331429 -97.583321 116.096985" Boundary="97.703949 23.593473 2.861877 2.808748" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="149.138" Y="-399.141">河</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="174" CTM="0.347342 0.061246 -0.061246 0.347342 -99.851852 115.194656" Boundary="99.913101 24.479906 2.560379 2.576395" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="222.785" Y="-365.25">北</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="175" CTM="0.351356 0.030741 -0.030741 0.351356 -102.365791 114.882599" Boundary="102.39653 24.787947 2.341492 2.46493" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="260.919" Y="-344.056">省</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="176" CTM="0.351356 -0.030741 0.030741 0.351356 -104.692909 114.727997" Boundary="104.66217 24.942554 2.46434 2.446383" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="323.762" Y="-291.897">税</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="177" CTM="0.347342 -0.061246 0.061246 0.347342 -106.685211 114.957886" Boundary="106.623962 24.716671 2.604561 2.666649" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="353.964" Y="-261.522">务</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="178" CTM="0.331429 -0.12063 0.12063 0.331429 -108.560379 115.474876" Boundary="108.439751 24.215586 2.734276 2.762302" LineWidth="1" MiterLimit="3.527" Font="83" Size="7" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="255 2 0"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="400.155" Y="-194.957">局</ofd:TextCode>
+</ofd:TextObject>
+<ofd:TextObject ID="179" CTM="0.3527 0 0 0.3527 -67.423889 129.373184" Boundary="67.423889 10.296012 73.164795 6.25232" LineWidth="1" MiterLimit="3.527" Font="83" Size="19" Stroke="false" Fill="true"><ofd:FillColor ColorSpace="4" Value="158 81 9"/>
+<ofd:StrokeColor ColorSpace="5" Value="0"/>
+<ofd:TextCode X="190.5" Y="-351" DeltaX="19 19 19 19 19 19 19 19 19 19">河北增值税电子普通发票</ofd:TextCode>
+</ofd:TextObject>
+<ofd:CompositeObject ID="180" Boundary="167.179794 107.573494 37.3862 28.215996" ResourceID="187"/>
+</ofd:Layer>
+</ofd:Content>
+</ofd:Page>

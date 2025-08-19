@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+    <xs:include schemaLocation="Page.xsd"/>
+    <!--数字签名或电子签章描述文件-->
+    <xs:element name="Sianature">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="SiqnedInfo">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Provider">
+                                <xs:complexType>
+                                    <xs:attribute name="ProviderName" type="xs:string" use="required"/>
+                                    <xs:attribute name="Version" type="xs:string"/>
+                                    <xs:attribute name="Company" type="xs:string"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="SignatureMethod" type="xs:string" minOccurs="0"/>
+                            <xs:element name="SianatureDateTime" type="xs:string" minOccurs="0"/>
+                            <xs:element name="References">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Reference" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element name="CheckValue" type="xs:base64Binary"/>
+                                                </xs:sequence>
+                                                <xs:attribute name="FileRef" type="ST_Loc" use="required"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="CheckMethod" default="MD5">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="MD5"/>
+                                                <xs:enumeration value="SHA1"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:sequence>
+                                <xs:element name="StampAnnot" minOccurs="0" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:attribute name="ID" type="xs:ID" use="required"/>
+                                        <xs:attribute name="PageRef" type="ST_RefID" use="required"/>
+                                        <xs:attribute name="Boundary" type="ST_Box" use="required"/>
+                                        <xs:attribute name="Clip" type="ST_Box"/>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="Seal" minOccurs="0">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="BaseLoc" type="ST_Loc"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="SignedValue" type="ST_Loc"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
