@@ -18,11 +18,6 @@ pub enum MyChoiceTypeContent {
 ///This is an example type to show how sequences are working
 #[derive(Debug)]
 pub struct MySequenceType {
-    pub content: MySequenceTypeContent,
-}
-///This is an example type to show how sequences are working
-#[derive(Debug)]
-pub struct MySequenceTypeContent {
     ///Exactly one integer.
     pub once: i32,
     ///An optional integer.

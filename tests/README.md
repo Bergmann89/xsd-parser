@@ -1,6 +1,7 @@
 ## Structure
 
 This module contains mutliple test cases. The test cases are ordered in the following groups:
+- `renderer` contains all code renderer related tests
 - `generator` contains all code generator related tests
 - `optimizer` contains all optimizer related tests
 - `feature` contains general tests for different features of the crate
