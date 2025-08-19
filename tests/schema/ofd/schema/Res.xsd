@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+    <xs:include schemaLocation="Page.xsd"/>
+    <!--源文件定义。文档中使用的资源性文件比如图形、图像、多媒体、绘制参数<样式>等应在资源文件中统一管理。-->
+    <xs:element name="Res">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element name="ColorSpaces">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ColorSpace" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_ColorSpace">
+                                            <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="DrawParams">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="DrawParam" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_DrawParam">
+                                            <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Fonts">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Font" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_Font">
+                                            <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="MultiMedias">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="MultiMedia" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_MultiMedia">
+                                            <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="CompositeGraphicUnits">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="CompositeGraphicUnit" maxOccurs="unbounded">
+                                <xs:complexType>
+                                    <xs:complexContent>
+                                        <xs:extension base="CT_VectorG">
+                                            <xs:attribute name="ID" type="ST_ID" use="required"/>
+                                        </xs:extension>
+                                    </xs:complexContent>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+            <xs:attribute name="BaseLoc" type="ST_Loc" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!--颜色空间的定义-->
+    <xs:complexType name="CT_ColorSpace">
+        <xs:sequence>
+            <xs:element name="Palette" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CV" type="ST_Array" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="Type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="GRAY"/>
+                    <xs:enumeration value="RGB"/>
+                    <xs:enumeration value="CMYK"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="BitsPerComponent" type="xs:int" default="8"/>
+        <xs:attribute name="Profile" type="ST_Loc"/>
+    </xs:complexType>
+    <!--绘制参数定义-->
+    <xs:complexType name="CT_DrawParam">
+        <xs:sequence>
+            <xs:element name="FillColor" type="CT_Color" minOccurs="0"/>
+            <xs:element name="StrokeColor" type="CT_Color" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="Relative" type="ST_RefID"/>
+        <xs:attribute name="LineWidth" type="xs:double" default="0.353"/>
+        <xs:attribute name="Join" type="xs:string" default="Miter"/>
+        <xs:attribute name="Cap" type="xs:string" default="Butt"/>
+        <xs:attribute name="DashOffset" type="xs:double" default="0"/>
+        <xs:attribute name="DashPattern" type="ST_Array"/>
+        <xs:attribute name="MiterLimit" type="xs:double" default="4.234"/>
+    </xs:complexType>
+    <!--字型资源定义-->
+    <xs:complexType name="CT_Font">
+        <xs:sequence>
+            <xs:element name="FontFile" type="ST_Loc" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="FontName" type="xs:string" use="required"/>
+        <xs:attribute name="FamilyName" type="xs:string"/>
+        <xs:attribute name="Charset" default="unicode">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="symbol"/>
+                    <xs:enumeration value="prc"/>
+                    <xs:enumeration value="big5"/>
+                    <xs:enumeration value="shift-iis"/>
+                    <xs:enumeration value="wansung"/>
+                    <xs:enumeration value="johab"/>
+                    <xs:enumeration value="unicode"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Italic" type="xs:boolean" default="false"/>
+        <xs:attribute name="Bold" type="xs:boolean" default="false"/>
+        <xs:attribute name="Serif" type="xs:boolean" default="false"/>
+        <xs:attribute name="FixedWidth" type="xs:boolean" default="false"/>
+    </xs:complexType>
+    <!--多媒体                                                                                                                                                        <含位图图像>资源定义-->
+    <xs:complexType name="CT_MultiMedia">
+        <xs:sequence>
+            <xs:element name="MediaFile" type="ST_Loc"/>
+        </xs:sequence>
+        <xs:attribute name="Type" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Image"/>
+                    <xs:enumeration value="Audio"/>
+                    <xs:enumeration value="Video"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="Format" type="xs:string"/>
+    </xs:complexType>
+    <!---矢量图像定义-->
+    <xs:complexType name="CT_VectorG">
+        <xs:sequence>
+            <xs:element name="Thumbnail" type="ST_RefID" minOccurs="0"/>
+            <xs:element name="Substitution" type="ST_RefID" minOccurs="0"/>
+            <xs:element name="Content" type="CT_PageBlock"/>
+        </xs:sequence>
+        <xs:attribute name="Width" type="xs:double" use="required"/>
+        <xs:attribute name="Height" type="xs:double" use="required"/>
+    </xs:complexType>
+</xs:schema>

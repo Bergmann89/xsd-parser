@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+    <!--主人口定义 -->
+    <xs:element name="OFD">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="DocBody" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="DocInfo" type="CT_DocInfo"/>
+                            <xs:element name="DocRoot" type="ST_Loc"/>
+                            <xs:element name="Versions" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Version" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:attribute name="ID" type="xs:ID" use="required"/>
+                                                <xs:attribute name="Index" type="xs:int" use="required"/>
+                                                <xs:attribute name="Current" type="xs:boolean" default="false"/>
+                                                <xs:attribute name="BaseLoc" type="ST_Loc" use="required"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Signatures" type="ST_Loc" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Version" type="xs:string" use="required" fixed="1.0"/>
+            <xs:attribute name="DocType" use="required" fixed="OFD">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="OFD"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <!--文档元数据定义-->
+    <xs:complexType name="CT_DocInfo">
+        <xs:sequence>
+            <xs:element name="DocID" type="xs:string"/>
+            <xs:element name="Title" type="xs:string" minOccurs="0"/>
+            <xs:element name="Author" type="xs:string" minOccurs="0"/>
+            <xs:element name="Subject" type="xs:string" minOccurs="0"/>
+            <xs:element name="Abstract" type="xs:string" minOccurs="0"/>
+            <xs:element name="CreationDate" type="xs:string" minOccurs="0"/>
+            <xs:element name="ModDate" type="xs:date" minOccurs="0"/>
+            <xs:element name="DocUsage" type="xs:string" minOccurs="0"/>
+            <xs:element name="Cover" type="ST_Loc" minOccurs="0"/>
+            <xs:element name="Keywords" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Keyword" type="xs:string" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Creator" type="xs:string" minOccurs="0"/>
+            <xs:element name="CreatorVersion" type="xs:string" minOccurs="0"/>
+            <xs:element name="CustomDatas" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CustomData" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="xs:string">
+                                        <xs:attribute name="Name" type="xs:string" use="required"/>
+                                    </xs:extension>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

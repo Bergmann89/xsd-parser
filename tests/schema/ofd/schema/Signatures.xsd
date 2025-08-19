@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding ="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="Definition.xsd"/>
+
+    <!--数字签名的索引文件-->
+    <xs:element name="Siqnatures">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="MaxSignId" type="xs:ID" minOccurs="0"/>
+                <xs:element name="Signature" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:attribute name="ID" type="xs:ID" use="required"/>
+                        <xs:attribute name="Type" default="Seal">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="Seal"/>
+                                    <xs:enumeration value="Siqn"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="BaseLoc" type="ST_Loc" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
