@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::btree_map::Entry;
 use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
@@ -161,7 +160,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn apply_element(
         &mut self,
-        ty: &ElementType,
+        ty: &'schema ElementType,
         extract_docs: bool,
     ) -> Result<(), Error> {
         use crate::models::schema::xs::ElementTypeContent as C;
@@ -268,7 +267,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_attribute(&mut self, ty: &AttributeType) -> Result<(), Error> {
+    pub(super) fn apply_attribute(&mut self, ty: &'schema AttributeType) -> Result<(), Error> {
         if let Some(type_) = &ty.type_ {
             let type_ = self.parse_qname(type_)?;
             init_any!(self, Reference, ReferenceMeta::new(type_), false);
@@ -280,7 +279,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_simple_type(&mut self, ty: &SimpleBaseType) -> Result<(), Error> {
+    pub(super) fn apply_simple_type(&mut self, ty: &'schema SimpleBaseType) -> Result<(), Error> {
         use crate::models::schema::xs::SimpleBaseTypeContent as C;
 
         if self.type_mode == TypeMode::Unknown {
@@ -302,7 +301,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_type_restriction(&mut self, ty: &Restriction) -> Result<(), Error> {
+    fn apply_simple_type_restriction(&mut self, ty: &'schema Restriction) -> Result<(), Error> {
         use crate::models::schema::xs::RestrictionContent as C;
 
         let base = ty
@@ -343,7 +342,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_complex_type(&mut self, ty: &ComplexBaseType) -> Result<(), Error> {
+    pub(super) fn apply_complex_type(&mut self, ty: &'schema ComplexBaseType) -> Result<(), Error> {
         use crate::models::schema::xs::ComplexBaseTypeContent as C;
 
         self.type_mode = TypeMode::Complex;
@@ -367,9 +366,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     self.apply_complex_content(x)
                 }
                 C::SimpleContent(x) => self.apply_simple_content(x),
-                C::All(x) => self.apply_all(x),
-                C::Choice(x) => self.apply_choice(x),
-                C::Sequence(x) => self.apply_sequence(x),
+                C::All(x) => self.apply_all(x, x.min_occurs, x.max_occurs),
+                C::Choice(x) => self.apply_choice(x, x.min_occurs, x.max_occurs),
+                C::Sequence(x) => self.apply_sequence(x, x.min_occurs, x.max_occurs),
                 C::Attribute(x) => self.apply_attribute_ref(x),
                 C::AnyAttribute(x) => self.apply_any_attribute(x),
                 C::Group(x) => self.apply_group_ref(x),
@@ -393,7 +392,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_content(&mut self, ty: &SimpleContent) -> Result<(), Error> {
+    fn apply_simple_content(&mut self, ty: &'schema SimpleContent) -> Result<(), Error> {
         use crate::models::schema::xs::SimpleContentContent as C;
 
         self.content_mode = ContentMode::Simple;
@@ -410,7 +409,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_complex_content(&mut self, ty: &ComplexContent) -> Result<(), Error> {
+    fn apply_complex_content(&mut self, ty: &'schema ComplexContent) -> Result<(), Error> {
         use crate::models::schema::xs::ComplexContentContent as C;
 
         let ci = get_or_init_any!(self, ComplexType);
@@ -444,7 +443,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_content_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
+    fn apply_simple_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Extension)?;
@@ -462,7 +461,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_simple_content_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
+    fn apply_simple_content_restriction(
+        &mut self,
+        ty: &'schema RestrictionType,
+    ) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Restriction)?;
@@ -480,7 +482,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_complex_content_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
+    fn apply_complex_content_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Extension)?;
@@ -493,7 +495,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_complex_content_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
+    fn apply_complex_content_restriction(
+        &mut self,
+        ty: &'schema RestrictionType,
+    ) -> Result<(), Error> {
         let base = self.parse_qname(&ty.base)?;
 
         self.copy_base_type(&base, UpdateMode::Restriction)?;
@@ -506,20 +511,20 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_extension(&mut self, ty: &ExtensionType) -> Result<(), Error> {
+    fn apply_extension(&mut self, ty: &'schema ExtensionType) -> Result<(), Error> {
         use crate::models::schema::xs::ExtensionTypeContent as C;
 
         for c in &ty.content {
             match c {
                 C::OpenContent(_) | C::Assert(_) => (),
                 C::Annotation(x) => self.apply_annotation(x),
-                C::All(x) => self.apply_all(x)?,
-                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
-                C::Attribute(x) => self.apply_attribute_ref(x)?,
-                C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
-                C::Choice(x) => self.apply_choice(x)?,
+                C::All(x) => self.apply_all(x, x.min_occurs, x.max_occurs)?,
+                C::Choice(x) => self.apply_choice(x, x.min_occurs, x.max_occurs)?,
+                C::Sequence(x) => self.apply_sequence(x, x.min_occurs, x.max_occurs)?,
                 C::Group(x) => self.apply_group_ref(x)?,
-                C::Sequence(x) => self.apply_sequence(x)?,
+                C::Attribute(x) => self.apply_attribute_ref(x)?,
+                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
+                C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
             }
         }
 
@@ -527,21 +532,21 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_restriction(&mut self, ty: &RestrictionType) -> Result<(), Error> {
+    fn apply_restriction(&mut self, ty: &'schema RestrictionType) -> Result<(), Error> {
         use crate::models::schema::xs::RestrictionTypeContent as C;
 
         for c in &ty.content {
             match c {
                 C::OpenContent(_) | C::Assert(_) => (),
                 C::Annotation(x) => self.apply_annotation(x),
-                C::All(x) => self.apply_all(x)?,
-                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
+                C::All(x) => self.apply_all(x, x.min_occurs, x.max_occurs)?,
+                C::Choice(x) => self.apply_choice(x, x.min_occurs, x.max_occurs)?,
+                C::Sequence(x) => self.apply_sequence(x, x.min_occurs, x.max_occurs)?,
                 C::Attribute(x) => self.apply_attribute_ref(x)?,
+                C::AnyAttribute(x) => self.apply_any_attribute(x)?,
                 C::AttributeGroup(x) => self.apply_attribute_group_ref(x)?,
-                C::Choice(x) => self.apply_choice(x)?,
                 C::Facet(x) => self.apply_facet(x)?,
                 C::Group(x) => self.apply_group_ref(x)?,
-                C::Sequence(x) => self.apply_sequence(x)?,
                 C::SimpleType(x) => self.apply_simple_type(x)?,
             }
         }
@@ -550,13 +555,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_all(&mut self, ty: &GroupType) -> Result<(), Error> {
+    fn apply_all(
+        &mut self,
+        ty: &'schema GroupType,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+    ) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
         self.complex_content_builder(
             field_name,
-            ty.min_occurs,
-            ty.max_occurs,
+            min_occurs,
+            max_occurs,
             type_ident,
             ComplexContentType::All,
             |builder| builder.apply_group(ty),
@@ -566,13 +576,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_choice(&mut self, ty: &GroupType) -> Result<(), Error> {
+    fn apply_choice(
+        &mut self,
+        ty: &'schema GroupType,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+    ) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
         self.complex_content_builder(
             field_name,
-            ty.min_occurs,
-            ty.max_occurs,
+            min_occurs,
+            max_occurs,
             type_ident,
             ComplexContentType::Choice,
             |builder| builder.apply_group(ty),
@@ -582,13 +597,18 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_sequence(&mut self, ty: &GroupType) -> Result<(), Error> {
+    fn apply_sequence(
+        &mut self,
+        ty: &'schema GroupType,
+        min_occurs: MinOccurs,
+        max_occurs: MaxOccurs,
+    ) -> Result<(), Error> {
         let (field_name, type_ident) = self.make_field_name_and_type(ty);
 
         self.complex_content_builder(
             field_name,
-            ty.min_occurs,
-            ty.max_occurs,
+            min_occurs,
+            max_occurs,
             type_ident,
             ComplexContentType::Sequence,
             |builder| builder.apply_group(ty),
@@ -598,7 +618,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_group(&mut self, ty: &GroupType) -> Result<(), Error> {
+    fn apply_group(&mut self, ty: &'schema GroupType) -> Result<(), Error> {
         use crate::models::schema::xs::GroupTypeContent as C;
 
         let is_mixed = self.state.is_mixed();
@@ -619,9 +639,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     self.apply_annotation(x);
                     Ok(())
                 }
-                C::All(x) => self.apply_all(x),
-                C::Choice(x) => self.apply_choice(x),
-                C::Sequence(x) => self.apply_sequence(x),
+                C::All(x) => self.apply_all(x, x.min_occurs, x.max_occurs),
+                C::Choice(x) => self.apply_choice(x, x.min_occurs, x.max_occurs),
+                C::Sequence(x) => self.apply_sequence(x, x.min_occurs, x.max_occurs),
                 C::Any(x) => self.apply_any(x),
                 C::Group(x) => self.apply_group_ref(x),
                 C::Element(x) => self.apply_element_ref(x),
@@ -638,7 +658,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_element_ref(&mut self, ty: &ElementType) -> Result<(), Error> {
+    fn apply_element_ref(&mut self, ty: &'schema ElementType) -> Result<(), Error> {
         use crate::models::schema::xs::ElementTypeContent as C;
 
         let element = match ty {
@@ -690,7 +710,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 let type_ = if let Some(type_) = &ty.type_ {
                     self.parse_qname(type_)?
                 } else {
-                    self.create_element(ns, Some(type_name), ty, false)?
+                    self.create_element_lazy(ns, Some(type_name), ty)?
                 };
                 let form = ty.form.unwrap_or(self.schema.element_form_default);
 
@@ -743,9 +763,9 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             ret = match c {
                 C::Annotation(_) => Ok(()),
                 C::Any(x) => self.apply_any(x),
-                C::All(x) => self.apply_all(&x.patch(ty)),
-                C::Choice(x) => self.apply_choice(&x.patch(ty)),
-                C::Sequence(x) => self.apply_sequence(&x.patch(ty)),
+                C::All(x) => self.apply_all(x, ty.min_occurs, ty.max_occurs),
+                C::Choice(x) => self.apply_choice(x, ty.min_occurs, ty.max_occurs),
+                C::Sequence(x) => self.apply_sequence(x, ty.min_occurs, ty.max_occurs),
                 C::Group(x) => self.apply_group_ref(x),
                 C::Element(x) => self.apply_element_ref(x),
             };
@@ -796,7 +816,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_attribute_ref(&mut self, ty: &AttributeType) -> Result<(), Error> {
+    fn apply_attribute_ref(&mut self, ty: &'schema AttributeType) -> Result<(), Error> {
         let attribute = match ty {
             AttributeType {
                 name: Some(name),
@@ -1071,7 +1091,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_union(&mut self, ty: &Union) -> Result<(), Error> {
+    fn apply_union(&mut self, ty: &'schema Union) -> Result<(), Error> {
         self.simple_content_builder(|builder| {
             let ui = get_or_init_any!(builder, Union);
 
@@ -1107,7 +1127,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     }
 
     #[instrument(err, level = "trace", skip(self))]
-    fn apply_list(&mut self, ty: &List) -> Result<(), Error> {
+    fn apply_list(&mut self, ty: &'schema List) -> Result<(), Error> {
         let mut type_ = None;
 
         if let Some(s) = &ty.item_type {
@@ -1669,22 +1689,5 @@ impl Update<AttributeType> for AttributeMeta {
     fn update(&mut self, other: &AttributeType) {
         self.use_ = other.use_;
         self.default.update(&other.default);
-    }
-}
-
-/* Patch */
-
-trait Patch<T>: Clone {
-    fn patch(&self, other: &T) -> Cow<'_, Self>;
-}
-
-impl Patch<GroupType> for GroupType {
-    fn patch(&self, other: &GroupType) -> Cow<'_, Self> {
-        let mut ret = self.clone();
-
-        ret.min_occurs = other.min_occurs;
-        ret.max_occurs = other.max_occurs;
-
-        Cow::Owned(ret)
     }
 }
