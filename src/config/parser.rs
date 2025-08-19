@@ -62,6 +62,36 @@ pub enum Schema {
     Schema(String),
 }
 
+impl Schema {
+    /// Create a [`Schema::Url`] from the passed `value`.
+    #[inline]
+    pub fn url<T>(value: T) -> Self
+    where
+        T: Into<Url>,
+    {
+        Self::Url(value.into())
+    }
+
+    /// Create a [`Schema::File`] from the passed `value`.
+    #[inline]
+    pub fn file<T>(value: T) -> Self
+    where
+        T: Into<PathBuf>,
+    {
+        Self::File(value.into())
+    }
+
+    /// Create a [`Schema::Schema`] from the passed `value`.
+    #[inline]
+    #[allow(clippy::self_named_constructors)]
+    pub fn schema<T>(value: T) -> Self
+    where
+        T: Into<String>,
+    {
+        Self::Schema(value.into())
+    }
+}
+
 bitflags! {
     /// Flags to control the [`Parser`](crate::Parser).
     #[derive(Debug, Clone)]
