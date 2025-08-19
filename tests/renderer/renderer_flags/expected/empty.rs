@@ -11,10 +11,6 @@ pub enum MyChoiceTypeContent {
 }
 #[derive(Debug)]
 pub struct MySequenceType {
-    pub content: MySequenceTypeContent,
-}
-#[derive(Debug)]
-pub struct MySequenceTypeContent {
     pub once: i32,
     pub optional: Option<i32>,
     pub once_specify: i32,

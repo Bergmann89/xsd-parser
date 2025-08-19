@@ -1,4 +1,4 @@
-use xsd_parser::{config::GeneratorFlags, Config, IdentType};
+use xsd_parser::{config::RendererFlags, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -8,7 +8,7 @@ fn empty() {
         "tests/renderer/renderer_flags/schema.xsd",
         "tests/renderer/renderer_flags/expected/empty.rs",
         Config::test_default()
-            .set_generator_flags(GeneratorFlags::NONE)
+            .set_renderer_flags(RendererFlags::NONE)
             .with_generate([
                 (IdentType::Type, "tns:MyChoice"),
                 (IdentType::Type, "tns:MySequence"),
@@ -22,7 +22,7 @@ fn render_docs() {
         "tests/renderer/renderer_flags/schema_with_docs.xsd",
         "tests/renderer/renderer_flags/expected/render_docs.rs",
         Config::test_default()
-            .set_generator_flags(GeneratorFlags::RENDER_DOCS)
+            .set_renderer_flags(RendererFlags::RENDER_DOCS)
             .with_generate([
                 (IdentType::Type, "tns:MyChoice"),
                 (IdentType::Type, "tns:MySequence"),

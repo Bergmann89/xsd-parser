@@ -2,16 +2,11 @@ use quote::ToTokens;
 use xsd_parser::{
     config::{GeneratorFlags, IdentTriple, OptimizerFlags, RendererFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
-    models::{
-        meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
-        schema::Namespace,
-    },
+    models::meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
     Config, IdentType, MetaTypes, Schemas,
 };
 
 use crate::utils::{generate_test_validate, ConfigEx};
-
-const NS: Namespace = Namespace::new_const(b"http://www.etim-international.com/bmecat/31");
 
 fn config() -> Config {
     let mut config = Config::test_default()
@@ -61,10 +56,6 @@ fn read_quick_xml() {
 
 fn generate_test(input_xsd: &str, expected_rs: &str, mut config: Config) {
     config.parser.schemas.push(Schema::File(input_xsd.into()));
-
-    config.parser.debug_output = Some("target/parser.log".into());
-    config.interpreter.debug_output = Some("target/interpreter.log".into());
-    config.optimizer.debug_output = Some("target/optimizer.log".into());
 
     let schemas = exec_parser(config.parser).unwrap();
     let meta_types = exec_interpreter(config.interpreter, &schemas).unwrap();

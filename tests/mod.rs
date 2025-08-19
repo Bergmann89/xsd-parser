@@ -3,5 +3,6 @@
 mod feature;
 mod generator;
 mod optimizer;
+mod renderer;
 mod schema;
 mod utils;
