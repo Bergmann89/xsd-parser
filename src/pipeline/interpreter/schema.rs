@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::str::from_utf8;
 
 use tracing::instrument;
@@ -22,6 +22,8 @@ pub(super) struct SchemaInterpreter<'schema, 'state> {
     pub(super) state: &'state mut State<'schema>,
     pub(super) schema: &'schema Schema,
     pub(super) schemas: &'schema Schemas,
+
+    pending_element_types: VecDeque<(Ident, &'schema ElementType)>,
 }
 
 impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
@@ -51,6 +53,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
             state,
             schema,
             schemas,
+            pending_element_types: VecDeque::new(),
         };
 
         for c in &this.schema.content {
@@ -65,7 +68,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                 | SchemaContent::Override(_)
                 | SchemaContent::Redefine(_) => (),
                 SchemaContent::Element(x) => {
-                    this.create_element(target_namespace, None, x, true)?;
+                    this.create_element(target_namespace, None, x)?;
                 }
                 SchemaContent::Attribute(x) => {
                     this.create_attribute(target_namespace, None, x)?;
@@ -77,6 +80,10 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
                     this.create_complex_type(target_namespace, None, x)?;
                 }
             }
+        }
+
+        while let Some((ident, ty)) = this.pending_element_types.pop_front() {
+            this.create_type(ident, |builder| builder.apply_element(ty, false))?;
         }
 
         Ok(())
@@ -92,7 +99,7 @@ impl SchemaInterpreter<'_, '_> {
             let ty = self
                 .find_element(ident.clone())
                 .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let new_ident = self.create_element(ident.ns, None, ty, true)?;
+            let new_ident = self.create_element(ident.ns, None, ty)?;
 
             crate::assert_eq!(ident, &new_ident);
         }
@@ -171,14 +178,13 @@ impl SchemaInterpreter<'_, '_> {
 
 /* Create Methods */
 
-impl SchemaInterpreter<'_, '_> {
+impl<'schema> SchemaInterpreter<'schema, '_> {
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn create_element(
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
-        ty: &ElementType,
-        extract_docs: bool,
+        ty: &'schema ElementType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
@@ -186,7 +192,25 @@ impl SchemaInterpreter<'_, '_> {
             type_: IdentType::Element,
         };
 
-        self.create_type(ident, |builder| builder.apply_element(ty, extract_docs))
+        self.create_type(ident, |builder| builder.apply_element(ty, true))
+    }
+
+    #[instrument(err, level = "trace", skip(self))]
+    pub(super) fn create_element_lazy(
+        &mut self,
+        ns: Option<NamespaceId>,
+        name: Option<Name>,
+        ty: &'schema ElementType,
+    ) -> Result<Ident, Error> {
+        let ident = Ident {
+            ns,
+            name: self.state.name_builder().or(name).or(&ty.name).finish(),
+            type_: IdentType::Element,
+        };
+
+        self.pending_element_types.push_back((ident.clone(), ty));
+
+        Ok(ident)
     }
 
     #[instrument(err, level = "trace", skip(self))]
@@ -194,7 +218,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
-        ty: &AttributeType,
+        ty: &'schema AttributeType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
@@ -210,7 +234,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
-        ty: &SimpleBaseType,
+        ty: &'schema SimpleBaseType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
@@ -226,7 +250,7 @@ impl SchemaInterpreter<'_, '_> {
         &mut self,
         ns: Option<NamespaceId>,
         name: Option<Name>,
-        ty: &ComplexBaseType,
+        ty: &'schema ComplexBaseType,
     ) -> Result<Ident, Error> {
         let ident = Ident {
             ns,
@@ -239,7 +263,7 @@ impl SchemaInterpreter<'_, '_> {
 
     pub(super) fn create_type<F>(&mut self, ident: Ident, mut f: F) -> Result<Ident, Error>
     where
-        F: FnMut(&mut VariantBuilder<'_, '_, '_>) -> Result<(), Error>,
+        F: FnMut(&mut VariantBuilder<'_, 'schema, '_>) -> Result<(), Error>,
     {
         if self.state.types.items.contains_key(&ident)
             || self
