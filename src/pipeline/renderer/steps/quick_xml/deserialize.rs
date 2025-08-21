@@ -37,10 +37,10 @@ pub struct QuickXmlDeserializeRenderStep {
     pub boxed_deserializer: bool,
 }
 
-struct BoxedDeserializer;
+struct DeserializerConfig;
 
-impl ValueKey for BoxedDeserializer {
-    type Type = bool;
+impl ValueKey for DeserializerConfig {
+    type Type = QuickXmlDeserializeRenderStep;
 }
 
 impl RenderStep for QuickXmlDeserializeRenderStep {
@@ -49,7 +49,7 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
     }
 
     fn render_type(&mut self, ctx: &mut Context<'_, '_>) {
-        ctx.set::<BoxedDeserializer>(self.boxed_deserializer);
+        ctx.set::<DeserializerConfig>(*self);
 
         match &ctx.data.variant {
             DataTypeVariant::BuildIn(_) | DataTypeVariant::Custom(_) => (),
@@ -61,7 +61,7 @@ impl RenderStep for QuickXmlDeserializeRenderStep {
             DataTypeVariant::Complex(x) => x.render_deserializer(ctx),
         }
 
-        ctx.unset::<BoxedDeserializer>();
+        ctx.unset::<DeserializerConfig>();
     }
 }
 
@@ -143,8 +143,8 @@ impl DynamicData<'_> {
             ..
         } = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
-        let deserializer_type = if boxed_deserializer {
+        let config = ctx.get_ref::<DeserializerConfig>();
+        let deserializer_type = if config.boxed_deserializer {
             quote!(Box<quick_xml_deserialize::#deserializer_ident>)
         } else {
             quote!(quick_xml_deserialize::#deserializer_ident)
@@ -197,15 +197,15 @@ impl DynamicData<'_> {
             ..
         } = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
-        let deserializer_type = if boxed_deserializer {
+        let config = ctx.get_ref::<DeserializerConfig>();
+        let deserializer_type = if config.boxed_deserializer {
             quote!(Box<#deserializer_ident>)
         } else {
             quote!(#deserializer_ident)
         };
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
-        let deref_self = boxed_deserializer.then(|| quote!(*));
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
+        let deref_self = config.boxed_deserializer.then(|| quote!(*));
 
         let variants_init = derived_types
             .iter()
@@ -305,11 +305,11 @@ impl DerivedType {
             ..
         } = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserialize_mapper = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote!(#boxed_deserializer_ident::#variant_ident(x)),
         );
         let target_type = ctx.resolve_type_for_deserialize_module(target_type);
@@ -365,11 +365,11 @@ impl DerivedType {
     ) -> TokenStream {
         let Self { variant_ident, .. } = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserialize_mapper = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote!(#boxed_deserializer_ident::#variant_ident(x)),
         );
 
@@ -723,7 +723,7 @@ impl ComplexData<'_> {
     }
 }
 
-impl ComplexBase {
+impl ComplexBase<'_> {
     fn return_end_event(&self, ctx: &Context<'_, '_>) -> (TokenStream, TokenStream) {
         ctx.add_quick_xml_deserialize_usings(["xsd_parser::quick_xml::DeserializerEvent"]);
 
@@ -741,8 +741,8 @@ impl ComplexBase {
             ..
         } = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
-        let deserializer_type = if boxed_deserializer {
+        let config = ctx.get_ref::<DeserializerConfig>();
+        let deserializer_type = if config.boxed_deserializer {
             quote!(Box<quick_xml_deserialize::#deserializer_ident>)
         } else {
             quote!(quick_xml_deserialize::#deserializer_ident)
@@ -769,8 +769,8 @@ impl ComplexBase {
     ) {
         let type_ident = &self.type_ident;
         let deserializer_ident = &self.deserializer_ident;
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
-        let deserializer_type = if boxed_deserializer {
+        let config = ctx.get_ref::<DeserializerConfig>();
+        let deserializer_type = if config.boxed_deserializer {
             quote!(Box<#deserializer_ident>)
         } else {
             quote!(#deserializer_ident)
@@ -823,9 +823,9 @@ impl ComplexBase {
     fn render_deserializer_fn_init_for_element(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let _ctx = ctx;
         let deserializer_ident = &self.deserializer_ident;
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
 
         quote! {
             reader.init_deserializer_from_start_event(event, #boxed_deserializer_ident::from_bytes_start)
@@ -879,7 +879,7 @@ impl ComplexDataEnum<'_> {
 
     fn render_deserializer_helper(&self, ctx: &mut Context<'_, '_>) {
         let represents_element = self.represents_element();
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -896,7 +896,7 @@ impl ComplexDataEnum<'_> {
             x.deserializer_enum_variant_fn_handle(
                 ctx,
                 represents_element,
-                &boxed_deserializer_ident(boxed_deserializer, deserializer_ident),
+                &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
                 deserializer_state_ident,
             )
         });
@@ -999,17 +999,17 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_state_ident = &self.deserializer_state_ident;
 
-        let self_type = if boxed_deserializer {
+        let self_type = if config.boxed_deserializer {
             quote!(Box<Self>)
         } else {
             quote!(Self)
         };
 
         let self_ctor = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote! {
                 Self {
                     state: Box::new(#deserializer_state_ident::Init__)
@@ -1053,7 +1053,7 @@ impl ComplexDataEnum<'_> {
 
     fn render_deserializer_fn_finish_state(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let type_ident = &self.type_ident;
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident = &self.deserializer_ident;
         let deserializer_state_ident = &self.deserializer_state_ident;
 
@@ -1061,7 +1061,7 @@ impl ComplexDataEnum<'_> {
             x.deserializer_enum_variant_finish(
                 ctx,
                 type_ident,
-                &boxed_deserializer_ident(boxed_deserializer, deserializer_ident),
+                &boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident),
             )
         });
 
@@ -1104,14 +1104,14 @@ impl ComplexDataEnum<'_> {
     fn render_deserializer_fn_init_for_group(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let _self = self;
 
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident = &self.deserializer_ident;
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let init_deserializer = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote! {
                 #boxed_deserializer_ident {
                     state: Box::new(#deserializer_state_ident::Init__),
@@ -1135,9 +1135,9 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_fn_next(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, &self.deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, &self.deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
         let (event_at, return_end_event) = self.return_end_event(ctx);
 
@@ -1204,9 +1204,9 @@ impl ComplexDataEnum<'_> {
     }
 
     fn render_deserializer_fn_finish(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, &self.deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, &self.deserializer_ident);
 
         quote! {
             #deserializer_ident::finish_state(reader, *self.state)
@@ -1455,7 +1455,7 @@ impl ComplexDataStruct<'_> {
 
     #[allow(clippy::too_many_lines)]
     fn render_deserializer_fn_from_bytes_start(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let mut index = 0;
@@ -1513,14 +1513,14 @@ impl ComplexDataStruct<'_> {
             }
         });
 
-        let self_type = if boxed_deserializer {
+        let self_type = if config.boxed_deserializer {
             quote!(Box<Self>)
         } else {
             quote!(Self)
         };
 
         let self_ctor = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote! {
                 Self {
                     #( #attrib_init )*
@@ -1638,9 +1638,9 @@ impl ComplexDataStruct<'_> {
 
     fn render_deserializer_fn_init_simple(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let deserializer_ident = &self.deserializer_ident;
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::Event",
@@ -1664,10 +1664,10 @@ impl ComplexDataStruct<'_> {
     }
 
     fn render_deserializer_fn_init_for_group(&self, ctx: &Context<'_, '_>) -> TokenStream {
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
+        let config = ctx.get_ref::<DeserializerConfig>();
         let deserializer_ident = &self.deserializer_ident;
         let boxed_deserializer_ident =
-            boxed_deserializer_ident(boxed_deserializer, deserializer_ident);
+            boxed_deserializer_ident(config.boxed_deserializer, deserializer_ident);
         let deserializer_state_ident = &self.deserializer_state_ident;
 
         let element_init = self
@@ -1678,7 +1678,7 @@ impl ComplexDataStruct<'_> {
             .content()
             .map(ComplexDataContent::deserializer_struct_field_init);
         let init_deserializer = do_box(
-            boxed_deserializer,
+            config.boxed_deserializer,
             quote! {
                 #boxed_deserializer_ident {
                     #( #element_init )*
@@ -2197,8 +2197,8 @@ impl ComplexDataContent<'_> {
         deserializer_state_ident: &Ident2,
     ) -> TokenStream {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
-        let boxed_deserializer = ctx.get::<BoxedDeserializer>();
-        let self_type = boxed_deserializer.then(|| quote!(: Box<Self>));
+        let config = ctx.get_ref::<DeserializerConfig>();
+        let self_type = config.boxed_deserializer.then(|| quote!(: Box<Self>));
 
         ctx.add_quick_xml_deserialize_usings([
             "xsd_parser::quick_xml::DeserializeReader",
