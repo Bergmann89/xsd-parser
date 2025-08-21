@@ -6,6 +6,8 @@ use bitflags::bitflags;
 use crate::models::code::IdentPath;
 use crate::pipeline::renderer::{RenderStep as RenderStepTrait, RenderStepType};
 
+use super::Namespace;
+
 /// Configuration for the actual code rendering.
 #[derive(Debug)]
 pub struct RendererConfig {
@@ -153,7 +155,13 @@ pub enum RenderStep {
 
     /// Renderer that renders code for the `quick_xml` serializer of the
     /// different types.
-    QuickXmlSerialize,
+    QuickXmlSerialize {
+        /// Whether to add namespaces to the root element during serialization or not.
+        with_namespaces: bool,
+
+        /// Default namespace to use for the serialization.
+        default_namespace: Option<Namespace>,
+    },
 
     /// Renderer that renders code for the `quick_xml` deserializer of the
     /// different types.
@@ -213,7 +221,7 @@ impl RenderStepConfig for RenderStep {
             Self::Defaults => RenderStepType::ExtraImpls,
             Self::NamespaceConstants => RenderStepType::ExtraImpls,
             Self::WithNamespaceTrait => RenderStepType::ExtraImpls,
-            Self::QuickXmlSerialize => RenderStepType::ExtraImpls,
+            Self::QuickXmlSerialize { .. } => RenderStepType::ExtraImpls,
             Self::QuickXmlDeserialize { .. } => RenderStepType::ExtraImpls,
         }
     }
@@ -241,7 +249,13 @@ impl RenderStepConfig for RenderStep {
             Self::Defaults => Box::new(DefaultsRenderStep),
             Self::NamespaceConstants => Box::new(NamespaceConstantsRenderStep::default()),
             Self::WithNamespaceTrait => Box::new(WithNamespaceTraitRenderStep),
-            Self::QuickXmlSerialize => Box::new(QuickXmlSerializeRenderStep),
+            Self::QuickXmlSerialize {
+                with_namespaces,
+                default_namespace,
+            } => Box::new(QuickXmlSerializeRenderStep {
+                with_namespaces,
+                default_namespace,
+            }),
             Self::QuickXmlDeserialize { boxed_deserializer } => {
                 Box::new(QuickXmlDeserializeRenderStep { boxed_deserializer })
             }
@@ -272,7 +286,7 @@ impl RenderStepConfig for RenderStep {
             (Self::Defaults, Some(Self::Defaults)) => true,
             (Self::NamespaceConstants, Some(Self::NamespaceConstants)) => true,
             (Self::WithNamespaceTrait, Some(Self::WithNamespaceTrait)) => true,
-            (Self::QuickXmlSerialize, Some(Self::QuickXmlSerialize)) => true,
+            (Self::QuickXmlSerialize { .. }, Some(Self::QuickXmlSerialize { .. })) => true,
             (Self::QuickXmlDeserialize { .. }, Some(Self::QuickXmlDeserialize { .. })) => true,
             (Self::Types, None) => other_id == TypeId::of::<TypesRenderStep>(),
             (
@@ -297,7 +311,7 @@ impl RenderStepConfig for RenderStep {
             (Self::WithNamespaceTrait, None) => {
                 other_id == TypeId::of::<WithNamespaceTraitRenderStep>()
             }
-            (Self::QuickXmlSerialize, None) => {
+            (Self::QuickXmlSerialize { .. }, None) => {
                 other_id == TypeId::of::<QuickXmlSerializeRenderStep>()
             }
             (Self::QuickXmlDeserialize { .. }, None) => {
@@ -320,7 +334,7 @@ impl RenderStep {
             | (Self::Defaults, Self::Defaults)
             | (Self::NamespaceConstants, Self::NamespaceConstants)
             | (Self::WithNamespaceTrait, Self::WithNamespaceTrait)
-            | (Self::QuickXmlSerialize, Self::QuickXmlSerialize)
+            | (Self::QuickXmlSerialize { .. }, Self::QuickXmlSerialize { .. })
             | (Self::QuickXmlDeserialize { .. }, Self::QuickXmlDeserialize { .. }) => true,
             (_, _) => false,
         }

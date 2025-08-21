@@ -42,10 +42,10 @@ impl WithSerializer for FooContent2Type {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
-        let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent2TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooContent2TypeSerializerState::Init__),
+            is_root,
         })
     }
 }
@@ -65,10 +65,10 @@ impl WithSerializer for FooContent3Type {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
-        let _is_root = is_root;
         Ok(quick_xml_serialize::FooContent3TypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooContent3TypeSerializerState::Init__),
+            is_root,
         })
     }
 }
@@ -1129,6 +1129,7 @@ pub mod quick_xml_serialize {
     pub struct FooContent2TypeSerializer<'ser> {
         pub(super) value: &'ser super::FooContent2Type,
         pub(super) state: Box<FooContent2TypeSerializerState<'ser>>,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooContent2TypeSerializerState<'ser> {
@@ -1145,12 +1146,12 @@ pub mod quick_xml_serialize {
                     FooContent2TypeSerializerState::Init__ => match self.value {
                         super::FooContent2Type::Element1(x) => {
                             *self.state = FooContent2TypeSerializerState::Element1(
-                                WithSerializer::serializer(x, Some("tns:Element1"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Element1"), self.is_root)?,
                             )
                         }
                         super::FooContent2Type::Element2(x) => {
                             *self.state = FooContent2TypeSerializerState::Element2(
-                                WithSerializer::serializer(x, Some("tns:Element2"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Element2"), self.is_root)?,
                             )
                         }
                     },
@@ -1185,6 +1186,7 @@ pub mod quick_xml_serialize {
     pub struct FooContent3TypeSerializer<'ser> {
         pub(super) value: &'ser super::FooContent3Type,
         pub(super) state: Box<FooContent3TypeSerializerState<'ser>>,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooContent3TypeSerializerState<'ser> {
@@ -1201,12 +1203,12 @@ pub mod quick_xml_serialize {
                     FooContent3TypeSerializerState::Init__ => match self.value {
                         super::FooContent3Type::Element3(x) => {
                             *self.state = FooContent3TypeSerializerState::Element3(
-                                WithSerializer::serializer(x, Some("tns:Element3"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Element3"), self.is_root)?,
                             )
                         }
                         super::FooContent3Type::Element4(x) => {
                             *self.state = FooContent3TypeSerializerState::Element4(
-                                WithSerializer::serializer(x, Some("tns:Element4"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Element4"), self.is_root)?,
                             )
                         }
                     },

@@ -43,10 +43,10 @@ impl WithSerializer for FooOuterType {
         is_root: bool,
     ) -> Result<Self::Serializer<'ser>, Error> {
         let _name = name;
-        let _is_root = is_root;
         Ok(quick_xml_serialize::FooOuterTypeSerializer {
             value: self,
             state: Box::new(quick_xml_serialize::FooOuterTypeSerializerState::Init__),
+            is_root,
         })
     }
 }
@@ -1187,6 +1187,7 @@ pub mod quick_xml_serialize {
     pub struct FooOuterTypeSerializer<'ser> {
         pub(super) value: &'ser super::FooOuterType,
         pub(super) state: Box<FooOuterTypeSerializerState<'ser>>,
+        pub(super) is_root: bool,
     }
     #[derive(Debug)]
     pub(super) enum FooOuterTypeSerializerState<'ser> {
@@ -1204,17 +1205,17 @@ pub mod quick_xml_serialize {
                     FooOuterTypeSerializerState::Init__ => match self.value {
                         super::FooOuterType::Bar(x) => {
                             *self.state = FooOuterTypeSerializerState::Bar(
-                                WithSerializer::serializer(x, Some("tns:Bar"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Bar"), self.is_root)?,
                             )
                         }
                         super::FooOuterType::Baz(x) => {
                             *self.state = FooOuterTypeSerializerState::Baz(
-                                WithSerializer::serializer(x, Some("tns:Baz"), false)?,
+                                WithSerializer::serializer(x, Some("tns:Baz"), self.is_root)?,
                             )
                         }
                         super::FooOuterType::Inner(x) => {
                             *self.state = FooOuterTypeSerializerState::Inner(
-                                WithSerializer::serializer(x, Some("Inner"), false)?,
+                                WithSerializer::serializer(x, Some("Inner"), self.is_root)?,
                             )
                         }
                     },

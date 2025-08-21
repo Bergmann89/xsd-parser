@@ -24,7 +24,10 @@ fn main() -> Result<(), Error> {
         RenderStep::QuickXmlDeserialize {
             boxed_deserializer: false,
         },
-        RenderStep::QuickXmlSerialize,
+        RenderStep::QuickXmlSerialize {
+            with_namespaces: true,
+            default_namespace: None,
+        },
     ]);
 
     // Generate the code based on the configuration above.
