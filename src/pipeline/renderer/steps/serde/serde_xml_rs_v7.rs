@@ -406,6 +406,8 @@ impl ComplexDataAttribute<'_> {
             ..
         } = self;
 
+        let tag_name = tag_name.get(true);
+
         let target_type = ctx.resolve_type_for_module(&self.target_type);
         let target_type = if self.is_option {
             quote!(Option<#target_type>)

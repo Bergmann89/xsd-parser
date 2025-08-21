@@ -336,7 +336,7 @@ impl ComplexData<'_> {
     }
 }
 
-impl ComplexBase {
+impl ComplexBase<'_> {
     fn render_with_serializer(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             type_ident,
@@ -345,7 +345,9 @@ impl ComplexBase {
         } = self;
 
         let body = if let Some(tag_name) = &self.element_tag() {
-            self.render_with_serializer_for_element(tag_name)
+            let tag_name = tag_name.get(true);
+
+            self.render_with_serializer_for_element(&tag_name)
         } else {
             self.render_with_serializer_for_content()
         };
@@ -793,7 +795,7 @@ impl ComplexDataStruct<'_> {
     fn render_serializer_impl_start_event(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let xmlns = self.render_serializer_xmlns(ctx);
         let attributes = self.attributes.iter().map(|attrib| {
-            let attrib_name = &attrib.tag_name;
+            let attrib_name = &attrib.tag_name.get(true);
             let field_ident = &attrib.ident;
 
             if attrib.meta.is_any() {
@@ -960,7 +962,7 @@ impl ComplexDataElement<'_> {
         state_ident: &Ident2,
         value: &TokenStream,
     ) -> TokenStream {
-        let field_name = &self.tag_name;
+        let field_name = &self.tag_name.get(true);
         let variant_ident = &self.variant_ident;
 
         match self.occurs {
