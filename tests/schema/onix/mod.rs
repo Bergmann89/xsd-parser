@@ -1,6 +1,6 @@
 use quote::ToTokens;
 use xsd_parser::{
-    config::{GeneratorFlags, IdentTriple, OptimizerFlags, RendererFlags, Schema},
+    config::{GeneratorFlags, IdentTriple, Namespace, OptimizerFlags, RendererFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
     models::meta::{ElementMetaVariant, ElementMode, MetaTypeVariant},
     Config, IdentType, MetaTypes, Schemas,
@@ -40,7 +40,13 @@ fn generate_quick_xml() {
     generate_test(
         "tests/schema/onix/schema/ONIX_BookProduct_3.1_reference.xsd",
         "tests/schema/onix/expected/quick_xml.rs",
-        config().with_quick_xml(),
+        config().with_quick_xml_config(
+            true,
+            Some(Namespace::new_const(
+                b"http://ns.editeur.org/onix/3.1/reference",
+            )),
+            false,
+        ),
     );
 }
 
@@ -50,6 +56,21 @@ fn read_quick_xml() {
     use quick_xml::onix::OnixMessageElement;
 
     let _obj = crate::utils::quick_xml_read_test::<OnixMessageElement, _>(
+        "tests/schema/onix/examples/Onix3sample_refnames.xml",
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_write_quick_xml() {
+    use quick_xml::onix::OnixMessageElement;
+
+    let obj = crate::utils::quick_xml_read_test::<OnixMessageElement, _>(
+        "tests/schema/onix/examples/Onix3sample_refnames.xml",
+    );
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "ONIXMessage",
         "tests/schema/onix/examples/Onix3sample_refnames.xml",
     );
 }

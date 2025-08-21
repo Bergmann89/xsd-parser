@@ -234,8 +234,7 @@ impl Iterator for IterReader {
                 .take()
                 .unwrap_or_else(|| self.reader.read_event_into(&mut self.buffer).unwrap())
             {
-                Event::Decl(_) if text.is_empty() => (),
-                Event::Decl(_) => (),
+                Event::Decl(_) | Event::Comment(_) => (),
                 Event::Text(x) => {
                     let x = x.decode().unwrap();
 

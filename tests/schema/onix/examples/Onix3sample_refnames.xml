@@ -257,7 +257,7 @@
 			</CitedContent>
 			<SupportingResource>
 				<ResourceContentType>01</ResourceContentType>
-				<ContentAudience>00</ContentAudience>	
+				<ContentAudience>00</ContentAudience>
 				<ResourceMode>03</ResourceMode>
 				<ResourceVersion>
 					<ResourceForm>02</ResourceForm>
@@ -413,7 +413,7 @@
 						<TaxRateCode>Z</TaxRateCode>
 						<TaxRatePercent>0</TaxRatePercent>
 						<TaxableAmount>7.99</TaxableAmount>
-						<TaxAmount>0.00</TaxAmount>
+						<TaxAmount>0</TaxAmount>
 					</Tax>
 					<CurrencyCode>GBP</CurrencyCode>
 					<Territory>
