@@ -22069,42 +22069,46 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::PopcountType::Op(x) => {
                                 *self.state = PopcountTypeSerializerState::Op(
-                                    WithSerializer::serializer(&**x, Some("op"), false)?,
+                                    WithSerializer::serializer(&**x, Some("op"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Unop(x) => {
                                 *self.state = PopcountTypeSerializerState::Unop(
-                                    WithSerializer::serializer(&**x, Some("unop"), false)?,
+                                    WithSerializer::serializer(&**x, Some("unop"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Fieldref(x) => {
                                 *self.state = PopcountTypeSerializerState::Fieldref(
-                                    WithSerializer::serializer(x, Some("fieldref"), false)?,
+                                    WithSerializer::serializer(x, Some("fieldref"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Enumref(x) => {
                                 *self.state = PopcountTypeSerializerState::Enumref(
-                                    WithSerializer::serializer(x, Some("enumref"), false)?,
+                                    WithSerializer::serializer(x, Some("enumref"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Popcount(x) => {
                                 *self.state = PopcountTypeSerializerState::Popcount(
-                                    WithSerializer::serializer(&**x, Some("popcount"), false)?,
+                                    WithSerializer::serializer(
+                                        &**x,
+                                        Some("popcount"),
+                                        self.is_root,
+                                    )?,
                                 )
                             }
                             super::PopcountType::Sumof(x) => {
                                 *self.state = PopcountTypeSerializerState::Sumof(
-                                    WithSerializer::serializer(x, Some("sumof"), false)?,
+                                    WithSerializer::serializer(x, Some("sumof"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Value(x) => {
                                 *self.state = PopcountTypeSerializerState::Value(
-                                    WithSerializer::serializer(x, Some("value"), false)?,
+                                    WithSerializer::serializer(x, Some("value"), self.is_root)?,
                                 )
                             }
                             super::PopcountType::Bit(x) => {
                                 *self.state = PopcountTypeSerializerState::Bit(
-                                    WithSerializer::serializer(x, Some("bit"), false)?,
+                                    WithSerializer::serializer(x, Some("bit"), self.is_root)?,
                                 )
                             }
                         }

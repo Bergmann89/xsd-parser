@@ -597,25 +597,31 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::FooType::Once(x) => {
                                 *self.state = FooTypeSerializerState::Once(
-                                    WithSerializer::serializer(x, Some("tns:Once"), false)?,
+                                    WithSerializer::serializer(x, Some("tns:Once"), self.is_root)?,
                                 )
                             }
                             super::FooType::Optional(x) => {
                                 *self.state = FooTypeSerializerState::Optional(IterSerializer::new(
                                     x.as_ref(),
                                     Some("tns:Optional"),
-                                    false,
+                                    self.is_root,
                                 ))
                             }
                             super::FooType::OnceSpecify(x) => {
-                                *self.state = FooTypeSerializerState::OnceSpecify(
-                                    WithSerializer::serializer(x, Some("tns:OnceSpecify"), false)?,
-                                )
+                                *self.state =
+                                    FooTypeSerializerState::OnceSpecify(WithSerializer::serializer(
+                                        x,
+                                        Some("tns:OnceSpecify"),
+                                        self.is_root,
+                                    )?)
                             }
                             super::FooType::TwiceOrMore(x) => {
-                                *self.state = FooTypeSerializerState::TwiceOrMore(
-                                    IterSerializer::new(&x[..], Some("tns:TwiceOrMore"), false),
-                                )
+                                *self.state =
+                                    FooTypeSerializerState::TwiceOrMore(IterSerializer::new(
+                                        &x[..],
+                                        Some("tns:TwiceOrMore"),
+                                        self.is_root,
+                                    ))
                             }
                         }
                         let mut bytes = BytesStart::new(self.name);

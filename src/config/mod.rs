@@ -249,7 +249,27 @@ impl Config {
             RenderStep::Types,
             RenderStep::Defaults,
             RenderStep::NamespaceConstants,
-            RenderStep::QuickXmlSerialize,
+            RenderStep::QuickXmlSerialize {
+                with_namespaces: true,
+                default_namespace: None,
+            },
+        ])
+    }
+
+    /// Enable code generation for [`quick_xml`] serialization.
+    pub fn with_quick_xml_serialize_config(
+        self,
+        with_namespaces: bool,
+        default_namespace: Option<Namespace>,
+    ) -> Self {
+        self.with_render_steps([
+            RenderStep::Types,
+            RenderStep::Defaults,
+            RenderStep::NamespaceConstants,
+            RenderStep::QuickXmlSerialize {
+                with_namespaces,
+                default_namespace,
+            },
         ])
     }
 
@@ -277,8 +297,13 @@ impl Config {
 
     /// Enable render steps for [`quick_xml`] serialization and deserialization
     /// with the passed configuration.
-    pub fn with_quick_xml_config(self, boxed_deserializer: bool) -> Self {
-        self.with_quick_xml_serialize()
+    pub fn with_quick_xml_config(
+        self,
+        serialize_with_namespaces: bool,
+        default_serialize_namespace: Option<Namespace>,
+        boxed_deserializer: bool,
+    ) -> Self {
+        self.with_quick_xml_serialize_config(serialize_with_namespaces, default_serialize_namespace)
             .with_quick_xml_deserialize_config(boxed_deserializer)
     }
 
