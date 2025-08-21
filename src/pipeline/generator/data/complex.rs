@@ -9,6 +9,7 @@ use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, Occurs, PathData, StructMode,
+        TagName,
     },
     meta::{
         AttributeMeta, AttributeMetaVariant, ComplexMeta, ElementMeta, ElementMetaVariant,
@@ -165,7 +166,7 @@ impl<'types> ComplexData<'types> {
         max_occurs: MaxOccurs,
         attributes: &'types [AttributeMeta],
     ) -> Result<Self, Error> {
-        let base = ComplexBase::new(ctx, false, form)?;
+        let base = ComplexBase::new(ctx, false, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let content_ref = ctx.get_or_create_type_ref(simple_type)?;
@@ -210,7 +211,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, form)?;
+        let mut base = ComplexBase::new(ctx, has_any, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
         let mut allow_any_attribute = false;
@@ -261,7 +262,7 @@ impl<'types> ComplexData<'types> {
 
         let content_type = has_content.then(|| {
             let type_ = ComplexDataEnum {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
+                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any), true),
                 elements: take(&mut elements),
                 allow_any,
                 allow_any_attribute,
@@ -328,7 +329,7 @@ impl<'types> ComplexData<'types> {
         elements: &'types [ElementMeta],
     ) -> Result<Self, Error> {
         let has_any = ctx.any_type.is_some() && elements.iter().any(ElementMeta::is_any);
-        let mut base = ComplexBase::new(ctx, has_any, form)?;
+        let mut base = ComplexBase::new(ctx, has_any, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
         let flatten = occurs == Occurs::Single
             && ctx.check_generator_flags(GeneratorFlags::FLATTEN_STRUCT_CONTENT);
@@ -415,7 +416,7 @@ impl<'types> ComplexData<'types> {
             };
 
             let type_ = ComplexDataStruct {
-                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any)),
+                base: ComplexBase::new_empty(content_ident.clone(), take(&mut base.has_any), true),
                 mode,
 
                 attributes: Vec::new(),
@@ -472,13 +473,18 @@ impl<'types> ComplexData<'types> {
     }
 }
 
-impl ComplexBase {
-    fn new(ctx: &mut Context<'_, '_>, has_any: bool, form: FormChoiceType) -> Result<Self, Error> {
+impl<'types> ComplexBase<'types> {
+    fn new(
+        ctx: &mut Context<'_, 'types>,
+        has_any: bool,
+        is_content: bool,
+        form: FormChoiceType,
+    ) -> Result<Self, Error> {
         let type_ref = ctx.current_type_ref();
         let type_ident = type_ref.path.ident().clone();
 
-        let mut ret = Self::new_empty(type_ident, has_any);
-        ret.tag_name = Some(make_tag_name(ctx.types, ctx.ident, form));
+        let mut ret = Self::new_empty(type_ident, has_any, is_content);
+        ret.tag_name = Some(TagName::new(ctx.types, ctx.ident, form));
         ret.trait_impls = ctx.make_trait_impls()?;
 
         if let Some(MetaTypeVariant::ComplexType(ci)) = ctx.types.get_variant(ctx.ident) {
@@ -489,7 +495,7 @@ impl ComplexBase {
         Ok(ret)
     }
 
-    fn new_empty(type_ident: Ident2, has_any: bool) -> Self {
+    fn new_empty(type_ident: Ident2, has_any: bool, is_content: bool) -> Self {
         let serializer_ident = format_ident!("{type_ident}Serializer");
         let serializer_state_ident = format_ident!("{type_ident}SerializerState");
 
@@ -503,6 +509,7 @@ impl ComplexBase {
             tag_name: None,
             has_any,
 
+            is_content,
             is_complex: false,
             is_dynamic: false,
 
@@ -558,7 +565,7 @@ impl<'types> ComplexDataElement<'types> {
             return Ok(None);
         }
 
-        let tag_name = make_tag_name(ctx.types, &meta.ident, meta.form);
+        let tag_name = TagName::new(ctx.types, &meta.ident, meta.form);
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
         let field_ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
@@ -643,7 +650,7 @@ impl<'types> ComplexDataElement<'types> {
             occurs: Occurs::Optional,
             s_name: ident.into(),
             b_name: Literal::byte_string(ident.as_bytes()),
-            tag_name: String::new(),
+            tag_name: TagName::default(),
             field_ident,
             variant_ident,
             target_type: PathData::text(),
@@ -683,7 +690,7 @@ impl<'types> ComplexDataElement<'types> {
             occurs,
             s_name: "content".into(),
             b_name: Literal::byte_string(b"content"),
-            tag_name: String::new(),
+            tag_name: TagName::default(),
             field_ident: format_ident!("content"),
             variant_ident: format_ident!("Content"),
             target_type,
@@ -735,7 +742,7 @@ impl<'types> ComplexDataAttribute<'types> {
 
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let tag_name = make_tag_name(ctx.types, &meta.ident, meta.form);
+        let tag_name = TagName::new(ctx.types, &meta.ident, meta.form);
         let is_option = matches!((&meta.use_, &default_value), (Use::Optional, None));
 
         Ok(Some(Self {
@@ -762,23 +769,6 @@ fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
         MetaTypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
         _ => false,
     }
-}
-
-fn make_tag_name(types: &MetaTypes, ident: &Ident, form: FormChoiceType) -> String {
-    let name = ident.name.to_string();
-
-    if form == FormChoiceType::Qualified {
-        if let Some(module) = ident
-            .ns
-            .as_ref()
-            .and_then(|ns| types.modules.get(ns))
-            .and_then(|module| module.prefix.as_ref())
-        {
-            return format!("{module}:{name}");
-        }
-    }
-
-    name
 }
 
 impl PathData {

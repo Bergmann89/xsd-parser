@@ -3,6 +3,7 @@ use std::ops::Deref;
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
+    data::TagName,
     meta::{AttributeMeta, ElementMeta},
     schema::{MaxOccurs, MinOccurs},
     Ident,
@@ -59,7 +60,7 @@ pub enum ComplexData<'types> {
 /// and [`ComplexDataStruct`].
 #[derive(Debug)]
 #[allow(clippy::struct_excessive_bools)]
-pub struct ComplexBase {
+pub struct ComplexBase<'types> {
     /// The identifier of the rendered type.
     pub type_ident: Ident2,
 
@@ -67,7 +68,7 @@ pub struct ComplexBase {
     pub trait_impls: Vec<TokenStream>,
 
     /// Name of the XML tag of the type (if the type represents an element in the XML).
-    pub tag_name: Option<String>,
+    pub tag_name: Option<TagName<'types>>,
 
     /// Whether the type has at least one `xs:any` element or not.
     pub has_any: bool,
@@ -77,6 +78,9 @@ pub struct ComplexBase {
 
     /// `true` if the type is dynamic, `false` otherwise.
     pub is_dynamic: bool,
+
+    /// `true` if the type is the content type of another complex type.
+    pub is_content: bool,
 
     /// Identifier of the serializer for this type.
     pub serializer_ident: Ident2,
@@ -97,7 +101,7 @@ pub struct ComplexBase {
 #[derive(Debug)]
 pub struct ComplexDataEnum<'types> {
     /// Basic type information.
-    pub base: ComplexBase,
+    pub base: ComplexBase<'types>,
 
     /// List of `xs:element`s or variants contained in this enum
     pub elements: Vec<ComplexDataElement<'types>>,
@@ -119,7 +123,7 @@ pub struct ComplexDataEnum<'types> {
 #[derive(Debug)]
 pub struct ComplexDataStruct<'types> {
     /// Basic type information.
-    pub base: ComplexBase,
+    pub base: ComplexBase<'types>,
 
     /// Additional information about the content of the struct.
     pub mode: StructMode<'types>,
@@ -218,7 +222,7 @@ pub struct ComplexDataElement<'types> {
     pub b_name: Literal,
 
     /// Name of the XML tag of the element.
-    pub tag_name: String,
+    pub tag_name: TagName<'types>,
 
     /// Field identifier of the element.
     pub field_ident: Ident2,
@@ -266,7 +270,7 @@ pub struct ComplexDataAttribute<'types> {
     pub b_name: Literal,
 
     /// Name of the attribute inside the XML tag.
-    pub tag_name: String,
+    pub tag_name: TagName<'types>,
 
     /// `true` if this attribute is optional, `false` otherwise.
     pub is_option: bool,
@@ -278,10 +282,10 @@ pub struct ComplexDataAttribute<'types> {
     pub default_value: Option<TokenStream>,
 }
 
-impl ComplexBase {
+impl<'types> ComplexBase<'types> {
     /// Returns the name of the element tag, if type is represented by a XML element.
     #[must_use]
-    pub fn element_tag(&self) -> Option<&String> {
+    pub fn element_tag(&self) -> Option<&TagName<'types>> {
         (self.is_complex && !self.is_dynamic)
             .then_some(self.tag_name.as_ref())
             .flatten()
@@ -294,8 +298,8 @@ impl ComplexBase {
     }
 }
 
-impl Deref for ComplexDataEnum<'_> {
-    type Target = ComplexBase;
+impl<'types> Deref for ComplexDataEnum<'types> {
+    type Target = ComplexBase<'types>;
 
     fn deref(&self) -> &Self::Target {
         &self.base
@@ -362,8 +366,8 @@ impl<'types> ComplexDataStruct<'types> {
     }
 }
 
-impl Deref for ComplexDataStruct<'_> {
-    type Target = ComplexBase;
+impl<'types> Deref for ComplexDataStruct<'types> {
+    type Target = ComplexBase<'types>;
 
     fn deref(&self) -> &Self::Target {
         &self.base
