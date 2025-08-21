@@ -103,12 +103,35 @@ impl<'a, 'types> Context<'a, 'types> {
     where
         K: ValueKey,
     {
+        self.get_ref::<K>().clone()
+    }
+
+    /// Get a reference to the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn get_ref<K>(&self) -> &K::Type
+    where
+        K: ValueKey,
+    {
         self.values
             .get(&TypeId::of::<K>())
             .unwrap()
             .downcast_ref::<K::Type>()
             .unwrap()
-            .clone()
+    }
+
+    /// Get a mutable reference to the value that was stored for the specified key `K`.
+    ///
+    /// Panics if the key was not set before.
+    pub fn get_mut<K>(&mut self) -> &mut K::Type
+    where
+        K: ValueKey,
+    {
+        self.values
+            .get_mut(&TypeId::of::<K>())
+            .unwrap()
+            .downcast_mut::<K::Type>()
+            .unwrap()
     }
 
     /// Removes any values for the specified key `K`.
