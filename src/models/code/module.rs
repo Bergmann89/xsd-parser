@@ -267,7 +267,7 @@ where
             continue;
         };
 
-        let (ident, path) = ident.into_parts();
+        let (ident, path, _) = ident.into_parts();
 
         let mut module = &mut root;
         for part in path.into_iter().flat_map(|x| x.0) {

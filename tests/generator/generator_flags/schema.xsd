@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:tns="http://example.com"
     targetNamespace="http://example.com">
-    <xs:complexType name="MyChoice">
+    <xs:complexType name="MyChoice" mixed="true">
         <xs:choice>
             <xs:element name="Once" type="xs:int" />
             <xs:element name="Optional" type="xs:int" minOccurs="0" />
@@ -11,7 +11,7 @@
         </xs:choice>
     </xs:complexType>
 
-    <xs:complexType name="MySequence">
+    <xs:complexType name="MySequence" mixed="true">
         <xs:sequence>
             <xs:element name="Once" type="xs:int" />
             <xs:element name="Optional" type="xs:int" minOccurs="0" />

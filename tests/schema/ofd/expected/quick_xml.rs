@@ -51835,12 +51835,12 @@ pub mod quick_xml_serialize {
                         match self.value {
                             super::CtActionGotoXElementType::Dest(x) => {
                                 *self.state = CtActionGotoXElementTypeSerializerState::Dest(
-                                    WithSerializer::serializer(x, Some("Dest"), false)?,
+                                    WithSerializer::serializer(x, Some("Dest"), self.is_root)?,
                                 )
                             }
                             super::CtActionGotoXElementType::Bookmark(x) => {
                                 *self.state = CtActionGotoXElementTypeSerializerState::Bookmark(
-                                    WithSerializer::serializer(x, Some("Bookmark"), false)?,
+                                    WithSerializer::serializer(x, Some("Bookmark"), self.is_root)?,
                                 )
                             }
                         }

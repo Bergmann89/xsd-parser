@@ -4,6 +4,9 @@ use std::fmt::{Debug, Display, Formatter, Result as FmtResult};
 use std::hash::{Hash, Hasher};
 use std::ops::{Deref, DerefMut};
 
+use quote::format_ident;
+
+use crate::models::code::IdentPath;
 use crate::models::schema::xs::FormChoiceType;
 
 use super::{
@@ -220,6 +223,46 @@ impl BuildInMeta {
             Self::Bool => "bool",
             Self::String => "String",
         }
+    }
+
+    /// Return the absolute path of the build in type as &str.
+    #[must_use]
+    pub fn as_absolute_path(&self) -> &'static str {
+        match self {
+            Self::U8 => "::core::primitive::u8",
+            Self::U16 => "::core::primitive::u16",
+            Self::U32 => "::core::primitive::u32",
+            Self::U64 => "::core::primitive::u64",
+            Self::U128 => "::core::primitive::u128",
+            Self::Usize => "::core::primitive::usize",
+
+            Self::I8 => "::core::primitive::i8",
+            Self::I16 => "::core::primitive::i16",
+            Self::I32 => "::core::primitive::i32",
+            Self::I64 => "::core::primitive::i64",
+            Self::I128 => "::core::primitive::i128",
+            Self::Isize => "::core::primitive::isize",
+
+            Self::F32 => "::core::primitive::f32",
+            Self::F64 => "::core::primitive::f64",
+
+            Self::Bool => "::core::primitive::bool",
+            Self::String => "::std::string::String",
+        }
+    }
+
+    /// Return the relative [`IdentPath`] of the build-in type.
+    #[must_use]
+    pub fn ident_path(&self) -> IdentPath {
+        IdentPath::from_ident(format_ident!("{self}"))
+    }
+
+    /// Return the absolute [`IdentPath`] of the build-in type.
+    #[must_use]
+    pub fn absolute_ident_path(&self) -> IdentPath {
+        use std::str::FromStr;
+
+        IdentPath::from_str(self.as_absolute_path()).unwrap()
     }
 }
 

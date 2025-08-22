@@ -25,9 +25,8 @@ fn config() -> Config {
         ])
         .with_parser_flags(ParserFlags::all())
         .with_interpreter_flags(InterpreterFlags::all())
-        .with_generator_flags(GeneratorFlags::all())
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all());
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS);
 
     config.parser.debug_output = Some("target/parser.log".into());
     config.interpreter.debug_output = Some("target/interpreter.log".into());

@@ -11,7 +11,7 @@ use crate::utils::generate_test_validate;
 fn config() -> Config {
     Config::default()
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all())
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
         .with_renderer_flags(RendererFlags::RENDER_DOCS)
         .with_any_support(
             "xsd_parser::xml::AnyElement",

@@ -14,7 +14,11 @@ fn config() -> Config {
                 - OptimizerFlags::SIMPLIFY_MIXED_TYPES
                 - OptimizerFlags::USE_UNRESTRICTED_BASE_TYPE_SIMPLE,
         )
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::USE_MODULES)
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::USE_MODULES
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
+        )
         .with_renderer_flags(RendererFlags::RENDER_DOCS)
         .with_any_support(
             "xsd_parser::xml::AnyElement",

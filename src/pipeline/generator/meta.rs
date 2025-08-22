@@ -36,6 +36,7 @@ pub struct MetaData<'types> {
 impl MetaData<'_> {
     /// Whether the passed `flags` intersect with the generator flags set in
     /// the configuration, or not.
+    #[inline]
     #[must_use]
     pub fn check_generator_flags(&self, flags: GeneratorFlags) -> bool {
         self.flags.intersects(flags)
