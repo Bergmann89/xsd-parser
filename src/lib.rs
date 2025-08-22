@@ -152,6 +152,9 @@ pub fn exec_parser(config: ParserConfig) -> Result<Schemas, Error> {
             Schema::Url(url) => parser = parser.add_schema_from_url(url)?,
             Schema::File(path) => parser = parser.add_schema_from_file(path)?,
             Schema::Schema(schema) => parser = parser.add_schema_from_str(&schema)?,
+            Schema::NamedSchema(name, schema) => {
+                parser = parser.add_named_schema_from_str(name, &schema)?;
+            }
         }
     }
 

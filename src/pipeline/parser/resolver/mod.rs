@@ -33,17 +33,21 @@ pub trait Resolver: Debug {
     ///
     /// This methods tries to resolve the schema information by using the
     /// information provided by the passed request. If the operation was
-    /// successful the url and a buffer that contains the schema information
-    /// is returned in `Ok(Some((url, buffer)))`. If the request could not be
-    /// resolved `Ok(None)` is returned.
+    /// successful the name, url and a buffer that contains the schema information
+    /// is returned in `Ok(Some((name, url, buffer)))`. If the request could
+    /// not be resolved `Ok(None)` is returned.
     ///
     /// # Errors
     ///
     /// May return any error if resolving the schema information was not
     /// successful.
-    fn resolve(&mut self, req: &ResolveRequest)
-        -> Result<Option<(Url, Self::Buffer)>, Self::Error>;
+    #[allow(clippy::type_complexity)]
+    fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self>;
 }
+
+/// Helper type to simplify the result of a [`Resolver`].
+pub type ResolveResult<R> =
+    Result<Option<(Option<String>, Url, <R as Resolver>::Buffer)>, <R as Resolver>::Error>;
 
 /// Contains information about the requested resolve action.
 #[must_use]
@@ -130,5 +134,15 @@ impl Display for ResolveRequest {
         }
 
         Ok(())
+    }
+}
+
+fn strip_name_ext(s: &str) -> &str {
+    if let Some(s) = s.strip_suffix(".xml") {
+        s
+    } else if let Some(s) = s.strip_suffix(".xsd") {
+        s
+    } else {
+        s
     }
 }

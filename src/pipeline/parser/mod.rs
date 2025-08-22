@@ -174,13 +174,41 @@ where
     /// Will return an suitable error if the parser could not parse the provided
     /// schema.
     #[instrument(err, level = "trace", skip(self, schema))]
-    pub fn add_schema_from_str(mut self, schema: &str) -> Result<Self, Error<TResolver::Error>> {
+    pub fn add_schema_from_str(self, schema: &str) -> Result<Self, Error<TResolver::Error>> {
+        self.add_named_schema_from_str_impl(None, schema)
+    }
+
+    /// Add a new XML schema from the passed string.
+    ///
+    /// This will parse the XML schema represented by the provided string and add
+    /// all schema information to the resulting [`Schemas`] structure using the
+    /// passed `name` for the schema.
+    ///
+    /// # Errors
+    ///
+    /// Will return an suitable error if the parser could not parse the provided
+    /// schema.
+    #[instrument(err, level = "trace", skip(self, schema))]
+    pub fn add_named_schema_from_str(
+        self,
+        name: String,
+        schema: &str,
+    ) -> Result<Self, Error<TResolver::Error>> {
+        self.add_named_schema_from_str_impl(Some(name), schema)
+    }
+
+    #[instrument(err, level = "trace", skip(self, schema))]
+    fn add_named_schema_from_str_impl(
+        mut self,
+        name: Option<String>,
+        schema: &str,
+    ) -> Result<Self, Error<TResolver::Error>> {
         let reader = SliceReader::new(schema);
         let mut reader = SchemaReader::new(reader);
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(schema, &reader.namespaces, None);
+        self.add_schema(name, schema, None, &reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -195,9 +223,35 @@ where
     ///
     /// Will return an suitable error if the parser could not read the data from
     /// the reader, or parse the schema provided by the reader.
-    #[instrument(err, level = "trace", skip(self, reader))]
     pub fn add_schema_from_reader<R: BufRead>(
+        self,
+        reader: R,
+    ) -> Result<Self, Error<TResolver::Error>> {
+        self.add_named_schema_from_reader_impl(None, reader)
+    }
+
+    /// Add a new XML schema from the passed `reader`.
+    ///
+    /// This will parse the XML schema represented by the provided reader and add
+    /// all schema information to the resulting [`Schemas`] structure using the
+    /// passed `name` as name for the schema.
+    ///
+    /// # Errors
+    ///
+    /// Will return an suitable error if the parser could not read the data from
+    /// the reader, or parse the schema provided by the reader.
+    pub fn add_named_schema_from_reader<R: BufRead>(
+        self,
+        name: String,
+        reader: R,
+    ) -> Result<Self, Error<TResolver::Error>> {
+        self.add_named_schema_from_reader_impl(Some(name), reader)
+    }
+
+    #[instrument(err, level = "trace", skip(self, reader))]
+    fn add_named_schema_from_reader_impl<R: BufRead>(
         mut self,
+        name: Option<String>,
         reader: R,
     ) -> Result<Self, Error<TResolver::Error>> {
         let reader = IoReader::new(reader);
@@ -205,7 +259,7 @@ where
 
         let schema = Schema::deserialize(&mut reader)?;
 
-        self.add_schema(schema, &reader.namespaces, None);
+        self.add_schema(name, schema, None, &reader.namespaces);
         self.resolve_pending()?;
 
         Ok(self)
@@ -288,7 +342,9 @@ where
     fn resolve_location(&mut self, req: ResolveRequest) -> Result<(), Error<TResolver::Error>> {
         tracing::debug!("Process resolve request: {req:#?}");
 
-        let Some((location, buffer)) = self.resolver.resolve(&req).map_err(Error::resolver)? else {
+        let Some((name, location, buffer)) =
+            self.resolver.resolve(&req).map_err(Error::resolver)?
+        else {
             return Err(Error::UnableToResolve(Box::new(req)));
         };
         if self.cache.contains(&location) {
@@ -312,7 +368,7 @@ where
 
         let reader = reader.into_inner();
 
-        self.add_schema(schema, &reader.namespaces, Some(&location));
+        self.add_schema(name, schema, Some(location.clone()), &reader.namespaces);
         self.cache.insert(location);
 
         Ok(())
@@ -320,13 +376,14 @@ where
 
     fn add_schema(
         &mut self,
+        name: Option<String>,
         schema: Schema,
+        location: Option<Url>,
         namespaces: &Namespaces,
-        current_location: Option<&Url>,
     ) {
         tracing::debug!(
             "Process schema (location={:?}, target_namespace={:?}",
-            current_location.as_ref().map(|url| url.as_str()),
+            location.as_ref().map(Url::as_str),
             &schema.target_namespace
         );
 
@@ -340,19 +397,20 @@ where
             for content in &schema.content {
                 match content {
                     SchemaContent::Import(x) => {
-                        if let Some(req) = import_req(x, target_ns.clone(), current_location) {
+                        if let Some(req) = import_req(x, target_ns.clone(), location.as_ref()) {
                             self.add_pending(req);
                         }
                     }
                     SchemaContent::Include(x) => {
-                        self.add_pending(include_req(x, target_ns.clone(), current_location));
+                        self.add_pending(include_req(x, target_ns.clone(), location.as_ref()));
                     }
                     _ => (),
                 }
             }
         }
 
-        self.schemas.add_schema(prefix, target_ns, schema);
+        self.schemas
+            .add_schema(prefix, target_ns, name, schema, location);
     }
 }
 

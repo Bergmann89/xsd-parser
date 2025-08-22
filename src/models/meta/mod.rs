@@ -32,5 +32,5 @@ pub use self::reference::ReferenceMeta;
 pub use self::simple::{SimpleMeta, WhiteSpace};
 pub use self::type_::{BuildInMeta, MetaType, MetaTypeVariant};
 pub use self::type_eq::TypeEq;
-pub use self::types::{MetaTypes, ModuleMeta};
+pub use self::types::{MetaTypes, ModuleMeta, SchemaMeta};
 pub use self::union::{UnionMeta, UnionMetaType, UnionMetaTypes};
