@@ -24,6 +24,7 @@ use super::format_module_ident;
 pub struct IdentPath {
     path: Option<ModulePath>,
     ident: Ident2,
+    is_absolute: bool,
 }
 
 /// Represents a path of a module.
@@ -53,7 +54,11 @@ impl IdentPath {
     /// module path.
     #[must_use]
     pub fn from_ident(ident: Ident2) -> Self {
-        Self { ident, path: None }
+        Self {
+            ident,
+            path: None,
+            is_absolute: false,
+        }
     }
 
     /// Changes the identifier of this identifier path to the passed `ident`.
@@ -78,10 +83,14 @@ impl IdentPath {
     /// Splits this identifier path into it's two main parts, the identifier
     /// and the module path.
     #[must_use]
-    pub fn into_parts(self) -> (Ident2, Option<ModulePath>) {
-        let Self { ident, path } = self;
+    pub fn into_parts(self) -> (Ident2, Option<ModulePath>, bool) {
+        let Self {
+            ident,
+            path,
+            is_absolute,
+        } = self;
 
-        (ident, path)
+        (ident, path, is_absolute)
     }
 
     /// Returns the identifier of this identifier path.
@@ -94,6 +103,12 @@ impl IdentPath {
     #[must_use]
     pub fn module(&self) -> Option<&ModulePath> {
         self.path.as_ref()
+    }
+
+    /// Returns `true` if the path is absolute, `false` otherwise.
+    #[must_use]
+    pub fn is_absolute(&self) -> bool {
+        self.is_absolute
     }
 
     /// Creates a [`TokenStream`] that is relative to the passed `dst` module path.
@@ -109,6 +124,14 @@ impl IdentPath {
         };
 
         let mut ret = TokenStream::new();
+        if self.is_absolute {
+            for p in src.0.iter() {
+                ret.extend(quote!(::#p));
+            }
+
+            return quote!(#ret::#ident);
+        }
+
         let mut src = src.0.iter().fuse();
         let mut dst = dst.0.iter().fuse();
 
@@ -174,10 +197,15 @@ impl FromStr for IdentPath {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut ident = None;
         let mut path = ModulePath::default();
+        let mut is_absolute = false;
 
         for part in s.split("::") {
             let part = part.trim();
             if part.is_empty() {
+                if path.is_empty() && ident.is_none() {
+                    is_absolute = true;
+                }
+
                 continue;
             }
 
@@ -191,6 +219,7 @@ impl FromStr for IdentPath {
         Ok(Self {
             ident: ident.ok_or_else(|| InvalidIdentPath(s.into()))?,
             path: Some(path),
+            is_absolute,
         })
     }
 }

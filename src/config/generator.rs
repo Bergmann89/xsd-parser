@@ -122,7 +122,38 @@ bitflags! {
         /// This will enable code generation for mixed types. This feature needs
         /// to be used with caution, because support for mixed types when using
         /// `serde` is quite limited.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `BUILD_IN_ABSOLUTE_PATHS` feature only will result in the following code:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/mixed_type_support.rs")]
+        /// ```
         const MIXED_TYPE_SUPPORT = 1 << 3;
+
+        /// Use absolute paths for build in types.
+        ///
+        /// Using this flag will instruct the generator to use absolute paths
+        /// for build in types (e.g. `usize` or `String`) to avoid naming
+        /// conflicts with generated types.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `BUILD_IN_ABSOLUTE_PATHS` feature only will result in the following code:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/build_in_absolute_paths.rs")]
+        /// ```
+        const BUILD_IN_ABSOLUTE_PATHS = 1 << 4;
     }
 }
 

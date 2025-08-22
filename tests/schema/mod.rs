@@ -4,6 +4,7 @@ mod bmecat_etim_310;
 mod bmecat_etim_501;
 mod factur_x;
 mod ideal_merchant_acquirer;
+mod ofd;
 mod onix;
 mod shiporder;
 mod sitemap;

@@ -10,7 +10,7 @@ use crate::utils::{generate_test_validate, ConfigEx};
 
 fn config() -> Config {
     let mut config = Config::test_default()
-        .with_generator_flags(GeneratorFlags::all())
+        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
         .with_optimizer_flags(
             OptimizerFlags::all()
                 - OptimizerFlags::FLATTEN_COMPLEX_TYPES

@@ -54,7 +54,7 @@ impl PathData {
     pub fn into_included(self) -> Self {
         if self.path.module().is_some() {
             let using = format!("{}", &self.path);
-            let (ident, _) = self.path.into_parts();
+            let (ident, _, _) = self.path.into_parts();
 
             Self::from_path(IdentPath::from_ident(ident)).with_using(using)
         } else {

@@ -392,7 +392,14 @@ impl<'types> State<'types> {
             let name = make_type_name(&meta.postfixes, ty, ident);
             let path = match &ty.variant {
                 MetaTypeVariant::BuildIn(x) => {
-                    PathData::from_path(IdentPath::from_ident(format_ident!("{x}")))
+                    let path =
+                        if meta.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS) {
+                            x.absolute_ident_path()
+                        } else {
+                            x.ident_path()
+                        };
+
+                    PathData::from_path(path)
                 }
                 MetaTypeVariant::Custom(x) => {
                     let path = IdentPath::from_ident(format_ident!("{}", x.name()));
@@ -404,7 +411,7 @@ impl<'types> State<'types> {
                     }
                 }
                 _ => {
-                    let use_modules = meta.flags.intersects(GeneratorFlags::USE_MODULES);
+                    let use_modules = meta.check_generator_flags(GeneratorFlags::USE_MODULES);
                     let module_ident =
                         format_module(meta.types, use_modules.then_some(ident.ns).flatten())?;
                     let type_ident = format_type_ident(&name, ty.display_name.as_deref());
