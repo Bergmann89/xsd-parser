@@ -3,10 +3,11 @@ use std::collections::HashMap;
 use std::ops::Deref;
 
 use parking_lot::Mutex;
-use proc_macro2::{Ident as Ident2, TokenStream};
+use proc_macro2::TokenStream;
 use quote::format_ident;
 
 use crate::config::GeneratorFlags;
+use crate::models::code::ModuleIdent;
 use crate::models::{
     code::{Module, ModulePath},
     data::{DataType, PathData},
@@ -60,7 +61,7 @@ impl<'a, 'types> Context<'a, 'types> {
     {
         let usings = self.patch_usings(usings);
         let mut root = self.module.lock();
-        Self::get_current_module(self.module_path.last(), &mut root).usings(usings);
+        Self::get_current_module(&self.module_path.0, &mut root).usings(usings);
     }
 
     /// Add using directives to the root module.
@@ -85,7 +86,7 @@ impl<'a, 'types> Context<'a, 'types> {
     pub fn current_module(&mut self) -> &mut Module {
         let root = self.module.get_mut();
 
-        Self::get_current_module(self.module_path.last(), root)
+        Self::get_current_module(&self.module_path.0, root)
     }
 
     /// Set a `value` for the specified key `K`.
@@ -202,7 +203,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let usings = self.patch_usings(usings);
 
         let mut root = self.module.lock();
-        Self::get_current_module(self.module_path.last(), &mut root)
+        Self::get_current_module(&self.module_path.0, &mut root)
             .module_mut("quick_xml_serialize")
             .usings(usings);
     }
@@ -215,7 +216,7 @@ impl<'a, 'types> Context<'a, 'types> {
         let usings = self.patch_usings(usings);
 
         let mut root = self.module.lock();
-        Self::get_current_module(self.module_path.last(), &mut root)
+        Self::get_current_module(&self.module_path.0, &mut root)
             .module_mut("quick_xml_deserialize")
             .usings(usings);
     }
@@ -226,11 +227,13 @@ impl<'a, 'types> Context<'a, 'types> {
         ident: &'a Ident,
         module: &'a mut Module,
     ) -> Self {
-        let ns = meta
-            .check_generator_flags(GeneratorFlags::USE_MODULES)
-            .then_some(ident.ns)
-            .flatten();
-        let module_path = ModulePath::from_namespace(ns, meta.types.meta.types);
+        let module_ident = ModuleIdent::new(
+            meta.types,
+            ident,
+            meta.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
+            meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
+        );
+        let module_path = ModulePath::from_ident(meta.types.meta.types, module_ident);
         let serialize_module_path = module_path
             .clone()
             .join(format_ident!("quick_xml_serialize"));
@@ -252,12 +255,18 @@ impl<'a, 'types> Context<'a, 'types> {
         }
     }
 
-    fn get_current_module<'x>(ident: Option<&Ident2>, root: &'x mut Module) -> &'x mut Module {
-        if let Some(ident) = ident {
-            root.module_mut(ident.to_string())
-        } else {
-            root
+    fn get_current_module<I>(idents: I, root: &mut Module) -> &mut Module
+    where
+        I: IntoIterator,
+        I::Item: ToString,
+    {
+        let mut module = root;
+
+        for ident in idents {
+            module = module.module_mut(ident.to_string());
         }
+
+        module
     }
 }
 

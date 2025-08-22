@@ -88,7 +88,17 @@ bitflags! {
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/use_modules.rs")]
         /// ```
-        const USE_MODULES = 1 << 0;
+        const USE_MODULES = Self::USE_NAMESPACE_MODULES.bits();
+
+        /// The generated code uses modules for the different namespaces.
+        ///
+        /// See [`USE_MODULES`](Self::USE_MODULES) for details.
+        const USE_NAMESPACE_MODULES = 1 << 0;
+
+        /// The generated code uses modules for the different schemas.
+        ///
+        /// See [`USE_MODULES`](Self::USE_MODULES) for details.
+        const USE_SCHEMA_MODULES = 1 << 1;
 
         /// The generator flattens the content type of choice types if it does not
         /// define any element attributes.
@@ -110,12 +120,12 @@ bitflags! {
         /// The generator flattens the content of enum types if possible.
         ///
         /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
-        const FLATTEN_ENUM_CONTENT = 1 << 1;
+        const FLATTEN_ENUM_CONTENT = 1 << 2;
 
         /// The generator flattens the content of struct types if possible.
         ///
         /// See [`FLATTEN_CONTENT`](Self::FLATTEN_CONTENT) for details.
-        const FLATTEN_STRUCT_CONTENT = 1 << 2;
+        const FLATTEN_STRUCT_CONTENT = 1 << 3;
 
         /// Enable support for mixed types.
         ///
@@ -134,7 +144,7 @@ bitflags! {
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/mixed_type_support.rs")]
         /// ```
-        const MIXED_TYPE_SUPPORT = 1 << 3;
+        const MIXED_TYPE_SUPPORT = 1 << 4;
 
         /// Use absolute paths for build in types.
         ///
@@ -153,7 +163,7 @@ bitflags! {
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/build_in_absolute_paths.rs")]
         /// ```
-        const BUILD_IN_ABSOLUTE_PATHS = 1 << 4;
+        const BUILD_IN_ABSOLUTE_PATHS = 1 << 5;
     }
 }
 

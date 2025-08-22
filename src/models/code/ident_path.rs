@@ -7,9 +7,12 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
 use thiserror::Error;
 
-use crate::models::{meta::MetaTypes, schema::NamespaceId};
-
-use super::format_module_ident;
+use crate::models::code::format_module_ident;
+use crate::models::{
+    meta::MetaTypes,
+    schema::{NamespaceId, SchemaId},
+    Ident,
+};
 
 /// Represents an identifier path.
 ///
@@ -38,6 +41,22 @@ pub struct ModulePath(pub SmallVec<[Ident2; 2]>);
 #[derive(Debug, Error)]
 #[error("Invalid identifier path: {0}")]
 pub struct InvalidIdentPath(pub String);
+
+/// Identifies the module the code gets rendered to.
+#[derive(Debug, Clone, Copy, Eq, PartialEq)]
+pub enum ModuleIdent {
+    /// The root module.
+    Root,
+
+    /// The module of the namespace of the current type.
+    Namespace(NamespaceId),
+
+    /// The module of the schema of the current type.
+    Schema(SchemaId),
+
+    /// The module of the namespace and the schema of the current type.
+    Both(NamespaceId, SchemaId),
+}
 
 impl IdentPath {
     /// Crates a new [`IdentPath`] instance from the passed module `path` and the
@@ -257,13 +276,24 @@ impl ModulePath {
     /// This tries to look up the passed namespace id in the types information and create
     /// a module path for it.
     #[must_use]
-    pub fn from_namespace(ns: Option<NamespaceId>, types: &MetaTypes) -> Self {
-        let ident = ns
+    pub fn from_ident(types: &MetaTypes, ident: ModuleIdent) -> Self {
+        let (namespace, schema) = match ident {
+            ModuleIdent::Root => (None, None),
+            ModuleIdent::Namespace(n) => (Some(n), None),
+            ModuleIdent::Schema(s) => (None, Some(s)),
+            ModuleIdent::Both(n, s) => (Some(n), Some(s)),
+        };
+
+        let namespace = namespace
             .and_then(|id| types.modules.get(&id))
             .and_then(|module| module.name.as_ref())
             .map(format_module_ident);
+        let schema = schema
+            .and_then(|id| types.schemas.get(&id))
+            .and_then(|schema| schema.name.as_ref())
+            .map(format_module_ident);
 
-        Self(ident.into_iter().collect())
+        Self(namespace.into_iter().chain(schema).collect())
     }
 
     /// Add a module to the module
@@ -286,6 +316,38 @@ impl Deref for ModulePath {
 impl DerefMut for ModulePath {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
+    }
+}
+
+/* ModuleIdent */
+
+impl ModuleIdent {
+    pub(crate) fn new(
+        types: &MetaTypes,
+        ident: &Ident,
+        with_namespace: bool,
+        with_schema: bool,
+    ) -> Self {
+        let schema_count = ident
+            .ns
+            .as_ref()
+            .and_then(|ns| types.modules.get(ns))
+            .map(|m| m.schema_count)
+            .unwrap_or_default();
+        let with_schema = with_schema && schema_count > 1;
+
+        let namespace = with_namespace.then_some(ident.ns).flatten();
+        let schema = with_schema
+            .then(|| types.items.get(ident))
+            .flatten()
+            .and_then(|ty| ty.schema);
+
+        match (namespace, schema) {
+            (None, None) => ModuleIdent::Root,
+            (Some(n), None) => ModuleIdent::Namespace(n),
+            (None, Some(s)) => ModuleIdent::Schema(s),
+            (Some(n), Some(s)) => ModuleIdent::Both(n, s),
+        }
     }
 }
 

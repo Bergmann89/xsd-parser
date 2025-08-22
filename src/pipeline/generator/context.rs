@@ -5,10 +5,9 @@ use quote::{format_ident, quote};
 
 use crate::config::GeneratorFlags;
 use crate::models::{
-    code::{format_variant_ident, ModulePath},
+    code::{format_variant_ident, ModuleIdent, ModulePath},
     data::Occurs,
     meta::{BuildInMeta, MetaTypeVariant},
-    schema::NamespaceId,
     Ident,
 };
 
@@ -35,10 +34,13 @@ impl<'a, 'types> Context<'a, 'types> {
         Self { meta, ident, state }
     }
 
-    pub(super) fn current_module(&self) -> Option<NamespaceId> {
-        self.check_generator_flags(GeneratorFlags::USE_MODULES)
-            .then_some(self.ident.ns)
-            .flatten()
+    pub(super) fn current_module(&self) -> ModuleIdent {
+        ModuleIdent::new(
+            self.meta.types,
+            self.ident,
+            self.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
+            self.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
+        )
     }
 
     pub(super) fn current_type_ref(&self) -> &TypeRef {
@@ -57,8 +59,8 @@ impl<'a, 'types> Context<'a, 'types> {
 
     pub(super) fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
         let ident = self.ident.clone();
-        let current_ns = self.current_module();
-        let module_path = ModulePath::from_namespace(current_ns, self.types);
+        let current_module = self.current_module();
+        let module_path = ModulePath::from_ident(self.types, current_module);
 
         self.get_trait_infos()
             .get(&ident)
@@ -81,7 +83,7 @@ impl<'a, 'types> Context<'a, 'types> {
     #[allow(clippy::too_many_lines)]
     pub(super) fn render_literal(
         &mut self,
-        current_ns: Option<NamespaceId>,
+        current_module: ModuleIdent,
         default: &str,
         ident: &Ident,
     ) -> Result<TokenStream, Error> {
@@ -136,7 +138,7 @@ impl<'a, 'types> Context<'a, 'types> {
             }
 
             MetaTypeVariant::Enumeration(ei) => {
-                let module_path = ModulePath::from_namespace(current_ns, types);
+                let module_path = ModulePath::from_ident(types, current_module);
                 let target_type = type_ref.path.relative_to(&module_path);
 
                 for var in &*ei.variants {
@@ -148,7 +150,8 @@ impl<'a, 'types> Context<'a, 'types> {
                     }
 
                     if let Some(target_ident) = &var.type_ {
-                        if let Ok(default) = self.render_literal(current_ns, default, target_ident)
+                        if let Ok(default) =
+                            self.render_literal(current_module, default, target_ident)
                         {
                             let variant_ident = match self.state.cache.get(target_ident) {
                                 Some(type_ref) if var.ident.name.is_generated() => {
@@ -167,11 +170,11 @@ impl<'a, 'types> Context<'a, 'types> {
             }
 
             MetaTypeVariant::Union(ui) => {
-                let module_path = ModulePath::from_namespace(current_ns, types);
+                let module_path = ModulePath::from_ident(types, current_module);
                 let target_type = type_ref.path.relative_to(&module_path);
 
                 for ty in &*ui.types {
-                    if let Ok(code) = self.render_literal(current_ns, default, &ty.type_) {
+                    if let Ok(code) = self.render_literal(current_module, default, &ty.type_) {
                         let variant_ident = match self.state.cache.get(&ty.type_) {
                             Some(type_ref) if ty.type_.name.is_generated() => {
                                 type_ref.path.ident().clone()
@@ -188,9 +191,11 @@ impl<'a, 'types> Context<'a, 'types> {
 
             MetaTypeVariant::Reference(ti) => {
                 match Occurs::from_occurs(ti.min_occurs, ti.max_occurs) {
-                    Occurs::Single => return self.render_literal(current_ns, default, &ti.type_),
+                    Occurs::Single => {
+                        return self.render_literal(current_module, default, &ti.type_)
+                    }
                     Occurs::DynamicList if default.is_empty() => {
-                        let module_path = ModulePath::from_namespace(current_ns, types);
+                        let module_path = ModulePath::from_ident(types, current_module);
                         let target_type = type_ref.path.relative_to(&module_path);
 
                         return Ok(quote! { #target_type(Vec::new()) });
@@ -200,9 +205,9 @@ impl<'a, 'types> Context<'a, 'types> {
             }
 
             MetaTypeVariant::SimpleType(si) => {
-                let module_path = ModulePath::from_namespace(current_ns, types);
+                let module_path = ModulePath::from_ident(types, current_module);
                 let target_type = type_ref.path.relative_to(&module_path);
-                let default = self.render_literal(current_ns, default, &si.base)?;
+                let default = self.render_literal(current_module, default, &si.base)?;
 
                 return Ok(quote! { #target_type(#default) });
             }

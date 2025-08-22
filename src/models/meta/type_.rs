@@ -7,7 +7,7 @@ use std::ops::{Deref, DerefMut};
 use quote::format_ident;
 
 use crate::models::code::IdentPath;
-use crate::models::schema::xs::FormChoiceType;
+use crate::models::schema::{xs::FormChoiceType, SchemaId};
 
 use super::{
     ComplexMeta, CustomMeta, DynamicMeta, EnumerationMeta, GroupMeta, MetaTypes, ReferenceMeta,
@@ -26,6 +26,9 @@ pub struct MetaType {
 
     /// Form for elements of this type.
     pub form: Option<FormChoiceType>,
+
+    /// Id of the schema this type was defined at.
+    pub schema: Option<SchemaId>,
 
     /// Name to use for rendering instead of the auto generated name.
     pub display_name: Option<String>,
@@ -124,6 +127,7 @@ impl MetaType {
         Self {
             variant,
             form: None,
+            schema: None,
             display_name: None,
             documentation: Vec::new(),
         }

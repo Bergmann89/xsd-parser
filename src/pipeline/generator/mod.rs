@@ -34,6 +34,7 @@ use quote::format_ident;
 use tracing::instrument;
 
 use crate::config::{BoxFlags, GeneratorFlags, TypedefMode};
+use crate::models::code::{ModuleIdent, ModulePath};
 use crate::models::{
     code::{format_module_ident, format_type_ident, IdentPath},
     data::{DataType, DataTypes, PathData},
@@ -411,12 +412,16 @@ impl<'types> State<'types> {
                     }
                 }
                 _ => {
-                    let use_modules = meta.check_generator_flags(GeneratorFlags::USE_MODULES);
-                    let module_ident =
-                        format_module(meta.types, use_modules.then_some(ident.ns).flatten())?;
+                    let module_ident = ModuleIdent::new(
+                        meta.types,
+                        ident,
+                        meta.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
+                        meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
+                    );
+                    let module_path = ModulePath::from_ident(meta.types, module_ident);
                     let type_ident = format_type_ident(&name, ty.display_name.as_deref());
 
-                    let path = IdentPath::from_parts(module_ident, type_ident);
+                    let path = IdentPath::from_parts(module_path.0, type_ident);
 
                     PathData::from_path(path)
                 }
