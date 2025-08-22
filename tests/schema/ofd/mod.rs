@@ -26,11 +26,7 @@ fn config() -> Config {
         .with_parser_flags(ParserFlags::all())
         .with_interpreter_flags(InterpreterFlags::all())
         .with_optimizer_flags(OptimizerFlags::all())
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS);
-
-    config.parser.debug_output = Some("target/parser.log".into());
-    config.interpreter.debug_output = Some("target/interpreter.log".into());
-    config.optimizer.debug_output = Some("target/optimizer.log".into());
+        .with_generator_flags(GeneratorFlags::all());
 
     config.generator.type_postfix.type_ = "XType".into();
     config.generator.type_postfix.element = String::new();
@@ -55,7 +51,7 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use quick_xml::{Ofd, Page};
+    use quick_xml::{ofd::Ofd, page::Page};
 
     let _obj = crate::utils::quick_xml_read_test::<Ofd, _>("tests/schema/ofd/examples/OFD.xml");
     let _obj =

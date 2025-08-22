@@ -16,7 +16,8 @@ fn config() -> Config {
         )
         .with_generator_flags(
             GeneratorFlags::all()
-                - GeneratorFlags::USE_MODULES
+                - GeneratorFlags::USE_NAMESPACE_MODULES
+                - GeneratorFlags::USE_SCHEMA_MODULES
                 - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
         )
         .with_renderer_flags(RendererFlags::RENDER_DOCS)

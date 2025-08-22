@@ -8,5 +8,5 @@ mod module;
 pub use self::format::{
     format_field_ident, format_module_ident, format_type_ident, format_variant_ident,
 };
-pub use self::ident_path::{IdentPath, InvalidIdentPath, ModulePath};
+pub use self::ident_path::{IdentPath, InvalidIdentPath, ModuleIdent, ModulePath};
 pub use self::module::{Module, SubModules};

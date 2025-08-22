@@ -3,6 +3,7 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
+use crate::models::schema::SchemaId;
 use crate::models::{
     meta::{MetaType, MetaTypeVariant},
     schema::{
@@ -20,6 +21,7 @@ use super::{state::StackEntry, Error, Node, State, VariantBuilder};
 #[derive(Debug)]
 pub(super) struct SchemaInterpreter<'schema, 'state> {
     pub(super) state: &'state mut State<'schema>,
+    pub(super) schema_id: SchemaId,
     pub(super) schema: &'schema Schema,
     pub(super) schemas: &'schema Schemas,
 
@@ -31,6 +33,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
     #[instrument(level = "trace", skip(state, schema, schemas))]
     pub(super) fn process(
         state: &'state mut State<'schema>,
+        schema_id: SchemaId,
         schema: &'schema Schema,
         schemas: &'schema Schemas,
     ) -> Result<(), Error> {
@@ -51,6 +54,7 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
 
         let mut this = Self {
             state,
+            schema_id,
             schema,
             schemas,
             pending_element_types: VecDeque::new(),
@@ -286,7 +290,10 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             unreachable!("Unexpected stack entry!");
         };
 
-        self.state.add_type(ident.clone(), type_?, false)?;
+        let mut type_ = type_?;
+        type_.schema = Some(self.schema_id);
+
+        self.state.add_type(ident.clone(), type_, false)?;
 
         Ok(ident)
     }

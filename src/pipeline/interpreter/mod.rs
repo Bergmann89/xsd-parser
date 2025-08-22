@@ -399,11 +399,13 @@ impl<'a> Interpreter<'a> {
                 .map(Name::new_named)
                 .or_else(|| prefix.clone());
             let namespace = info.namespace.clone();
+            let schema_count = info.schemas.len();
 
             let module = ModuleMeta {
                 name,
                 prefix,
                 namespace,
+                schema_count,
             };
 
             self.state.types.modules.insert(*id, module);
@@ -417,7 +419,7 @@ impl<'a> Interpreter<'a> {
 
             self.state.types.schemas.insert(*id, schema);
 
-            SchemaInterpreter::process(&mut self.state, &info.schema, self.schemas)?;
+            SchemaInterpreter::process(&mut self.state, *id, &info.schema, self.schemas)?;
         }
 
         Ok(self.state.types)

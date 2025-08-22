@@ -42,6 +42,9 @@ pub struct ModuleMeta {
 
     /// Namespace of the module.
     pub namespace: Option<Namespace>,
+
+    /// Number of schemas assigned to this module/namespace.
+    pub schema_count: usize,
 }
 
 /// Represents a schema used by type information in the [`MetaTypes`] structure.
