@@ -22,6 +22,7 @@ pub use namespace::Namespace;
 pub use namespace_prefix::NamespacePrefix;
 pub use occurs::{MaxOccurs, MinOccurs};
 pub use qname::QName;
+use url::Url;
 
 /// Top-level structure for managing loaded XML schema files and associated namespaces.
 ///
@@ -47,7 +48,7 @@ pub struct Schemas {
     next_namespace_id: usize,
 }
 
-/// Contians the information for a specific namespace.
+/// Contains the information for a specific namespace.
 #[derive(Debug)]
 pub struct NamespaceInfo {
     /// First used/known prefix of the namespace or `None` if it is unknown.
@@ -63,6 +64,22 @@ pub struct NamespaceInfo {
     pub module_name: Option<String>,
 }
 
+/// Contains information for a specific schema
+#[derive(Debug)]
+pub struct SchemaInfo {
+    /// Name of the schema.
+    pub name: Option<String>,
+
+    /// The actual schema data.
+    pub schema: Schema,
+
+    /// Location the schema was load from.
+    pub location: Option<Url>,
+
+    /// Id of the namespace this schema belongs to.
+    namespace_id: NamespaceId,
+}
+
 /// Represents an unique id for a XML schema.
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct SchemaId(pub usize);
@@ -72,7 +89,7 @@ pub struct SchemaId(pub usize);
 pub struct NamespaceId(pub usize);
 
 /// Map of [`SchemaId`] to [`Schema`]
-pub type SchemaFiles = BTreeMap<SchemaId, Schema>;
+pub type SchemaFiles = BTreeMap<SchemaId, SchemaInfo>;
 
 /// Map of [`NamespaceId`] to [`NamespaceInfo`]
 pub type NamespaceInfos = BTreeMap<NamespaceId, NamespaceInfo>;
@@ -95,15 +112,23 @@ impl Schemas {
         &mut self,
         prefix: Option<NamespacePrefix>,
         namespace: Option<Namespace>,
+        name: Option<String>,
         schema: Schema,
+        location: Option<Url>,
     ) {
         let schema_id = SchemaId(self.next_schema_id);
-        let schema_info = self.get_or_create_namespace_info_mut(prefix, namespace);
-        schema_info.schemas.push(schema_id);
+        let (namespace_id, namespace_info) =
+            self.get_or_create_namespace_info_mut(prefix, namespace);
+        namespace_info.schemas.push(schema_id);
         self.next_schema_id = self.next_schema_id.wrapping_add(1);
 
         match self.schemas.entry(schema_id) {
-            Entry::Vacant(e) => e.insert(schema),
+            Entry::Vacant(e) => e.insert(SchemaInfo {
+                name,
+                schema,
+                location,
+                namespace_id,
+            }),
             Entry::Occupied(_) => crate::unreachable!(),
         };
     }
@@ -113,7 +138,7 @@ impl Schemas {
         &mut self,
         prefix: Option<NamespacePrefix>,
         namespace: Option<Namespace>,
-    ) -> &mut NamespaceInfo {
+    ) -> (NamespaceId, &mut NamespaceInfo) {
         let (ns, id) = match self.known_namespaces.entry(namespace) {
             Entry::Occupied(e) => {
                 let id = *e.get();
@@ -155,16 +180,16 @@ impl Schemas {
             }
         }
 
-        ns
+        (id, ns)
     }
 
     /// Returns an iterator over all schemas stored in this structure.
-    pub fn schemas(&self) -> Iter<'_, SchemaId, Schema> {
+    pub fn schemas(&self) -> Iter<'_, SchemaId, SchemaInfo> {
         self.schemas.iter()
     }
 
     /// Returns a mutable iterator over all schemas stored in this structure.
-    pub fn schemas_mut(&mut self) -> IterMut<'_, SchemaId, Schema> {
+    pub fn schemas_mut(&mut self) -> IterMut<'_, SchemaId, SchemaInfo> {
         self.schemas.iter_mut()
     }
 
@@ -177,14 +202,14 @@ impl Schemas {
     /// Returns a reference to a specific schema by using the schema id,
     /// or `None` if the schema is not known.
     #[must_use]
-    pub fn get_schema(&self, id: &SchemaId) -> Option<&Schema> {
+    pub fn get_schema(&self, id: &SchemaId) -> Option<&SchemaInfo> {
         self.schemas.get(id)
     }
 
     /// Returns a mutable reference to a specific schema by using the schema id,
     /// or `None` if the schema is not known.
     #[must_use]
-    pub fn get_schema_mut(&mut self, id: &SchemaId) -> Option<&mut Schema> {
+    pub fn get_schema_mut(&mut self, id: &SchemaId) -> Option<&mut SchemaInfo> {
         self.schemas.get_mut(id)
     }
 
@@ -243,5 +268,15 @@ impl NamespaceInfo {
             schemas: Vec::new(),
             module_name: None,
         }
+    }
+}
+
+/* SchemaInfo */
+
+impl SchemaInfo {
+    /// Get the id of the namespace this schema belongs to.
+    #[must_use]
+    pub fn namespace_id(&self) -> NamespaceId {
+        self.namespace_id
     }
 }

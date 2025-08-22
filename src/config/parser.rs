@@ -60,6 +60,9 @@ pub enum Schema {
 
     /// Load the schema from the provided string.
     Schema(String),
+
+    /// Load the schema from the provided strings: `(name, schema)`.
+    NamedSchema(String, String),
 }
 
 impl Schema {
@@ -89,6 +92,17 @@ impl Schema {
         T: Into<String>,
     {
         Self::Schema(value.into())
+    }
+
+    /// Create a [`Schema::NamedSchema`] from the passed `name` and `value`.
+    #[inline]
+    #[allow(clippy::self_named_constructors)]
+    pub fn named_schema<S, T>(name: S, value: T) -> Self
+    where
+        S: Into<String>,
+        T: Into<String>,
+    {
+        Self::NamedSchema(name.into(), value.into())
     }
 }
 

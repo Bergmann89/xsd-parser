@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::sync::{atomic::AtomicUsize, Arc};
 
 use crate::models::{
-    schema::{Namespace, NamespaceId},
+    schema::{Namespace, NamespaceId, SchemaId},
     Ident, Name,
 };
 
@@ -25,13 +25,16 @@ pub struct MetaTypes {
     /// Map of the different namespaces.
     pub modules: BTreeMap<NamespaceId, ModuleMeta>,
 
+    /// Map of the different schemas.
+    pub schemas: BTreeMap<SchemaId, SchemaMeta>,
+
     next_name_id: Arc<AtomicUsize>,
 }
 
 /// Represents a module used by type information in the [`MetaTypes`] structure.
 #[derive(Debug)]
 pub struct ModuleMeta {
-    /// Name of the module (also used as xml prefix).
+    /// Name of the module.
     pub name: Option<Name>,
 
     /// Prefix of the modules namespace.
@@ -39,6 +42,16 @@ pub struct ModuleMeta {
 
     /// Namespace of the module.
     pub namespace: Option<Namespace>,
+}
+
+/// Represents a schema used by type information in the [`MetaTypes`] structure.
+#[derive(Debug)]
+pub struct SchemaMeta {
+    /// Name of the schema.
+    pub name: Option<Name>,
+
+    /// Id of the namespace this schema belongs to.
+    pub namespace: NamespaceId,
 }
 
 impl MetaTypes {

@@ -2,9 +2,8 @@ use std::error::Error as StdError;
 use std::io::BufRead;
 
 use anyhow::Error;
-use url::Url;
 
-use super::{ResolveRequest, Resolver};
+use super::{ResolveRequest, ResolveResult, Resolver};
 
 /// Implements a [`Resolver`] that can combines multiple different other resolvers
 /// into one single resolver.
@@ -44,13 +43,10 @@ impl Resolver for ManyResolver {
     type Buffer = BoxedBuffer;
     type Error = Error;
 
-    fn resolve(
-        &mut self,
-        req: &ResolveRequest,
-    ) -> Result<Option<(Url, Self::Buffer)>, Self::Error> {
+    fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self> {
         for resolver in self.resolvers.iter_mut() {
-            if let Some((location, buffer)) = resolver.resolve(req)? {
-                return Ok(Some((location, buffer)));
+            if let Some((name, location, buffer)) = resolver.resolve(req)? {
+                return Ok(Some((name, location, buffer)));
             }
         }
 
@@ -69,12 +65,9 @@ where
     type Buffer = BoxedBuffer;
     type Error = Error;
 
-    fn resolve(
-        &mut self,
-        req: &ResolveRequest,
-    ) -> Result<Option<(Url, Self::Buffer)>, Self::Error> {
+    fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self> {
         match self.0.resolve(req) {
-            Ok(Some((location, buffer))) => Ok(Some((location, Box::new(buffer)))),
+            Ok(Some((name, location, buffer))) => Ok(Some((name, location, Box::new(buffer)))),
             Ok(None) => Ok(None),
             Err(error) => Err(Error::from(error)),
         }

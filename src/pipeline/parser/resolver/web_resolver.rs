@@ -6,7 +6,7 @@ use reqwest::{
 };
 use url::Url;
 
-use super::{ResolveRequest, Resolver};
+use super::{strip_name_ext, ResolveRequest, ResolveResult, Resolver};
 
 /// Implements a [`Resolver`] that resolves `http` and `https` resources.
 #[must_use]
@@ -26,10 +26,7 @@ impl Resolver for WebResolver {
     type Buffer = BufReader<Response>;
     type Error = Error;
 
-    fn resolve(
-        &mut self,
-        req: &ResolveRequest,
-    ) -> Result<Option<(Url, Self::Buffer)>, Self::Error> {
+    fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self> {
         let url = if let Some(current) = &req.current_location {
             current.join(&req.requested_location)
         } else {
@@ -49,6 +46,13 @@ impl Resolver for WebResolver {
         let res = client.get(url.clone()).send()?;
         let buffer = BufReader::new(res);
 
-        Ok(Some((url, buffer)))
+        let name = url
+            .as_str()
+            .split(['\\', '/'])
+            .next_back()
+            .map(strip_name_ext)
+            .map(ToOwned::to_owned);
+
+        Ok(Some((name, url, buffer)))
     }
 }

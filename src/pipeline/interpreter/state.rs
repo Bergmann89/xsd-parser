@@ -177,8 +177,8 @@ fn search_in_schemas<'a>(
         let ns_info = schemas.get_namespace_info(ns)?;
 
         for id in &ns_info.schemas {
-            if let Some(schema) = schemas.get_schema(id) {
-                if let Some(node) = search_in_schema(schema, name, type_) {
+            if let Some(info) = schemas.get_schema(id) {
+                if let Some(node) = search_in_schema(&info.schema, name, type_) {
                     return Some(node);
                 }
             }

@@ -39,6 +39,7 @@ use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, BuildInMeta, ComplexMeta, CustomMeta,
         ElementMeta, GroupMeta, MetaType, MetaTypeVariant, MetaTypes, ModuleMeta, ReferenceMeta,
+        SchemaMeta,
     },
     schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
     Ident, IdentType, Name,
@@ -408,8 +409,15 @@ impl<'a> Interpreter<'a> {
             self.state.types.modules.insert(*id, module);
         }
 
-        for (_id, schema) in self.schemas.schemas() {
-            SchemaInterpreter::process(&mut self.state, schema, self.schemas)?;
+        for (id, info) in self.schemas.schemas() {
+            let schema = SchemaMeta {
+                name: info.name.clone().map(Name::new_named),
+                namespace: info.namespace_id(),
+            };
+
+            self.state.types.schemas.insert(*id, schema);
+
+            SchemaInterpreter::process(&mut self.state, &info.schema, self.schemas)?;
         }
 
         Ok(self.state.types)

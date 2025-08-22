@@ -1,8 +1,6 @@
 use std::io::{BufRead, Error, ErrorKind};
 
-use url::Url;
-
-use super::{ResolveRequest, Resolver};
+use super::{ResolveRequest, ResolveResult, Resolver};
 
 /// Implements a [`Resolver`] that resolves nothing.
 ///
@@ -22,10 +20,7 @@ impl Resolver for NoOpResolver {
     type Buffer = Box<dyn BufRead + 'static>;
     type Error = Error;
 
-    fn resolve(
-        &mut self,
-        req: &ResolveRequest,
-    ) -> Result<Option<(Url, Self::Buffer)>, Self::Error> {
+    fn resolve(&mut self, req: &ResolveRequest) -> ResolveResult<Self> {
         Err(Error::new(
             ErrorKind::NotFound,
             format!("Unable to resolve requested location: {req}"),
