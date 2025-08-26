@@ -6,6 +6,7 @@ If you enjoy the project and would like to support my work, you can [buy me a co
 
 <a href="https://github.com/Bergmann89/xsd-parser/blob/master/LICENSE"><img src="https://img.shields.io/crates/l/xsd-parser" alt="Crates.io License"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/v/xsd-parser" alt="Crates.io Version"></a> <a href="https://crates.io/crates/xsd-parser"><img src="https://img.shields.io/crates/d/xsd-parser" alt="Crates.io Total Downloads"></a> <a href="https://docs.rs/xsd-parser"><img src="https://img.shields.io/docsrs/xsd-parser" alt="docs.rs"></a> <a href="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml"><img src="https://github.com/Bergmann89/xsd-parser/actions/workflows/main.yml/badge.svg" alt="Github CI"></a> <a href="https://deps.rs/repo/github/Bergmann89/xsd-parser"><img src="https://deps.rs/repo/github/Bergmann89/xsd-parser/status.svg" alt="Dependency Status"></a>
 
+
 # Overview
 
 This library is built around a staged transformation pipeline that converts XML schemas into Rust source code. Each stage handles a specific level of abstraction and produces a well-defined intermediate representation. This makes the library highly flexible, testable, and suitable for advanced customization or tooling.
@@ -43,6 +44,7 @@ This library is built around a staged transformation pipeline that converts XML 
 - **`Module`:**
   The final model is produced by the `Renderer`. It wraps the Rust source code output into a structured format, ready for file output or consumption as token streams. Modules support nested submodules, file splitting, and embedded metadata for customization.
 
+
 # Features
 
 This library provides the following features:
@@ -53,9 +55,49 @@ This library provides the following features:
 - **`serde` Support:** Generate code for serialization and deserialization using [`serde`](https://docs.rs/serde) with [`serde_xml`](https://docs.rs/serde-xml-rs) or [`quick_xml`](https://docs.rs/quick-xml) as serializer/deserializer.
 - **`quick_xml` Support:** Direct serialization/deserialization support using [`quick_xml`](https://docs.rs/quick-xml), avoiding `serde` limitations and leveraging asynchronous features.
 
+
+# Planned Features
+
+- **Schema-Based Validation:** Generate validators directly from schemas to validate XML data during reading or writing.
+
+
 # Changelog
 
 Below you can find a short list of the most important changes for each released version.
+
+## Version 1.3
+
+This release introduces new configuration options, enhanced schema modularization, extended type handling, improved serializer support, and broader schema compatibility. It also addresses a range of long-standing issues with stability and schema validation.
+
+- **New Examples and Customization Options**
+  An example for custom named enum variants has been added, showcasing how to override generated names with user-defined ones.
+  The renderer context was refactored and expanded with helper methods, giving developers more control over schema-level configuration and code generation behavior.
+
+- **Schema Modularization**
+  Generated code can now be split into modules per schema definition. This improves maintainability and separation of concerns when working with large or multi-schema projects.
+  Meta information is now attached to schemas, making it easier to inspect and debug schema processing.
+
+- **Support for Additional Schemas**
+  Support for the OFD schema was added to the test suite, expanding real-world coverage.
+  Compatibility with the ONIX schema was introduced, ensuring support for publishing and book-industry data standards.
+
+- **Extended Type Handling**
+  A new option allows the use of the full path for built-in types, ensuring unambiguous references in complex projects.
+  A new `models::data::TagName` type was introduced to provide consistent and reliable handling of XML tag names across the pipeline.
+  Inline element types are now lazily interpreted, reducing memory usage and improving performance for large schemas.
+  Restrictions expressed through `xs:facet` are now evaluated and applied to simple type definitions, closing a gap in schema validation support.
+
+- **Improved Serializer Support**
+  A new configuration for the `quick_xml` serializer has been implemented, making it possible to fine-tune serialization behavior.
+  Existing schema tests were updated to use the new serializer configuration, ensuring consistent results across different serializers.
+
+- **Bug Fixes and Stability Improvements**
+  - Fixed escaping and unescaping of mixed content and special characters
+  - Resolved interpreter errors with self-referencing types
+  - Fixed duplicate type names generated when an attribute named `Type` was present
+  - Corrected deserialization failures for XML with `elementFormDefault=qualified`
+  - Included schemas now properly inherit their target namespace instead of defaulting incorrectly
+  - Restored missing integration tests and expanded coverage for real-world scenarios
 
 ## Version 1.2
 
@@ -94,10 +136,6 @@ This release introduces a series of architectural improvements, enhanced flexibi
 ## Version 1.0
 
 - First official release of `xsd-parser`
-
-# Planned Features
-
-- **Schema-Based Validation:** Generate validators directly from schemas to validate XML data during reading or writing.
 
 
 # License
