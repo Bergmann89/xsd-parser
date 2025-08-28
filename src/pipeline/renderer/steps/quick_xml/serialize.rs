@@ -1,7 +1,7 @@
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote};
 
-use crate::config::TypedefMode;
+use crate::config::{GeneratorFlags, TypedefMode};
 use crate::models::{
     code::IdentPath,
     data::{
@@ -491,6 +491,14 @@ impl ComplexBase<'_> {
             return Vec::new();
         }
 
+        let xsi = ctx
+            .check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT)
+            .then(|| {
+                ctx.add_quick_xml_serialize_usings(["xsd_parser::models::schema::Namespace"]);
+
+                quote!(bytes.push_attribute((&b"xmlns:xsi"[..], &Namespace::XSI[..]));)
+            });
+
         ctx.types
             .meta
             .types
@@ -521,6 +529,7 @@ impl ComplexBase<'_> {
                     bytes.push_attribute((&#xmlns[..], &#ns_const[..]));
                 })
             })
+            .chain(xsi)
             .collect::<Vec<_>>()
     }
 }

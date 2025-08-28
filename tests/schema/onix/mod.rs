@@ -13,7 +13,8 @@ fn config() -> Config {
         .with_generator_flags(
             GeneratorFlags::all()
                 - GeneratorFlags::USE_SCHEMA_MODULES
-                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS,
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
+                - GeneratorFlags::NILLABLE_TYPE_SUPPORT,
         )
         .with_optimizer_flags(
             OptimizerFlags::all()

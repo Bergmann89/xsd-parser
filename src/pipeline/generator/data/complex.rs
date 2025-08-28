@@ -1,4 +1,4 @@
-use std::mem::{swap, take};
+use std::mem::take;
 
 use proc_macro2::{Ident as Ident2, Literal};
 use quote::format_ident;
@@ -588,13 +588,15 @@ impl<'types> ComplexDataElement<'types> {
                 (target_type, target_is_dynamic)
             }
             ElementMetaVariant::Type { type_, mode } => {
+                let mixed = mixed && *mode == ElementMode::Element;
+                let nillable = meta.nillable
+                    && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
+
                 let target_ref = ctx.get_or_create_type_ref(type_)?;
 
                 let target_type = target_ref.path.clone();
-                let target_type = PathData::from_path_data_mixed(
-                    mixed && *mode == ElementMode::Element,
-                    target_type,
-                );
+                let target_type = PathData::from_path_data_mixed(mixed, target_type);
+                let target_type = PathData::from_path_data_nillable(nillable, target_type);
 
                 if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
                     occurs = Occurs::Optional;
@@ -635,6 +637,7 @@ impl<'types> ComplexDataElement<'types> {
             ident: Ident::element(ident),
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
+            nillable: false,
             min_occurs: 0,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -672,6 +675,7 @@ impl<'types> ComplexDataElement<'types> {
                 mode: ElementMode::Group,
             },
             form: FormChoiceType::Unqualified,
+            nillable: false,
             min_occurs,
             max_occurs,
             display_name: None,
@@ -768,27 +772,6 @@ fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
         MetaTypeVariant::ComplexType(ci) => ci.is_dynamic,
         MetaTypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
         _ => false,
-    }
-}
-
-impl PathData {
-    fn from_path_data_mixed(is_mixed: bool, mut path: PathData) -> PathData {
-        if is_mixed {
-            let mut tmp = IdentPath::from_ident(format_ident!("Mixed"));
-
-            swap(&mut path.path, &mut tmp);
-
-            path.with_generic(tmp).with_using("xsd_parser::xml::Mixed")
-        } else {
-            path
-        }
-    }
-
-    fn text() -> Self {
-        let target_type = format_ident!("Text");
-        let target_type = IdentPath::from_ident(target_type);
-
-        Self::from_path(target_type).with_using("xsd_parser::xml::Text")
     }
 }
 

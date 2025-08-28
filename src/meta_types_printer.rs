@@ -153,6 +153,7 @@ impl<'a> MetaTypesPrinter<'a> {
                 indentln!("display_name={:?}", &ty.display_name);
                 indentln!("min={}", x.min_occurs);
                 indentln!("max={:?}", x.max_occurs);
+                indentln!("nillable={:?}", x.nillable);
                 indentln!("type={}", x.type_);
 
                 s.level -= 1;
@@ -210,6 +211,7 @@ impl<'a> MetaTypesPrinter<'a> {
 
                     indentln!("name={}", x.ident.name);
                     indentln!("form={:?}", x.form);
+                    indentln!("nillable={:?}", x.nillable);
                     indentln!("min_occurs={}", x.min_occurs);
                     indentln!("max_occurs={:?}", x.max_occurs);
 

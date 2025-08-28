@@ -121,7 +121,7 @@ pub trait XmlReaderSync<'a>: XmlReader {
                 Event::Start(_) => depth += 1,
                 Event::End(_) if depth == 1 => return Ok(()),
                 Event::End(_) => depth -= 1,
-                Event::Eof => Err(ErrorKind::UnexpectedEof)?,
+                Event::Eof => Err(ErrorKind::UnexpectedEoF)?,
                 _ if depth > 0 => (),
                 _ => return Ok(()),
             }

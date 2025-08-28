@@ -52,7 +52,7 @@ where
                     Event::Start(_) => this.depth += 1,
                     Event::End(_) if this.depth == 1 => return Poll::Ready(Ok(())),
                     Event::End(_) => this.depth -= 1,
-                    Event::Eof => return Poll::Ready(Err(Error::from(ErrorKind::UnexpectedEof))),
+                    Event::Eof => return Poll::Ready(Err(Error::from(ErrorKind::UnexpectedEoF))),
                     _ if this.depth > 0 => (),
                     _ => return Poll::Ready(Ok(())),
                 },

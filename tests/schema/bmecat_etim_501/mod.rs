@@ -10,7 +10,11 @@ const NS: Namespace = Namespace::new_const(b"https://www.etim-international.com/
 
 fn config() -> Config {
     let mut config = Config::test_default()
-        .with_generator_flags(GeneratorFlags::all() - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS)
+        .with_generator_flags(
+            GeneratorFlags::all()
+                - GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS
+                - GeneratorFlags::NILLABLE_TYPE_SUPPORT,
+        )
         .with_optimizer_flags(OptimizerFlags::all() - OptimizerFlags::REMOVE_DUPLICATES)
         .with_generate([(
             IdentType::Element,

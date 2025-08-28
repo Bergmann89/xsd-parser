@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="unqualified">
+
+    <xs:complexType name="FooType">
+        <xs:sequence>
+            <xs:element name="A" type="xs:int" />
+            <xs:element name="B" type="xs:int" nillable="true" />
+            <xs:element name="C" type="xs:int" minOccurs="0" />
+            <xs:element name="D" type="xs:int" minOccurs="0" nillable="true" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="Foo" type="tns:FooType" />
+    <xs:element name="NillableFoo" type="tns:FooType" nillable="true" />
+</xs:schema>

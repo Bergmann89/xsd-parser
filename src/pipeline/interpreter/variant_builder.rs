@@ -163,6 +163,35 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         ty: &'schema ElementType,
         extract_docs: bool,
     ) -> Result<(), Error> {
+        if ty.nillable.unwrap_or_default() {
+            let mut ident = self.state.current_ident().unwrap().clone();
+            ident.type_ = IdentType::Type;
+            ident.name = self
+                .state
+                .name_builder()
+                .auto_extend(false, true, self.state)
+                .remove_suffix("Type")
+                .remove_suffix("Content")
+                .unique_name("Inner")
+                .finish();
+
+            let inner = self.create_type(ident, |builder| builder.apply_element_inner(ty, true))?;
+
+            let meta = init_any!(self, Reference, ReferenceMeta::new(inner), true);
+            meta.nillable = true;
+
+            Ok(())
+        } else {
+            self.apply_element_inner(ty, extract_docs)
+        }
+    }
+
+    #[instrument(err, level = "trace", skip(self))]
+    pub(super) fn apply_element_inner(
+        &mut self,
+        ty: &'schema ElementType,
+        extract_docs: bool,
+    ) -> Result<(), Error> {
         use crate::models::schema::xs::ElementTypeContent as C;
 
         if let Some(type_) = &ty.type_ {
@@ -1656,6 +1685,7 @@ trait Update<T> {
 }
 
 impl<T: Clone> Update<Option<T>> for T {
+    #[inline]
     fn update(&mut self, other: &Option<T>) {
         if let Some(value) = other {
             *self = value.clone();
@@ -1664,6 +1694,7 @@ impl<T: Clone> Update<Option<T>> for T {
 }
 
 impl<T: Clone> Update<Option<T>> for Option<T> {
+    #[inline]
     fn update(&mut self, other: &Option<T>) {
         if let Some(value) = other {
             *self = Some(value.clone());
@@ -1672,6 +1703,7 @@ impl<T: Clone> Update<Option<T>> for Option<T> {
 }
 
 impl Update<GroupType> for ElementMeta {
+    #[inline]
     fn update(&mut self, other: &GroupType) {
         self.min_occurs = other.min_occurs;
         self.max_occurs = other.max_occurs;
@@ -1679,13 +1711,16 @@ impl Update<GroupType> for ElementMeta {
 }
 
 impl Update<ElementType> for ElementMeta {
+    #[inline]
     fn update(&mut self, other: &ElementType) {
         self.min_occurs = other.min_occurs;
         self.max_occurs = other.max_occurs;
+        self.nillable.update(&other.nillable);
     }
 }
 
 impl Update<AttributeType> for AttributeMeta {
+    #[inline]
     fn update(&mut self, other: &AttributeType) {
         self.use_ = other.use_;
         self.default.update(&other.default);

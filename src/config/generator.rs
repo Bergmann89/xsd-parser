@@ -140,11 +140,30 @@ bitflags! {
         #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
         /// ```
         ///
-        /// Enable the `BUILD_IN_ABSOLUTE_PATHS` feature only will result in the following code:
+        /// Enable the `MIXED_TYPE_SUPPORT` feature only will result in the following code:
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/mixed_type_support.rs")]
         /// ```
         const MIXED_TYPE_SUPPORT = 1 << 4;
+
+        /// Enable support for nillable types.
+        ///
+        /// This will enable code generation for nillable types. This feature needs
+        /// to be used with caution, because support for nillable types when using
+        /// `serde` is quite limited.
+        ///
+        /// # Examples
+        ///
+        /// Consider the following XML schema:
+        /// ```xml
+        #[doc = include_str!("../../tests/generator/generator_flags/schema.xsd")]
+        /// ```
+        ///
+        /// Enable the `NILLABLE_TYPE_SUPPORT` feature only will result in the following code:
+        /// ```rust,ignore
+        #[doc = include_str!("../../tests/generator/generator_flags/expected/nillable_type_support.rs")]
+        /// ```
+        const NILLABLE_TYPE_SUPPORT = 1 << 5;
 
         /// Use absolute paths for build in types.
         ///
@@ -163,7 +182,7 @@ bitflags! {
         /// ```rust,ignore
         #[doc = include_str!("../../tests/generator/generator_flags/expected/build_in_absolute_paths.rs")]
         /// ```
-        const BUILD_IN_ABSOLUTE_PATHS = 1 << 5;
+        const BUILD_IN_ABSOLUTE_PATHS = 1 << 6;
     }
 }
 

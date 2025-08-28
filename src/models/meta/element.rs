@@ -28,6 +28,9 @@ pub struct ElementMeta {
     /// The form of this element.
     pub form: FormChoiceType,
 
+    /// Wether the element is nillable or not.
+    pub nillable: bool,
+
     /// Minimum occurrence of the field.
     pub min_occurs: MinOccurs,
 
@@ -102,6 +105,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Type { type_, mode },
             form,
+            nillable: false,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -116,6 +120,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Any { meta },
             form: FormChoiceType::Unqualified,
+            nillable: false,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -130,6 +135,7 @@ impl ElementMeta {
             ident,
             variant: ElementMetaVariant::Text,
             form: FormChoiceType::Unqualified,
+            nillable: false,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
             display_name: None,
@@ -166,6 +172,7 @@ impl TypeEq for ElementMeta {
             ident,
             variant,
             form,
+            nillable,
             min_occurs,
             max_occurs,
             display_name,
@@ -175,6 +182,7 @@ impl TypeEq for ElementMeta {
         ident.hash(hasher);
         variant.type_hash(hasher, types);
         form.hash(hasher);
+        nillable.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
         display_name.hash(hasher);
@@ -186,6 +194,7 @@ impl TypeEq for ElementMeta {
             ident,
             variant,
             form,
+            nillable,
             min_occurs,
             max_occurs,
             display_name,
@@ -195,6 +204,7 @@ impl TypeEq for ElementMeta {
         ident.eq(&other.ident)
             && variant.type_eq(&other.variant, types)
             && form.eq(&other.form)
+            && nillable.eq(&other.nillable)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
             && display_name.eq(&other.display_name)
