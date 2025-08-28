@@ -249,7 +249,7 @@ pub enum DeserializerEvent<'a> {
     Break(Event<'a>),
 
     /// The event was not consumed by the deserializer an may be processed again
-    /// by it's any of it's parents.
+    /// by any of it's parents.
     Continue(Event<'a>),
 }
 

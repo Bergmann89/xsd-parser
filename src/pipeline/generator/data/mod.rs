@@ -6,11 +6,14 @@ mod simple;
 mod type_;
 mod union;
 
+use std::mem::swap;
+
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
 
 use crate::models::{
-    data::{BuildInData, CustomData, Occurs},
+    code::IdentPath,
+    data::{BuildInData, CustomData, Occurs, PathData},
     meta::{BuildInMeta, CustomMeta},
 };
 
@@ -47,5 +50,39 @@ impl Occurs {
             Self::StaticList(sz) if need_indirection => Some(quote! { [Box<#ident>; #sz] }),
             Self::StaticList(sz) => Some(quote! { [#ident; #sz] }),
         }
+    }
+}
+
+impl PathData {
+    fn from_path_data_nillable(is_mixed: bool, mut path: PathData) -> PathData {
+        if is_mixed {
+            let mut tmp = IdentPath::from_ident(format_ident!("Nillable"));
+
+            swap(&mut path.path, &mut tmp);
+
+            path.with_generic(tmp)
+                .with_using("xsd_parser::xml::Nillable")
+        } else {
+            path
+        }
+    }
+
+    fn from_path_data_mixed(is_mixed: bool, mut path: PathData) -> PathData {
+        if is_mixed {
+            let mut tmp = IdentPath::from_ident(format_ident!("Mixed"));
+
+            swap(&mut path.path, &mut tmp);
+
+            path.with_generic(tmp).with_using("xsd_parser::xml::Mixed")
+        } else {
+            path
+        }
+    }
+
+    fn text() -> Self {
+        let target_type = format_ident!("Text");
+        let target_type = IdentPath::from_ident(target_type);
+
+        Self::from_path(target_type).with_using("xsd_parser::xml::Text")
     }
 }

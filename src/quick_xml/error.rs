@@ -181,7 +181,11 @@ pub enum Kind {
 
     /// Unexpected end of file.
     #[error("Unexpected EoF!")]
-    UnexpectedEof,
+    UnexpectedEoF,
+
+    /// Unexpected end of element.
+    #[error("Unexpected EoL!")]
+    UnexpectedEoL,
 }
 
 /// Error raised by different XML value validation functions.

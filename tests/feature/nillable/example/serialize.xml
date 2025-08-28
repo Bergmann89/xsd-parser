@@ -1,0 +1,5 @@
+<Foo xmlns:tns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <A>1</A>
+    <B xsi:nil="true" />
+    <D xsi:nil="true" />
+</Foo>

@@ -15,6 +15,9 @@ pub struct ReferenceMeta {
     /// Type that is referenced.
     pub type_: Ident,
 
+    /// Whether the referenced type is nillable or not.
+    pub nillable: bool,
+
     /// Minimum occurrence of the referenced type.
     pub min_occurs: MinOccurs,
 
@@ -31,6 +34,7 @@ impl ReferenceMeta {
     {
         Self {
             type_: type_.into(),
+            nillable: false,
             min_occurs: 1,
             max_occurs: MaxOccurs::Bounded(1),
         }
@@ -42,7 +46,7 @@ impl ReferenceMeta {
     /// existing type.
     #[must_use]
     pub fn is_single(&self) -> bool {
-        self.min_occurs == 1 && self.max_occurs == MaxOccurs::Bounded(1)
+        self.min_occurs == 1 && self.max_occurs == MaxOccurs::Bounded(1) && !self.nillable
     }
 
     /// Sets the minimum occurrence of the referenced type.
@@ -66,11 +70,13 @@ impl TypeEq for ReferenceMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
         let Self {
             type_,
+            nillable,
             min_occurs,
             max_occurs,
         } = self;
 
         type_.type_hash(hasher, types);
+        nillable.hash(hasher);
         min_occurs.hash(hasher);
         max_occurs.hash(hasher);
     }
@@ -78,11 +84,13 @@ impl TypeEq for ReferenceMeta {
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             type_,
+            nillable,
             min_occurs,
             max_occurs,
         } = self;
 
         type_.type_eq(&other.type_, types)
+            && nillable.eq(&other.nillable)
             && min_occurs.eq(&other.min_occurs)
             && max_occurs.eq(&other.max_occurs)
     }

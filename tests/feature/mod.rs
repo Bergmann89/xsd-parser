@@ -27,6 +27,7 @@ mod inline_element_names;
 mod list;
 mod mixed_content;
 mod mixed_content_groups;
+mod nillable;
 mod num_big_int;
 mod numeric_fields;
 mod ref_to_attribute;

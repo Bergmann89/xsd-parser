@@ -370,6 +370,16 @@ impl Config {
 
         self
     }
+
+    /// Enable support for mixed types.
+    pub fn with_mixed_type_support(self) -> Self {
+        self.with_generator_flags(GeneratorFlags::MIXED_TYPE_SUPPORT)
+    }
+
+    /// Enable support for nillable types.
+    pub fn with_nillable_type_support(self) -> Self {
+        self.with_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT)
+    }
 }
 
 /// Identifier that is used inside the config.

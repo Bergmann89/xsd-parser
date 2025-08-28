@@ -1,0 +1,11 @@
+<Foo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <A>1</A>
+
+    <B xsi:nil="true" />
+
+    <!-- C has minOccurs="0" so we can skip it -->
+    <!-- <C>2</C> -->
+
+    <!-- D also has minOccurs="0" but we want to check if it detected the inner "nil" value -->
+    <D xsi:nil="true"></D>
+</Foo>
