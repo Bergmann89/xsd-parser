@@ -419,7 +419,13 @@ impl<'a> Interpreter<'a> {
 
             self.state.types.schemas.insert(*id, schema);
 
-            SchemaInterpreter::process(&mut self.state, *id, &info.schema, self.schemas)?;
+            SchemaInterpreter::process(
+                &mut self.state,
+                &info.schema,
+                self.schemas,
+                *id,
+                info.namespace_id(),
+            )?;
         }
 
         Ok(self.state.types)

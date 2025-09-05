@@ -22,6 +22,7 @@ mod extension_simple_content;
 mod extra_derive;
 mod facets;
 mod globally_allowed_attribute;
+mod include_references;
 mod include_target_namespace;
 mod inline_element_names;
 mod list;
