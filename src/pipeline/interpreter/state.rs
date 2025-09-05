@@ -151,13 +151,13 @@ impl<'a> State<'a> {
     pub(super) fn get_node(
         &mut self,
         schemas: &'a Schemas,
-        schema: &'a Schema,
+        current: NamespaceId,
         ident: Ident,
     ) -> Option<Node<'a>> {
         match self.node_cache.entry(ident) {
             Entry::Occupied(e) => Some(*e.get()),
             Entry::Vacant(e) => {
-                let node = search_in_schemas(schemas, schema, e.key())?;
+                let node = search_in_schemas(schemas, current, e.key())?;
 
                 Some(*e.insert(node))
             }
@@ -167,27 +167,24 @@ impl<'a> State<'a> {
 
 fn search_in_schemas<'a>(
     schemas: &'a Schemas,
-    schema: &'a Schema,
+    current: NamespaceId,
     ident: &Ident,
 ) -> Option<Node<'a>> {
     let name = ident.name.as_named_str()?;
     let type_ = ident.type_;
 
-    if let Some(ns) = &ident.ns {
-        let ns_info = schemas.get_namespace_info(ns)?;
+    let ns = ident.ns.as_ref().unwrap_or(&current);
+    let ns_info = schemas.get_namespace_info(ns)?;
 
-        for id in &ns_info.schemas {
-            if let Some(info) = schemas.get_schema(id) {
-                if let Some(node) = search_in_schema(&info.schema, name, type_) {
-                    return Some(node);
-                }
+    for id in &ns_info.schemas {
+        if let Some(info) = schemas.get_schema(id) {
+            if let Some(node) = search_in_schema(&info.schema, name, type_) {
+                return Some(node);
             }
         }
-
-        None
-    } else {
-        search_in_schema(schema, name, type_)
     }
+
+    None
 }
 
 fn search_in_schema<'a>(schema: &'a Schema, name: &str, type_: IdentType) -> Option<Node<'a>> {

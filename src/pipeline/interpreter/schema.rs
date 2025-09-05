@@ -21,9 +21,10 @@ use super::{state::StackEntry, Error, Node, State, VariantBuilder};
 #[derive(Debug)]
 pub(super) struct SchemaInterpreter<'schema, 'state> {
     pub(super) state: &'state mut State<'schema>,
-    pub(super) schema_id: SchemaId,
     pub(super) schema: &'schema Schema,
     pub(super) schemas: &'schema Schemas,
+    pub(super) schema_id: SchemaId,
+    pub(super) namespace_id: NamespaceId,
 
     pending_element_types: VecDeque<(Ident, &'schema ElementType)>,
 }
@@ -33,9 +34,10 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
     #[instrument(level = "trace", skip(state, schema, schemas))]
     pub(super) fn process(
         state: &'state mut State<'schema>,
-        schema_id: SchemaId,
         schema: &'schema Schema,
         schemas: &'schema Schemas,
+        schema_id: SchemaId,
+        namespace_id: NamespaceId,
     ) -> Result<(), Error> {
         let target_namespace = schema
             .target_namespace
@@ -54,9 +56,10 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
 
         let mut this = Self {
             state,
-            schema_id,
             schema,
             schemas,
+            schema_id,
+            namespace_id,
             pending_element_types: VecDeque::new(),
         };
 
@@ -303,7 +306,8 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
 
 impl<'schema> SchemaInterpreter<'schema, '_> {
     pub(super) fn find_element(&mut self, ident: Ident) -> Option<&'schema ElementType> {
-        if let Some(Node::Element(x)) = self.state.get_node(self.schemas, self.schema, ident) {
+        if let Some(Node::Element(x)) = self.state.get_node(self.schemas, self.namespace_id, ident)
+        {
             Some(x)
         } else {
             None
@@ -311,7 +315,9 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     }
 
     pub(super) fn find_simple_type(&mut self, ident: Ident) -> Option<&'schema SimpleBaseType> {
-        if let Some(Node::SimpleType(x)) = self.state.get_node(self.schemas, self.schema, ident) {
+        if let Some(Node::SimpleType(x)) =
+            self.state.get_node(self.schemas, self.namespace_id, ident)
+        {
             Some(x)
         } else {
             None
@@ -319,7 +325,9 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     }
 
     pub(super) fn find_complex_type(&mut self, ident: Ident) -> Option<&'schema ComplexBaseType> {
-        if let Some(Node::ComplexType(x)) = self.state.get_node(self.schemas, self.schema, ident) {
+        if let Some(Node::ComplexType(x)) =
+            self.state.get_node(self.schemas, self.namespace_id, ident)
+        {
             Some(x)
         } else {
             None
@@ -327,7 +335,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
     }
 
     pub(super) fn find_group(&mut self, ident: Ident) -> Option<&'schema GroupType> {
-        if let Some(Node::Group(x)) = self.state.get_node(self.schemas, self.schema, ident) {
+        if let Some(Node::Group(x)) = self.state.get_node(self.schemas, self.namespace_id, ident) {
             Some(x)
         } else {
             None
@@ -338,7 +346,8 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
         &mut self,
         ident: Ident,
     ) -> Option<&'schema AttributeGroupType> {
-        if let Some(Node::AttributeGroup(x)) = self.state.get_node(self.schemas, self.schema, ident)
+        if let Some(Node::AttributeGroup(x)) =
+            self.state.get_node(self.schemas, self.namespace_id, ident)
         {
             Some(x)
         } else {
