@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<Container id="container">
+<RootType id="root_1">
+  <SomeType id="some_1" partnerIdRef="some_2"/>
+  <SomeType id="some_2" partnerIdRef="some_3"/>
+
+  <!--
+    uncomment below xml line cashes the test case:
+
+      Error { kind: UnexpectedAttribute("someIdRef"), position: Some(263), elements: Some(["Container", "RootType"]) }
+
+    someIdRef is added in many old xml files unexpected.
+    can we have an option just skip such unexpected attributes.
+   -->
+  <SomeType id="some_3" someIdRef="xyz" partnerIdRef="some_1"/>
+
+</RootType>
+</Container>

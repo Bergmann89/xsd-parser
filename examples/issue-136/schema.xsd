@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xhtml="http://www.w3.org/1999/xhtml"
+			xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			xmlns="http://www.smokexml.org/schema"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+			targetNamespace="http://www.smokexml.org/schema"
+			version="0.1"
+			xsi:schemaLocation="http://smokexml.org/schema/v0.1.xsd">
+	<xsd:element name="Name" type="xsd:string"/>
+	<xsd:element name="Container">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="RootType" maxOccurs="unbounded"/>
+			</xsd:choice>
+			<xsd:attribute name="id" type="xsd:ID" use="required"/>
+			<!-- <xsd:anyAttribute /> -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SomeType">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:ID" use="required"/>
+			<xsd:attribute name="partnerIdRef" type="xsd:IDREF">
+				<xsd:annotation>
+					<xsd:documentation>ID for a resource meter</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<!-- <xsd:anyAttribute /> -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="RootType">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element ref="SomeType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:choice>
+			<xsd:attribute name="id" type="xsd:ID" use="required"/>
+			<!-- <xsd:anyAttribute /> -->
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>
