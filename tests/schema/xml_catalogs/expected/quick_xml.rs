@@ -440,7 +440,7 @@ pub mod er {
             id: Option<String>,
             prefer: Option<super::SystemOrPublicType>,
             content: Vec<super::CatalogTypeContent>,
-            state: Box<CatalogTypeDeserializerState>,
+            state__: Box<CatalogTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CatalogTypeDeserializerState {
@@ -474,7 +474,7 @@ pub mod er {
                     id: id,
                     prefer: prefer,
                     content: Vec::new(),
-                    state: Box::new(CatalogTypeDeserializerState::Init__),
+                    state__: Box::new(CatalogTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -509,7 +509,7 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CatalogTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -521,20 +521,21 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CatalogTypeDeserializerState::Next__;
+                        *self.state__ = CatalogTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CatalogTypeDeserializerState::Content__(deserializer);
+                                *self.state__ =
+                                    CatalogTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(CatalogTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = CatalogTypeDeserializerState::Next__;
+                                *self.state__ = CatalogTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -561,7 +562,7 @@ pub mod er {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -603,7 +604,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CatalogTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CatalogTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CatalogType {
                     id: self.id,
@@ -614,7 +615,7 @@ pub mod er {
         }
         #[derive(Debug)]
         pub struct CatalogTypeContentDeserializer {
-            state: Box<CatalogTypeContentDeserializerState>,
+            state__: Box<CatalogTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CatalogTypeContentDeserializerState {
@@ -853,7 +854,7 @@ pub mod er {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CatalogTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
@@ -1143,9 +1144,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::Public(values, None),
@@ -1175,11 +1176,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::Public(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CatalogTypeContentDeserializerState::Public(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -1201,9 +1202,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::System(values, None),
@@ -1233,11 +1234,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::System(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CatalogTypeContentDeserializerState::System(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -1259,9 +1260,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::Uri(values, None),
@@ -1288,11 +1289,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::Uri(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CatalogTypeContentDeserializerState::Uri(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -1314,9 +1315,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::RewriteSystem(values, None),
@@ -1350,11 +1351,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::RewriteSystem(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::RewriteSystem(
+                        *self.state__ = CatalogTypeContentDeserializerState::RewriteSystem(
                             values,
                             Some(deserializer),
                         );
@@ -1378,9 +1379,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::RewriteUri(values, None),
@@ -1414,11 +1415,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::RewriteUri(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::RewriteUri(
+                        *self.state__ = CatalogTypeContentDeserializerState::RewriteUri(
                             values,
                             Some(deserializer),
                         );
@@ -1442,9 +1443,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::UriSuffix(values, None),
@@ -1475,11 +1476,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::UriSuffix(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::UriSuffix(
+                        *self.state__ = CatalogTypeContentDeserializerState::UriSuffix(
                             values,
                             Some(deserializer),
                         );
@@ -1503,9 +1504,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::SystemSuffix(values, None),
@@ -1539,11 +1540,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::SystemSuffix(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::SystemSuffix(
+                        *self.state__ = CatalogTypeContentDeserializerState::SystemSuffix(
                             values,
                             Some(deserializer),
                         );
@@ -1567,9 +1568,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::DelegatePublic(values, None),
@@ -1603,11 +1604,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::DelegatePublic(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::DelegatePublic(
+                        *self.state__ = CatalogTypeContentDeserializerState::DelegatePublic(
                             values,
                             Some(deserializer),
                         );
@@ -1631,9 +1632,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::DelegateSystem(values, None),
@@ -1667,11 +1668,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::DelegateSystem(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::DelegateSystem(
+                        *self.state__ = CatalogTypeContentDeserializerState::DelegateSystem(
                             values,
                             Some(deserializer),
                         );
@@ -1695,9 +1696,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::DelegateUri(values, None),
@@ -1731,11 +1732,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::DelegateUri(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::DelegateUri(
+                        *self.state__ = CatalogTypeContentDeserializerState::DelegateUri(
                             values,
                             Some(deserializer),
                         );
@@ -1759,9 +1760,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::NextCatalog(values, None),
@@ -1795,11 +1796,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::NextCatalog(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CatalogTypeContentDeserializerState::NextCatalog(
+                        *self.state__ = CatalogTypeContentDeserializerState::NextCatalog(
                             values,
                             Some(deserializer),
                         );
@@ -1823,9 +1824,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CatalogTypeContentDeserializerState::Init__;
+                            *self.state__ = CatalogTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CatalogTypeContentDeserializerState::Group(values, None),
@@ -1852,11 +1853,11 @@ pub mod er {
                             reader,
                             CatalogTypeContentDeserializerState::Group(values, None),
                         )?;
-                        *self.state = CatalogTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CatalogTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CatalogTypeContentDeserializerState::Group(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -1872,12 +1873,12 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CatalogTypeContentDeserializerState::Init__),
+                    state__: Box::new(CatalogTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, CatalogTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, CatalogTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -1897,7 +1898,7 @@ pub mod er {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Public(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -2233,13 +2234,13 @@ pub mod er {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -2254,7 +2255,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -2262,7 +2263,7 @@ pub mod er {
             public_id_start_string: String,
             catalog: String,
             id: Option<String>,
-            state: Box<DelegatePublicTypeDeserializerState>,
+            state__: Box<DelegatePublicTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DelegatePublicTypeDeserializerState {
@@ -2308,7 +2309,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
                     })?,
                     id: id,
-                    state: Box::new(DelegatePublicTypeDeserializerState::Init__),
+                    state__: Box::new(DelegatePublicTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -2359,7 +2360,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DelegatePublicTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -2375,7 +2376,7 @@ pub mod er {
             system_id_start_string: String,
             catalog: String,
             id: Option<String>,
-            state: Box<DelegateSystemTypeDeserializerState>,
+            state__: Box<DelegateSystemTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DelegateSystemTypeDeserializerState {
@@ -2421,7 +2422,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
                     })?,
                     id: id,
-                    state: Box::new(DelegateSystemTypeDeserializerState::Init__),
+                    state__: Box::new(DelegateSystemTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -2472,7 +2473,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DelegateSystemTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -2488,7 +2489,7 @@ pub mod er {
             uri_start_string: String,
             catalog: String,
             id: Option<String>,
-            state: Box<DelegateUriTypeDeserializerState>,
+            state__: Box<DelegateUriTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DelegateUriTypeDeserializerState {
@@ -2534,7 +2535,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
                     })?,
                     id: id,
-                    state: Box::new(DelegateUriTypeDeserializerState::Init__),
+                    state__: Box::new(DelegateUriTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -2585,7 +2586,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DelegateUriTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -2601,7 +2602,7 @@ pub mod er {
             prefer: Option<super::SystemOrPublicType>,
             id: Option<String>,
             content: Vec<super::GroupTypeContent>,
-            state: Box<GroupTypeDeserializerState>,
+            state__: Box<GroupTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum GroupTypeDeserializerState {
@@ -2635,7 +2636,7 @@ pub mod er {
                     prefer: prefer,
                     id: id,
                     content: Vec::new(),
-                    state: Box::new(GroupTypeDeserializerState::Init__),
+                    state__: Box::new(GroupTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -2670,7 +2671,7 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(GroupTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -2682,20 +2683,20 @@ pub mod er {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = GroupTypeDeserializerState::Next__;
+                        *self.state__ = GroupTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = GroupTypeDeserializerState::Content__(deserializer);
+                                *self.state__ = GroupTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(GroupTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = GroupTypeDeserializerState::Next__;
+                                *self.state__ = GroupTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -2722,7 +2723,7 @@ pub mod er {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -2767,7 +2768,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, GroupTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, GroupTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::GroupType {
                     prefer: self.prefer,
@@ -2778,7 +2779,7 @@ pub mod er {
         }
         #[derive(Debug)]
         pub struct GroupTypeContentDeserializer {
-            state: Box<GroupTypeContentDeserializerState>,
+            state__: Box<GroupTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum GroupTypeContentDeserializerState {
@@ -2999,7 +3000,7 @@ pub mod er {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(GroupTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, true))
@@ -3263,9 +3264,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Public(values, None),
@@ -3292,11 +3293,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::Public(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Public(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -3318,9 +3319,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::System(values, None),
@@ -3347,11 +3348,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::System(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::System(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -3373,9 +3374,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Uri(values, None),
@@ -3402,11 +3403,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::Uri(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Uri(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -3428,9 +3429,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::RewriteSystem(values, None),
@@ -3464,11 +3465,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::RewriteSystem(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::RewriteSystem(
+                        *self.state__ = GroupTypeContentDeserializerState::RewriteSystem(
                             values,
                             Some(deserializer),
                         );
@@ -3492,9 +3493,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::RewriteUri(values, None),
@@ -3525,11 +3526,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::RewriteUri(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::RewriteUri(
+                        *self.state__ = GroupTypeContentDeserializerState::RewriteUri(
                             values,
                             Some(deserializer),
                         );
@@ -3553,9 +3554,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::UriSuffix(values, None),
@@ -3585,11 +3586,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::UriSuffix(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::UriSuffix(
+                        *self.state__ = GroupTypeContentDeserializerState::UriSuffix(
                             values,
                             Some(deserializer),
                         );
@@ -3613,9 +3614,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::SystemSuffix(values, None),
@@ -3649,11 +3650,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::SystemSuffix(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::SystemSuffix(
+                        *self.state__ = GroupTypeContentDeserializerState::SystemSuffix(
                             values,
                             Some(deserializer),
                         );
@@ -3677,9 +3678,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::DelegatePublic(values, None),
@@ -3713,11 +3714,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::DelegatePublic(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::DelegatePublic(
+                        *self.state__ = GroupTypeContentDeserializerState::DelegatePublic(
                             values,
                             Some(deserializer),
                         );
@@ -3741,9 +3742,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::DelegateSystem(values, None),
@@ -3777,11 +3778,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::DelegateSystem(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::DelegateSystem(
+                        *self.state__ = GroupTypeContentDeserializerState::DelegateSystem(
                             values,
                             Some(deserializer),
                         );
@@ -3805,9 +3806,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::DelegateUri(values, None),
@@ -3838,11 +3839,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::DelegateUri(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::DelegateUri(
+                        *self.state__ = GroupTypeContentDeserializerState::DelegateUri(
                             values,
                             Some(deserializer),
                         );
@@ -3866,9 +3867,9 @@ pub mod er {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::NextCatalog(values, None),
@@ -3899,11 +3900,11 @@ pub mod er {
                             reader,
                             GroupTypeContentDeserializerState::NextCatalog(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::NextCatalog(
+                        *self.state__ = GroupTypeContentDeserializerState::NextCatalog(
                             values,
                             Some(deserializer),
                         );
@@ -3921,12 +3922,12 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(GroupTypeContentDeserializerState::Init__),
+                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, GroupTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, GroupTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -3946,7 +3947,7 @@ pub mod er {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Public(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -4259,13 +4260,13 @@ pub mod er {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -4280,14 +4281,14 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct NextCatalogTypeDeserializer {
             catalog: String,
             id: Option<String>,
-            state: Box<NextCatalogTypeDeserializerState>,
+            state__: Box<NextCatalogTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum NextCatalogTypeDeserializerState {
@@ -4320,7 +4321,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("catalog".into()))
                     })?,
                     id: id,
-                    state: Box::new(NextCatalogTypeDeserializerState::Init__),
+                    state__: Box::new(NextCatalogTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4371,7 +4372,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     NextCatalogTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -4386,7 +4387,7 @@ pub mod er {
             public_id: String,
             uri: String,
             id: Option<String>,
-            state: Box<PublicTypeDeserializerState>,
+            state__: Box<PublicTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PublicTypeDeserializerState {
@@ -4428,7 +4429,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
                     id: id,
-                    state: Box::new(PublicTypeDeserializerState::Init__),
+                    state__: Box::new(PublicTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4475,7 +4476,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, PublicTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, PublicTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::PublicType {
                     public_id: self.public_id,
@@ -4489,7 +4490,7 @@ pub mod er {
             system_id_start_string: String,
             rewrite_prefix: String,
             id: Option<String>,
-            state: Box<RewriteSystemTypeDeserializerState>,
+            state__: Box<RewriteSystemTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RewriteSystemTypeDeserializerState {
@@ -4535,7 +4536,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("rewritePrefix".into()))
                     })?,
                     id: id,
-                    state: Box::new(RewriteSystemTypeDeserializerState::Init__),
+                    state__: Box::new(RewriteSystemTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4586,7 +4587,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     RewriteSystemTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -4602,7 +4603,7 @@ pub mod er {
             uri_start_string: String,
             rewrite_prefix: String,
             id: Option<String>,
-            state: Box<RewriteUriTypeDeserializerState>,
+            state__: Box<RewriteUriTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RewriteUriTypeDeserializerState {
@@ -4648,7 +4649,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("rewritePrefix".into()))
                     })?,
                     id: id,
-                    state: Box::new(RewriteUriTypeDeserializerState::Init__),
+                    state__: Box::new(RewriteUriTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4698,7 +4699,10 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, RewriteUriTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    RewriteUriTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::RewriteUriType {
                     uri_start_string: self.uri_start_string,
@@ -4712,7 +4716,7 @@ pub mod er {
             system_id: String,
             uri: String,
             id: Option<String>,
-            state: Box<SystemTypeDeserializerState>,
+            state__: Box<SystemTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SystemTypeDeserializerState {
@@ -4754,7 +4758,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
                     id: id,
-                    state: Box::new(SystemTypeDeserializerState::Init__),
+                    state__: Box::new(SystemTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4801,7 +4805,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SystemTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, SystemTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::SystemType {
                     system_id: self.system_id,
@@ -4815,7 +4819,7 @@ pub mod er {
             system_id_suffix: String,
             uri: String,
             id: Option<String>,
-            state: Box<SystemSuffixTypeDeserializerState>,
+            state__: Box<SystemSuffixTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SystemSuffixTypeDeserializerState {
@@ -4861,7 +4865,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
                     id: id,
-                    state: Box::new(SystemSuffixTypeDeserializerState::Init__),
+                    state__: Box::new(SystemSuffixTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4912,7 +4916,7 @@ pub mod er {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SystemSuffixTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -4928,7 +4932,7 @@ pub mod er {
             name: String,
             uri: String,
             id: Option<String>,
-            state: Box<UriTypeDeserializerState>,
+            state__: Box<UriTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum UriTypeDeserializerState {
@@ -4970,7 +4974,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
                     id: id,
-                    state: Box::new(UriTypeDeserializerState::Init__),
+                    state__: Box::new(UriTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -5017,7 +5021,7 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, UriTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, UriTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::UriType {
                     name: self.name,
@@ -5031,7 +5035,7 @@ pub mod er {
             uri_suffix: String,
             uri: String,
             id: Option<String>,
-            state: Box<UriSuffixTypeDeserializerState>,
+            state__: Box<UriSuffixTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum UriSuffixTypeDeserializerState {
@@ -5073,7 +5077,7 @@ pub mod er {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
                     id: id,
-                    state: Box::new(UriSuffixTypeDeserializerState::Init__),
+                    state__: Box::new(UriSuffixTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -5123,7 +5127,10 @@ pub mod er {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, UriSuffixTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    UriSuffixTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::UriSuffixType {
                     uri_suffix: self.uri_suffix,
@@ -6273,7 +6280,7 @@ pub mod xs {
         };
         #[derive(Debug)]
         pub struct AnyTypeDeserializer {
-            state: Box<AnyTypeDeserializerState>,
+            state__: Box<AnyTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnyTypeDeserializerState {
@@ -6286,7 +6293,7 @@ pub mod xs {
                 R: DeserializeReader,
             {
                 Ok(Self {
-                    state: Box::new(AnyTypeDeserializerState::Init__),
+                    state__: Box::new(AnyTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -6333,7 +6340,7 @@ pub mod xs {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, AnyTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::AnyType {})
             }

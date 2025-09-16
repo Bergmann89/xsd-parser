@@ -33,7 +33,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct SuccessTypeDeserializer {
-        state: Box<SuccessTypeDeserializerState>,
+        state__: Box<SuccessTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum SuccessTypeDeserializerState {
@@ -50,7 +50,7 @@ pub mod quick_xml_deserialize {
                 reader.raise_unexpected_attrib_checked(attrib)?;
             }
             Ok(Self {
-                state: Box::new(SuccessTypeDeserializerState::Init__),
+                state__: Box::new(SuccessTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -97,7 +97,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, SuccessTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, SuccessTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::SuccessType {})
         }

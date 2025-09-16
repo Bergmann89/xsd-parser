@@ -33,7 +33,7 @@ pub mod quick_xml_deserialize {
     };
     #[derive(Debug)]
     pub struct AnyTypeDeserializer {
-        state: Box<AnyTypeDeserializerState>,
+        state__: Box<AnyTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum AnyTypeDeserializerState {
@@ -46,7 +46,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             Ok(Self {
-                state: Box::new(AnyTypeDeserializerState::Init__),
+                state__: Box::new(AnyTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -93,7 +93,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, AnyTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, AnyTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::AnyType {})
         }

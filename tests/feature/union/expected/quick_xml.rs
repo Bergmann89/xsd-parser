@@ -71,7 +71,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct FooTypeDeserializer {
         union_: super::UnionType,
-        state: Box<FooTypeDeserializerState>,
+        state__: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
@@ -98,7 +98,7 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 union_: union_
                     .ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("union".into())))?,
-                state: Box::new(FooTypeDeserializerState::Init__),
+                state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -145,7 +145,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType {
                 union_: self.union_,

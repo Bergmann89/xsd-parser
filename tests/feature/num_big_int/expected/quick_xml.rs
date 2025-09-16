@@ -51,7 +51,7 @@ pub mod tns {
         pub struct FooTypeDeserializer {
             a_int: BigInt,
             b_int: BigInt,
-            state: Box<FooTypeDeserializerState>,
+            state__: Box<FooTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FooTypeDeserializerState {
@@ -84,7 +84,7 @@ pub mod tns {
                 Ok(Self {
                     a_int: a_int.unwrap_or_else(super::FooType::default_a_int),
                     b_int: b_int.unwrap_or_else(super::FooType::default_b_int),
-                    state: Box::new(FooTypeDeserializerState::Init__),
+                    state__: Box::new(FooTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -131,7 +131,7 @@ pub mod tns {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::FooType {
                     a_int: self.a_int,

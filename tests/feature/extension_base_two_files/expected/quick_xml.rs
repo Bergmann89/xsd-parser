@@ -39,7 +39,7 @@ pub mod other {
         pub struct BarTypeDeserializer {
             b: Option<i32>,
             c: Option<String>,
-            state: Box<BarTypeDeserializerState>,
+            state__: Box<BarTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum BarTypeDeserializerState {
@@ -61,7 +61,7 @@ pub mod other {
                 Ok(Self {
                     b: None,
                     c: None,
-                    state: Box::new(BarTypeDeserializerState::Init__),
+                    state__: Box::new(BarTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -111,10 +111,10 @@ pub mod other {
                 if artifact.is_none() {
                     if self.b.is_some() {
                         fallback.get_or_insert(BarTypeDeserializerState::B(None));
-                        *self.state = BarTypeDeserializerState::C(None);
+                        *self.state__ = BarTypeDeserializerState::C(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = BarTypeDeserializerState::B(None);
+                        *self.state__ = BarTypeDeserializerState::B(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -125,7 +125,7 @@ pub mod other {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_b(data)?;
-                        *self.state = BarTypeDeserializerState::C(None);
+                        *self.state__ = BarTypeDeserializerState::C(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -134,10 +134,10 @@ pub mod other {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback
                                     .get_or_insert(BarTypeDeserializerState::B(Some(deserializer)));
-                                *self.state = BarTypeDeserializerState::C(None);
+                                *self.state__ = BarTypeDeserializerState::C(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = BarTypeDeserializerState::B(Some(deserializer));
+                                *self.state__ = BarTypeDeserializerState::B(Some(deserializer));
                             }
                         }
                         ret
@@ -161,10 +161,10 @@ pub mod other {
                 if artifact.is_none() {
                     if self.c.is_some() {
                         fallback.get_or_insert(BarTypeDeserializerState::C(None));
-                        *self.state = BarTypeDeserializerState::Done__;
+                        *self.state__ = BarTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = BarTypeDeserializerState::C(None);
+                        *self.state__ = BarTypeDeserializerState::C(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -175,7 +175,7 @@ pub mod other {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_c(data)?;
-                        *self.state = BarTypeDeserializerState::Done__;
+                        *self.state__ = BarTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -184,10 +184,10 @@ pub mod other {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback
                                     .get_or_insert(BarTypeDeserializerState::C(Some(deserializer)));
-                                *self.state = BarTypeDeserializerState::Done__;
+                                *self.state__ = BarTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = BarTypeDeserializerState::C(Some(deserializer));
+                                *self.state__ = BarTypeDeserializerState::C(Some(deserializer));
                             }
                         }
                         ret
@@ -215,7 +215,7 @@ pub mod other {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::B(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -253,7 +253,7 @@ pub mod other {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = BarTypeDeserializerState::B(None);
+                            *self.state__ = BarTypeDeserializerState::B(None);
                             event
                         }
                         (S::B(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -296,13 +296,13 @@ pub mod other {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -314,7 +314,7 @@ pub mod other {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, BarTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, BarTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::BarType {
                     b: self
@@ -443,7 +443,7 @@ pub mod tns {
         pub struct FooTypeDeserializer {
             a: Option<f32>,
             b: Option<super::super::other::BarType>,
-            state: Box<FooTypeDeserializerState>,
+            state__: Box<FooTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FooTypeDeserializerState {
@@ -465,7 +465,7 @@ pub mod tns {
                 Ok(Self {
                     a: None,
                     b: None,
-                    state: Box::new(FooTypeDeserializerState::Init__),
+                    state__: Box::new(FooTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -515,10 +515,10 @@ pub mod tns {
                 if artifact.is_none() {
                     if self.a.is_some() {
                         fallback.get_or_insert(FooTypeDeserializerState::A(None));
-                        *self.state = FooTypeDeserializerState::B(None);
+                        *self.state__ = FooTypeDeserializerState::B(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = FooTypeDeserializerState::A(None);
+                        *self.state__ = FooTypeDeserializerState::A(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -529,7 +529,7 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_a(data)?;
-                        *self.state = FooTypeDeserializerState::B(None);
+                        *self.state__ = FooTypeDeserializerState::B(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -538,10 +538,10 @@ pub mod tns {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback
                                     .get_or_insert(FooTypeDeserializerState::A(Some(deserializer)));
-                                *self.state = FooTypeDeserializerState::B(None);
+                                *self.state__ = FooTypeDeserializerState::B(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = FooTypeDeserializerState::A(Some(deserializer));
+                                *self.state__ = FooTypeDeserializerState::A(Some(deserializer));
                             }
                         }
                         ret
@@ -565,10 +565,10 @@ pub mod tns {
                 if artifact.is_none() {
                     if self.b.is_some() {
                         fallback.get_or_insert(FooTypeDeserializerState::B(None));
-                        *self.state = FooTypeDeserializerState::Done__;
+                        *self.state__ = FooTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = FooTypeDeserializerState::B(None);
+                        *self.state__ = FooTypeDeserializerState::B(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -579,7 +579,7 @@ pub mod tns {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_b(data)?;
-                        *self.state = FooTypeDeserializerState::Done__;
+                        *self.state__ = FooTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -588,10 +588,10 @@ pub mod tns {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback
                                     .get_or_insert(FooTypeDeserializerState::B(Some(deserializer)));
-                                *self.state = FooTypeDeserializerState::Done__;
+                                *self.state__ = FooTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = FooTypeDeserializerState::B(Some(deserializer));
+                                *self.state__ = FooTypeDeserializerState::B(Some(deserializer));
                             }
                         }
                         ret
@@ -619,7 +619,7 @@ pub mod tns {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::A(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -657,7 +657,7 @@ pub mod tns {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = FooTypeDeserializerState::A(None);
+                            *self.state__ = FooTypeDeserializerState::A(None);
                             event
                         }
                         (S::A(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -700,13 +700,13 @@ pub mod tns {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -718,7 +718,7 @@ pub mod tns {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::FooType {
                     a: self

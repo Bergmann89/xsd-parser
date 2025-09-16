@@ -44,7 +44,7 @@ pub mod quick_xml_deserialize {
         optional: Option<i32>,
         once_specify: Option<i32>,
         twice_or_more: Vec<i32>,
-        state: Box<FooTypeDeserializerState>,
+        state__: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
@@ -70,7 +70,7 @@ pub mod quick_xml_deserialize {
                 optional: None,
                 once_specify: None,
                 twice_or_more: Vec::new(),
-                state: Box::new(FooTypeDeserializerState::Init__),
+                state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -143,10 +143,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.once.is_some() {
                     fallback.get_or_insert(FooTypeDeserializerState::Once(None));
-                    *self.state = FooTypeDeserializerState::Optional(None);
+                    *self.state__ = FooTypeDeserializerState::Optional(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooTypeDeserializerState::Once(None);
+                    *self.state__ = FooTypeDeserializerState::Once(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -157,7 +157,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_once(data)?;
-                    *self.state = FooTypeDeserializerState::Optional(None);
+                    *self.state__ = FooTypeDeserializerState::Optional(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -166,10 +166,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(FooTypeDeserializerState::Once(Some(deserializer)));
-                            *self.state = FooTypeDeserializerState::Optional(None);
+                            *self.state__ = FooTypeDeserializerState::Optional(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Once(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Once(Some(deserializer));
                         }
                     }
                     ret
@@ -192,7 +192,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(FooTypeDeserializerState::Optional(None));
-                *self.state = FooTypeDeserializerState::OnceSpecify(None);
+                *self.state__ = FooTypeDeserializerState::OnceSpecify(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -202,7 +202,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_optional(data)?;
-                    *self.state = FooTypeDeserializerState::OnceSpecify(None);
+                    *self.state__ = FooTypeDeserializerState::OnceSpecify(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -212,10 +212,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(FooTypeDeserializerState::Optional(Some(
                                 deserializer,
                             )));
-                            *self.state = FooTypeDeserializerState::OnceSpecify(None);
+                            *self.state__ = FooTypeDeserializerState::OnceSpecify(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Optional(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Optional(Some(deserializer));
                         }
                     }
                     ret
@@ -239,10 +239,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.once_specify.is_some() {
                     fallback.get_or_insert(FooTypeDeserializerState::OnceSpecify(None));
-                    *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                    *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooTypeDeserializerState::OnceSpecify(None);
+                    *self.state__ = FooTypeDeserializerState::OnceSpecify(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -253,7 +253,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_once_specify(data)?;
-                    *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                    *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -263,10 +263,11 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(FooTypeDeserializerState::OnceSpecify(Some(
                                 deserializer,
                             )));
-                            *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                            *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::OnceSpecify(Some(deserializer));
+                            *self.state__ =
+                                FooTypeDeserializerState::OnceSpecify(Some(deserializer));
                         }
                     }
                     ret
@@ -289,11 +290,11 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 if self.twice_or_more.len() < 2usize {
-                    *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                    *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(FooTypeDeserializerState::TwiceOrMore(None));
-                    *self.state = FooTypeDeserializerState::Done__;
+                    *self.state__ = FooTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
             }
@@ -304,7 +305,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_twice_or_more(data)?;
-                    *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                    *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -315,13 +316,14 @@ pub mod quick_xml_deserialize {
                                 deserializer,
                             )));
                             if self.twice_or_more.len().saturating_add(1) < 2usize {
-                                *self.state = FooTypeDeserializerState::TwiceOrMore(None);
+                                *self.state__ = FooTypeDeserializerState::TwiceOrMore(None);
                             } else {
-                                *self.state = FooTypeDeserializerState::Done__;
+                                *self.state__ = FooTypeDeserializerState::Done__;
                             }
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::TwiceOrMore(Some(deserializer));
+                            *self.state__ =
+                                FooTypeDeserializerState::TwiceOrMore(Some(deserializer));
                         }
                     }
                     ret
@@ -349,7 +351,7 @@ pub mod quick_xml_deserialize {
             let mut fallback = None;
             let mut allow_any_element = false;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Once(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -411,7 +413,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = FooTypeDeserializerState::Once(None);
+                        *self.state__ = FooTypeDeserializerState::Once(None);
                         event
                     }
                     (S::Once(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -488,13 +490,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
-                        *self.state = state;
+                        *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
             if let Some(fallback) = fallback {
-                *self.state = fallback;
+                *self.state__ = fallback;
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -506,7 +508,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType {
                 once: self
