@@ -54,6 +54,7 @@ impl TraitInfos {
                     .traits_all
                     .insert(base_ident.clone());
 
+                #[allow(clippy::single_match)]
                 match types.get_variant(type_ident) {
                     Some(MetaTypeVariant::Dynamic(DynamicMeta {
                         type_: Some(type_ident),
@@ -61,13 +62,6 @@ impl TraitInfos {
                     })) => {
                         ret.0
                             .entry(type_ident.clone())
-                            .or_default()
-                            .traits_all
-                            .insert(base_ident.clone());
-                    }
-                    Some(MetaTypeVariant::Reference(ri)) if ri.is_single() => {
-                        ret.0
-                            .entry(ri.type_.clone())
                             .or_default()
                             .traits_all
                             .insert(base_ident.clone());

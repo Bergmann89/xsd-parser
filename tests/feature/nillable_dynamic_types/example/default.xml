@@ -1,0 +1,4 @@
+<List xmlns:tns="http://example.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <intermediate baseValue="10" intermediateValue="11" />
+    <final baseValue="20" intermediateValue="21" finalValue="22" />
+</List>

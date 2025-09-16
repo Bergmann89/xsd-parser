@@ -185,7 +185,8 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("display_name={:?}", &ty.display_name);
-                indentln!("types:");
+                indentln!("type={:?}", &x.type_);
+                indentln!("derived_types:");
 
                 s.level += 1;
 

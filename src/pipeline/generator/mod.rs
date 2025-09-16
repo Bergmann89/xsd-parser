@@ -102,6 +102,8 @@ impl<'types> Generator<'types> {
                 String::new(),               // AttributeGroup = 5
                 String::new(),               // BuildIn = 6
                 String::new(),               // Enumeration = 7
+                String::from("NotNil"),      // NillableContent = 8
+                String::from("Dyn"),         // DynamicElement = 9
             ],
             box_flags: BoxFlags::AUTO,
             typedef_mode: TypedefMode::Auto,

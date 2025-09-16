@@ -32,8 +32,7 @@ impl WithSerializer for FooType {
 impl WithDeserializer for FooType {
     type Deserializer = quick_xml_deserialize::FooTypeDeserializer;
 }
-pub type NillableFoo = Nillable<NillableFooInnerType>;
-pub type NillableFooInnerType = FooType;
+pub type NillableFoo = Nillable<FooType>;
 pub mod quick_xml_deserialize {
     use core::mem::replace;
     use xsd_parser::{

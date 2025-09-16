@@ -101,7 +101,11 @@ impl<'schema, 'state> SchemaInterpreter<'schema, 'state> {
 
 impl SchemaInterpreter<'_, '_> {
     #[instrument(level = "trace", skip(self))]
-    pub(super) fn get_element_mut(&mut self, ident: &Ident) -> Result<&mut MetaType, Error> {
+    pub(super) fn get_substitution_group_element_mut(
+        &mut self,
+        ident: &Ident,
+    ) -> Result<&mut MetaType, Error> {
+        // Create the element if it does not exist
         if !self.state.types.items.contains_key(ident) {
             let ty = self
                 .find_element(ident.clone())
@@ -293,10 +297,7 @@ impl<'schema> SchemaInterpreter<'schema, '_> {
             unreachable!("Unexpected stack entry!");
         };
 
-        let mut type_ = type_?;
-        type_.schema = Some(self.schema_id);
-
-        self.state.add_type(ident.clone(), type_, false)?;
+        self.state.add_type(ident.clone(), type_?, false)?;
 
         Ok(ident)
     }

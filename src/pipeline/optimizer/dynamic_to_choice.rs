@@ -49,19 +49,11 @@ impl Optimizer {
             let content_name = self.types.name_builder().shared_name("Content").finish();
             let content_ident = Ident::new(content_name).with_ns(ident.ns);
 
-            let type_ = self.types.items.get_mut(&ident).unwrap();
-            let form = type_.form();
-            let MetaTypeVariant::Dynamic(x) = &mut type_.variant else {
-                crate::unreachable!();
-            };
-
             let mut si = GroupMeta::default();
-            for derived in &x.derived_types {
-                si.elements.find_or_insert(derived.clone(), |ident| {
-                    ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
-                });
-            }
+            let type_ = self.types.items.get(&ident).unwrap();
+            self.add_elements(&mut si, type_);
 
+            let type_ = self.types.items.get_mut(&ident).unwrap();
             type_.variant = MetaTypeVariant::ComplexType(ComplexMeta {
                 content: Some(content_ident.clone()),
                 is_dynamic: true,
@@ -77,5 +69,23 @@ impl Optimizer {
         }
 
         self
+    }
+
+    fn add_elements(&self, group: &mut GroupMeta, ty: &MetaType) {
+        let form = ty.form();
+        let MetaTypeVariant::Dynamic(x) = &ty.variant else {
+            crate::unreachable!();
+        };
+
+        for derived in &x.derived_types {
+            let derived_ty = self.types.get_resolved_type(derived).unwrap();
+            if let MetaTypeVariant::Dynamic(_) = &derived_ty.variant {
+                self.add_elements(group, derived_ty);
+            } else {
+                group.elements.find_or_insert(derived.clone(), |ident| {
+                    ElementMeta::new(ident, derived.clone(), ElementMode::Element, form)
+                });
+            }
+        }
     }
 }
