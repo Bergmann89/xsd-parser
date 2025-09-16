@@ -1,4 +1,5 @@
 use std::collections::btree_map::Entry;
+use std::mem::swap;
 use std::ops::{Bound, Deref, DerefMut};
 use std::str::from_utf8;
 
@@ -145,12 +146,36 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
     }
 
+    pub(super) fn reset(&mut self) {
+        self.variant = None;
+        self.fixed = false;
+        self.type_mode = TypeMode::Unknown;
+        self.content_mode = ContentMode::Unknown;
+        self.is_simple_content_unique = false;
+
+        self.documentation.clear();
+    }
+
+    pub(super) fn finish_mut(&mut self) -> Result<MetaType, Error> {
+        let variant = self.variant.take().ok_or(Error::NoType)?;
+
+        let mut type_ = MetaType::new(variant);
+        type_.form = Some(self.owner.schema.element_form_default);
+        type_.schema = Some(self.owner.schema_id);
+        swap(&mut type_.documentation, &mut self.documentation);
+
+        self.reset();
+
+        Ok(type_)
+    }
+
     pub(super) fn finish(self) -> Result<MetaType, Error> {
         let Self { variant, owner, .. } = self;
         let variant = variant.ok_or(Error::NoType)?;
 
         let mut type_ = MetaType::new(variant);
         type_.form = Some(owner.schema.element_form_default);
+        type_.schema = Some(owner.schema_id);
         type_.documentation = self.documentation;
 
         Ok(type_)
@@ -158,33 +183,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
     #[instrument(err, level = "trace", skip(self))]
     pub(super) fn apply_element(
-        &mut self,
-        ty: &'schema ElementType,
-        extract_docs: bool,
-    ) -> Result<(), Error> {
-        if ty.nillable.unwrap_or_default() {
-            let mut ident = self.state.current_ident().unwrap().clone();
-            ident.type_ = IdentType::Type;
-            ident.name = self
-                .state
-                .name_builder()
-                .auto_extend(false, true, self.state)
-                .unique_name("Inner")
-                .finish();
-
-            let inner = self.create_type(ident, |builder| builder.apply_element_inner(ty, true))?;
-
-            let meta = init_any!(self, Reference, ReferenceMeta::new(inner), true);
-            meta.nillable = true;
-
-            Ok(())
-        } else {
-            self.apply_element_inner(ty, extract_docs)
-        }
-    }
-
-    #[instrument(err, level = "trace", skip(self))]
-    pub(super) fn apply_element_inner(
         &mut self,
         ty: &'schema ElementType,
         extract_docs: bool,
@@ -265,12 +263,29 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
             let ai = init_any!(self, Dynamic);
             ai.type_ = type_;
+        } else if ty.nillable.unwrap_or_default() {
+            let mut ident = self.state.current_ident().unwrap().clone();
+            ident.type_ = IdentType::NillableContent;
+
+            let type_ = self.finish_mut()?;
+            self.state.add_type(ident.clone(), type_, false)?;
+
+            let meta = init_any!(self, Reference, ReferenceMeta::new(ident), true);
+            meta.nillable = true;
         }
 
         if let Some(substitution_group) = &ty.substitution_group {
+            let mut ident = self.state.current_ident().unwrap().clone();
+            ident.type_ = IdentType::DynamicElement;
+
+            let type_ = self.finish_mut()?;
+            self.state.add_type(ident.clone(), type_, false)?;
+
+            init_any!(self, Reference, ReferenceMeta::new(ident), true);
+
             self.walk_substitution_groups(substitution_group, |builder, base_ident| {
                 let ident = builder.state.current_ident().unwrap().clone();
-                let base_ty = builder.get_element_mut(base_ident)?;
+                let base_ty = builder.get_substitution_group_element_mut(base_ident)?;
 
                 if let MetaTypeVariant::Reference(ti) = &mut base_ty.variant {
                     base_ty.variant = MetaTypeVariant::Dynamic(DynamicMeta {

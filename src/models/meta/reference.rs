@@ -40,13 +40,21 @@ impl ReferenceMeta {
         }
     }
 
-    /// Returns `true` if this is a reference references a single type, `false` otherwise.
+    /// Returns `true` if this references a single type, `false` otherwise.
+    ///
+    /// This means that the target type is used exactly once in this reference.
+    #[must_use]
+    pub fn is_single(&self) -> bool {
+        self.min_occurs == 1 && self.max_occurs == MaxOccurs::Bounded(1)
+    }
+
+    /// Returns `true` if this references a simple type, `false` otherwise.
     ///
     /// This means that it is more or less just a type definition or renaming of an
     /// existing type.
     #[must_use]
-    pub fn is_single(&self) -> bool {
-        self.min_occurs == 1 && self.max_occurs == MaxOccurs::Bounded(1) && !self.nillable
+    pub fn is_simple(&self) -> bool {
+        self.is_single() && !self.nillable
     }
 
     /// Sets the minimum occurrence of the referenced type.

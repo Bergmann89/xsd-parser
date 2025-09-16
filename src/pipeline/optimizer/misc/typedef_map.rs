@@ -14,7 +14,7 @@ impl TypedefMap {
 
         for (ident, type_) in &types.items {
             if let MetaTypeVariant::Reference(x) = &type_.variant {
-                if x.is_single() {
+                if x.is_simple() {
                     ret.insert(ident.clone(), x.type_.clone());
                 }
             }

@@ -249,6 +249,12 @@ pub struct TypePostfix {
 
     /// Postfixes added to inline types if elements (like `xs:element`).
     pub element_type: String,
+
+    /// Postfix for the type that is used as content for [`Nillable`](crate::xml::Nillable) elements.
+    pub nillable_content: String,
+
+    /// Postfix for concrete elements in a substitution group.
+    pub dynamic_element: String,
 }
 
 impl Default for TypePostfix {
@@ -257,6 +263,8 @@ impl Default for TypePostfix {
             type_: String::from("Type"),
             element: String::new(),
             element_type: String::from("ElementType"),
+            nillable_content: String::from("NotNil"),
+            dynamic_element: String::from("Dyn"),
         }
     }
 }

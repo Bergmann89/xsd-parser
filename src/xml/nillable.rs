@@ -44,6 +44,14 @@ impl<T> Nillable<T> {
     pub fn is_nil(&self) -> bool {
         self.0.is_none()
     }
+
+    /// Returns the contained [`Some`] value, consuming the `self` value.
+    ///
+    /// Panics if the nillable does not contain a value.
+    #[inline]
+    pub fn unwrap(self) -> T {
+        self.0.unwrap()
+    }
 }
 
 impl<T> From<Nillable<T>> for Option<T> {

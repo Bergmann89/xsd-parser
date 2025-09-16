@@ -312,6 +312,14 @@ pub fn exec_generator<'types>(
     generator = generator.with_type_postfix(IdentType::Element, config.type_postfix.element);
     generator =
         generator.with_type_postfix(IdentType::ElementType, config.type_postfix.element_type);
+    generator = generator.with_type_postfix(
+        IdentType::NillableContent,
+        config.type_postfix.nillable_content,
+    );
+    generator = generator.with_type_postfix(
+        IdentType::DynamicElement,
+        config.type_postfix.dynamic_element,
+    );
 
     for triple in config.types {
         let ident = triple.resolve(schemas)?;

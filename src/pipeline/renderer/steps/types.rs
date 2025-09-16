@@ -135,10 +135,13 @@ impl ReferenceData<'_> {
             TypedefMode::Auto => crate::unreachable!(),
             TypedefMode::Typedef => {
                 let target_type = occurs.make_type(&target_type, false);
+                let trait_impls = render_trait_impls(type_ident, trait_impls);
 
                 quote! {
                     #docs
                     pub type #type_ident = #target_type;
+
+                    #( #trait_impls )*
                 }
             }
             TypedefMode::NewType => {

@@ -134,7 +134,7 @@ fn get_resolved_impl<'a>(
     let ty = types.items.get(ident)?;
 
     match &ty.variant {
-        MetaTypeVariant::Reference(x) if x.is_single() => {
+        MetaTypeVariant::Reference(x) if x.is_simple() => {
             visited.push(ident);
 
             let ret = match get_resolved_impl(types, &x.type_, visited) {

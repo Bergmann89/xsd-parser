@@ -106,7 +106,7 @@ impl Optimizer {
                     self.flatten_union_impl(&t.type_, t.display_name.as_deref(), next);
                 }
             }
-            MetaTypeVariant::Reference(x) if x.is_single() => {
+            MetaTypeVariant::Reference(x) if x.is_simple() => {
                 self.flatten_union_impl(&x.type_, display_name, next);
             }
             _ => {

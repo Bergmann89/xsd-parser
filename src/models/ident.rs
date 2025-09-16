@@ -46,6 +46,12 @@ pub enum IdentType {
 
     /// Used for `xs:enumeration`.
     Enumeration = 7,
+
+    /// Used to define the content for [`Nillable`](crate::xml::Nillable) types.
+    NillableContent = 8,
+
+    /// One concrete element in a substitution group.
+    DynamicElement = 9,
 }
 
 #[allow(missing_docs)]
@@ -178,6 +184,8 @@ impl Display for Ident {
             IdentType::Attribute => write!(f, "Attribute(")?,
             IdentType::AttributeGroup => write!(f, "AttributeGroup(")?,
             IdentType::Enumeration => write!(f, "Enumeration(")?,
+            IdentType::NillableContent => write!(f, "NillableContent(")?,
+            IdentType::DynamicElement => write!(f, "DynamicElement(")?,
         }
 
         if f.sign_minus() {

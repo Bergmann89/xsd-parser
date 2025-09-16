@@ -8524,11 +8524,6 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum BlockElement {
-        Heading(HeadingElement),
-        Lists(ListsElement),
-        Blocktext(BlocktextElement),
-        Div(DdElementType),
-        P(AbbrElementType),
         H1(AbbrElementType),
         H2(AbbrElementType),
         H3(AbbrElementType),
@@ -8542,18 +8537,18 @@ pub mod onix {
         Hr(HrElementType),
         Pre(PreElementType),
         Blockquote(BlockquoteElementType),
+        Div(DdElementType),
+        P(AbbrElementType),
         Table(TableElementType),
     }
     #[derive(Debug)]
     pub enum InlineElement {
-        Special(SpecialElement),
-        Fontstyle(FontstyleElement),
-        Phrase(PhraseElement),
-        Gloss(GlossElement),
-        A(AElementType),
         Span(AbbrElementType),
         Bdo(BdoElementType),
         Br(BrElementType),
+        Img(ImgElementType),
+        Map(MapElementType),
+        Fontstyle(FontstyleElement),
         Em(AbbrElementType),
         Strong(AbbrElementType),
         Dfn(AbbrElementType),
@@ -8567,13 +8562,13 @@ pub mod onix {
         Q(QElementType),
         Sub(AbbrElementType),
         Sup(AbbrElementType),
+        Gloss(GlossElement),
+        A(AElementType),
         Tt(AbbrElementType),
         I(AbbrElementType),
         B(AbbrElementType),
         Big(AbbrElementType),
         Small(AbbrElementType),
-        Img(ImgElementType),
-        Map(MapElementType),
         Ruby(RubyElementType),
     }
     #[derive(Debug)]
@@ -14101,44 +14096,6 @@ pub mod onix {
         B220,
     }
     #[derive(Debug)]
-    pub enum HeadingElement {
-        H1(AbbrElementType),
-        H2(AbbrElementType),
-        H3(AbbrElementType),
-        H4(AbbrElementType),
-        H5(AbbrElementType),
-        H6(AbbrElementType),
-    }
-    #[derive(Debug)]
-    pub enum ListsElement {
-        Ul(UlElementType),
-        Ol(OlElementType),
-        Dl(DlElementType),
-    }
-    #[derive(Debug)]
-    pub enum BlocktextElement {
-        Address(AbbrElementType),
-        Hr(HrElementType),
-        Pre(PreElementType),
-        Blockquote(BlockquoteElementType),
-    }
-    #[derive(Debug)]
-    pub struct DdElementType {
-        pub id: Option<String>,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-        pub lang: Option<String>,
-        pub dir: Option<Dir>,
-        pub content: Vec<DdElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum DdElementTypeContent {
-        Block(BlockElement),
-        Inline(InlineElement),
-        Text(Text),
-    }
-    #[derive(Debug)]
     pub struct AbbrElementType {
         pub id: Option<String>,
         pub class: Option<String>,
@@ -14231,6 +14188,22 @@ pub mod onix {
         pub block: Vec<BlockElement>,
     }
     #[derive(Debug)]
+    pub struct DdElementType {
+        pub id: Option<String>,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+        pub lang: Option<String>,
+        pub dir: Option<Dir>,
+        pub content: Vec<DdElementTypeContent>,
+    }
+    #[derive(Debug)]
+    pub enum DdElementTypeContent {
+        Block(BlockElement),
+        Inline(InlineElement),
+        Text(Text),
+    }
+    #[derive(Debug)]
     pub struct TableElementType {
         pub id: Option<String>,
         pub class: Option<String>,
@@ -14252,12 +14225,54 @@ pub mod onix {
         pub content_353: TableContent353,
     }
     #[derive(Debug)]
-    pub enum SpecialElement {
-        Span(AbbrElementType),
-        Bdo(BdoElementType),
-        Br(BrElementType),
-        Img(ImgElementType),
-        Map(MapElementType),
+    pub struct BdoElementType {
+        pub id: Option<String>,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+        pub lang: Option<String>,
+        pub dir: Dir,
+        pub text_before: Option<Text>,
+        pub inline: Vec<Mixed<InlineElement>>,
+    }
+    #[derive(Debug)]
+    pub struct BrElementType {
+        pub id: Option<String>,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+    }
+    #[derive(Debug)]
+    pub struct ImgElementType {
+        pub id: Option<String>,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+        pub lang: Option<String>,
+        pub dir: Option<Dir>,
+        pub src: String,
+        pub alt: String,
+        pub longdesc: Option<String>,
+        pub height: Option<String>,
+        pub width: Option<String>,
+        pub usemap: Option<String>,
+        pub ismap: Option<Ismap>,
+    }
+    #[derive(Debug)]
+    pub struct MapElementType {
+        pub lang: Option<String>,
+        pub dir: Option<Dir>,
+        pub id: String,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+        pub name: Option<String>,
+        pub content: Vec<MapElementTypeContent>,
+    }
+    #[derive(Debug)]
+    pub enum MapElementTypeContent {
+        Block(BlockElement),
+        Area(AreaElementType),
     }
     #[derive(Debug)]
     pub enum FontstyleElement {
@@ -14268,20 +14283,16 @@ pub mod onix {
         Small(AbbrElementType),
     }
     #[derive(Debug)]
-    pub enum PhraseElement {
-        Em(AbbrElementType),
-        Strong(AbbrElementType),
-        Dfn(AbbrElementType),
-        Code(AbbrElementType),
-        Samp(AbbrElementType),
-        Kbd(AbbrElementType),
-        Var(AbbrElementType),
-        Cite(AbbrElementType),
-        Abbr(AbbrElementType),
-        Acronym(AbbrElementType),
-        Q(QElementType),
-        Sub(AbbrElementType),
-        Sup(AbbrElementType),
+    pub struct QElementType {
+        pub id: Option<String>,
+        pub class: Option<String>,
+        pub style: Option<String>,
+        pub title: Option<String>,
+        pub lang: Option<String>,
+        pub dir: Option<Dir>,
+        pub cite: Option<String>,
+        pub text_before: Option<Text>,
+        pub inline: Vec<Mixed<InlineElement>>,
     }
     #[derive(Debug)]
     pub enum GlossElement {
@@ -14317,68 +14328,6 @@ pub mod onix {
         Phrase(PhraseElement),
         Gloss(GlossElement),
         Text(Text),
-    }
-    #[derive(Debug)]
-    pub struct BdoElementType {
-        pub id: Option<String>,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-        pub lang: Option<String>,
-        pub dir: Dir,
-        pub text_before: Option<Text>,
-        pub inline: Vec<Mixed<InlineElement>>,
-    }
-    #[derive(Debug)]
-    pub struct BrElementType {
-        pub id: Option<String>,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-    }
-    #[derive(Debug)]
-    pub struct QElementType {
-        pub id: Option<String>,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-        pub lang: Option<String>,
-        pub dir: Option<Dir>,
-        pub cite: Option<String>,
-        pub text_before: Option<Text>,
-        pub inline: Vec<Mixed<InlineElement>>,
-    }
-    #[derive(Debug)]
-    pub struct ImgElementType {
-        pub id: Option<String>,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-        pub lang: Option<String>,
-        pub dir: Option<Dir>,
-        pub src: String,
-        pub alt: String,
-        pub longdesc: Option<String>,
-        pub height: Option<String>,
-        pub width: Option<String>,
-        pub usemap: Option<String>,
-        pub ismap: Option<Ismap>,
-    }
-    #[derive(Debug)]
-    pub struct MapElementType {
-        pub lang: Option<String>,
-        pub dir: Option<Dir>,
-        pub id: String,
-        pub class: Option<String>,
-        pub style: Option<String>,
-        pub title: Option<String>,
-        pub name: Option<String>,
-        pub content: Vec<MapElementTypeContent>,
-    }
-    #[derive(Debug)]
-    pub enum MapElementTypeContent {
-        Block(BlockElement),
-        Area(AreaElementType),
     }
     #[derive(Debug)]
     pub struct RubyElementType {
@@ -19913,6 +19862,22 @@ pub mod onix {
         ILowerCase,
     }
     #[derive(Debug)]
+    pub enum PhraseElement {
+        Em(AbbrElementType),
+        Strong(AbbrElementType),
+        Dfn(AbbrElementType),
+        Code(AbbrElementType),
+        Samp(AbbrElementType),
+        Kbd(AbbrElementType),
+        Var(AbbrElementType),
+        Cite(AbbrElementType),
+        Abbr(AbbrElementType),
+        Acronym(AbbrElementType),
+        Q(QElementType),
+        Sub(AbbrElementType),
+        Sup(AbbrElementType),
+    }
+    #[derive(Debug)]
     pub enum TFrame {
         Void,
         Above,
@@ -19957,13 +19922,6 @@ pub mod onix {
         Tr(Vec<TrElementType>),
     }
     #[derive(Debug)]
-    pub enum Shape {
-        Rect,
-        Circle,
-        Poly,
-        Default,
-    }
-    #[derive(Debug)]
     pub enum Ismap {
         Ismap,
     }
@@ -19980,6 +19938,21 @@ pub mod onix {
         pub href: Option<String>,
         pub nohref: Option<Nohref>,
         pub alt: String,
+    }
+    #[derive(Debug)]
+    pub enum Shape {
+        Rect,
+        Circle,
+        Poly,
+        Default,
+    }
+    #[derive(Debug)]
+    pub enum SpecialElement {
+        Span(AbbrElementType),
+        Bdo(BdoElementType),
+        Br(BrElementType),
+        Img(ImgElementType),
+        Map(MapElementType),
     }
     #[derive(Debug)]
     pub struct RubyContent363 {

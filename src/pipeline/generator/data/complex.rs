@@ -770,7 +770,7 @@ fn is_dynamic(ident: &Ident, types: &MetaTypes) -> bool {
     match &ty.variant {
         MetaTypeVariant::Dynamic(_) => true,
         MetaTypeVariant::ComplexType(ci) => ci.is_dynamic,
-        MetaTypeVariant::Reference(x) if x.is_single() => is_dynamic(&x.type_, types),
+        MetaTypeVariant::Reference(x) if x.is_simple() => is_dynamic(&x.type_, types),
         _ => false,
     }
 }

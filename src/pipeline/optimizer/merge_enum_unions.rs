@@ -131,7 +131,7 @@ impl Optimizer {
                     new_var.display_name.clone_from(&var.display_name);
                 }
             }
-            MetaTypeVariant::Reference(x) if x.is_single() => {
+            MetaTypeVariant::Reference(x) if x.is_simple() => {
                 self.merge_enum_union_impl(&x.type_, display_name, next);
             }
             _ => {

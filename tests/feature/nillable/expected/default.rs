@@ -7,5 +7,4 @@ pub struct FooType {
     pub c: Option<i32>,
     pub d: Option<Nillable<i32>>,
 }
-pub type NillableFoo = Nillable<NillableFooInnerType>;
-pub type NillableFooInnerType = FooType;
+pub type NillableFoo = Nillable<FooType>;
