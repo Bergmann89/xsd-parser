@@ -849,7 +849,7 @@ impl ComplexDataEnum<'_> {
         let code = quote! {
             #[derive(Debug)]
             pub struct #deserializer_ident {
-                state: Box<#deserializer_state_ident>,
+                state__: Box<#deserializer_state_ident>,
             }
         };
 
@@ -961,7 +961,7 @@ impl ComplexDataEnum<'_> {
 
         let fallback = text.unwrap_or_else(|| {
             quote! {
-                *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+                *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
                 Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
             }
@@ -1012,7 +1012,7 @@ impl ComplexDataEnum<'_> {
             config.boxed_deserializer,
             quote! {
                 Self {
-                    state: Box::new(#deserializer_state_ident::Init__)
+                    state__: Box::new(#deserializer_state_ident::Init__)
                 }
             },
         );
@@ -1114,7 +1114,7 @@ impl ComplexDataEnum<'_> {
             config.boxed_deserializer,
             quote! {
                 #boxed_deserializer_ident {
-                    state: Box::new(#deserializer_state_ident::Init__),
+                    state__: Box::new(#deserializer_state_ident::Init__),
                 }
             },
         );
@@ -1126,7 +1126,7 @@ impl ComplexDataEnum<'_> {
             let mut output = deserializer.next(reader, event)?;
 
             output.artifact = match output.artifact {
-                DeserializerArtifact::Deserializer(x) if matches!(&*x.state, #deserializer_state_ident::Init__) => DeserializerArtifact::None,
+                DeserializerArtifact::Deserializer(x) if matches!(&*x.state__, #deserializer_state_ident::Init__) => DeserializerArtifact::None,
                 artifact => artifact,
             };
 
@@ -1165,7 +1165,7 @@ impl ComplexDataEnum<'_> {
             let mut fallback = None;
 
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     #( #handlers_continue )*
                     (state, #event_at Event::End(_)) => {
@@ -1181,7 +1181,7 @@ impl ComplexDataEnum<'_> {
                     },
                     #( #handlers_create )*
                     (s @ S::Done__(_), event) => {
-                        *self.state = s;
+                        *self.state__ = s;
 
                         break (DeserializerEvent::Continue(event), false);
                     },
@@ -1189,7 +1189,7 @@ impl ComplexDataEnum<'_> {
                 }
             };
 
-            let artifact = if matches!(&*self.state, S::Done__(_)) {
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(reader)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
@@ -1209,7 +1209,7 @@ impl ComplexDataEnum<'_> {
             boxed_deserializer_ident(config.boxed_deserializer, &self.deserializer_ident);
 
         quote! {
-            #deserializer_ident::finish_state(reader, *self.state)
+            #deserializer_ident::finish_state(reader, *self.state__)
         }
     }
 }
@@ -1242,7 +1242,7 @@ impl ComplexDataStruct<'_> {
                 #( #attributes )*
                 #( #elements )*
                 #content
-                state: Box<#deserializer_state_ident>,
+                state__: Box<#deserializer_state_ident>,
             }
         };
 
@@ -1418,7 +1418,7 @@ impl ComplexDataStruct<'_> {
             .find_map(|x| x.deserializer_struct_field_init_text(ctx))
             .unwrap_or_else(|| {
                 quote! {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
+                    *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Init__);
 
                     Ok(ElementHandlerOutput::return_to_parent(event, #allow_any_result))
                 }
@@ -1526,7 +1526,7 @@ impl ComplexDataStruct<'_> {
                     #( #attrib_init )*
                     #( #element_init )*
                     #content_init
-                    state: Box::new(#deserializer_state_ident::Init__),
+                    state__: Box::new(#deserializer_state_ident::Init__),
                 }
             },
         );
@@ -1683,7 +1683,7 @@ impl ComplexDataStruct<'_> {
                 #boxed_deserializer_ident {
                     #( #element_init )*
                     #content_init
-                    state: Box::new(#deserializer_state_ident::Init__),
+                    state__: Box::new(#deserializer_state_ident::Init__),
                 }
             },
         );
@@ -1695,7 +1695,7 @@ impl ComplexDataStruct<'_> {
             let mut output = deserializer.next(reader, event)?;
 
             output.artifact = match output.artifact {
-                DeserializerArtifact::Deserializer(x) if matches!(&*x.state, #deserializer_state_ident::Init__) => DeserializerArtifact::None,
+                DeserializerArtifact::Deserializer(x) if matches!(&*x.state__, #deserializer_state_ident::Init__) => DeserializerArtifact::None,
                 artifact => artifact,
             };
 
@@ -1764,7 +1764,7 @@ impl ComplexDataStruct<'_> {
         quote! {
             use #deserializer_state_ident as S;
 
-            match replace(&mut *self.state, S::Unknown__) {
+            match replace(&mut *self.state__, S::Unknown__) {
                 S::Init__ => {
                     let output = ContentDeserializer::init(reader, event)?;
                     self.handle_content(reader, output)
@@ -1791,7 +1791,7 @@ impl ComplexDataStruct<'_> {
         let done_handler = has_done_state.then(|| {
             quote! {
                 (S::Done__, event) => {
-                    *self.state = S::Done__;
+                    *self.state__ = S::Done__;
 
                     break (DeserializerEvent::Continue(event), false);
                 },
@@ -1799,7 +1799,7 @@ impl ComplexDataStruct<'_> {
         });
         let artifact_handler = if has_done_state {
             quote! {
-                let artifact = match &*self.state {
+                let artifact = match &*self.state__ {
                     S::Done__ => DeserializerArtifact::Data(self.finish(reader)?),
                     _ => DeserializerArtifact::Deserializer(self),
                 };
@@ -1824,7 +1824,7 @@ impl ComplexDataStruct<'_> {
             let mut fallback = None;
 
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
                     (S::Content__(deserializer), event) => {
@@ -1880,7 +1880,7 @@ impl ComplexDataStruct<'_> {
             let mut fallback = None;
 
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
                     #( #handlers )*
@@ -1971,7 +1971,7 @@ impl ComplexDataStruct<'_> {
                 if let Some(state) = any_fallback.take() {
                     is_any_retry = true;
 
-                    *self.state = state;
+                    *self.state__ = state;
 
                     event
                 } else {
@@ -1983,7 +1983,7 @@ impl ComplexDataStruct<'_> {
         let handler_fallback = text_only.not().then(|| {
             quote! {
                 (state, event) => {
-                    *self.state = state;
+                    *self.state__ = state;
                     break (DeserializerEvent::Break(event), false);
                 }
             }
@@ -1998,7 +1998,7 @@ impl ComplexDataStruct<'_> {
             #any_retry
 
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
 
                 event = match (state, event) {
                     #( #handlers_continue )*
@@ -2018,7 +2018,7 @@ impl ComplexDataStruct<'_> {
 
                         fallback.get_or_insert(S::Init__);
 
-                        *self.state = #deserializer_state_ident::#first_ident(None);
+                        *self.state__ = #deserializer_state_ident::#first_ident(None);
 
                         event
                     },
@@ -2032,7 +2032,7 @@ impl ComplexDataStruct<'_> {
             };
 
             if let Some(fallback) = fallback {
-                *self.state = fallback;
+                *self.state__ = fallback;
             }
 
             Ok(DeserializerOutput {
@@ -2062,7 +2062,7 @@ impl ComplexDataStruct<'_> {
         ctx.add_quick_xml_deserialize_usings([quote!(core::mem::replace)]);
 
         quote! {
-            let state = replace(&mut *self.state, #deserializer_state_ident::Unknown__);
+            let state = replace(&mut *self.state__, #deserializer_state_ident::Unknown__);
             self.finish_state(reader, state)?;
 
             Ok(super::#type_ident {
@@ -2237,7 +2237,7 @@ impl ComplexDataContent<'_> {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
 
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
@@ -2271,7 +2271,7 @@ impl ComplexDataContent<'_> {
             (_, Occurs::None, _) => unreachable!(),
             // Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state = #deserializer_state_ident::Done__;
+                *self.state__ = #deserializer_state_ident::Done__;
 
                 ElementHandlerOutput::Break {
                     event,
@@ -2283,11 +2283,11 @@ impl ComplexDataContent<'_> {
             (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
                 quote! {
                     if self.content.len() < #max {
-                        *self.state = #deserializer_state_ident::Next__;
+                        *self.state__ = #deserializer_state_ident::Next__;
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
-                        *self.state = #deserializer_state_ident::Done__;
+                        *self.state__ = #deserializer_state_ident::Done__;
 
                         ElementHandlerOutput::Break {
                             event,
@@ -2298,7 +2298,7 @@ impl ComplexDataContent<'_> {
             }
             // Value is unbound, continue in any case
             (_, _, _) => quote! {
-                *self.state = #deserializer_state_ident::Next__;
+                *self.state__ = #deserializer_state_ident::Next__;
 
                 ElementHandlerOutput::from_event(event, allow_any)
             },
@@ -2311,7 +2311,7 @@ impl ComplexDataContent<'_> {
             // we only continue the deserialization process for `End` events (because
             // they may finish this deserializer).
             (Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state = #deserializer_state_ident::Content__(deserializer);
+                *self.state__ = #deserializer_state_ident::Content__(deserializer);
 
                 ElementHandlerOutput::from_event_end(event, allow_any)
             },
@@ -2332,10 +2332,10 @@ impl ComplexDataContent<'_> {
                         (true, ElementHandlerOutput::Continue { .. })  => {
                             fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
 
-                            *self.state = #deserializer_state_ident::Next__;
+                            *self.state__ = #deserializer_state_ident::Next__;
                         }
                         (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = #deserializer_state_ident::Content__(deserializer);
+                            *self.state__ = #deserializer_state_ident::Content__(deserializer);
                         }
                     }
 
@@ -2348,12 +2348,12 @@ impl ComplexDataContent<'_> {
 
                 match &ret {
                     ElementHandlerOutput::Break { .. } => {
-                        *self.state = #deserializer_state_ident::Content__(deserializer);
+                        *self.state__ = #deserializer_state_ident::Content__(deserializer);
                     }
                     ElementHandlerOutput::Continue { .. } => {
                         fallback.get_or_insert(#deserializer_state_ident::Content__(deserializer));
 
-                        *self.state = #deserializer_state_ident::Next__;
+                        *self.state__ = #deserializer_state_ident::Next__;
                     }
                 }
 
@@ -2378,7 +2378,7 @@ impl ComplexDataContent<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    *self.state = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
+                    *self.state__ = fallback.take().unwrap_or(#deserializer_state_ident::Next__);
 
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
@@ -2879,7 +2879,7 @@ impl ComplexDataElement<'_> {
         let fallback_to_init = fallback_to_init_check.map(|values_are_empty| {
             quote! {
                 None if #values_are_empty => {
-                    *self.state = #deserializer_state_ident::Init__;
+                    *self.state__ = #deserializer_state_ident::Init__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 },
             }
@@ -2891,7 +2891,7 @@ impl ComplexDataElement<'_> {
             // Return instantly if we have received the expected value
             (false, Occurs::Single | Occurs::Optional, _) => quote! {
                 let data = #deserializer_ident::finish_state(reader, #deserializer_state_ident::#variant_ident(values, None))?;
-                *self.state = #deserializer_state_ident::Done__(data);
+                *self.state__ = #deserializer_state_ident::Done__(data);
 
                 ElementHandlerOutput::Break {
                     event,
@@ -2903,12 +2903,12 @@ impl ComplexDataElement<'_> {
             (false, Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => {
                 quote! {
                     if values.len() < #max {
-                        *self.state = #deserializer_state_ident::#variant_ident(values, None);
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
                         let data = #deserializer_ident::finish_state(#deserializer_state_ident::#variant_ident(values, None))?;
-                        *self.state = #deserializer_state_ident::Done__(data);
+                        *self.state__ = #deserializer_state_ident::Done__(data);
 
                         ElementHandlerOutput::Break {
                             event,
@@ -2919,7 +2919,7 @@ impl ComplexDataElement<'_> {
             }
             // Value is unbound, continue in any case
             (_, _, _) => quote! {
-                *self.state = #deserializer_state_ident::#variant_ident(values, None);
+                *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
 
                 ElementHandlerOutput::from_event(event, allow_any)
             },
@@ -2932,7 +2932,7 @@ impl ComplexDataElement<'_> {
             // we only continue the deserialization process for `End` events (because
             // they may finish this deserializer).
             (Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
+                *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
 
                 ElementHandlerOutput::from_event_end(event, allow_any)
             },
@@ -2953,10 +2953,10 @@ impl ComplexDataElement<'_> {
                         (true, ElementHandlerOutput::Continue { .. })  => {
                             fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
 
-                            *self.state = #deserializer_state_ident::#variant_ident(values, None);
+                            *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
                         }
                         (false, _ ) | (_, ElementHandlerOutput::Break { .. }) => {
-                            *self.state = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
+                            *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
                         }
                     }
 
@@ -2969,12 +2969,12 @@ impl ComplexDataElement<'_> {
 
                 match &ret {
                     ElementHandlerOutput::Break { .. } => {
-                        *self.state = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, Some(deserializer));
                     }
                     ElementHandlerOutput::Continue { .. } => {
                         fallback.get_or_insert(#deserializer_state_ident::#variant_ident(Default::default(), Some(deserializer)));
 
-                        *self.state = #deserializer_state_ident::#variant_ident(values, None);
+                        *self.state__ = #deserializer_state_ident::#variant_ident(values, None);
                     }
                 }
 
@@ -3000,7 +3000,7 @@ impl ComplexDataElement<'_> {
                 } = output;
 
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         #fallback_to_init
                         None => #deserializer_state_ident::#variant_ident(values, None),
                         Some(#deserializer_state_ident::#variant_ident(_, Some(deserializer))) => #deserializer_state_ident::#variant_ident(values, Some(deserializer)),
@@ -3302,7 +3302,7 @@ impl ComplexDataElement<'_> {
                 if artifact.is_none() {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
 
-                    *self.state = match ret {
+                    *self.state__ = match ret {
                         ElementHandlerOutput::Continue { .. } => #deserializer_state_ident::Next__,
                         ElementHandlerOutput::Break { .. } => fallback.take().unwrap_or(#deserializer_state_ident::Next__),
                     };
@@ -3319,7 +3319,7 @@ impl ComplexDataElement<'_> {
                     DeserializerArtifact::Data(data) => {
                         self.#store_ident(data)?;
 
-                        *self.state = #deserializer_state_ident::Next__;
+                        *self.state__ = #deserializer_state_ident::Next__;
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -3330,10 +3330,10 @@ impl ComplexDataElement<'_> {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(#deserializer_state_ident::#variant_ident(deserializer));
 
-                                *self.state = #deserializer_state_ident::Next__;
+                                *self.state__ = #deserializer_state_ident::Next__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = #deserializer_state_ident::#variant_ident(deserializer);
+                                *self.state__ = #deserializer_state_ident::#variant_ident(deserializer);
                             }
                         }
 
@@ -3381,7 +3381,7 @@ impl ComplexDataElement<'_> {
             (_, 0) | (Occurs::Optional, _) => quote! {
                 fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
-                *self.state = #next_state;
+                *self.state__ = #next_state;
 
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             },
@@ -3391,11 +3391,11 @@ impl ComplexDataElement<'_> {
                 if self.#field_ident.is_some() {
                     fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
-                    *self.state = #next_state;
+                    *self.state__ = #next_state;
 
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
 
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
@@ -3404,13 +3404,13 @@ impl ComplexDataElement<'_> {
             // current state and break, otherwise we continue with the next state.
             (Occurs::DynamicList | Occurs::StaticList(_), min) => quote! {
                 if self.#field_ident.len() < #min {
-                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
 
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 } else {
                     fallback.get_or_insert(#deserializer_state_ident::#variant_ident(None));
 
-                    *self.state = #next_state;
+                    *self.state__ = #next_state;
 
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -3421,20 +3421,20 @@ impl ComplexDataElement<'_> {
         let data_handler = match (self.occurs, self.meta().max_occurs) {
             // If we got some data we simple move one to the next element
             (Occurs::Single | Occurs::Optional, _) => quote! {
-                *self.state = #next_state;
+                *self.state__ = #next_state;
             },
             // If we got some data and the maximum amount of elements of this
             // type is reached we move on, otherwise we stay in the current state.
             (Occurs::DynamicList | Occurs::StaticList(_), MaxOccurs::Bounded(max)) => quote! {
                 if self.#field_ident.len() < #max {
-                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
                 } else {
-                    *self.state = #next_state;
+                    *self.state__ = #next_state;
                 }
             },
             // Unbounded amount. Stay in the current state in any case.
             (_, _) => quote! {
-                *self.state = #deserializer_state_ident::#variant_ident(None);
+                *self.state__ = #deserializer_state_ident::#variant_ident(None);
             },
         };
 
@@ -3445,7 +3445,7 @@ impl ComplexDataElement<'_> {
             // because the old yet unfinished deserializer already contains
             // this data.
             Occurs::Single | Occurs::Optional => quote! {
-                *self.state = #next_state;
+                *self.state__ = #next_state;
             },
             // If we have enough space for more data of the same element, we stay
             // inside the state, otherwise we continue with the next one.
@@ -3453,14 +3453,14 @@ impl ComplexDataElement<'_> {
             // deserializer.
             Occurs::DynamicList | Occurs::StaticList(_) if min > 0 => quote! {
                 if self.#field_ident.len().saturating_add(1) < #min {
-                    *self.state = #deserializer_state_ident::#variant_ident(None);
+                    *self.state__ = #deserializer_state_ident::#variant_ident(None);
                 } else {
-                    *self.state = #next_state;
+                    *self.state__ = #next_state;
                 }
             },
             // Infinit amount of data: Stay in the current state.
             _ => quote! {
-                *self.state = #deserializer_state_ident::#variant_ident(None);
+                *self.state__ = #deserializer_state_ident::#variant_ident(None);
             },
         };
 
@@ -3507,7 +3507,7 @@ impl ComplexDataElement<'_> {
                                 #deserializer_handler
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = #deserializer_state_ident::#variant_ident(Some(deserializer));
+                                *self.state__ = #deserializer_state_ident::#variant_ident(Some(deserializer));
                             }
                         }
 
@@ -3626,7 +3626,7 @@ impl ComplexDataElement<'_> {
                 } else {
                     any_fallback.get_or_insert(S::#variant_ident(None));
 
-                    *self.state = #next_state;
+                    *self.state__ = #next_state;
 
                     event
                 }

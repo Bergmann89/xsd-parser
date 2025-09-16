@@ -64,7 +64,7 @@ pub mod annotations {
         #[derive(Debug)]
         pub struct AnnotationsXElementTypeDeserializer {
             page: Vec<super::AnnotationsPageXElementType>,
-            state: Box<AnnotationsXElementTypeDeserializerState>,
+            state__: Box<AnnotationsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnnotationsXElementTypeDeserializerState {
@@ -84,7 +84,7 @@ pub mod annotations {
                 }
                 Ok(Self {
                     page: Vec::new(),
-                    state: Box::new(AnnotationsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(AnnotationsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -125,7 +125,7 @@ pub mod annotations {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(AnnotationsXElementTypeDeserializerState::Page(None));
-                    *self.state = AnnotationsXElementTypeDeserializerState::Done__;
+                    *self.state__ = AnnotationsXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -135,7 +135,7 @@ pub mod annotations {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page(data)?;
-                        *self.state = AnnotationsXElementTypeDeserializerState::Page(None);
+                        *self.state__ = AnnotationsXElementTypeDeserializerState::Page(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -147,12 +147,13 @@ pub mod annotations {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = AnnotationsXElementTypeDeserializerState::Page(None);
+                                *self.state__ =
+                                    AnnotationsXElementTypeDeserializerState::Page(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = AnnotationsXElementTypeDeserializerState::Page(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = AnnotationsXElementTypeDeserializerState::Page(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -185,7 +186,7 @@ pub mod annotations {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Page(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -211,7 +212,7 @@ pub mod annotations {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = AnnotationsXElementTypeDeserializerState::Page(None);
+                            *self.state__ = AnnotationsXElementTypeDeserializerState::Page(None);
                             event
                         }
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -237,13 +238,13 @@ pub mod annotations {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -256,7 +257,7 @@ pub mod annotations {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     AnnotationsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -267,7 +268,7 @@ pub mod annotations {
         pub struct AnnotationsPageXElementTypeDeserializer {
             page_id: ::core::primitive::u32,
             file_loc: Option<::std::string::String>,
-            state: Box<AnnotationsPageXElementTypeDeserializerState>,
+            state__: Box<AnnotationsPageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnnotationsPageXElementTypeDeserializerState {
@@ -298,7 +299,7 @@ pub mod annotations {
                         reader.map_error(ErrorKind::MissingAttribute("PageID".into()))
                     })?,
                     file_loc: None,
-                    state: Box::new(AnnotationsPageXElementTypeDeserializerState::Init__),
+                    state__: Box::new(AnnotationsPageXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -346,10 +347,10 @@ pub mod annotations {
                         fallback.get_or_insert(
                             AnnotationsPageXElementTypeDeserializerState::FileLoc(None),
                         );
-                        *self.state = AnnotationsPageXElementTypeDeserializerState::Done__;
+                        *self.state__ = AnnotationsPageXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = AnnotationsPageXElementTypeDeserializerState::FileLoc(None);
+                        *self.state__ = AnnotationsPageXElementTypeDeserializerState::FileLoc(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -360,7 +361,7 @@ pub mod annotations {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state = AnnotationsPageXElementTypeDeserializerState::Done__;
+                        *self.state__ = AnnotationsPageXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -372,12 +373,14 @@ pub mod annotations {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = AnnotationsPageXElementTypeDeserializerState::Done__;
+                                *self.state__ =
+                                    AnnotationsPageXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = AnnotationsPageXElementTypeDeserializerState::FileLoc(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    AnnotationsPageXElementTypeDeserializerState::FileLoc(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -410,7 +413,7 @@ pub mod annotations {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FileLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -436,7 +439,7 @@ pub mod annotations {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 AnnotationsPageXElementTypeDeserializerState::FileLoc(None);
                             event
                         }
@@ -463,13 +466,13 @@ pub mod annotations {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -482,7 +485,7 @@ pub mod annotations {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     AnnotationsPageXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -828,7 +831,7 @@ pub mod annotion {
         #[derive(Debug)]
         pub struct PageAnnotXElementTypeDeserializer {
             annot: Vec<super::PageAnnotAnnotXElementType>,
-            state: Box<PageAnnotXElementTypeDeserializerState>,
+            state__: Box<PageAnnotXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageAnnotXElementTypeDeserializerState {
@@ -848,7 +851,7 @@ pub mod annotion {
                 }
                 Ok(Self {
                     annot: Vec::new(),
-                    state: Box::new(PageAnnotXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageAnnotXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -891,11 +894,11 @@ pub mod annotion {
                 } = output;
                 if artifact.is_none() {
                     if self.annot.len() < 1usize {
-                        *self.state = PageAnnotXElementTypeDeserializerState::Annot(None);
+                        *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(PageAnnotXElementTypeDeserializerState::Annot(None));
-                        *self.state = PageAnnotXElementTypeDeserializerState::Done__;
+                        *self.state__ = PageAnnotXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -906,7 +909,7 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annot(data)?;
-                        *self.state = PageAnnotXElementTypeDeserializerState::Annot(None);
+                        *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -919,16 +922,16 @@ pub mod annotion {
                                     )),
                                 );
                                 if self.annot.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         PageAnnotXElementTypeDeserializerState::Annot(None);
                                 } else {
-                                    *self.state = PageAnnotXElementTypeDeserializerState::Done__;
+                                    *self.state__ = PageAnnotXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = PageAnnotXElementTypeDeserializerState::Annot(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -959,7 +962,7 @@ pub mod annotion {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Annot(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -985,7 +988,7 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = PageAnnotXElementTypeDeserializerState::Annot(None);
+                            *self.state__ = PageAnnotXElementTypeDeserializerState::Annot(None);
                             event
                         }
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1011,13 +1014,13 @@ pub mod annotion {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -1030,7 +1033,7 @@ pub mod annotion {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageAnnotXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -1052,7 +1055,7 @@ pub mod annotion {
             remark: Option<::std::string::String>,
             parameters: Option<super::PageAnnotAnnotParametersXElementType>,
             appearance: Option<super::PageAnnotAnnotAppearanceXElementType>,
-            state: Box<PageAnnotAnnotXElementTypeDeserializerState>,
+            state__: Box<PageAnnotAnnotXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageAnnotAnnotXElementTypeDeserializerState {
@@ -1168,7 +1171,7 @@ pub mod annotion {
                     remark: None,
                     parameters: None,
                     appearance: None,
-                    state: Box::new(PageAnnotAnnotXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageAnnotAnnotXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -1244,7 +1247,7 @@ pub mod annotion {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(PageAnnotAnnotXElementTypeDeserializerState::Remark(None));
-                    *self.state = PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
+                    *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -1254,7 +1257,8 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
+                        *self.state__ =
+                            PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -1266,11 +1270,11 @@ pub mod annotion {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     PageAnnotAnnotXElementTypeDeserializerState::Parameters(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = PageAnnotAnnotXElementTypeDeserializerState::Remark(
+                                *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Remark(
                                     Some(deserializer),
                                 );
                             }
@@ -1297,7 +1301,7 @@ pub mod annotion {
                     fallback.get_or_insert(
                         PageAnnotAnnotXElementTypeDeserializerState::Parameters(None),
                     );
-                    *self.state = PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                    *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -1307,7 +1311,8 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_parameters(data)?;
-                        *self.state = PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                        *self.state__ =
+                            PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -1319,11 +1324,11 @@ pub mod annotion {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageAnnotAnnotXElementTypeDeserializerState::Parameters(Some(
                                         deserializer,
                                     ));
@@ -1352,10 +1357,11 @@ pub mod annotion {
                         fallback.get_or_insert(
                             PageAnnotAnnotXElementTypeDeserializerState::Appearance(None),
                         );
-                        *self.state = PageAnnotAnnotXElementTypeDeserializerState::Done__;
+                        *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
+                        *self.state__ =
+                            PageAnnotAnnotXElementTypeDeserializerState::Appearance(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -1366,7 +1372,7 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_appearance(data)?;
-                        *self.state = PageAnnotAnnotXElementTypeDeserializerState::Done__;
+                        *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -1378,10 +1384,10 @@ pub mod annotion {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = PageAnnotAnnotXElementTypeDeserializerState::Done__;
+                                *self.state__ = PageAnnotAnnotXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageAnnotAnnotXElementTypeDeserializerState::Appearance(Some(
                                         deserializer,
                                     ));
@@ -1417,7 +1423,7 @@ pub mod annotion {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Remark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -1467,7 +1473,8 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = PageAnnotAnnotXElementTypeDeserializerState::Remark(None);
+                            *self.state__ =
+                                PageAnnotAnnotXElementTypeDeserializerState::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -1527,13 +1534,13 @@ pub mod annotion {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -1546,7 +1553,7 @@ pub mod annotion {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageAnnotAnnotXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -1572,7 +1579,7 @@ pub mod annotion {
         #[derive(Debug)]
         pub struct PageAnnotAnnotParametersXElementTypeDeserializer {
             parameter: Vec<super::super::ofd::CtDocInfoCustomDatasCustomDataXElementType>,
-            state: Box<PageAnnotAnnotParametersXElementTypeDeserializerState>,
+            state__: Box<PageAnnotAnnotParametersXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageAnnotAnnotParametersXElementTypeDeserializerState {
@@ -1588,7 +1595,9 @@ pub mod annotion {
                 }
                 Ok(Self {
                     parameter: Vec::new(),
-                    state: Box::new(PageAnnotAnnotParametersXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        PageAnnotAnnotParametersXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -1634,14 +1643,15 @@ pub mod annotion {
                 } = output;
                 if artifact.is_none() {
                     if self.parameter.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None),
                         );
-                        *self.state = PageAnnotAnnotParametersXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            PageAnnotAnnotParametersXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -1652,7 +1662,7 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_parameter(data)?;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -1662,13 +1672,13 @@ pub mod annotion {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (Some (deserializer))) ;
                                 if self.parameter.len().saturating_add(1) < 1usize {
-                                    * self . state = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (None) ;
+                                    * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (None) ;
                                 } else {
-                                    * self . state = PageAnnotAnnotParametersXElementTypeDeserializerState :: Done__ ;
+                                    * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Done__ ;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (Some (deserializer)) ;
+                                * self . state__ = PageAnnotAnnotParametersXElementTypeDeserializerState :: Parameter (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -1701,7 +1711,7 @@ pub mod annotion {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Parameter(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -1727,7 +1737,7 @@ pub mod annotion {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 PageAnnotAnnotParametersXElementTypeDeserializerState::Parameter(
                                     None,
                                 );
@@ -1756,13 +1766,13 @@ pub mod annotion {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -1778,7 +1788,7 @@ pub mod annotion {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageAnnotAnnotParametersXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -1791,7 +1801,7 @@ pub mod annotion {
         pub struct PageAnnotAnnotAppearanceXElementTypeDeserializer {
             boundary: Option<::std::string::String>,
             content: Vec<super::PageAnnotAnnotAppearanceXElementTypeContent>,
-            state: Box<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
+            state__: Box<PageAnnotAnnotAppearanceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageAnnotAnnotAppearanceXElementTypeDeserializerState {
@@ -1816,7 +1826,9 @@ pub mod annotion {
                 Ok(Self {
                     boundary: boundary,
                     content: Vec::new(),
-                    state: Box::new(PageAnnotAnnotAppearanceXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        PageAnnotAnnotAppearanceXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -1857,7 +1869,7 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -1869,18 +1881,19 @@ pub mod annotion {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__;
+                        *self.state__ =
+                            PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = PageAnnotAnnotAppearanceXElementTypeDeserializerState :: Content__ (deserializer) ;
+                                * self . state__ = PageAnnotAnnotAppearanceXElementTypeDeserializerState :: Content__ (deserializer) ;
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (PageAnnotAnnotAppearanceXElementTypeDeserializerState :: Content__ (deserializer)) ;
-                                *self.state =
+                                *self.state__ =
                                     PageAnnotAnnotAppearanceXElementTypeDeserializerState::Next__;
                             }
                         }
@@ -1913,7 +1926,7 @@ pub mod annotion {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -1959,7 +1972,7 @@ pub mod annotion {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageAnnotAnnotAppearanceXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -1971,7 +1984,7 @@ pub mod annotion {
         }
         #[derive(Debug)]
         pub struct PageAnnotAnnotAppearanceXElementTypeContentDeserializer {
-            state: Box<PageAnnotAnnotAppearanceXElementTypeContentDeserializerState>,
+            state__: Box<PageAnnotAnnotAppearanceXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum PageAnnotAnnotAppearanceXElementTypeContentDeserializerState {
@@ -2048,7 +2061,7 @@ pub mod annotion {
                         );
                     }
                 }
-                *self.state = fallback.take().unwrap_or(
+                *self.state__ = fallback.take().unwrap_or(
                     PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Init__,
                 );
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -2210,7 +2223,7 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback.take() {
@@ -2231,14 +2244,14 @@ pub mod annotion {
                     DeserializerArtifact::Data(data) => {
                         Self::store_text_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
                                 data,
                             );
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , Some (deserializer)) ;
+                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: TextObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -2262,7 +2275,7 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback.take() {
@@ -2283,14 +2296,14 @@ pub mod annotion {
                     DeserializerArtifact::Data(data) => {
                         Self::store_path_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
                                 data,
                             );
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , Some (deserializer)) ;
+                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: PathObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -2314,7 +2327,7 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback.take() {
@@ -2335,14 +2348,14 @@ pub mod annotion {
                     DeserializerArtifact::Data(data) => {
                         Self::store_image_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
                                 data,
                             );
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , Some (deserializer)) ;
+                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: ImageObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -2366,7 +2379,7 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback . take () { None => () , Some (PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => { let data = deserializer . finish (reader) ? ; Self :: store_composite_object (& mut values , data) ? ; } Some (_) => unreachable ! () , }
@@ -2375,14 +2388,14 @@ pub mod annotion {
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
                                 data,
                             );
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
+                        * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -2406,9 +2419,9 @@ pub mod annotion {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            * self . state = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ;
+                            * self . state__ = PageAnnotAnnotAppearanceXElementTypeContentDeserializerState :: Init__ ;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -2454,14 +2467,14 @@ pub mod annotion {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Done__(
                                 data,
                             );
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::PageBlock(
                                 values,
                                 Some(deserializer),
@@ -2482,7 +2495,7 @@ pub mod annotion {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(
+                    state__: Box::new(
                         PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Init__,
                     ),
                 };
@@ -2490,7 +2503,7 @@ pub mod annotion {
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             PageAnnotAnnotAppearanceXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -2512,7 +2525,7 @@ pub mod annotion {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -2657,13 +2670,13 @@ pub mod annotion {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -2681,7 +2694,7 @@ pub mod annotion {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
     }
@@ -3133,7 +3146,7 @@ pub mod attachments {
         #[derive(Debug)]
         pub struct AttachmentsXElementTypeDeserializer {
             attachment: Vec<super::CtAttachmentXType>,
-            state: Box<AttachmentsXElementTypeDeserializerState>,
+            state__: Box<AttachmentsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AttachmentsXElementTypeDeserializerState {
@@ -3153,7 +3166,7 @@ pub mod attachments {
                 }
                 Ok(Self {
                     attachment: Vec::new(),
-                    state: Box::new(AttachmentsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(AttachmentsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -3194,7 +3207,7 @@ pub mod attachments {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(AttachmentsXElementTypeDeserializerState::Attachment(None));
-                    *self.state = AttachmentsXElementTypeDeserializerState::Done__;
+                    *self.state__ = AttachmentsXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -3204,7 +3217,7 @@ pub mod attachments {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_attachment(data)?;
-                        *self.state = AttachmentsXElementTypeDeserializerState::Attachment(None);
+                        *self.state__ = AttachmentsXElementTypeDeserializerState::Attachment(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -3216,13 +3229,14 @@ pub mod attachments {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     AttachmentsXElementTypeDeserializerState::Attachment(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = AttachmentsXElementTypeDeserializerState::Attachment(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    AttachmentsXElementTypeDeserializerState::Attachment(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -3255,7 +3269,7 @@ pub mod attachments {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Attachment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -3281,7 +3295,7 @@ pub mod attachments {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 AttachmentsXElementTypeDeserializerState::Attachment(None);
                             event
                         }
@@ -3308,13 +3322,13 @@ pub mod attachments {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -3327,7 +3341,7 @@ pub mod attachments {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     AttachmentsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -3347,7 +3361,7 @@ pub mod attachments {
             visible: ::core::primitive::bool,
             usage: ::std::string::String,
             file_loc: Option<::std::string::String>,
-            state: Box<CtAttachmentXTypeDeserializerState>,
+            state__: Box<CtAttachmentXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtAttachmentXTypeDeserializerState {
@@ -3429,7 +3443,7 @@ pub mod attachments {
                     visible: visible.unwrap_or_else(super::CtAttachmentXType::default_visible),
                     usage: usage.unwrap_or_else(super::CtAttachmentXType::default_usage),
                     file_loc: None,
-                    state: Box::new(CtAttachmentXTypeDeserializerState::Init__),
+                    state__: Box::new(CtAttachmentXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -3475,10 +3489,10 @@ pub mod attachments {
                 if artifact.is_none() {
                     if self.file_loc.is_some() {
                         fallback.get_or_insert(CtAttachmentXTypeDeserializerState::FileLoc(None));
-                        *self.state = CtAttachmentXTypeDeserializerState::Done__;
+                        *self.state__ = CtAttachmentXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtAttachmentXTypeDeserializerState::FileLoc(None);
+                        *self.state__ = CtAttachmentXTypeDeserializerState::FileLoc(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -3489,7 +3503,7 @@ pub mod attachments {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state = CtAttachmentXTypeDeserializerState::Done__;
+                        *self.state__ = CtAttachmentXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -3499,10 +3513,10 @@ pub mod attachments {
                                 fallback.get_or_insert(
                                     CtAttachmentXTypeDeserializerState::FileLoc(Some(deserializer)),
                                 );
-                                *self.state = CtAttachmentXTypeDeserializerState::Done__;
+                                *self.state__ = CtAttachmentXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtAttachmentXTypeDeserializerState::FileLoc(Some(deserializer));
                             }
                         }
@@ -3534,7 +3548,7 @@ pub mod attachments {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FileLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -3560,7 +3574,7 @@ pub mod attachments {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtAttachmentXTypeDeserializerState::FileLoc(None);
+                            *self.state__ = CtAttachmentXTypeDeserializerState::FileLoc(None);
                             event
                         }
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -3586,13 +3600,13 @@ pub mod attachments {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -3605,7 +3619,7 @@ pub mod attachments {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtAttachmentXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -3836,7 +3850,7 @@ pub mod custom_tags {
         #[derive(Debug)]
         pub struct CustomTagsXElementTypeDeserializer {
             custom_tag: Vec<super::CustomTagsCustomTagXElementType>,
-            state: Box<CustomTagsXElementTypeDeserializerState>,
+            state__: Box<CustomTagsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CustomTagsXElementTypeDeserializerState {
@@ -3858,7 +3872,7 @@ pub mod custom_tags {
                 }
                 Ok(Self {
                     custom_tag: Vec::new(),
-                    state: Box::new(CustomTagsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CustomTagsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -3902,7 +3916,7 @@ pub mod custom_tags {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(CustomTagsXElementTypeDeserializerState::CustomTag(None));
-                    *self.state = CustomTagsXElementTypeDeserializerState::Done__;
+                    *self.state__ = CustomTagsXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -3912,7 +3926,7 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_tag(data)?;
-                        *self.state = CustomTagsXElementTypeDeserializerState::CustomTag(None);
+                        *self.state__ = CustomTagsXElementTypeDeserializerState::CustomTag(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -3924,11 +3938,11 @@ pub mod custom_tags {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CustomTagsXElementTypeDeserializerState::CustomTag(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CustomTagsXElementTypeDeserializerState::CustomTag(
+                                *self.state__ = CustomTagsXElementTypeDeserializerState::CustomTag(
                                     Some(deserializer),
                                 );
                             }
@@ -3961,7 +3975,7 @@ pub mod custom_tags {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CustomTag(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -3987,7 +4001,8 @@ pub mod custom_tags {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CustomTagsXElementTypeDeserializerState::CustomTag(None);
+                            *self.state__ =
+                                CustomTagsXElementTypeDeserializerState::CustomTag(None);
                             event
                         }
                         (S::CustomTag(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -4013,13 +4028,13 @@ pub mod custom_tags {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -4032,7 +4047,7 @@ pub mod custom_tags {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CustomTagsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -4046,7 +4061,7 @@ pub mod custom_tags {
             name_space: ::std::string::String,
             schema_loc: Option<::std::string::String>,
             file_loc: Option<::std::string::String>,
-            state: Box<CustomTagsCustomTagXElementTypeDeserializerState>,
+            state__: Box<CustomTagsCustomTagXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CustomTagsCustomTagXElementTypeDeserializerState {
@@ -4079,7 +4094,7 @@ pub mod custom_tags {
                     })?,
                     schema_loc: None,
                     file_loc: None,
-                    state: Box::new(CustomTagsCustomTagXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CustomTagsCustomTagXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4138,7 +4153,7 @@ pub mod custom_tags {
                     fallback.get_or_insert(
                         CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(None),
                     );
-                    *self.state = CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
+                    *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -4148,7 +4163,7 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_schema_loc(data)?;
-                        *self.state =
+                        *self.state__ =
                             CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -4161,11 +4176,11 @@ pub mod custom_tags {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(
                                         Some(deserializer),
                                     );
@@ -4194,10 +4209,10 @@ pub mod custom_tags {
                         fallback.get_or_insert(
                             CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None),
                         );
-                        *self.state = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
+                        *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -4209,7 +4224,7 @@ pub mod custom_tags {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_loc(data)?;
-                        *self.state = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
+                        *self.state__ = CustomTagsCustomTagXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -4221,11 +4236,11 @@ pub mod custom_tags {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CustomTagsCustomTagXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CustomTagsCustomTagXElementTypeDeserializerState::FileLoc(
                                         Some(deserializer),
                                     );
@@ -4261,7 +4276,7 @@ pub mod custom_tags {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::SchemaLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -4299,7 +4314,7 @@ pub mod custom_tags {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CustomTagsCustomTagXElementTypeDeserializerState::SchemaLoc(None);
                             event
                         }
@@ -4343,13 +4358,13 @@ pub mod custom_tags {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -4365,7 +4380,7 @@ pub mod custom_tags {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CustomTagsCustomTagXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -5099,7 +5114,7 @@ pub mod definition {
         pub struct CtActionXTypeDeserializer {
             event: super::CtActionEventXType,
             content: Vec<super::CtActionXTypeContent>,
-            state: Box<CtActionXTypeDeserializerState>,
+            state__: Box<CtActionXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionXTypeDeserializerState {
@@ -5130,7 +5145,7 @@ pub mod definition {
                         reader.map_error(ErrorKind::MissingAttribute("Event".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(CtActionXTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -5165,7 +5180,7 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtActionXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -5177,7 +5192,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtActionXTypeDeserializerState::Next__;
+                        *self.state__ = CtActionXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -5192,10 +5207,10 @@ pub mod definition {
                                 fallback.get_or_insert(CtActionXTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = CtActionXTypeDeserializerState::Next__;
+                                *self.state__ = CtActionXTypeDeserializerState::Next__;
                             }
                             (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                                *self.state =
+                                *self.state__ =
                                     CtActionXTypeDeserializerState::Content__(deserializer);
                             }
                         }
@@ -5226,7 +5241,7 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -5268,7 +5283,10 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtActionXTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CtActionXTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CtActionXType {
                     event: self.event,
@@ -5278,7 +5296,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtActionXTypeContentDeserializer {
-            state: Box<CtActionXTypeContentDeserializerState>,
+            state__: Box<CtActionXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtActionXTypeContentDeserializerState {
@@ -5392,7 +5410,7 @@ pub mod definition {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtActionXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -5549,9 +5567,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::Region(values, None),
@@ -5582,11 +5600,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::Region(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionXTypeContentDeserializerState::Region(
+                        *self.state__ = CtActionXTypeContentDeserializerState::Region(
                             values,
                             Some(deserializer),
                         );
@@ -5610,9 +5628,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::Goto(values, None),
@@ -5642,11 +5660,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::Goto(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtActionXTypeContentDeserializerState::Goto(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -5668,9 +5686,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::Uri(values, None),
@@ -5697,11 +5715,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::Uri(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtActionXTypeContentDeserializerState::Uri(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -5723,9 +5741,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::GotoA(values, None),
@@ -5755,11 +5773,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::GotoA(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionXTypeContentDeserializerState::GotoA(
+                        *self.state__ = CtActionXTypeContentDeserializerState::GotoA(
                             values,
                             Some(deserializer),
                         );
@@ -5783,9 +5801,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::Sound(values, None),
@@ -5815,11 +5833,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::Sound(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionXTypeContentDeserializerState::Sound(
+                        *self.state__ = CtActionXTypeContentDeserializerState::Sound(
                             values,
                             Some(deserializer),
                         );
@@ -5843,9 +5861,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtActionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionXTypeContentDeserializerState::Movie(values, None),
@@ -5875,11 +5893,11 @@ pub mod definition {
                             reader,
                             CtActionXTypeContentDeserializerState::Movie(values, None),
                         )?;
-                        *self.state = CtActionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtActionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionXTypeContentDeserializerState::Movie(
+                        *self.state__ = CtActionXTypeContentDeserializerState::Movie(
                             values,
                             Some(deserializer),
                         );
@@ -5897,12 +5915,12 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtActionXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtActionXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, CtActionXTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, CtActionXTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -5922,7 +5940,7 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Region(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -6080,13 +6098,13 @@ pub mod definition {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -6101,7 +6119,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -6113,7 +6131,7 @@ pub mod definition {
             right: Option<::core::primitive::f64>,
             bottom: Option<::core::primitive::f64>,
             zoom: Option<::core::primitive::f64>,
-            state: Box<CtDestXTypeDeserializerState>,
+            state__: Box<CtDestXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDestXTypeDeserializerState {
@@ -6185,7 +6203,7 @@ pub mod definition {
                     right: right,
                     bottom: bottom,
                     zoom: zoom,
-                    state: Box::new(CtDestXTypeDeserializerState::Init__),
+                    state__: Box::new(CtDestXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -6232,7 +6250,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtDestXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtDestXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtDestXType {
                     type_: self.type_,
@@ -6251,7 +6269,7 @@ pub mod definition {
             application_box: Option<::std::string::String>,
             content_box: Option<::std::string::String>,
             bleed_box: Option<::std::string::String>,
-            state: Box<CtPageAreaXTypeDeserializerState>,
+            state__: Box<CtPageAreaXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageAreaXTypeDeserializerState {
@@ -6277,7 +6295,7 @@ pub mod definition {
                     application_box: None,
                     content_box: None,
                     bleed_box: None,
-                    state: Box::new(CtPageAreaXTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageAreaXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -6359,10 +6377,10 @@ pub mod definition {
                 if artifact.is_none() {
                     if self.physical_box.is_some() {
                         fallback.get_or_insert(CtPageAreaXTypeDeserializerState::PhysicalBox(None));
-                        *self.state = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
+                        *self.state__ = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtPageAreaXTypeDeserializerState::PhysicalBox(None);
+                        *self.state__ = CtPageAreaXTypeDeserializerState::PhysicalBox(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -6373,7 +6391,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_physical_box(data)?;
-                        *self.state = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
+                        *self.state__ = CtPageAreaXTypeDeserializerState::ApplicationBox(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -6385,13 +6403,13 @@ pub mod definition {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageAreaXTypeDeserializerState::ApplicationBox(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPageAreaXTypeDeserializerState::PhysicalBox(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtPageAreaXTypeDeserializerState::PhysicalBox(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -6414,7 +6432,7 @@ pub mod definition {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ApplicationBox(None));
-                    *self.state = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                    *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -6424,7 +6442,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_application_box(data)?;
-                        *self.state = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                        *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -6436,10 +6454,10 @@ pub mod definition {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPageAreaXTypeDeserializerState::ContentBox(None);
+                                *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPageAreaXTypeDeserializerState::ApplicationBox(
+                                *self.state__ = CtPageAreaXTypeDeserializerState::ApplicationBox(
                                     Some(deserializer),
                                 );
                             }
@@ -6464,7 +6482,7 @@ pub mod definition {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPageAreaXTypeDeserializerState::ContentBox(None));
-                    *self.state = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                    *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -6474,7 +6492,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content_box(data)?;
-                        *self.state = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                        *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -6486,10 +6504,10 @@ pub mod definition {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPageAreaXTypeDeserializerState::BleedBox(None);
+                                *self.state__ = CtPageAreaXTypeDeserializerState::BleedBox(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPageAreaXTypeDeserializerState::ContentBox(Some(
+                                *self.state__ = CtPageAreaXTypeDeserializerState::ContentBox(Some(
                                     deserializer,
                                 ));
                             }
@@ -6514,7 +6532,7 @@ pub mod definition {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPageAreaXTypeDeserializerState::BleedBox(None));
-                    *self.state = CtPageAreaXTypeDeserializerState::Done__;
+                    *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -6524,7 +6542,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bleed_box(data)?;
-                        *self.state = CtPageAreaXTypeDeserializerState::Done__;
+                        *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -6534,10 +6552,10 @@ pub mod definition {
                                 fallback.get_or_insert(CtPageAreaXTypeDeserializerState::BleedBox(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPageAreaXTypeDeserializerState::Done__;
+                                *self.state__ = CtPageAreaXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageAreaXTypeDeserializerState::BleedBox(Some(deserializer));
                             }
                         }
@@ -6569,7 +6587,7 @@ pub mod definition {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::PhysicalBox(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -6631,7 +6649,7 @@ pub mod definition {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtPageAreaXTypeDeserializerState::PhysicalBox(None);
+                            *self.state__ = CtPageAreaXTypeDeserializerState::PhysicalBox(None);
                             event
                         }
                         (S::PhysicalBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6708,13 +6726,13 @@ pub mod definition {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -6727,7 +6745,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageAreaXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -6744,7 +6762,7 @@ pub mod definition {
         #[derive(Debug)]
         pub struct CtRegionXTypeDeserializer {
             area: Vec<super::CtRegionAreaXElementType>,
-            state: Box<CtRegionXTypeDeserializerState>,
+            state__: Box<CtRegionXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionXTypeDeserializerState {
@@ -6764,7 +6782,7 @@ pub mod definition {
                 }
                 Ok(Self {
                     area: Vec::new(),
-                    state: Box::new(CtRegionXTypeDeserializerState::Init__),
+                    state__: Box::new(CtRegionXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -6802,11 +6820,11 @@ pub mod definition {
                 } = output;
                 if artifact.is_none() {
                     if self.area.len() < 1usize {
-                        *self.state = CtRegionXTypeDeserializerState::Area(None);
+                        *self.state__ = CtRegionXTypeDeserializerState::Area(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtRegionXTypeDeserializerState::Area(None));
-                        *self.state = CtRegionXTypeDeserializerState::Done__;
+                        *self.state__ = CtRegionXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -6817,7 +6835,7 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state = CtRegionXTypeDeserializerState::Area(None);
+                        *self.state__ = CtRegionXTypeDeserializerState::Area(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -6828,13 +6846,13 @@ pub mod definition {
                                     deserializer,
                                 )));
                                 if self.area.len().saturating_add(1) < 1usize {
-                                    *self.state = CtRegionXTypeDeserializerState::Area(None);
+                                    *self.state__ = CtRegionXTypeDeserializerState::Area(None);
                                 } else {
-                                    *self.state = CtRegionXTypeDeserializerState::Done__;
+                                    *self.state__ = CtRegionXTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtRegionXTypeDeserializerState::Area(Some(deserializer));
                             }
                         }
@@ -6866,7 +6884,7 @@ pub mod definition {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Area(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -6892,7 +6910,7 @@ pub mod definition {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtRegionXTypeDeserializerState::Area(None);
+                            *self.state__ = CtRegionXTypeDeserializerState::Area(None);
                             event
                         }
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -6918,13 +6936,13 @@ pub mod definition {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -6936,14 +6954,17 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtRegionXTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CtRegionXTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CtRegionXType { area: self.area })
             }
         }
         #[derive(Debug)]
         pub struct CtActionGotoXElementTypeDeserializer {
-            state: Box<CtActionGotoXElementTypeDeserializerState>,
+            state__: Box<CtActionGotoXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtActionGotoXElementTypeDeserializerState {
@@ -6997,7 +7018,7 @@ pub mod definition {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtActionGotoXElementTypeDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -7011,7 +7032,7 @@ pub mod definition {
                     reader.raise_unexpected_attrib_checked(attrib)?;
                 }
                 Ok(Self {
-                    state: Box::new(CtActionGotoXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionGotoXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7084,9 +7105,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionGotoXElementTypeDeserializerState::Init__;
+                            *self.state__ = CtActionGotoXElementTypeDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionGotoXElementTypeDeserializerState::Dest(values, None),
@@ -7116,11 +7137,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_dest(&mut values, data)?;
-                        *self.state = CtActionGotoXElementTypeDeserializerState::Dest(values, None);
+                        *self.state__ =
+                            CtActionGotoXElementTypeDeserializerState::Dest(values, None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionGotoXElementTypeDeserializerState::Dest(
+                        *self.state__ = CtActionGotoXElementTypeDeserializerState::Dest(
                             values,
                             Some(deserializer),
                         );
@@ -7144,9 +7166,9 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtActionGotoXElementTypeDeserializerState::Init__;
+                            *self.state__ = CtActionGotoXElementTypeDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtActionGotoXElementTypeDeserializerState::Bookmark(values, None),
@@ -7176,12 +7198,12 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         Self::store_bookmark(&mut values, data)?;
-                        *self.state =
+                        *self.state__ =
                             CtActionGotoXElementTypeDeserializerState::Bookmark(values, None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtActionGotoXElementTypeDeserializerState::Bookmark(
+                        *self.state__ = CtActionGotoXElementTypeDeserializerState::Bookmark(
                             values,
                             Some(deserializer),
                         );
@@ -7214,7 +7236,7 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Dest(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -7280,13 +7302,13 @@ pub mod definition {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -7301,7 +7323,7 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -7309,7 +7331,7 @@ pub mod definition {
             uri: ::std::string::String,
             base: Option<::std::string::String>,
             target: Option<::std::string::String>,
-            state: Box<CtActionUriXElementTypeDeserializerState>,
+            state__: Box<CtActionUriXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionUriXElementTypeDeserializerState {
@@ -7351,7 +7373,7 @@ pub mod definition {
                     })?,
                     base: base,
                     target: target,
-                    state: Box::new(CtActionUriXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionUriXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7404,7 +7426,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtActionUriXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7419,7 +7441,7 @@ pub mod definition {
         pub struct CtActionGotoAxElementTypeDeserializer {
             attach_id: ::std::string::String,
             new_window: ::core::primitive::bool,
-            state: Box<CtActionGotoAxElementTypeDeserializerState>,
+            state__: Box<CtActionGotoAxElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionGotoAxElementTypeDeserializerState {
@@ -7455,7 +7477,7 @@ pub mod definition {
                     })?,
                     new_window: new_window
                         .unwrap_or_else(super::CtActionGotoAxElementType::default_new_window),
-                    state: Box::new(CtActionGotoAxElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionGotoAxElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7508,7 +7530,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtActionGotoAxElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7524,7 +7546,7 @@ pub mod definition {
             volume: Option<::core::primitive::i32>,
             repeat: Option<::core::primitive::bool>,
             synchronous: Option<::core::primitive::bool>,
-            state: Box<CtActionSoundXElementTypeDeserializerState>,
+            state__: Box<CtActionSoundXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionSoundXElementTypeDeserializerState {
@@ -7573,7 +7595,7 @@ pub mod definition {
                     volume: volume,
                     repeat: repeat,
                     synchronous: synchronous,
-                    state: Box::new(CtActionSoundXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionSoundXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7626,7 +7648,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtActionSoundXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7642,7 +7664,7 @@ pub mod definition {
         pub struct CtActionMovieXElementTypeDeserializer {
             resource_id: ::core::primitive::u32,
             operator: super::CtActionMovieOperatorXType,
-            state: Box<CtActionMovieXElementTypeDeserializerState>,
+            state__: Box<CtActionMovieXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionMovieXElementTypeDeserializerState {
@@ -7678,7 +7700,7 @@ pub mod definition {
                     })?,
                     operator: operator
                         .unwrap_or_else(super::CtActionMovieXElementType::default_operator),
-                    state: Box::new(CtActionMovieXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionMovieXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7731,7 +7753,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtActionMovieXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7745,7 +7767,7 @@ pub mod definition {
         pub struct CtRegionAreaXElementTypeDeserializer {
             start: ::std::string::String,
             content: Vec<super::CtRegionAreaXElementTypeContent>,
-            state: Box<CtRegionAreaXElementTypeDeserializerState>,
+            state__: Box<CtRegionAreaXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionAreaXElementTypeDeserializerState {
@@ -7776,7 +7798,7 @@ pub mod definition {
                         reader.map_error(ErrorKind::MissingAttribute("Start".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(CtRegionAreaXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtRegionAreaXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7814,7 +7836,7 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtRegionAreaXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -7826,16 +7848,17 @@ pub mod definition {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtRegionAreaXElementTypeDeserializerState::Next__;
+                        *self.state__ = CtRegionAreaXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtRegionAreaXElementTypeDeserializerState::Content__(
-                                    deserializer,
-                                );
+                                *self.state__ =
+                                    CtRegionAreaXElementTypeDeserializerState::Content__(
+                                        deserializer,
+                                    );
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
@@ -7843,7 +7866,7 @@ pub mod definition {
                                         deserializer,
                                     ),
                                 );
-                                *self.state = CtRegionAreaXElementTypeDeserializerState::Next__;
+                                *self.state__ = CtRegionAreaXElementTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -7875,7 +7898,7 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -7918,7 +7941,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRegionAreaXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7930,7 +7953,7 @@ pub mod definition {
         }
         #[derive(Debug)]
         pub struct CtRegionAreaXElementTypeContentDeserializer {
-            state: Box<CtRegionAreaXElementTypeContentDeserializerState>,
+            state__: Box<CtRegionAreaXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtRegionAreaXElementTypeContentDeserializerState {
@@ -8014,7 +8037,7 @@ pub mod definition {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtRegionAreaXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -8172,9 +8195,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -8210,12 +8234,12 @@ pub mod definition {
                             reader,
                             CtRegionAreaXElementTypeContentDeserializerState::Move(values, None),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtRegionAreaXElementTypeContentDeserializerState::Move(
+                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Move(
                             values,
                             Some(deserializer),
                         );
@@ -8239,9 +8263,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -8277,12 +8302,12 @@ pub mod definition {
                             reader,
                             CtRegionAreaXElementTypeContentDeserializerState::Line(values, None),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtRegionAreaXElementTypeContentDeserializerState::Line(
+                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Line(
                             values,
                             Some(deserializer),
                         );
@@ -8306,9 +8331,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtRegionAreaXElementTypeContentDeserializerState::OuadraticBezier(
@@ -8348,12 +8374,12 @@ pub mod definition {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::OuadraticBezier(
                                 values,
                                 Some(deserializer),
@@ -8378,9 +8404,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtRegionAreaXElementTypeContentDeserializerState::CubicBezier(
@@ -8418,15 +8445,16 @@ pub mod definition {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtRegionAreaXElementTypeContentDeserializerState::CubicBezier(
-                            values,
-                            Some(deserializer),
-                        );
+                        *self.state__ =
+                            CtRegionAreaXElementTypeContentDeserializerState::CubicBezier(
+                                values,
+                                Some(deserializer),
+                            );
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -8447,9 +8475,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtRegionAreaXElementTypeContentDeserializerState::Arc(values, None),
@@ -8483,12 +8512,12 @@ pub mod definition {
                             reader,
                             CtRegionAreaXElementTypeContentDeserializerState::Arc(values, None),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtRegionAreaXElementTypeContentDeserializerState::Arc(
+                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Arc(
                             values,
                             Some(deserializer),
                         );
@@ -8512,9 +8541,10 @@ pub mod definition {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtRegionAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ =
+                                CtRegionAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -8550,12 +8580,12 @@ pub mod definition {
                             reader,
                             CtRegionAreaXElementTypeContentDeserializerState::Close(values, None),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtRegionAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtRegionAreaXElementTypeContentDeserializerState::Close(
+                        *self.state__ = CtRegionAreaXElementTypeContentDeserializerState::Close(
                             values,
                             Some(deserializer),
                         );
@@ -8575,13 +8605,13 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtRegionAreaXElementTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtRegionAreaXElementTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtRegionAreaXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -8603,7 +8633,7 @@ pub mod definition {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Move(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -8771,13 +8801,13 @@ pub mod definition {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -8792,13 +8822,13 @@ pub mod definition {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtActionGotoBookmarkXElementTypeDeserializer {
             name: ::std::string::String,
-            state: Box<CtActionGotoBookmarkXElementTypeDeserializerState>,
+            state__: Box<CtActionGotoBookmarkXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtActionGotoBookmarkXElementTypeDeserializerState {
@@ -8826,7 +8856,7 @@ pub mod definition {
                     name: name.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("Name".into()))
                     })?,
-                    state: Box::new(CtActionGotoBookmarkXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtActionGotoBookmarkXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8882,7 +8912,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtActionGotoBookmarkXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -8892,7 +8922,7 @@ pub mod definition {
         #[derive(Debug)]
         pub struct CtRegionAreaLineXElementTypeDeserializer {
             point_1: ::std::string::String,
-            state: Box<CtRegionAreaLineXElementTypeDeserializerState>,
+            state__: Box<CtRegionAreaLineXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionAreaLineXElementTypeDeserializerState {
@@ -8920,7 +8950,7 @@ pub mod definition {
                     point_1: point_1.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("Point1".into()))
                     })?,
-                    state: Box::new(CtRegionAreaLineXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtRegionAreaLineXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8973,7 +9003,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRegionAreaLineXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -8986,7 +9016,7 @@ pub mod definition {
         pub struct CtRegionAreaOuadraticBezierXElementTypeDeserializer {
             pointl: ::std::string::String,
             point_2: ::std::string::String,
-            state: Box<CtRegionAreaOuadraticBezierXElementTypeDeserializerState>,
+            state__: Box<CtRegionAreaOuadraticBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionAreaOuadraticBezierXElementTypeDeserializerState {
@@ -9023,7 +9053,7 @@ pub mod definition {
                     point_2: point_2.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("Point2".into()))
                     })?,
-                    state: Box::new(
+                    state__: Box::new(
                         CtRegionAreaOuadraticBezierXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -9081,7 +9111,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRegionAreaOuadraticBezierXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -9096,7 +9126,7 @@ pub mod definition {
             point_1: Option<::std::string::String>,
             point_2: Option<::std::string::String>,
             point_3: ::std::string::String,
-            state: Box<CtRegionAreaCubicBezierXElementTypeDeserializerState>,
+            state__: Box<CtRegionAreaCubicBezierXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionAreaCubicBezierXElementTypeDeserializerState {
@@ -9138,7 +9168,7 @@ pub mod definition {
                     point_3: point_3.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("Point3".into()))
                     })?,
-                    state: Box::new(CtRegionAreaCubicBezierXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtRegionAreaCubicBezierXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9194,7 +9224,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRegionAreaCubicBezierXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -9212,7 +9242,7 @@ pub mod definition {
             rotation_anglet: ::core::primitive::f64,
             ellipse_size: ::std::string::String,
             end_point: ::std::string::String,
-            state: Box<CtRegionAreaArcXElementTypeDeserializerState>,
+            state__: Box<CtRegionAreaArcXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRegionAreaArcXElementTypeDeserializerState {
@@ -9284,7 +9314,7 @@ pub mod definition {
                     end_point: end_point.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("EndPoint".into()))
                     })?,
-                    state: Box::new(CtRegionAreaArcXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtRegionAreaArcXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9337,7 +9367,7 @@ pub mod definition {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRegionAreaArcXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -11072,7 +11102,7 @@ pub mod document {
         pub struct CtBookmarkXTypeDeserializer {
             name: ::std::string::String,
             dest: Option<super::super::definition::CtDestXType>,
-            state: Box<CtBookmarkXTypeDeserializerState>,
+            state__: Box<CtBookmarkXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtBookmarkXTypeDeserializerState {
@@ -11103,7 +11133,7 @@ pub mod document {
                         reader.map_error(ErrorKind::MissingAttribute("Name".into()))
                     })?,
                     dest: None,
-                    state: Box::new(CtBookmarkXTypeDeserializerState::Init__),
+                    state__: Box::new(CtBookmarkXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -11148,10 +11178,10 @@ pub mod document {
                 if artifact.is_none() {
                     if self.dest.is_some() {
                         fallback.get_or_insert(CtBookmarkXTypeDeserializerState::Dest(None));
-                        *self.state = CtBookmarkXTypeDeserializerState::Done__;
+                        *self.state__ = CtBookmarkXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtBookmarkXTypeDeserializerState::Dest(None);
+                        *self.state__ = CtBookmarkXTypeDeserializerState::Dest(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -11162,7 +11192,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_dest(data)?;
-                        *self.state = CtBookmarkXTypeDeserializerState::Done__;
+                        *self.state__ = CtBookmarkXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11172,10 +11202,10 @@ pub mod document {
                                 fallback.get_or_insert(CtBookmarkXTypeDeserializerState::Dest(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtBookmarkXTypeDeserializerState::Done__;
+                                *self.state__ = CtBookmarkXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtBookmarkXTypeDeserializerState::Dest(Some(deserializer));
                             }
                         }
@@ -11207,7 +11237,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Dest(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -11233,7 +11263,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtBookmarkXTypeDeserializerState::Dest(None);
+                            *self.state__ = CtBookmarkXTypeDeserializerState::Dest(None);
                             event
                         }
                         (S::Dest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11259,13 +11289,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -11278,7 +11308,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtBookmarkXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -11297,7 +11327,7 @@ pub mod document {
             expanded: ::core::primitive::bool,
             actions: Option<super::super::page::CtGraphicUnitActionsXElementType>,
             outline_elem: Vec<super::CtOutlineElemXType>,
-            state: Box<CtOutlineElemXTypeDeserializerState>,
+            state__: Box<CtOutlineElemXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtOutlineElemXTypeDeserializerState {
@@ -11339,7 +11369,7 @@ pub mod document {
                     expanded: expanded.unwrap_or_else(super::CtOutlineElemXType::default_expanded),
                     actions: None,
                     outline_elem: Vec::new(),
-                    state: Box::new(CtOutlineElemXTypeDeserializerState::Init__),
+                    state__: Box::new(CtOutlineElemXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -11400,7 +11430,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::Actions(None));
-                    *self.state = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                    *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11410,7 +11440,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11422,11 +11452,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtOutlineElemXTypeDeserializerState::OutlineElem(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtOutlineElemXTypeDeserializerState::Actions(Some(
+                                *self.state__ = CtOutlineElemXTypeDeserializerState::Actions(Some(
                                     deserializer,
                                 ));
                             }
@@ -11451,7 +11481,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtOutlineElemXTypeDeserializerState::OutlineElem(None));
-                    *self.state = CtOutlineElemXTypeDeserializerState::Done__;
+                    *self.state__ = CtOutlineElemXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11461,7 +11491,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outline_elem(data)?;
-                        *self.state = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
+                        *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11473,11 +11503,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtOutlineElemXTypeDeserializerState::OutlineElem(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtOutlineElemXTypeDeserializerState::OutlineElem(
+                                *self.state__ = CtOutlineElemXTypeDeserializerState::OutlineElem(
                                     Some(deserializer),
                                 );
                             }
@@ -11510,7 +11540,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -11548,7 +11578,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtOutlineElemXTypeDeserializerState::Actions(None);
+                            *self.state__ = CtOutlineElemXTypeDeserializerState::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -11591,13 +11621,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -11610,7 +11640,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtOutlineElemXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -11633,7 +11663,7 @@ pub mod document {
             print_screen: Option<::core::primitive::bool>,
             print: Option<super::CtPermissionPrintXElementType>,
             valid_period: Option<super::CtPermissionValidPeriodXElementType>,
-            state: Box<CtPermissionXTypeDeserializerState>,
+            state__: Box<CtPermissionXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPermissionXTypeDeserializerState {
@@ -11671,7 +11701,7 @@ pub mod document {
                     print_screen: None,
                     print: None,
                     valid_period: None,
-                    state: Box::new(CtPermissionXTypeDeserializerState::Init__),
+                    state__: Box::new(CtPermissionXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -11802,7 +11832,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Edit(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Annot(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11812,7 +11842,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_edit(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Annot(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11822,10 +11852,10 @@ pub mod document {
                                 fallback.get_or_insert(CtPermissionXTypeDeserializerState::Edit(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPermissionXTypeDeserializerState::Annot(None);
+                                *self.state__ = CtPermissionXTypeDeserializerState::Annot(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPermissionXTypeDeserializerState::Edit(Some(deserializer));
                             }
                         }
@@ -11849,7 +11879,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Annot(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Export(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11859,7 +11889,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annot(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Export(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11869,10 +11899,10 @@ pub mod document {
                                 fallback.get_or_insert(CtPermissionXTypeDeserializerState::Annot(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPermissionXTypeDeserializerState::Export(None);
+                                *self.state__ = CtPermissionXTypeDeserializerState::Export(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPermissionXTypeDeserializerState::Annot(Some(deserializer));
                             }
                         }
@@ -11896,7 +11926,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Export(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Signature(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11906,7 +11936,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_export(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Signature(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11916,10 +11946,10 @@ pub mod document {
                                 fallback.get_or_insert(CtPermissionXTypeDeserializerState::Export(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPermissionXTypeDeserializerState::Signature(None);
+                                *self.state__ = CtPermissionXTypeDeserializerState::Signature(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPermissionXTypeDeserializerState::Export(Some(deserializer));
                             }
                         }
@@ -11943,7 +11973,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Signature(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Watermark(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -11953,7 +11983,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Watermark(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -11965,12 +11995,12 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPermissionXTypeDeserializerState::Watermark(None);
+                                *self.state__ = CtPermissionXTypeDeserializerState::Watermark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPermissionXTypeDeserializerState::Signature(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtPermissionXTypeDeserializerState::Signature(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -11993,7 +12023,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Watermark(None));
-                    *self.state = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12003,7 +12033,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_watermark(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -12015,12 +12045,13 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPermissionXTypeDeserializerState::PrintScreen(None);
+                                *self.state__ =
+                                    CtPermissionXTypeDeserializerState::PrintScreen(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPermissionXTypeDeserializerState::Watermark(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtPermissionXTypeDeserializerState::Watermark(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -12043,7 +12074,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::PrintScreen(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Print(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12053,7 +12084,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_print_screen(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Print(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -12065,10 +12096,10 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPermissionXTypeDeserializerState::Print(None);
+                                *self.state__ = CtPermissionXTypeDeserializerState::Print(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPermissionXTypeDeserializerState::PrintScreen(
+                                *self.state__ = CtPermissionXTypeDeserializerState::PrintScreen(
                                     Some(deserializer),
                                 );
                             }
@@ -12093,7 +12124,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::Print(None));
-                    *self.state = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                    *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12103,7 +12134,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_print(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                        *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -12113,10 +12144,11 @@ pub mod document {
                                 fallback.get_or_insert(CtPermissionXTypeDeserializerState::Print(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPermissionXTypeDeserializerState::ValidPeriod(None);
+                                *self.state__ =
+                                    CtPermissionXTypeDeserializerState::ValidPeriod(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPermissionXTypeDeserializerState::Print(Some(deserializer));
                             }
                         }
@@ -12140,7 +12172,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPermissionXTypeDeserializerState::ValidPeriod(None));
-                    *self.state = CtPermissionXTypeDeserializerState::Done__;
+                    *self.state__ = CtPermissionXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -12150,7 +12182,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_valid_period(data)?;
-                        *self.state = CtPermissionXTypeDeserializerState::Done__;
+                        *self.state__ = CtPermissionXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -12162,10 +12194,10 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPermissionXTypeDeserializerState::Done__;
+                                *self.state__ = CtPermissionXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPermissionXTypeDeserializerState::ValidPeriod(
+                                *self.state__ = CtPermissionXTypeDeserializerState::ValidPeriod(
                                     Some(deserializer),
                                 );
                             }
@@ -12198,7 +12230,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Edit(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -12308,7 +12340,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtPermissionXTypeDeserializerState::Edit(None);
+                            *self.state__ = CtPermissionXTypeDeserializerState::Edit(None);
                             event
                         }
                         (S::Edit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -12453,13 +12485,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -12472,7 +12504,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPermissionXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -12491,7 +12523,7 @@ pub mod document {
         #[derive(Debug)]
         pub struct CtVPreferencesXTypeDeserializer {
             content: Vec<super::CtVPreferencesXTypeContent>,
-            state: Box<CtVPreferencesXTypeDeserializerState>,
+            state__: Box<CtVPreferencesXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtVPreferencesXTypeDeserializerState {
@@ -12511,7 +12543,7 @@ pub mod document {
                 }
                 Ok(Self {
                     content: Vec::new(),
-                    state: Box::new(CtVPreferencesXTypeDeserializerState::Init__),
+                    state__: Box::new(CtVPreferencesXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -12549,7 +12581,7 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtVPreferencesXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -12561,7 +12593,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtVPreferencesXTypeDeserializerState::Next__;
+                        *self.state__ = CtVPreferencesXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -12576,10 +12608,10 @@ pub mod document {
                                 fallback.get_or_insert(
                                     CtVPreferencesXTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = CtVPreferencesXTypeDeserializerState::Next__;
+                                *self.state__ = CtVPreferencesXTypeDeserializerState::Next__;
                             }
                             (false, _) | (_, ElementHandlerOutput::Break { .. }) => {
-                                *self.state =
+                                *self.state__ =
                                     CtVPreferencesXTypeDeserializerState::Content__(deserializer);
                             }
                         }
@@ -12610,7 +12642,7 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -12653,7 +12685,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtVPreferencesXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -12664,7 +12696,7 @@ pub mod document {
         }
         #[derive(Debug)]
         pub struct CtVPreferencesXTypeContentDeserializer {
-            state: Box<CtVPreferencesXTypeContentDeserializerState>,
+            state__: Box<CtVPreferencesXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtVPreferencesXTypeContentDeserializerState {
@@ -12832,7 +12864,7 @@ pub mod document {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtVPreferencesXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -13036,9 +13068,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtVPreferencesXTypeContentDeserializerState::PageMode(values, None),
@@ -13072,11 +13104,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::PageMode(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::PageMode(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::PageMode(
                             values,
                             Some(deserializer),
                         );
@@ -13100,9 +13132,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -13138,11 +13170,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::PageLayout(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::PageLayout(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::PageLayout(
                             values,
                             Some(deserializer),
                         );
@@ -13166,9 +13198,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -13204,11 +13236,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::TabDisplay(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::TabDisplay(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::TabDisplay(
                             values,
                             Some(deserializer),
                         );
@@ -13232,9 +13264,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -13270,11 +13302,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::HideToolbar(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::HideToolbar(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideToolbar(
                             values,
                             Some(deserializer),
                         );
@@ -13298,9 +13330,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -13336,11 +13368,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::HideMenubar(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::HideMenubar(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideMenubar(
                             values,
                             Some(deserializer),
                         );
@@ -13364,9 +13396,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -13402,11 +13434,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::HideWindowUi(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::HideWindowUi(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::HideWindowUi(
                             values,
                             Some(deserializer),
                         );
@@ -13430,9 +13462,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtVPreferencesXTypeContentDeserializerState::ZoomMode(values, None),
@@ -13466,11 +13498,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::ZoomMode(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::ZoomMode(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::ZoomMode(
                             values,
                             Some(deserializer),
                         );
@@ -13494,9 +13526,9 @@ pub mod document {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtVPreferencesXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtVPreferencesXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtVPreferencesXTypeContentDeserializerState::Zoom(values, None),
@@ -13530,11 +13562,11 @@ pub mod document {
                             reader,
                             CtVPreferencesXTypeContentDeserializerState::Zoom(values, None),
                         )?;
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtVPreferencesXTypeContentDeserializerState::Zoom(
+                        *self.state__ = CtVPreferencesXTypeContentDeserializerState::Zoom(
                             values,
                             Some(deserializer),
                         );
@@ -13554,13 +13586,13 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtVPreferencesXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtVPreferencesXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtVPreferencesXTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -13582,7 +13614,7 @@ pub mod document {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::PageMode(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -13796,13 +13828,13 @@ pub mod document {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -13817,7 +13849,7 @@ pub mod document {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -13833,7 +13865,7 @@ pub mod document {
             custom_tags: Option<::std::string::String>,
             attachments: Option<::std::string::String>,
             extensions: Option<::std::string::String>,
-            state: Box<DocumentXElementTypeDeserializerState>,
+            state__: Box<DocumentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentXElementTypeDeserializerState {
@@ -13859,7 +13891,7 @@ pub mod document {
                     custom_tags: None,
                     attachments: None,
                     extensions: None,
-                    state: Box::new(DocumentXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -14044,10 +14076,10 @@ pub mod document {
                     if self.common_data.is_some() {
                         fallback
                             .get_or_insert(DocumentXElementTypeDeserializerState::CommonData(None));
-                        *self.state = DocumentXElementTypeDeserializerState::Pages(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = DocumentXElementTypeDeserializerState::CommonData(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::CommonData(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -14058,7 +14090,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_common_data(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Pages(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14070,10 +14102,10 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = DocumentXElementTypeDeserializerState::Pages(None);
+                                *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::CommonData(
+                                *self.state__ = DocumentXElementTypeDeserializerState::CommonData(
                                     Some(deserializer),
                                 );
                             }
@@ -14099,10 +14131,10 @@ pub mod document {
                 if artifact.is_none() {
                     if self.pages.is_some() {
                         fallback.get_or_insert(DocumentXElementTypeDeserializerState::Pages(None));
-                        *self.state = DocumentXElementTypeDeserializerState::Outlines(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Outlines(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = DocumentXElementTypeDeserializerState::Pages(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Pages(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -14113,7 +14145,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_pages(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Outlines(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Outlines(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14125,10 +14157,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = DocumentXElementTypeDeserializerState::Outlines(None);
+                                *self.state__ =
+                                    DocumentXElementTypeDeserializerState::Outlines(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Pages(Some(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Pages(Some(
                                     deserializer,
                                 ));
                             }
@@ -14153,7 +14186,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(DocumentXElementTypeDeserializerState::Outlines(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Permissions(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Permissions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14163,7 +14196,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outlines(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Permissions(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Permissions(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14175,11 +14208,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::Permissions(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Outlines(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Outlines(
                                     Some(deserializer),
                                 );
                             }
@@ -14205,7 +14238,7 @@ pub mod document {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(DocumentXElementTypeDeserializerState::Permissions(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Actions(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Actions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14215,7 +14248,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_permissions(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Actions(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Actions(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14227,10 +14260,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = DocumentXElementTypeDeserializerState::Actions(None);
+                                *self.state__ =
+                                    DocumentXElementTypeDeserializerState::Actions(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Permissions(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Permissions(
                                     Some(deserializer),
                                 );
                             }
@@ -14258,7 +14292,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(DocumentXElementTypeDeserializerState::Actions(None));
-                    *self.state = DocumentXElementTypeDeserializerState::VPreferences(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14268,7 +14302,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::VPreferences(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14280,13 +14314,13 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::VPreferences(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Actions(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = DocumentXElementTypeDeserializerState::Actions(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -14310,7 +14344,7 @@ pub mod document {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(DocumentXElementTypeDeserializerState::VPreferences(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Bookmarks(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14320,7 +14354,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_v_preferences(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Bookmarks(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14332,11 +14366,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::Bookmarks(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::VPreferences(
+                                *self.state__ = DocumentXElementTypeDeserializerState::VPreferences(
                                     Some(deserializer),
                                 );
                             }
@@ -14361,7 +14395,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(DocumentXElementTypeDeserializerState::Bookmarks(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Annotations(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Annotations(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14371,7 +14405,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bookmarks(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Annotations(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Annotations(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14383,11 +14417,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::Annotations(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Bookmarks(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Bookmarks(
                                     Some(deserializer),
                                 );
                             }
@@ -14413,7 +14447,7 @@ pub mod document {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(DocumentXElementTypeDeserializerState::Annotations(None));
-                    *self.state = DocumentXElementTypeDeserializerState::CustomTags(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14423,7 +14457,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_annotations(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::CustomTags(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14435,11 +14469,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::CustomTags(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Annotations(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Annotations(
                                     Some(deserializer),
                                 );
                             }
@@ -14464,7 +14498,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(DocumentXElementTypeDeserializerState::CustomTags(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Attachments(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Attachments(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14474,7 +14508,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_tags(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Attachments(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Attachments(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14486,11 +14520,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::Attachments(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::CustomTags(
+                                *self.state__ = DocumentXElementTypeDeserializerState::CustomTags(
                                     Some(deserializer),
                                 );
                             }
@@ -14516,7 +14550,7 @@ pub mod document {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(DocumentXElementTypeDeserializerState::Attachments(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Extensions(None);
+                    *self.state__ = DocumentXElementTypeDeserializerState::Extensions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14526,7 +14560,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_attachments(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Extensions(None);
+                        *self.state__ = DocumentXElementTypeDeserializerState::Extensions(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14538,11 +14572,11 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentXElementTypeDeserializerState::Extensions(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Attachments(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Attachments(
                                     Some(deserializer),
                                 );
                             }
@@ -14567,7 +14601,7 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(DocumentXElementTypeDeserializerState::Extensions(None));
-                    *self.state = DocumentXElementTypeDeserializerState::Done__;
+                    *self.state__ = DocumentXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -14577,7 +14611,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_extensions(data)?;
-                        *self.state = DocumentXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocumentXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -14589,10 +14623,10 @@ pub mod document {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = DocumentXElementTypeDeserializerState::Done__;
+                                *self.state__ = DocumentXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentXElementTypeDeserializerState::Extensions(
+                                *self.state__ = DocumentXElementTypeDeserializerState::Extensions(
                                     Some(deserializer),
                                 );
                             }
@@ -14625,7 +14659,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CommonData(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -14771,7 +14805,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = DocumentXElementTypeDeserializerState::CommonData(None);
+                            *self.state__ = DocumentXElementTypeDeserializerState::CommonData(None);
                             event
                         }
                         (S::CommonData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -14967,13 +15001,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -14986,7 +15020,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -15013,7 +15047,7 @@ pub mod document {
         pub struct CtPermissionPrintXElementTypeDeserializer {
             printable: ::core::primitive::bool,
             copies: ::core::primitive::i32,
-            state: Box<CtPermissionPrintXElementTypeDeserializerState>,
+            state__: Box<CtPermissionPrintXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPermissionPrintXElementTypeDeserializerState {
@@ -15049,7 +15083,7 @@ pub mod document {
                     })?,
                     copies: copies
                         .unwrap_or_else(super::CtPermissionPrintXElementType::default_copies),
-                    state: Box::new(CtPermissionPrintXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPermissionPrintXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -15105,7 +15139,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPermissionPrintXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -15119,7 +15153,7 @@ pub mod document {
         pub struct CtPermissionValidPeriodXElementTypeDeserializer {
             start_date: Option<::std::string::String>,
             end_date: Option<::std::string::String>,
-            state: Box<CtPermissionValidPeriodXElementTypeDeserializerState>,
+            state__: Box<CtPermissionValidPeriodXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPermissionValidPeriodXElementTypeDeserializerState {
@@ -15152,7 +15186,7 @@ pub mod document {
                 Ok(Self {
                     start_date: start_date,
                     end_date: end_date,
-                    state: Box::new(CtPermissionValidPeriodXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPermissionValidPeriodXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -15208,7 +15242,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPermissionValidPeriodXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -15226,7 +15260,7 @@ pub mod document {
             document_res: Vec<::std::string::String>,
             template_page: Vec<super::DocumentCommonDataTemplatePageXElementType>,
             default_cs: Option<::core::primitive::u32>,
-            state: Box<DocumentCommonDataXElementTypeDeserializerState>,
+            state__: Box<DocumentCommonDataXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentCommonDataXElementTypeDeserializerState {
@@ -15247,7 +15281,7 @@ pub mod document {
                     document_res: Vec::new(),
                     template_page: Vec::new(),
                     default_cs: None,
-                    state: Box::new(DocumentCommonDataXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentCommonDataXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -15346,11 +15380,11 @@ pub mod document {
                         fallback.get_or_insert(
                             DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(None),
                         );
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -15362,7 +15396,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_max_unit_id(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -15375,11 +15409,11 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(
                                         Some(deserializer),
                                     );
@@ -15408,11 +15442,11 @@ pub mod document {
                         fallback.get_or_insert(
                             DocumentCommonDataXElementTypeDeserializerState::PageArea(None),
                         );
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PageArea(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -15424,7 +15458,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page_area(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -15437,13 +15471,13 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::PublicRes(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::PageArea(
                                         Some(deserializer),
                                     );
@@ -15471,7 +15505,7 @@ pub mod document {
                     fallback.get_or_insert(
                         DocumentCommonDataXElementTypeDeserializerState::PublicRes(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -15482,7 +15516,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_public_res(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::PublicRes(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -15495,13 +15529,13 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::PublicRes(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::PublicRes(
                                         Some(deserializer),
                                     );
@@ -15529,7 +15563,7 @@ pub mod document {
                     fallback.get_or_insert(
                         DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -15540,7 +15574,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_document_res(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::DocumentRes(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -15553,13 +15587,13 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::DocumentRes(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::DocumentRes(
                                         Some(deserializer),
                                     );
@@ -15587,7 +15621,8 @@ pub mod document {
                     fallback.get_or_insert(
                         DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None),
                     );
-                    *self.state = DocumentCommonDataXElementTypeDeserializerState::DefaultCs(None);
+                    *self.state__ =
+                        DocumentCommonDataXElementTypeDeserializerState::DefaultCs(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -15597,7 +15632,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_template_page(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentCommonDataXElementTypeDeserializerState::TemplatePage(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -15610,13 +15645,13 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::TemplatePage(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::TemplatePage(
                                         Some(deserializer),
                                     );
@@ -15644,7 +15679,7 @@ pub mod document {
                     fallback.get_or_insert(
                         DocumentCommonDataXElementTypeDeserializerState::DefaultCs(None),
                     );
-                    *self.state = DocumentCommonDataXElementTypeDeserializerState::Done__;
+                    *self.state__ = DocumentCommonDataXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -15654,7 +15689,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_default_cs(data)?;
-                        *self.state = DocumentCommonDataXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocumentCommonDataXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -15666,11 +15701,11 @@ pub mod document {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentCommonDataXElementTypeDeserializerState::DefaultCs(
                                         Some(deserializer),
                                     );
@@ -15706,7 +15741,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::MaxUnitId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -15792,7 +15827,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 DocumentCommonDataXElementTypeDeserializerState::MaxUnitId(None);
                             event
                         }
@@ -15904,13 +15939,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -15926,7 +15961,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentCommonDataXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -15947,7 +15982,7 @@ pub mod document {
         #[derive(Debug)]
         pub struct DocumentPagesXElementTypeDeserializer {
             page: Vec<super::DocumentPagesPageXElementType>,
-            state: Box<DocumentPagesXElementTypeDeserializerState>,
+            state__: Box<DocumentPagesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentPagesXElementTypeDeserializerState {
@@ -15967,7 +16002,7 @@ pub mod document {
                 }
                 Ok(Self {
                     page: Vec::new(),
-                    state: Box::new(DocumentPagesXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentPagesXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -16008,12 +16043,12 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     if self.page.len() < 1usize {
-                        *self.state = DocumentPagesXElementTypeDeserializerState::Page(None);
+                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback
                             .get_or_insert(DocumentPagesXElementTypeDeserializerState::Page(None));
-                        *self.state = DocumentPagesXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -16024,7 +16059,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page(data)?;
-                        *self.state = DocumentPagesXElementTypeDeserializerState::Page(None);
+                        *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -16037,15 +16072,15 @@ pub mod document {
                                     )),
                                 );
                                 if self.page.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentPagesXElementTypeDeserializerState::Page(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentPagesXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocumentPagesXElementTypeDeserializerState::Page(
+                                *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(
                                     Some(deserializer),
                                 );
                             }
@@ -16080,7 +16115,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Page(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -16106,7 +16141,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = DocumentPagesXElementTypeDeserializerState::Page(None);
+                            *self.state__ = DocumentPagesXElementTypeDeserializerState::Page(None);
                             event
                         }
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -16132,13 +16167,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -16151,7 +16186,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentPagesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -16161,7 +16196,7 @@ pub mod document {
         #[derive(Debug)]
         pub struct DocumentOutlinesXElementTypeDeserializer {
             outline_elem: Vec<super::CtOutlineElemXType>,
-            state: Box<DocumentOutlinesXElementTypeDeserializerState>,
+            state__: Box<DocumentOutlinesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentOutlinesXElementTypeDeserializerState {
@@ -16181,7 +16216,7 @@ pub mod document {
                 }
                 Ok(Self {
                     outline_elem: Vec::new(),
-                    state: Box::new(DocumentOutlinesXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentOutlinesXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -16224,14 +16259,14 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     if self.outline_elem.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None),
                         );
-                        *self.state = DocumentOutlinesXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocumentOutlinesXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -16242,7 +16277,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_outline_elem(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -16256,17 +16291,17 @@ pub mod document {
                                     ),
                                 );
                                 if self.outline_elem.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentOutlinesXElementTypeDeserializerState::OutlineElem(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentOutlinesXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentOutlinesXElementTypeDeserializerState::OutlineElem(
                                         Some(deserializer),
                                     );
@@ -16302,7 +16337,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::OutlineElem(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -16328,7 +16363,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 DocumentOutlinesXElementTypeDeserializerState::OutlineElem(None);
                             event
                         }
@@ -16355,13 +16390,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -16374,7 +16409,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentOutlinesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -16386,7 +16421,7 @@ pub mod document {
         #[derive(Debug)]
         pub struct DocumentBookmarksXElementTypeDeserializer {
             bookmark: Vec<super::CtBookmarkXType>,
-            state: Box<DocumentBookmarksXElementTypeDeserializerState>,
+            state__: Box<DocumentBookmarksXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentBookmarksXElementTypeDeserializerState {
@@ -16406,7 +16441,7 @@ pub mod document {
                 }
                 Ok(Self {
                     bookmark: Vec::new(),
-                    state: Box::new(DocumentBookmarksXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentBookmarksXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -16446,14 +16481,14 @@ pub mod document {
                 } = output;
                 if artifact.is_none() {
                     if self.bookmark.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             DocumentBookmarksXElementTypeDeserializerState::Bookmark(None),
                         );
-                        *self.state = DocumentBookmarksXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocumentBookmarksXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -16464,7 +16499,7 @@ pub mod document {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_bookmark(data)?;
-                        *self.state =
+                        *self.state__ =
                             DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -16478,17 +16513,17 @@ pub mod document {
                                     )),
                                 );
                                 if self.bookmark.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentBookmarksXElementTypeDeserializerState::Bookmark(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         DocumentBookmarksXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DocumentBookmarksXElementTypeDeserializerState::Bookmark(Some(
                                         deserializer,
                                     ));
@@ -16524,7 +16559,7 @@ pub mod document {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Bookmark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -16550,7 +16585,7 @@ pub mod document {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 DocumentBookmarksXElementTypeDeserializerState::Bookmark(None);
                             event
                         }
@@ -16577,13 +16612,13 @@ pub mod document {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -16599,7 +16634,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentBookmarksXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -16614,7 +16649,7 @@ pub mod document {
             name: Option<::std::string::String>,
             z_order: Option<super::DocumentCommonDataTemplatePageZOrderXType>,
             base_loc: ::std::string::String,
-            state: Box<DocumentCommonDataTemplatePageXElementTypeDeserializerState>,
+            state__: Box<DocumentCommonDataTemplatePageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentCommonDataTemplatePageXElementTypeDeserializerState {
@@ -16665,7 +16700,7 @@ pub mod document {
                     base_loc: base_loc.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("BaseLoc".into()))
                     })?,
-                    state: Box::new(
+                    state__: Box::new(
                         DocumentCommonDataTemplatePageXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -16723,7 +16758,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentCommonDataTemplatePageXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -16739,7 +16774,7 @@ pub mod document {
         pub struct DocumentPagesPageXElementTypeDeserializer {
             id: ::core::primitive::u32,
             base_loc: ::std::string::String,
-            state: Box<DocumentPagesPageXElementTypeDeserializerState>,
+            state__: Box<DocumentPagesPageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocumentPagesPageXElementTypeDeserializerState {
@@ -16776,7 +16811,7 @@ pub mod document {
                     base_loc: base_loc.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("BaseLoc".into()))
                     })?,
-                    state: Box::new(DocumentPagesPageXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocumentPagesPageXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -16832,7 +16867,7 @@ pub mod document {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocumentPagesPageXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -18360,7 +18395,7 @@ pub mod extensions {
             date: Option<::std::string::String>,
             ref_id: ::core::primitive::u32,
             content: Vec<super::CtExtensionXTypeContent>,
-            state: Box<CtExtensionXTypeDeserializerState>,
+            state__: Box<CtExtensionXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtExtensionXTypeDeserializerState {
@@ -18421,7 +18456,7 @@ pub mod extensions {
                         reader.map_error(ErrorKind::MissingAttribute("RefId".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(CtExtensionXTypeDeserializerState::Init__),
+                    state__: Box::new(CtExtensionXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -18459,7 +18494,7 @@ pub mod extensions {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtExtensionXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -18471,21 +18506,21 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtExtensionXTypeDeserializerState::Next__;
+                        *self.state__ = CtExtensionXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtExtensionXTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     CtExtensionXTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = CtExtensionXTypeDeserializerState::Next__;
+                                *self.state__ = CtExtensionXTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -18515,7 +18550,7 @@ pub mod extensions {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -18558,7 +18593,7 @@ pub mod extensions {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtExtensionXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -18574,7 +18609,7 @@ pub mod extensions {
         }
         #[derive(Debug)]
         pub struct CtExtensionXTypeContentDeserializer {
-            state: Box<CtExtensionXTypeContentDeserializerState>,
+            state__: Box<CtExtensionXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtExtensionXTypeContentDeserializerState {
@@ -18645,7 +18680,7 @@ pub mod extensions {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtExtensionXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -18741,9 +18776,9 @@ pub mod extensions {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtExtensionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtExtensionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtExtensionXTypeContentDeserializerState::Property(values, None),
@@ -18777,11 +18812,11 @@ pub mod extensions {
                             reader,
                             CtExtensionXTypeContentDeserializerState::Property(values, None),
                         )?;
-                        *self.state = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtExtensionXTypeContentDeserializerState::Property(
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::Property(
                             values,
                             Some(deserializer),
                         );
@@ -18805,9 +18840,9 @@ pub mod extensions {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtExtensionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtExtensionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtExtensionXTypeContentDeserializerState::Data(values, None),
@@ -18838,11 +18873,11 @@ pub mod extensions {
                             reader,
                             CtExtensionXTypeContentDeserializerState::Data(values, None),
                         )?;
-                        *self.state = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtExtensionXTypeContentDeserializerState::Data(
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::Data(
                             values,
                             Some(deserializer),
                         );
@@ -18866,9 +18901,9 @@ pub mod extensions {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtExtensionXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtExtensionXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtExtensionXTypeContentDeserializerState::ExtendData(values, None),
@@ -18902,11 +18937,11 @@ pub mod extensions {
                             reader,
                             CtExtensionXTypeContentDeserializerState::ExtendData(values, None),
                         )?;
-                        *self.state = CtExtensionXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtExtensionXTypeContentDeserializerState::ExtendData(
+                        *self.state__ = CtExtensionXTypeContentDeserializerState::ExtendData(
                             values,
                             Some(deserializer),
                         );
@@ -18926,13 +18961,13 @@ pub mod extensions {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtExtensionXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtExtensionXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtExtensionXTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -18954,7 +18989,7 @@ pub mod extensions {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Property(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -19043,13 +19078,13 @@ pub mod extensions {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -19064,13 +19099,13 @@ pub mod extensions {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct ExtensionsXElementTypeDeserializer {
             extension: Vec<super::CtExtensionXType>,
-            state: Box<ExtensionsXElementTypeDeserializerState>,
+            state__: Box<ExtensionsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ExtensionsXElementTypeDeserializerState {
@@ -19090,7 +19125,7 @@ pub mod extensions {
                 }
                 Ok(Self {
                     extension: Vec::new(),
-                    state: Box::new(ExtensionsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ExtensionsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -19130,13 +19165,13 @@ pub mod extensions {
                 } = output;
                 if artifact.is_none() {
                     if self.extension.len() < 1usize {
-                        *self.state = ExtensionsXElementTypeDeserializerState::Extension(None);
+                        *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(ExtensionsXElementTypeDeserializerState::Extension(
                             None,
                         ));
-                        *self.state = ExtensionsXElementTypeDeserializerState::Done__;
+                        *self.state__ = ExtensionsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -19147,7 +19182,7 @@ pub mod extensions {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_extension(data)?;
-                        *self.state = ExtensionsXElementTypeDeserializerState::Extension(None);
+                        *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -19160,14 +19195,14 @@ pub mod extensions {
                                     )),
                                 );
                                 if self.extension.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         ExtensionsXElementTypeDeserializerState::Extension(None);
                                 } else {
-                                    *self.state = ExtensionsXElementTypeDeserializerState::Done__;
+                                    *self.state__ = ExtensionsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ExtensionsXElementTypeDeserializerState::Extension(
+                                *self.state__ = ExtensionsXElementTypeDeserializerState::Extension(
                                     Some(deserializer),
                                 );
                             }
@@ -19200,7 +19235,7 @@ pub mod extensions {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Extension(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -19226,7 +19261,8 @@ pub mod extensions {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ExtensionsXElementTypeDeserializerState::Extension(None);
+                            *self.state__ =
+                                ExtensionsXElementTypeDeserializerState::Extension(None);
                             event
                         }
                         (S::Extension(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -19252,13 +19288,13 @@ pub mod extensions {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -19271,7 +19307,7 @@ pub mod extensions {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ExtensionsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -19285,7 +19321,7 @@ pub mod extensions {
             name: ::std::string::String,
             type_: Option<::std::string::String>,
             content: Option<::std::string::String>,
-            state: Box<CtExtensionPropertyXElementTypeDeserializerState>,
+            state__: Box<CtExtensionPropertyXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtExtensionPropertyXElementTypeDeserializerState {
@@ -19322,7 +19358,7 @@ pub mod extensions {
                     })?,
                     type_: type_,
                     content: None,
-                    state: Box::new(CtExtensionPropertyXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtExtensionPropertyXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -19377,7 +19413,7 @@ pub mod extensions {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -19415,7 +19451,7 @@ pub mod extensions {
                 R: DeserializeReader,
             {
                 use CtExtensionPropertyXElementTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -19435,7 +19471,7 @@ pub mod extensions {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtExtensionPropertyXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -19989,7 +20025,7 @@ pub mod ofd {
             creator: Option<::std::string::String>,
             creator_version: Option<::std::string::String>,
             custom_datas: Option<super::CtDocInfoCustomDatasXElementType>,
-            state: Box<CtDocInfoXTypeDeserializerState>,
+            state__: Box<CtDocInfoXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoXTypeDeserializerState {
@@ -20037,7 +20073,7 @@ pub mod ofd {
                     creator: None,
                     creator_version: None,
                     custom_datas: None,
-                    state: Box::new(CtDocInfoXTypeDeserializerState::Init__),
+                    state__: Box::new(CtDocInfoXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -20233,10 +20269,10 @@ pub mod ofd {
                 if artifact.is_none() {
                     if self.doc_id.is_some() {
                         fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocId(None));
-                        *self.state = CtDocInfoXTypeDeserializerState::Title(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Title(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtDocInfoXTypeDeserializerState::DocId(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::DocId(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -20247,7 +20283,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_id(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Title(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Title(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20257,10 +20293,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocId(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Title(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Title(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::DocId(Some(deserializer));
                             }
                         }
@@ -20284,7 +20320,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Title(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Author(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20294,7 +20330,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_title(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Author(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20304,10 +20340,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Title(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Author(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Author(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Title(Some(deserializer));
                             }
                         }
@@ -20331,7 +20367,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Author(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Subject(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20341,7 +20377,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_author(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Subject(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20351,10 +20387,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Author(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Subject(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Subject(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Author(Some(deserializer));
                             }
                         }
@@ -20378,7 +20414,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Subject(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Abstract(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20388,7 +20424,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_subject(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Abstract(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20398,10 +20434,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Subject(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Abstract(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Abstract(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Subject(Some(deserializer));
                             }
                         }
@@ -20425,7 +20461,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Abstract(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20435,7 +20471,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abstract_(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20445,10 +20481,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Abstract(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::CreationDate(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Abstract(Some(deserializer));
                             }
                         }
@@ -20472,7 +20508,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreationDate(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::ModDate(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20482,7 +20518,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creation_date(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::ModDate(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20494,12 +20530,12 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtDocInfoXTypeDeserializerState::ModDate(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::ModDate(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtDocInfoXTypeDeserializerState::CreationDate(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtDocInfoXTypeDeserializerState::CreationDate(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -20522,7 +20558,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::ModDate(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20532,7 +20568,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_mod_date(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20542,10 +20578,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::ModDate(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::DocUsage(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::DocUsage(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::ModDate(Some(deserializer));
                             }
                         }
@@ -20569,7 +20605,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocUsage(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Cover(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20579,7 +20615,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_usage(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Cover(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20589,10 +20625,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::DocUsage(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Cover(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Cover(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::DocUsage(Some(deserializer));
                             }
                         }
@@ -20616,7 +20652,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Cover(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Keywords(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20626,7 +20662,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cover(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Keywords(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20636,10 +20672,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Cover(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Keywords(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Keywords(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Cover(Some(deserializer));
                             }
                         }
@@ -20663,7 +20699,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Keywords(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Creator(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20673,7 +20709,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_keywords(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Creator(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20683,10 +20719,10 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Keywords(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::Creator(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Creator(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Keywords(Some(deserializer));
                             }
                         }
@@ -20710,7 +20746,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Creator(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20720,7 +20756,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creator(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20730,10 +20766,11 @@ pub mod ofd {
                                 fallback.get_or_insert(CtDocInfoXTypeDeserializerState::Creator(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtDocInfoXTypeDeserializerState::CreatorVersion(None);
+                                *self.state__ =
+                                    CtDocInfoXTypeDeserializerState::CreatorVersion(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoXTypeDeserializerState::Creator(Some(deserializer));
                             }
                         }
@@ -20757,7 +20794,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CreatorVersion(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                    *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20767,7 +20804,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_creator_version(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                        *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20779,10 +20816,10 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtDocInfoXTypeDeserializerState::CustomDatas(None);
+                                *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtDocInfoXTypeDeserializerState::CreatorVersion(
+                                *self.state__ = CtDocInfoXTypeDeserializerState::CreatorVersion(
                                     Some(deserializer),
                                 );
                             }
@@ -20807,7 +20844,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDocInfoXTypeDeserializerState::CustomDatas(None));
-                    *self.state = CtDocInfoXTypeDeserializerState::Done__;
+                    *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -20817,7 +20854,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_datas(data)?;
-                        *self.state = CtDocInfoXTypeDeserializerState::Done__;
+                        *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -20829,10 +20866,10 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtDocInfoXTypeDeserializerState::Done__;
+                                *self.state__ = CtDocInfoXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtDocInfoXTypeDeserializerState::CustomDatas(Some(
+                                *self.state__ = CtDocInfoXTypeDeserializerState::CustomDatas(Some(
                                     deserializer,
                                 ));
                             }
@@ -20865,7 +20902,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::DocId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -21035,7 +21072,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtDocInfoXTypeDeserializerState::DocId(None);
+                            *self.state__ = CtDocInfoXTypeDeserializerState::DocId(None);
                             event
                         }
                         (S::DocId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -21265,13 +21302,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -21283,7 +21320,10 @@ pub mod ofd {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtDocInfoXTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CtDocInfoXTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CtDocInfoXType {
                     doc_id: self
@@ -21309,7 +21349,7 @@ pub mod ofd {
             version: ::std::string::String,
             doc_type: super::OfdDocTypeXType,
             doc_body: Vec<super::OfdDocBodyXElementType>,
-            state: Box<OfdXElementTypeDeserializerState>,
+            state__: Box<OfdXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OfdXElementTypeDeserializerState {
@@ -21349,7 +21389,7 @@ pub mod ofd {
                         reader.map_error(ErrorKind::MissingAttribute("DocType".into()))
                     })?,
                     doc_body: Vec::new(),
-                    state: Box::new(OfdXElementTypeDeserializerState::Init__),
+                    state__: Box::new(OfdXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -21392,11 +21432,11 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     if self.doc_body.len() < 1usize {
-                        *self.state = OfdXElementTypeDeserializerState::DocBody(None);
+                        *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(OfdXElementTypeDeserializerState::DocBody(None));
-                        *self.state = OfdXElementTypeDeserializerState::Done__;
+                        *self.state__ = OfdXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -21407,7 +21447,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_body(data)?;
-                        *self.state = OfdXElementTypeDeserializerState::DocBody(None);
+                        *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -21418,13 +21458,13 @@ pub mod ofd {
                                     Some(deserializer),
                                 ));
                                 if self.doc_body.len().saturating_add(1) < 1usize {
-                                    *self.state = OfdXElementTypeDeserializerState::DocBody(None);
+                                    *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
                                 } else {
-                                    *self.state = OfdXElementTypeDeserializerState::Done__;
+                                    *self.state__ = OfdXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     OfdXElementTypeDeserializerState::DocBody(Some(deserializer));
                             }
                         }
@@ -21456,7 +21496,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::DocBody(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -21482,7 +21522,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = OfdXElementTypeDeserializerState::DocBody(None);
+                            *self.state__ = OfdXElementTypeDeserializerState::DocBody(None);
                             event
                         }
                         (S::DocBody(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -21508,13 +21548,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -21527,7 +21567,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     OfdXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -21541,7 +21581,7 @@ pub mod ofd {
         #[derive(Debug)]
         pub struct CtDocInfoKeywordsXElementTypeDeserializer {
             keyword: Vec<::std::string::String>,
-            state: Box<CtDocInfoKeywordsXElementTypeDeserializerState>,
+            state__: Box<CtDocInfoKeywordsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoKeywordsXElementTypeDeserializerState {
@@ -21561,7 +21601,7 @@ pub mod ofd {
                 }
                 Ok(Self {
                     keyword: Vec::new(),
-                    state: Box::new(CtDocInfoKeywordsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtDocInfoKeywordsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -21601,13 +21641,14 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     if self.keyword.len() < 1usize {
-                        *self.state = CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
+                        *self.state__ =
+                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None),
                         );
-                        *self.state = CtDocInfoKeywordsXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtDocInfoKeywordsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -21618,7 +21659,8 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_keyword(data)?;
-                        *self.state = CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
+                        *self.state__ =
+                            CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -21631,17 +21673,17 @@ pub mod ofd {
                                     )),
                                 );
                                 if self.keyword.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtDocInfoKeywordsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(Some(
                                         deserializer,
                                     ));
@@ -21677,7 +21719,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Keyword(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -21703,7 +21745,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtDocInfoKeywordsXElementTypeDeserializerState::Keyword(None);
                             event
                         }
@@ -21730,13 +21772,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -21752,7 +21794,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtDocInfoKeywordsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -21764,7 +21806,7 @@ pub mod ofd {
         #[derive(Debug)]
         pub struct CtDocInfoCustomDatasXElementTypeDeserializer {
             custom_data: Vec<super::CtDocInfoCustomDatasCustomDataXElementType>,
-            state: Box<CtDocInfoCustomDatasXElementTypeDeserializerState>,
+            state__: Box<CtDocInfoCustomDatasXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoCustomDatasXElementTypeDeserializerState {
@@ -21780,7 +21822,7 @@ pub mod ofd {
                 }
                 Ok(Self {
                     custom_data: Vec::new(),
-                    state: Box::new(CtDocInfoCustomDatasXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtDocInfoCustomDatasXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -21823,14 +21865,14 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     if self.custom_data.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None),
                         );
-                        *self.state = CtDocInfoCustomDatasXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtDocInfoCustomDatasXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -21841,7 +21883,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_custom_data(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -21855,14 +21897,14 @@ pub mod ofd {
                                     ),
                                 );
                                 if self.custom_data.len().saturating_add(1) < 1usize {
-                                    * self . state = CtDocInfoCustomDatasXElementTypeDeserializerState :: CustomData (None) ;
+                                    * self . state__ = CtDocInfoCustomDatasXElementTypeDeserializerState :: CustomData (None) ;
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtDocInfoCustomDatasXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(
                                         Some(deserializer),
                                     );
@@ -21898,7 +21940,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CustomData(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -21924,7 +21966,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtDocInfoCustomDatasXElementTypeDeserializerState::CustomData(None);
                             event
                         }
@@ -21951,13 +21993,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -21973,7 +22015,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtDocInfoCustomDatasXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -21988,7 +22030,7 @@ pub mod ofd {
             doc_root: Option<::std::string::String>,
             versions: Option<super::OfdDocBodyVersionsXElementType>,
             signatures: Option<::std::string::String>,
-            state: Box<OfdDocBodyXElementTypeDeserializerState>,
+            state__: Box<OfdDocBodyXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OfdDocBodyXElementTypeDeserializerState {
@@ -22016,7 +22058,7 @@ pub mod ofd {
                     doc_root: None,
                     versions: None,
                     signatures: None,
-                    state: Box::new(OfdDocBodyXElementTypeDeserializerState::Init__),
+                    state__: Box::new(OfdDocBodyXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -22102,10 +22144,10 @@ pub mod ofd {
                     if self.doc_info.is_some() {
                         fallback
                             .get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocInfo(None));
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::DocInfo(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocInfo(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -22116,7 +22158,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_info(data)?;
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -22128,11 +22170,11 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = OfdDocBodyXElementTypeDeserializerState::DocInfo(
+                                *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocInfo(
                                     Some(deserializer),
                                 );
                             }
@@ -22159,10 +22201,10 @@ pub mod ofd {
                     if self.doc_root.is_some() {
                         fallback
                             .get_or_insert(OfdDocBodyXElementTypeDeserializerState::DocRoot(None));
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::Versions(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Versions(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -22173,7 +22215,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_root(data)?;
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::Versions(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Versions(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -22185,11 +22227,11 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     OfdDocBodyXElementTypeDeserializerState::Versions(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = OfdDocBodyXElementTypeDeserializerState::DocRoot(
+                                *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocRoot(
                                     Some(deserializer),
                                 );
                             }
@@ -22214,7 +22256,7 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(OfdDocBodyXElementTypeDeserializerState::Versions(None));
-                    *self.state = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
+                    *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -22224,7 +22266,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_versions(data)?;
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -22236,11 +22278,11 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     OfdDocBodyXElementTypeDeserializerState::Signatures(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = OfdDocBodyXElementTypeDeserializerState::Versions(
+                                *self.state__ = OfdDocBodyXElementTypeDeserializerState::Versions(
                                     Some(deserializer),
                                 );
                             }
@@ -22266,7 +22308,7 @@ pub mod ofd {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(OfdDocBodyXElementTypeDeserializerState::Signatures(None));
-                    *self.state = OfdDocBodyXElementTypeDeserializerState::Done__;
+                    *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -22276,7 +22318,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signatures(data)?;
-                        *self.state = OfdDocBodyXElementTypeDeserializerState::Done__;
+                        *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -22288,10 +22330,10 @@ pub mod ofd {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = OfdDocBodyXElementTypeDeserializerState::Done__;
+                                *self.state__ = OfdDocBodyXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = OfdDocBodyXElementTypeDeserializerState::Signatures(
+                                *self.state__ = OfdDocBodyXElementTypeDeserializerState::Signatures(
                                     Some(deserializer),
                                 );
                             }
@@ -22324,7 +22366,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::DocInfo(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -22386,7 +22428,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = OfdDocBodyXElementTypeDeserializerState::DocInfo(None);
+                            *self.state__ = OfdDocBodyXElementTypeDeserializerState::DocInfo(None);
                             event
                         }
                         (S::DocInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -22463,13 +22505,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -22482,7 +22524,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     OfdDocBodyXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -22502,7 +22544,7 @@ pub mod ofd {
         pub struct CtDocInfoCustomDatasCustomDataXElementTypeDeserializer {
             name: ::std::string::String,
             content: Option<::std::string::String>,
-            state: Box<CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState>,
+            state__: Box<CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState {
@@ -22532,7 +22574,7 @@ pub mod ofd {
                         reader.map_error(ErrorKind::MissingAttribute("Name".into()))
                     })?,
                     content: None,
-                    state: Box::new(
+                    state__: Box::new(
                         CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -22590,7 +22632,7 @@ pub mod ofd {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -22628,7 +22670,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 use CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -22648,7 +22690,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtDocInfoCustomDatasCustomDataXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -22661,7 +22703,7 @@ pub mod ofd {
         #[derive(Debug)]
         pub struct OfdDocBodyVersionsXElementTypeDeserializer {
             version: Vec<super::OfdDocBodyVersionsVersionXElementType>,
-            state: Box<OfdDocBodyVersionsXElementTypeDeserializerState>,
+            state__: Box<OfdDocBodyVersionsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OfdDocBodyVersionsXElementTypeDeserializerState {
@@ -22677,7 +22719,7 @@ pub mod ofd {
                 }
                 Ok(Self {
                     version: Vec::new(),
-                    state: Box::new(OfdDocBodyVersionsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(OfdDocBodyVersionsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -22720,14 +22762,14 @@ pub mod ofd {
                 } = output;
                 if artifact.is_none() {
                     if self.version.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             OfdDocBodyVersionsXElementTypeDeserializerState::Version(None),
                         );
-                        *self.state = OfdDocBodyVersionsXElementTypeDeserializerState::Done__;
+                        *self.state__ = OfdDocBodyVersionsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -22738,7 +22780,7 @@ pub mod ofd {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_version(data)?;
-                        *self.state =
+                        *self.state__ =
                             OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -22752,17 +22794,17 @@ pub mod ofd {
                                     )),
                                 );
                                 if self.version.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         OfdDocBodyVersionsXElementTypeDeserializerState::Version(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         OfdDocBodyVersionsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     OfdDocBodyVersionsXElementTypeDeserializerState::Version(Some(
                                         deserializer,
                                     ));
@@ -22798,7 +22840,7 @@ pub mod ofd {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Version(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -22824,7 +22866,7 @@ pub mod ofd {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 OfdDocBodyVersionsXElementTypeDeserializerState::Version(None);
                             event
                         }
@@ -22851,13 +22893,13 @@ pub mod ofd {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -22873,7 +22915,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     OfdDocBodyVersionsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -22888,7 +22930,7 @@ pub mod ofd {
             index: ::core::primitive::i32,
             current: ::core::primitive::bool,
             base_loc: ::std::string::String,
-            state: Box<OfdDocBodyVersionsVersionXElementTypeDeserializerState>,
+            state__: Box<OfdDocBodyVersionsVersionXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OfdDocBodyVersionsVersionXElementTypeDeserializerState {
@@ -22943,7 +22985,9 @@ pub mod ofd {
                     base_loc: base_loc.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("BaseLoc".into()))
                     })?,
-                    state: Box::new(OfdDocBodyVersionsVersionXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        OfdDocBodyVersionsVersionXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -22999,7 +23043,7 @@ pub mod ofd {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     OfdDocBodyVersionsVersionXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -25759,7 +25803,7 @@ pub mod page {
             start_point: ::std::string::String,
             end_point: ::std::string::String,
             segment: Vec<super::CtAxialShdSegmentXElementType>,
-            state: Box<CtAxialShdXTypeDeserializerState>,
+            state__: Box<CtAxialShdXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtAxialShdXTypeDeserializerState {
@@ -25822,7 +25866,7 @@ pub mod page {
                         reader.map_error(ErrorKind::MissingAttribute("EndPoint".into()))
                     })?,
                     segment: Vec::new(),
-                    state: Box::new(CtAxialShdXTypeDeserializerState::Init__),
+                    state__: Box::new(CtAxialShdXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -25865,11 +25909,11 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.segment.len() < 2usize {
-                        *self.state = CtAxialShdXTypeDeserializerState::Segment(None);
+                        *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtAxialShdXTypeDeserializerState::Segment(None));
-                        *self.state = CtAxialShdXTypeDeserializerState::Done__;
+                        *self.state__ = CtAxialShdXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -25880,7 +25924,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_segment(data)?;
-                        *self.state = CtAxialShdXTypeDeserializerState::Segment(None);
+                        *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -25891,13 +25935,13 @@ pub mod page {
                                     Some(deserializer),
                                 ));
                                 if self.segment.len().saturating_add(1) < 2usize {
-                                    *self.state = CtAxialShdXTypeDeserializerState::Segment(None);
+                                    *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
                                 } else {
-                                    *self.state = CtAxialShdXTypeDeserializerState::Done__;
+                                    *self.state__ = CtAxialShdXTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtAxialShdXTypeDeserializerState::Segment(Some(deserializer));
                             }
                         }
@@ -25929,7 +25973,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Segment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -25955,7 +25999,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtAxialShdXTypeDeserializerState::Segment(None);
+                            *self.state__ = CtAxialShdXTypeDeserializerState::Segment(None);
                             event
                         }
                         (S::Segment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -25981,13 +26025,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26000,7 +26044,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtAxialShdXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -26020,7 +26064,7 @@ pub mod page {
             code_count: ::core::primitive::i32,
             glyph_count: ::core::primitive::i32,
             glyphs: Option<::std::string::String>,
-            state: Box<CtCgTransformXTypeDeserializerState>,
+            state__: Box<CtCgTransformXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtCgTransformXTypeDeserializerState {
@@ -26067,7 +26111,7 @@ pub mod page {
                     glyph_count: glyph_count
                         .unwrap_or_else(super::CtCgTransformXType::default_glyph_count),
                     glyphs: None,
-                    state: Box::new(CtCgTransformXTypeDeserializerState::Init__),
+                    state__: Box::new(CtCgTransformXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26112,7 +26156,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtCgTransformXTypeDeserializerState::Glyphs(None));
-                    *self.state = CtCgTransformXTypeDeserializerState::Done__;
+                    *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -26122,7 +26166,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_glyphs(data)?;
-                        *self.state = CtCgTransformXTypeDeserializerState::Done__;
+                        *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -26132,10 +26176,10 @@ pub mod page {
                                 fallback.get_or_insert(
                                     CtCgTransformXTypeDeserializerState::Glyphs(Some(deserializer)),
                                 );
-                                *self.state = CtCgTransformXTypeDeserializerState::Done__;
+                                *self.state__ = CtCgTransformXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtCgTransformXTypeDeserializerState::Glyphs(Some(deserializer));
                             }
                         }
@@ -26167,7 +26211,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Glyphs(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -26193,7 +26237,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtCgTransformXTypeDeserializerState::Glyphs(None);
+                            *self.state__ = CtCgTransformXTypeDeserializerState::Glyphs(None);
                             event
                         }
                         (S::Glyphs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26219,13 +26263,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26238,7 +26282,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtCgTransformXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -26253,7 +26297,7 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtClipXTypeDeserializer {
             area: Vec<super::CtClipAreaXElementType>,
-            state: Box<CtClipXTypeDeserializerState>,
+            state__: Box<CtClipXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtClipXTypeDeserializerState {
@@ -26273,7 +26317,7 @@ pub mod page {
                 }
                 Ok(Self {
                     area: Vec::new(),
-                    state: Box::new(CtClipXTypeDeserializerState::Init__),
+                    state__: Box::new(CtClipXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26311,11 +26355,11 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.area.len() < 1usize {
-                        *self.state = CtClipXTypeDeserializerState::Area(None);
+                        *self.state__ = CtClipXTypeDeserializerState::Area(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtClipXTypeDeserializerState::Area(None));
-                        *self.state = CtClipXTypeDeserializerState::Done__;
+                        *self.state__ = CtClipXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -26326,7 +26370,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state = CtClipXTypeDeserializerState::Area(None);
+                        *self.state__ = CtClipXTypeDeserializerState::Area(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -26337,13 +26381,13 @@ pub mod page {
                                     deserializer,
                                 )));
                                 if self.area.len().saturating_add(1) < 1usize {
-                                    *self.state = CtClipXTypeDeserializerState::Area(None);
+                                    *self.state__ = CtClipXTypeDeserializerState::Area(None);
                                 } else {
-                                    *self.state = CtClipXTypeDeserializerState::Done__;
+                                    *self.state__ = CtClipXTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtClipXTypeDeserializerState::Area(Some(deserializer));
                             }
                         }
@@ -26372,7 +26416,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Area(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -26398,7 +26442,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtClipXTypeDeserializerState::Area(None);
+                            *self.state__ = CtClipXTypeDeserializerState::Area(None);
                             event
                         }
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -26424,13 +26468,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -26442,7 +26486,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtClipXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtClipXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtClipXType { area: self.area })
             }
@@ -26454,7 +26498,7 @@ pub mod page {
             color_space: Option<::core::primitive::u32>,
             alpha: ::core::primitive::i32,
             content: Option<super::CtColorXTypeContent>,
-            state: Box<CtColorXTypeDeserializerState>,
+            state__: Box<CtColorXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtColorXTypeDeserializerState {
@@ -26504,7 +26548,7 @@ pub mod page {
                     color_space: color_space,
                     alpha: alpha.unwrap_or_else(super::CtColorXType::default_alpha),
                     content: None,
-                    state: Box::new(CtColorXTypeDeserializerState::Init__),
+                    state__: Box::new(CtColorXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26542,7 +26586,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtColorXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -26554,11 +26598,11 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtColorXTypeDeserializerState::Next__;
+                        *self.state__ = CtColorXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeDeserializerState::Content__(deserializer);
+                        *self.state__ = CtColorXTypeDeserializerState::Content__(deserializer);
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -26586,7 +26630,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -26628,7 +26672,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtColorXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtColorXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtColorXType {
                     value: self.value,
@@ -26641,7 +26685,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtColorXTypeContentDeserializer {
-            state: Box<CtColorXTypeContentDeserializerState>,
+            state__: Box<CtColorXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtColorXTypeContentDeserializerState {
@@ -26756,7 +26800,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtColorXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -26897,9 +26941,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtColorXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtColorXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtColorXTypeContentDeserializerState::Pattern(values, None),
@@ -26930,11 +26974,11 @@ pub mod page {
                             reader,
                             CtColorXTypeContentDeserializerState::Pattern(values, None),
                         )?;
-                        *self.state = CtColorXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeContentDeserializerState::Pattern(
+                        *self.state__ = CtColorXTypeContentDeserializerState::Pattern(
                             values,
                             Some(deserializer),
                         );
@@ -26958,9 +27002,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtColorXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtColorXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtColorXTypeContentDeserializerState::AxialShd(values, None),
@@ -26991,11 +27035,11 @@ pub mod page {
                             reader,
                             CtColorXTypeContentDeserializerState::AxialShd(values, None),
                         )?;
-                        *self.state = CtColorXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeContentDeserializerState::AxialShd(
+                        *self.state__ = CtColorXTypeContentDeserializerState::AxialShd(
                             values,
                             Some(deserializer),
                         );
@@ -27019,9 +27063,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtColorXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtColorXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtColorXTypeContentDeserializerState::RadialShd(values, None),
@@ -27055,11 +27099,11 @@ pub mod page {
                             reader,
                             CtColorXTypeContentDeserializerState::RadialShd(values, None),
                         )?;
-                        *self.state = CtColorXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeContentDeserializerState::RadialShd(
+                        *self.state__ = CtColorXTypeContentDeserializerState::RadialShd(
                             values,
                             Some(deserializer),
                         );
@@ -27083,9 +27127,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtColorXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtColorXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtColorXTypeContentDeserializerState::GouraudShd(values, None),
@@ -27119,11 +27163,11 @@ pub mod page {
                             reader,
                             CtColorXTypeContentDeserializerState::GouraudShd(values, None),
                         )?;
-                        *self.state = CtColorXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeContentDeserializerState::GouraudShd(
+                        *self.state__ = CtColorXTypeContentDeserializerState::GouraudShd(
                             values,
                             Some(deserializer),
                         );
@@ -27147,9 +27191,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtColorXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtColorXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtColorXTypeContentDeserializerState::LaGourandShd(values, None),
@@ -27183,11 +27227,11 @@ pub mod page {
                             reader,
                             CtColorXTypeContentDeserializerState::LaGourandShd(values, None),
                         )?;
-                        *self.state = CtColorXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtColorXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtColorXTypeContentDeserializerState::LaGourandShd(
+                        *self.state__ = CtColorXTypeContentDeserializerState::LaGourandShd(
                             values,
                             Some(deserializer),
                         );
@@ -27205,12 +27249,12 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtColorXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtColorXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, CtColorXTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, CtColorXTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -27230,7 +27274,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Pattern(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27375,13 +27419,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -27396,7 +27440,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -27416,7 +27460,7 @@ pub mod page {
             resource_id: ::core::primitive::u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
-            state: Box<CtCompositeXTypeDeserializerState>,
+            state__: Box<CtCompositeXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtCompositeXTypeDeserializerState {
@@ -27542,7 +27586,7 @@ pub mod page {
                     })?,
                     actions: None,
                     clips: None,
-                    state: Box::new(CtCompositeXTypeDeserializerState::Init__),
+                    state__: Box::new(CtCompositeXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -27605,7 +27649,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtCompositeXTypeDeserializerState::Actions(None));
-                    *self.state = CtCompositeXTypeDeserializerState::Clips(None);
+                    *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27615,7 +27659,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = CtCompositeXTypeDeserializerState::Clips(None);
+                        *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -27625,10 +27669,10 @@ pub mod page {
                                 fallback.get_or_insert(CtCompositeXTypeDeserializerState::Actions(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtCompositeXTypeDeserializerState::Clips(None);
+                                *self.state__ = CtCompositeXTypeDeserializerState::Clips(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtCompositeXTypeDeserializerState::Actions(Some(deserializer));
                             }
                         }
@@ -27652,7 +27696,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtCompositeXTypeDeserializerState::Clips(None));
-                    *self.state = CtCompositeXTypeDeserializerState::Done__;
+                    *self.state__ = CtCompositeXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27662,7 +27706,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state = CtCompositeXTypeDeserializerState::Done__;
+                        *self.state__ = CtCompositeXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -27672,10 +27716,10 @@ pub mod page {
                                 fallback.get_or_insert(CtCompositeXTypeDeserializerState::Clips(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtCompositeXTypeDeserializerState::Done__;
+                                *self.state__ = CtCompositeXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtCompositeXTypeDeserializerState::Clips(Some(deserializer));
                             }
                         }
@@ -27707,7 +27751,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27745,7 +27789,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtCompositeXTypeDeserializerState::Actions(None);
+                            *self.state__ = CtCompositeXTypeDeserializerState::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -27788,13 +27832,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -27807,7 +27851,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtCompositeXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -27835,7 +27879,7 @@ pub mod page {
             extend: Option<::core::primitive::i32>,
             point: Vec<super::CtGouraudShdPointXElementType>,
             back_color: Option<super::CtColorXType>,
-            state: Box<CtGouraudShdXTypeDeserializerState>,
+            state__: Box<CtGouraudShdXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtGouraudShdXTypeDeserializerState {
@@ -27866,7 +27910,7 @@ pub mod page {
                     extend: extend,
                     point: Vec::new(),
                     back_color: None,
-                    state: Box::new(CtGouraudShdXTypeDeserializerState::Init__),
+                    state__: Box::new(CtGouraudShdXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -27921,11 +27965,11 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.point.len() < 3usize {
-                        *self.state = CtGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::Point(None));
-                        *self.state = CtGouraudShdXTypeDeserializerState::BackColor(None);
+                        *self.state__ = CtGouraudShdXTypeDeserializerState::BackColor(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -27936,7 +27980,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_point(data)?;
-                        *self.state = CtGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -27947,14 +27991,14 @@ pub mod page {
                                     Some(deserializer),
                                 ));
                                 if self.point.len().saturating_add(1) < 3usize {
-                                    *self.state = CtGouraudShdXTypeDeserializerState::Point(None);
+                                    *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtGouraudShdXTypeDeserializerState::BackColor(None);
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtGouraudShdXTypeDeserializerState::Point(Some(deserializer));
                             }
                         }
@@ -27978,7 +28022,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtGouraudShdXTypeDeserializerState::BackColor(None));
-                    *self.state = CtGouraudShdXTypeDeserializerState::Done__;
+                    *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27988,7 +28032,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_back_color(data)?;
-                        *self.state = CtGouraudShdXTypeDeserializerState::Done__;
+                        *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28000,12 +28044,12 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtGouraudShdXTypeDeserializerState::Done__;
+                                *self.state__ = CtGouraudShdXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtGouraudShdXTypeDeserializerState::BackColor(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtGouraudShdXTypeDeserializerState::BackColor(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -28036,7 +28080,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Point(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -28074,7 +28118,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtGouraudShdXTypeDeserializerState::Point(None);
+                            *self.state__ = CtGouraudShdXTypeDeserializerState::Point(None);
                             event
                         }
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -28117,13 +28161,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -28136,7 +28180,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtGouraudShdXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -28163,7 +28207,7 @@ pub mod page {
             alpha: ::core::primitive::i32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
-            state: Box<CtGraphicUnitXTypeDeserializerState>,
+            state__: Box<CtGraphicUnitXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtGraphicUnitXTypeDeserializerState {
@@ -28280,7 +28324,7 @@ pub mod page {
                     alpha: alpha.unwrap_or_else(super::CtGraphicUnitXType::default_alpha),
                     actions: None,
                     clips: None,
-                    state: Box::new(CtGraphicUnitXTypeDeserializerState::Init__),
+                    state__: Box::new(CtGraphicUnitXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -28343,7 +28387,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Actions(None));
-                    *self.state = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                    *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28353,7 +28397,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28365,10 +28409,10 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtGraphicUnitXTypeDeserializerState::Clips(None);
+                                *self.state__ = CtGraphicUnitXTypeDeserializerState::Clips(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtGraphicUnitXTypeDeserializerState::Actions(Some(
+                                *self.state__ = CtGraphicUnitXTypeDeserializerState::Actions(Some(
                                     deserializer,
                                 ));
                             }
@@ -28393,7 +28437,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Clips(None));
-                    *self.state = CtGraphicUnitXTypeDeserializerState::Done__;
+                    *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28403,7 +28447,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state = CtGraphicUnitXTypeDeserializerState::Done__;
+                        *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28413,10 +28457,10 @@ pub mod page {
                                 fallback.get_or_insert(CtGraphicUnitXTypeDeserializerState::Clips(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtGraphicUnitXTypeDeserializerState::Done__;
+                                *self.state__ = CtGraphicUnitXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtGraphicUnitXTypeDeserializerState::Clips(Some(deserializer));
                             }
                         }
@@ -28448,7 +28492,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -28486,7 +28530,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtGraphicUnitXTypeDeserializerState::Actions(None);
+                            *self.state__ = CtGraphicUnitXTypeDeserializerState::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -28529,13 +28573,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -28548,7 +28592,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtGraphicUnitXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -28590,7 +28634,7 @@ pub mod page {
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             border: Option<super::CtImageBorderXElementType>,
-            state: Box<CtImageXTypeDeserializerState>,
+            state__: Box<CtImageXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtImageXTypeDeserializerState {
@@ -28731,7 +28775,7 @@ pub mod page {
                     actions: None,
                     clips: None,
                     border: None,
-                    state: Box::new(CtImageXTypeDeserializerState::Init__),
+                    state__: Box::new(CtImageXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -28809,7 +28853,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtImageXTypeDeserializerState::Actions(None));
-                    *self.state = CtImageXTypeDeserializerState::Clips(None);
+                    *self.state__ = CtImageXTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28819,7 +28863,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = CtImageXTypeDeserializerState::Clips(None);
+                        *self.state__ = CtImageXTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28829,10 +28873,10 @@ pub mod page {
                                 fallback.get_or_insert(CtImageXTypeDeserializerState::Actions(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtImageXTypeDeserializerState::Clips(None);
+                                *self.state__ = CtImageXTypeDeserializerState::Clips(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtImageXTypeDeserializerState::Actions(Some(deserializer));
                             }
                         }
@@ -28856,7 +28900,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtImageXTypeDeserializerState::Clips(None));
-                    *self.state = CtImageXTypeDeserializerState::Border(None);
+                    *self.state__ = CtImageXTypeDeserializerState::Border(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28866,7 +28910,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state = CtImageXTypeDeserializerState::Border(None);
+                        *self.state__ = CtImageXTypeDeserializerState::Border(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28876,10 +28920,10 @@ pub mod page {
                                 fallback.get_or_insert(CtImageXTypeDeserializerState::Clips(Some(
                                     deserializer,
                                 )));
-                                *self.state = CtImageXTypeDeserializerState::Border(None);
+                                *self.state__ = CtImageXTypeDeserializerState::Border(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtImageXTypeDeserializerState::Clips(Some(deserializer));
                             }
                         }
@@ -28903,7 +28947,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtImageXTypeDeserializerState::Border(None));
-                    *self.state = CtImageXTypeDeserializerState::Done__;
+                    *self.state__ = CtImageXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28913,7 +28957,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border(data)?;
-                        *self.state = CtImageXTypeDeserializerState::Done__;
+                        *self.state__ = CtImageXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28923,10 +28967,10 @@ pub mod page {
                                 fallback.get_or_insert(CtImageXTypeDeserializerState::Border(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtImageXTypeDeserializerState::Done__;
+                                *self.state__ = CtImageXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtImageXTypeDeserializerState::Border(Some(deserializer));
                             }
                         }
@@ -28958,7 +29002,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -29008,7 +29052,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtImageXTypeDeserializerState::Actions(None);
+                            *self.state__ = CtImageXTypeDeserializerState::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -29068,13 +29112,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -29086,7 +29130,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtImageXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtImageXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtImageXType {
                     boundary: self.boundary,
@@ -29116,7 +29160,7 @@ pub mod page {
             extend: Option<::core::primitive::i32>,
             point: Vec<super::CtLaGouraudShdPointXElementType>,
             back_color: Option<super::CtColorXType>,
-            state: Box<CtLaGouraudShdXTypeDeserializerState>,
+            state__: Box<CtLaGouraudShdXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtLaGouraudShdXTypeDeserializerState {
@@ -29162,7 +29206,7 @@ pub mod page {
                     extend: extend,
                     point: Vec::new(),
                     back_color: None,
-                    state: Box::new(CtLaGouraudShdXTypeDeserializerState::Init__),
+                    state__: Box::new(CtLaGouraudShdXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29217,11 +29261,11 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.point.len() < 4usize {
-                        *self.state = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::Point(None));
-                        *self.state = CtLaGouraudShdXTypeDeserializerState::BackColor(None);
+                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::BackColor(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -29232,7 +29276,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_point(data)?;
-                        *self.state = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -29243,14 +29287,15 @@ pub mod page {
                                     CtLaGouraudShdXTypeDeserializerState::Point(Some(deserializer)),
                                 );
                                 if self.point.len().saturating_add(1) < 4usize {
-                                    *self.state = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                                    *self.state__ =
+                                        CtLaGouraudShdXTypeDeserializerState::Point(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtLaGouraudShdXTypeDeserializerState::BackColor(None);
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtLaGouraudShdXTypeDeserializerState::Point(Some(deserializer));
                             }
                         }
@@ -29274,7 +29319,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtLaGouraudShdXTypeDeserializerState::BackColor(None));
-                    *self.state = CtLaGouraudShdXTypeDeserializerState::Done__;
+                    *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -29284,7 +29329,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_back_color(data)?;
-                        *self.state = CtLaGouraudShdXTypeDeserializerState::Done__;
+                        *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -29296,10 +29341,10 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtLaGouraudShdXTypeDeserializerState::Done__;
+                                *self.state__ = CtLaGouraudShdXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtLaGouraudShdXTypeDeserializerState::BackColor(
+                                *self.state__ = CtLaGouraudShdXTypeDeserializerState::BackColor(
                                     Some(deserializer),
                                 );
                             }
@@ -29332,7 +29377,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Point(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -29370,7 +29415,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtLaGouraudShdXTypeDeserializerState::Point(None);
+                            *self.state__ = CtLaGouraudShdXTypeDeserializerState::Point(None);
                             event
                         }
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -29413,13 +29458,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -29432,7 +29477,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtLaGouraudShdXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -29449,7 +29494,7 @@ pub mod page {
             type_: super::CtLayerTypeXType,
             draw_param: Option<::core::primitive::u32>,
             content: Vec<super::CtLayerXTypeContent>,
-            state: Box<CtLayerXTypeDeserializerState>,
+            state__: Box<CtLayerXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtLayerXTypeDeserializerState {
@@ -29485,7 +29530,7 @@ pub mod page {
                     type_: type_.unwrap_or_else(super::CtLayerXType::default_type_),
                     draw_param: draw_param,
                     content: Vec::new(),
-                    state: Box::new(CtLayerXTypeDeserializerState::Init__),
+                    state__: Box::new(CtLayerXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29520,7 +29565,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtLayerXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -29532,21 +29577,21 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtLayerXTypeDeserializerState::Next__;
+                        *self.state__ = CtLayerXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtLayerXTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(CtLayerXTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = CtLayerXTypeDeserializerState::Next__;
+                                *self.state__ = CtLayerXTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -29576,7 +29621,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -29618,7 +29663,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtLayerXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtLayerXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtLayerXType {
                     type_: self.type_,
@@ -29629,7 +29674,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtLayerXTypeContentDeserializer {
-            state: Box<CtLayerXTypeContentDeserializerState>,
+            state__: Box<CtLayerXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtLayerXTypeContentDeserializerState {
@@ -29706,7 +29751,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtLayerXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -29848,9 +29893,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtLayerXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtLayerXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtLayerXTypeContentDeserializerState::TextObject(values, None),
@@ -29884,11 +29929,11 @@ pub mod page {
                             reader,
                             CtLayerXTypeContentDeserializerState::TextObject(values, None),
                         )?;
-                        *self.state = CtLayerXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtLayerXTypeContentDeserializerState::TextObject(
+                        *self.state__ = CtLayerXTypeContentDeserializerState::TextObject(
                             values,
                             Some(deserializer),
                         );
@@ -29912,9 +29957,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtLayerXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtLayerXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtLayerXTypeContentDeserializerState::PathObject(values, None),
@@ -29948,11 +29993,11 @@ pub mod page {
                             reader,
                             CtLayerXTypeContentDeserializerState::PathObject(values, None),
                         )?;
-                        *self.state = CtLayerXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtLayerXTypeContentDeserializerState::PathObject(
+                        *self.state__ = CtLayerXTypeContentDeserializerState::PathObject(
                             values,
                             Some(deserializer),
                         );
@@ -29976,9 +30021,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtLayerXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtLayerXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtLayerXTypeContentDeserializerState::ImageObject(values, None),
@@ -30012,11 +30057,11 @@ pub mod page {
                             reader,
                             CtLayerXTypeContentDeserializerState::ImageObject(values, None),
                         )?;
-                        *self.state = CtLayerXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtLayerXTypeContentDeserializerState::ImageObject(
+                        *self.state__ = CtLayerXTypeContentDeserializerState::ImageObject(
                             values,
                             Some(deserializer),
                         );
@@ -30040,9 +30085,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtLayerXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtLayerXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtLayerXTypeContentDeserializerState::CompositeObject(values, None),
@@ -30076,11 +30121,11 @@ pub mod page {
                             reader,
                             CtLayerXTypeContentDeserializerState::CompositeObject(values, None),
                         )?;
-                        *self.state = CtLayerXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtLayerXTypeContentDeserializerState::CompositeObject(
+                        *self.state__ = CtLayerXTypeContentDeserializerState::CompositeObject(
                             values,
                             Some(deserializer),
                         );
@@ -30104,9 +30149,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtLayerXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtLayerXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtLayerXTypeContentDeserializerState::PageBlock(values, None),
@@ -30140,11 +30185,11 @@ pub mod page {
                             reader,
                             CtLayerXTypeContentDeserializerState::PageBlock(values, None),
                         )?;
-                        *self.state = CtLayerXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtLayerXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtLayerXTypeContentDeserializerState::PageBlock(
+                        *self.state__ = CtLayerXTypeContentDeserializerState::PageBlock(
                             values,
                             Some(deserializer),
                         );
@@ -30162,12 +30207,12 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtLayerXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtLayerXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, CtLayerXTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, CtLayerXTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -30187,7 +30232,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -30332,13 +30377,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -30353,13 +30398,13 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtPageBlockXTypeDeserializer {
             content: Vec<super::CtPageBlockXTypeContent>,
-            state: Box<CtPageBlockXTypeDeserializerState>,
+            state__: Box<CtPageBlockXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockXTypeDeserializerState {
@@ -30379,7 +30424,7 @@ pub mod page {
                 }
                 Ok(Self {
                     content: Vec::new(),
-                    state: Box::new(CtPageBlockXTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -30417,7 +30462,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtPageBlockXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -30429,21 +30474,21 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtPageBlockXTypeDeserializerState::Next__;
+                        *self.state__ = CtPageBlockXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockXTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     CtPageBlockXTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = CtPageBlockXTypeDeserializerState::Next__;
+                                *self.state__ = CtPageBlockXTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -30473,7 +30518,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -30516,7 +30561,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -30527,7 +30572,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockXTypeContentDeserializer {
-            state: Box<CtPageBlockXTypeContentDeserializerState>,
+            state__: Box<CtPageBlockXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtPageBlockXTypeContentDeserializerState {
@@ -30604,7 +30649,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtPageBlockXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -30747,9 +30792,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtPageBlockXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtPageBlockXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtPageBlockXTypeContentDeserializerState::TextObject(values, None),
@@ -30783,11 +30828,11 @@ pub mod page {
                             reader,
                             CtPageBlockXTypeContentDeserializerState::TextObject(values, None),
                         )?;
-                        *self.state = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtPageBlockXTypeContentDeserializerState::TextObject(
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::TextObject(
                             values,
                             Some(deserializer),
                         );
@@ -30811,9 +30856,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtPageBlockXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtPageBlockXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtPageBlockXTypeContentDeserializerState::PathObject(values, None),
@@ -30847,11 +30892,11 @@ pub mod page {
                             reader,
                             CtPageBlockXTypeContentDeserializerState::PathObject(values, None),
                         )?;
-                        *self.state = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtPageBlockXTypeContentDeserializerState::PathObject(
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::PathObject(
                             values,
                             Some(deserializer),
                         );
@@ -30875,9 +30920,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtPageBlockXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtPageBlockXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtPageBlockXTypeContentDeserializerState::ImageObject(values, None),
@@ -30911,11 +30956,11 @@ pub mod page {
                             reader,
                             CtPageBlockXTypeContentDeserializerState::ImageObject(values, None),
                         )?;
-                        *self.state = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtPageBlockXTypeContentDeserializerState::ImageObject(
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::ImageObject(
                             values,
                             Some(deserializer),
                         );
@@ -30939,9 +30984,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtPageBlockXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtPageBlockXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -30977,11 +31022,11 @@ pub mod page {
                             reader,
                             CtPageBlockXTypeContentDeserializerState::CompositeObject(values, None),
                         )?;
-                        *self.state = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtPageBlockXTypeContentDeserializerState::CompositeObject(
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::CompositeObject(
                             values,
                             Some(deserializer),
                         );
@@ -31005,9 +31050,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtPageBlockXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtPageBlockXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtPageBlockXTypeContentDeserializerState::PageBlock(values, None),
@@ -31041,11 +31086,11 @@ pub mod page {
                             reader,
                             CtPageBlockXTypeContentDeserializerState::PageBlock(values, None),
                         )?;
-                        *self.state = CtPageBlockXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtPageBlockXTypeContentDeserializerState::PageBlock(
+                        *self.state__ = CtPageBlockXTypeContentDeserializerState::PageBlock(
                             values,
                             Some(deserializer),
                         );
@@ -31065,13 +31110,13 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtPageBlockXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtPageBlockXTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -31093,7 +31138,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -31238,13 +31283,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -31259,7 +31304,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -31284,7 +31329,7 @@ pub mod page {
             stroke_color: Option<super::CtColorXType>,
             fill_color: Option<super::CtColorXType>,
             abbreviated_data: Option<::std::string::String>,
-            state: Box<CtPathXTypeDeserializerState>,
+            state__: Box<CtPathXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPathXTypeDeserializerState {
@@ -31427,7 +31472,7 @@ pub mod page {
                     stroke_color: None,
                     fill_color: None,
                     abbreviated_data: None,
-                    state: Box::new(CtPathXTypeDeserializerState::Init__),
+                    state__: Box::new(CtPathXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -31529,7 +31574,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPathXTypeDeserializerState::Actions(None));
-                    *self.state = CtPathXTypeDeserializerState::Clips(None);
+                    *self.state__ = CtPathXTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31539,7 +31584,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = CtPathXTypeDeserializerState::Clips(None);
+                        *self.state__ = CtPathXTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31549,10 +31594,10 @@ pub mod page {
                                 fallback.get_or_insert(CtPathXTypeDeserializerState::Actions(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPathXTypeDeserializerState::Clips(None);
+                                *self.state__ = CtPathXTypeDeserializerState::Clips(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPathXTypeDeserializerState::Actions(Some(deserializer));
                             }
                         }
@@ -31576,7 +31621,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPathXTypeDeserializerState::Clips(None));
-                    *self.state = CtPathXTypeDeserializerState::StrokeColor(None);
+                    *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31586,7 +31631,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state = CtPathXTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31596,10 +31641,10 @@ pub mod page {
                                 fallback.get_or_insert(CtPathXTypeDeserializerState::Clips(Some(
                                     deserializer,
                                 )));
-                                *self.state = CtPathXTypeDeserializerState::StrokeColor(None);
+                                *self.state__ = CtPathXTypeDeserializerState::StrokeColor(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPathXTypeDeserializerState::Clips(Some(deserializer));
                             }
                         }
@@ -31623,7 +31668,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPathXTypeDeserializerState::StrokeColor(None));
-                    *self.state = CtPathXTypeDeserializerState::FillColor(None);
+                    *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31633,7 +31678,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state = CtPathXTypeDeserializerState::FillColor(None);
+                        *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31643,10 +31688,10 @@ pub mod page {
                                 fallback.get_or_insert(CtPathXTypeDeserializerState::StrokeColor(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPathXTypeDeserializerState::FillColor(None);
+                                *self.state__ = CtPathXTypeDeserializerState::FillColor(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPathXTypeDeserializerState::StrokeColor(Some(deserializer));
                             }
                         }
@@ -31670,7 +31715,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtPathXTypeDeserializerState::FillColor(None));
-                    *self.state = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                    *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31680,7 +31725,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                        *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31690,10 +31735,10 @@ pub mod page {
                                 fallback.get_or_insert(CtPathXTypeDeserializerState::FillColor(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                                *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPathXTypeDeserializerState::FillColor(Some(deserializer));
                             }
                         }
@@ -31718,10 +31763,10 @@ pub mod page {
                 if artifact.is_none() {
                     if self.abbreviated_data.is_some() {
                         fallback.get_or_insert(CtPathXTypeDeserializerState::AbbreviatedData(None));
-                        *self.state = CtPathXTypeDeserializerState::Done__;
+                        *self.state__ = CtPathXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtPathXTypeDeserializerState::AbbreviatedData(None);
+                        *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -31732,7 +31777,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abbreviated_data(data)?;
-                        *self.state = CtPathXTypeDeserializerState::Done__;
+                        *self.state__ = CtPathXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31744,12 +31789,12 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPathXTypeDeserializerState::Done__;
+                                *self.state__ = CtPathXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPathXTypeDeserializerState::AbbreviatedData(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtPathXTypeDeserializerState::AbbreviatedData(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -31777,7 +31822,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -31851,7 +31896,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtPathXTypeDeserializerState::Actions(None);
+                            *self.state__ = CtPathXTypeDeserializerState::Actions(None);
                             event
                         }
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -31945,13 +31990,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -31963,7 +32008,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtPathXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtPathXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtPathXType {
                     boundary: self.boundary,
@@ -32001,7 +32046,7 @@ pub mod page {
             relative_to: super::CtPatternRelativeToXType,
             ctm: Option<::std::string::String>,
             cell_content: Option<super::CtPatternCellContentXElementType>,
-            state: Box<CtPatternXTypeDeserializerState>,
+            state__: Box<CtPatternXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPatternXTypeDeserializerState {
@@ -32080,7 +32125,7 @@ pub mod page {
                         .unwrap_or_else(super::CtPatternXType::default_relative_to),
                     ctm: ctm,
                     cell_content: None,
-                    state: Box::new(CtPatternXTypeDeserializerState::Init__),
+                    state__: Box::new(CtPatternXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32129,10 +32174,10 @@ pub mod page {
                 if artifact.is_none() {
                     if self.cell_content.is_some() {
                         fallback.get_or_insert(CtPatternXTypeDeserializerState::CellContent(None));
-                        *self.state = CtPatternXTypeDeserializerState::Done__;
+                        *self.state__ = CtPatternXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtPatternXTypeDeserializerState::CellContent(None);
+                        *self.state__ = CtPatternXTypeDeserializerState::CellContent(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -32143,7 +32188,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cell_content(data)?;
-                        *self.state = CtPatternXTypeDeserializerState::Done__;
+                        *self.state__ = CtPatternXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -32155,10 +32200,10 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtPatternXTypeDeserializerState::Done__;
+                                *self.state__ = CtPatternXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtPatternXTypeDeserializerState::CellContent(Some(
+                                *self.state__ = CtPatternXTypeDeserializerState::CellContent(Some(
                                     deserializer,
                                 ));
                             }
@@ -32191,7 +32236,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CellContent(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -32217,7 +32262,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtPatternXTypeDeserializerState::CellContent(None);
+                            *self.state__ = CtPatternXTypeDeserializerState::CellContent(None);
                             event
                         }
                         (S::CellContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32243,13 +32288,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32261,7 +32306,10 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtPatternXTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CtPatternXTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CtPatternXType {
                     width: self.width,
@@ -32289,7 +32337,7 @@ pub mod page {
             end_radius: ::core::primitive::f64,
             extend: ::core::primitive::i32,
             seqment: Vec<super::CtAxialShdSegmentXElementType>,
-            state: Box<CtRadialShdXTypeDeserializerState>,
+            state__: Box<CtRadialShdXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtRadialShdXTypeDeserializerState {
@@ -32384,7 +32432,7 @@ pub mod page {
                     })?,
                     extend: extend.unwrap_or_else(super::CtRadialShdXType::default_extend),
                     seqment: Vec::new(),
-                    state: Box::new(CtRadialShdXTypeDeserializerState::Init__),
+                    state__: Box::new(CtRadialShdXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32427,11 +32475,11 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.seqment.len() < 2usize {
-                        *self.state = CtRadialShdXTypeDeserializerState::Seqment(None);
+                        *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(CtRadialShdXTypeDeserializerState::Seqment(None));
-                        *self.state = CtRadialShdXTypeDeserializerState::Done__;
+                        *self.state__ = CtRadialShdXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -32442,7 +32490,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_seqment(data)?;
-                        *self.state = CtRadialShdXTypeDeserializerState::Seqment(None);
+                        *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -32453,13 +32501,14 @@ pub mod page {
                                     Some(deserializer),
                                 ));
                                 if self.seqment.len().saturating_add(1) < 2usize {
-                                    *self.state = CtRadialShdXTypeDeserializerState::Seqment(None);
+                                    *self.state__ =
+                                        CtRadialShdXTypeDeserializerState::Seqment(None);
                                 } else {
-                                    *self.state = CtRadialShdXTypeDeserializerState::Done__;
+                                    *self.state__ = CtRadialShdXTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtRadialShdXTypeDeserializerState::Seqment(Some(deserializer));
                             }
                         }
@@ -32491,7 +32540,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Seqment(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -32517,7 +32566,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtRadialShdXTypeDeserializerState::Seqment(None);
+                            *self.state__ = CtRadialShdXTypeDeserializerState::Seqment(None);
                             event
                         }
                         (S::Seqment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32543,13 +32592,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32562,7 +32611,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtRadialShdXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32604,7 +32653,7 @@ pub mod page {
             weight: super::CtTextWeightXType,
             italic: ::core::primitive::bool,
             content: Vec<super::CtTextXTypeContent>,
-            state: Box<CtTextXTypeDeserializerState>,
+            state__: Box<CtTextXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtTextXTypeDeserializerState {
@@ -32783,7 +32832,7 @@ pub mod page {
                     weight: weight.unwrap_or_else(super::CtTextXType::default_weight),
                     italic: italic.unwrap_or_else(super::CtTextXType::default_italic),
                     content: Vec::new(),
-                    state: Box::new(CtTextXTypeDeserializerState::Init__),
+                    state__: Box::new(CtTextXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32818,7 +32867,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtTextXTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -32830,20 +32879,21 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtTextXTypeDeserializerState::Next__;
+                        *self.state__ = CtTextXTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtTextXTypeDeserializerState::Content__(deserializer);
+                                *self.state__ =
+                                    CtTextXTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(CtTextXTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = CtTextXTypeDeserializerState::Next__;
+                                *self.state__ = CtTextXTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -32870,7 +32920,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -32912,7 +32962,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtTextXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtTextXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtTextXType {
                     boundary: self.boundary,
@@ -32942,7 +32992,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtTextXTypeContentDeserializer {
-            state: Box<CtTextXTypeContentDeserializerState>,
+            state__: Box<CtTextXTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtTextXTypeContentDeserializerState {
@@ -33065,7 +33115,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtTextXTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -33226,9 +33276,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::Actions(values, None),
@@ -33258,11 +33308,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::Actions(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtTextXTypeContentDeserializerState::Actions(
+                        *self.state__ = CtTextXTypeContentDeserializerState::Actions(
                             values,
                             Some(deserializer),
                         );
@@ -33286,9 +33336,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::Clips(values, None),
@@ -33315,11 +33365,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::Clips(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtTextXTypeContentDeserializerState::Clips(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -33341,9 +33391,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::FillColor(values, None),
@@ -33374,11 +33424,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::FillColor(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtTextXTypeContentDeserializerState::FillColor(
+                        *self.state__ = CtTextXTypeContentDeserializerState::FillColor(
                             values,
                             Some(deserializer),
                         );
@@ -33402,9 +33452,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::StrokeColor(values, None),
@@ -33438,11 +33488,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::StrokeColor(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtTextXTypeContentDeserializerState::StrokeColor(
+                        *self.state__ = CtTextXTypeContentDeserializerState::StrokeColor(
                             values,
                             Some(deserializer),
                         );
@@ -33466,9 +33516,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::CgTransform(values, None),
@@ -33502,11 +33552,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::CgTransform(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtTextXTypeContentDeserializerState::CgTransform(
+                        *self.state__ = CtTextXTypeContentDeserializerState::CgTransform(
                             values,
                             Some(deserializer),
                         );
@@ -33530,9 +33580,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtTextXTypeContentDeserializerState::Init__;
+                            *self.state__ = CtTextXTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtTextXTypeContentDeserializerState::TextCode(values, None),
@@ -33563,11 +33613,11 @@ pub mod page {
                             reader,
                             CtTextXTypeContentDeserializerState::TextCode(values, None),
                         )?;
-                        *self.state = CtTextXTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CtTextXTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtTextXTypeContentDeserializerState::TextCode(
+                        *self.state__ = CtTextXTypeContentDeserializerState::TextCode(
                             values,
                             Some(deserializer),
                         );
@@ -33585,12 +33635,12 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtTextXTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtTextXTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, CtTextXTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, CtTextXTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -33610,7 +33660,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -33768,13 +33818,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -33789,7 +33839,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -33799,7 +33849,7 @@ pub mod page {
             area: Option<super::super::definition::CtPageAreaXType>,
             content: Option<super::PageContentXElementType>,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
-            state: Box<PageXElementTypeDeserializerState>,
+            state__: Box<PageXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageXElementTypeDeserializerState {
@@ -33833,7 +33883,7 @@ pub mod page {
                     area: None,
                     content: None,
                     actions: None,
-                    state: Box::new(PageXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -33924,7 +33974,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PageXElementTypeDeserializerState::Template(None));
-                    *self.state = PageXElementTypeDeserializerState::PageRes(None);
+                    *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -33934,7 +33984,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_template(data)?;
-                        *self.state = PageXElementTypeDeserializerState::Template(None);
+                        *self.state__ = PageXElementTypeDeserializerState::Template(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -33944,10 +33994,10 @@ pub mod page {
                                 fallback.get_or_insert(
                                     PageXElementTypeDeserializerState::Template(Some(deserializer)),
                                 );
-                                *self.state = PageXElementTypeDeserializerState::Template(None);
+                                *self.state__ = PageXElementTypeDeserializerState::Template(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageXElementTypeDeserializerState::Template(Some(deserializer));
                             }
                         }
@@ -33971,7 +34021,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PageXElementTypeDeserializerState::PageRes(None));
-                    *self.state = PageXElementTypeDeserializerState::Area(None);
+                    *self.state__ = PageXElementTypeDeserializerState::Area(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -33981,7 +34031,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_page_res(data)?;
-                        *self.state = PageXElementTypeDeserializerState::PageRes(None);
+                        *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -33991,10 +34041,10 @@ pub mod page {
                                 fallback.get_or_insert(PageXElementTypeDeserializerState::PageRes(
                                     Some(deserializer),
                                 ));
-                                *self.state = PageXElementTypeDeserializerState::PageRes(None);
+                                *self.state__ = PageXElementTypeDeserializerState::PageRes(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageXElementTypeDeserializerState::PageRes(Some(deserializer));
                             }
                         }
@@ -34018,7 +34068,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PageXElementTypeDeserializerState::Area(None));
-                    *self.state = PageXElementTypeDeserializerState::Content(None);
+                    *self.state__ = PageXElementTypeDeserializerState::Content(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34028,7 +34078,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_area(data)?;
-                        *self.state = PageXElementTypeDeserializerState::Content(None);
+                        *self.state__ = PageXElementTypeDeserializerState::Content(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -34038,10 +34088,10 @@ pub mod page {
                                 fallback.get_or_insert(PageXElementTypeDeserializerState::Area(
                                     Some(deserializer),
                                 ));
-                                *self.state = PageXElementTypeDeserializerState::Content(None);
+                                *self.state__ = PageXElementTypeDeserializerState::Content(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageXElementTypeDeserializerState::Area(Some(deserializer));
                             }
                         }
@@ -34065,7 +34115,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PageXElementTypeDeserializerState::Content(None));
-                    *self.state = PageXElementTypeDeserializerState::Actions(None);
+                    *self.state__ = PageXElementTypeDeserializerState::Actions(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34075,7 +34125,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = PageXElementTypeDeserializerState::Actions(None);
+                        *self.state__ = PageXElementTypeDeserializerState::Actions(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -34085,10 +34135,10 @@ pub mod page {
                                 fallback.get_or_insert(PageXElementTypeDeserializerState::Content(
                                     Some(deserializer),
                                 ));
-                                *self.state = PageXElementTypeDeserializerState::Actions(None);
+                                *self.state__ = PageXElementTypeDeserializerState::Actions(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageXElementTypeDeserializerState::Content(Some(deserializer));
                             }
                         }
@@ -34112,7 +34162,7 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PageXElementTypeDeserializerState::Actions(None));
-                    *self.state = PageXElementTypeDeserializerState::Done__;
+                    *self.state__ = PageXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -34122,7 +34172,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state = PageXElementTypeDeserializerState::Done__;
+                        *self.state__ = PageXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -34132,10 +34182,10 @@ pub mod page {
                                 fallback.get_or_insert(PageXElementTypeDeserializerState::Actions(
                                     Some(deserializer),
                                 ));
-                                *self.state = PageXElementTypeDeserializerState::Done__;
+                                *self.state__ = PageXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageXElementTypeDeserializerState::Actions(Some(deserializer));
                             }
                         }
@@ -34167,7 +34217,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Template(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -34241,7 +34291,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = PageXElementTypeDeserializerState::Template(None);
+                            *self.state__ = PageXElementTypeDeserializerState::Template(None);
                             event
                         }
                         (S::Template(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -34335,13 +34385,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -34354,7 +34404,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -34371,7 +34421,7 @@ pub mod page {
         pub struct CtAxialShdSegmentXElementTypeDeserializer {
             position: Option<::core::primitive::f64>,
             color: Option<super::CtColorXType>,
-            state: Box<CtAxialShdSegmentXElementTypeDeserializerState>,
+            state__: Box<CtAxialShdSegmentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtAxialShdSegmentXElementTypeDeserializerState {
@@ -34400,7 +34450,7 @@ pub mod page {
                 Ok(Self {
                     position: position,
                     color: None,
-                    state: Box::new(CtAxialShdSegmentXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtAxialShdSegmentXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -34448,10 +34498,10 @@ pub mod page {
                         fallback.get_or_insert(
                             CtAxialShdSegmentXElementTypeDeserializerState::Color(None),
                         );
-                        *self.state = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtAxialShdSegmentXElementTypeDeserializerState::Color(None);
+                        *self.state__ = CtAxialShdSegmentXElementTypeDeserializerState::Color(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -34462,7 +34512,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtAxialShdSegmentXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -34474,13 +34524,14 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtAxialShdSegmentXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtAxialShdSegmentXElementTypeDeserializerState::Color(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    CtAxialShdSegmentXElementTypeDeserializerState::Color(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -34513,7 +34564,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -34539,7 +34590,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtAxialShdSegmentXElementTypeDeserializerState::Color(None);
                             event
                         }
@@ -34566,13 +34617,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -34588,7 +34639,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtAxialShdSegmentXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -34605,7 +34656,7 @@ pub mod page {
             draw_param: Option<::core::primitive::u32>,
             ctm: Option<::std::string::String>,
             content: Option<super::CtClipAreaXElementTypeContent>,
-            state: Box<CtClipAreaXElementTypeDeserializerState>,
+            state__: Box<CtClipAreaXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtClipAreaXElementTypeDeserializerState {
@@ -34641,7 +34692,7 @@ pub mod page {
                     draw_param: draw_param,
                     ctm: ctm,
                     content: None,
-                    state: Box::new(CtClipAreaXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtClipAreaXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -34682,7 +34733,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtClipAreaXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -34694,11 +34745,11 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtClipAreaXElementTypeDeserializerState::Next__;
+                        *self.state__ = CtClipAreaXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtClipAreaXElementTypeDeserializerState::Content__(deserializer);
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -34727,7 +34778,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -34770,7 +34821,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtClipAreaXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -34783,7 +34834,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtClipAreaXElementTypeContentDeserializer {
-            state: Box<CtClipAreaXElementTypeContentDeserializerState>,
+            state__: Box<CtClipAreaXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtClipAreaXElementTypeContentDeserializerState {
@@ -34839,7 +34890,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtClipAreaXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -34912,9 +34963,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtClipAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtClipAreaXElementTypeContentDeserializerState::Path(values, None),
@@ -34948,11 +34999,12 @@ pub mod page {
                             reader,
                             CtClipAreaXElementTypeContentDeserializerState::Path(values, None),
                         )?;
-                        *self.state = CtClipAreaXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ =
+                            CtClipAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtClipAreaXElementTypeContentDeserializerState::Path(
+                        *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Path(
                             values,
                             Some(deserializer),
                         );
@@ -34976,9 +35028,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CtClipAreaXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CtClipAreaXElementTypeContentDeserializerState::Text(values, None),
@@ -35012,11 +35064,12 @@ pub mod page {
                             reader,
                             CtClipAreaXElementTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = CtClipAreaXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ =
+                            CtClipAreaXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CtClipAreaXElementTypeContentDeserializerState::Text(
+                        *self.state__ = CtClipAreaXElementTypeContentDeserializerState::Text(
                             values,
                             Some(deserializer),
                         );
@@ -35036,13 +35089,13 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CtClipAreaXElementTypeContentDeserializerState::Init__),
+                    state__: Box::new(CtClipAreaXElementTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtClipAreaXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -35064,7 +35117,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Path(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -35130,13 +35183,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -35151,13 +35204,13 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtGraphicUnitActionsXElementTypeDeserializer {
             action: Vec<super::super::definition::CtActionXType>,
-            state: Box<CtGraphicUnitActionsXElementTypeDeserializerState>,
+            state__: Box<CtGraphicUnitActionsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtGraphicUnitActionsXElementTypeDeserializerState {
@@ -35179,7 +35232,7 @@ pub mod page {
                 }
                 Ok(Self {
                     action: Vec::new(),
-                    state: Box::new(CtGraphicUnitActionsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtGraphicUnitActionsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -35222,14 +35275,14 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.action.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             CtGraphicUnitActionsXElementTypeDeserializerState::Action(None),
                         );
-                        *self.state = CtGraphicUnitActionsXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtGraphicUnitActionsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -35240,7 +35293,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_action(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -35254,17 +35307,17 @@ pub mod page {
                                     ),
                                 );
                                 if self.action.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         CtGraphicUnitActionsXElementTypeDeserializerState::Action(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtGraphicUnitActionsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtGraphicUnitActionsXElementTypeDeserializerState::Action(
                                         Some(deserializer),
                                     );
@@ -35300,7 +35353,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Action(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -35326,7 +35379,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtGraphicUnitActionsXElementTypeDeserializerState::Action(None);
                             event
                         }
@@ -35353,13 +35406,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -35375,7 +35428,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtGraphicUnitActionsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -35387,7 +35440,7 @@ pub mod page {
         #[derive(Debug)]
         pub struct CtGraphicUnitClipsXElementTypeDeserializer {
             clip: Vec<super::CtClipXType>,
-            state: Box<CtGraphicUnitClipsXElementTypeDeserializerState>,
+            state__: Box<CtGraphicUnitClipsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtGraphicUnitClipsXElementTypeDeserializerState {
@@ -35407,7 +35460,7 @@ pub mod page {
                 }
                 Ok(Self {
                     clip: Vec::new(),
-                    state: Box::new(CtGraphicUnitClipsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtGraphicUnitClipsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -35445,13 +35498,13 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.clip.len() < 1usize {
-                        *self.state = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
+                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None),
                         );
-                        *self.state = CtGraphicUnitClipsXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -35462,7 +35515,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clip(data)?;
-                        *self.state = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
+                        *self.state__ = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -35475,17 +35528,18 @@ pub mod page {
                                     )),
                                 );
                                 if self.clip.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtGraphicUnitClipsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtGraphicUnitClipsXElementTypeDeserializerState::Clip(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    CtGraphicUnitClipsXElementTypeDeserializerState::Clip(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -35518,7 +35572,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Clip(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -35544,7 +35598,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtGraphicUnitClipsXElementTypeDeserializerState::Clip(None);
                             event
                         }
@@ -35571,13 +35625,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -35593,7 +35647,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtGraphicUnitClipsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -35606,7 +35660,7 @@ pub mod page {
             y: ::core::primitive::f64,
             edge_flag: Option<super::CtGouraudShdPointEdgeFlagXType>,
             color: Option<super::CtColorXType>,
-            state: Box<CtGouraudShdPointXElementTypeDeserializerState>,
+            state__: Box<CtGouraudShdPointXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtGouraudShdPointXElementTypeDeserializerState {
@@ -35649,7 +35703,7 @@ pub mod page {
                     y: y.ok_or_else(|| reader.map_error(ErrorKind::MissingAttribute("y".into())))?,
                     edge_flag: edge_flag,
                     color: None,
-                    state: Box::new(CtGouraudShdPointXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtGouraudShdPointXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -35697,10 +35751,10 @@ pub mod page {
                         fallback.get_or_insert(
                             CtGouraudShdPointXElementTypeDeserializerState::Color(None),
                         );
-                        *self.state = CtGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtGouraudShdPointXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtGouraudShdPointXElementTypeDeserializerState::Color(None);
+                        *self.state__ = CtGouraudShdPointXElementTypeDeserializerState::Color(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -35711,7 +35765,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state = CtGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtGouraudShdPointXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -35723,13 +35777,14 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtGouraudShdPointXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtGouraudShdPointXElementTypeDeserializerState::Color(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    CtGouraudShdPointXElementTypeDeserializerState::Color(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -35762,7 +35817,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -35788,7 +35843,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtGouraudShdPointXElementTypeDeserializerState::Color(None);
                             event
                         }
@@ -35815,13 +35870,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -35837,7 +35892,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtGouraudShdPointXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -35859,7 +35914,7 @@ pub mod page {
             dash_offset: ::core::primitive::f64,
             dash_pattern: Option<::std::string::String>,
             border_color: Option<super::CtColorXType>,
-            state: Box<CtImageBorderXElementTypeDeserializerState>,
+            state__: Box<CtImageBorderXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtImageBorderXElementTypeDeserializerState {
@@ -35930,7 +35985,7 @@ pub mod page {
                         .unwrap_or_else(super::CtImageBorderXElementType::default_dash_offset),
                     dash_pattern: dash_pattern,
                     border_color: None,
-                    state: Box::new(CtImageBorderXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtImageBorderXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -35977,7 +36032,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtImageBorderXElementTypeDeserializerState::BorderColor(None),
                     );
-                    *self.state = CtImageBorderXElementTypeDeserializerState::Done__;
+                    *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -35987,7 +36042,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border_color(data)?;
-                        *self.state = CtImageBorderXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -35999,10 +36054,10 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtImageBorderXElementTypeDeserializerState::Done__;
+                                *self.state__ = CtImageBorderXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtImageBorderXElementTypeDeserializerState::BorderColor(Some(
                                         deserializer,
                                     ));
@@ -36038,7 +36093,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::BorderColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -36064,7 +36119,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtImageBorderXElementTypeDeserializerState::BorderColor(None);
                             event
                         }
@@ -36091,13 +36146,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -36110,7 +36165,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtImageBorderXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -36129,7 +36184,7 @@ pub mod page {
             x: Option<::core::primitive::f64>,
             y: Option<::core::primitive::f64>,
             color: Option<super::CtColorXType>,
-            state: Box<CtLaGouraudShdPointXElementTypeDeserializerState>,
+            state__: Box<CtLaGouraudShdPointXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtLaGouraudShdPointXElementTypeDeserializerState {
@@ -36165,7 +36220,7 @@ pub mod page {
                     x: x,
                     y: y,
                     color: None,
-                    state: Box::new(CtLaGouraudShdPointXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtLaGouraudShdPointXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -36213,10 +36268,11 @@ pub mod page {
                         fallback.get_or_insert(
                             CtLaGouraudShdPointXElementTypeDeserializerState::Color(None),
                         );
-                        *self.state = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtLaGouraudShdPointXElementTypeDeserializerState::Color(None);
+                        *self.state__ =
+                            CtLaGouraudShdPointXElementTypeDeserializerState::Color(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -36227,7 +36283,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color(data)?;
-                        *self.state = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -36239,11 +36295,11 @@ pub mod page {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtLaGouraudShdPointXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtLaGouraudShdPointXElementTypeDeserializerState::Color(Some(
                                         deserializer,
                                     ));
@@ -36279,7 +36335,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Color(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -36305,7 +36361,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtLaGouraudShdPointXElementTypeDeserializerState::Color(None);
                             event
                         }
@@ -36332,13 +36388,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -36354,7 +36410,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtLaGouraudShdPointXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -36392,7 +36448,7 @@ pub mod page {
             italic: ::core::primitive::bool,
             id: ::core::primitive::u32,
             content: Vec<super::CtPageBlockTextObjectXElementTypeContent>,
-            state: Box<CtPageBlockTextObjectXElementTypeDeserializerState>,
+            state__: Box<CtPageBlockTextObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockTextObjectXElementTypeDeserializerState {
@@ -36596,7 +36652,7 @@ pub mod page {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(CtPageBlockTextObjectXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockTextObjectXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -36636,7 +36692,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtPageBlockTextObjectXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -36648,14 +36704,14 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtPageBlockTextObjectXElementTypeDeserializerState::Next__;
+                        *self.state__ = CtPageBlockTextObjectXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockTextObjectXElementTypeDeserializerState::Content__(
                                         deserializer,
                                     );
@@ -36666,7 +36722,7 @@ pub mod page {
                                         deserializer,
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockTextObjectXElementTypeDeserializerState::Next__;
                             }
                         }
@@ -36699,7 +36755,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -36745,7 +36801,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockTextObjectXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -36778,7 +36834,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockTextObjectXElementTypeContentDeserializer {
-            state: Box<CtPageBlockTextObjectXElementTypeContentDeserializerState>,
+            state__: Box<CtPageBlockTextObjectXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtPageBlockTextObjectXElementTypeContentDeserializerState {
@@ -36901,7 +36957,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -37070,9 +37126,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37113,12 +37169,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Actions(
                                 values,
                                 Some(deserializer),
@@ -37143,9 +37199,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37184,12 +37240,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Clips(
                                 values,
                                 Some(deserializer),
@@ -37214,9 +37270,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37259,12 +37315,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::FillColor(
                                 values,
                                 Some(deserializer),
@@ -37289,9 +37345,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37338,12 +37394,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::StrokeColor(
                                 values,
                                 Some(deserializer),
@@ -37368,9 +37424,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37417,12 +37473,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::CgTransform(
                                 values,
                                 Some(deserializer),
@@ -37447,9 +37503,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -37492,12 +37548,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::TextCode(
                                 values,
                                 Some(deserializer),
@@ -37518,7 +37574,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(
+                    state__: Box::new(
                         CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__,
                     ),
                 };
@@ -37526,7 +37582,7 @@ pub mod page {
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtPageBlockTextObjectXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -37548,7 +37604,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -37706,13 +37762,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -37730,7 +37786,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -37756,7 +37812,7 @@ pub mod page {
             stroke_color: Option<super::CtColorXType>,
             fill_color: Option<super::CtColorXType>,
             abbreviated_data: Option<::std::string::String>,
-            state: Box<CtPageBlockPathObjectXElementTypeDeserializerState>,
+            state__: Box<CtPageBlockPathObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockPathObjectXElementTypeDeserializerState {
@@ -37918,7 +37974,7 @@ pub mod page {
                     stroke_color: None,
                     fill_color: None,
                     abbreviated_data: None,
-                    state: Box::new(CtPageBlockPathObjectXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockPathObjectXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -38022,7 +38078,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockPathObjectXElementTypeDeserializerState::Actions(None),
                     );
-                    *self.state = CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
+                    *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -38032,7 +38088,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -38045,11 +38101,11 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::Actions(
                                         Some(deserializer),
                                     );
@@ -38077,7 +38133,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockPathObjectXElementTypeDeserializerState::Clips(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -38088,7 +38144,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -38101,13 +38157,13 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::Clips(
                                         Some(deserializer),
                                     );
@@ -38135,7 +38191,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -38146,7 +38202,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -38159,13 +38215,13 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::StrokeColor(
                                         Some(deserializer),
                                     );
@@ -38193,7 +38249,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -38204,7 +38260,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(
                                 None,
                             );
@@ -38219,10 +38275,10 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                * self . state = CtPageBlockPathObjectXElementTypeDeserializerState :: AbbreviatedData (None) ;
+                                * self . state__ = CtPageBlockPathObjectXElementTypeDeserializerState :: AbbreviatedData (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::FillColor(
                                         Some(deserializer),
                                     );
@@ -38253,10 +38309,10 @@ pub mod page {
                                 None,
                             ),
                         );
-                        *self.state = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPathObjectXElementTypeDeserializerState::AbbreviatedData(
                                 None,
                             );
@@ -38270,7 +38326,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_abbreviated_data(data)?;
-                        *self.state = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -38278,11 +38334,11 @@ pub mod page {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (CtPageBlockPathObjectXElementTypeDeserializerState :: AbbreviatedData (Some (deserializer))) ;
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPathObjectXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = CtPageBlockPathObjectXElementTypeDeserializerState :: AbbreviatedData (Some (deserializer)) ;
+                                * self . state__ = CtPageBlockPathObjectXElementTypeDeserializerState :: AbbreviatedData (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -38315,7 +38371,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -38389,7 +38445,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockPathObjectXElementTypeDeserializerState::Actions(None);
                             event
                         }
@@ -38484,13 +38540,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -38506,7 +38562,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockPathObjectXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -38558,7 +38614,7 @@ pub mod page {
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
             border: Option<super::CtImageBorderXElementType>,
-            state: Box<CtPageBlockImageObjectXElementTypeDeserializerState>,
+            state__: Box<CtPageBlockImageObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockImageObjectXElementTypeDeserializerState {
@@ -38715,7 +38771,7 @@ pub mod page {
                     actions: None,
                     clips: None,
                     border: None,
-                    state: Box::new(CtPageBlockImageObjectXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockImageObjectXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -38795,7 +38851,8 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockImageObjectXElementTypeDeserializerState::Actions(None),
                     );
-                    *self.state = CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
+                    *self.state__ =
+                        CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -38805,7 +38862,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -38818,13 +38875,13 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Clips(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Actions(
                                         Some(deserializer),
                                     );
@@ -38852,7 +38909,8 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockImageObjectXElementTypeDeserializerState::Clips(None),
                     );
-                    *self.state = CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
+                    *self.state__ =
+                        CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -38862,7 +38920,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockImageObjectXElementTypeDeserializerState::Border(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -38875,13 +38933,13 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Border(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Clips(
                                         Some(deserializer),
                                     );
@@ -38909,7 +38967,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockImageObjectXElementTypeDeserializerState::Border(None),
                     );
-                    *self.state = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
+                    *self.state__ = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -38919,7 +38977,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_border(data)?;
-                        *self.state = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -38931,11 +38989,11 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockImageObjectXElementTypeDeserializerState::Border(
                                         Some(deserializer),
                                     );
@@ -38971,7 +39029,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -39021,7 +39079,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockImageObjectXElementTypeDeserializerState::Actions(None);
                             event
                         }
@@ -39082,13 +39140,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -39104,7 +39162,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockImageObjectXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -39149,7 +39207,7 @@ pub mod page {
             id: ::core::primitive::u32,
             actions: Option<super::CtGraphicUnitActionsXElementType>,
             clips: Option<super::CtGraphicUnitClipsXElementType>,
-            state: Box<CtPageBlockCompositeObjectXElementTypeDeserializerState>,
+            state__: Box<CtPageBlockCompositeObjectXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockCompositeObjectXElementTypeDeserializerState {
@@ -39294,7 +39352,7 @@ pub mod page {
                     })?,
                     actions: None,
                     clips: None,
-                    state: Box::new(
+                    state__: Box::new(
                         CtPageBlockCompositeObjectXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -39361,7 +39419,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockCompositeObjectXElementTypeDeserializerState::Actions(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -39372,7 +39430,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_actions(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -39381,13 +39439,13 @@ pub mod page {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (CtPageBlockCompositeObjectXElementTypeDeserializerState :: Actions (Some (deserializer))) ;
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = CtPageBlockCompositeObjectXElementTypeDeserializerState :: Actions (Some (deserializer)) ;
+                                * self . state__ = CtPageBlockCompositeObjectXElementTypeDeserializerState :: Actions (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -39412,7 +39470,7 @@ pub mod page {
                     fallback.get_or_insert(
                         CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(None),
                     );
-                    *self.state = CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
+                    *self.state__ = CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -39422,7 +39480,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_clips(data)?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -39435,11 +39493,11 @@ pub mod page {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockCompositeObjectXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockCompositeObjectXElementTypeDeserializerState::Clips(
                                         Some(deserializer),
                                     );
@@ -39475,7 +39533,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Actions(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -39513,7 +39571,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockCompositeObjectXElementTypeDeserializerState::Actions(
                                     None,
                                 );
@@ -39559,13 +39617,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -39581,7 +39639,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockCompositeObjectXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -39609,7 +39667,7 @@ pub mod page {
         pub struct CtPageBlockPageBlockXElementTypeDeserializer {
             id: ::core::primitive::u32,
             content: Vec<super::CtPageBlockPageBlockXElementTypeContent>,
-            state: Box<CtPageBlockPageBlockXElementTypeDeserializerState>,
+            state__: Box<CtPageBlockPageBlockXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPageBlockPageBlockXElementTypeDeserializerState {
@@ -39642,7 +39700,7 @@ pub mod page {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(CtPageBlockPageBlockXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPageBlockPageBlockXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -39682,7 +39740,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtPageBlockPageBlockXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -39694,14 +39752,14 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtPageBlockPageBlockXElementTypeDeserializerState::Next__;
+                        *self.state__ = CtPageBlockPageBlockXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPageBlockXElementTypeDeserializerState::Content__(
                                         deserializer,
                                     );
@@ -39712,7 +39770,7 @@ pub mod page {
                                         deserializer,
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPageBlockPageBlockXElementTypeDeserializerState::Next__;
                             }
                         }
@@ -39745,7 +39803,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -39791,7 +39849,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPageBlockPageBlockXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -39803,7 +39861,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPageBlockPageBlockXElementTypeContentDeserializer {
-            state: Box<CtPageBlockPageBlockXElementTypeContentDeserializerState>,
+            state__: Box<CtPageBlockPageBlockXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtPageBlockPageBlockXElementTypeContentDeserializerState {
@@ -39880,7 +39938,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -40025,9 +40083,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -40070,12 +40128,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::TextObject(
                                 values,
                                 Some(deserializer),
@@ -40100,9 +40158,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -40145,12 +40203,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::PathObject(
                                 values,
                                 Some(deserializer),
@@ -40175,9 +40233,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -40222,12 +40280,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::ImageObject(
                                 values,
                                 Some(deserializer),
@@ -40252,7 +40310,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = CtPageBlockPageBlockXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = CtPageBlockPageBlockXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback.take() {
@@ -40273,12 +40331,12 @@ pub mod page {
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
+                        * self . state__ = CtPageBlockPageBlockXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -40299,9 +40357,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -40344,12 +40402,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::PageBlock(
                                 values,
                                 Some(deserializer),
@@ -40370,7 +40428,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(
+                    state__: Box::new(
                         CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__,
                     ),
                 };
@@ -40378,7 +40436,7 @@ pub mod page {
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtPageBlockPageBlockXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -40400,7 +40458,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -40545,13 +40603,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -40569,14 +40627,14 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtPatternCellContentXElementTypeDeserializer {
             thumbnail: Option<::core::primitive::u32>,
             content: Vec<super::CtPatternCellContentXElementTypeContent>,
-            state: Box<CtPatternCellContentXElementTypeDeserializerState>,
+            state__: Box<CtPatternCellContentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtPatternCellContentXElementTypeDeserializerState {
@@ -40607,7 +40665,7 @@ pub mod page {
                 Ok(Self {
                     thumbnail: thumbnail,
                     content: Vec::new(),
-                    state: Box::new(CtPatternCellContentXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtPatternCellContentXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -40647,7 +40705,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CtPatternCellContentXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -40659,14 +40717,14 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtPatternCellContentXElementTypeDeserializerState::Next__;
+                        *self.state__ = CtPatternCellContentXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtPatternCellContentXElementTypeDeserializerState::Content__(
                                         deserializer,
                                     );
@@ -40677,7 +40735,7 @@ pub mod page {
                                         deserializer,
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     CtPatternCellContentXElementTypeDeserializerState::Next__;
                             }
                         }
@@ -40710,7 +40768,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -40756,7 +40814,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtPatternCellContentXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -40768,7 +40826,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct CtPatternCellContentXElementTypeContentDeserializer {
-            state: Box<CtPatternCellContentXElementTypeContentDeserializerState>,
+            state__: Box<CtPatternCellContentXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CtPatternCellContentXElementTypeContentDeserializerState {
@@ -40845,7 +40903,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(CtPatternCellContentXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -40990,9 +41048,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPatternCellContentXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -41035,12 +41093,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::TextObject(
                                 values,
                                 Some(deserializer),
@@ -41065,9 +41123,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPatternCellContentXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -41110,12 +41168,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::PathObject(
                                 values,
                                 Some(deserializer),
@@ -41140,9 +41198,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPatternCellContentXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -41187,12 +41245,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::ImageObject(
                                 values,
                                 Some(deserializer),
@@ -41217,7 +41275,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    * self . state = match fallback . take () { None if values . is_none () => { * self . state = CtPatternCellContentXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
+                    * self . state__ = match fallback . take () { None if values . is_none () => { * self . state__ = CtPatternCellContentXElementTypeContentDeserializerState :: Init__ ; return Ok (ElementHandlerOutput :: from_event (event , allow_any)) ; } , None => CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , None) , Some (CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (_ , Some (deserializer))) => CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) , _ => unreachable ! () , } ;
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 match fallback.take() {
@@ -41238,12 +41296,12 @@ pub mod page {
                     DeserializerArtifact::Data(data) => {
                         Self::store_composite_object(&mut values, data)?;
                         let data = Self :: finish_state (reader , CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , None)) ? ;
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        * self . state = CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
+                        * self . state__ = CtPatternCellContentXElementTypeContentDeserializerState :: CompositeObject (values , Some (deserializer)) ;
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
                 })
@@ -41264,9 +41322,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 CtPatternCellContentXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -41309,12 +41367,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             CtPatternCellContentXElementTypeContentDeserializerState::PageBlock(
                                 values,
                                 Some(deserializer),
@@ -41335,7 +41393,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(
+                    state__: Box::new(
                         CtPatternCellContentXElementTypeContentDeserializerState::Init__,
                     ),
                 };
@@ -41343,7 +41401,7 @@ pub mod page {
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CtPatternCellContentXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -41365,7 +41423,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -41510,13 +41568,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -41534,7 +41592,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -41544,7 +41602,7 @@ pub mod page {
             delta_x: Option<::std::string::String>,
             deltay: Option<::std::string::String>,
             content: Option<::std::string::String>,
-            state: Box<CtTextTextCodeXElementTypeDeserializerState>,
+            state__: Box<CtTextTextCodeXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtTextTextCodeXElementTypeDeserializerState {
@@ -41593,7 +41651,7 @@ pub mod page {
                     delta_x: delta_x,
                     deltay: deltay,
                     content: None,
-                    state: Box::new(CtTextTextCodeXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtTextTextCodeXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41647,7 +41705,7 @@ pub mod page {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -41685,7 +41743,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 use CtTextTextCodeXElementTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -41702,7 +41760,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtTextTextCodeXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -41719,7 +41777,7 @@ pub mod page {
         pub struct PageTemplateXElementTypeDeserializer {
             template_id: ::core::primitive::u32,
             z_order: super::PageTemplateZOrderXType,
-            state: Box<PageTemplateXElementTypeDeserializerState>,
+            state__: Box<PageTemplateXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageTemplateXElementTypeDeserializerState {
@@ -41755,7 +41813,7 @@ pub mod page {
                     })?,
                     z_order: z_order
                         .unwrap_or_else(super::PageTemplateXElementType::default_z_order),
-                    state: Box::new(PageTemplateXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageTemplateXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41808,7 +41866,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageTemplateXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -41821,7 +41879,7 @@ pub mod page {
         #[derive(Debug)]
         pub struct PageContentXElementTypeDeserializer {
             layer: Vec<super::PageContentLayerXElementType>,
-            state: Box<PageContentXElementTypeDeserializerState>,
+            state__: Box<PageContentXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageContentXElementTypeDeserializerState {
@@ -41841,7 +41899,7 @@ pub mod page {
                 }
                 Ok(Self {
                     layer: Vec::new(),
-                    state: Box::new(PageContentXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageContentXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41884,12 +41942,12 @@ pub mod page {
                 } = output;
                 if artifact.is_none() {
                     if self.layer.len() < 1usize {
-                        *self.state = PageContentXElementTypeDeserializerState::Layer(None);
+                        *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback
                             .get_or_insert(PageContentXElementTypeDeserializerState::Layer(None));
-                        *self.state = PageContentXElementTypeDeserializerState::Done__;
+                        *self.state__ = PageContentXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -41900,7 +41958,7 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_layer(data)?;
-                        *self.state = PageContentXElementTypeDeserializerState::Layer(None);
+                        *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41913,14 +41971,15 @@ pub mod page {
                                     )),
                                 );
                                 if self.layer.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         PageContentXElementTypeDeserializerState::Layer(None);
                                 } else {
-                                    *self.state = PageContentXElementTypeDeserializerState::Done__;
+                                    *self.state__ =
+                                        PageContentXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = PageContentXElementTypeDeserializerState::Layer(
+                                *self.state__ = PageContentXElementTypeDeserializerState::Layer(
                                     Some(deserializer),
                                 );
                             }
@@ -41955,7 +42014,7 @@ pub mod page {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Layer(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -41981,7 +42040,7 @@ pub mod page {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = PageContentXElementTypeDeserializerState::Layer(None);
+                            *self.state__ = PageContentXElementTypeDeserializerState::Layer(None);
                             event
                         }
                         (S::Layer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -42007,13 +42066,13 @@ pub mod page {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -42026,7 +42085,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageContentXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -42039,7 +42098,7 @@ pub mod page {
             draw_param: Option<::core::primitive::u32>,
             id: ::core::primitive::u32,
             content: Vec<super::PageContentLayerXElementTypeContent>,
-            state: Box<PageContentLayerXElementTypeDeserializerState>,
+            state__: Box<PageContentLayerXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PageContentLayerXElementTypeDeserializerState {
@@ -42086,7 +42145,7 @@ pub mod page {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(PageContentLayerXElementTypeDeserializerState::Init__),
+                    state__: Box::new(PageContentLayerXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -42126,7 +42185,7 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(PageContentLayerXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -42138,14 +42197,14 @@ pub mod page {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = PageContentLayerXElementTypeDeserializerState::Next__;
+                        *self.state__ = PageContentLayerXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PageContentLayerXElementTypeDeserializerState::Content__(
                                         deserializer,
                                     );
@@ -42156,7 +42215,8 @@ pub mod page {
                                         deserializer,
                                     ),
                                 );
-                                *self.state = PageContentLayerXElementTypeDeserializerState::Next__;
+                                *self.state__ =
+                                    PageContentLayerXElementTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -42188,7 +42248,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -42231,7 +42291,7 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PageContentLayerXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -42245,7 +42305,7 @@ pub mod page {
         }
         #[derive(Debug)]
         pub struct PageContentLayerXElementTypeContentDeserializer {
-            state: Box<PageContentLayerXElementTypeContentDeserializerState>,
+            state__: Box<PageContentLayerXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum PageContentLayerXElementTypeContentDeserializerState {
@@ -42322,7 +42382,7 @@ pub mod page {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(PageContentLayerXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -42465,9 +42525,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 PageContentLayerXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -42506,12 +42566,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::TextObject(
                                 values,
                                 Some(deserializer),
@@ -42536,9 +42596,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 PageContentLayerXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -42577,12 +42637,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::PathObject(
                                 values,
                                 Some(deserializer),
@@ -42607,9 +42667,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 PageContentLayerXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -42650,12 +42710,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::ImageObject(
                                 values,
                                 Some(deserializer),
@@ -42680,9 +42740,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 PageContentLayerXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -42727,12 +42787,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::CompositeObject(
                                 values,
                                 Some(deserializer),
@@ -42757,9 +42817,9 @@ pub mod page {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state =
+                            *self.state__ =
                                 PageContentLayerXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
@@ -42798,12 +42858,12 @@ pub mod page {
                                 values, None,
                             ),
                         )?;
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             PageContentLayerXElementTypeContentDeserializerState::PageBlock(
                                 values,
                                 Some(deserializer),
@@ -42824,13 +42884,13 @@ pub mod page {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(PageContentLayerXElementTypeContentDeserializerState::Init__),
+                    state__: Box::new(PageContentLayerXElementTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             PageContentLayerXElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -42852,7 +42912,7 @@ pub mod page {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextObject(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -42997,13 +43057,13 @@ pub mod page {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -43021,7 +43081,7 @@ pub mod page {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
     }
@@ -47210,7 +47270,7 @@ pub mod res {
             bits_per_component: ::core::primitive::i32,
             profile: Option<::std::string::String>,
             palette: Option<super::CtColorSpacePaletteXElementType>,
-            state: Box<CtColorSpaceXTypeDeserializerState>,
+            state__: Box<CtColorSpaceXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtColorSpaceXTypeDeserializerState {
@@ -47262,7 +47322,7 @@ pub mod res {
                         .unwrap_or_else(super::CtColorSpaceXType::default_bits_per_component),
                     profile: profile,
                     palette: None,
-                    state: Box::new(CtColorSpaceXTypeDeserializerState::Init__),
+                    state__: Box::new(CtColorSpaceXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -47310,7 +47370,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtColorSpaceXTypeDeserializerState::Palette(None));
-                    *self.state = CtColorSpaceXTypeDeserializerState::Done__;
+                    *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47320,7 +47380,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_palette(data)?;
-                        *self.state = CtColorSpaceXTypeDeserializerState::Done__;
+                        *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -47330,10 +47390,10 @@ pub mod res {
                                 fallback.get_or_insert(
                                     CtColorSpaceXTypeDeserializerState::Palette(Some(deserializer)),
                                 );
-                                *self.state = CtColorSpaceXTypeDeserializerState::Done__;
+                                *self.state__ = CtColorSpaceXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtColorSpaceXTypeDeserializerState::Palette(Some(deserializer));
                             }
                         }
@@ -47365,7 +47425,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Palette(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -47391,7 +47451,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtColorSpaceXTypeDeserializerState::Palette(None);
+                            *self.state__ = CtColorSpaceXTypeDeserializerState::Palette(None);
                             event
                         }
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -47417,13 +47477,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -47436,7 +47496,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtColorSpaceXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -47459,7 +47519,7 @@ pub mod res {
             miter_limit: ::core::primitive::f64,
             fill_color: Option<super::super::page::CtColorXType>,
             stroke_color: Option<super::super::page::CtColorXType>,
-            state: Box<CtDrawParamXTypeDeserializerState>,
+            state__: Box<CtDrawParamXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtDrawParamXTypeDeserializerState {
@@ -47537,7 +47597,7 @@ pub mod res {
                         .unwrap_or_else(super::CtDrawParamXType::default_miter_limit),
                     fill_color: None,
                     stroke_color: None,
-                    state: Box::new(CtDrawParamXTypeDeserializerState::Init__),
+                    state__: Box::new(CtDrawParamXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -47600,7 +47660,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDrawParamXTypeDeserializerState::FillColor(None));
-                    *self.state = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                    *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47610,7 +47670,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                        *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -47622,10 +47682,11 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtDrawParamXTypeDeserializerState::StrokeColor(None);
+                                *self.state__ =
+                                    CtDrawParamXTypeDeserializerState::StrokeColor(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtDrawParamXTypeDeserializerState::FillColor(Some(
+                                *self.state__ = CtDrawParamXTypeDeserializerState::FillColor(Some(
                                     deserializer,
                                 ));
                             }
@@ -47650,7 +47711,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtDrawParamXTypeDeserializerState::StrokeColor(None));
-                    *self.state = CtDrawParamXTypeDeserializerState::Done__;
+                    *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47660,7 +47721,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state = CtDrawParamXTypeDeserializerState::Done__;
+                        *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -47672,12 +47733,12 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtDrawParamXTypeDeserializerState::Done__;
+                                *self.state__ = CtDrawParamXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtDrawParamXTypeDeserializerState::StrokeColor(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtDrawParamXTypeDeserializerState::StrokeColor(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -47708,7 +47769,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FillColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -47746,7 +47807,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtDrawParamXTypeDeserializerState::FillColor(None);
+                            *self.state__ = CtDrawParamXTypeDeserializerState::FillColor(None);
                             event
                         }
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -47789,13 +47850,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -47808,7 +47869,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtDrawParamXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -47835,7 +47896,7 @@ pub mod res {
             serif: ::core::primitive::bool,
             fixed_width: ::core::primitive::bool,
             font_file: Option<::std::string::String>,
-            state: Box<CtFontXTypeDeserializerState>,
+            state__: Box<CtFontXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtFontXTypeDeserializerState {
@@ -47909,7 +47970,7 @@ pub mod res {
                     fixed_width: fixed_width
                         .unwrap_or_else(super::CtFontXType::default_fixed_width),
                     font_file: None,
-                    state: Box::new(CtFontXTypeDeserializerState::Init__),
+                    state__: Box::new(CtFontXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -47954,7 +48015,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtFontXTypeDeserializerState::FontFile(None));
-                    *self.state = CtFontXTypeDeserializerState::Done__;
+                    *self.state__ = CtFontXTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -47964,7 +48025,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font_file(data)?;
-                        *self.state = CtFontXTypeDeserializerState::Done__;
+                        *self.state__ = CtFontXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -47974,10 +48035,10 @@ pub mod res {
                                 fallback.get_or_insert(CtFontXTypeDeserializerState::FontFile(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtFontXTypeDeserializerState::Done__;
+                                *self.state__ = CtFontXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtFontXTypeDeserializerState::FontFile(Some(deserializer));
                             }
                         }
@@ -48006,7 +48067,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FontFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -48032,7 +48093,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtFontXTypeDeserializerState::FontFile(None);
+                            *self.state__ = CtFontXTypeDeserializerState::FontFile(None);
                             event
                         }
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -48058,13 +48119,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -48076,7 +48137,7 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtFontXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CtFontXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CtFontXType {
                     font_name: self.font_name,
@@ -48095,7 +48156,7 @@ pub mod res {
             type_: super::CtMultiMediaTypeXType,
             format: Option<::std::string::String>,
             media_file: Option<::std::string::String>,
-            state: Box<CtMultiMediaXTypeDeserializerState>,
+            state__: Box<CtMultiMediaXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtMultiMediaXTypeDeserializerState {
@@ -48133,7 +48194,7 @@ pub mod res {
                     })?,
                     format: format,
                     media_file: None,
-                    state: Box::new(CtMultiMediaXTypeDeserializerState::Init__),
+                    state__: Box::new(CtMultiMediaXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -48179,10 +48240,10 @@ pub mod res {
                 if artifact.is_none() {
                     if self.media_file.is_some() {
                         fallback.get_or_insert(CtMultiMediaXTypeDeserializerState::MediaFile(None));
-                        *self.state = CtMultiMediaXTypeDeserializerState::Done__;
+                        *self.state__ = CtMultiMediaXTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtMultiMediaXTypeDeserializerState::MediaFile(None);
+                        *self.state__ = CtMultiMediaXTypeDeserializerState::MediaFile(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -48193,7 +48254,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_media_file(data)?;
-                        *self.state = CtMultiMediaXTypeDeserializerState::Done__;
+                        *self.state__ = CtMultiMediaXTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -48205,12 +48266,12 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtMultiMediaXTypeDeserializerState::Done__;
+                                *self.state__ = CtMultiMediaXTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtMultiMediaXTypeDeserializerState::MediaFile(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtMultiMediaXTypeDeserializerState::MediaFile(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -48241,7 +48302,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::MediaFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -48267,7 +48328,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtMultiMediaXTypeDeserializerState::MediaFile(None);
+                            *self.state__ = CtMultiMediaXTypeDeserializerState::MediaFile(None);
                             event
                         }
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -48293,13 +48354,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -48312,7 +48373,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtMultiMediaXTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -48332,7 +48393,7 @@ pub mod res {
             thumbnail: Option<::core::primitive::u32>,
             substitution: Option<::core::primitive::u32>,
             content: Option<super::super::page::CtPageBlockXType>,
-            state: Box<CtVectorGxTypeDeserializerState>,
+            state__: Box<CtVectorGxTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtVectorGxTypeDeserializerState {
@@ -48378,7 +48439,7 @@ pub mod res {
                     thumbnail: None,
                     substitution: None,
                     content: None,
-                    state: Box::new(CtVectorGxTypeDeserializerState::Init__),
+                    state__: Box::new(CtVectorGxTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -48450,7 +48511,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtVectorGxTypeDeserializerState::Thumbnail(None));
-                    *self.state = CtVectorGxTypeDeserializerState::Substitution(None);
+                    *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -48460,7 +48521,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_thumbnail(data)?;
-                        *self.state = CtVectorGxTypeDeserializerState::Substitution(None);
+                        *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -48470,10 +48531,10 @@ pub mod res {
                                 fallback.get_or_insert(CtVectorGxTypeDeserializerState::Thumbnail(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtVectorGxTypeDeserializerState::Substitution(None);
+                                *self.state__ = CtVectorGxTypeDeserializerState::Substitution(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtVectorGxTypeDeserializerState::Thumbnail(Some(deserializer));
                             }
                         }
@@ -48497,7 +48558,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CtVectorGxTypeDeserializerState::Substitution(None));
-                    *self.state = CtVectorGxTypeDeserializerState::Content(None);
+                    *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -48507,7 +48568,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_substitution(data)?;
-                        *self.state = CtVectorGxTypeDeserializerState::Content(None);
+                        *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -48519,12 +48580,12 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CtVectorGxTypeDeserializerState::Content(None);
+                                *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtVectorGxTypeDeserializerState::Substitution(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = CtVectorGxTypeDeserializerState::Substitution(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -48548,10 +48609,10 @@ pub mod res {
                 if artifact.is_none() {
                     if self.content.is_some() {
                         fallback.get_or_insert(CtVectorGxTypeDeserializerState::Content(None));
-                        *self.state = CtVectorGxTypeDeserializerState::Done__;
+                        *self.state__ = CtVectorGxTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = CtVectorGxTypeDeserializerState::Content(None);
+                        *self.state__ = CtVectorGxTypeDeserializerState::Content(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -48562,7 +48623,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CtVectorGxTypeDeserializerState::Done__;
+                        *self.state__ = CtVectorGxTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -48572,10 +48633,10 @@ pub mod res {
                                 fallback.get_or_insert(CtVectorGxTypeDeserializerState::Content(
                                     Some(deserializer),
                                 ));
-                                *self.state = CtVectorGxTypeDeserializerState::Done__;
+                                *self.state__ = CtVectorGxTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CtVectorGxTypeDeserializerState::Content(Some(deserializer));
                             }
                         }
@@ -48607,7 +48668,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Thumbnail(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -48657,7 +48718,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CtVectorGxTypeDeserializerState::Thumbnail(None);
+                            *self.state__ = CtVectorGxTypeDeserializerState::Thumbnail(None);
                             event
                         }
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -48717,13 +48778,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -48735,7 +48796,10 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CtVectorGxTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CtVectorGxTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CtVectorGxType {
                     width: self.width,
@@ -48752,7 +48816,7 @@ pub mod res {
         pub struct ResXElementTypeDeserializer {
             base_loc: ::std::string::String,
             content: Vec<super::ResXElementTypeContent>,
-            state: Box<ResXElementTypeDeserializerState>,
+            state__: Box<ResXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResXElementTypeDeserializerState {
@@ -48783,7 +48847,7 @@ pub mod res {
                         reader.map_error(ErrorKind::MissingAttribute("BaseLoc".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(ResXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -48818,7 +48882,7 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(ResXElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -48830,21 +48894,21 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = ResXElementTypeDeserializerState::Next__;
+                        *self.state__ = ResXElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResXElementTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     ResXElementTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = ResXElementTypeDeserializerState::Next__;
+                                *self.state__ = ResXElementTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -48874,7 +48938,7 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -48917,7 +48981,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -48929,7 +48993,7 @@ pub mod res {
         }
         #[derive(Debug)]
         pub struct ResXElementTypeContentDeserializer {
-            state: Box<ResXElementTypeContentDeserializerState>,
+            state__: Box<ResXElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum ResXElementTypeContentDeserializerState {
@@ -49034,7 +49098,7 @@ pub mod res {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(ResXElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -49178,9 +49242,9 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ResXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = ResXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ResXElementTypeContentDeserializerState::ColorSpaces(values, None),
@@ -49214,11 +49278,11 @@ pub mod res {
                             reader,
                             ResXElementTypeContentDeserializerState::ColorSpaces(values, None),
                         )?;
-                        *self.state = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ResXElementTypeContentDeserializerState::ColorSpaces(
+                        *self.state__ = ResXElementTypeContentDeserializerState::ColorSpaces(
                             values,
                             Some(deserializer),
                         );
@@ -49242,9 +49306,9 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ResXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = ResXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ResXElementTypeContentDeserializerState::DrawParams(values, None),
@@ -49278,11 +49342,11 @@ pub mod res {
                             reader,
                             ResXElementTypeContentDeserializerState::DrawParams(values, None),
                         )?;
-                        *self.state = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ResXElementTypeContentDeserializerState::DrawParams(
+                        *self.state__ = ResXElementTypeContentDeserializerState::DrawParams(
                             values,
                             Some(deserializer),
                         );
@@ -49306,9 +49370,9 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ResXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = ResXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ResXElementTypeContentDeserializerState::Fonts(values, None),
@@ -49339,11 +49403,11 @@ pub mod res {
                             reader,
                             ResXElementTypeContentDeserializerState::Fonts(values, None),
                         )?;
-                        *self.state = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ResXElementTypeContentDeserializerState::Fonts(
+                        *self.state__ = ResXElementTypeContentDeserializerState::Fonts(
                             values,
                             Some(deserializer),
                         );
@@ -49367,9 +49431,9 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ResXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = ResXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ResXElementTypeContentDeserializerState::MultiMedias(values, None),
@@ -49403,11 +49467,11 @@ pub mod res {
                             reader,
                             ResXElementTypeContentDeserializerState::MultiMedias(values, None),
                         )?;
-                        *self.state = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ResXElementTypeContentDeserializerState::MultiMedias(
+                        *self.state__ = ResXElementTypeContentDeserializerState::MultiMedias(
                             values,
                             Some(deserializer),
                         );
@@ -49431,9 +49495,9 @@ pub mod res {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ResXElementTypeContentDeserializerState::Init__;
+                            *self.state__ = ResXElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ResXElementTypeContentDeserializerState::CompositeGraphicUnits(
@@ -49471,11 +49535,11 @@ pub mod res {
                                 values, None,
                             ),
                         )?;
-                        *self.state = ResXElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ResXElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ResXElementTypeContentDeserializerState::CompositeGraphicUnits(
                                 values,
                                 Some(deserializer),
@@ -49494,12 +49558,15 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(ResXElementTypeContentDeserializerState::Init__),
+                    state__: Box::new(ResXElementTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, ResXElementTypeContentDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            ResXElementTypeContentDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -49519,7 +49586,7 @@ pub mod res {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::ColorSpaces(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -49664,13 +49731,13 @@ pub mod res {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -49685,13 +49752,13 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct CtColorSpacePaletteXElementTypeDeserializer {
             cv: Vec<::std::string::String>,
-            state: Box<CtColorSpacePaletteXElementTypeDeserializerState>,
+            state__: Box<CtColorSpacePaletteXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CtColorSpacePaletteXElementTypeDeserializerState {
@@ -49711,7 +49778,7 @@ pub mod res {
                 }
                 Ok(Self {
                     cv: Vec::new(),
-                    state: Box::new(CtColorSpacePaletteXElementTypeDeserializerState::Init__),
+                    state__: Box::new(CtColorSpacePaletteXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -49749,13 +49816,13 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.cv.len() < 1usize {
-                        *self.state = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
+                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             CtColorSpacePaletteXElementTypeDeserializerState::Cv(None),
                         );
-                        *self.state = CtColorSpacePaletteXElementTypeDeserializerState::Done__;
+                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -49766,7 +49833,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_cv(data)?;
-                        *self.state = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
+                        *self.state__ = CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -49779,17 +49846,18 @@ pub mod res {
                                     )),
                                 );
                                 if self.cv.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         CtColorSpacePaletteXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CtColorSpacePaletteXElementTypeDeserializerState::Cv(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    CtColorSpacePaletteXElementTypeDeserializerState::Cv(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -49822,7 +49890,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Cv(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -49848,7 +49916,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 CtColorSpacePaletteXElementTypeDeserializerState::Cv(None);
                             event
                         }
@@ -49875,13 +49943,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -49897,7 +49965,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CtColorSpacePaletteXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -49907,7 +49975,7 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResColorSpacesXElementTypeDeserializer {
             color_space: Vec<super::ResColorSpacesColorSpaceXElementType>,
-            state: Box<ResColorSpacesXElementTypeDeserializerState>,
+            state__: Box<ResColorSpacesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResColorSpacesXElementTypeDeserializerState {
@@ -49931,7 +49999,7 @@ pub mod res {
                 }
                 Ok(Self {
                     color_space: Vec::new(),
-                    state: Box::new(ResColorSpacesXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResColorSpacesXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -49974,13 +50042,14 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.color_space.len() < 1usize {
-                        *self.state = ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
+                        *self.state__ =
+                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             ResColorSpacesXElementTypeDeserializerState::ColorSpace(None),
                         );
-                        *self.state = ResColorSpacesXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResColorSpacesXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -49991,7 +50060,8 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_color_space(data)?;
-                        *self.state = ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
+                        *self.state__ =
+                            ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -50004,17 +50074,17 @@ pub mod res {
                                     )),
                                 );
                                 if self.color_space.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         ResColorSpacesXElementTypeDeserializerState::ColorSpace(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         ResColorSpacesXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResColorSpacesXElementTypeDeserializerState::ColorSpace(Some(
                                         deserializer,
                                     ));
@@ -50050,7 +50120,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::ColorSpace(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -50076,7 +50146,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResColorSpacesXElementTypeDeserializerState::ColorSpace(None);
                             event
                         }
@@ -50103,13 +50173,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -50122,7 +50192,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResColorSpacesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -50134,7 +50204,7 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResDrawParamsXElementTypeDeserializer {
             draw_param: Vec<super::ResDrawParamsDrawParamXElementType>,
-            state: Box<ResDrawParamsXElementTypeDeserializerState>,
+            state__: Box<ResDrawParamsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResDrawParamsXElementTypeDeserializerState {
@@ -50158,7 +50228,7 @@ pub mod res {
                 }
                 Ok(Self {
                     draw_param: Vec::new(),
-                    state: Box::new(ResDrawParamsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResDrawParamsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -50201,13 +50271,13 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.draw_param.len() < 1usize {
-                        *self.state = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
+                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             ResDrawParamsXElementTypeDeserializerState::DrawParam(None),
                         );
-                        *self.state = ResDrawParamsXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -50218,7 +50288,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_draw_param(data)?;
-                        *self.state = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
+                        *self.state__ = ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -50231,17 +50301,18 @@ pub mod res {
                                     )),
                                 );
                                 if self.draw_param.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         ResDrawParamsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ResDrawParamsXElementTypeDeserializerState::DrawParam(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    ResDrawParamsXElementTypeDeserializerState::DrawParam(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -50274,7 +50345,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::DrawParam(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -50300,7 +50371,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResDrawParamsXElementTypeDeserializerState::DrawParam(None);
                             event
                         }
@@ -50327,13 +50398,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -50346,7 +50417,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResDrawParamsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -50358,7 +50429,7 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResFontsXElementTypeDeserializer {
             font: Vec<super::ResFontsFontXElementType>,
-            state: Box<ResFontsXElementTypeDeserializerState>,
+            state__: Box<ResFontsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResFontsXElementTypeDeserializerState {
@@ -50378,7 +50449,7 @@ pub mod res {
                 }
                 Ok(Self {
                     font: Vec::new(),
-                    state: Box::new(ResFontsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResFontsXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -50416,11 +50487,11 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.font.len() < 1usize {
-                        *self.state = ResFontsXElementTypeDeserializerState::Font(None);
+                        *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(ResFontsXElementTypeDeserializerState::Font(None));
-                        *self.state = ResFontsXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResFontsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -50431,7 +50502,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font(data)?;
-                        *self.state = ResFontsXElementTypeDeserializerState::Font(None);
+                        *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -50442,13 +50513,14 @@ pub mod res {
                                     ResFontsXElementTypeDeserializerState::Font(Some(deserializer)),
                                 );
                                 if self.font.len().saturating_add(1) < 1usize {
-                                    *self.state = ResFontsXElementTypeDeserializerState::Font(None);
+                                    *self.state__ =
+                                        ResFontsXElementTypeDeserializerState::Font(None);
                                 } else {
-                                    *self.state = ResFontsXElementTypeDeserializerState::Done__;
+                                    *self.state__ = ResFontsXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResFontsXElementTypeDeserializerState::Font(Some(deserializer));
                             }
                         }
@@ -50480,7 +50552,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Font(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -50506,7 +50578,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ResFontsXElementTypeDeserializerState::Font(None);
+                            *self.state__ = ResFontsXElementTypeDeserializerState::Font(None);
                             event
                         }
                         (S::Font(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -50532,13 +50604,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -50551,7 +50623,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResFontsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -50561,7 +50633,7 @@ pub mod res {
         #[derive(Debug)]
         pub struct ResMultiMediasXElementTypeDeserializer {
             multi_media: Vec<super::ResMultiMediasMultiMediaXElementType>,
-            state: Box<ResMultiMediasXElementTypeDeserializerState>,
+            state__: Box<ResMultiMediasXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResMultiMediasXElementTypeDeserializerState {
@@ -50585,7 +50657,7 @@ pub mod res {
                 }
                 Ok(Self {
                     multi_media: Vec::new(),
-                    state: Box::new(ResMultiMediasXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResMultiMediasXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -50628,13 +50700,14 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.multi_media.len() < 1usize {
-                        *self.state = ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
+                        *self.state__ =
+                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             ResMultiMediasXElementTypeDeserializerState::MultiMedia(None),
                         );
-                        *self.state = ResMultiMediasXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResMultiMediasXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -50645,7 +50718,8 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_multi_media(data)?;
-                        *self.state = ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
+                        *self.state__ =
+                            ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -50658,17 +50732,17 @@ pub mod res {
                                     )),
                                 );
                                 if self.multi_media.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         ResMultiMediasXElementTypeDeserializerState::MultiMedia(
                                             None,
                                         );
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         ResMultiMediasXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResMultiMediasXElementTypeDeserializerState::MultiMedia(Some(
                                         deserializer,
                                     ));
@@ -50704,7 +50778,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::MultiMedia(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -50730,7 +50804,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResMultiMediasXElementTypeDeserializerState::MultiMedia(None);
                             event
                         }
@@ -50757,13 +50831,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -50776,7 +50850,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResMultiMediasXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -50789,7 +50863,7 @@ pub mod res {
         pub struct ResCompositeGraphicUnitsXElementTypeDeserializer {
             composite_graphic_unit:
                 Vec<super::ResCompositeGraphicUnitsCompositeGraphicUnitXElementType>,
-            state: Box<ResCompositeGraphicUnitsXElementTypeDeserializerState>,
+            state__: Box<ResCompositeGraphicUnitsXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResCompositeGraphicUnitsXElementTypeDeserializerState {
@@ -50805,7 +50879,9 @@ pub mod res {
                 }
                 Ok(Self {
                     composite_graphic_unit: Vec::new(),
-                    state: Box::new(ResCompositeGraphicUnitsXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        ResCompositeGraphicUnitsXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -50851,11 +50927,12 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     if self.composite_graphic_unit.len() < 1usize {
-                        * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                        * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None)) ;
-                        *self.state = ResCompositeGraphicUnitsXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            ResCompositeGraphicUnitsXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -50866,7 +50943,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_composite_graphic_unit(data)?;
-                        * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                        * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -50875,13 +50952,13 @@ pub mod res {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer))) ;
                                 if self.composite_graphic_unit.len().saturating_add(1) < 1usize {
-                                    * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                                    * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
                                 } else {
-                                    * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: Done__ ;
+                                    * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: Done__ ;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer)) ;
+                                * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -50914,7 +50991,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CompositeGraphicUnit(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -50944,7 +51021,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
+                            * self . state__ = ResCompositeGraphicUnitsXElementTypeDeserializerState :: CompositeGraphicUnit (None) ;
                             event
                         }
                         (
@@ -50977,13 +51054,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -50999,7 +51076,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResCompositeGraphicUnitsXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -51015,7 +51092,7 @@ pub mod res {
             profile: Option<::std::string::String>,
             id: ::core::primitive::u32,
             palette: Option<super::CtColorSpacePaletteXElementType>,
-            state: Box<ResColorSpacesColorSpaceXElementTypeDeserializerState>,
+            state__: Box<ResColorSpacesColorSpaceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResColorSpacesColorSpaceXElementTypeDeserializerState {
@@ -51077,7 +51154,9 @@ pub mod res {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     palette: None,
-                    state: Box::new(ResColorSpacesColorSpaceXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        ResColorSpacesColorSpaceXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -51127,7 +51206,7 @@ pub mod res {
                     fallback.get_or_insert(
                         ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(None),
                     );
-                    *self.state = ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
+                    *self.state__ = ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -51137,7 +51216,8 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_palette(data)?;
-                        *self.state = ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -51149,11 +51229,11 @@ pub mod res {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     ResColorSpacesColorSpaceXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(
                                         Some(deserializer),
                                     );
@@ -51189,7 +51269,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Palette(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -51215,7 +51295,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResColorSpacesColorSpaceXElementTypeDeserializerState::Palette(
                                     None,
                                 );
@@ -51244,13 +51324,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -51266,7 +51346,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResColorSpacesColorSpaceXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -51291,7 +51371,7 @@ pub mod res {
             id: ::core::primitive::u32,
             fill_color: Option<super::super::page::CtColorXType>,
             stroke_color: Option<super::super::page::CtColorXType>,
-            state: Box<ResDrawParamsDrawParamXElementTypeDeserializerState>,
+            state__: Box<ResDrawParamsDrawParamXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResDrawParamsDrawParamXElementTypeDeserializerState {
@@ -51382,7 +51462,7 @@ pub mod res {
                     })?,
                     fill_color: None,
                     stroke_color: None,
-                    state: Box::new(ResDrawParamsDrawParamXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResDrawParamsDrawParamXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -51447,7 +51527,7 @@ pub mod res {
                     fallback.get_or_insert(
                         ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -51458,7 +51538,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fill_color(data)?;
-                        *self.state =
+                        *self.state__ =
                             ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -51471,10 +51551,10 @@ pub mod res {
                                         Some(deserializer),
                                     ),
                                 );
-                                * self . state = ResDrawParamsDrawParamXElementTypeDeserializerState :: StrokeColor (None) ;
+                                * self . state__ = ResDrawParamsDrawParamXElementTypeDeserializerState :: StrokeColor (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(
                                         Some(deserializer),
                                     );
@@ -51502,7 +51582,7 @@ pub mod res {
                     fallback.get_or_insert(
                         ResDrawParamsDrawParamXElementTypeDeserializerState::StrokeColor(None),
                     );
-                    *self.state = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
+                    *self.state__ = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -51512,7 +51592,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stroke_color(data)?;
-                        *self.state = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -51520,11 +51600,11 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResDrawParamsDrawParamXElementTypeDeserializerState :: StrokeColor (Some (deserializer))) ;
-                                *self.state =
+                                *self.state__ =
                                     ResDrawParamsDrawParamXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResDrawParamsDrawParamXElementTypeDeserializerState :: StrokeColor (Some (deserializer)) ;
+                                * self . state__ = ResDrawParamsDrawParamXElementTypeDeserializerState :: StrokeColor (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -51557,7 +51637,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FillColor(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -51595,7 +51675,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResDrawParamsDrawParamXElementTypeDeserializerState::FillColor(
                                     None,
                                 );
@@ -51641,13 +51721,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -51663,7 +51743,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResDrawParamsDrawParamXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -51692,7 +51772,7 @@ pub mod res {
             fixed_width: ::core::primitive::bool,
             id: ::core::primitive::u32,
             font_file: Option<::std::string::String>,
-            state: Box<ResFontsFontXElementTypeDeserializerState>,
+            state__: Box<ResFontsFontXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResFontsFontXElementTypeDeserializerState {
@@ -51776,7 +51856,7 @@ pub mod res {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     font_file: None,
-                    state: Box::new(ResFontsFontXElementTypeDeserializerState::Init__),
+                    state__: Box::new(ResFontsFontXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -51822,7 +51902,7 @@ pub mod res {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(ResFontsFontXElementTypeDeserializerState::FontFile(None));
-                    *self.state = ResFontsFontXElementTypeDeserializerState::Done__;
+                    *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -51832,7 +51912,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_font_file(data)?;
-                        *self.state = ResFontsFontXElementTypeDeserializerState::Done__;
+                        *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -51844,10 +51924,10 @@ pub mod res {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = ResFontsFontXElementTypeDeserializerState::Done__;
+                                *self.state__ = ResFontsFontXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ResFontsFontXElementTypeDeserializerState::FontFile(
+                                *self.state__ = ResFontsFontXElementTypeDeserializerState::FontFile(
                                     Some(deserializer),
                                 );
                             }
@@ -51882,7 +51962,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FontFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -51908,7 +51988,8 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ResFontsFontXElementTypeDeserializerState::FontFile(None);
+                            *self.state__ =
+                                ResFontsFontXElementTypeDeserializerState::FontFile(None);
                             event
                         }
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -51934,13 +52015,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -51953,7 +52034,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResFontsFontXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -51976,7 +52057,7 @@ pub mod res {
             format: Option<::std::string::String>,
             id: ::core::primitive::u32,
             media_file: Option<::std::string::String>,
-            state: Box<ResMultiMediasMultiMediaXElementTypeDeserializerState>,
+            state__: Box<ResMultiMediasMultiMediaXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResMultiMediasMultiMediaXElementTypeDeserializerState {
@@ -52023,7 +52104,9 @@ pub mod res {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     media_file: None,
-                    state: Box::new(ResMultiMediasMultiMediaXElementTypeDeserializerState::Init__),
+                    state__: Box::new(
+                        ResMultiMediasMultiMediaXElementTypeDeserializerState::Init__,
+                    ),
                 })
             }
             fn finish_state<R>(
@@ -52071,10 +52154,11 @@ pub mod res {
                         fallback.get_or_insert(
                             ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(None),
                         );
-                        *self.state = ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -52086,7 +52170,8 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_media_file(data)?;
-                        *self.state = ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -52094,11 +52179,11 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResMultiMediasMultiMediaXElementTypeDeserializerState :: MediaFile (Some (deserializer))) ;
-                                *self.state =
+                                *self.state__ =
                                     ResMultiMediasMultiMediaXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResMultiMediasMultiMediaXElementTypeDeserializerState :: MediaFile (Some (deserializer)) ;
+                                * self . state__ = ResMultiMediasMultiMediaXElementTypeDeserializerState :: MediaFile (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -52131,7 +52216,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::MediaFile(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -52157,7 +52242,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 ResMultiMediasMultiMediaXElementTypeDeserializerState::MediaFile(
                                     None,
                                 );
@@ -52186,13 +52271,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -52208,7 +52293,7 @@ pub mod res {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ResMultiMediasMultiMediaXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -52230,7 +52315,7 @@ pub mod res {
             thumbnail: Option<::core::primitive::u32>,
             substitution: Option<::core::primitive::u32>,
             content: Option<super::super::page::CtPageBlockXType>,
-            state: Box<ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState>,
+            state__: Box<ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState {
@@ -52272,7 +52357,7 @@ pub mod res {
                         reader.raise_unexpected_attrib_checked(attrib)?;
                     }
                 }
-                Ok (Self { width : width . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("Width" . into ()))) ? , height : height . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("Height" . into ()))) ? , id : id . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("ID" . into ()))) ? , thumbnail : None , substitution : None , content : None , state : Box :: new (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Init__) , })
+                Ok (Self { width : width . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("Width" . into ()))) ? , height : height . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("Height" . into ()))) ? , id : id . ok_or_else (|| reader . map_error (ErrorKind :: MissingAttribute ("ID" . into ()))) ? , thumbnail : None , substitution : None , content : None , state__ : Box :: new (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Init__) , })
             }
             fn finish_state<R>(
                 &mut self,
@@ -52345,7 +52430,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (None)) ;
-                    * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                    * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -52355,7 +52440,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_thumbnail(data)?;
-                        * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -52363,10 +52448,10 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (Some (deserializer))) ;
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (Some (deserializer)) ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -52391,7 +52476,7 @@ pub mod res {
                 } = output;
                 if artifact.is_none() {
                     fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (None)) ;
-                    * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                    * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -52401,7 +52486,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_substitution(data)?;
-                        * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -52409,10 +52494,10 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (Some (deserializer))) ;
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (Some (deserializer)) ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Substitution (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -52438,10 +52523,10 @@ pub mod res {
                 if artifact.is_none() {
                     if self.content.is_some() {
                         fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None)) ;
-                        * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
+                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
+                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (None) ;
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -52452,7 +52537,7 @@ pub mod res {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
+                        * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -52460,10 +52545,10 @@ pub mod res {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (Some (deserializer))) ;
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Done__ ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (Some (deserializer)) ;
+                                * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Content (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -52502,7 +52587,7 @@ pub mod res {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Thumbnail(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -52552,7 +52637,7 @@ pub mod res {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (None) ;
+                            * self . state__ = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Thumbnail (None) ;
                             event
                         }
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -52612,13 +52697,13 @@ pub mod res {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -52633,7 +52718,7 @@ pub mod res {
             where
                 R: DeserializeReader,
             {
-                let state = replace (& mut * self . state , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Unknown__) ;
+                let state = replace (& mut * self . state__ , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeDeserializerState :: Unknown__) ;
                 self.finish_state(reader, state)?;
                 Ok(
                     super::ResCompositeGraphicUnitsCompositeGraphicUnitXElementType {
@@ -54199,7 +54284,7 @@ pub mod signature {
         pub struct SianatureXElementTypeDeserializer {
             siqned_info: Option<super::SianatureSiqnedInfoXElementType>,
             signed_value: Option<::std::string::String>,
-            state: Box<SianatureXElementTypeDeserializerState>,
+            state__: Box<SianatureXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureXElementTypeDeserializerState {
@@ -54223,7 +54308,7 @@ pub mod signature {
                 Ok(Self {
                     siqned_info: None,
                     signed_value: None,
-                    state: Box::new(SianatureXElementTypeDeserializerState::Init__),
+                    state__: Box::new(SianatureXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -54286,10 +54371,10 @@ pub mod signature {
                         fallback.get_or_insert(SianatureXElementTypeDeserializerState::SiqnedInfo(
                             None,
                         ));
-                        *self.state = SianatureXElementTypeDeserializerState::SignedValue(None);
+                        *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = SianatureXElementTypeDeserializerState::SiqnedInfo(None);
+                        *self.state__ = SianatureXElementTypeDeserializerState::SiqnedInfo(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -54300,7 +54385,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_siqned_info(data)?;
-                        *self.state = SianatureXElementTypeDeserializerState::SignedValue(None);
+                        *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -54312,11 +54397,11 @@ pub mod signature {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SianatureXElementTypeDeserializerState::SignedValue(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = SianatureXElementTypeDeserializerState::SiqnedInfo(
+                                *self.state__ = SianatureXElementTypeDeserializerState::SiqnedInfo(
                                     Some(deserializer),
                                 );
                             }
@@ -54344,10 +54429,10 @@ pub mod signature {
                         fallback.get_or_insert(
                             SianatureXElementTypeDeserializerState::SignedValue(None),
                         );
-                        *self.state = SianatureXElementTypeDeserializerState::Done__;
+                        *self.state__ = SianatureXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = SianatureXElementTypeDeserializerState::SignedValue(None);
+                        *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -54358,7 +54443,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signed_value(data)?;
-                        *self.state = SianatureXElementTypeDeserializerState::Done__;
+                        *self.state__ = SianatureXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -54370,10 +54455,10 @@ pub mod signature {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = SianatureXElementTypeDeserializerState::Done__;
+                                *self.state__ = SianatureXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = SianatureXElementTypeDeserializerState::SignedValue(
+                                *self.state__ = SianatureXElementTypeDeserializerState::SignedValue(
                                     Some(deserializer),
                                 );
                             }
@@ -54406,7 +54491,7 @@ pub mod signature {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::SiqnedInfo(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -54444,7 +54529,8 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = SianatureXElementTypeDeserializerState::SiqnedInfo(None);
+                            *self.state__ =
+                                SianatureXElementTypeDeserializerState::SiqnedInfo(None);
                             event
                         }
                         (S::SiqnedInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -54487,13 +54573,13 @@ pub mod signature {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -54506,7 +54592,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -54528,7 +54614,7 @@ pub mod signature {
             references: Option<super::SianatureSiqnedInfoReferencesXElementType>,
             stamp_annot: Vec<super::SianatureSiqnedInfoStampAnnotXElementType>,
             seal: Option<super::SianatureSiqnedInfoSealXElementType>,
-            state: Box<SianatureSiqnedInfoXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoXElementTypeDeserializerState {
@@ -54549,7 +54635,7 @@ pub mod signature {
                     references: None,
                     stamp_annot: Vec::new(),
                     seal: None,
-                    state: Box::new(SianatureSiqnedInfoXElementTypeDeserializerState::Init__),
+                    state__: Box::new(SianatureSiqnedInfoXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -54666,11 +54752,11 @@ pub mod signature {
                         fallback.get_or_insert(
                             SianatureSiqnedInfoXElementTypeDeserializerState::Provider(None),
                         );
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::Provider(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -54682,7 +54768,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_provider(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -54695,10 +54781,10 @@ pub mod signature {
                                         Some(deserializer),
                                     ),
                                 );
-                                * self . state = SianatureSiqnedInfoXElementTypeDeserializerState :: SignatureMethod (None) ;
+                                * self . state__ = SianatureSiqnedInfoXElementTypeDeserializerState :: SignatureMethod (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::Provider(
                                         Some(deserializer),
                                     );
@@ -54726,7 +54812,7 @@ pub mod signature {
                     fallback.get_or_insert(
                         SianatureSiqnedInfoXElementTypeDeserializerState::SignatureMethod(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -54737,7 +54823,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature_method(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(
                                 None,
                             );
@@ -54748,10 +54834,10 @@ pub mod signature {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (SianatureSiqnedInfoXElementTypeDeserializerState :: SignatureMethod (Some (deserializer))) ;
-                                * self . state = SianatureSiqnedInfoXElementTypeDeserializerState :: SianatureDateTime (None) ;
+                                * self . state__ = SianatureSiqnedInfoXElementTypeDeserializerState :: SianatureDateTime (None) ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = SianatureSiqnedInfoXElementTypeDeserializerState :: SignatureMethod (Some (deserializer)) ;
+                                * self . state__ = SianatureSiqnedInfoXElementTypeDeserializerState :: SignatureMethod (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -54776,7 +54862,7 @@ pub mod signature {
                     fallback.get_or_insert(
                         SianatureSiqnedInfoXElementTypeDeserializerState::SianatureDateTime(None),
                     );
-                    *self.state =
+                    *self.state__ =
                         SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
@@ -54787,7 +54873,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_sianature_date_time(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -54796,13 +54882,13 @@ pub mod signature {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (SianatureSiqnedInfoXElementTypeDeserializerState :: SianatureDateTime (Some (deserializer))) ;
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::References(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = SianatureSiqnedInfoXElementTypeDeserializerState :: SianatureDateTime (Some (deserializer)) ;
+                                * self . state__ = SianatureSiqnedInfoXElementTypeDeserializerState :: SianatureDateTime (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -54828,11 +54914,11 @@ pub mod signature {
                         fallback.get_or_insert(
                             SianatureSiqnedInfoXElementTypeDeserializerState::References(None),
                         );
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::References(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -54844,7 +54930,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_references(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -54857,13 +54943,13 @@ pub mod signature {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::References(
                                         Some(deserializer),
                                     );
@@ -54891,7 +54977,7 @@ pub mod signature {
                     fallback.get_or_insert(
                         SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None),
                     );
-                    *self.state = SianatureSiqnedInfoXElementTypeDeserializerState::Seal(None);
+                    *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Seal(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -54901,7 +54987,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_stamp_annot(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
@@ -54914,13 +55000,13 @@ pub mod signature {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(
                                         None,
                                     );
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::StampAnnot(
                                         Some(deserializer),
                                     );
@@ -54948,7 +55034,7 @@ pub mod signature {
                     fallback.get_or_insert(SianatureSiqnedInfoXElementTypeDeserializerState::Seal(
                         None,
                     ));
-                    *self.state = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
+                    *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -54958,7 +55044,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_seal(data)?;
-                        *self.state = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
+                        *self.state__ = SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -54970,11 +55056,11 @@ pub mod signature {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoXElementTypeDeserializerState::Seal(Some(
                                         deserializer,
                                     ));
@@ -55010,7 +55096,7 @@ pub mod signature {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Provider(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -55096,7 +55182,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 SianatureSiqnedInfoXElementTypeDeserializerState::Provider(None);
                             event
                         }
@@ -55211,13 +55297,13 @@ pub mod signature {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -55233,7 +55319,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -55256,7 +55342,7 @@ pub mod signature {
             provider_name: ::std::string::String,
             version: Option<::std::string::String>,
             company: Option<::std::string::String>,
-            state: Box<SianatureSiqnedInfoProviderXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoProviderXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoProviderXElementTypeDeserializerState {
@@ -55298,7 +55384,7 @@ pub mod signature {
                     })?,
                     version: version,
                     company: company,
-                    state: Box::new(
+                    state__: Box::new(
                         SianatureSiqnedInfoProviderXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -55356,7 +55442,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoProviderXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -55371,7 +55457,7 @@ pub mod signature {
         pub struct SianatureSiqnedInfoReferencesXElementTypeDeserializer {
             check_method: super::SianatureSiqnedInfoReferencesCheckMethodXType,
             reference: Vec<super::SianatureSiqnedInfoReferencesReferenceXElementType>,
-            state: Box<SianatureSiqnedInfoReferencesXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoReferencesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoReferencesXElementTypeDeserializerState {
@@ -55399,7 +55485,7 @@ pub mod signature {
                         super::SianatureSiqnedInfoReferencesXElementType::default_check_method,
                     ),
                     reference: Vec::new(),
-                    state: Box::new(
+                    state__: Box::new(
                         SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -55447,7 +55533,7 @@ pub mod signature {
                 } = output;
                 if artifact.is_none() {
                     if self.reference.len() < 1usize {
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
                                 None,
                             );
@@ -55458,7 +55544,7 @@ pub mod signature {
                                 None,
                             ),
                         );
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
@@ -55470,7 +55556,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_reference(data)?;
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Reference(
                                 None,
                             );
@@ -55482,13 +55568,13 @@ pub mod signature {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (Some (deserializer))) ;
                                 if self.reference.len().saturating_add(1) < 1usize {
-                                    * self . state = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
+                                    * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
                                 } else {
-                                    * self . state = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Done__ ;
+                                    * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Done__ ;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (Some (deserializer)) ;
+                                * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -55521,7 +55607,7 @@ pub mod signature {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Reference(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -55547,7 +55633,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
+                            * self . state__ = SianatureSiqnedInfoReferencesXElementTypeDeserializerState :: Reference (None) ;
                             event
                         }
                         (S::Reference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -55573,13 +55659,13 @@ pub mod signature {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -55595,7 +55681,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoReferencesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -55611,7 +55697,7 @@ pub mod signature {
             page_ref: ::core::primitive::u32,
             boundary: ::std::string::String,
             clip: Option<::std::string::String>,
-            state: Box<SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState {
@@ -55664,7 +55750,7 @@ pub mod signature {
                         reader.map_error(ErrorKind::MissingAttribute("Boundary".into()))
                     })?,
                     clip: clip,
-                    state: Box::new(
+                    state__: Box::new(
                         SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -55722,7 +55808,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoStampAnnotXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -55737,7 +55823,7 @@ pub mod signature {
         #[derive(Debug)]
         pub struct SianatureSiqnedInfoSealXElementTypeDeserializer {
             base_loc: Option<::std::string::String>,
-            state: Box<SianatureSiqnedInfoSealXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoSealXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoSealXElementTypeDeserializerState {
@@ -55757,7 +55843,7 @@ pub mod signature {
                 }
                 Ok(Self {
                     base_loc: None,
-                    state: Box::new(SianatureSiqnedInfoSealXElementTypeDeserializerState::Init__),
+                    state__: Box::new(SianatureSiqnedInfoSealXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -55805,10 +55891,11 @@ pub mod signature {
                         fallback.get_or_insert(
                             SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(None),
                         );
-                        *self.state = SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state =
+                        *self.state__ =
                             SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
@@ -55820,7 +55907,8 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_base_loc(data)?;
-                        *self.state = SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
+                        *self.state__ =
+                            SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -55832,11 +55920,11 @@ pub mod signature {
                                         Some(deserializer),
                                     ),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoSealXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(
                                         Some(deserializer),
                                     );
@@ -55872,7 +55960,7 @@ pub mod signature {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::BaseLoc(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -55898,7 +55986,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 SianatureSiqnedInfoSealXElementTypeDeserializerState::BaseLoc(None);
                             event
                         }
@@ -55925,13 +56013,13 @@ pub mod signature {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -55947,7 +56035,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoSealXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -55962,7 +56050,7 @@ pub mod signature {
         pub struct SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializer {
             file_ref: ::std::string::String,
             check_value: Option<::std::string::String>,
-            state: Box<SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState>,
+            state__: Box<SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState {
@@ -55993,7 +56081,7 @@ pub mod signature {
                         reader.map_error(ErrorKind::MissingAttribute("FileRef".into()))
                     })?,
                     check_value: None,
-                    state: Box::new(
+                    state__: Box::new(
                         SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState::Init__,
                     ),
                 })
@@ -56043,10 +56131,10 @@ pub mod signature {
                 if artifact.is_none() {
                     if self.check_value.is_some() {
                         fallback . get_or_insert (SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None)) ;
-                        * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
+                        * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None) ;
+                        * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None) ;
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -56057,7 +56145,7 @@ pub mod signature {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_value(data)?;
-                        * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
+                        * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -56065,10 +56153,10 @@ pub mod signature {
                         match &ret {
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback . get_or_insert (SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (Some (deserializer))) ;
-                                * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
+                                * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: Done__ ;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (Some (deserializer)) ;
+                                * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (Some (deserializer)) ;
                             }
                         }
                         ret
@@ -56101,7 +56189,7 @@ pub mod signature {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CheckValue(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -56127,7 +56215,7 @@ pub mod signature {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None) ;
+                            * self . state__ = SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState :: CheckValue (None) ;
                             event
                         }
                         (S::CheckValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -56153,13 +56241,13 @@ pub mod signature {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -56175,7 +56263,7 @@ pub mod signature {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SianatureSiqnedInfoReferencesReferenceXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -56738,7 +56826,7 @@ pub mod signatures {
         pub struct SiqnaturesXElementTypeDeserializer {
             max_sign_id: Option<::std::string::String>,
             signature: Vec<super::SiqnaturesSignatureXElementType>,
-            state: Box<SiqnaturesXElementTypeDeserializerState>,
+            state__: Box<SiqnaturesXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SiqnaturesXElementTypeDeserializerState {
@@ -56762,7 +56850,7 @@ pub mod signatures {
                 Ok(Self {
                     max_sign_id: None,
                     signature: Vec::new(),
-                    state: Box::new(SiqnaturesXElementTypeDeserializerState::Init__),
+                    state__: Box::new(SiqnaturesXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -56818,7 +56906,7 @@ pub mod signatures {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(SiqnaturesXElementTypeDeserializerState::MaxSignId(None));
-                    *self.state = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                    *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -56828,7 +56916,7 @@ pub mod signatures {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_max_sign_id(data)?;
-                        *self.state = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -56840,11 +56928,11 @@ pub mod signatures {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SiqnaturesXElementTypeDeserializerState::Signature(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = SiqnaturesXElementTypeDeserializerState::MaxSignId(
+                                *self.state__ = SiqnaturesXElementTypeDeserializerState::MaxSignId(
                                     Some(deserializer),
                                 );
                             }
@@ -56870,7 +56958,7 @@ pub mod signatures {
                 if artifact.is_none() {
                     fallback
                         .get_or_insert(SiqnaturesXElementTypeDeserializerState::Signature(None));
-                    *self.state = SiqnaturesXElementTypeDeserializerState::Done__;
+                    *self.state__ = SiqnaturesXElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -56880,7 +56968,7 @@ pub mod signatures {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_signature(data)?;
-                        *self.state = SiqnaturesXElementTypeDeserializerState::Signature(None);
+                        *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -56892,11 +56980,11 @@ pub mod signatures {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     SiqnaturesXElementTypeDeserializerState::Signature(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = SiqnaturesXElementTypeDeserializerState::Signature(
+                                *self.state__ = SiqnaturesXElementTypeDeserializerState::Signature(
                                     Some(deserializer),
                                 );
                             }
@@ -56929,7 +57017,7 @@ pub mod signatures {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::MaxSignId(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -56967,7 +57055,8 @@ pub mod signatures {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = SiqnaturesXElementTypeDeserializerState::MaxSignId(None);
+                            *self.state__ =
+                                SiqnaturesXElementTypeDeserializerState::MaxSignId(None);
                             event
                         }
                         (S::MaxSignId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -57010,13 +57099,13 @@ pub mod signatures {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -57029,7 +57118,7 @@ pub mod signatures {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SiqnaturesXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -57044,7 +57133,7 @@ pub mod signatures {
             id: ::std::string::String,
             type_: super::SiqnaturesSignatureTypeXType,
             base_loc: ::std::string::String,
-            state: Box<SiqnaturesSignatureXElementTypeDeserializerState>,
+            state__: Box<SiqnaturesSignatureXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SiqnaturesSignatureXElementTypeDeserializerState {
@@ -57089,7 +57178,7 @@ pub mod signatures {
                     base_loc: base_loc.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("BaseLoc".into()))
                     })?,
-                    state: Box::new(SiqnaturesSignatureXElementTypeDeserializerState::Init__),
+                    state__: Box::new(SiqnaturesSignatureXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -57145,7 +57234,7 @@ pub mod signatures {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SiqnaturesSignatureXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -57390,7 +57479,7 @@ pub mod version {
             creation_date: Option<::std::string::String>,
             file_list: Option<super::DocVersionFileListXElementType>,
             doc_root: Option<::std::string::String>,
-            state: Box<DocVersionXElementTypeDeserializerState>,
+            state__: Box<DocVersionXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocVersionXElementTypeDeserializerState {
@@ -57446,7 +57535,7 @@ pub mod version {
                     creation_date: creation_date,
                     file_list: None,
                     doc_root: None,
-                    state: Box::new(DocVersionXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocVersionXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -57508,10 +57597,10 @@ pub mod version {
                     if self.file_list.is_some() {
                         fallback
                             .get_or_insert(DocVersionXElementTypeDeserializerState::FileList(None));
-                        *self.state = DocVersionXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = DocVersionXElementTypeDeserializerState::FileList(None);
+                        *self.state__ = DocVersionXElementTypeDeserializerState::FileList(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -57522,7 +57611,7 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file_list(data)?;
-                        *self.state = DocVersionXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -57534,11 +57623,11 @@ pub mod version {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     DocVersionXElementTypeDeserializerState::DocRoot(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocVersionXElementTypeDeserializerState::FileList(
+                                *self.state__ = DocVersionXElementTypeDeserializerState::FileList(
                                     Some(deserializer),
                                 );
                             }
@@ -57565,10 +57654,10 @@ pub mod version {
                     if self.doc_root.is_some() {
                         fallback
                             .get_or_insert(DocVersionXElementTypeDeserializerState::DocRoot(None));
-                        *self.state = DocVersionXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocVersionXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = DocVersionXElementTypeDeserializerState::DocRoot(None);
+                        *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -57579,7 +57668,7 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_doc_root(data)?;
-                        *self.state = DocVersionXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocVersionXElementTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -57591,10 +57680,10 @@ pub mod version {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = DocVersionXElementTypeDeserializerState::Done__;
+                                *self.state__ = DocVersionXElementTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocVersionXElementTypeDeserializerState::DocRoot(
+                                *self.state__ = DocVersionXElementTypeDeserializerState::DocRoot(
                                     Some(deserializer),
                                 );
                             }
@@ -57627,7 +57716,7 @@ pub mod version {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::FileList(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -57665,7 +57754,7 @@ pub mod version {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = DocVersionXElementTypeDeserializerState::FileList(None);
+                            *self.state__ = DocVersionXElementTypeDeserializerState::FileList(None);
                             event
                         }
                         (S::FileList(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -57708,13 +57797,13 @@ pub mod version {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -57727,7 +57816,7 @@ pub mod version {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocVersionXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -57748,7 +57837,7 @@ pub mod version {
         #[derive(Debug)]
         pub struct DocVersionFileListXElementTypeDeserializer {
             file: Vec<super::DocVersionFileListFileXElementType>,
-            state: Box<DocVersionFileListXElementTypeDeserializerState>,
+            state__: Box<DocVersionFileListXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocVersionFileListXElementTypeDeserializerState {
@@ -57772,7 +57861,7 @@ pub mod version {
                 }
                 Ok(Self {
                     file: Vec::new(),
-                    state: Box::new(DocVersionFileListXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocVersionFileListXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -57813,13 +57902,13 @@ pub mod version {
                 } = output;
                 if artifact.is_none() {
                     if self.file.len() < 1usize {
-                        *self.state = DocVersionFileListXElementTypeDeserializerState::File(None);
+                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::File(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             DocVersionFileListXElementTypeDeserializerState::File(None),
                         );
-                        *self.state = DocVersionFileListXElementTypeDeserializerState::Done__;
+                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -57830,7 +57919,7 @@ pub mod version {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_file(data)?;
-                        *self.state = DocVersionFileListXElementTypeDeserializerState::File(None);
+                        *self.state__ = DocVersionFileListXElementTypeDeserializerState::File(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -57843,17 +57932,18 @@ pub mod version {
                                     )),
                                 );
                                 if self.file.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         DocVersionFileListXElementTypeDeserializerState::File(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         DocVersionFileListXElementTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = DocVersionFileListXElementTypeDeserializerState::File(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    DocVersionFileListXElementTypeDeserializerState::File(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -57886,7 +57976,7 @@ pub mod version {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::File(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -57912,7 +58002,7 @@ pub mod version {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 DocVersionFileListXElementTypeDeserializerState::File(None);
                             event
                         }
@@ -57939,13 +58029,13 @@ pub mod version {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -57961,7 +58051,7 @@ pub mod version {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocVersionFileListXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -57972,7 +58062,7 @@ pub mod version {
         pub struct DocVersionFileListFileXElementTypeDeserializer {
             id: ::std::string::String,
             content: Option<::std::string::String>,
-            state: Box<DocVersionFileListFileXElementTypeDeserializerState>,
+            state__: Box<DocVersionFileListFileXElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DocVersionFileListFileXElementTypeDeserializerState {
@@ -58002,7 +58092,7 @@ pub mod version {
                         reader.map_error(ErrorKind::MissingAttribute("ID".into()))
                     })?,
                     content: None,
-                    state: Box::new(DocVersionFileListFileXElementTypeDeserializerState::Init__),
+                    state__: Box::new(DocVersionFileListFileXElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -58058,7 +58148,7 @@ pub mod version {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -58096,7 +58186,7 @@ pub mod version {
                 R: DeserializeReader,
             {
                 use DocVersionFileListFileXElementTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -58116,7 +58206,7 @@ pub mod version {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     DocVersionFileListFileXElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -58470,7 +58560,7 @@ pub mod xs {
         };
         #[derive(Debug)]
         pub struct AnyTypeXTypeDeserializer {
-            state: Box<AnyTypeXTypeDeserializerState>,
+            state__: Box<AnyTypeXTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum AnyTypeXTypeDeserializerState {
@@ -58483,7 +58573,7 @@ pub mod xs {
                 R: DeserializeReader,
             {
                 Ok(Self {
-                    state: Box::new(AnyTypeXTypeDeserializerState::Init__),
+                    state__: Box::new(AnyTypeXTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -58533,7 +58623,7 @@ pub mod xs {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, AnyTypeXTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, AnyTypeXTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::AnyTypeXType {})
             }

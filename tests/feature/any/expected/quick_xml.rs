@@ -96,7 +96,7 @@ pub mod quick_xml_deserialize {
         any_0: Vec<AnyElement>,
         choice: Vec<super::ChoiceType>,
         any_1: Vec<AnyElement>,
-        state: Box<FooTypeDeserializerState>,
+        state__: Box<FooTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum FooTypeDeserializerState {
@@ -124,7 +124,7 @@ pub mod quick_xml_deserialize {
                 any_0: Vec::new(),
                 choice: Vec::new(),
                 any_1: Vec::new(),
-                state: Box::new(FooTypeDeserializerState::Init__),
+                state__: Box::new(FooTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -181,10 +181,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.name.is_some() {
                     fallback.get_or_insert(FooTypeDeserializerState::Name(None));
-                    *self.state = FooTypeDeserializerState::Any0(None);
+                    *self.state__ = FooTypeDeserializerState::Any0(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = FooTypeDeserializerState::Name(None);
+                    *self.state__ = FooTypeDeserializerState::Name(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -195,7 +195,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_name(data)?;
-                    *self.state = FooTypeDeserializerState::Any0(None);
+                    *self.state__ = FooTypeDeserializerState::Any0(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -204,10 +204,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(FooTypeDeserializerState::Name(Some(deserializer)));
-                            *self.state = FooTypeDeserializerState::Any0(None);
+                            *self.state__ = FooTypeDeserializerState::Any0(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Name(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Name(Some(deserializer));
                         }
                     }
                     ret
@@ -230,7 +230,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(FooTypeDeserializerState::Any0(None));
-                *self.state = FooTypeDeserializerState::Choice(None);
+                *self.state__ = FooTypeDeserializerState::Choice(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -240,7 +240,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_any_0(data)?;
-                    *self.state = FooTypeDeserializerState::Any0(None);
+                    *self.state__ = FooTypeDeserializerState::Any0(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -249,10 +249,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(FooTypeDeserializerState::Any0(Some(deserializer)));
-                            *self.state = FooTypeDeserializerState::Any0(None);
+                            *self.state__ = FooTypeDeserializerState::Any0(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Any0(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Any0(Some(deserializer));
                         }
                     }
                     ret
@@ -275,7 +275,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(FooTypeDeserializerState::Choice(None));
-                *self.state = FooTypeDeserializerState::Any1(None);
+                *self.state__ = FooTypeDeserializerState::Any1(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -285,7 +285,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_choice(data)?;
-                    *self.state = FooTypeDeserializerState::Choice(None);
+                    *self.state__ = FooTypeDeserializerState::Choice(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -295,10 +295,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(FooTypeDeserializerState::Choice(Some(
                                 deserializer,
                             )));
-                            *self.state = FooTypeDeserializerState::Choice(None);
+                            *self.state__ = FooTypeDeserializerState::Choice(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Choice(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Choice(Some(deserializer));
                         }
                     }
                     ret
@@ -321,7 +321,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(FooTypeDeserializerState::Any1(None));
-                *self.state = FooTypeDeserializerState::Done__;
+                *self.state__ = FooTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -331,7 +331,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_any_1(data)?;
-                    *self.state = FooTypeDeserializerState::Any1(None);
+                    *self.state__ = FooTypeDeserializerState::Any1(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -340,10 +340,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(FooTypeDeserializerState::Any1(Some(deserializer)));
-                            *self.state = FooTypeDeserializerState::Any1(None);
+                            *self.state__ = FooTypeDeserializerState::Any1(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = FooTypeDeserializerState::Any1(Some(deserializer));
+                            *self.state__ = FooTypeDeserializerState::Any1(Some(deserializer));
                         }
                     }
                     ret
@@ -373,7 +373,7 @@ pub mod quick_xml_deserialize {
             let mut is_any_retry = false;
             let mut any_fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Name(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -435,7 +435,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = FooTypeDeserializerState::Name(None);
+                        *self.state__ = FooTypeDeserializerState::Name(None);
                         event
                     }
                     (S::Name(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -471,7 +471,7 @@ pub mod quick_xml_deserialize {
                             }
                         } else {
                             any_fallback.get_or_insert(S::Any0(None));
-                            *self.state = S::Choice(None);
+                            *self.state__ = S::Choice(None);
                             event
                         }
                     }
@@ -508,14 +508,14 @@ pub mod quick_xml_deserialize {
                             }
                         } else {
                             any_fallback.get_or_insert(S::Any1(None));
-                            *self.state = S::Done__;
+                            *self.state__ = S::Done__;
                             event
                         }
                     }
                     (S::Done__, event) => {
                         if let Some(state) = any_fallback.take() {
                             is_any_retry = true;
-                            *self.state = state;
+                            *self.state__ = state;
                             event
                         } else {
                             fallback.get_or_insert(S::Done__);
@@ -524,13 +524,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
-                        *self.state = state;
+                        *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
             if let Some(fallback) = fallback {
-                *self.state = fallback;
+                *self.state__ = fallback;
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -542,7 +542,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, FooTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, FooTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::FooType {
                 any_attribute: self.any_attribute,
@@ -559,7 +559,7 @@ pub mod quick_xml_deserialize {
     pub struct ChoiceTypeDeserializer {
         any_attribute: AnyAttributes,
         content: Option<super::ChoiceTypeContent>,
-        state: Box<ChoiceTypeDeserializerState>,
+        state__: Box<ChoiceTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum ChoiceTypeDeserializerState {
@@ -581,7 +581,7 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 any_attribute: any_attribute,
                 content: None,
-                state: Box::new(ChoiceTypeDeserializerState::Init__),
+                state__: Box::new(ChoiceTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -619,7 +619,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(ChoiceTypeDeserializerState::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -631,11 +631,11 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state = ChoiceTypeDeserializerState::Next__;
+                    *self.state__ = ChoiceTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = ChoiceTypeDeserializerState::Content__(deserializer);
+                    *self.state__ = ChoiceTypeDeserializerState::Content__(deserializer);
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
             })
@@ -660,7 +660,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -705,7 +705,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, ChoiceTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, ChoiceTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::ChoiceType {
                 any_attribute: self.any_attribute,
@@ -715,7 +715,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct ChoiceTypeContentDeserializer {
-        state: Box<ChoiceTypeContentDeserializerState>,
+        state__: Box<ChoiceTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     pub enum ChoiceTypeContentDeserializerState {
@@ -761,7 +761,7 @@ pub mod quick_xml_deserialize {
                     }
                 };
             }
-            *self.state = fallback
+            *self.state__ = fallback
                 .take()
                 .unwrap_or(ChoiceTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -828,9 +828,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = ChoiceTypeContentDeserializerState::Init__;
+                        *self.state__ = ChoiceTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => ChoiceTypeContentDeserializerState::Name(values, None),
@@ -857,11 +857,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         ChoiceTypeContentDeserializerState::Name(values, None),
                     )?;
-                    *self.state = ChoiceTypeContentDeserializerState::Done__(data);
+                    *self.state__ = ChoiceTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state =
+                    *self.state__ =
                         ChoiceTypeContentDeserializerState::Name(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
@@ -883,9 +883,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = ChoiceTypeContentDeserializerState::Init__;
+                        *self.state__ = ChoiceTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => ChoiceTypeContentDeserializerState::Any(values, None),
@@ -912,11 +912,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         ChoiceTypeContentDeserializerState::Any(values, None),
                     )?;
-                    *self.state = ChoiceTypeContentDeserializerState::Done__(data);
+                    *self.state__ = ChoiceTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state =
+                    *self.state__ =
                         ChoiceTypeContentDeserializerState::Any(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
@@ -932,12 +932,12 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let deserializer = Self {
-                state: Box::new(ChoiceTypeContentDeserializerState::Init__),
+                state__: Box::new(ChoiceTypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, ChoiceTypeContentDeserializerState::Init__) =>
+                    if matches!(&*x.state__, ChoiceTypeContentDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -957,7 +957,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Name(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -1017,13 +1017,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (s @ S::Done__(_), event) => {
-                        *self.state = s;
+                        *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = if matches!(&*self.state, S::Done__(_)) {
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(reader)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
@@ -1038,7 +1038,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            Self::finish_state(reader, *self.state)
+            Self::finish_state(reader, *self.state__)
         }
     }
 }

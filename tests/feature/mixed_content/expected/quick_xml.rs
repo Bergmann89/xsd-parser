@@ -167,7 +167,7 @@ pub mod quick_xml_deserialize {
         text_before: Option<Text>,
         fuu: Option<Mixed<i32>>,
         bar: Option<Mixed<String>>,
-        state: Box<MixedAllTypeDeserializerState>,
+        state__: Box<MixedAllTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum MixedAllTypeDeserializerState {
@@ -221,7 +221,7 @@ pub mod quick_xml_deserialize {
                 text_before: None,
                 fuu: None,
                 bar: None,
-                state: Box::new(MixedAllTypeDeserializerState::Init__),
+                state__: Box::new(MixedAllTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -282,7 +282,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 let ret = ElementHandlerOutput::from_event(event, allow_any);
-                *self.state = match ret {
+                *self.state__ = match ret {
                     ElementHandlerOutput::Continue { .. } => MixedAllTypeDeserializerState::Next__,
                     ElementHandlerOutput::Break { .. } => fallback
                         .take()
@@ -297,7 +297,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = MixedAllTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -307,10 +307,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedAllTypeDeserializerState::TextBefore(
                                 deserializer,
                             ));
-                            *self.state = MixedAllTypeDeserializerState::Next__;
+                            *self.state__ = MixedAllTypeDeserializerState::Next__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = MixedAllTypeDeserializerState::TextBefore(deserializer);
+                            *self.state__ = MixedAllTypeDeserializerState::TextBefore(deserializer);
                         }
                     }
                     ret
@@ -333,7 +333,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 let ret = ElementHandlerOutput::from_event(event, allow_any);
-                *self.state = match ret {
+                *self.state__ = match ret {
                     ElementHandlerOutput::Continue { .. } => MixedAllTypeDeserializerState::Next__,
                     ElementHandlerOutput::Break { .. } => fallback
                         .take()
@@ -348,7 +348,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = MixedAllTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -357,10 +357,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(MixedAllTypeDeserializerState::Fuu(deserializer));
-                            *self.state = MixedAllTypeDeserializerState::Next__;
+                            *self.state__ = MixedAllTypeDeserializerState::Next__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = MixedAllTypeDeserializerState::Fuu(deserializer);
+                            *self.state__ = MixedAllTypeDeserializerState::Fuu(deserializer);
                         }
                     }
                     ret
@@ -383,7 +383,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 let ret = ElementHandlerOutput::from_event(event, allow_any);
-                *self.state = match ret {
+                *self.state__ = match ret {
                     ElementHandlerOutput::Continue { .. } => MixedAllTypeDeserializerState::Next__,
                     ElementHandlerOutput::Break { .. } => fallback
                         .take()
@@ -398,7 +398,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state = MixedAllTypeDeserializerState::Next__;
+                    *self.state__ = MixedAllTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -407,10 +407,10 @@ pub mod quick_xml_deserialize {
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(MixedAllTypeDeserializerState::Bar(deserializer));
-                            *self.state = MixedAllTypeDeserializerState::Next__;
+                            *self.state__ = MixedAllTypeDeserializerState::Next__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = MixedAllTypeDeserializerState::Bar(deserializer);
+                            *self.state__ = MixedAllTypeDeserializerState::Bar(deserializer);
                         }
                     }
                     ret
@@ -437,7 +437,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::TextBefore(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -495,7 +495,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, MixedAllTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, MixedAllTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::MixedAllType {
                 text_before: self.text_before,
@@ -512,7 +512,7 @@ pub mod quick_xml_deserialize {
     pub struct MixedChoiceTypeDeserializer {
         text_before: Option<Text>,
         content: Option<super::MixedChoiceTypeContent>,
-        state: Box<MixedChoiceTypeDeserializerState>,
+        state__: Box<MixedChoiceTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum MixedChoiceTypeDeserializerState {
@@ -534,7 +534,7 @@ pub mod quick_xml_deserialize {
             Ok(Self {
                 text_before: None,
                 content: None,
-                state: Box::new(MixedChoiceTypeDeserializerState::Init__),
+                state__: Box::new(MixedChoiceTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -591,7 +591,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(MixedChoiceTypeDeserializerState::TextBefore(None));
-                *self.state = MixedChoiceTypeDeserializerState::Content(None);
+                *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -601,7 +601,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state = MixedChoiceTypeDeserializerState::Content(None);
+                    *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -611,10 +611,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedChoiceTypeDeserializerState::TextBefore(
                                 Some(deserializer),
                             ));
-                            *self.state = MixedChoiceTypeDeserializerState::Content(None);
+                            *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedChoiceTypeDeserializerState::TextBefore(Some(deserializer));
                         }
                     }
@@ -639,10 +639,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.content.is_some() {
                     fallback.get_or_insert(MixedChoiceTypeDeserializerState::Content(None));
-                    *self.state = MixedChoiceTypeDeserializerState::Done__;
+                    *self.state__ = MixedChoiceTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = MixedChoiceTypeDeserializerState::Content(None);
+                    *self.state__ = MixedChoiceTypeDeserializerState::Content(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -653,7 +653,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state = MixedChoiceTypeDeserializerState::Done__;
+                    *self.state__ = MixedChoiceTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -663,10 +663,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedChoiceTypeDeserializerState::Content(
                                 Some(deserializer),
                             ));
-                            *self.state = MixedChoiceTypeDeserializerState::Done__;
+                            *self.state__ = MixedChoiceTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedChoiceTypeDeserializerState::Content(Some(deserializer));
                         }
                     }
@@ -695,7 +695,7 @@ pub mod quick_xml_deserialize {
             let mut fallback = None;
             let mut allow_any_element = false;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::TextBefore(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -733,7 +733,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = MixedChoiceTypeDeserializerState::TextBefore(None);
+                        *self.state__ = MixedChoiceTypeDeserializerState::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {
@@ -766,13 +766,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
-                        *self.state = state;
+                        *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
             if let Some(fallback) = fallback {
-                *self.state = fallback;
+                *self.state__ = fallback;
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -785,7 +785,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let state = replace(
-                &mut *self.state,
+                &mut *self.state__,
                 MixedChoiceTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
@@ -799,7 +799,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct MixedChoiceTypeContentDeserializer {
-        state: Box<MixedChoiceTypeContentDeserializerState>,
+        state__: Box<MixedChoiceTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     pub enum MixedChoiceTypeContentDeserializerState {
@@ -843,7 +843,7 @@ pub mod quick_xml_deserialize {
                     return self.handle_bar(reader, Default::default(), output, &mut *fallback);
                 }
             }
-            *self.state = fallback
+            *self.state__ = fallback
                 .take()
                 .unwrap_or(MixedChoiceTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -913,9 +913,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        *self.state__ = MixedChoiceTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => MixedChoiceTypeContentDeserializerState::Fuu(values, None),
@@ -942,11 +942,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         MixedChoiceTypeContentDeserializerState::Fuu(values, None),
                     )?;
-                    *self.state = MixedChoiceTypeContentDeserializerState::Done__(data);
+                    *self.state__ = MixedChoiceTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state =
+                    *self.state__ =
                         MixedChoiceTypeContentDeserializerState::Fuu(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
@@ -968,9 +968,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = MixedChoiceTypeContentDeserializerState::Init__;
+                        *self.state__ = MixedChoiceTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => MixedChoiceTypeContentDeserializerState::Bar(values, None),
@@ -997,11 +997,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         MixedChoiceTypeContentDeserializerState::Bar(values, None),
                     )?;
-                    *self.state = MixedChoiceTypeContentDeserializerState::Done__(data);
+                    *self.state__ = MixedChoiceTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state =
+                    *self.state__ =
                         MixedChoiceTypeContentDeserializerState::Bar(values, Some(deserializer));
                     ElementHandlerOutput::from_event_end(event, allow_any)
                 }
@@ -1017,12 +1017,12 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let deserializer = Self {
-                state: Box::new(MixedChoiceTypeContentDeserializerState::Init__),
+                state__: Box::new(MixedChoiceTypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, MixedChoiceTypeContentDeserializerState::Init__) =>
+                    if matches!(&*x.state__, MixedChoiceTypeContentDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -1042,7 +1042,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Fuu(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -1106,13 +1106,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (s @ S::Done__(_), event) => {
-                        *self.state = s;
+                        *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = if matches!(&*self.state, S::Done__(_)) {
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(reader)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
@@ -1127,13 +1127,13 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            Self::finish_state(reader, *self.state)
+            Self::finish_state(reader, *self.state__)
         }
     }
     #[derive(Debug)]
     pub struct MixedChoiceListTypeDeserializer {
         content: Vec<super::MixedChoiceListTypeContent>,
-        state: Box<MixedChoiceListTypeDeserializerState>,
+        state__: Box<MixedChoiceListTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum MixedChoiceListTypeDeserializerState {
@@ -1153,7 +1153,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 content: Vec::new(),
-                state: Box::new(MixedChoiceListTypeDeserializerState::Init__),
+                state__: Box::new(MixedChoiceListTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -1188,7 +1188,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(MixedChoiceListTypeDeserializerState::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -1200,21 +1200,21 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state = MixedChoiceListTypeDeserializerState::Next__;
+                    *self.state__ = MixedChoiceListTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedChoiceListTypeDeserializerState::Content__(deserializer);
                         }
                         ElementHandlerOutput::Continue { .. } => {
                             fallback.get_or_insert(
                                 MixedChoiceListTypeDeserializerState::Content__(deserializer),
                             );
-                            *self.state = MixedChoiceListTypeDeserializerState::Next__;
+                            *self.state__ = MixedChoiceListTypeDeserializerState::Next__;
                         }
                     }
                     ret
@@ -1244,7 +1244,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -1287,7 +1287,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let state = replace(
-                &mut *self.state,
+                &mut *self.state__,
                 MixedChoiceListTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;
@@ -1298,7 +1298,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct MixedChoiceListTypeContentDeserializer {
-        state: Box<MixedChoiceListTypeContentDeserializerState>,
+        state__: Box<MixedChoiceListTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     pub enum MixedChoiceListTypeContentDeserializerState {
@@ -1422,9 +1422,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        *self.state__ = MixedChoiceListTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => MixedChoiceListTypeContentDeserializerState::Fuu(values, None),
@@ -1454,11 +1454,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         MixedChoiceListTypeContentDeserializerState::Fuu(values, None),
                     )?;
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Fuu(
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Fuu(
                         values,
                         Some(deserializer),
                     );
@@ -1482,9 +1482,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        *self.state__ = MixedChoiceListTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => MixedChoiceListTypeContentDeserializerState::Bar(values, None),
@@ -1514,11 +1514,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         MixedChoiceListTypeContentDeserializerState::Bar(values, None),
                     )?;
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Bar(
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Bar(
                         values,
                         Some(deserializer),
                     );
@@ -1542,9 +1542,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = MixedChoiceListTypeContentDeserializerState::Init__;
+                        *self.state__ = MixedChoiceListTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => MixedChoiceListTypeContentDeserializerState::Text(values, None),
@@ -1575,11 +1575,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         MixedChoiceListTypeContentDeserializerState::Text(values, None),
                     )?;
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Done__(data);
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = MixedChoiceListTypeContentDeserializerState::Text(
+                    *self.state__ = MixedChoiceListTypeContentDeserializerState::Text(
                         values,
                         Some(deserializer),
                     );
@@ -1599,13 +1599,13 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let deserializer = Self {
-                state: Box::new(MixedChoiceListTypeContentDeserializerState::Init__),
+                state__: Box::new(MixedChoiceListTypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
                     if matches!(
-                        &*x.state,
+                        &*x.state__,
                         MixedChoiceListTypeContentDeserializerState::Init__
                     ) =>
                 {
@@ -1627,7 +1627,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Fuu(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -1709,13 +1709,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (s @ S::Done__(_), event) => {
-                        *self.state = s;
+                        *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = if matches!(&*self.state, S::Done__(_)) {
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(reader)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
@@ -1730,7 +1730,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            Self::finish_state(reader, *self.state)
+            Self::finish_state(reader, *self.state__)
         }
     }
     #[derive(Debug)]
@@ -1740,7 +1740,7 @@ pub mod quick_xml_deserialize {
         text_after_fuu: Option<Text>,
         bar: Option<String>,
         text_after_bar: Option<Text>,
-        state: Box<MixedSequenceTypeDeserializerState>,
+        state__: Box<MixedSequenceTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum MixedSequenceTypeDeserializerState {
@@ -1768,7 +1768,7 @@ pub mod quick_xml_deserialize {
                 text_after_fuu: None,
                 bar: None,
                 text_after_bar: None,
-                state: Box::new(MixedSequenceTypeDeserializerState::Init__),
+                state__: Box::new(MixedSequenceTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -1853,7 +1853,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextBefore(None));
-                *self.state = MixedSequenceTypeDeserializerState::Fuu(None);
+                *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1863,7 +1863,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_before(data)?;
-                    *self.state = MixedSequenceTypeDeserializerState::Fuu(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -1873,10 +1873,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextBefore(
                                 Some(deserializer),
                             ));
-                            *self.state = MixedSequenceTypeDeserializerState::Fuu(None);
+                            *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedSequenceTypeDeserializerState::TextBefore(Some(deserializer));
                         }
                     }
@@ -1901,10 +1901,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.fuu.is_some() {
                     fallback.get_or_insert(MixedSequenceTypeDeserializerState::Fuu(None));
-                    *self.state = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = MixedSequenceTypeDeserializerState::Fuu(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::Fuu(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -1915,7 +1915,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_fuu(data)?;
-                    *self.state = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -1925,10 +1925,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedSequenceTypeDeserializerState::Fuu(Some(
                                 deserializer,
                             )));
-                            *self.state = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
+                            *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedSequenceTypeDeserializerState::Fuu(Some(deserializer));
                         }
                     }
@@ -1952,7 +1952,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterFuu(None));
-                *self.state = MixedSequenceTypeDeserializerState::Bar(None);
+                *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -1962,7 +1962,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_after_fuu(data)?;
-                    *self.state = MixedSequenceTypeDeserializerState::Bar(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -1974,10 +1974,10 @@ pub mod quick_xml_deserialize {
                                     deserializer,
                                 )),
                             );
-                            *self.state = MixedSequenceTypeDeserializerState::Bar(None);
+                            *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = MixedSequenceTypeDeserializerState::TextAfterFuu(Some(
+                            *self.state__ = MixedSequenceTypeDeserializerState::TextAfterFuu(Some(
                                 deserializer,
                             ));
                         }
@@ -2003,10 +2003,10 @@ pub mod quick_xml_deserialize {
             if artifact.is_none() {
                 if self.bar.is_some() {
                     fallback.get_or_insert(MixedSequenceTypeDeserializerState::Bar(None));
-                    *self.state = MixedSequenceTypeDeserializerState::TextAfterBar(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 } else {
-                    *self.state = MixedSequenceTypeDeserializerState::Bar(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::Bar(None);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
             }
@@ -2017,7 +2017,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_bar(data)?;
-                    *self.state = MixedSequenceTypeDeserializerState::TextAfterBar(None);
+                    *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(None);
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -2027,10 +2027,10 @@ pub mod quick_xml_deserialize {
                             fallback.get_or_insert(MixedSequenceTypeDeserializerState::Bar(Some(
                                 deserializer,
                             )));
-                            *self.state = MixedSequenceTypeDeserializerState::TextAfterBar(None);
+                            *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(None);
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state =
+                            *self.state__ =
                                 MixedSequenceTypeDeserializerState::Bar(Some(deserializer));
                         }
                     }
@@ -2054,7 +2054,7 @@ pub mod quick_xml_deserialize {
             } = output;
             if artifact.is_none() {
                 fallback.get_or_insert(MixedSequenceTypeDeserializerState::TextAfterBar(None));
-                *self.state = MixedSequenceTypeDeserializerState::Done__;
+                *self.state__ = MixedSequenceTypeDeserializerState::Done__;
                 return Ok(ElementHandlerOutput::from_event(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -2064,7 +2064,7 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_text_after_bar(data)?;
-                    *self.state = MixedSequenceTypeDeserializerState::Done__;
+                    *self.state__ = MixedSequenceTypeDeserializerState::Done__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
@@ -2076,10 +2076,10 @@ pub mod quick_xml_deserialize {
                                     deserializer,
                                 )),
                             );
-                            *self.state = MixedSequenceTypeDeserializerState::Done__;
+                            *self.state__ = MixedSequenceTypeDeserializerState::Done__;
                         }
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = MixedSequenceTypeDeserializerState::TextAfterBar(Some(
+                            *self.state__ = MixedSequenceTypeDeserializerState::TextAfterBar(Some(
                                 deserializer,
                             ));
                         }
@@ -2112,7 +2112,7 @@ pub mod quick_xml_deserialize {
             let mut fallback = None;
             let mut allow_any_element = false;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::TextBefore(Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -2186,7 +2186,7 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Init__, event) => {
                         fallback.get_or_insert(S::Init__);
-                        *self.state = MixedSequenceTypeDeserializerState::TextBefore(None);
+                        *self.state__ = MixedSequenceTypeDeserializerState::TextBefore(None);
                         event
                     }
                     (S::TextBefore(None), event) => {
@@ -2265,13 +2265,13 @@ pub mod quick_xml_deserialize {
                     }
                     (S::Unknown__, _) => unreachable!(),
                     (state, event) => {
-                        *self.state = state;
+                        *self.state__ = state;
                         break (DeserializerEvent::Break(event), false);
                     }
                 }
             };
             if let Some(fallback) = fallback {
-                *self.state = fallback;
+                *self.state__ = fallback;
             }
             Ok(DeserializerOutput {
                 artifact: DeserializerArtifact::Deserializer(self),
@@ -2284,7 +2284,7 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let state = replace(
-                &mut *self.state,
+                &mut *self.state__,
                 MixedSequenceTypeDeserializerState::Unknown__,
             );
             self.finish_state(reader, state)?;

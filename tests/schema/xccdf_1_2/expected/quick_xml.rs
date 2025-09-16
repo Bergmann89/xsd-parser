@@ -4143,7 +4143,7 @@ pub mod cdf {
             style_href: Option<String>,
             lang: Option<String>,
             content: Vec<super::BenchmarkElementTypeContent>,
-            state: Box<BenchmarkElementTypeDeserializerState>,
+            state__: Box<BenchmarkElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum BenchmarkElementTypeDeserializerState {
@@ -4210,7 +4210,7 @@ pub mod cdf {
                     style_href: style_href,
                     lang: lang,
                     content: Vec::new(),
-                    state: Box::new(BenchmarkElementTypeDeserializerState::Init__),
+                    state__: Box::new(BenchmarkElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -4248,7 +4248,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(BenchmarkElementTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -4260,21 +4260,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = BenchmarkElementTypeDeserializerState::Next__;
+                        *self.state__ = BenchmarkElementTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     BenchmarkElementTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     BenchmarkElementTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = BenchmarkElementTypeDeserializerState::Next__;
+                                *self.state__ = BenchmarkElementTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -4304,7 +4304,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -4347,7 +4347,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     BenchmarkElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -4364,7 +4364,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct BenchmarkElementTypeContentDeserializer {
-            state: Box<BenchmarkElementTypeContentDeserializerState>,
+            state__: Box<BenchmarkElementTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum BenchmarkElementTypeContentDeserializerState {
@@ -4669,7 +4669,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(BenchmarkElementTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -5127,9 +5127,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Status(values, None),
@@ -5163,11 +5163,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Status(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Status(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Status(
                             values,
                             Some(deserializer),
                         );
@@ -5191,9 +5191,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5229,11 +5229,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::DcStatus(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::DcStatus(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::DcStatus(
                             values,
                             Some(deserializer),
                         );
@@ -5257,9 +5257,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Title(values, None),
@@ -5293,11 +5293,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Title(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Title(
                             values,
                             Some(deserializer),
                         );
@@ -5321,9 +5321,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5359,11 +5359,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Description(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Description(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Description(
                             values,
                             Some(deserializer),
                         );
@@ -5387,9 +5387,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Notice(values, None),
@@ -5423,11 +5423,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Notice(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Notice(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Notice(
                             values,
                             Some(deserializer),
                         );
@@ -5451,9 +5451,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5489,11 +5489,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::FrontMatter(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::FrontMatter(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::FrontMatter(
                             values,
                             Some(deserializer),
                         );
@@ -5517,9 +5517,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5555,11 +5555,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::RearMatter(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::RearMatter(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::RearMatter(
                             values,
                             Some(deserializer),
                         );
@@ -5583,9 +5583,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5621,11 +5621,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Reference(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Reference(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Reference(
                             values,
                             Some(deserializer),
                         );
@@ -5649,9 +5649,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5687,11 +5687,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::PlainText(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::PlainText(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::PlainText(
                             values,
                             Some(deserializer),
                         );
@@ -5715,9 +5715,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5759,11 +5759,11 @@ pub mod cdf {
                                 values, None,
                             ),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             BenchmarkElementTypeContentDeserializerState::PlatformSpecification(
                                 values,
                                 Some(deserializer),
@@ -5788,9 +5788,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5826,11 +5826,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Platform(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Platform(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Platform(
                             values,
                             Some(deserializer),
                         );
@@ -5854,9 +5854,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Version(values, None),
@@ -5890,11 +5890,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Version(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Version(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Version(
                             values,
                             Some(deserializer),
                         );
@@ -5918,9 +5918,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -5956,11 +5956,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Metadata(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Metadata(
                             values,
                             Some(deserializer),
                         );
@@ -5984,9 +5984,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Model(values, None),
@@ -6020,11 +6020,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Model(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Model(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Model(
                             values,
                             Some(deserializer),
                         );
@@ -6048,9 +6048,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Profile(values, None),
@@ -6084,11 +6084,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Profile(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Profile(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Profile(
                             values,
                             Some(deserializer),
                         );
@@ -6112,9 +6112,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Value(values, None),
@@ -6148,11 +6148,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Value(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Value(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Value(
                             values,
                             Some(deserializer),
                         );
@@ -6176,9 +6176,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Group(values, None),
@@ -6212,11 +6212,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Group(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Group(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Group(
                             values,
                             Some(deserializer),
                         );
@@ -6240,9 +6240,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => BenchmarkElementTypeContentDeserializerState::Rule(values, None),
@@ -6276,11 +6276,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Rule(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Rule(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Rule(
                             values,
                             Some(deserializer),
                         );
@@ -6304,9 +6304,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -6342,11 +6342,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::TestResult(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::TestResult(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::TestResult(
                             values,
                             Some(deserializer),
                         );
@@ -6370,9 +6370,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = BenchmarkElementTypeContentDeserializerState::Init__;
+                            *self.state__ = BenchmarkElementTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -6408,11 +6408,11 @@ pub mod cdf {
                             reader,
                             BenchmarkElementTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Done__(data);
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = BenchmarkElementTypeContentDeserializerState::Signature(
+                        *self.state__ = BenchmarkElementTypeContentDeserializerState::Signature(
                             values,
                             Some(deserializer),
                         );
@@ -6432,13 +6432,13 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(BenchmarkElementTypeContentDeserializerState::Init__),
+                    state__: Box::new(BenchmarkElementTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             BenchmarkElementTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -6460,7 +6460,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Status(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -6950,13 +6950,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -6971,14 +6971,14 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct StatusElementTypeDeserializer {
             date: Option<String>,
             content: Option<super::StatusType>,
-            state: Box<StatusElementTypeDeserializerState>,
+            state__: Box<StatusElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum StatusElementTypeDeserializerState {
@@ -7006,7 +7006,7 @@ pub mod cdf {
                 Ok(Self {
                     date: date,
                     content: None,
-                    state: Box::new(StatusElementTypeDeserializerState::Init__),
+                    state__: Box::new(StatusElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7059,7 +7059,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -7095,7 +7095,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use StatusElementTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -7112,7 +7112,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     StatusElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7125,7 +7125,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct DcStatusTypeDeserializer {
             any: Vec<AnyElement>,
-            state: Box<DcStatusTypeDeserializerState>,
+            state__: Box<DcStatusTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum DcStatusTypeDeserializerState {
@@ -7145,7 +7145,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     any: Vec::new(),
-                    state: Box::new(DcStatusTypeDeserializerState::Init__),
+                    state__: Box::new(DcStatusTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7183,11 +7183,11 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     if self.any.len() < 1usize {
-                        *self.state = DcStatusTypeDeserializerState::Any(None);
+                        *self.state__ = DcStatusTypeDeserializerState::Any(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(DcStatusTypeDeserializerState::Any(None));
-                        *self.state = DcStatusTypeDeserializerState::Done__;
+                        *self.state__ = DcStatusTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -7198,7 +7198,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = DcStatusTypeDeserializerState::Any(None);
+                        *self.state__ = DcStatusTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -7209,13 +7209,13 @@ pub mod cdf {
                                     deserializer,
                                 )));
                                 if self.any.len().saturating_add(1) < 1usize {
-                                    *self.state = DcStatusTypeDeserializerState::Any(None);
+                                    *self.state__ = DcStatusTypeDeserializerState::Any(None);
                                 } else {
-                                    *self.state = DcStatusTypeDeserializerState::Done__;
+                                    *self.state__ = DcStatusTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     DcStatusTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
@@ -7249,7 +7249,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Any(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -7275,7 +7275,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = DcStatusTypeDeserializerState::Any(None);
+                            *self.state__ = DcStatusTypeDeserializerState::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -7294,14 +7294,14 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::Done__;
+                                *self.state__ = S::Done__;
                                 event
                             }
                         }
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -7310,13 +7310,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -7328,7 +7328,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, DcStatusTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, DcStatusTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::DcStatusType { any: self.any })
             }
@@ -7338,7 +7338,7 @@ pub mod cdf {
             lang: Option<String>,
             override_: bool,
             content: Option<String>,
-            state: Box<TextTypeDeserializerState>,
+            state__: Box<TextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TextTypeDeserializerState {
@@ -7373,7 +7373,7 @@ pub mod cdf {
                     lang: lang,
                     override_: override_.unwrap_or_else(super::TextType::default_override_),
                     content: None,
-                    state: Box::new(TextTypeDeserializerState::Init__),
+                    state__: Box::new(TextTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7426,7 +7426,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -7459,7 +7459,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use TextTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -7475,7 +7475,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, TextTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, TextTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::TextType {
                     lang: self.lang,
@@ -7489,7 +7489,7 @@ pub mod cdf {
             lang: Option<String>,
             override_: bool,
             content: Vec<super::HtmlTextWithSubTypeContent>,
-            state: Box<HtmlTextWithSubTypeDeserializerState>,
+            state__: Box<HtmlTextWithSubTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum HtmlTextWithSubTypeDeserializerState {
@@ -7526,7 +7526,7 @@ pub mod cdf {
                     override_: override_
                         .unwrap_or_else(super::HtmlTextWithSubType::default_override_),
                     content: Vec::new(),
-                    state: Box::new(HtmlTextWithSubTypeDeserializerState::Init__),
+                    state__: Box::new(HtmlTextWithSubTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -7564,7 +7564,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(HtmlTextWithSubTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -7576,21 +7576,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = HtmlTextWithSubTypeDeserializerState::Next__;
+                        *self.state__ = HtmlTextWithSubTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     HtmlTextWithSubTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     HtmlTextWithSubTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = HtmlTextWithSubTypeDeserializerState::Next__;
+                                *self.state__ = HtmlTextWithSubTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -7620,7 +7620,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -7663,7 +7663,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     HtmlTextWithSubTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -7676,7 +7676,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct HtmlTextWithSubTypeContentDeserializer {
-            state: Box<HtmlTextWithSubTypeContentDeserializerState>,
+            state__: Box<HtmlTextWithSubTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum HtmlTextWithSubTypeContentDeserializerState {
@@ -7814,9 +7814,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => HtmlTextWithSubTypeContentDeserializerState::Sub(values, None),
@@ -7850,11 +7850,11 @@ pub mod cdf {
                             reader,
                             HtmlTextWithSubTypeContentDeserializerState::Sub(values, None),
                         )?;
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Sub(
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Sub(
                             values,
                             Some(deserializer),
                         );
@@ -7878,9 +7878,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => HtmlTextWithSubTypeContentDeserializerState::Any(values, None),
@@ -7914,11 +7914,11 @@ pub mod cdf {
                             reader,
                             HtmlTextWithSubTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Any(
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Any(
                             values,
                             Some(deserializer),
                         );
@@ -7942,9 +7942,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = HtmlTextWithSubTypeContentDeserializerState::Init__;
+                            *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
@@ -7978,11 +7978,11 @@ pub mod cdf {
                             reader,
                             HtmlTextWithSubTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = HtmlTextWithSubTypeContentDeserializerState::Text(
+                        *self.state__ = HtmlTextWithSubTypeContentDeserializerState::Text(
                             values,
                             Some(deserializer),
                         );
@@ -8002,13 +8002,13 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(HtmlTextWithSubTypeContentDeserializerState::Init__),
+                    state__: Box::new(HtmlTextWithSubTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             HtmlTextWithSubTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -8030,7 +8030,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Sub(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -8111,13 +8111,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -8132,7 +8132,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -8142,7 +8142,7 @@ pub mod cdf {
             lang: Option<String>,
             text_before: Option<Text>,
             any: Vec<Mixed<AnyElement>>,
-            state: Box<NoticeTypeDeserializerState>,
+            state__: Box<NoticeTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum NoticeTypeDeserializerState {
@@ -8187,7 +8187,7 @@ pub mod cdf {
                     lang: lang,
                     text_before: None,
                     any: Vec::new(),
-                    state: Box::new(NoticeTypeDeserializerState::Init__),
+                    state__: Box::new(NoticeTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8237,7 +8237,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(NoticeTypeDeserializerState::TextBefore(None));
-                    *self.state = NoticeTypeDeserializerState::Any(None);
+                    *self.state__ = NoticeTypeDeserializerState::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8247,7 +8247,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state = NoticeTypeDeserializerState::Any(None);
+                        *self.state__ = NoticeTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -8257,10 +8257,10 @@ pub mod cdf {
                                 fallback.get_or_insert(NoticeTypeDeserializerState::TextBefore(
                                     Some(deserializer),
                                 ));
-                                *self.state = NoticeTypeDeserializerState::Any(None);
+                                *self.state__ = NoticeTypeDeserializerState::Any(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     NoticeTypeDeserializerState::TextBefore(Some(deserializer));
                             }
                         }
@@ -8284,7 +8284,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(NoticeTypeDeserializerState::Any(None));
-                    *self.state = NoticeTypeDeserializerState::Done__;
+                    *self.state__ = NoticeTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8294,7 +8294,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = NoticeTypeDeserializerState::Any(None);
+                        *self.state__ = NoticeTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -8304,10 +8304,11 @@ pub mod cdf {
                                 fallback.get_or_insert(NoticeTypeDeserializerState::Any(Some(
                                     deserializer,
                                 )));
-                                *self.state = NoticeTypeDeserializerState::Any(None);
+                                *self.state__ = NoticeTypeDeserializerState::Any(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = NoticeTypeDeserializerState::Any(Some(deserializer));
+                                *self.state__ =
+                                    NoticeTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
                         ret
@@ -8337,7 +8338,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextBefore(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -8375,7 +8376,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = NoticeTypeDeserializerState::TextBefore(None);
+                            *self.state__ = NoticeTypeDeserializerState::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -8408,14 +8409,14 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::Done__;
+                                *self.state__ = S::Done__;
                                 event
                             }
                         }
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -8424,13 +8425,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -8442,7 +8443,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, NoticeTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, NoticeTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::NoticeType {
                     id: self.id,
@@ -8459,7 +8460,7 @@ pub mod cdf {
             override_: Option<bool>,
             text_before: Option<Text>,
             any: Vec<Mixed<AnyElement>>,
-            state: Box<ReferenceTypeDeserializerState>,
+            state__: Box<ReferenceTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ReferenceTypeDeserializerState {
@@ -8497,7 +8498,7 @@ pub mod cdf {
                     override_: override_,
                     text_before: None,
                     any: Vec::new(),
-                    state: Box::new(ReferenceTypeDeserializerState::Init__),
+                    state__: Box::new(ReferenceTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8547,7 +8548,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ReferenceTypeDeserializerState::TextBefore(None));
-                    *self.state = ReferenceTypeDeserializerState::Any(None);
+                    *self.state__ = ReferenceTypeDeserializerState::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8557,7 +8558,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state = ReferenceTypeDeserializerState::Any(None);
+                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -8567,10 +8568,10 @@ pub mod cdf {
                                 fallback.get_or_insert(ReferenceTypeDeserializerState::TextBefore(
                                     Some(deserializer),
                                 ));
-                                *self.state = ReferenceTypeDeserializerState::Any(None);
+                                *self.state__ = ReferenceTypeDeserializerState::Any(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ReferenceTypeDeserializerState::TextBefore(Some(deserializer));
                             }
                         }
@@ -8594,7 +8595,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ReferenceTypeDeserializerState::Any(None));
-                    *self.state = ReferenceTypeDeserializerState::Done__;
+                    *self.state__ = ReferenceTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -8604,7 +8605,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = ReferenceTypeDeserializerState::Any(None);
+                        *self.state__ = ReferenceTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -8614,10 +8615,10 @@ pub mod cdf {
                                 fallback.get_or_insert(ReferenceTypeDeserializerState::Any(Some(
                                     deserializer,
                                 )));
-                                *self.state = ReferenceTypeDeserializerState::Any(None);
+                                *self.state__ = ReferenceTypeDeserializerState::Any(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ReferenceTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
@@ -8651,7 +8652,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextBefore(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -8689,7 +8690,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ReferenceTypeDeserializerState::TextBefore(None);
+                            *self.state__ = ReferenceTypeDeserializerState::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -8722,14 +8723,14 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::Done__;
+                                *self.state__ = S::Done__;
                                 event
                             }
                         }
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -8738,13 +8739,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -8756,7 +8757,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, ReferenceTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    ReferenceTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::ReferenceType {
                     href: self.href,
@@ -8770,7 +8774,7 @@ pub mod cdf {
         pub struct PlainTextTypeDeserializer {
             id: String,
             content: Option<String>,
-            state: Box<PlainTextTypeDeserializerState>,
+            state__: Box<PlainTextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PlainTextTypeDeserializerState {
@@ -8800,7 +8804,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("id".into()))
                     })?,
                     content: None,
-                    state: Box::new(PlainTextTypeDeserializerState::Init__),
+                    state__: Box::new(PlainTextTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8853,7 +8857,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -8889,7 +8893,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use PlainTextTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -8905,7 +8909,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, PlainTextTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    PlainTextTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::PlainTextType {
                     id: self.id,
@@ -8916,7 +8923,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct Cpe2IdrefTypeDeserializer {
             idref: String,
-            state: Box<Cpe2IdrefTypeDeserializerState>,
+            state__: Box<Cpe2IdrefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum Cpe2IdrefTypeDeserializerState {
@@ -8944,7 +8951,7 @@ pub mod cdf {
                     idref: idref.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
-                    state: Box::new(Cpe2IdrefTypeDeserializerState::Init__),
+                    state__: Box::new(Cpe2IdrefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -8994,7 +9001,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, Cpe2IdrefTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    Cpe2IdrefTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::Cpe2IdrefType { idref: self.idref })
             }
@@ -9004,7 +9014,7 @@ pub mod cdf {
             time: Option<String>,
             update: Option<String>,
             content: Option<String>,
-            state: Box<VersionTypeDeserializerState>,
+            state__: Box<VersionTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum VersionTypeDeserializerState {
@@ -9039,7 +9049,7 @@ pub mod cdf {
                     time: time,
                     update: update,
                     content: None,
-                    state: Box::new(VersionTypeDeserializerState::Init__),
+                    state__: Box::new(VersionTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9092,7 +9102,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -9125,7 +9135,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use VersionTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -9141,7 +9151,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, VersionTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, VersionTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::VersionType {
                     time: self.time,
@@ -9153,7 +9163,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct MetadataTypeDeserializer {
             any: Vec<AnyElement>,
-            state: Box<MetadataTypeDeserializerState>,
+            state__: Box<MetadataTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum MetadataTypeDeserializerState {
@@ -9173,7 +9183,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     any: Vec::new(),
-                    state: Box::new(MetadataTypeDeserializerState::Init__),
+                    state__: Box::new(MetadataTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9211,11 +9221,11 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     if self.any.len() < 1usize {
-                        *self.state = MetadataTypeDeserializerState::Any(None);
+                        *self.state__ = MetadataTypeDeserializerState::Any(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(MetadataTypeDeserializerState::Any(None));
-                        *self.state = MetadataTypeDeserializerState::Done__;
+                        *self.state__ = MetadataTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -9226,7 +9236,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = MetadataTypeDeserializerState::Any(None);
+                        *self.state__ = MetadataTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -9237,13 +9247,13 @@ pub mod cdf {
                                     deserializer,
                                 )));
                                 if self.any.len().saturating_add(1) < 1usize {
-                                    *self.state = MetadataTypeDeserializerState::Any(None);
+                                    *self.state__ = MetadataTypeDeserializerState::Any(None);
                                 } else {
-                                    *self.state = MetadataTypeDeserializerState::Done__;
+                                    *self.state__ = MetadataTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     MetadataTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
@@ -9277,7 +9287,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Any(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -9303,7 +9313,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = MetadataTypeDeserializerState::Any(None);
+                            *self.state__ = MetadataTypeDeserializerState::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9322,14 +9332,14 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::Done__;
+                                *self.state__ = S::Done__;
                                 event
                             }
                         }
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -9338,13 +9348,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -9356,7 +9366,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, MetadataTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, MetadataTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::MetadataType { any: self.any })
             }
@@ -9365,7 +9375,7 @@ pub mod cdf {
         pub struct ModelElementTypeDeserializer {
             system: String,
             param: Vec<super::ParamType>,
-            state: Box<ModelElementTypeDeserializerState>,
+            state__: Box<ModelElementTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ModelElementTypeDeserializerState {
@@ -9396,7 +9406,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("system".into()))
                     })?,
                     param: Vec::new(),
-                    state: Box::new(ModelElementTypeDeserializerState::Init__),
+                    state__: Box::new(ModelElementTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9436,7 +9446,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ModelElementTypeDeserializerState::Param(None));
-                    *self.state = ModelElementTypeDeserializerState::Done__;
+                    *self.state__ = ModelElementTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -9446,7 +9456,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_param(data)?;
-                        *self.state = ModelElementTypeDeserializerState::Param(None);
+                        *self.state__ = ModelElementTypeDeserializerState::Param(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -9456,10 +9466,10 @@ pub mod cdf {
                                 fallback.get_or_insert(ModelElementTypeDeserializerState::Param(
                                     Some(deserializer),
                                 ));
-                                *self.state = ModelElementTypeDeserializerState::Param(None);
+                                *self.state__ = ModelElementTypeDeserializerState::Param(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ModelElementTypeDeserializerState::Param(Some(deserializer));
                             }
                         }
@@ -9491,7 +9501,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Param(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -9517,7 +9527,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ModelElementTypeDeserializerState::Param(None);
+                            *self.state__ = ModelElementTypeDeserializerState::Param(None);
                             event
                         }
                         (S::Param(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -9543,13 +9553,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -9562,7 +9572,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ModelElementTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -9582,7 +9592,7 @@ pub mod cdf {
             base: Option<String>,
             xml_id: Option<String>,
             content: Vec<super::ProfileTypeContent>,
-            state: Box<ProfileTypeDeserializerState>,
+            state__: Box<ProfileTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileTypeDeserializerState {
@@ -9660,7 +9670,7 @@ pub mod cdf {
                     base: base,
                     xml_id: xml_id,
                     content: Vec::new(),
-                    state: Box::new(ProfileTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -9695,7 +9705,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(ProfileTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -9707,20 +9717,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = ProfileTypeDeserializerState::Next__;
+                        *self.state__ = ProfileTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ProfileTypeDeserializerState::Content__(deserializer);
+                                *self.state__ =
+                                    ProfileTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(ProfileTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = ProfileTypeDeserializerState::Next__;
+                                *self.state__ = ProfileTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -9747,7 +9758,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -9789,7 +9800,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, ProfileTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, ProfileTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::ProfileType {
                     id: self.id,
@@ -9805,7 +9816,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct ProfileTypeContentDeserializer {
-            state: Box<ProfileTypeContentDeserializerState>,
+            state__: Box<ProfileTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum ProfileTypeContentDeserializerState {
@@ -10079,7 +10090,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(ProfileTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -10410,9 +10421,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Status(values, None),
@@ -10442,11 +10453,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Status(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ProfileTypeContentDeserializerState::Status(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -10468,9 +10479,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::DcStatus(values, None),
@@ -10501,11 +10512,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::DcStatus(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::DcStatus(
+                        *self.state__ = ProfileTypeContentDeserializerState::DcStatus(
                             values,
                             Some(deserializer),
                         );
@@ -10529,9 +10540,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Version(values, None),
@@ -10561,11 +10572,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Version(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Version(
+                        *self.state__ = ProfileTypeContentDeserializerState::Version(
                             values,
                             Some(deserializer),
                         );
@@ -10589,9 +10600,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Title(values, None),
@@ -10618,11 +10629,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ProfileTypeContentDeserializerState::Title(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -10644,9 +10655,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Description(values, None),
@@ -10680,11 +10691,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Description(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Description(
+                        *self.state__ = ProfileTypeContentDeserializerState::Description(
                             values,
                             Some(deserializer),
                         );
@@ -10708,9 +10719,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Reference(values, None),
@@ -10741,11 +10752,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Reference(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Reference(
+                        *self.state__ = ProfileTypeContentDeserializerState::Reference(
                             values,
                             Some(deserializer),
                         );
@@ -10769,9 +10780,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Platform(values, None),
@@ -10802,11 +10813,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Platform(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Platform(
+                        *self.state__ = ProfileTypeContentDeserializerState::Platform(
                             values,
                             Some(deserializer),
                         );
@@ -10830,9 +10841,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Select(values, None),
@@ -10862,11 +10873,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Select(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ProfileTypeContentDeserializerState::Select(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -10888,9 +10899,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::SetComplexValue(values, None),
@@ -10924,11 +10935,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::SetComplexValue(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::SetComplexValue(
+                        *self.state__ = ProfileTypeContentDeserializerState::SetComplexValue(
                             values,
                             Some(deserializer),
                         );
@@ -10952,9 +10963,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::SetValue(values, None),
@@ -10985,11 +10996,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::SetValue(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::SetValue(
+                        *self.state__ = ProfileTypeContentDeserializerState::SetValue(
                             values,
                             Some(deserializer),
                         );
@@ -11013,9 +11024,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::RefineValue(values, None),
@@ -11049,11 +11060,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::RefineValue(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::RefineValue(
+                        *self.state__ = ProfileTypeContentDeserializerState::RefineValue(
                             values,
                             Some(deserializer),
                         );
@@ -11077,9 +11088,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::RefineRule(values, None),
@@ -11113,11 +11124,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::RefineRule(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::RefineRule(
+                        *self.state__ = ProfileTypeContentDeserializerState::RefineRule(
                             values,
                             Some(deserializer),
                         );
@@ -11141,9 +11152,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Metadata(values, None),
@@ -11174,11 +11185,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Metadata(
+                        *self.state__ = ProfileTypeContentDeserializerState::Metadata(
                             values,
                             Some(deserializer),
                         );
@@ -11202,9 +11213,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileTypeContentDeserializerState::Signature(values, None),
@@ -11235,11 +11246,11 @@ pub mod cdf {
                             reader,
                             ProfileTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = ProfileTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileTypeContentDeserializerState::Signature(
+                        *self.state__ = ProfileTypeContentDeserializerState::Signature(
                             values,
                             Some(deserializer),
                         );
@@ -11257,12 +11268,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(ProfileTypeContentDeserializerState::Init__),
+                    state__: Box::new(ProfileTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, ProfileTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, ProfileTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -11282,7 +11293,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Status(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -11634,13 +11645,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -11655,7 +11666,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -11674,7 +11685,7 @@ pub mod cdf {
             interactive: bool,
             interface_hint: Option<super::InterfaceHintType>,
             content: Vec<super::ValueTypeContent>,
-            state: Box<ValueTypeDeserializerState>,
+            state__: Box<ValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ValueTypeDeserializerState {
@@ -11794,7 +11805,7 @@ pub mod cdf {
                     interactive: interactive.unwrap_or_else(super::ValueType::default_interactive),
                     interface_hint: interface_hint,
                     content: Vec::new(),
-                    state: Box::new(ValueTypeDeserializerState::Init__),
+                    state__: Box::new(ValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -11829,7 +11840,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(ValueTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -11841,20 +11852,20 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = ValueTypeDeserializerState::Next__;
+                        *self.state__ = ValueTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ValueTypeDeserializerState::Content__(deserializer);
+                                *self.state__ = ValueTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(ValueTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = ValueTypeDeserializerState::Next__;
+                                *self.state__ = ValueTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -11881,7 +11892,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -11926,7 +11937,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, ValueTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, ValueTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::ValueType {
                     abstract_: self.abstract_,
@@ -11948,7 +11959,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct ValueTypeContentDeserializer {
-            state: Box<ValueTypeContentDeserializerState>,
+            state__: Box<ValueTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum ValueTypeContentDeserializerState {
@@ -12321,7 +12332,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(ValueTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -12755,9 +12766,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Status(values, None),
@@ -12784,11 +12795,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Status(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Status(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -12810,9 +12821,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::DcStatus(values, None),
@@ -12842,11 +12853,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::DcStatus(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::DcStatus(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -12868,9 +12879,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Version(values, None),
@@ -12897,11 +12908,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Version(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Version(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -12923,9 +12934,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Title(values, None),
@@ -12952,11 +12963,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Title(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -12978,9 +12989,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Description(values, None),
@@ -13011,11 +13022,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Description(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::Description(
+                        *self.state__ = ValueTypeContentDeserializerState::Description(
                             values,
                             Some(deserializer),
                         );
@@ -13039,9 +13050,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Warning(values, None),
@@ -13068,11 +13079,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Warning(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Warning(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13094,9 +13105,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Question(values, None),
@@ -13126,11 +13137,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Question(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Question(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13152,9 +13163,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Reference(values, None),
@@ -13184,11 +13195,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Reference(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::Reference(
+                        *self.state__ = ValueTypeContentDeserializerState::Reference(
                             values,
                             Some(deserializer),
                         );
@@ -13212,9 +13223,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Metadata(values, None),
@@ -13244,11 +13255,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Metadata(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13270,9 +13281,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Value(values, None),
@@ -13299,11 +13310,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Value(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Value(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13325,9 +13336,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::ComplexValue(values, None),
@@ -13361,11 +13372,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::ComplexValue(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::ComplexValue(
+                        *self.state__ = ValueTypeContentDeserializerState::ComplexValue(
                             values,
                             Some(deserializer),
                         );
@@ -13389,9 +13400,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Default(values, None),
@@ -13418,11 +13429,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Default(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Default(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13444,9 +13455,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::ComplexDefault(values, None),
@@ -13480,11 +13491,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::ComplexDefault(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::ComplexDefault(
+                        *self.state__ = ValueTypeContentDeserializerState::ComplexDefault(
                             values,
                             Some(deserializer),
                         );
@@ -13508,9 +13519,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Match(values, None),
@@ -13537,11 +13548,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Match(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Match(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13563,9 +13574,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::LowerBound(values, None),
@@ -13596,11 +13607,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::LowerBound(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::LowerBound(
+                        *self.state__ = ValueTypeContentDeserializerState::LowerBound(
                             values,
                             Some(deserializer),
                         );
@@ -13624,9 +13635,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::UpperBound(values, None),
@@ -13657,11 +13668,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::UpperBound(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::UpperBound(
+                        *self.state__ = ValueTypeContentDeserializerState::UpperBound(
                             values,
                             Some(deserializer),
                         );
@@ -13685,9 +13696,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Choices(values, None),
@@ -13714,11 +13725,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Choices(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Choices(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13740,9 +13751,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Source(values, None),
@@ -13769,11 +13780,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Source(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             ValueTypeContentDeserializerState::Source(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -13795,9 +13806,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ValueTypeContentDeserializerState::Init__;
+                            *self.state__ = ValueTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ValueTypeContentDeserializerState::Signature(values, None),
@@ -13827,11 +13838,11 @@ pub mod cdf {
                             reader,
                             ValueTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = ValueTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ValueTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ValueTypeContentDeserializerState::Signature(
+                        *self.state__ = ValueTypeContentDeserializerState::Signature(
                             values,
                             Some(deserializer),
                         );
@@ -13849,12 +13860,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(ValueTypeContentDeserializerState::Init__),
+                    state__: Box::new(ValueTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, ValueTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, ValueTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -13874,7 +13885,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Status(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -14351,13 +14362,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -14372,7 +14383,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -14389,7 +14400,7 @@ pub mod cdf {
             weight: f64,
             id: String,
             content: Vec<super::GroupTypeContent>,
-            state: Box<GroupTypeDeserializerState>,
+            state__: Box<GroupTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum GroupTypeDeserializerState {
@@ -14495,7 +14506,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("id".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(GroupTypeDeserializerState::Init__),
+                    state__: Box::new(GroupTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -14530,7 +14541,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(GroupTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -14542,20 +14553,20 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = GroupTypeDeserializerState::Next__;
+                        *self.state__ = GroupTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = GroupTypeDeserializerState::Content__(deserializer);
+                                *self.state__ = GroupTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(GroupTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = GroupTypeDeserializerState::Next__;
+                                *self.state__ = GroupTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -14582,7 +14593,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -14627,7 +14638,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, GroupTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, GroupTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::GroupType {
                     abstract_: self.abstract_,
@@ -14647,7 +14658,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct GroupTypeContentDeserializer {
-            state: Box<GroupTypeContentDeserializerState>,
+            state__: Box<GroupTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum GroupTypeContentDeserializerState {
@@ -14978,7 +14989,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(GroupTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -15368,9 +15379,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Status(values, None),
@@ -15397,11 +15408,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Status(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Status(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15423,9 +15434,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::DcStatus(values, None),
@@ -15455,11 +15466,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::DcStatus(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::DcStatus(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15481,9 +15492,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Version(values, None),
@@ -15510,11 +15521,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Version(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Version(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15536,9 +15547,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Title(values, None),
@@ -15565,11 +15576,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Title(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15591,9 +15602,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Description(values, None),
@@ -15624,11 +15635,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Description(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::Description(
+                        *self.state__ = GroupTypeContentDeserializerState::Description(
                             values,
                             Some(deserializer),
                         );
@@ -15652,9 +15663,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Warning(values, None),
@@ -15681,11 +15692,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Warning(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Warning(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15707,9 +15718,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Question(values, None),
@@ -15739,11 +15750,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Question(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Question(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15765,9 +15776,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Reference(values, None),
@@ -15797,11 +15808,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Reference(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::Reference(
+                        *self.state__ = GroupTypeContentDeserializerState::Reference(
                             values,
                             Some(deserializer),
                         );
@@ -15825,9 +15836,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Metadata(values, None),
@@ -15857,11 +15868,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Metadata(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -15883,9 +15894,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Rationale(values, None),
@@ -15915,11 +15926,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Rationale(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::Rationale(
+                        *self.state__ = GroupTypeContentDeserializerState::Rationale(
                             values,
                             Some(deserializer),
                         );
@@ -15943,9 +15954,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Platform(values, None),
@@ -15975,11 +15986,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Platform(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Platform(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -16001,9 +16012,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Requires(values, None),
@@ -16033,11 +16044,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Requires(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Requires(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -16059,9 +16070,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Conflicts(values, None),
@@ -16091,11 +16102,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Conflicts(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::Conflicts(
+                        *self.state__ = GroupTypeContentDeserializerState::Conflicts(
                             values,
                             Some(deserializer),
                         );
@@ -16119,9 +16130,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Value(values, None),
@@ -16148,11 +16159,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Value(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Value(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -16174,9 +16185,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Group(values, None),
@@ -16203,11 +16214,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Group(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Group(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -16229,9 +16240,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Rule(values, None),
@@ -16258,11 +16269,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Rule(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             GroupTypeContentDeserializerState::Rule(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -16284,9 +16295,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = GroupTypeContentDeserializerState::Init__;
+                            *self.state__ = GroupTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => GroupTypeContentDeserializerState::Signature(values, None),
@@ -16316,11 +16327,11 @@ pub mod cdf {
                             reader,
                             GroupTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = GroupTypeContentDeserializerState::Done__(data);
+                        *self.state__ = GroupTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = GroupTypeContentDeserializerState::Signature(
+                        *self.state__ = GroupTypeContentDeserializerState::Signature(
                             values,
                             Some(deserializer),
                         );
@@ -16338,12 +16349,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(GroupTypeContentDeserializerState::Init__),
+                    state__: Box::new(GroupTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, GroupTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, GroupTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -16363,7 +16374,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Status(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -16774,13 +16785,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -16795,7 +16806,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -16815,7 +16826,7 @@ pub mod cdf {
             severity: super::SeverityEnumType,
             multiple: bool,
             content: Vec<super::RuleTypeContent>,
-            state: Box<RuleTypeDeserializerState>,
+            state__: Box<RuleTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RuleTypeDeserializerState {
@@ -16942,7 +16953,7 @@ pub mod cdf {
                     severity: severity.unwrap_or_else(super::RuleType::default_severity),
                     multiple: multiple.unwrap_or_else(super::RuleType::default_multiple),
                     content: Vec::new(),
-                    state: Box::new(RuleTypeDeserializerState::Init__),
+                    state__: Box::new(RuleTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -16977,7 +16988,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback.take().unwrap_or(RuleTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(RuleTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -16987,20 +16998,20 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = RuleTypeDeserializerState::Next__;
+                        *self.state__ = RuleTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = RuleTypeDeserializerState::Content__(deserializer);
+                                *self.state__ = RuleTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(RuleTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = RuleTypeDeserializerState::Next__;
+                                *self.state__ = RuleTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -17027,7 +17038,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -17072,7 +17083,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, RuleTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, RuleTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::RuleType {
                     abstract_: self.abstract_,
@@ -17095,7 +17106,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct RuleTypeContentDeserializer {
-            state: Box<RuleTypeContentDeserializerState>,
+            state__: Box<RuleTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum RuleTypeContentDeserializerState {
@@ -17494,7 +17505,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(RuleTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -17968,9 +17979,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Status(values, None),
@@ -17997,11 +18008,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Status(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Status(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18023,9 +18034,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::DcStatus(values, None),
@@ -18052,11 +18063,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::DcStatus(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::DcStatus(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18078,9 +18089,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Version(values, None),
@@ -18107,11 +18118,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Version(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Version(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18133,9 +18144,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Title(values, None),
@@ -18162,11 +18173,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Title(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18188,9 +18199,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Description(values, None),
@@ -18221,11 +18232,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Description(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleTypeContentDeserializerState::Description(
+                        *self.state__ = RuleTypeContentDeserializerState::Description(
                             values,
                             Some(deserializer),
                         );
@@ -18249,9 +18260,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Warning(values, None),
@@ -18278,11 +18289,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Warning(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Warning(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18304,9 +18315,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Question(values, None),
@@ -18333,11 +18344,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Question(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Question(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18359,9 +18370,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Reference(values, None),
@@ -18391,11 +18402,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Reference(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Reference(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18417,9 +18428,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Metadata(values, None),
@@ -18446,11 +18457,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Metadata(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18472,9 +18483,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Rationale(values, None),
@@ -18504,11 +18515,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Rationale(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Rationale(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18530,9 +18541,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Platform(values, None),
@@ -18559,11 +18570,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Platform(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Platform(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18585,9 +18596,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Requires(values, None),
@@ -18614,11 +18625,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Requires(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Requires(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18640,9 +18651,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Conflicts(values, None),
@@ -18672,11 +18683,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Conflicts(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Conflicts(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18698,9 +18709,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Ident(values, None),
@@ -18727,11 +18738,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Ident(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Ident(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18753,9 +18764,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::ImpactMetric(values, None),
@@ -18786,11 +18797,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::ImpactMetric(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleTypeContentDeserializerState::ImpactMetric(
+                        *self.state__ = RuleTypeContentDeserializerState::ImpactMetric(
                             values,
                             Some(deserializer),
                         );
@@ -18814,9 +18825,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::ProfileNote(values, None),
@@ -18847,11 +18858,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::ProfileNote(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleTypeContentDeserializerState::ProfileNote(
+                        *self.state__ = RuleTypeContentDeserializerState::ProfileNote(
                             values,
                             Some(deserializer),
                         );
@@ -18875,9 +18886,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Fixtext(values, None),
@@ -18904,11 +18915,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Fixtext(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Fixtext(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18930,9 +18941,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Fix(values, None),
@@ -18959,11 +18970,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Fix(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Fix(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -18985,9 +18996,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Check(values, None),
@@ -19014,11 +19025,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Check(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Check(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -19040,9 +19051,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::ComplexCheck(values, None),
@@ -19073,11 +19084,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::ComplexCheck(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleTypeContentDeserializerState::ComplexCheck(
+                        *self.state__ = RuleTypeContentDeserializerState::ComplexCheck(
                             values,
                             Some(deserializer),
                         );
@@ -19101,9 +19112,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleTypeContentDeserializerState::Signature(values, None),
@@ -19133,11 +19144,11 @@ pub mod cdf {
                             reader,
                             RuleTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = RuleTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleTypeContentDeserializerState::Signature(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -19153,12 +19164,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(RuleTypeContentDeserializerState::Init__),
+                    state__: Box::new(RuleTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, RuleTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, RuleTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -19178,7 +19189,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Status(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -19701,13 +19712,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -19722,7 +19733,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -19734,7 +19745,7 @@ pub mod cdf {
             version: Option<String>,
             xml_id: Option<String>,
             content: Vec<super::TestResultTypeContent>,
-            state: Box<TestResultTypeDeserializerState>,
+            state__: Box<TestResultTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TestResultTypeDeserializerState {
@@ -19802,7 +19813,7 @@ pub mod cdf {
                     version: version,
                     xml_id: xml_id,
                     content: Vec::new(),
-                    state: Box::new(TestResultTypeDeserializerState::Init__),
+                    state__: Box::new(TestResultTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -19837,7 +19848,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(TestResultTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -19849,21 +19860,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = TestResultTypeDeserializerState::Next__;
+                        *self.state__ = TestResultTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     TestResultTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(TestResultTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = TestResultTypeDeserializerState::Next__;
+                                *self.state__ = TestResultTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -19893,7 +19904,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -19935,7 +19946,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, TestResultTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    TestResultTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::TestResultType {
                     id: self.id,
@@ -19950,7 +19964,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct TestResultTypeContentDeserializer {
-            state: Box<TestResultTypeContentDeserializerState>,
+            state__: Box<TestResultTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum TestResultTypeContentDeserializerState {
@@ -20306,7 +20320,7 @@ pub mod cdf {
                         }
                     };
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(TestResultTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -20741,9 +20755,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Benchmark(values, None),
@@ -20777,11 +20791,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Benchmark(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Benchmark(
+                        *self.state__ = TestResultTypeContentDeserializerState::Benchmark(
                             values,
                             Some(deserializer),
                         );
@@ -20805,9 +20819,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::TailoringFile(values, None),
@@ -20841,11 +20855,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::TailoringFile(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::TailoringFile(
+                        *self.state__ = TestResultTypeContentDeserializerState::TailoringFile(
                             values,
                             Some(deserializer),
                         );
@@ -20869,9 +20883,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Title(values, None),
@@ -20902,11 +20916,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Title(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Title(
+                        *self.state__ = TestResultTypeContentDeserializerState::Title(
                             values,
                             Some(deserializer),
                         );
@@ -20930,9 +20944,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Remark(values, None),
@@ -20963,11 +20977,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Remark(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Remark(
+                        *self.state__ = TestResultTypeContentDeserializerState::Remark(
                             values,
                             Some(deserializer),
                         );
@@ -20991,9 +21005,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Organization(values, None),
@@ -21027,11 +21041,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Organization(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Organization(
+                        *self.state__ = TestResultTypeContentDeserializerState::Organization(
                             values,
                             Some(deserializer),
                         );
@@ -21055,9 +21069,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Identity(values, None),
@@ -21091,11 +21105,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Identity(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Identity(
+                        *self.state__ = TestResultTypeContentDeserializerState::Identity(
                             values,
                             Some(deserializer),
                         );
@@ -21119,9 +21133,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Profile(values, None),
@@ -21155,11 +21169,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Profile(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Profile(
+                        *self.state__ = TestResultTypeContentDeserializerState::Profile(
                             values,
                             Some(deserializer),
                         );
@@ -21183,9 +21197,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Target(values, None),
@@ -21216,11 +21230,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Target(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Target(
+                        *self.state__ = TestResultTypeContentDeserializerState::Target(
                             values,
                             Some(deserializer),
                         );
@@ -21244,9 +21258,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::TargetAddress(values, None),
@@ -21280,11 +21294,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::TargetAddress(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::TargetAddress(
+                        *self.state__ = TestResultTypeContentDeserializerState::TargetAddress(
                             values,
                             Some(deserializer),
                         );
@@ -21308,9 +21322,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::TargetFacts(values, None),
@@ -21344,11 +21358,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::TargetFacts(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::TargetFacts(
+                        *self.state__ = TestResultTypeContentDeserializerState::TargetFacts(
                             values,
                             Some(deserializer),
                         );
@@ -21372,9 +21386,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::TargetIdRef(values, None),
@@ -21408,11 +21422,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::TargetIdRef(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::TargetIdRef(
+                        *self.state__ = TestResultTypeContentDeserializerState::TargetIdRef(
                             values,
                             Some(deserializer),
                         );
@@ -21436,9 +21450,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Any(values, None),
@@ -21468,11 +21482,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             TestResultTypeContentDeserializerState::Any(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -21494,9 +21508,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Platform(values, None),
@@ -21530,11 +21544,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Platform(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Platform(
+                        *self.state__ = TestResultTypeContentDeserializerState::Platform(
                             values,
                             Some(deserializer),
                         );
@@ -21558,9 +21572,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::SetValue(values, None),
@@ -21594,11 +21608,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::SetValue(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::SetValue(
+                        *self.state__ = TestResultTypeContentDeserializerState::SetValue(
                             values,
                             Some(deserializer),
                         );
@@ -21622,9 +21636,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -21660,11 +21674,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::SetComplexValue(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::SetComplexValue(
+                        *self.state__ = TestResultTypeContentDeserializerState::SetComplexValue(
                             values,
                             Some(deserializer),
                         );
@@ -21688,9 +21702,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::RuleResult(values, None),
@@ -21724,11 +21738,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::RuleResult(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::RuleResult(
+                        *self.state__ = TestResultTypeContentDeserializerState::RuleResult(
                             values,
                             Some(deserializer),
                         );
@@ -21752,9 +21766,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Score(values, None),
@@ -21785,11 +21799,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Score(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Score(
+                        *self.state__ = TestResultTypeContentDeserializerState::Score(
                             values,
                             Some(deserializer),
                         );
@@ -21813,9 +21827,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Metadata(values, None),
@@ -21849,11 +21863,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Metadata(
+                        *self.state__ = TestResultTypeContentDeserializerState::Metadata(
                             values,
                             Some(deserializer),
                         );
@@ -21877,9 +21891,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = TestResultTypeContentDeserializerState::Init__;
+                            *self.state__ = TestResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => TestResultTypeContentDeserializerState::Signature(values, None),
@@ -21913,11 +21927,11 @@ pub mod cdf {
                             reader,
                             TestResultTypeContentDeserializerState::Signature(values, None),
                         )?;
-                        *self.state = TestResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = TestResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = TestResultTypeContentDeserializerState::Signature(
+                        *self.state__ = TestResultTypeContentDeserializerState::Signature(
                             values,
                             Some(deserializer),
                         );
@@ -21935,12 +21949,15 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(TestResultTypeContentDeserializerState::Init__),
+                    state__: Box::new(TestResultTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, TestResultTypeContentDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            TestResultTypeContentDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -21960,7 +21977,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Benchmark(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -22453,13 +22470,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -22474,13 +22491,13 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct SignatureTypeDeserializer {
             any: Option<AnyElement>,
-            state: Box<SignatureTypeDeserializerState>,
+            state__: Box<SignatureTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SignatureTypeDeserializerState {
@@ -22500,7 +22517,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     any: None,
-                    state: Box::new(SignatureTypeDeserializerState::Init__),
+                    state__: Box::new(SignatureTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -22544,10 +22561,10 @@ pub mod cdf {
                 if artifact.is_none() {
                     if self.any.is_some() {
                         fallback.get_or_insert(SignatureTypeDeserializerState::Any(None));
-                        *self.state = SignatureTypeDeserializerState::Done__;
+                        *self.state__ = SignatureTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = SignatureTypeDeserializerState::Any(None);
+                        *self.state__ = SignatureTypeDeserializerState::Any(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -22558,7 +22575,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = SignatureTypeDeserializerState::Done__;
+                        *self.state__ = SignatureTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -22568,10 +22585,10 @@ pub mod cdf {
                                 fallback.get_or_insert(SignatureTypeDeserializerState::Any(Some(
                                     deserializer,
                                 )));
-                                *self.state = SignatureTypeDeserializerState::Done__;
+                                *self.state__ = SignatureTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SignatureTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
@@ -22605,7 +22622,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Any(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -22631,7 +22648,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = SignatureTypeDeserializerState::Any(None);
+                            *self.state__ = SignatureTypeDeserializerState::Any(None);
                             event
                         }
                         (S::Any(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -22650,14 +22667,14 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::Done__;
+                                *self.state__ = S::Done__;
                                 event
                             }
                         }
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -22666,13 +22683,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -22684,7 +22701,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SignatureTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    SignatureTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::SignatureType {
                     any: self
@@ -22697,7 +22717,7 @@ pub mod cdf {
         pub struct SubTypeDeserializer {
             idref: String,
             use_: super::SubUseEnumType,
-            state: Box<SubTypeDeserializerState>,
+            state__: Box<SubTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SubTypeDeserializerState {
@@ -22732,7 +22752,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
                     use_: use_.unwrap_or_else(super::SubType::default_use_),
-                    state: Box::new(SubTypeDeserializerState::Init__),
+                    state__: Box::new(SubTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -22779,7 +22799,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SubTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, SubTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::SubType {
                     idref: self.idref,
@@ -22791,7 +22811,7 @@ pub mod cdf {
         pub struct ParamTypeDeserializer {
             name: String,
             content: Option<String>,
-            state: Box<ParamTypeDeserializerState>,
+            state__: Box<ParamTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ParamTypeDeserializerState {
@@ -22821,7 +22841,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("name".into()))
                     })?,
                     content: None,
-                    state: Box::new(ParamTypeDeserializerState::Init__),
+                    state__: Box::new(ParamTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -22874,7 +22894,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -22907,7 +22927,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use ParamTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -22923,7 +22943,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, ParamTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, ParamTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::ParamType {
                     name: self.name,
@@ -22937,7 +22957,7 @@ pub mod cdf {
             override_: bool,
             text_before: Option<Text>,
             sub: Vec<Mixed<super::SubType>>,
-            state: Box<TextWithSubTypeDeserializerState>,
+            state__: Box<TextWithSubTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TextWithSubTypeDeserializerState {
@@ -22975,7 +22995,7 @@ pub mod cdf {
                     override_: override_.unwrap_or_else(super::TextWithSubType::default_override_),
                     text_before: None,
                     sub: Vec::new(),
-                    state: Box::new(TextWithSubTypeDeserializerState::Init__),
+                    state__: Box::new(TextWithSubTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -23025,7 +23045,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(TextWithSubTypeDeserializerState::TextBefore(None));
-                    *self.state = TextWithSubTypeDeserializerState::Sub(None);
+                    *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23035,7 +23055,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state = TextWithSubTypeDeserializerState::Sub(None);
+                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -23047,10 +23067,10 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = TextWithSubTypeDeserializerState::Sub(None);
+                                *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = TextWithSubTypeDeserializerState::TextBefore(Some(
+                                *self.state__ = TextWithSubTypeDeserializerState::TextBefore(Some(
                                     deserializer,
                                 ));
                             }
@@ -23075,7 +23095,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(TextWithSubTypeDeserializerState::Sub(None));
-                    *self.state = TextWithSubTypeDeserializerState::Done__;
+                    *self.state__ = TextWithSubTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23085,7 +23105,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_sub(data)?;
-                        *self.state = TextWithSubTypeDeserializerState::Sub(None);
+                        *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -23095,10 +23115,10 @@ pub mod cdf {
                                 fallback.get_or_insert(TextWithSubTypeDeserializerState::Sub(
                                     Some(deserializer),
                                 ));
-                                *self.state = TextWithSubTypeDeserializerState::Sub(None);
+                                *self.state__ = TextWithSubTypeDeserializerState::Sub(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     TextWithSubTypeDeserializerState::Sub(Some(deserializer));
                             }
                         }
@@ -23130,7 +23150,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextBefore(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -23168,7 +23188,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = TextWithSubTypeDeserializerState::TextBefore(None);
+                            *self.state__ = TextWithSubTypeDeserializerState::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -23207,13 +23227,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -23226,7 +23246,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     TextWithSubTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -23242,7 +23262,7 @@ pub mod cdf {
         pub struct OverrideableCpe2IdrefTypeDeserializer {
             idref: String,
             override_: bool,
-            state: Box<OverrideableCpe2IdrefTypeDeserializerState>,
+            state__: Box<OverrideableCpe2IdrefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OverrideableCpe2IdrefTypeDeserializerState {
@@ -23278,7 +23298,7 @@ pub mod cdf {
                     })?,
                     override_: override_
                         .unwrap_or_else(super::OverrideableCpe2IdrefType::default_override_),
-                    state: Box::new(OverrideableCpe2IdrefTypeDeserializerState::Init__),
+                    state__: Box::new(OverrideableCpe2IdrefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -23331,7 +23351,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     OverrideableCpe2IdrefTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -23346,7 +23366,7 @@ pub mod cdf {
             idref: String,
             selected: bool,
             remark: Vec<super::TextType>,
-            state: Box<ProfileSelectTypeDeserializerState>,
+            state__: Box<ProfileSelectTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileSelectTypeDeserializerState {
@@ -23386,7 +23406,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("selected".into()))
                     })?,
                     remark: Vec::new(),
-                    state: Box::new(ProfileSelectTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileSelectTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -23426,7 +23446,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ProfileSelectTypeDeserializerState::Remark(None));
-                    *self.state = ProfileSelectTypeDeserializerState::Done__;
+                    *self.state__ = ProfileSelectTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23436,7 +23456,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = ProfileSelectTypeDeserializerState::Remark(None);
+                        *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -23446,10 +23466,10 @@ pub mod cdf {
                                 fallback.get_or_insert(ProfileSelectTypeDeserializerState::Remark(
                                     Some(deserializer),
                                 ));
-                                *self.state = ProfileSelectTypeDeserializerState::Remark(None);
+                                *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ProfileSelectTypeDeserializerState::Remark(Some(deserializer));
                             }
                         }
@@ -23481,7 +23501,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Remark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -23507,7 +23527,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ProfileSelectTypeDeserializerState::Remark(None);
+                            *self.state__ = ProfileSelectTypeDeserializerState::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -23533,13 +23553,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -23552,7 +23572,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileSelectTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -23567,7 +23587,7 @@ pub mod cdf {
         pub struct ProfileSetComplexValueTypeDeserializer {
             idref: String,
             item: Vec<String>,
-            state: Box<ProfileSetComplexValueTypeDeserializerState>,
+            state__: Box<ProfileSetComplexValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileSetComplexValueTypeDeserializerState {
@@ -23598,7 +23618,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
                     item: Vec::new(),
-                    state: Box::new(ProfileSetComplexValueTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileSetComplexValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -23636,7 +23656,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ProfileSetComplexValueTypeDeserializerState::Item(None));
-                    *self.state = ProfileSetComplexValueTypeDeserializerState::Done__;
+                    *self.state__ = ProfileSetComplexValueTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -23646,7 +23666,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state = ProfileSetComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -23658,11 +23678,11 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state =
+                                *self.state__ =
                                     ProfileSetComplexValueTypeDeserializerState::Item(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ProfileSetComplexValueTypeDeserializerState::Item(
+                                *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(
                                     Some(deserializer),
                                 );
                             }
@@ -23697,7 +23717,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Item(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -23723,7 +23743,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ProfileSetComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = ProfileSetComplexValueTypeDeserializerState::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -23749,13 +23769,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -23768,7 +23788,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileSetComplexValueTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -23782,7 +23802,7 @@ pub mod cdf {
         pub struct ProfileSetValueTypeDeserializer {
             idref: String,
             content: Option<String>,
-            state: Box<ProfileSetValueTypeDeserializerState>,
+            state__: Box<ProfileSetValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileSetValueTypeDeserializerState {
@@ -23812,7 +23832,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
                     content: None,
-                    state: Box::new(ProfileSetValueTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileSetValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -23865,7 +23885,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -23901,7 +23921,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use ProfileSetValueTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -23918,7 +23938,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileSetValueTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -23934,7 +23954,7 @@ pub mod cdf {
             selector: Option<String>,
             operator: Option<super::ValueOperatorType>,
             remark: Vec<super::TextType>,
-            state: Box<ProfileRefineValueTypeDeserializerState>,
+            state__: Box<ProfileRefineValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileRefineValueTypeDeserializerState {
@@ -23979,7 +23999,7 @@ pub mod cdf {
                     selector: selector,
                     operator: operator,
                     remark: Vec::new(),
-                    state: Box::new(ProfileRefineValueTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileRefineValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -24019,7 +24039,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ProfileRefineValueTypeDeserializerState::Remark(None));
-                    *self.state = ProfileRefineValueTypeDeserializerState::Done__;
+                    *self.state__ = ProfileRefineValueTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24029,7 +24049,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = ProfileRefineValueTypeDeserializerState::Remark(None);
+                        *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -24041,10 +24061,11 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = ProfileRefineValueTypeDeserializerState::Remark(None);
+                                *self.state__ =
+                                    ProfileRefineValueTypeDeserializerState::Remark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ProfileRefineValueTypeDeserializerState::Remark(
+                                *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(
                                     Some(deserializer),
                                 );
                             }
@@ -24077,7 +24098,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Remark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -24103,7 +24124,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ProfileRefineValueTypeDeserializerState::Remark(None);
+                            *self.state__ = ProfileRefineValueTypeDeserializerState::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -24129,13 +24150,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -24148,7 +24169,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileRefineValueTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -24168,7 +24189,7 @@ pub mod cdf {
             severity: Option<super::SeverityEnumType>,
             role: Option<super::RoleEnumType>,
             remark: Vec<super::TextType>,
-            state: Box<ProfileRefineRuleTypeDeserializerState>,
+            state__: Box<ProfileRefineRuleTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileRefineRuleTypeDeserializerState {
@@ -24227,7 +24248,7 @@ pub mod cdf {
                     severity: severity,
                     role: role,
                     remark: Vec::new(),
-                    state: Box::new(ProfileRefineRuleTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileRefineRuleTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -24267,7 +24288,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ProfileRefineRuleTypeDeserializerState::Remark(None));
-                    *self.state = ProfileRefineRuleTypeDeserializerState::Done__;
+                    *self.state__ = ProfileRefineRuleTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -24277,7 +24298,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                        *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -24289,12 +24310,13 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                                *self.state__ =
+                                    ProfileRefineRuleTypeDeserializerState::Remark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = ProfileRefineRuleTypeDeserializerState::Remark(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -24325,7 +24347,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Remark(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -24351,7 +24373,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ProfileRefineRuleTypeDeserializerState::Remark(None);
+                            *self.state__ = ProfileRefineRuleTypeDeserializerState::Remark(None);
                             event
                         }
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -24377,13 +24399,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -24396,7 +24418,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileRefineRuleTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -24416,7 +24438,7 @@ pub mod cdf {
             override_: bool,
             category: super::WarningCategoryEnumType,
             content: Vec<super::WarningTypeContent>,
-            state: Box<WarningTypeDeserializerState>,
+            state__: Box<WarningTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum WarningTypeDeserializerState {
@@ -24459,7 +24481,7 @@ pub mod cdf {
                     override_: override_.unwrap_or_else(super::WarningType::default_override_),
                     category: category.unwrap_or_else(super::WarningType::default_category),
                     content: Vec::new(),
-                    state: Box::new(WarningTypeDeserializerState::Init__),
+                    state__: Box::new(WarningTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -24494,7 +24516,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(WarningTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -24506,20 +24528,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = WarningTypeDeserializerState::Next__;
+                        *self.state__ = WarningTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = WarningTypeDeserializerState::Content__(deserializer);
+                                *self.state__ =
+                                    WarningTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(WarningTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = WarningTypeDeserializerState::Next__;
+                                *self.state__ = WarningTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -24546,7 +24569,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -24588,7 +24611,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, WarningTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, WarningTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::WarningType {
                     lang: self.lang,
@@ -24600,7 +24623,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct WarningTypeContentDeserializer {
-            state: Box<WarningTypeContentDeserializerState>,
+            state__: Box<WarningTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum WarningTypeContentDeserializerState {
@@ -24738,9 +24761,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            *self.state__ = WarningTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => WarningTypeContentDeserializerState::Sub(values, None),
@@ -24767,11 +24790,11 @@ pub mod cdf {
                             reader,
                             WarningTypeContentDeserializerState::Sub(values, None),
                         )?;
-                        *self.state = WarningTypeContentDeserializerState::Done__(data);
+                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             WarningTypeContentDeserializerState::Sub(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -24793,9 +24816,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            *self.state__ = WarningTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => WarningTypeContentDeserializerState::Any(values, None),
@@ -24822,11 +24845,11 @@ pub mod cdf {
                             reader,
                             WarningTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = WarningTypeContentDeserializerState::Done__(data);
+                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             WarningTypeContentDeserializerState::Any(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -24848,9 +24871,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = WarningTypeContentDeserializerState::Init__;
+                            *self.state__ = WarningTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => WarningTypeContentDeserializerState::Text(values, None),
@@ -24877,11 +24900,11 @@ pub mod cdf {
                             reader,
                             WarningTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = WarningTypeContentDeserializerState::Done__(data);
+                        *self.state__ = WarningTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             WarningTypeContentDeserializerState::Text(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -24897,12 +24920,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(WarningTypeContentDeserializerState::Init__),
+                    state__: Box::new(WarningTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, WarningTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, WarningTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -24922,7 +24945,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Sub(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -25003,13 +25026,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -25024,14 +25047,14 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct SelStringTypeDeserializer {
             selector: String,
             content: Option<String>,
-            state: Box<SelStringTypeDeserializerState>,
+            state__: Box<SelStringTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SelStringTypeDeserializerState {
@@ -25059,7 +25082,7 @@ pub mod cdf {
                 Ok(Self {
                     selector: selector.unwrap_or_else(super::SelStringType::default_selector),
                     content: None,
-                    state: Box::new(SelStringTypeDeserializerState::Init__),
+                    state__: Box::new(SelStringTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -25112,7 +25135,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -25148,7 +25171,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use SelStringTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -25164,7 +25187,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SelStringTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    SelStringTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::SelStringType {
                     selector: self.selector,
@@ -25176,7 +25202,7 @@ pub mod cdf {
         pub struct SelComplexValueTypeDeserializer {
             selector: String,
             item: Vec<String>,
-            state: Box<SelComplexValueTypeDeserializerState>,
+            state__: Box<SelComplexValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SelComplexValueTypeDeserializerState {
@@ -25205,7 +25231,7 @@ pub mod cdf {
                 Ok(Self {
                     selector: selector.unwrap_or_else(super::SelComplexValueType::default_selector),
                     item: Vec::new(),
-                    state: Box::new(SelComplexValueTypeDeserializerState::Init__),
+                    state__: Box::new(SelComplexValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -25243,7 +25269,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(SelComplexValueTypeDeserializerState::Item(None));
-                    *self.state = SelComplexValueTypeDeserializerState::Done__;
+                    *self.state__ = SelComplexValueTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -25253,7 +25279,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state = SelComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -25263,10 +25289,10 @@ pub mod cdf {
                                 fallback.get_or_insert(SelComplexValueTypeDeserializerState::Item(
                                     Some(deserializer),
                                 ));
-                                *self.state = SelComplexValueTypeDeserializerState::Item(None);
+                                *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SelComplexValueTypeDeserializerState::Item(Some(deserializer));
                             }
                         }
@@ -25298,7 +25324,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Item(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -25324,7 +25350,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = SelComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = SelComplexValueTypeDeserializerState::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -25350,13 +25376,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -25369,7 +25395,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     SelComplexValueTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -25383,7 +25409,7 @@ pub mod cdf {
         pub struct SelNumTypeDeserializer {
             selector: String,
             content: Option<f64>,
-            state: Box<SelNumTypeDeserializerState>,
+            state__: Box<SelNumTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SelNumTypeDeserializerState {
@@ -25411,7 +25437,7 @@ pub mod cdf {
                 Ok(Self {
                     selector: selector.unwrap_or_else(super::SelNumType::default_selector),
                     content: None,
-                    state: Box::new(SelNumTypeDeserializerState::Init__),
+                    state__: Box::new(SelNumTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -25464,7 +25490,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -25497,7 +25523,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use SelNumTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -25513,7 +25539,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SelNumTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, SelNumTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::SelNumType {
                     selector: self.selector,
@@ -25526,7 +25552,7 @@ pub mod cdf {
             must_match: Option<bool>,
             selector: String,
             content: Vec<super::SelChoicesTypeContent>,
-            state: Box<SelChoicesTypeDeserializerState>,
+            state__: Box<SelChoicesTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum SelChoicesTypeDeserializerState {
@@ -25562,7 +25588,7 @@ pub mod cdf {
                     must_match: must_match,
                     selector: selector.unwrap_or_else(super::SelChoicesType::default_selector),
                     content: Vec::new(),
-                    state: Box::new(SelChoicesTypeDeserializerState::Init__),
+                    state__: Box::new(SelChoicesTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -25597,7 +25623,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(SelChoicesTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -25609,21 +25635,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = SelChoicesTypeDeserializerState::Next__;
+                        *self.state__ = SelChoicesTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     SelChoicesTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(SelChoicesTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = SelChoicesTypeDeserializerState::Next__;
+                                *self.state__ = SelChoicesTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -25653,7 +25679,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -25695,7 +25721,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, SelChoicesTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    SelChoicesTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::SelChoicesType {
                     must_match: self.must_match,
@@ -25706,7 +25735,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct SelChoicesTypeContentDeserializer {
-            state: Box<SelChoicesTypeContentDeserializerState>,
+            state__: Box<SelChoicesTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum SelChoicesTypeContentDeserializerState {
@@ -25762,7 +25791,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(SelChoicesTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -25838,9 +25867,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            *self.state__ = SelChoicesTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => SelChoicesTypeContentDeserializerState::Choice(values, None),
@@ -25871,11 +25900,11 @@ pub mod cdf {
                             reader,
                             SelChoicesTypeContentDeserializerState::Choice(values, None),
                         )?;
-                        *self.state = SelChoicesTypeContentDeserializerState::Done__(data);
+                        *self.state__ = SelChoicesTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = SelChoicesTypeContentDeserializerState::Choice(
+                        *self.state__ = SelChoicesTypeContentDeserializerState::Choice(
                             values,
                             Some(deserializer),
                         );
@@ -25899,9 +25928,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = SelChoicesTypeContentDeserializerState::Init__;
+                            *self.state__ = SelChoicesTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => SelChoicesTypeContentDeserializerState::ComplexChoice(values, None),
@@ -25935,11 +25964,11 @@ pub mod cdf {
                             reader,
                             SelChoicesTypeContentDeserializerState::ComplexChoice(values, None),
                         )?;
-                        *self.state = SelChoicesTypeContentDeserializerState::Done__(data);
+                        *self.state__ = SelChoicesTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = SelChoicesTypeContentDeserializerState::ComplexChoice(
+                        *self.state__ = SelChoicesTypeContentDeserializerState::ComplexChoice(
                             values,
                             Some(deserializer),
                         );
@@ -25957,12 +25986,15 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(SelChoicesTypeContentDeserializerState::Init__),
+                    state__: Box::new(SelChoicesTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, SelChoicesTypeContentDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            SelChoicesTypeContentDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -25982,7 +26014,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Choice(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -26058,13 +26090,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -26079,13 +26111,13 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct UriRefTypeDeserializer {
             uri: String,
-            state: Box<UriRefTypeDeserializerState>,
+            state__: Box<UriRefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum UriRefTypeDeserializerState {
@@ -26113,7 +26145,7 @@ pub mod cdf {
                     uri: uri.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("uri".into()))
                     })?,
-                    state: Box::new(UriRefTypeDeserializerState::Init__),
+                    state__: Box::new(UriRefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26160,7 +26192,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, UriRefTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, UriRefTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::UriRefType { uri: self.uri })
             }
@@ -26168,7 +26200,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct IdrefListTypeDeserializer {
             idref: super::super::xs::EntitiesType,
-            state: Box<IdrefListTypeDeserializerState>,
+            state__: Box<IdrefListTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum IdrefListTypeDeserializerState {
@@ -26196,7 +26228,7 @@ pub mod cdf {
                     idref: idref.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
-                    state: Box::new(IdrefListTypeDeserializerState::Init__),
+                    state__: Box::new(IdrefListTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26246,7 +26278,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, IdrefListTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    IdrefListTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::IdrefListType { idref: self.idref })
             }
@@ -26254,7 +26289,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct IdrefTypeDeserializer {
             idref: String,
-            state: Box<IdrefTypeDeserializerState>,
+            state__: Box<IdrefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum IdrefTypeDeserializerState {
@@ -26282,7 +26317,7 @@ pub mod cdf {
                     idref: idref.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("idref".into()))
                     })?,
-                    state: Box::new(IdrefTypeDeserializerState::Init__),
+                    state__: Box::new(IdrefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26329,7 +26364,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, IdrefTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, IdrefTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::IdrefType { idref: self.idref })
             }
@@ -26339,7 +26374,7 @@ pub mod cdf {
             system: String,
             any_attribute: AnyAttributes,
             content: Option<String>,
-            state: Box<IdentTypeDeserializerState>,
+            state__: Box<IdentTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum IdentTypeDeserializerState {
@@ -26371,7 +26406,7 @@ pub mod cdf {
                     })?,
                     any_attribute: any_attribute,
                     content: None,
-                    state: Box::new(IdentTypeDeserializerState::Init__),
+                    state__: Box::new(IdentTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26424,7 +26459,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -26457,7 +26492,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use IdentTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -26473,7 +26508,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, IdentTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, IdentTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::IdentType {
                     system: self.system,
@@ -26487,7 +26522,7 @@ pub mod cdf {
             lang: Option<String>,
             tag: String,
             content: Vec<super::ProfileNoteTypeContent>,
-            state: Box<ProfileNoteTypeDeserializerState>,
+            state__: Box<ProfileNoteTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ProfileNoteTypeDeserializerState {
@@ -26525,7 +26560,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("tag".into()))
                     })?,
                     content: Vec::new(),
-                    state: Box::new(ProfileNoteTypeDeserializerState::Init__),
+                    state__: Box::new(ProfileNoteTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -26560,7 +26595,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(ProfileNoteTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -26572,21 +26607,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = ProfileNoteTypeDeserializerState::Next__;
+                        *self.state__ = ProfileNoteTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ProfileNoteTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     ProfileNoteTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = ProfileNoteTypeDeserializerState::Next__;
+                                *self.state__ = ProfileNoteTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -26616,7 +26651,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -26659,7 +26694,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ProfileNoteTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -26672,7 +26707,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct ProfileNoteTypeContentDeserializer {
-            state: Box<ProfileNoteTypeContentDeserializerState>,
+            state__: Box<ProfileNoteTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum ProfileNoteTypeContentDeserializerState {
@@ -26810,9 +26845,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileNoteTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileNoteTypeContentDeserializerState::Sub(values, None),
@@ -26842,11 +26877,11 @@ pub mod cdf {
                             reader,
                             ProfileNoteTypeContentDeserializerState::Sub(values, None),
                         )?;
-                        *self.state = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileNoteTypeContentDeserializerState::Sub(
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Sub(
                             values,
                             Some(deserializer),
                         );
@@ -26870,9 +26905,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileNoteTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileNoteTypeContentDeserializerState::Any(values, None),
@@ -26902,11 +26937,11 @@ pub mod cdf {
                             reader,
                             ProfileNoteTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileNoteTypeContentDeserializerState::Any(
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Any(
                             values,
                             Some(deserializer),
                         );
@@ -26930,9 +26965,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ProfileNoteTypeContentDeserializerState::Init__;
+                            *self.state__ = ProfileNoteTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ProfileNoteTypeContentDeserializerState::Text(values, None),
@@ -26963,11 +26998,11 @@ pub mod cdf {
                             reader,
                             ProfileNoteTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = ProfileNoteTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ProfileNoteTypeContentDeserializerState::Text(
+                        *self.state__ = ProfileNoteTypeContentDeserializerState::Text(
                             values,
                             Some(deserializer),
                         );
@@ -26985,12 +27020,15 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(ProfileNoteTypeContentDeserializerState::Init__),
+                    state__: Box::new(ProfileNoteTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, ProfileNoteTypeContentDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            ProfileNoteTypeContentDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -27010,7 +27048,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Sub(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27091,13 +27129,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -27112,7 +27150,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -27125,7 +27163,7 @@ pub mod cdf {
             disruption: super::RatingEnumType,
             complexity: super::RatingEnumType,
             content: Vec<super::FixTextTypeContent>,
-            state: Box<FixTextTypeDeserializerState>,
+            state__: Box<FixTextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FixTextTypeDeserializerState {
@@ -27196,7 +27234,7 @@ pub mod cdf {
                     disruption: disruption.unwrap_or_else(super::FixTextType::default_disruption),
                     complexity: complexity.unwrap_or_else(super::FixTextType::default_complexity),
                     content: Vec::new(),
-                    state: Box::new(FixTextTypeDeserializerState::Init__),
+                    state__: Box::new(FixTextTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -27231,7 +27269,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(FixTextTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -27243,20 +27281,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = FixTextTypeDeserializerState::Next__;
+                        *self.state__ = FixTextTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = FixTextTypeDeserializerState::Content__(deserializer);
+                                *self.state__ =
+                                    FixTextTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(FixTextTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = FixTextTypeDeserializerState::Next__;
+                                *self.state__ = FixTextTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -27283,7 +27322,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27325,7 +27364,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, FixTextTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, FixTextTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::FixTextType {
                     lang: self.lang,
@@ -27341,7 +27380,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct FixTextTypeContentDeserializer {
-            state: Box<FixTextTypeContentDeserializerState>,
+            state__: Box<FixTextTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum FixTextTypeContentDeserializerState {
@@ -27479,9 +27518,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTextTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTextTypeContentDeserializerState::Sub(values, None),
@@ -27508,11 +27547,11 @@ pub mod cdf {
                             reader,
                             FixTextTypeContentDeserializerState::Sub(values, None),
                         )?;
-                        *self.state = FixTextTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTextTypeContentDeserializerState::Sub(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -27534,9 +27573,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTextTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTextTypeContentDeserializerState::Any(values, None),
@@ -27563,11 +27602,11 @@ pub mod cdf {
                             reader,
                             FixTextTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = FixTextTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTextTypeContentDeserializerState::Any(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -27589,9 +27628,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTextTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTextTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTextTypeContentDeserializerState::Text(values, None),
@@ -27618,11 +27657,11 @@ pub mod cdf {
                             reader,
                             FixTextTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = FixTextTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTextTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTextTypeContentDeserializerState::Text(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -27638,12 +27677,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(FixTextTypeContentDeserializerState::Init__),
+                    state__: Box::new(FixTextTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, FixTextTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, FixTextTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -27663,7 +27702,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Sub(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27744,13 +27783,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -27765,7 +27804,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -27778,7 +27817,7 @@ pub mod cdf {
             system: Option<String>,
             platform: Option<String>,
             content: Vec<super::FixTypeContent>,
-            state: Box<FixTypeDeserializerState>,
+            state__: Box<FixTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FixTypeDeserializerState {
@@ -27849,7 +27888,7 @@ pub mod cdf {
                     system: system,
                     platform: platform,
                     content: Vec::new(),
-                    state: Box::new(FixTypeDeserializerState::Init__),
+                    state__: Box::new(FixTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -27884,7 +27923,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback.take().unwrap_or(FixTypeDeserializerState::Next__);
+                    *self.state__ = fallback.take().unwrap_or(FixTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -27894,20 +27933,20 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = FixTypeDeserializerState::Next__;
+                        *self.state__ = FixTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = FixTypeDeserializerState::Content__(deserializer);
+                                *self.state__ = FixTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(FixTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = FixTypeDeserializerState::Next__;
+                                *self.state__ = FixTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -27934,7 +27973,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -27979,7 +28018,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, FixTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, FixTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::FixType {
                     id: self.id,
@@ -27995,7 +28034,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct FixTypeContentDeserializer {
-            state: Box<FixTypeContentDeserializerState>,
+            state__: Box<FixTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum FixTypeContentDeserializerState {
@@ -28140,9 +28179,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTypeContentDeserializerState::Sub(values, None),
@@ -28169,11 +28208,11 @@ pub mod cdf {
                             reader,
                             FixTypeContentDeserializerState::Sub(values, None),
                         )?;
-                        *self.state = FixTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTypeContentDeserializerState::Sub(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -28195,9 +28234,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTypeContentDeserializerState::Instance(values, None),
@@ -28224,11 +28263,11 @@ pub mod cdf {
                             reader,
                             FixTypeContentDeserializerState::Instance(values, None),
                         )?;
-                        *self.state = FixTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTypeContentDeserializerState::Instance(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -28250,9 +28289,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = FixTypeContentDeserializerState::Init__;
+                            *self.state__ = FixTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => FixTypeContentDeserializerState::Text(values, None),
@@ -28279,11 +28318,11 @@ pub mod cdf {
                             reader,
                             FixTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = FixTypeContentDeserializerState::Done__(data);
+                        *self.state__ = FixTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             FixTypeContentDeserializerState::Text(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -28299,12 +28338,12 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(FixTypeContentDeserializerState::Init__),
+                    state__: Box::new(FixTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, FixTypeContentDeserializerState::Init__) =>
+                        if matches!(&*x.state__, FixTypeContentDeserializerState::Init__) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -28324,7 +28363,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Sub(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -28409,13 +28448,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -28430,7 +28469,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -28445,7 +28484,7 @@ pub mod cdf {
             check_export: Vec<super::CheckExportType>,
             check_content_ref: Vec<super::CheckContentRefType>,
             check_content: Option<super::CheckContentType>,
-            state: Box<CheckTypeDeserializerState>,
+            state__: Box<CheckTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckTypeDeserializerState {
@@ -28517,7 +28556,7 @@ pub mod cdf {
                     check_export: Vec::new(),
                     check_content_ref: Vec::new(),
                     check_content: None,
-                    state: Box::new(CheckTypeDeserializerState::Init__),
+                    state__: Box::new(CheckTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -28586,7 +28625,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckTypeDeserializerState::CheckImport(None));
-                    *self.state = CheckTypeDeserializerState::CheckExport(None);
+                    *self.state__ = CheckTypeDeserializerState::CheckExport(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28596,7 +28635,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_import(data)?;
-                        *self.state = CheckTypeDeserializerState::CheckImport(None);
+                        *self.state__ = CheckTypeDeserializerState::CheckImport(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28606,10 +28645,10 @@ pub mod cdf {
                                 fallback.get_or_insert(CheckTypeDeserializerState::CheckImport(
                                     Some(deserializer),
                                 ));
-                                *self.state = CheckTypeDeserializerState::CheckImport(None);
+                                *self.state__ = CheckTypeDeserializerState::CheckImport(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckTypeDeserializerState::CheckImport(Some(deserializer));
                             }
                         }
@@ -28633,7 +28672,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckTypeDeserializerState::CheckExport(None));
-                    *self.state = CheckTypeDeserializerState::CheckContentRef(None);
+                    *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28643,7 +28682,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_export(data)?;
-                        *self.state = CheckTypeDeserializerState::CheckExport(None);
+                        *self.state__ = CheckTypeDeserializerState::CheckExport(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28653,10 +28692,10 @@ pub mod cdf {
                                 fallback.get_or_insert(CheckTypeDeserializerState::CheckExport(
                                     Some(deserializer),
                                 ));
-                                *self.state = CheckTypeDeserializerState::CheckExport(None);
+                                *self.state__ = CheckTypeDeserializerState::CheckExport(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckTypeDeserializerState::CheckExport(Some(deserializer));
                             }
                         }
@@ -28680,7 +28719,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckTypeDeserializerState::CheckContentRef(None));
-                    *self.state = CheckTypeDeserializerState::CheckContent(None);
+                    *self.state__ = CheckTypeDeserializerState::CheckContent(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28690,7 +28729,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_content_ref(data)?;
-                        *self.state = CheckTypeDeserializerState::CheckContentRef(None);
+                        *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28700,10 +28739,10 @@ pub mod cdf {
                                 fallback.get_or_insert(
                                     CheckTypeDeserializerState::CheckContentRef(Some(deserializer)),
                                 );
-                                *self.state = CheckTypeDeserializerState::CheckContentRef(None);
+                                *self.state__ = CheckTypeDeserializerState::CheckContentRef(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckTypeDeserializerState::CheckContentRef(Some(deserializer));
                             }
                         }
@@ -28727,7 +28766,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckTypeDeserializerState::CheckContent(None));
-                    *self.state = CheckTypeDeserializerState::Done__;
+                    *self.state__ = CheckTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -28737,7 +28776,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_content(data)?;
-                        *self.state = CheckTypeDeserializerState::Done__;
+                        *self.state__ = CheckTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -28747,10 +28786,10 @@ pub mod cdf {
                                 fallback.get_or_insert(CheckTypeDeserializerState::CheckContent(
                                     Some(deserializer),
                                 ));
-                                *self.state = CheckTypeDeserializerState::Done__;
+                                *self.state__ = CheckTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckTypeDeserializerState::CheckContent(Some(deserializer));
                             }
                         }
@@ -28779,7 +28818,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::CheckImport(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -28841,7 +28880,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CheckTypeDeserializerState::CheckImport(None);
+                            *self.state__ = CheckTypeDeserializerState::CheckImport(None);
                             event
                         }
                         (S::CheckImport(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -28918,13 +28957,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -28936,7 +28975,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CheckTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, CheckTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::CheckType {
                     system: self.system,
@@ -28957,7 +28996,7 @@ pub mod cdf {
             operator: super::CcOperatorEnumType,
             negate: bool,
             content: Vec<super::ComplexCheckTypeContent>,
-            state: Box<ComplexCheckTypeDeserializerState>,
+            state__: Box<ComplexCheckTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ComplexCheckTypeDeserializerState {
@@ -28995,7 +29034,7 @@ pub mod cdf {
                     })?,
                     negate: negate.unwrap_or_else(super::ComplexCheckType::default_negate),
                     content: Vec::new(),
-                    state: Box::new(ComplexCheckTypeDeserializerState::Init__),
+                    state__: Box::new(ComplexCheckTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29033,7 +29072,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(ComplexCheckTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -29045,21 +29084,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = ComplexCheckTypeDeserializerState::Next__;
+                        *self.state__ = ComplexCheckTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ComplexCheckTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     ComplexCheckTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = ComplexCheckTypeDeserializerState::Next__;
+                                *self.state__ = ComplexCheckTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -29089,7 +29128,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -29132,7 +29171,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ComplexCheckTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -29145,7 +29184,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct ComplexCheckTypeContentDeserializer {
-            state: Box<ComplexCheckTypeContentDeserializerState>,
+            state__: Box<ComplexCheckTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum ComplexCheckTypeContentDeserializerState {
@@ -29202,7 +29241,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(ComplexCheckTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -29280,9 +29319,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            *self.state__ = ComplexCheckTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => ComplexCheckTypeContentDeserializerState::Check(values, None),
@@ -29316,11 +29355,11 @@ pub mod cdf {
                             reader,
                             ComplexCheckTypeContentDeserializerState::Check(values, None),
                         )?;
-                        *self.state = ComplexCheckTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ComplexCheckTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ComplexCheckTypeContentDeserializerState::Check(
+                        *self.state__ = ComplexCheckTypeContentDeserializerState::Check(
                             values,
                             Some(deserializer),
                         );
@@ -29344,9 +29383,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = ComplexCheckTypeContentDeserializerState::Init__;
+                            *self.state__ = ComplexCheckTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => {
@@ -29382,11 +29421,11 @@ pub mod cdf {
                             reader,
                             ComplexCheckTypeContentDeserializerState::ComplexCheck(values, None),
                         )?;
-                        *self.state = ComplexCheckTypeContentDeserializerState::Done__(data);
+                        *self.state__ = ComplexCheckTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = ComplexCheckTypeContentDeserializerState::ComplexCheck(
+                        *self.state__ = ComplexCheckTypeContentDeserializerState::ComplexCheck(
                             values,
                             Some(deserializer),
                         );
@@ -29406,13 +29445,13 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(ComplexCheckTypeContentDeserializerState::Init__),
+                    state__: Box::new(ComplexCheckTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             ComplexCheckTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -29434,7 +29473,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Check(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -29510,13 +29549,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -29531,14 +29570,14 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
         pub struct BenchmarkReferenceTypeDeserializer {
             href: String,
             id: Option<String>,
-            state: Box<BenchmarkReferenceTypeDeserializerState>,
+            state__: Box<BenchmarkReferenceTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum BenchmarkReferenceTypeDeserializerState {
@@ -29573,7 +29612,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("href".into()))
                     })?,
                     id: id,
-                    state: Box::new(BenchmarkReferenceTypeDeserializerState::Init__),
+                    state__: Box::new(BenchmarkReferenceTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29624,7 +29663,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     BenchmarkReferenceTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -29640,7 +29679,7 @@ pub mod cdf {
             id: String,
             version: String,
             time: String,
-            state: Box<TailoringReferenceTypeDeserializerState>,
+            state__: Box<TailoringReferenceTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TailoringReferenceTypeDeserializerState {
@@ -29695,7 +29734,7 @@ pub mod cdf {
                     time: time.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("time".into()))
                     })?,
-                    state: Box::new(TailoringReferenceTypeDeserializerState::Init__),
+                    state__: Box::new(TailoringReferenceTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29746,7 +29785,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     TailoringReferenceTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -29763,7 +29802,7 @@ pub mod cdf {
             authenticated: bool,
             privileged: bool,
             content: Option<String>,
-            state: Box<IdentityTypeDeserializerState>,
+            state__: Box<IdentityTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum IdentityTypeDeserializerState {
@@ -29802,7 +29841,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("privileged".into()))
                     })?,
                     content: None,
-                    state: Box::new(IdentityTypeDeserializerState::Init__),
+                    state__: Box::new(IdentityTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29855,7 +29894,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -29891,7 +29930,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use IdentityTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -29907,7 +29946,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, IdentityTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, IdentityTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::IdentityType {
                     authenticated: self.authenticated,
@@ -29919,7 +29958,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct TargetFactsTypeDeserializer {
             fact: Vec<super::FactType>,
-            state: Box<TargetFactsTypeDeserializerState>,
+            state__: Box<TargetFactsTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TargetFactsTypeDeserializerState {
@@ -29939,7 +29978,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     fact: Vec::new(),
-                    state: Box::new(TargetFactsTypeDeserializerState::Init__),
+                    state__: Box::new(TargetFactsTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -29977,7 +30016,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(TargetFactsTypeDeserializerState::Fact(None));
-                    *self.state = TargetFactsTypeDeserializerState::Done__;
+                    *self.state__ = TargetFactsTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -29987,7 +30026,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fact(data)?;
-                        *self.state = TargetFactsTypeDeserializerState::Fact(None);
+                        *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -29997,10 +30036,10 @@ pub mod cdf {
                                 fallback.get_or_insert(TargetFactsTypeDeserializerState::Fact(
                                     Some(deserializer),
                                 ));
-                                *self.state = TargetFactsTypeDeserializerState::Fact(None);
+                                *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     TargetFactsTypeDeserializerState::Fact(Some(deserializer));
                             }
                         }
@@ -30032,7 +30071,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Fact(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -30058,7 +30097,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = TargetFactsTypeDeserializerState::Fact(None);
+                            *self.state__ = TargetFactsTypeDeserializerState::Fact(None);
                             event
                         }
                         (S::Fact(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -30084,13 +30123,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -30103,7 +30142,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     TargetFactsTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -30115,7 +30154,7 @@ pub mod cdf {
             system: String,
             href: String,
             name: Option<String>,
-            state: Box<TargetIdRefTypeDeserializerState>,
+            state__: Box<TargetIdRefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TargetIdRefTypeDeserializerState {
@@ -30159,7 +30198,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("href".into()))
                     })?,
                     name: name,
-                    state: Box::new(TargetIdRefTypeDeserializerState::Init__),
+                    state__: Box::new(TargetIdRefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -30210,7 +30249,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     TargetIdRefTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -30230,7 +30269,7 @@ pub mod cdf {
             version: Option<String>,
             weight: Option<f64>,
             content: Vec<super::RuleResultTypeContent>,
-            state: Box<RuleResultTypeDeserializerState>,
+            state__: Box<RuleResultTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum RuleResultTypeDeserializerState {
@@ -30296,7 +30335,7 @@ pub mod cdf {
                     version: version,
                     weight: weight,
                     content: Vec::new(),
-                    state: Box::new(RuleResultTypeDeserializerState::Init__),
+                    state__: Box::new(RuleResultTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -30331,7 +30370,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(RuleResultTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -30343,21 +30382,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = RuleResultTypeDeserializerState::Next__;
+                        *self.state__ = RuleResultTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     RuleResultTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(RuleResultTypeDeserializerState::Content__(
                                     deserializer,
                                 ));
-                                *self.state = RuleResultTypeDeserializerState::Next__;
+                                *self.state__ = RuleResultTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -30387,7 +30426,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -30429,7 +30468,10 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, RuleResultTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    RuleResultTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::RuleResultType {
                     idref: self.idref,
@@ -30444,7 +30486,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct RuleResultTypeContentDeserializer {
-            state: Box<RuleResultTypeContentDeserializerState>,
+            state__: Box<RuleResultTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum RuleResultTypeContentDeserializerState {
@@ -30624,7 +30666,7 @@ pub mod cdf {
                         );
                     }
                 }
-                *self.state = fallback
+                *self.state__ = fallback
                     .take()
                     .unwrap_or(RuleResultTypeContentDeserializerState::Init__);
                 Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -30847,9 +30889,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Result(values, None),
@@ -30880,11 +30922,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Result(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Result(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Result(
                             values,
                             Some(deserializer),
                         );
@@ -30908,9 +30950,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Override(values, None),
@@ -30944,11 +30986,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Override(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Override(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Override(
                             values,
                             Some(deserializer),
                         );
@@ -30972,9 +31014,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Ident(values, None),
@@ -31005,11 +31047,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Ident(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Ident(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Ident(
                             values,
                             Some(deserializer),
                         );
@@ -31033,9 +31075,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Metadata(values, None),
@@ -31069,11 +31111,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Metadata(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Metadata(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Metadata(
                             values,
                             Some(deserializer),
                         );
@@ -31097,9 +31139,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Message(values, None),
@@ -31133,11 +31175,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Message(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Message(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Message(
                             values,
                             Some(deserializer),
                         );
@@ -31161,9 +31203,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Instance(values, None),
@@ -31197,11 +31239,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Instance(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Instance(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Instance(
                             values,
                             Some(deserializer),
                         );
@@ -31225,9 +31267,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Fix(values, None),
@@ -31257,11 +31299,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Fix(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state =
+                        *self.state__ =
                             RuleResultTypeContentDeserializerState::Fix(values, Some(deserializer));
                         ElementHandlerOutput::from_event_end(event, allow_any)
                     }
@@ -31283,9 +31325,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::Check(values, None),
@@ -31316,11 +31358,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::Check(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::Check(
+                        *self.state__ = RuleResultTypeContentDeserializerState::Check(
                             values,
                             Some(deserializer),
                         );
@@ -31344,9 +31386,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = RuleResultTypeContentDeserializerState::Init__;
+                            *self.state__ = RuleResultTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => RuleResultTypeContentDeserializerState::ComplexCheck(values, None),
@@ -31380,11 +31422,11 @@ pub mod cdf {
                             reader,
                             RuleResultTypeContentDeserializerState::ComplexCheck(values, None),
                         )?;
-                        *self.state = RuleResultTypeContentDeserializerState::Done__(data);
+                        *self.state__ = RuleResultTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = RuleResultTypeContentDeserializerState::ComplexCheck(
+                        *self.state__ = RuleResultTypeContentDeserializerState::ComplexCheck(
                             values,
                             Some(deserializer),
                         );
@@ -31402,12 +31444,15 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(RuleResultTypeContentDeserializerState::Init__),
+                    state__: Box::new(RuleResultTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
-                        if matches!(&*x.state, RuleResultTypeContentDeserializerState::Init__) =>
+                        if matches!(
+                            &*x.state__,
+                            RuleResultTypeContentDeserializerState::Init__
+                        ) =>
                     {
                         DeserializerArtifact::None
                     }
@@ -31427,7 +31472,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Result(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -31664,13 +31709,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -31685,7 +31730,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -31693,7 +31738,7 @@ pub mod cdf {
             system: Option<String>,
             maximum: Option<f64>,
             content: Option<f64>,
-            state: Box<ScoreTypeDeserializerState>,
+            state__: Box<ScoreTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ScoreTypeDeserializerState {
@@ -31728,7 +31773,7 @@ pub mod cdf {
                     system: system,
                     maximum: maximum,
                     content: None,
-                    state: Box::new(ScoreTypeDeserializerState::Init__),
+                    state__: Box::new(ScoreTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -31781,7 +31826,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -31814,7 +31859,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use ScoreTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -31830,7 +31875,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, ScoreTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, ScoreTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::ScoreType {
                     system: self.system,
@@ -31842,7 +31887,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct ComplexValueTypeDeserializer {
             item: Vec<String>,
-            state: Box<ComplexValueTypeDeserializerState>,
+            state__: Box<ComplexValueTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum ComplexValueTypeDeserializerState {
@@ -31862,7 +31907,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     item: Vec::new(),
-                    state: Box::new(ComplexValueTypeDeserializerState::Init__),
+                    state__: Box::new(ComplexValueTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -31900,7 +31945,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(ComplexValueTypeDeserializerState::Item(None));
-                    *self.state = ComplexValueTypeDeserializerState::Done__;
+                    *self.state__ = ComplexValueTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -31910,7 +31955,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_item(data)?;
-                        *self.state = ComplexValueTypeDeserializerState::Item(None);
+                        *self.state__ = ComplexValueTypeDeserializerState::Item(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -31920,10 +31965,10 @@ pub mod cdf {
                                 fallback.get_or_insert(ComplexValueTypeDeserializerState::Item(
                                     Some(deserializer),
                                 ));
-                                *self.state = ComplexValueTypeDeserializerState::Item(None);
+                                *self.state__ = ComplexValueTypeDeserializerState::Item(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     ComplexValueTypeDeserializerState::Item(Some(deserializer));
                             }
                         }
@@ -31955,7 +32000,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Item(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -31981,7 +32026,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = ComplexValueTypeDeserializerState::Item(None);
+                            *self.state__ = ComplexValueTypeDeserializerState::Item(None);
                             event
                         }
                         (S::Item(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -32007,13 +32052,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32026,7 +32071,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     ComplexValueTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32036,7 +32081,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct InstanceFixTypeDeserializer {
             context: String,
-            state: Box<InstanceFixTypeDeserializerState>,
+            state__: Box<InstanceFixTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum InstanceFixTypeDeserializerState {
@@ -32062,7 +32107,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     context: context.unwrap_or_else(super::InstanceFixType::default_context),
-                    state: Box::new(InstanceFixTypeDeserializerState::Init__),
+                    state__: Box::new(InstanceFixTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32113,7 +32158,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     InstanceFixTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32129,7 +32174,7 @@ pub mod cdf {
             text_before: Option<Text>,
             any: Option<AnyElement>,
             text_after_any_36: Option<Text>,
-            state: Box<CheckImportTypeDeserializerState>,
+            state__: Box<CheckImportTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckImportTypeDeserializerState {
@@ -32171,7 +32216,7 @@ pub mod cdf {
                     text_before: None,
                     any: None,
                     text_after_any_36: None,
-                    state: Box::new(CheckImportTypeDeserializerState::Init__),
+                    state__: Box::new(CheckImportTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32238,7 +32283,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckImportTypeDeserializerState::TextBefore(None));
-                    *self.state = CheckImportTypeDeserializerState::Any(None);
+                    *self.state__ = CheckImportTypeDeserializerState::Any(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -32248,7 +32293,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_before(data)?;
-                        *self.state = CheckImportTypeDeserializerState::Any(None);
+                        *self.state__ = CheckImportTypeDeserializerState::Any(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -32260,10 +32305,10 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CheckImportTypeDeserializerState::Any(None);
+                                *self.state__ = CheckImportTypeDeserializerState::Any(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CheckImportTypeDeserializerState::TextBefore(Some(
+                                *self.state__ = CheckImportTypeDeserializerState::TextBefore(Some(
                                     deserializer,
                                 ));
                             }
@@ -32288,7 +32333,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckImportTypeDeserializerState::Any(None));
-                    *self.state = CheckImportTypeDeserializerState::TextAfterAny36(None);
+                    *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -32298,7 +32343,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_any(data)?;
-                        *self.state = CheckImportTypeDeserializerState::TextAfterAny36(None);
+                        *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -32308,11 +32353,11 @@ pub mod cdf {
                                 fallback.get_or_insert(CheckImportTypeDeserializerState::Any(
                                     Some(deserializer),
                                 ));
-                                *self.state =
+                                *self.state__ =
                                     CheckImportTypeDeserializerState::TextAfterAny36(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckImportTypeDeserializerState::Any(Some(deserializer));
                             }
                         }
@@ -32336,7 +32381,7 @@ pub mod cdf {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(CheckImportTypeDeserializerState::TextAfterAny36(None));
-                    *self.state = CheckImportTypeDeserializerState::Done__;
+                    *self.state__ = CheckImportTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -32346,7 +32391,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_text_after_any_36(data)?;
-                        *self.state = CheckImportTypeDeserializerState::Done__;
+                        *self.state__ = CheckImportTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -32358,10 +32403,10 @@ pub mod cdf {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = CheckImportTypeDeserializerState::Done__;
+                                *self.state__ = CheckImportTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = CheckImportTypeDeserializerState::TextAfterAny36(
+                                *self.state__ = CheckImportTypeDeserializerState::TextAfterAny36(
                                     Some(deserializer),
                                 );
                             }
@@ -32396,7 +32441,7 @@ pub mod cdf {
                 let mut is_any_retry = false;
                 let mut any_fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::TextBefore(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -32446,7 +32491,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = CheckImportTypeDeserializerState::TextBefore(None);
+                            *self.state__ = CheckImportTypeDeserializerState::TextBefore(None);
                             event
                         }
                         (S::TextBefore(None), event) => {
@@ -32478,7 +32523,7 @@ pub mod cdf {
                                 }
                             } else {
                                 any_fallback.get_or_insert(S::Any(None));
-                                *self.state = S::TextAfterAny36(None);
+                                *self.state__ = S::TextAfterAny36(None);
                                 event
                             }
                         }
@@ -32498,7 +32543,7 @@ pub mod cdf {
                         (S::Done__, event) => {
                             if let Some(state) = any_fallback.take() {
                                 is_any_retry = true;
-                                *self.state = state;
+                                *self.state__ = state;
                                 event
                             } else {
                                 fallback.get_or_insert(S::Done__);
@@ -32507,13 +32552,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -32526,7 +32571,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CheckImportTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32543,7 +32588,7 @@ pub mod cdf {
         pub struct CheckExportTypeDeserializer {
             value_id: String,
             export_name: String,
-            state: Box<CheckExportTypeDeserializerState>,
+            state__: Box<CheckExportTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckExportTypeDeserializerState {
@@ -32580,7 +32625,7 @@ pub mod cdf {
                     export_name: export_name.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("export-name".into()))
                     })?,
-                    state: Box::new(CheckExportTypeDeserializerState::Init__),
+                    state__: Box::new(CheckExportTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32631,7 +32676,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CheckExportTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32645,7 +32690,7 @@ pub mod cdf {
         pub struct CheckContentRefTypeDeserializer {
             href: String,
             name: Option<String>,
-            state: Box<CheckContentRefTypeDeserializerState>,
+            state__: Box<CheckContentRefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckContentRefTypeDeserializerState {
@@ -32680,7 +32725,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("href".into()))
                     })?,
                     name: name,
-                    state: Box::new(CheckContentRefTypeDeserializerState::Init__),
+                    state__: Box::new(CheckContentRefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32731,7 +32776,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CheckContentRefTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32744,7 +32789,7 @@ pub mod cdf {
         #[derive(Debug)]
         pub struct CheckContentTypeDeserializer {
             content: Vec<super::CheckContentTypeContent>,
-            state: Box<CheckContentTypeDeserializerState>,
+            state__: Box<CheckContentTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckContentTypeDeserializerState {
@@ -32764,7 +32809,7 @@ pub mod cdf {
                 }
                 Ok(Self {
                     content: Vec::new(),
-                    state: Box::new(CheckContentTypeDeserializerState::Init__),
+                    state__: Box::new(CheckContentTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -32802,7 +32847,7 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = fallback
+                    *self.state__ = fallback
                         .take()
                         .unwrap_or(CheckContentTypeDeserializerState::Next__);
                     return Ok(ElementHandlerOutput::break_(event, allow_any));
@@ -32814,21 +32859,21 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_content(data)?;
-                        *self.state = CheckContentTypeDeserializerState::Next__;
+                        *self.state__ = CheckContentTypeDeserializerState::Next__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
                         let ret = ElementHandlerOutput::from_event(event, allow_any);
                         match &ret {
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     CheckContentTypeDeserializerState::Content__(deserializer);
                             }
                             ElementHandlerOutput::Continue { .. } => {
                                 fallback.get_or_insert(
                                     CheckContentTypeDeserializerState::Content__(deserializer),
                                 );
-                                *self.state = CheckContentTypeDeserializerState::Next__;
+                                *self.state__ = CheckContentTypeDeserializerState::Next__;
                             }
                         }
                         ret
@@ -32858,7 +32903,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Content__(deserializer), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -32901,7 +32946,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CheckContentTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -32912,7 +32957,7 @@ pub mod cdf {
         }
         #[derive(Debug)]
         pub struct CheckContentTypeContentDeserializer {
-            state: Box<CheckContentTypeContentDeserializerState>,
+            state__: Box<CheckContentTypeContentDeserializerState>,
         }
         #[derive(Debug)]
         pub enum CheckContentTypeContentDeserializerState {
@@ -33018,9 +33063,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            *self.state__ = CheckContentTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CheckContentTypeContentDeserializerState::Any(values, None),
@@ -33051,11 +33096,11 @@ pub mod cdf {
                             reader,
                             CheckContentTypeContentDeserializerState::Any(values, None),
                         )?;
-                        *self.state = CheckContentTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CheckContentTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CheckContentTypeContentDeserializerState::Any(
+                        *self.state__ = CheckContentTypeContentDeserializerState::Any(
                             values,
                             Some(deserializer),
                         );
@@ -33079,9 +33124,9 @@ pub mod cdf {
                     allow_any,
                 } = output;
                 if artifact.is_none() {
-                    *self.state = match fallback.take() {
+                    *self.state__ = match fallback.take() {
                         None if values.is_none() => {
-                            *self.state = CheckContentTypeContentDeserializerState::Init__;
+                            *self.state__ = CheckContentTypeContentDeserializerState::Init__;
                             return Ok(ElementHandlerOutput::from_event(event, allow_any));
                         }
                         None => CheckContentTypeContentDeserializerState::Text(values, None),
@@ -33112,11 +33157,11 @@ pub mod cdf {
                             reader,
                             CheckContentTypeContentDeserializerState::Text(values, None),
                         )?;
-                        *self.state = CheckContentTypeContentDeserializerState::Done__(data);
+                        *self.state__ = CheckContentTypeContentDeserializerState::Done__(data);
                         ElementHandlerOutput::Break { event, allow_any }
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = CheckContentTypeContentDeserializerState::Text(
+                        *self.state__ = CheckContentTypeContentDeserializerState::Text(
                             values,
                             Some(deserializer),
                         );
@@ -33136,13 +33181,13 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let deserializer = Self {
-                    state: Box::new(CheckContentTypeContentDeserializerState::Init__),
+                    state__: Box::new(CheckContentTypeContentDeserializerState::Init__),
                 };
                 let mut output = deserializer.next(reader, event)?;
                 output.artifact = match output.artifact {
                     DeserializerArtifact::Deserializer(x)
                         if matches!(
-                            &*x.state,
+                            &*x.state__,
                             CheckContentTypeContentDeserializerState::Init__
                         ) =>
                     {
@@ -33164,7 +33209,7 @@ pub mod cdf {
                 let mut event = event;
                 let mut fallback = None;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Any(values, Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -33222,13 +33267,13 @@ pub mod cdf {
                             }
                         }
                         (s @ S::Done__(_), event) => {
-                            *self.state = s;
+                            *self.state__ = s;
                             break (DeserializerEvent::Continue(event), false);
                         }
                         (S::Unknown__, _) => unreachable!(),
                     }
                 };
-                let artifact = if matches!(&*self.state, S::Done__(_)) {
+                let artifact = if matches!(&*self.state__, S::Done__(_)) {
                     DeserializerArtifact::Data(self.finish(reader)?)
                 } else {
                     DeserializerArtifact::Deserializer(self)
@@ -33243,7 +33288,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                Self::finish_state(reader, *self.state)
+                Self::finish_state(reader, *self.state__)
             }
         }
         #[derive(Debug)]
@@ -33251,7 +33296,7 @@ pub mod cdf {
             name: String,
             type_: super::ValueTypeType,
             content: Option<String>,
-            state: Box<FactTypeDeserializerState>,
+            state__: Box<FactTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum FactTypeDeserializerState {
@@ -33288,7 +33333,7 @@ pub mod cdf {
                     })?,
                     type_: type_.unwrap_or_else(super::FactType::default_type_),
                     content: None,
-                    state: Box::new(FactTypeDeserializerState::Init__),
+                    state__: Box::new(FactTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -33341,7 +33386,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -33374,7 +33419,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use FactTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -33390,7 +33435,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, FactTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, FactTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::FactType {
                     name: self.name,
@@ -33406,7 +33451,7 @@ pub mod cdf {
             old_result: Option<super::ResultEnumType>,
             new_result: Option<super::ResultEnumType>,
             remark: Option<super::TextType>,
-            state: Box<OverrideTypeDeserializerState>,
+            state__: Box<OverrideTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum OverrideTypeDeserializerState {
@@ -33450,7 +33495,7 @@ pub mod cdf {
                     old_result: None,
                     new_result: None,
                     remark: None,
-                    state: Box::new(OverrideTypeDeserializerState::Init__),
+                    state__: Box::new(OverrideTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -33520,10 +33565,10 @@ pub mod cdf {
                 if artifact.is_none() {
                     if self.old_result.is_some() {
                         fallback.get_or_insert(OverrideTypeDeserializerState::OldResult(None));
-                        *self.state = OverrideTypeDeserializerState::NewResult(None);
+                        *self.state__ = OverrideTypeDeserializerState::NewResult(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = OverrideTypeDeserializerState::OldResult(None);
+                        *self.state__ = OverrideTypeDeserializerState::OldResult(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -33534,7 +33579,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_old_result(data)?;
-                        *self.state = OverrideTypeDeserializerState::NewResult(None);
+                        *self.state__ = OverrideTypeDeserializerState::NewResult(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -33544,10 +33589,10 @@ pub mod cdf {
                                 fallback.get_or_insert(OverrideTypeDeserializerState::OldResult(
                                     Some(deserializer),
                                 ));
-                                *self.state = OverrideTypeDeserializerState::NewResult(None);
+                                *self.state__ = OverrideTypeDeserializerState::NewResult(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     OverrideTypeDeserializerState::OldResult(Some(deserializer));
                             }
                         }
@@ -33572,10 +33617,10 @@ pub mod cdf {
                 if artifact.is_none() {
                     if self.new_result.is_some() {
                         fallback.get_or_insert(OverrideTypeDeserializerState::NewResult(None));
-                        *self.state = OverrideTypeDeserializerState::Remark(None);
+                        *self.state__ = OverrideTypeDeserializerState::Remark(None);
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = OverrideTypeDeserializerState::NewResult(None);
+                        *self.state__ = OverrideTypeDeserializerState::NewResult(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -33586,7 +33631,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_new_result(data)?;
-                        *self.state = OverrideTypeDeserializerState::Remark(None);
+                        *self.state__ = OverrideTypeDeserializerState::Remark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -33596,10 +33641,10 @@ pub mod cdf {
                                 fallback.get_or_insert(OverrideTypeDeserializerState::NewResult(
                                     Some(deserializer),
                                 ));
-                                *self.state = OverrideTypeDeserializerState::Remark(None);
+                                *self.state__ = OverrideTypeDeserializerState::Remark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     OverrideTypeDeserializerState::NewResult(Some(deserializer));
                             }
                         }
@@ -33624,10 +33669,10 @@ pub mod cdf {
                 if artifact.is_none() {
                     if self.remark.is_some() {
                         fallback.get_or_insert(OverrideTypeDeserializerState::Remark(None));
-                        *self.state = OverrideTypeDeserializerState::Done__;
+                        *self.state__ = OverrideTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = OverrideTypeDeserializerState::Remark(None);
+                        *self.state__ = OverrideTypeDeserializerState::Remark(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -33638,7 +33683,7 @@ pub mod cdf {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = OverrideTypeDeserializerState::Done__;
+                        *self.state__ = OverrideTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -33648,10 +33693,10 @@ pub mod cdf {
                                 fallback.get_or_insert(OverrideTypeDeserializerState::Remark(
                                     Some(deserializer),
                                 ));
-                                *self.state = OverrideTypeDeserializerState::Done__;
+                                *self.state__ = OverrideTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     OverrideTypeDeserializerState::Remark(Some(deserializer));
                             }
                         }
@@ -33683,7 +33728,7 @@ pub mod cdf {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::OldResult(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -33733,7 +33778,7 @@ pub mod cdf {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = OverrideTypeDeserializerState::OldResult(None);
+                            *self.state__ = OverrideTypeDeserializerState::OldResult(None);
                             event
                         }
                         (S::OldResult(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -33793,13 +33838,13 @@ pub mod cdf {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -33811,7 +33856,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, OverrideTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, OverrideTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::OverrideType {
                     time: self.time,
@@ -33832,7 +33877,7 @@ pub mod cdf {
         pub struct MessageTypeDeserializer {
             severity: super::MsgSevEnumType,
             content: Option<String>,
-            state: Box<MessageTypeDeserializerState>,
+            state__: Box<MessageTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum MessageTypeDeserializerState {
@@ -33862,7 +33907,7 @@ pub mod cdf {
                         reader.map_error(ErrorKind::MissingAttribute("severity".into()))
                     })?,
                     content: None,
-                    state: Box::new(MessageTypeDeserializerState::Init__),
+                    state__: Box::new(MessageTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -33915,7 +33960,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -33948,7 +33993,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use MessageTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -33964,7 +34009,7 @@ pub mod cdf {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, MessageTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, MessageTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::MessageType {
                     severity: self.severity,
@@ -33977,7 +34022,7 @@ pub mod cdf {
             context: String,
             parent_context: Option<String>,
             content: Option<String>,
-            state: Box<InstanceResultTypeDeserializerState>,
+            state__: Box<InstanceResultTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum InstanceResultTypeDeserializerState {
@@ -34012,7 +34057,7 @@ pub mod cdf {
                     context: context.unwrap_or_else(super::InstanceResultType::default_context),
                     parent_context: parent_context,
                     content: None,
-                    state: Box::new(InstanceResultTypeDeserializerState::Init__),
+                    state__: Box::new(InstanceResultTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -34065,7 +34110,7 @@ pub mod cdf {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -34101,7 +34146,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 use InstanceResultTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -34118,7 +34163,7 @@ pub mod cdf {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     InstanceResultTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -40656,7 +40701,7 @@ pub mod cpe {
         #[derive(Debug)]
         pub struct PlatformSpecificationTypeDeserializer {
             platform: Vec<super::PlatformType>,
-            state: Box<PlatformSpecificationTypeDeserializerState>,
+            state__: Box<PlatformSpecificationTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PlatformSpecificationTypeDeserializerState {
@@ -40676,7 +40721,7 @@ pub mod cpe {
                 }
                 Ok(Self {
                     platform: Vec::new(),
-                    state: Box::new(PlatformSpecificationTypeDeserializerState::Init__),
+                    state__: Box::new(PlatformSpecificationTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -40716,13 +40761,13 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     if self.platform.len() < 1usize {
-                        *self.state = PlatformSpecificationTypeDeserializerState::Platform(None);
+                        *self.state__ = PlatformSpecificationTypeDeserializerState::Platform(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     } else {
                         fallback.get_or_insert(
                             PlatformSpecificationTypeDeserializerState::Platform(None),
                         );
-                        *self.state = PlatformSpecificationTypeDeserializerState::Done__;
+                        *self.state__ = PlatformSpecificationTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                 }
@@ -40733,7 +40778,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_platform(data)?;
-                        *self.state = PlatformSpecificationTypeDeserializerState::Platform(None);
+                        *self.state__ = PlatformSpecificationTypeDeserializerState::Platform(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -40746,17 +40791,18 @@ pub mod cpe {
                                     )),
                                 );
                                 if self.platform.len().saturating_add(1) < 1usize {
-                                    *self.state =
+                                    *self.state__ =
                                         PlatformSpecificationTypeDeserializerState::Platform(None);
                                 } else {
-                                    *self.state =
+                                    *self.state__ =
                                         PlatformSpecificationTypeDeserializerState::Done__;
                                 }
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = PlatformSpecificationTypeDeserializerState::Platform(
-                                    Some(deserializer),
-                                );
+                                *self.state__ =
+                                    PlatformSpecificationTypeDeserializerState::Platform(Some(
+                                        deserializer,
+                                    ));
                             }
                         }
                         ret
@@ -40789,7 +40835,7 @@ pub mod cpe {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Platform(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -40815,7 +40861,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state =
+                            *self.state__ =
                                 PlatformSpecificationTypeDeserializerState::Platform(None);
                             event
                         }
@@ -40842,13 +40888,13 @@ pub mod cpe {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -40861,7 +40907,7 @@ pub mod cpe {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     PlatformSpecificationTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -40876,7 +40922,7 @@ pub mod cpe {
             title: Vec<super::TextType>,
             remark: Vec<super::TextType>,
             logical_test: Option<super::LogicalTestType>,
-            state: Box<PlatformTypeDeserializerState>,
+            state__: Box<PlatformTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum PlatformTypeDeserializerState {
@@ -40911,7 +40957,7 @@ pub mod cpe {
                     title: Vec::new(),
                     remark: Vec::new(),
                     logical_test: None,
-                    state: Box::new(PlatformTypeDeserializerState::Init__),
+                    state__: Box::new(PlatformTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -40970,7 +41016,7 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PlatformTypeDeserializerState::Title(None));
-                    *self.state = PlatformTypeDeserializerState::Remark(None);
+                    *self.state__ = PlatformTypeDeserializerState::Remark(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -40980,7 +41026,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_title(data)?;
-                        *self.state = PlatformTypeDeserializerState::Title(None);
+                        *self.state__ = PlatformTypeDeserializerState::Title(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -40990,10 +41036,10 @@ pub mod cpe {
                                 fallback.get_or_insert(PlatformTypeDeserializerState::Title(Some(
                                     deserializer,
                                 )));
-                                *self.state = PlatformTypeDeserializerState::Title(None);
+                                *self.state__ = PlatformTypeDeserializerState::Title(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PlatformTypeDeserializerState::Title(Some(deserializer));
                             }
                         }
@@ -41017,7 +41063,7 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(PlatformTypeDeserializerState::Remark(None));
-                    *self.state = PlatformTypeDeserializerState::LogicalTest(None);
+                    *self.state__ = PlatformTypeDeserializerState::LogicalTest(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -41027,7 +41073,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_remark(data)?;
-                        *self.state = PlatformTypeDeserializerState::Remark(None);
+                        *self.state__ = PlatformTypeDeserializerState::Remark(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41037,10 +41083,10 @@ pub mod cpe {
                                 fallback.get_or_insert(PlatformTypeDeserializerState::Remark(
                                     Some(deserializer),
                                 ));
-                                *self.state = PlatformTypeDeserializerState::Remark(None);
+                                *self.state__ = PlatformTypeDeserializerState::Remark(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PlatformTypeDeserializerState::Remark(Some(deserializer));
                             }
                         }
@@ -41065,10 +41111,10 @@ pub mod cpe {
                 if artifact.is_none() {
                     if self.logical_test.is_some() {
                         fallback.get_or_insert(PlatformTypeDeserializerState::LogicalTest(None));
-                        *self.state = PlatformTypeDeserializerState::Done__;
+                        *self.state__ = PlatformTypeDeserializerState::Done__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     } else {
-                        *self.state = PlatformTypeDeserializerState::LogicalTest(None);
+                        *self.state__ = PlatformTypeDeserializerState::LogicalTest(None);
                         return Ok(ElementHandlerOutput::break_(event, allow_any));
                     }
                 }
@@ -41079,7 +41125,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_logical_test(data)?;
-                        *self.state = PlatformTypeDeserializerState::Done__;
+                        *self.state__ = PlatformTypeDeserializerState::Done__;
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41089,10 +41135,10 @@ pub mod cpe {
                                 fallback.get_or_insert(PlatformTypeDeserializerState::LogicalTest(
                                     Some(deserializer),
                                 ));
-                                *self.state = PlatformTypeDeserializerState::Done__;
+                                *self.state__ = PlatformTypeDeserializerState::Done__;
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     PlatformTypeDeserializerState::LogicalTest(Some(deserializer));
                             }
                         }
@@ -41124,7 +41170,7 @@ pub mod cpe {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::Title(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -41174,7 +41220,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = PlatformTypeDeserializerState::Title(None);
+                            *self.state__ = PlatformTypeDeserializerState::Title(None);
                             event
                         }
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -41234,13 +41280,13 @@ pub mod cpe {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -41252,7 +41298,7 @@ pub mod cpe {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, PlatformTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, PlatformTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::PlatformType {
                     id: self.id,
@@ -41268,7 +41314,7 @@ pub mod cpe {
         pub struct TextTypeDeserializer {
             lang: Option<String>,
             content: Option<String>,
-            state: Box<TextTypeDeserializerState>,
+            state__: Box<TextTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum TextTypeDeserializerState {
@@ -41296,7 +41342,7 @@ pub mod cpe {
                 Ok(Self {
                     lang: lang,
                     content: None,
-                    state: Box::new(TextTypeDeserializerState::Init__),
+                    state__: Box::new(TextTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41349,7 +41395,7 @@ pub mod cpe {
                         })
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
-                        *self.state = S::Content__(deserializer);
+                        *self.state__ = S::Content__(deserializer);
                         Ok(DeserializerOutput {
                             artifact: DeserializerArtifact::Deserializer(self),
                             event,
@@ -41382,7 +41428,7 @@ pub mod cpe {
                 R: DeserializeReader,
             {
                 use TextTypeDeserializerState as S;
-                match replace(&mut *self.state, S::Unknown__) {
+                match replace(&mut *self.state__, S::Unknown__) {
                     S::Init__ => {
                         let output = ContentDeserializer::init(reader, event)?;
                         self.handle_content(reader, output)
@@ -41398,7 +41444,7 @@ pub mod cpe {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, TextTypeDeserializerState::Unknown__);
+                let state = replace(&mut *self.state__, TextTypeDeserializerState::Unknown__);
                 self.finish_state(reader, state)?;
                 Ok(super::TextType {
                     lang: self.lang,
@@ -41413,7 +41459,7 @@ pub mod cpe {
             logical_test: Vec<super::LogicalTestType>,
             fact_ref: Vec<super::CpeFactRefType>,
             check_fact_ref: Vec<super::CheckFactRefType>,
-            state: Box<LogicalTestTypeDeserializerState>,
+            state__: Box<LogicalTestTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum LogicalTestTypeDeserializerState {
@@ -41457,7 +41503,7 @@ pub mod cpe {
                     logical_test: Vec::new(),
                     fact_ref: Vec::new(),
                     check_fact_ref: Vec::new(),
-                    state: Box::new(LogicalTestTypeDeserializerState::Init__),
+                    state__: Box::new(LogicalTestTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41514,7 +41560,7 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(LogicalTestTypeDeserializerState::LogicalTest(None));
-                    *self.state = LogicalTestTypeDeserializerState::FactRef(None);
+                    *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -41524,7 +41570,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_logical_test(data)?;
-                        *self.state = LogicalTestTypeDeserializerState::LogicalTest(None);
+                        *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41536,12 +41582,12 @@ pub mod cpe {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = LogicalTestTypeDeserializerState::LogicalTest(None);
+                                *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = LogicalTestTypeDeserializerState::LogicalTest(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -41564,7 +41610,7 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(LogicalTestTypeDeserializerState::FactRef(None));
-                    *self.state = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                    *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(None);
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -41574,7 +41620,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_fact_ref(data)?;
-                        *self.state = LogicalTestTypeDeserializerState::FactRef(None);
+                        *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41584,10 +41630,10 @@ pub mod cpe {
                                 fallback.get_or_insert(LogicalTestTypeDeserializerState::FactRef(
                                     Some(deserializer),
                                 ));
-                                *self.state = LogicalTestTypeDeserializerState::FactRef(None);
+                                *self.state__ = LogicalTestTypeDeserializerState::FactRef(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state =
+                                *self.state__ =
                                     LogicalTestTypeDeserializerState::FactRef(Some(deserializer));
                             }
                         }
@@ -41611,7 +41657,7 @@ pub mod cpe {
                 } = output;
                 if artifact.is_none() {
                     fallback.get_or_insert(LogicalTestTypeDeserializerState::CheckFactRef(None));
-                    *self.state = LogicalTestTypeDeserializerState::Done__;
+                    *self.state__ = LogicalTestTypeDeserializerState::Done__;
                     return Ok(ElementHandlerOutput::from_event(event, allow_any));
                 }
                 if let Some(fallback) = fallback.take() {
@@ -41621,7 +41667,7 @@ pub mod cpe {
                     DeserializerArtifact::None => unreachable!(),
                     DeserializerArtifact::Data(data) => {
                         self.store_check_fact_ref(data)?;
-                        *self.state = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                        *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(None);
                         ElementHandlerOutput::from_event(event, allow_any)
                     }
                     DeserializerArtifact::Deserializer(deserializer) => {
@@ -41633,12 +41679,13 @@ pub mod cpe {
                                         deserializer,
                                     )),
                                 );
-                                *self.state = LogicalTestTypeDeserializerState::CheckFactRef(None);
+                                *self.state__ =
+                                    LogicalTestTypeDeserializerState::CheckFactRef(None);
                             }
                             ElementHandlerOutput::Break { .. } => {
-                                *self.state = LogicalTestTypeDeserializerState::CheckFactRef(Some(
-                                    deserializer,
-                                ));
+                                *self.state__ = LogicalTestTypeDeserializerState::CheckFactRef(
+                                    Some(deserializer),
+                                );
                             }
                         }
                         ret
@@ -41669,7 +41716,7 @@ pub mod cpe {
                 let mut fallback = None;
                 let mut allow_any_element = false;
                 let (event, allow_any) = loop {
-                    let state = replace(&mut *self.state, S::Unknown__);
+                    let state = replace(&mut *self.state__, S::Unknown__);
                     event = match (state, event) {
                         (S::LogicalTest(Some(deserializer)), event) => {
                             let output = deserializer.next(reader, event)?;
@@ -41719,7 +41766,7 @@ pub mod cpe {
                         }
                         (S::Init__, event) => {
                             fallback.get_or_insert(S::Init__);
-                            *self.state = LogicalTestTypeDeserializerState::LogicalTest(None);
+                            *self.state__ = LogicalTestTypeDeserializerState::LogicalTest(None);
                             event
                         }
                         (S::LogicalTest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
@@ -41779,13 +41826,13 @@ pub mod cpe {
                         }
                         (S::Unknown__, _) => unreachable!(),
                         (state, event) => {
-                            *self.state = state;
+                            *self.state__ = state;
                             break (DeserializerEvent::Break(event), false);
                         }
                     }
                 };
                 if let Some(fallback) = fallback {
-                    *self.state = fallback;
+                    *self.state__ = fallback;
                 }
                 Ok(DeserializerOutput {
                     artifact: DeserializerArtifact::Deserializer(self),
@@ -41798,7 +41845,7 @@ pub mod cpe {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     LogicalTestTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;
@@ -41815,7 +41862,7 @@ pub mod cpe {
         pub struct CpeFactRefTypeDeserializer {
             description: Option<String>,
             name: String,
-            state: Box<CpeFactRefTypeDeserializerState>,
+            state__: Box<CpeFactRefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CpeFactRefTypeDeserializerState {
@@ -41850,7 +41897,7 @@ pub mod cpe {
                     name: name.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("name".into()))
                     })?,
-                    state: Box::new(CpeFactRefTypeDeserializerState::Init__),
+                    state__: Box::new(CpeFactRefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -41900,7 +41947,10 @@ pub mod cpe {
             where
                 R: DeserializeReader,
             {
-                let state = replace(&mut *self.state, CpeFactRefTypeDeserializerState::Unknown__);
+                let state = replace(
+                    &mut *self.state__,
+                    CpeFactRefTypeDeserializerState::Unknown__,
+                );
                 self.finish_state(reader, state)?;
                 Ok(super::CpeFactRefType {
                     description: self.description,
@@ -41914,7 +41964,7 @@ pub mod cpe {
             system: String,
             href: String,
             id_ref: String,
-            state: Box<CheckFactRefTypeDeserializerState>,
+            state__: Box<CheckFactRefTypeDeserializerState>,
         }
         #[derive(Debug)]
         enum CheckFactRefTypeDeserializerState {
@@ -41967,7 +42017,7 @@ pub mod cpe {
                     id_ref: id_ref.ok_or_else(|| {
                         reader.map_error(ErrorKind::MissingAttribute("id-ref".into()))
                     })?,
-                    state: Box::new(CheckFactRefTypeDeserializerState::Init__),
+                    state__: Box::new(CheckFactRefTypeDeserializerState::Init__),
                 })
             }
             fn finish_state<R>(
@@ -42018,7 +42068,7 @@ pub mod cpe {
                 R: DeserializeReader,
             {
                 let state = replace(
-                    &mut *self.state,
+                    &mut *self.state__,
                     CheckFactRefTypeDeserializerState::Unknown__,
                 );
                 self.finish_state(reader, state)?;

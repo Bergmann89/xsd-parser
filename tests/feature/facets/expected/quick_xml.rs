@@ -246,7 +246,7 @@ pub mod quick_xml_deserialize {
     #[derive(Debug)]
     pub struct RootTypeDeserializer {
         content: Vec<super::RootTypeContent>,
-        state: Box<RootTypeDeserializerState>,
+        state__: Box<RootTypeDeserializerState>,
     }
     #[derive(Debug)]
     enum RootTypeDeserializerState {
@@ -266,7 +266,7 @@ pub mod quick_xml_deserialize {
             }
             Ok(Self {
                 content: Vec::new(),
-                state: Box::new(RootTypeDeserializerState::Init__),
+                state__: Box::new(RootTypeDeserializerState::Init__),
             })
         }
         fn finish_state<R>(
@@ -301,7 +301,7 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = fallback.take().unwrap_or(RootTypeDeserializerState::Next__);
+                *self.state__ = fallback.take().unwrap_or(RootTypeDeserializerState::Next__);
                 return Ok(ElementHandlerOutput::break_(event, allow_any));
             }
             if let Some(fallback) = fallback.take() {
@@ -311,19 +311,19 @@ pub mod quick_xml_deserialize {
                 DeserializerArtifact::None => unreachable!(),
                 DeserializerArtifact::Data(data) => {
                     self.store_content(data)?;
-                    *self.state = RootTypeDeserializerState::Next__;
+                    *self.state__ = RootTypeDeserializerState::Next__;
                     ElementHandlerOutput::from_event(event, allow_any)
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
                     let ret = ElementHandlerOutput::from_event(event, allow_any);
                     match &ret {
                         ElementHandlerOutput::Break { .. } => {
-                            *self.state = RootTypeDeserializerState::Content__(deserializer);
+                            *self.state__ = RootTypeDeserializerState::Content__(deserializer);
                         }
                         ElementHandlerOutput::Continue { .. } => {
                             fallback
                                 .get_or_insert(RootTypeDeserializerState::Content__(deserializer));
-                            *self.state = RootTypeDeserializerState::Next__;
+                            *self.state__ = RootTypeDeserializerState::Next__;
                         }
                     }
                     ret
@@ -350,7 +350,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::Content__(deserializer), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -395,7 +395,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            let state = replace(&mut *self.state, RootTypeDeserializerState::Unknown__);
+            let state = replace(&mut *self.state__, RootTypeDeserializerState::Unknown__);
             self.finish_state(reader, state)?;
             Ok(super::RootType {
                 content: self.content,
@@ -404,7 +404,7 @@ pub mod quick_xml_deserialize {
     }
     #[derive(Debug)]
     pub struct RootTypeContentDeserializer {
-        state: Box<RootTypeContentDeserializerState>,
+        state__: Box<RootTypeContentDeserializerState>,
     }
     #[derive(Debug)]
     pub enum RootTypeContentDeserializerState {
@@ -481,7 +481,7 @@ pub mod quick_xml_deserialize {
                     );
                 }
             }
-            *self.state = fallback
+            *self.state__ = fallback
                 .take()
                 .unwrap_or(RootTypeContentDeserializerState::Init__);
             Ok(ElementHandlerOutput::return_to_parent(event, false))
@@ -580,9 +580,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = RootTypeContentDeserializerState::Init__;
+                        *self.state__ = RootTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => RootTypeContentDeserializerState::NegativeDecimal(values, None),
@@ -613,11 +613,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         RootTypeContentDeserializerState::NegativeDecimal(values, None),
                     )?;
-                    *self.state = RootTypeContentDeserializerState::Done__(data);
+                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = RootTypeContentDeserializerState::NegativeDecimal(
+                    *self.state__ = RootTypeContentDeserializerState::NegativeDecimal(
                         values,
                         Some(deserializer),
                     );
@@ -641,9 +641,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = RootTypeContentDeserializerState::Init__;
+                        *self.state__ = RootTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => RootTypeContentDeserializerState::PositiveDecimal(values, None),
@@ -674,11 +674,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         RootTypeContentDeserializerState::PositiveDecimal(values, None),
                     )?;
-                    *self.state = RootTypeContentDeserializerState::Done__(data);
+                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = RootTypeContentDeserializerState::PositiveDecimal(
+                    *self.state__ = RootTypeContentDeserializerState::PositiveDecimal(
                         values,
                         Some(deserializer),
                     );
@@ -702,9 +702,9 @@ pub mod quick_xml_deserialize {
                 allow_any,
             } = output;
             if artifact.is_none() {
-                *self.state = match fallback.take() {
+                *self.state__ = match fallback.take() {
                     None if values.is_none() => {
-                        *self.state = RootTypeContentDeserializerState::Init__;
+                        *self.state__ = RootTypeContentDeserializerState::Init__;
                         return Ok(ElementHandlerOutput::from_event(event, allow_any));
                     }
                     None => RootTypeContentDeserializerState::RestrictedString(values, None),
@@ -735,11 +735,11 @@ pub mod quick_xml_deserialize {
                         reader,
                         RootTypeContentDeserializerState::RestrictedString(values, None),
                     )?;
-                    *self.state = RootTypeContentDeserializerState::Done__(data);
+                    *self.state__ = RootTypeContentDeserializerState::Done__(data);
                     ElementHandlerOutput::Break { event, allow_any }
                 }
                 DeserializerArtifact::Deserializer(deserializer) => {
-                    *self.state = RootTypeContentDeserializerState::RestrictedString(
+                    *self.state__ = RootTypeContentDeserializerState::RestrictedString(
                         values,
                         Some(deserializer),
                     );
@@ -754,12 +754,12 @@ pub mod quick_xml_deserialize {
             R: DeserializeReader,
         {
             let deserializer = Self {
-                state: Box::new(RootTypeContentDeserializerState::Init__),
+                state__: Box::new(RootTypeContentDeserializerState::Init__),
             };
             let mut output = deserializer.next(reader, event)?;
             output.artifact = match output.artifact {
                 DeserializerArtifact::Deserializer(x)
-                    if matches!(&*x.state, RootTypeContentDeserializerState::Init__) =>
+                    if matches!(&*x.state__, RootTypeContentDeserializerState::Init__) =>
                 {
                     DeserializerArtifact::None
                 }
@@ -779,7 +779,7 @@ pub mod quick_xml_deserialize {
             let mut event = event;
             let mut fallback = None;
             let (event, allow_any) = loop {
-                let state = replace(&mut *self.state, S::Unknown__);
+                let state = replace(&mut *self.state__, S::Unknown__);
                 event = match (state, event) {
                     (S::NegativeDecimal(values, Some(deserializer)), event) => {
                         let output = deserializer.next(reader, event)?;
@@ -876,13 +876,13 @@ pub mod quick_xml_deserialize {
                         }
                     }
                     (s @ S::Done__(_), event) => {
-                        *self.state = s;
+                        *self.state__ = s;
                         break (DeserializerEvent::Continue(event), false);
                     }
                     (S::Unknown__, _) => unreachable!(),
                 }
             };
-            let artifact = if matches!(&*self.state, S::Done__(_)) {
+            let artifact = if matches!(&*self.state__, S::Done__(_)) {
                 DeserializerArtifact::Data(self.finish(reader)?)
             } else {
                 DeserializerArtifact::Deserializer(self)
@@ -897,7 +897,7 @@ pub mod quick_xml_deserialize {
         where
             R: DeserializeReader,
         {
-            Self::finish_state(reader, *self.state)
+            Self::finish_state(reader, *self.state__)
         }
     }
 }
