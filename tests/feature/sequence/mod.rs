@@ -92,6 +92,16 @@ fn read_serde_xml_rs() {
     assert_eq!(obj.max, 2);
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::Foo;
+
+    let obj = Foo { min: 1, max: 2 };
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/sequence/example/default.xml");
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]

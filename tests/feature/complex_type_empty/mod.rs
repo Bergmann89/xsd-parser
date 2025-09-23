@@ -95,6 +95,17 @@ fn read_serde_xml_rs() {
     );
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::SuccessType;
+
+    crate::utils::serde_xml_rs_write_test::<SuccessType, _>(
+        &SuccessType,
+        "tests/feature/complex_type_empty/example/default.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]

@@ -106,6 +106,24 @@ fn read_serde_xml_rs() {
     assert!(iter.next().is_none());
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::{Foo, FooTypeContent};
+
+    let obj = Foo {
+        content: vec![
+            FooTypeContent::Element1(3),
+            FooTypeContent::Element4("test".into()),
+        ],
+    };
+
+    crate::utils::serde_xml_rs_write_test(
+        &obj,
+        "tests/feature/sequence_with_choice/example/default.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]

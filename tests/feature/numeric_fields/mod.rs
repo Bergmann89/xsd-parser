@@ -91,6 +91,20 @@ fn read_serde_xml_rs() {
     assert!(matches!(obj._4.value, EnumTypeValue::_1));
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::{EnumType, EnumTypeValue, Foo};
+
+    let obj = Foo {
+        _4: EnumType {
+            value: EnumTypeValue::_1,
+        },
+    };
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/numeric_fields/example/default.xml");
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]

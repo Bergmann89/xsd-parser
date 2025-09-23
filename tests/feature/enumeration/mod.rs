@@ -93,6 +93,20 @@ fn read_serde_xml_rs() {
     assert!(matches!(obj.enum_.value, EnumTypeValue::Auto));
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::{EnumType, EnumTypeValue, Foo};
+
+    let obj = Foo {
+        enum_: EnumType {
+            value: EnumTypeValue::Auto,
+        },
+    };
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/enumeration/example/default.xml");
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]
@@ -121,6 +135,18 @@ fn read_serde_xml_rs_v7() {
     );
 
     assert!(matches!(obj.enum_, EnumType::Auto));
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs_v7() {
+    use serde_xml_rs_v7::{EnumType, Foo};
+
+    let obj = Foo {
+        enum_: EnumType::Auto,
+    };
+
+    crate::utils::serde_xml_rs_v7_write_test(&obj, "tests/feature/enumeration/example/default.xml");
 }
 
 #[cfg(not(feature = "update-expectations"))]

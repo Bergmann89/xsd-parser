@@ -114,6 +114,17 @@ fn read_serde_xml_rs() {
     check_obj!(serde_xml_rs, obj);
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    let obj = test_obj!(serde_xml_rs);
+
+    crate::utils::serde_xml_rs_write_test(
+        &obj,
+        "tests/feature/choice_flatten_content/example/default.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]

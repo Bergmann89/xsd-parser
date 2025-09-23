@@ -92,6 +92,18 @@ fn read_serde_xml_rs() {
     assert_eq!(obj.text, "abcd");
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::Foo;
+
+    let obj = Foo {
+        text: "abcd".into(),
+    };
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/xsd_string/example/default.xml");
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(dead_code, unused_imports)]

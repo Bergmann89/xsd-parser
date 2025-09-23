@@ -102,9 +102,18 @@ fn generate_serde_xml_rs() {
 fn read_serde_xml_rs() {
     use serde_xml_rs::Foo;
 
-    let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>("tests/feature/all/example/serde.xml");
+    let obj =
+        crate::utils::serde_xml_rs_read_test::<Foo, _>("tests/feature/all/example/default.xml");
 
     check_obj!(obj);
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    let obj = test_obj!(serde_xml_rs);
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/all/example/serialize.xml");
 }
 
 #[cfg(not(feature = "update-expectations"))]

@@ -101,6 +101,30 @@ fn read_serde_xml_rs_v7() {
     assert_eq!(obj.content, "");
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs_v7() {
+    use serde_xml_rs_v7::{ComplexContent, SimpleContent};
+
+    let obj = SimpleContent {
+        lang: "".into(),
+        content: "".into(),
+    };
+    crate::utils::serde_xml_rs_v7_write_test::<SimpleContent, _>(
+        &obj,
+        "tests/feature/empty_string/example/simple.xml",
+    );
+
+    let obj = ComplexContent {
+        lang: "".into(),
+        content: "".into(),
+    };
+    crate::utils::serde_xml_rs_v7_write_test::<ComplexContent, _>(
+        &obj,
+        "tests/feature/empty_string/example/complex.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs_v7 {
     #![allow(unused_imports)]
@@ -137,6 +161,30 @@ fn read_serde_xml_rs_v8() {
 
     assert_eq!(obj.lang, "");
     assert_eq!(obj.content, "");
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs_v8() {
+    use serde_xml_rs_v8::{ComplexContent, SimpleContent};
+
+    let obj = SimpleContent {
+        lang: "".into(),
+        content: "".into(),
+    };
+    crate::utils::serde_xml_rs_write_test::<SimpleContent, _>(
+        &obj,
+        "tests/feature/empty_string/example/simple.xml",
+    );
+
+    let obj = ComplexContent {
+        lang: "".into(),
+        content: "".into(),
+    };
+    crate::utils::serde_xml_rs_write_test::<ComplexContent, _>(
+        &obj,
+        "tests/feature/empty_string/example/complex.xml",
+    );
 }
 
 #[cfg(not(feature = "update-expectations"))]

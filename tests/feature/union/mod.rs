@@ -76,6 +76,29 @@ fn generate_serde_xml_rs() {
     );
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_serde_xml_rs() {
+    use serde_xml_rs::{Foo, UnionType};
+
+    let obj =
+        crate::utils::serde_xml_rs_read_test::<Foo, _>("tests/feature/union/example/default.xml");
+
+    assert!(matches!(obj.union_, UnionType::String(s) if s == "string"));
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::{Foo, UnionType};
+
+    let obj = Foo {
+        union_: UnionType::String("string".into()),
+    };
+
+    crate::utils::serde_xml_rs_write_test(&obj, "tests/feature/union/example/default.xml");
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(dead_code, unused_imports)]

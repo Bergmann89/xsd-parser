@@ -93,6 +93,21 @@ fn read_serde_xml_rs() {
     assert!(matches!(obj.id.as_deref(), Some("abcd")));
 }
 
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn write_serde_xml_rs() {
+    use serde_xml_rs::Foo;
+
+    let obj = Foo {
+        id: Some("abcd".into()),
+    };
+
+    crate::utils::serde_xml_rs_write_test(
+        &obj,
+        "tests/feature/ref_to_attribute/example/default.xml",
+    );
+}
+
 #[cfg(not(feature = "update-expectations"))]
 mod serde_xml_rs {
     #![allow(unused_imports)]
