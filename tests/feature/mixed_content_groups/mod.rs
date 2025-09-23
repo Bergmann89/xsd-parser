@@ -15,6 +15,8 @@ fn config() -> Config {
     config
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -23,6 +25,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -107,13 +118,6 @@ fn write_quick_xml_mixed() {
         "tns:Example",
         "tests/feature/mixed_content_groups/example/example.xml",
     );
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

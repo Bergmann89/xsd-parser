@@ -12,6 +12,38 @@ fn config() -> Config {
         .with_generate([(IdentType::Element, "tns:Foo")])
 }
 
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! check_obj {
+    ($obj:expr) => {{
+        use num::BigInt;
+        use std::str::FromStr;
+
+        let obj = $obj;
+
+        assert_eq!(obj.a_int, BigInt::from(123));
+        assert_eq!(
+            obj.b_int,
+            BigInt::from_str("1000000000000000000000000").unwrap()
+        );
+    }};
+}
+
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! test_obj {
+    ($module:ident) => {{
+        use num::BigInt;
+        use std::str::FromStr;
+        use $module::tns::Foo;
+
+        Foo {
+            a_int: BigInt::from(123),
+            b_int: BigInt::from_str("1000000000000000000000000").unwrap(),
+        }
+    }};
+}
+
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -20,6 +52,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -33,47 +74,25 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use std::str::FromStr;
-
-    use num::BigInt;
     use quick_xml::tns::Foo;
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>(
         "tests/feature/num_big_int/example/default.xml",
     );
 
-    assert_eq!(obj.a_int, BigInt::from(123));
-    assert_eq!(
-        obj.b_int,
-        BigInt::from_str("1000000000000000000000000").unwrap()
-    );
+    check_obj!(obj);
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use std::str::FromStr;
-
-    use num::BigInt;
-    use quick_xml::tns::Foo;
-
-    let obj = Foo {
-        a_int: BigInt::from(123),
-        b_int: BigInt::from_str("1000000000000000000000000").unwrap(),
-    };
+    let obj = test_obj!(quick_xml);
 
     crate::utils::quick_xml_write_test(
         &obj,
         "Foo",
         "tests/feature/num_big_int/example/serialize.xml",
     );
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

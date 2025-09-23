@@ -1,11 +1,11 @@
 use xsd_parser::{
-    config::{GeneratorFlags, OptimizerFlags},
+    config::{GeneratorFlags, OptimizerFlags, SerdeXmlRsVersion},
     Config, IdentType,
 };
 
 use crate::utils::{generate_test, ConfigEx};
 
-fn config_quick_xml() -> Config {
+fn config() -> Config {
     Config::test_default()
         .with_optimizer_flags(OptimizerFlags::SIMPLIFY_MIXED_TYPES)
         .with_generator_flags(GeneratorFlags::FLATTEN_CONTENT | GeneratorFlags::MIXED_TYPE_SUPPORT)
@@ -24,30 +24,32 @@ fn config_serde() -> Config {
         .with_generate([(IdentType::Element, "tns:MixedChoiceList")])
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
         "tests/feature/mixed_content/schema.xsd",
         "tests/feature/mixed_content/expected/default.rs",
-        config_quick_xml(),
+        config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
     generate_test(
         "tests/feature/mixed_content/schema.xsd",
         "tests/feature/mixed_content/expected/quick_xml.rs",
-        config_quick_xml().with_quick_xml(),
-    );
-}
-
-#[test]
-fn generate_serde_quick_xml() {
-    generate_test(
-        "tests/feature/mixed_content/schema.xsd",
-        "tests/feature/mixed_content/expected/serde_quick_xml.rs",
-        config_serde().with_serde_quick_xml(),
+        config().with_quick_xml(),
     );
 }
 
@@ -112,34 +114,6 @@ fn read_quick_xml_choice_list() {
     use quick_xml::{MixedChoiceList, MixedChoiceListTypeContent};
 
     let obj = crate::utils::quick_xml_read_test::<MixedChoiceList, _>(
-        "tests/feature/mixed_content/example/all.xml",
-    );
-
-    let mut it = obj.content.into_iter();
-
-    assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before &\n    ")
-    );
-    assert!(matches!(
-        it.next().unwrap(),
-        MixedChoiceListTypeContent::Fuu(111)
-    ));
-    assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text between\n    ")
-    );
-    assert!(matches!(it.next().unwrap(), MixedChoiceListTypeContent::Bar(x) if x == "Hello World"));
-    assert!(
-        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after ä\n")
-    );
-    assert!(it.next().is_none());
-}
-
-#[test]
-#[cfg(not(feature = "update-expectations"))]
-fn read_serde_quick_xml_choice_list() {
-    use serde_quick_xml::{MixedChoiceList, MixedChoiceListTypeContent};
-
-    let obj = crate::utils::serde_quick_xml_read_test::<MixedChoiceList, _>(
         "tests/feature/mixed_content/example/all.xml",
     );
 
@@ -278,17 +252,60 @@ fn write_quick_xml_sequence() {
 }
 
 #[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
 mod quick_xml {
     #![allow(unused_imports)]
 
     include!("expected/quick_xml.rs");
+}
+
+/* serde_xml_rs */
+
+#[test]
+fn generate_serde_xml_rs() {
+    generate_test(
+        "tests/feature/mixed_content/schema.xsd",
+        "tests/feature/mixed_content/expected/serde_xml_rs.rs",
+        config_serde().with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove),
+    );
+}
+
+/* serde_quick_xml */
+
+#[test]
+fn generate_serde_quick_xml() {
+    generate_test(
+        "tests/feature/mixed_content/schema.xsd",
+        "tests/feature/mixed_content/expected/serde_quick_xml.rs",
+        config_serde().with_serde_quick_xml(),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_serde_quick_xml_choice_list() {
+    use serde_quick_xml::{MixedChoiceList, MixedChoiceListTypeContent};
+
+    let obj = crate::utils::serde_quick_xml_read_test::<MixedChoiceList, _>(
+        "tests/feature/mixed_content/example/all.xml",
+    );
+
+    let mut it = obj.content.into_iter();
+
+    assert!(
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text before &\n    ")
+    );
+    assert!(matches!(
+        it.next().unwrap(),
+        MixedChoiceListTypeContent::Fuu(111)
+    ));
+    assert!(
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text between\n    ")
+    );
+    assert!(matches!(it.next().unwrap(), MixedChoiceListTypeContent::Bar(x) if x == "Hello World"));
+    assert!(
+        matches!(it.next().unwrap(), MixedChoiceListTypeContent::Text(x) if x.0 == "\n    Text after ä\n")
+    );
+    assert!(it.next().is_none());
 }
 
 #[cfg(not(feature = "update-expectations"))]

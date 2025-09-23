@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Foo>
-    <Once>111</Once>
-    <Optional>222</Optional>
-    <OnceSpecify>333</OnceSpecify>
-    <TwiceOrMore>444</TwiceOrMore>
-    <TwiceOrMore>555</TwiceOrMore>
-    <TwiceOrMore>666</TwiceOrMore>
-</Foo>

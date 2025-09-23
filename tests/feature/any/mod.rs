@@ -13,6 +13,91 @@ fn config() -> Config {
     config
 }
 
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! check_obj {
+    ($module:ident, $obj:expr) => {{
+        use $module::ChoiceTypeContent;
+
+        let obj = $obj;
+
+        // <tns:Name />
+        assert_eq!("abc", obj.name);
+        assert_eq!(1, obj.any_attribute.len());
+        assert_eq!(
+            b"fuu",
+            obj.any_attribute.get(b"any".as_ref()).unwrap().as_ref()
+        );
+
+        // <xs:any />
+        assert_eq!(2, obj.any_0.len());
+        assert_eq!(b"AnyElement", obj.any_0[0].name.as_ref());
+        assert_eq!(b"AnotherElement", obj.any_0[1].name.as_ref());
+
+        // <tns:Choice />
+        assert_eq!(3, obj.choice.len());
+        assert_eq!(
+            b"bar",
+            obj.choice[0]
+                .any_attribute
+                .get(b"any".as_ref())
+                .unwrap()
+                .as_ref()
+        );
+        assert!(matches!(&obj.choice[0].content, ChoiceTypeContent::Name(name) if name == "def"));
+        assert!(
+            matches!(&obj.choice[1].content, ChoiceTypeContent::Any(x) if x.name.as_ref() == b"AnyElement2")
+        );
+        assert!(
+            matches!(&obj.choice[2].content, ChoiceTypeContent::Any(x) if x.name.as_ref() == b"AnotherElement2")
+        );
+
+        // <xs:any />
+        assert_eq!(1, obj.any_1.len());
+        assert_eq!(b"LastElement", obj.any_1[0].name.as_ref());
+    }};
+}
+
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! test_obj {
+    ($module:ident) => {{
+        use $module::{ChoiceType, ChoiceTypeContent, FooType};
+
+        use xsd_parser::xml::{AnyAttributes, AttributeKey, AttributeValue, Element};
+
+        FooType {
+            any_attribute: AnyAttributes::from_iter([(
+                AttributeKey(b"any".into()),
+                AttributeValue(b"fuu".into()),
+            )]),
+            name: "abc".into(),
+            any_0: vec![
+                Element::default().name(b"AnyElement"),
+                Element::default().name(b"AnotherElement"),
+            ],
+            choice: vec![
+                ChoiceType {
+                    any_attribute: AnyAttributes::from_iter([(
+                        AttributeKey(b"any".into()),
+                        AttributeValue(b"bar".into()),
+                    )]),
+                    content: ChoiceTypeContent::Name("def".into()),
+                },
+                ChoiceType {
+                    any_attribute: AnyAttributes::default(),
+                    content: ChoiceTypeContent::Any(Element::default().name(b"AnyElement2")),
+                },
+                ChoiceType {
+                    any_attribute: AnyAttributes::default(),
+                    content: ChoiceTypeContent::Any(Element::default().name(b"AnotherElement2")),
+                },
+            ],
+            any_1: vec![Element::default().name(b"LastElement")],
+        }
+    }};
+}
+
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -21,6 +106,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -34,91 +128,19 @@ fn generate_quick_xml() {
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_quick_xml() {
-    use quick_xml::{ChoiceTypeContent, Foo};
+    use quick_xml::Foo;
 
     let obj = crate::utils::quick_xml_read_test::<Foo, _>("tests/feature/any/example/default.xml");
 
-    // <tns:Name />
-    assert_eq!("abc", obj.name);
-    assert_eq!(1, obj.any_attribute.len());
-    assert_eq!(
-        b"fuu",
-        obj.any_attribute.get(b"any".as_ref()).unwrap().as_ref()
-    );
-
-    // <xs:any />
-    assert_eq!(2, obj.any_0.len());
-    assert_eq!(b"AnyElement", obj.any_0[0].name.as_ref());
-    assert_eq!(b"AnotherElement", obj.any_0[1].name.as_ref());
-
-    // <tns:Choice />
-    assert_eq!(3, obj.choice.len());
-    assert_eq!(
-        b"bar",
-        obj.choice[0]
-            .any_attribute
-            .get(b"any".as_ref())
-            .unwrap()
-            .as_ref()
-    );
-    assert!(matches!(&obj.choice[0].content, ChoiceTypeContent::Name(name) if name == "def"));
-    assert!(
-        matches!(&obj.choice[1].content, ChoiceTypeContent::Any(x) if x.name.as_ref() == b"AnyElement2")
-    );
-    assert!(
-        matches!(&obj.choice[2].content, ChoiceTypeContent::Any(x) if x.name.as_ref() == b"AnotherElement2")
-    );
-
-    // <xs:any />
-    assert_eq!(1, obj.any_1.len());
-    assert_eq!(b"LastElement", obj.any_1[0].name.as_ref());
+    check_obj!(quick_xml, obj);
 }
 
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn write_quick_xml() {
-    use quick_xml::{ChoiceType, ChoiceTypeContent, FooType};
-
-    use xsd_parser::xml::{AnyAttributes, AttributeKey, AttributeValue, Element};
-
-    let obj = FooType {
-        any_attribute: AnyAttributes::from_iter([(
-            AttributeKey(b"any".into()),
-            AttributeValue(b"fuu".into()),
-        )]),
-        name: "abc".into(),
-        any_0: vec![
-            Element::default().name(b"AnyElement"),
-            Element::default().name(b"AnotherElement"),
-        ],
-        choice: vec![
-            ChoiceType {
-                any_attribute: AnyAttributes::from_iter([(
-                    AttributeKey(b"any".into()),
-                    AttributeValue(b"bar".into()),
-                )]),
-                content: ChoiceTypeContent::Name("def".into()),
-            },
-            ChoiceType {
-                any_attribute: AnyAttributes::default(),
-                content: ChoiceTypeContent::Any(Element::default().name(b"AnyElement2")),
-            },
-            ChoiceType {
-                any_attribute: AnyAttributes::default(),
-                content: ChoiceTypeContent::Any(Element::default().name(b"AnotherElement2")),
-            },
-        ],
-        any_1: vec![Element::default().name(b"LastElement")],
-    };
+    let obj = test_obj!(quick_xml);
 
     crate::utils::quick_xml_write_test(&obj, "tns:Foo", "tests/feature/any/example/default.xml");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

@@ -1,7 +1,7 @@
-pub type EnumType = EnumType;
+pub type Root = RootType;
 #[derive(Debug)]
-pub struct EnumType {
-    pub refname: Option<EnumTypeRefnameType>,
+pub struct RootType {
+    pub refname: Option<RootRefnameType>,
     pub content: EnumListType,
 }
 #[derive(Debug)]
@@ -10,6 +10,6 @@ pub enum EnumListType {
     _02,
 }
 #[derive(Debug)]
-pub enum EnumTypeRefnameType {
-    EnumType,
+pub enum RootRefnameType {
+    EnumValue,
 }
