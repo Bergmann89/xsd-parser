@@ -12,6 +12,8 @@ fn config() -> Config {
         ])
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -20,6 +22,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -63,13 +74,6 @@ fn write_quick_xml() {
         d: Some(Nillable::nil()),
     };
     quick_xml_write_test(&obj, "Foo", "tests/feature/nillable/example/serialize.xml");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

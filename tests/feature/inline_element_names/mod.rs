@@ -6,6 +6,8 @@ fn config() -> Config {
     Config::test_default().with_generate([(IdentType::Element, "rootElement")])
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(

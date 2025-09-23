@@ -4,15 +4,15 @@
            targetNamespace="http://example.com">
 
     <xs:include schemaLocation="include.xsd"/>
-    
-    <xs:element name="EnumType" >
+
+    <xs:element name="Root" >
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="EnumList">
                     <xs:attribute name="refname">
                         <xs:simpleType>
                             <xs:restriction base="xs:token">
-                                <xs:enumeration value="EnumType"/>
+                                <xs:enumeration value="EnumValue"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>

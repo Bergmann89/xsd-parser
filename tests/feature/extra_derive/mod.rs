@@ -10,8 +10,7 @@ use xsd_parser::{
 
 use crate::utils::{generate_test_validate, ConfigEx};
 
-#[test]
-fn generate_default() {
+fn config() -> Config {
     let mut config = Config::test_default()
         .with_optimizer_flags(OptimizerFlags::all())
         .with_generate([
@@ -24,6 +23,14 @@ fn generate_default() {
         "tests/feature/extra_derive/schema.xsd",
     )));
 
+    config
+}
+
+/* default */
+
+#[test]
+fn generate_default() {
+    let config = config();
     let schemas = exec_parser(config.parser).expect("Parser failed");
     let meta_types = exec_interpreter(config.interpreter, &schemas).expect("Interpreter failed");
     let meta_types = exec_optimizer(config.optimizer, meta_types).expect("Optimizer failed");

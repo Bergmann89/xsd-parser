@@ -5,7 +5,10 @@ pub struct FooType {
 }
 #[derive(Debug)]
 pub enum EnumType {
+    ///Something is explicitly turned off.
     Off,
+    ///Something is explicitly turned on.
     On,
+    ///Something is handled automatically.
     Auto,
 }

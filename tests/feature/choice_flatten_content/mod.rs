@@ -1,4 +1,7 @@
-use xsd_parser::{config::GeneratorFlags, Config, IdentType};
+use xsd_parser::{
+    config::{GeneratorFlags, SerdeXmlRsVersion},
+    Config, IdentType,
+};
 
 use crate::utils::{generate_test, ConfigEx};
 
@@ -8,6 +11,28 @@ fn config() -> Config {
         .with_generate([(IdentType::Element, "tns:Foo")])
 }
 
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! check_obj {
+    ($module:ident, $obj:expr) => {{
+        use $module::Foo;
+
+        let obj = $obj;
+
+        assert!(matches!(obj, Foo::Once(222)));
+    }};
+}
+
+#[cfg(not(feature = "update-expectations"))]
+macro_rules! test_obj {
+    ($module:ident) => {{
+        use $module::Foo;
+
+        Foo::Once(222)
+    }};
+}
+
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -16,6 +41,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -35,14 +69,19 @@ fn read_quick_xml() {
         "tests/feature/choice_flatten_content/example/default.xml",
     );
 
-    assert!(matches!(obj, Foo::Once(222)));
+    check_obj!(quick_xml, obj);
 }
 
+#[test]
 #[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
+fn write_quick_xml() {
+    let obj = test_obj!(quick_xml);
 
-    include!("expected/default.rs");
+    crate::utils::quick_xml_write_test(
+        &obj,
+        "tns:Foo",
+        "tests/feature/choice_flatten_content/example/default.xml",
+    );
 }
 
 #[cfg(not(feature = "update-expectations"))]
@@ -50,4 +89,34 @@ mod quick_xml {
     #![allow(unused_imports)]
 
     include!("expected/quick_xml.rs");
+}
+
+/* serde_xml_rs */
+
+#[test]
+fn generate_serde_xml_rs() {
+    generate_test(
+        "tests/feature/choice_flatten_content/schema.xsd",
+        "tests/feature/choice_flatten_content/expected/serde_xml_rs.rs",
+        config().with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove),
+    );
+}
+
+#[test]
+#[cfg(not(feature = "update-expectations"))]
+fn read_serde_xml_rs() {
+    use serde_xml_rs::Foo;
+
+    let obj = crate::utils::serde_xml_rs_read_test::<Foo, _>(
+        "tests/feature/choice_flatten_content/example/default.xml",
+    );
+
+    check_obj!(serde_xml_rs, obj);
+}
+
+#[cfg(not(feature = "update-expectations"))]
+mod serde_xml_rs {
+    #![allow(unused_imports)]
+
+    include!("expected/serde_xml_rs.rs");
 }

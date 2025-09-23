@@ -11,6 +11,8 @@ fn config() -> Config {
         .with_generate([(IdentType::Element, "tns:Foo")])
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -20,30 +22,21 @@ fn generate_default() {
     );
 }
 
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
+
 #[test]
 fn generate_quick_xml() {
     generate_test(
         "tests/feature/complex_type_with_group/schema.xsd",
         "tests/feature/complex_type_with_group/expected/quick_xml.rs",
         config().with_quick_xml(),
-    );
-}
-
-#[test]
-fn generate_serde_xml_rs() {
-    generate_test(
-        "tests/feature/complex_type_with_group/schema.xsd",
-        "tests/feature/complex_type_with_group/expected/serde_xml_rs.rs",
-        config().with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove),
-    );
-}
-
-#[test]
-fn generate_serde_quick_xml() {
-    generate_test(
-        "tests/feature/complex_type_with_group/schema.xsd",
-        "tests/feature/complex_type_with_group/expected/serde_quick_xml.rs",
-        config().with_serde_quick_xml(),
     );
 }
 
@@ -77,6 +70,24 @@ fn write_quick_xml() {
     );
 }
 
+#[cfg(not(feature = "update-expectations"))]
+mod quick_xml {
+    #![allow(unused_imports)]
+
+    include!("expected/quick_xml.rs");
+}
+
+/* serde_xml_rs */
+
+#[test]
+fn generate_serde_xml_rs() {
+    generate_test(
+        "tests/feature/complex_type_with_group/schema.xsd",
+        "tests/feature/complex_type_with_group/expected/serde_xml_rs.rs",
+        config().with_serde_xml_rs(SerdeXmlRsVersion::Version08AndAbove),
+    );
+}
+
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_serde_xml_rs() {
@@ -95,6 +106,24 @@ fn read_serde_xml_rs() {
     assert!(it.next().is_none());
 }
 
+#[cfg(not(feature = "update-expectations"))]
+mod serde_xml_rs {
+    #![allow(unused_imports)]
+
+    include!("expected/serde_xml_rs.rs");
+}
+
+/* serde_quick_xml */
+
+#[test]
+fn generate_serde_quick_xml() {
+    generate_test(
+        "tests/feature/complex_type_with_group/schema.xsd",
+        "tests/feature/complex_type_with_group/expected/serde_quick_xml.rs",
+        config().with_serde_quick_xml(),
+    );
+}
+
 #[test]
 #[cfg(not(feature = "update-expectations"))]
 fn read_serde_quick_xml() {
@@ -111,27 +140,6 @@ fn read_serde_quick_xml() {
         Some(FooTypeContent::Bar(x)) if x == "Hello World"));
     assert!(matches!(it.next(), Some(FooTypeContent::Baz(3))));
     assert!(it.next().is_none());
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod quick_xml {
-    #![allow(unused_imports)]
-
-    include!("expected/quick_xml.rs");
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod serde_xml_rs {
-    #![allow(unused_imports)]
-
-    include!("expected/serde_xml_rs.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

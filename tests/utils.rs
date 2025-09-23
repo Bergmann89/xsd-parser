@@ -2,12 +2,12 @@
 
 use std::fmt::Debug;
 use std::fs::File;
-use std::io::{BufReader, Write};
+use std::io::{BufRead, BufReader, Write};
 use std::path::Path;
 use std::process::{Command, Stdio};
 
 use quick_xml::{escape::unescape, events::BytesText, Reader};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use xsd_parser::{
     config::{Config, Generate, GeneratorFlags, IdentTriple, OptimizerFlags, Schema},
@@ -203,13 +203,95 @@ where
     panic!("Unexpected event")
 }
 
-struct IterReader {
-    reader: Reader<BufReader<File>>,
+pub fn serde_quick_xml_read_test<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: for<'de> Deserialize<'de>,
+{
+    let reader = File::open(path).unwrap();
+    let reader = BufReader::new(reader);
+
+    quick_xml::de::from_reader::<_, T>(reader).unwrap()
+}
+
+pub fn serde_xml_rs_read_test<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: for<'de> Deserialize<'de>,
+{
+    let reader = File::open(path).unwrap();
+
+    serde_xml_rs::from_reader::<T, _>(reader).unwrap()
+}
+
+pub fn serde_xml_rs_v7_read_test<T, P>(path: P) -> T
+where
+    P: AsRef<Path>,
+    T: for<'de> Deserialize<'de>,
+{
+    let reader = File::open(path).unwrap();
+
+    serde_xml_rs_v7::from_reader::<_, T>(reader).unwrap()
+}
+
+pub fn serde_xml_rs_write_test<T, P>(value: &T, path: P)
+where
+    P: AsRef<Path>,
+    T: Serialize,
+{
+    let mut content = Vec::new();
+    serde_xml_rs::to_writer(&mut content, value).unwrap();
+
+    serde_xml_rs_compare(&content, path);
+}
+
+pub fn serde_xml_rs_v7_write_test<T, P>(value: &T, path: P)
+where
+    P: AsRef<Path>,
+    T: Serialize,
+{
+    let mut content = Vec::new();
+    serde_xml_rs_v7::to_writer(&mut content, value).unwrap();
+
+    serde_xml_rs_compare(&content, path);
+}
+
+fn serde_xml_rs_compare<P>(actual: &[u8], expected: P)
+where
+    P: AsRef<Path>,
+{
+    let content = std::str::from_utf8(actual).unwrap();
+
+    let mut actual = IterReader::from_str(content);
+    let mut expected = IterReader::from_file(expected);
+
+    let (actual, expected) = loop {
+        let expected = expected.next().unwrap_or(Event::Eof);
+        let actual = actual.next().unwrap_or(Event::Eof);
+
+        match quick_xml_event_cmp(&actual, &expected) {
+            None => return,
+            Some(true) => (),
+            Some(false) => break (actual, expected),
+        }
+    };
+
+    println!("=== actual: {actual:?}");
+    println!("=== expected: {expected:?}");
+    println!("=== content: {content}");
+
+    panic!("Unexpected event")
+}
+
+/* Misc */
+
+struct IterReader<R> {
+    reader: Reader<R>,
     buffer: Vec<u8>,
     pending: Option<Event<'static>>,
 }
 
-impl IterReader {
+impl IterReader<BufReader<File>> {
     fn from_file<P>(path: P) -> Self
     where
         P: AsRef<Path>,
@@ -222,7 +304,20 @@ impl IterReader {
     }
 }
 
-impl Iterator for IterReader {
+impl<'a> IterReader<&'a [u8]> {
+    fn from_str(s: &'a str) -> Self {
+        Self {
+            reader: Reader::from_str(s),
+            buffer: Vec::new(),
+            pending: None,
+        }
+    }
+}
+
+impl<R> Iterator for IterReader<R>
+where
+    R: BufRead,
+{
     type Item = Event<'static>;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -256,37 +351,6 @@ impl Iterator for IterReader {
             }
         }
     }
-}
-
-pub fn serde_quick_xml_read_test<T, P>(path: P) -> T
-where
-    P: AsRef<Path>,
-    T: for<'de> Deserialize<'de>,
-{
-    let reader = File::open(path).unwrap();
-    let reader = BufReader::new(reader);
-
-    quick_xml::de::from_reader::<_, T>(reader).unwrap()
-}
-
-pub fn serde_xml_rs_read_test<T, P>(path: P) -> T
-where
-    P: AsRef<Path>,
-    T: for<'de> Deserialize<'de>,
-{
-    let reader = File::open(path).unwrap();
-
-    serde_xml_rs::from_reader::<T, _>(reader).unwrap()
-}
-
-pub fn serde_xml_rs_v7_read_test<T, P>(path: P) -> T
-where
-    P: AsRef<Path>,
-    T: for<'de> Deserialize<'de>,
-{
-    let reader = File::open(path).unwrap();
-
-    serde_xml_rs_v7::from_reader::<_, T>(reader).unwrap()
 }
 
 fn fmt_code(s: &str) -> String {

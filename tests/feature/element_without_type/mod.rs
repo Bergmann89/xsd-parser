@@ -8,6 +8,8 @@ fn config() -> Config {
         .with_generate([(IdentType::Element, "xml:my_name")])
 }
 
+/* default */
+
 #[test]
 fn generate_default() {
     generate_test(
@@ -16,6 +18,15 @@ fn generate_default() {
         config(),
     );
 }
+
+#[cfg(not(feature = "update-expectations"))]
+mod default {
+    #![allow(unused_imports)]
+
+    include!("expected/default.rs");
+}
+
+/* quick_xml */
 
 #[test]
 fn generate_quick_xml() {
@@ -34,13 +45,6 @@ fn read_quick_xml() {
     let obj = crate::utils::quick_xml_read_test::<MyName, _>(
         "tests/feature/element_without_type/example/default.xml",
     );
-}
-
-#[cfg(not(feature = "update-expectations"))]
-mod default {
-    #![allow(unused_imports)]
-
-    include!("expected/default.rs");
 }
 
 #[cfg(not(feature = "update-expectations"))]

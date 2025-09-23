@@ -284,6 +284,10 @@ where
                         *self = Self::End { name };
                     }
 
+                    if data.is_empty() {
+                        continue;
+                    }
+
                     return Some(Ok(Event::Text(BytesText::from_escaped(escape(data)))));
                 }
                 Self::End { name } => return Some(Ok(Event::End(BytesEnd::new(name)))),

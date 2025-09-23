@@ -1,13 +1,21 @@
-use xsd_parser::{Config, IdentType};
+use xsd_parser::{config::RendererFlags, Config, IdentType};
 
 use crate::utils::{generate_test, ConfigEx};
+
+fn config() -> Config {
+    Config::test_default()
+        .with_renderer_flags(RendererFlags::RENDER_DOCS)
+        .with_generate([(IdentType::Element, "tns:Foo")])
+}
+
+/* default */
 
 #[test]
 fn generate_default() {
     generate_test(
         "tests/feature/enumeration_with_annotation/schema.xsd",
         "tests/feature/enumeration_with_annotation/expected/default.rs",
-        Config::test_default().with_generate([(IdentType::Element, "tns:Foo")]),
+        config(),
     );
 }
 
