@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 
 use crate::models::Ident;
 
-use super::{Base, MetaTypes, TypeEq};
+use super::{Base, Constrains, MetaTypes, TypeEq};
 
 /// Type information that defines a union type.
 #[derive(Default, Debug, Clone)]
@@ -15,6 +15,9 @@ pub struct UnionMeta {
 
     /// Types that are unified in this union type.
     pub types: UnionMetaTypes,
+
+    /// Constraining facets defined for this type.
+    pub constrains: Constrains,
 }
 
 /// Type information that represents one type unified by a [`UnionMeta`].
@@ -35,16 +38,27 @@ pub struct UnionMetaTypes(pub Vec<UnionMetaType>);
 
 impl TypeEq for UnionMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, ctx: &MetaTypes) {
-        let Self { base, types } = self;
+        let Self {
+            base,
+            types,
+            constrains,
+        } = self;
 
         base.type_hash(hasher, ctx);
         types.type_hash(hasher, ctx);
+        constrains.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, ctx: &MetaTypes) -> bool {
-        let Self { base, types } = self;
+        let Self {
+            base,
+            types,
+            constrains,
+        } = self;
 
-        base.type_eq(&other.base, ctx) && types.type_eq(&other.types, ctx)
+        base.type_eq(&other.base, ctx)
+            && types.type_eq(&other.types, ctx)
+            && constrains.eq(&other.constrains)
     }
 }
 

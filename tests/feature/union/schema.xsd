@@ -4,8 +4,14 @@
            targetNamespace="http://example.com"
            elementFormDefault="qualified">
 
-    <xs:simpleType name="UnionType">
+    <xs:simpleType name="UnionBaseType">
         <xs:union memberTypes="xs:int xs:string" />
+    </xs:simpleType>
+
+    <xs:simpleType name="UnionType">
+        <xs:restriction base="tns:UnionBaseType">
+            <xs:pattern value="[a-z0-9]+"/>
+        </xs:restriction>
     </xs:simpleType>
 
     <xs:complexType name="FooType">
