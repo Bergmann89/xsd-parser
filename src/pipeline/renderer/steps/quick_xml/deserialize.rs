@@ -7,6 +7,7 @@ use proc_macro2::{Ident as Ident2, TokenStream};
 use quote::{format_ident, quote};
 
 use crate::config::TypedefMode;
+use crate::models::data::ConstrainsData;
 use crate::models::{
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
@@ -75,9 +76,10 @@ impl UnionData<'_> {
             ..
         } = self;
 
+        let validation = self.constrains.render_validation(ctx);
         let variants = variants
             .iter()
-            .map(|var| var.render_deserializer_variant(ctx));
+            .map(|var| var.render_deserializer_variant(ctx, validation.is_some()));
 
         ctx.add_usings([
             "xsd_parser::quick_xml::Error",
@@ -97,6 +99,8 @@ impl UnionData<'_> {
                 {
                     let mut errors = Vec::new();
 
+                    #validation
+
                     #( #variants )*
 
                     Err(reader.map_error(ErrorKind::InvalidUnion(errors.into())))
@@ -109,7 +113,7 @@ impl UnionData<'_> {
 }
 
 impl UnionTypeVariant<'_> {
-    fn render_deserializer_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
+    fn render_deserializer_variant(&self, ctx: &Context<'_, '_>, as_str: bool) -> TokenStream {
         let Self {
             variant_ident,
             target_type,
@@ -118,10 +122,19 @@ impl UnionTypeVariant<'_> {
 
         let target_type = ctx.resolve_type_for_module(target_type);
 
-        quote! {
-            match #target_type::deserialize_bytes(reader, bytes) {
-                Ok(value) => return Ok(Self::#variant_ident(value)),
-                Err(error) => errors.push(Box::new(error)),
+        if as_str {
+            quote! {
+                match #target_type::deserialize_str(reader, s) {
+                    Ok(value) => return Ok(Self::#variant_ident(value)),
+                    Err(error) => errors.push(Box::new(error)),
+                }
+            }
+        } else {
+            quote! {
+                match #target_type::deserialize_bytes(reader, bytes) {
+                    Ok(value) => return Ok(Self::#variant_ident(value)),
+                    Err(error) => errors.push(Box::new(error)),
+                }
             }
         }
     }
@@ -504,6 +517,7 @@ impl EnumerationData<'_> {
         } = self;
 
         let mut other = None;
+        let validation = self.constrains.render_validation(ctx);
         let variants = variants
             .iter()
             .filter_map(|v| v.render_deserializer_variant(ctx, &mut other))
@@ -541,6 +555,8 @@ impl EnumerationData<'_> {
                 where
                     R: DeserializeReader
                 {
+                    #validation
+
                     match bytes {
                         #( #variants )*
                         #other
@@ -591,7 +607,6 @@ impl SimpleData<'_> {
             ..
         } = self;
 
-        let mut need_str = false;
         let target_type = ctx.resolve_type_for_module(target_type);
 
         ctx.add_usings([
@@ -600,53 +615,9 @@ impl SimpleData<'_> {
             "xsd_parser::quick_xml::DeserializeReader",
         ]);
 
-        /* Whitespace */
+        let validation = self.constrains.render_validation(ctx);
 
-        let whitespace = match &self.meta.whitespace {
-            WhiteSpace::Preserve => None,
-            WhiteSpace::Replace => {
-                need_str = true;
-
-                ctx.add_usings(["xsd_parser::quick_xml::whitespace_replace"]);
-
-                Some(quote! {
-                    let buffer = whitespace_replace(s);
-                    let s = buffer.as_str();
-                })
-            }
-            WhiteSpace::Collapse => {
-                need_str = true;
-
-                ctx.add_usings(["xsd_parser::quick_xml::whitespace_collapse"]);
-
-                Some(quote! {
-                    let buffer = whitespace_collapse(s);
-                    let s = buffer.trim();
-                })
-            }
-        };
-
-        /* String Validation */
-
-        let validate_str = self.need_string_validation().then(|| {
-            need_str = true;
-
-            quote! {
-                Self::validate_str(s).map_err(|error| (bytes, error))?;
-            }
-        });
-
-        /* Actual Rendering */
-
-        let need_str = need_str.then(|| {
-            ctx.add_usings(["std::str::from_utf8"]);
-
-            quote! {
-                let s = from_utf8(bytes).map_err(Error::from)?;
-            }
-        });
-
-        let body = match (need_str.is_some(), occurs) {
+        let body = match (validation.is_some(), occurs) {
             (true, Occurs::Single) => {
                 quote! {
                     let inner = #target_type::deserialize_str(reader, s)?;
@@ -679,9 +650,7 @@ impl SimpleData<'_> {
                 where
                     R: DeserializeReader
                 {
-                    #need_str
-                    #whitespace
-                    #validate_str
+                    #validation
 
                     #body
 
@@ -691,6 +660,58 @@ impl SimpleData<'_> {
         };
 
         ctx.current_module().append(code);
+    }
+}
+
+/* ConstrainsData */
+
+impl ConstrainsData<'_> {
+    fn render_validation(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        let whitespace = self.render_whitespace(ctx);
+        let validate_str = self.render_validate_str();
+
+        if whitespace.is_some() || validate_str.is_some() {
+            ctx.add_usings(["std::str::from_utf8"]);
+
+            Some(quote! {
+                let s = from_utf8(bytes).map_err(Error::from)?;
+
+                #whitespace
+                #validate_str
+            })
+        } else {
+            None
+        }
+    }
+
+    fn render_whitespace(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        match &self.meta.whitespace {
+            WhiteSpace::Preserve => None,
+            WhiteSpace::Replace => {
+                ctx.add_usings(["xsd_parser::quick_xml::whitespace_replace"]);
+
+                Some(quote! {
+                    let buffer = whitespace_replace(s);
+                    let s = buffer.as_str();
+                })
+            }
+            WhiteSpace::Collapse => {
+                ctx.add_usings(["xsd_parser::quick_xml::whitespace_collapse"]);
+
+                Some(quote! {
+                    let buffer = whitespace_collapse(s);
+                    let s = buffer.trim();
+                })
+            }
+        }
+    }
+
+    fn render_validate_str(&self) -> Option<TokenStream> {
+        self.meta.need_string_validation().then(|| {
+            quote! {
+                Self::validate_str(s).map_err(|error| (bytes, error))?;
+            }
+        })
     }
 }
 

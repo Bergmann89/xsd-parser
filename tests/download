@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+ROOT="${DOWNLOAD_ROOT:-.}"
+
+log() {
+    echo "$@" >&2
+}
+
+escape() {
+    printf '%s' "$1" | sed 's/[#&]/\\&/g';
+}
+
+abs_url() {
+    local PARENT="$1"
+    local CHILD="$2"
+
+    case "$CHILD" in
+        http://*|https://*)
+            echo "$CHILD"
+            ;;
+        //* )
+            echo "${PARENT%%:*}:$CHILD"
+            ;;
+        /*)
+            local SCH="${PARENT%%:*}";
+            local REST="${PARENT#*://}"
+            local HOST="${REST%%/*}";
+            echo "$SCH://$HOST$CHILD"
+            ;;
+        *)
+            echo "${PARENT%/*}/$CHILD"
+            ;;
+    esac
+}
+
+rel_path() {
+    local i=0;
+    local TO="$(readlink -f "$2")"
+    local TO="${TO%/}"
+    local FROM="$(readlink -f "$1")"
+    local FROM="${FROM%/}"
+
+    IFS="/" read -r -a A <<< "${FROM#/}"
+    IFS="/" read -r -a B <<< "${TO#/}"
+
+    while [[ $i -lt ${#A[@]} && $i -lt ${#B[@]} && "${A[i]}" == "${B[i]}" ]]; do
+        ((i++));
+    done
+
+    local rel=""
+    local up=$(( ${#A[@]} - i ));
+
+    for ((j=0; j<up; j++)); do
+        rel+="../"
+    done
+
+    for ((j=i; j<${#B[@]}; j++)); do
+        rel+="${B[j]}"
+        [[ $j -lt $((${#B[@]}-1)) ]] && rel+="/"
+    done
+
+    [[ -z "$rel" ]] && rel="."
+
+    printf '%s' "$rel"
+}
+
+download() {
+    local PARENT="$1"
+    local URL="$2"
+    local URL="$(abs_url "$PARENT" "$URL")"
+
+    local REL="${URL#*//}"
+    local ABS="$ROOT/$REL"
+    local DIR="${ABS%/*}"
+
+    echo "$ABS"
+
+    if [[ -f "$ABS" ]]; then
+        return
+    fi
+
+    log "Download:
+    Schema $URL
+    To $REL
+    "
+
+    mkdir -p "$DIR"
+    curl -L -o "$ABS" "$URL" 2>/dev/null
+
+    mapfile -t URLS < <(
+        grep -oE "schemaLocation=['\"][^'\"]*['\"]" "$ABS" |
+        sed -E "s/^schemaLocation=['\"](.*)['\"]$/\1/" |
+        sort -u
+    )
+
+    for CHILD in "${URLS[@]}"; do
+        local CHILD_ABS="$(download "$URL" "$CHILD")"
+        local CHILD_REL="$(rel_path "$DIR" "$CHILD_ABS")"
+
+        local OLD="$(escape "$CHILD")";
+        local NEW="$(escape "$CHILD_REL")"
+
+        sed -i "s#schemaLocation=[\"']$OLD[\"']#schemaLocation=\"$NEW\"#g" "$ABS"
+    done
+}
+
+for URL in "$@"; do
+    download "$URL" "$URL" >/dev/null
+done

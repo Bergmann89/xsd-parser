@@ -1,9 +1,10 @@
-use std::borrow::Cow;
+use regex::Regex;
+use std::{borrow::Cow, str::from_utf8, sync::LazyLock};
 use xsd_parser::{
     models::schema::Namespace,
     quick_xml::{
         DeserializeBytes, DeserializeReader, Error, ErrorKind, RawByteStr, SerializeBytes,
-        WithDeserializer, WithSerializer,
+        ValidateError, WithDeserializer, WithSerializer,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -38,6 +39,18 @@ pub enum EnumType {
     On,
     Auto,
 }
+impl EnumType {
+    pub fn validate_str(s: &str) -> Result<(), ValidateError> {
+        static PATTERNS: LazyLock<[Regex; 1usize]> =
+            LazyLock::new(|| [Regex::new("[A-Z]+").unwrap()]);
+        for pattern in PATTERNS.iter() {
+            if !pattern.is_match(s) {
+                return Err(ValidateError::Pattern(pattern.as_str()));
+            }
+        }
+        Ok(())
+    }
+}
 impl SerializeBytes for EnumType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
@@ -52,6 +65,8 @@ impl DeserializeBytes for EnumType {
     where
         R: DeserializeReader,
     {
+        let s = from_utf8(bytes).map_err(Error::from)?;
+        Self::validate_str(s).map_err(|error| (bytes, error))?;
         match bytes {
             b"OFF" => Ok(Self::Off),
             b"ON" => Ok(Self::On),
