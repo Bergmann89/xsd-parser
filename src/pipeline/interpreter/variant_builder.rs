@@ -4,12 +4,11 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
-use crate::models::meta::WhiteSpace;
 use crate::models::{
     meta::{
         AnyAttributeMeta, AnyMeta, AttributeMeta, Base, DynamicMeta, ElementMeta,
         ElementMetaVariant, ElementMode, ElementsMeta, EnumerationMetaVariant, MetaType,
-        MetaTypeVariant, ReferenceMeta, SimpleMeta, UnionMetaType,
+        MetaTypeVariant, ReferenceMeta, SimpleMeta, UnionMetaType, WhiteSpace,
     },
     schema::{
         xs::{
@@ -1002,8 +1001,8 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
     #[instrument(err, level = "trace", skip(self))]
     fn apply_simple_type_facet(&mut self, ty: &Facet) -> Result<(), Error> {
         self.simple_content_builder(|builder| {
-            let sm = match &mut builder.variant {
-                Some(MetaTypeVariant::SimpleType(x)) => x,
+            let constrains = match &mut builder.variant {
+                Some(MetaTypeVariant::SimpleType(x)) => &mut x.constrains,
                 Some(MetaTypeVariant::Reference(x)) => {
                     let base = x.type_.clone();
                     let min = x.min_occurs;
@@ -1013,37 +1012,38 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                     if min != 1 {
                         si.is_list = true;
-                        si.min_length = Some(min);
+                        si.constrains.min_length = Some(min);
                     }
 
                     if max != MaxOccurs::Bounded(1) {
                         si.is_list = true;
                         if let MaxOccurs::Bounded(max) = max {
-                            si.max_length = Some(max);
+                            si.constrains.max_length = Some(max);
                         }
                     }
 
-                    si
+                    &mut si.constrains
                 }
-                Some(MetaTypeVariant::Enumeration(_)) => return Ok(()),
+                Some(MetaTypeVariant::Enumeration(em)) => &mut em.constrains,
+                Some(MetaTypeVariant::Union(um)) => &mut um.constrains,
                 Some(e) => crate::unreachable!("Type is expected to be a {:?}", e),
                 None => crate::unreachable!("Type variant is not set yet"),
             };
 
             match ty {
-                Facet::MinExclusive(x) => sm.range.start = Bound::Excluded(x.value.clone()),
-                Facet::MinInclusive(x) => sm.range.start = Bound::Included(x.value.clone()),
-                Facet::MaxExclusive(x) => sm.range.end = Bound::Excluded(x.value.clone()),
-                Facet::MaxInclusive(x) => sm.range.end = Bound::Included(x.value.clone()),
+                Facet::MinExclusive(x) => constrains.range.start = Bound::Excluded(x.value.clone()),
+                Facet::MinInclusive(x) => constrains.range.start = Bound::Included(x.value.clone()),
+                Facet::MaxExclusive(x) => constrains.range.end = Bound::Excluded(x.value.clone()),
+                Facet::MaxInclusive(x) => constrains.range.end = Bound::Included(x.value.clone()),
                 Facet::TotalDigits(x) => {
-                    sm.total_digits = Some(
+                    constrains.total_digits = Some(
                         x.value
                             .parse()
                             .map_err(|_| Error::InvalidFacet(ty.clone()))?,
                     );
                 }
                 Facet::FractionDigits(x) => {
-                    sm.fraction_digits = Some(
+                    constrains.fraction_digits = Some(
                         x.value
                             .parse()
                             .map_err(|_| Error::InvalidFacet(ty.clone()))?,
@@ -1055,32 +1055,32 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                         .parse()
                         .map_err(|_| Error::InvalidFacet(ty.clone()))?;
 
-                    sm.min_length = Some(len);
-                    sm.max_length = Some(len);
+                    constrains.min_length = Some(len);
+                    constrains.max_length = Some(len);
                 }
                 Facet::MinLength(x) => {
-                    sm.min_length = Some(
+                    constrains.min_length = Some(
                         x.value
                             .parse()
                             .map_err(|_| Error::InvalidFacet(ty.clone()))?,
                     );
                 }
                 Facet::MaxLength(x) => {
-                    sm.max_length = Some(
+                    constrains.max_length = Some(
                         x.value
                             .parse()
                             .map_err(|_| Error::InvalidFacet(ty.clone()))?,
                     );
                 }
                 Facet::WhiteSpace(x) => {
-                    sm.whitespace = match x.value.to_ascii_lowercase().as_str() {
+                    constrains.whitespace = match x.value.to_ascii_lowercase().as_str() {
                         "preserve" => WhiteSpace::Preserve,
                         "replace" => WhiteSpace::Replace,
                         "collapse" => WhiteSpace::Collapse,
                         _ => return Err(Error::InvalidFacet(ty.clone())),
                     }
                 }
-                Facet::Pattern(x) => sm.pattern = Some(x.value.clone()),
+                Facet::Pattern(x) => constrains.patterns.push(x.value.clone()),
                 _ => crate::unreachable!("Not a valid facet for a simple type!"),
             }
 
@@ -1096,8 +1096,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             .with_type(IdentType::Enumeration);
 
         self.simple_content_builder(|builder| {
-            if matches!(&builder.variant, Some(MetaTypeVariant::SimpleType(_))) {
-                init_any!(builder, Enumeration);
+            if let Some(MetaTypeVariant::SimpleType(sm)) = &builder.variant {
+                let constrains = sm.constrains.clone();
+                let em = init_any!(builder, Enumeration);
+                em.constrains = constrains;
             }
 
             let ei = get_or_init_any!(builder, Enumeration);

@@ -3,7 +3,7 @@ use quote::format_ident;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{EnumerationData, EnumerationTypeVariant},
+    data::{ConstrainsData, EnumerationData, EnumerationTypeVariant},
     meta::{EnumerationMeta, EnumerationMetaVariant},
     schema::xs::Use,
 };
@@ -16,6 +16,7 @@ impl<'types> EnumerationData<'types> {
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
         let mut unknown = 0usize;
+        let constrains = ConstrainsData::new(&meta.constrains, None, ctx)?;
         let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_impls = ctx.make_trait_impls()?;
 
@@ -27,6 +28,7 @@ impl<'types> EnumerationData<'types> {
 
         Ok(EnumerationData {
             meta,
+            constrains,
             type_ident,
             variants,
             trait_impls,

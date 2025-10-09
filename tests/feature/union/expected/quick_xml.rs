@@ -1,9 +1,10 @@
-use std::borrow::Cow;
+use regex::Regex;
+use std::{borrow::Cow, str::from_utf8, sync::LazyLock};
 use xsd_parser::{
     models::schema::Namespace,
     quick_xml::{
-        DeserializeBytes, Error, ErrorKind, SerializeBytes, WithDeserializer, WithSerializer,
-        XmlReader,
+        DeserializeBytes, Error, ErrorKind, SerializeBytes, ValidateError, WithDeserializer,
+        WithSerializer, XmlReader,
     },
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
@@ -37,6 +38,18 @@ pub enum UnionType {
     I32(i32),
     String(String),
 }
+impl UnionType {
+    pub fn validate_str(s: &str) -> Result<(), ValidateError> {
+        static PATTERNS: LazyLock<[Regex; 1usize]> =
+            LazyLock::new(|| [Regex::new("[a-z0-9]+").unwrap()]);
+        for pattern in PATTERNS.iter() {
+            if !pattern.is_match(s) {
+                return Err(ValidateError::Pattern(pattern.as_str()));
+            }
+        }
+        Ok(())
+    }
+}
 impl SerializeBytes for UnionType {
     fn serialize_bytes(&self) -> Result<Option<Cow<'_, str>>, Error> {
         match self {
@@ -51,11 +64,13 @@ impl DeserializeBytes for UnionType {
         R: XmlReader,
     {
         let mut errors = Vec::new();
-        match i32::deserialize_bytes(reader, bytes) {
+        let s = from_utf8(bytes).map_err(Error::from)?;
+        Self::validate_str(s).map_err(|error| (bytes, error))?;
+        match i32::deserialize_str(reader, s) {
             Ok(value) => return Ok(Self::I32(value)),
             Err(error) => errors.push(Box::new(error)),
         }
-        match String::deserialize_bytes(reader, bytes) {
+        match String::deserialize_str(reader, s) {
             Ok(value) => return Ok(Self::String(value)),
             Err(error) => errors.push(Box::new(error)),
         }

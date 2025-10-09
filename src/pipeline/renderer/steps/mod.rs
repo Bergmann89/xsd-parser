@@ -14,7 +14,7 @@ use quote::{format_ident, quote, ToTokens};
 use crate::config::RendererFlags;
 use crate::models::{
     code::IdentPath,
-    data::{ConfigValue, SimpleData},
+    data::{ConfigValue, ConstrainsData, EnumerationData, SimpleData, UnionData},
 };
 
 use super::Context;
@@ -49,163 +49,67 @@ impl Context<'_, '_> {
     }
 }
 
+impl EnumerationData<'_> {
+    fn render_common_impls(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            constrains,
+            type_ident,
+            ..
+        } = self;
+
+        if let Some(validate_str) = constrains.render_fn_validate_str(ctx) {
+            let code = quote! {
+                impl #type_ident {
+                    #validate_str
+                }
+            };
+
+            ctx.add_usings(["xsd_parser::quick_xml::ValidateError"]);
+            ctx.current_module().append(code);
+        }
+    }
+}
+
+impl UnionData<'_> {
+    fn render_common_impls(&self, ctx: &mut Context<'_, '_>) {
+        let Self {
+            constrains,
+            type_ident,
+            ..
+        } = self;
+
+        if let Some(validate_str) = constrains.render_fn_validate_str(ctx) {
+            let code = quote! {
+                impl #type_ident {
+                    #validate_str
+                }
+            };
+
+            ctx.add_usings(["xsd_parser::quick_xml::ValidateError"]);
+            ctx.current_module().append(code);
+        }
+    }
+}
+
 impl SimpleData<'_> {
     #[allow(clippy::too_many_lines)]
     fn render_common_impls(&self, ctx: &mut Context<'_, '_>) {
         let Self {
             occurs,
+            constrains,
             type_ident,
             target_type,
             ..
         } = self;
 
         let target_type = ctx.resolve_type_for_module(target_type);
-        let target_type = occurs.make_type(&target_type, false);
+        let target_type = occurs.make_type(&target_type, false).unwrap();
 
-        /* Pattern */
-
-        let pattern = self.meta.pattern.as_ref().map(|x| {
-            ctx.add_usings(["regex::Regex", "std::sync::LazyLock"]);
-
-            let rx = Literal::string(x);
-
-            quote! {
-                static PATTERN: LazyLock<Regex> = LazyLock::new(|| Regex::new(#rx).unwrap());
-                if !PATTERN.is_match(s) {
-                    return Err(ValidateError::Pattern(#rx));
-                }
-            }
-        });
-
-        /* Total Digits */
-
-        let total_digits = self.meta.total_digits.map(|x| {
-            ctx.add_usings(["xsd_parser::quick_xml::total_digits"]);
-
-            quote! {
-                total_digits(s, #x)?;
-            }
-        });
-
-        /* Fraction Digits */
-
-        let fraction_digits = self.meta.fraction_digits.map(|x| {
-            ctx.add_usings(["xsd_parser::quick_xml::fraction_digits"]);
-
-            quote! {
-                fraction_digits(s, #x)?;
-            }
-        });
-
-        /* Min Length */
-
-        let min_length = self.meta.min_length.as_ref().map(|x| {
-            quote! {
-                if value.len() < #x {
-                    return Err(ValidateError::MinLength(#x));
-                }
-            }
-        });
-
-        /* Max Length */
-
-        let max_length = self.meta.max_length.as_ref().map(|x| {
-            quote! {
-                if value.len() > #x {
-                    return Err(ValidateError::MaxLength(#x));
-                }
-            }
-        });
-
-        /* Range Start */
-
-        let range_start = match &self.range.start {
-            Bound::Unbounded => None,
-            Bound::Included(x) => {
-                let Bound::Included(val) = &self.meta.range.start else {
-                    unreachable!();
-                };
-
-                Some(quote! {
-                    if *value < #x {
-                        return Err(ValidateError::LessThan(#val));
-                    }
-                })
-            }
-            Bound::Excluded(x) => {
-                let Bound::Excluded(val) = &self.meta.range.start else {
-                    unreachable!();
-                };
-
-                Some(quote! {
-                    if *value <= #x {
-                        return Err(ValidateError::LessEqualThan(#val));
-                    }
-                })
-            }
-        };
-
-        /* Range End */
-
-        let range_end = match &self.range.end {
-            Bound::Unbounded => None,
-            Bound::Included(x) => {
-                let Bound::Included(val) = &self.meta.range.end else {
-                    unreachable!();
-                };
-
-                Some(quote! {
-                    if *value > #x {
-                        return Err(ValidateError::GraterThan(#val));
-                    }
-                })
-            }
-            Bound::Excluded(x) => {
-                let Bound::Excluded(val) = &self.meta.range.end else {
-                    unreachable!();
-                };
-
-                Some(quote! {
-                    if *value >= #x {
-                        return Err(ValidateError::GraterEqualThan(#val));
-                    }
-                })
-            }
-        };
-
-        /* fn validate_str */
-
-        let validate_str = self.need_string_validation().then(|| {
-            quote! {
-                pub fn validate_str(s: &str) -> Result<(), ValidateError> {
-                    #pattern
-                    #total_digits
-                    #fraction_digits
-
-                    Ok(())
-                }
-            }
-        });
-
-        /* fn validate_value */
-
-        let validate_value = self.need_value_validation().then(|| {
-            quote! {
-                pub fn validate_value(value: &#target_type) -> Result<(), ValidateError> {
-                    #range_start
-                    #range_end
-                    #min_length
-                    #max_length
-
-                    Ok(())
-                }
-            }
-        });
+        let validate_str = constrains.render_fn_validate_str(ctx);
+        let validate_value = constrains.render_fn_validate_value(&target_type);
         let call_validate_value = validate_value
-            .is_some()
-            .then(|| quote! { Self::validate_value(&inner)?; });
-
-        /* Render Actual Code */
+            .as_ref()
+            .map(|_| quote! { Self::validate_value(&inner)?; });
 
         let code = quote! {
             impl #type_ident {
@@ -248,6 +152,167 @@ impl SimpleData<'_> {
 
         ctx.add_usings(["core::ops::Deref", "xsd_parser::quick_xml::ValidateError"]);
         ctx.current_module().append(code);
+    }
+}
+
+impl ConstrainsData<'_> {
+    fn render_fn_validate_str(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        self.meta.need_string_validation().then(|| {
+            let validate_pattern = self.render_validate_pattern(ctx);
+            let validate_total_digits = self.render_validate_total_digits(ctx);
+            let validate_fraction_digits = self.render_validate_fraction_digits(ctx);
+
+            quote! {
+                pub fn validate_str(s: &str) -> Result<(), ValidateError> {
+                    #validate_pattern
+                    #validate_total_digits
+                    #validate_fraction_digits
+
+                    Ok(())
+                }
+            }
+        })
+    }
+
+    fn render_fn_validate_value(&self, target_type: &TokenStream) -> Option<TokenStream> {
+        self.meta.need_value_validation().then(|| {
+            let validate_range_start = self.render_validate_range_start();
+            let validate_range_end = self.render_validate_range_end();
+            let validate_min_length = self.render_validate_min_length();
+            let validate_max_length = self.render_validate_max_length();
+
+            quote! {
+                pub fn validate_value(value: &#target_type) -> Result<(), ValidateError> {
+                    #validate_range_start
+                    #validate_range_end
+                    #validate_min_length
+                    #validate_max_length
+
+                    Ok(())
+                }
+            }
+        })
+    }
+
+    fn render_validate_pattern(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        if self.meta.patterns.is_empty() {
+            return None;
+        }
+
+        ctx.add_usings(["regex::Regex", "std::sync::LazyLock"]);
+
+        let sz = self.meta.patterns.len();
+        let patterns = self.meta.patterns.iter().map(|x| {
+            let rx = Literal::string(x);
+
+            quote!(Regex::new(#rx).unwrap())
+        });
+
+        Some(quote! {
+            static PATTERNS: LazyLock<[Regex; #sz]> = LazyLock::new(|| [ #( #patterns )* ]);
+
+            for pattern in PATTERNS.iter() {
+                if !pattern.is_match(s) {
+                    return Err(ValidateError::Pattern(pattern.as_str()));
+                }
+            }
+        })
+    }
+
+    fn render_validate_total_digits(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        self.meta.total_digits.map(|x| {
+            ctx.add_usings(["xsd_parser::quick_xml::total_digits"]);
+
+            quote! {
+                total_digits(s, #x)?;
+            }
+        })
+    }
+
+    fn render_validate_fraction_digits(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
+        self.meta.fraction_digits.map(|x| {
+            ctx.add_usings(["xsd_parser::quick_xml::fraction_digits"]);
+
+            quote! {
+                fraction_digits(s, #x)?;
+            }
+        })
+    }
+
+    fn render_validate_min_length(&self) -> Option<TokenStream> {
+        self.meta.min_length.as_ref().map(|x| {
+            quote! {
+                if value.len() < #x {
+                    return Err(ValidateError::MinLength(#x));
+                }
+            }
+        })
+    }
+
+    fn render_validate_max_length(&self) -> Option<TokenStream> {
+        self.meta.max_length.as_ref().map(|x| {
+            quote! {
+                if value.len() > #x {
+                    return Err(ValidateError::MaxLength(#x));
+                }
+            }
+        })
+    }
+
+    fn render_validate_range_start(&self) -> Option<TokenStream> {
+        match &self.range.start {
+            Bound::Unbounded => None,
+            Bound::Included(x) => {
+                let Bound::Included(val) = &self.meta.range.start else {
+                    unreachable!();
+                };
+
+                Some(quote! {
+                    if *value < #x {
+                        return Err(ValidateError::LessThan(#val));
+                    }
+                })
+            }
+            Bound::Excluded(x) => {
+                let Bound::Excluded(val) = &self.meta.range.start else {
+                    unreachable!();
+                };
+
+                Some(quote! {
+                    if *value <= #x {
+                        return Err(ValidateError::LessEqualThan(#val));
+                    }
+                })
+            }
+        }
+    }
+
+    fn render_validate_range_end(&self) -> Option<TokenStream> {
+        match &self.range.end {
+            Bound::Unbounded => None,
+            Bound::Included(x) => {
+                let Bound::Included(val) = &self.meta.range.end else {
+                    unreachable!();
+                };
+
+                Some(quote! {
+                    if *value > #x {
+                        return Err(ValidateError::GraterThan(#val));
+                    }
+                })
+            }
+            Bound::Excluded(x) => {
+                let Bound::Excluded(val) = &self.meta.range.end else {
+                    unreachable!();
+                };
+
+                Some(quote! {
+                    if *value >= #x {
+                        return Err(ValidateError::GraterEqualThan(#val));
+                    }
+                })
+            }
+        }
     }
 }
 

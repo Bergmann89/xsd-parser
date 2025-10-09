@@ -1,7 +1,7 @@
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    data::PathData,
+    data::{ConstrainsData, PathData},
     meta::{UnionMeta, UnionMetaType},
 };
 
@@ -11,6 +11,9 @@ use crate::models::{
 pub struct UnionData<'types> {
     /// Reference to the original type information.
     pub meta: &'types UnionMeta,
+
+    /// Code generator data for the constrains of the type.
+    pub constrains: ConstrainsData<'types>,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,

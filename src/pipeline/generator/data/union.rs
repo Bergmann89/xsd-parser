@@ -2,7 +2,7 @@ use proc_macro2::Literal;
 
 use crate::models::{
     code::format_variant_ident,
-    data::{UnionData, UnionTypeVariant},
+    data::{ConstrainsData, UnionData, UnionTypeVariant},
     meta::{UnionMeta, UnionMetaType},
 };
 
@@ -13,6 +13,7 @@ impl<'types> UnionData<'types> {
         meta: &'types UnionMeta,
         ctx: &mut Context<'_, 'types>,
     ) -> Result<Self, Error> {
+        let constrains = ConstrainsData::new(&meta.constrains, None, ctx)?;
         let type_ident = ctx.current_type_ref().path.ident().clone();
         let trait_impls = ctx.make_trait_impls()?;
         let variants = meta
@@ -23,6 +24,7 @@ impl<'types> UnionData<'types> {
 
         Ok(Self {
             meta,
+            constrains,
             type_ident,
             variants,
             trait_impls,

@@ -1,7 +1,5 @@
-use std::ops::{Bound, Range};
-
 use crate::models::{
-    data::{Occurs, SimpleData},
+    data::{ConstrainsData, Occurs, SimpleData},
     meta::SimpleMeta,
 };
 
@@ -16,26 +14,15 @@ impl<'types> SimpleData<'types> {
             .types
             .get_resolved_ident(&meta.base)
             .unwrap_or(&meta.base);
-        let current_ns = ctx.current_module();
         let type_ident = ctx.current_type_ref().path.ident().clone();
-
-        let start = match &meta.range.start {
-            Bound::Unbounded => Bound::Unbounded,
-            Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
-            Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
-        };
-        let end = match &meta.range.end {
-            Bound::Unbounded => Bound::Unbounded,
-            Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
-            Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
-        };
-        let range = Range { start, end };
 
         let occurs = if meta.is_list {
             Occurs::DynamicList
         } else {
             Occurs::Single
         };
+
+        let constrains = ConstrainsData::new(&meta.constrains, Some(base), ctx)?;
 
         let target_ref = ctx.get_or_create_type_ref(&meta.base)?;
         let target_type = target_ref.path.clone();
@@ -44,8 +31,8 @@ impl<'types> SimpleData<'types> {
 
         Ok(Self {
             meta,
-            range,
             occurs,
+            constrains,
             type_ident,
             target_type,
             trait_impls,

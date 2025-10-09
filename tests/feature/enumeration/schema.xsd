@@ -6,6 +6,7 @@
 
     <xs:simpleType name="EnumType">
         <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]+" />
             <xs:enumeration value="OFF" />
             <xs:enumeration value="ON" />
             <xs:enumeration value="AUTO" />

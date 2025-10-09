@@ -1,0 +1,37 @@
+use std::ops::{Bound, Range};
+
+use crate::models::{data::ConstrainsData, meta::Constrains, Ident};
+
+use super::super::{Context, Error};
+
+impl<'types> ConstrainsData<'types> {
+    pub(super) fn new(
+        meta: &'types Constrains,
+        base: Option<&Ident>,
+        ctx: &mut Context<'_, 'types>,
+    ) -> Result<Self, Error> {
+        let current_ns = ctx.current_module();
+
+        let range = if let Some(base) = base {
+            let start = match &meta.range.start {
+                Bound::Unbounded => Bound::Unbounded,
+                Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
+                Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
+            };
+            let end = match &meta.range.end {
+                Bound::Unbounded => Bound::Unbounded,
+                Bound::Included(x) => Bound::Included(ctx.render_literal(current_ns, x, base)?),
+                Bound::Excluded(x) => Bound::Excluded(ctx.render_literal(current_ns, x, base)?),
+            };
+
+            Range { start, end }
+        } else {
+            Range {
+                start: Bound::Unbounded,
+                end: Bound::Unbounded,
+            }
+        };
+
+        Ok(Self { meta, range })
+    }
+}

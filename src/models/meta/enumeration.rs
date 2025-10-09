@@ -5,7 +5,7 @@ use std::ops::{Deref, DerefMut};
 
 use crate::models::{schema::xs::Use, Ident};
 
-use super::{Base, MetaTypes, TypeEq};
+use super::{Base, Constrains, MetaTypes, TypeEq};
 
 /// Type information that defines an enumeration type.
 #[derive(Default, Debug, Clone)]
@@ -15,6 +15,9 @@ pub struct EnumerationMeta {
 
     /// Variants defined for this enumeration.
     pub variants: EnumerationMetaVariants,
+
+    /// Constraining facets defined for this type.
+    pub constrains: Constrains,
 }
 
 /// Type information that defines variants of an [`EnumerationMeta`].
@@ -44,16 +47,27 @@ pub struct EnumerationMetaVariants(pub Vec<EnumerationMetaVariant>);
 
 impl TypeEq for EnumerationMeta {
     fn type_hash<H: Hasher>(&self, hasher: &mut H, types: &MetaTypes) {
-        let Self { base, variants } = self;
+        let Self {
+            base,
+            variants,
+            constrains,
+        } = self;
 
         base.type_hash(hasher, types);
         variants.type_hash(hasher, types);
+        constrains.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
-        let Self { base, variants } = self;
+        let Self {
+            base,
+            variants,
+            constrains,
+        } = self;
 
-        base.type_eq(&other.base, types) && variants.type_eq(&other.variants, types)
+        base.type_eq(&other.base, types)
+            && variants.type_eq(&other.variants, types)
+            && constrains.eq(&other.constrains)
     }
 }
 

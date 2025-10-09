@@ -1,9 +1,8 @@
 use std::hash::{Hash, Hasher};
-use std::ops::{Bound, Range};
 
 use crate::models::Ident;
 
-use super::{MetaTypes, TypeEq};
+use super::{Constrains, MetaTypes, TypeEq};
 
 /// Type information that contains data about a simple type including
 /// it's potential restrictions.
@@ -19,26 +18,8 @@ pub struct SimpleMeta {
     /// `true` if this simple type is a list, `false` otherwise.
     pub is_list: bool,
 
-    /// Range the value should be in.
-    pub range: Range<Bound<String>>,
-
-    /// Number of total digits the value maximal should have.
-    pub total_digits: Option<usize>,
-
-    /// Number of fraction digits the value maximal should have.
-    pub fraction_digits: Option<usize>,
-
-    /// Regex pattern the value should fulfill.
-    pub pattern: Option<String>,
-
-    /// The minimum length the value should have.
-    pub min_length: Option<usize>,
-
-    /// The maximum length the value should have.
-    pub max_length: Option<usize>,
-
-    /// Defines the whitespace handling.
-    pub whitespace: WhiteSpace,
+    /// Constraining facets defined for this type.
+    pub constrains: Constrains,
 }
 
 /// Defines how to deal with whitespaces inside a XML element.
@@ -63,16 +44,7 @@ impl SimpleMeta {
         Self {
             base,
             is_list: false,
-            range: Range {
-                start: Bound::Unbounded,
-                end: Bound::Unbounded,
-            },
-            total_digits: None,
-            fraction_digits: None,
-            pattern: None,
-            min_length: None,
-            max_length: None,
-            whitespace: WhiteSpace::default(),
+            constrains: Constrains::default(),
         }
     }
 }
@@ -82,48 +54,24 @@ impl TypeEq for SimpleMeta {
         let Self {
             base,
             is_list,
-            range,
-            total_digits,
-            fraction_digits,
-            pattern,
-            min_length,
-            max_length,
-            whitespace,
+            constrains,
         } = self;
 
         base.type_hash(hasher, types);
         is_list.hash(hasher);
-        range.hash(hasher);
-        total_digits.hash(hasher);
-        fraction_digits.hash(hasher);
-        pattern.hash(hasher);
-        min_length.hash(hasher);
-        max_length.hash(hasher);
-        whitespace.hash(hasher);
+        constrains.hash(hasher);
     }
 
     fn type_eq(&self, other: &Self, types: &MetaTypes) -> bool {
         let Self {
             base,
             is_list,
-            range,
-            total_digits,
-            fraction_digits,
-            pattern,
-            min_length,
-            max_length,
-            whitespace,
+            constrains,
         } = self;
 
         base.type_eq(&other.base, types)
             && is_list.eq(&other.is_list)
-            && range.eq(&other.range)
-            && total_digits.eq(&other.total_digits)
-            && fraction_digits.eq(&other.fraction_digits)
-            && pattern.eq(&other.pattern)
-            && min_length.eq(&other.min_length)
-            && max_length.eq(&other.max_length)
-            && whitespace.eq(&other.whitespace)
+            && constrains.eq(&other.constrains)
     }
 }
 
