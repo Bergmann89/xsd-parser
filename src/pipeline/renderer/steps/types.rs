@@ -59,6 +59,8 @@ impl UnionData<'_> {
         };
 
         ctx.current_module().append(code);
+
+        self.render_common_impls(ctx);
     }
 }
 
@@ -191,6 +193,8 @@ impl EnumerationData<'_> {
         };
 
         ctx.current_module().append(code);
+
+        self.render_common_impls(ctx);
     }
 }
 

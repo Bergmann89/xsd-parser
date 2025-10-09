@@ -94,10 +94,29 @@ impl<'a> MetaTypesPrinter<'a> {
                 write!(f, $( $tt )*)?;
             }};
         }
+
         macro_rules! indentln {
             ($( $tt:tt )*) => {{
                 write!(f, "{0:1$}", "", 4 * s.level)?;
                 writeln!(f, $( $tt )*)?;
+            }};
+        }
+
+        macro_rules! write_constrains {
+            ($c:expr) => {{
+                let x = $c;
+
+                s.level += 1;
+
+                indentln!("range={:?}", x.range);
+                indentln!("total_digits={:?}", x.total_digits);
+                indentln!("fraction_digits={:?}", x.fraction_digits);
+                indentln!("patterns={:?}", x.patterns);
+                indentln!("min_length={:?}", x.min_length);
+                indentln!("max_length={:?}", x.max_length);
+                indentln!("whitespace={:?}", x.whitespace);
+
+                s.level -= 1;
             }};
         }
 
@@ -135,6 +154,8 @@ impl<'a> MetaTypesPrinter<'a> {
 
                 indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
+                indentln!("constrains:");
+                write_constrains!(&x.constrains);
                 indentln!("types:");
 
                 s.level += 1;
@@ -181,6 +202,8 @@ impl<'a> MetaTypesPrinter<'a> {
 
                 indentln!("display_name={:?}", &ty.display_name);
                 indentln!("base={}", x.base);
+                indentln!("constrains:");
+                write_constrains!(&x.constrains);
                 indentln!("variants:");
 
                 s.level += 1;
@@ -325,13 +348,9 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("base={}", x.base);
-                indentln!("range={:?}", x.range);
-                indentln!("total_digits={:?}", x.total_digits);
-                indentln!("fraction_digits={:?}", x.fraction_digits);
-                indentln!("pattern={:?}", x.pattern);
-                indentln!("min_length={:?}", x.min_length);
-                indentln!("max_length={:?}", x.max_length);
-                indentln!("whitespace={:?}", x.whitespace);
+                indentln!("is_list={}", x.is_list);
+                indentln!("constrains:");
+                write_constrains!(&x.constrains);
 
                 s.level -= 1;
             }

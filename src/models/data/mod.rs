@@ -10,6 +10,7 @@
 
 mod build_in;
 mod complex;
+mod constrains;
 mod custom;
 mod dynamic;
 mod enumeration;
@@ -22,11 +23,16 @@ mod type_;
 mod types;
 mod union;
 
+use std::ops::Bound;
+
+use crate::models::meta::Constrains;
+
 pub use self::build_in::BuildInData;
 pub use self::complex::{
     ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
     ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, StructMode,
 };
+pub use self::constrains::ConstrainsData;
 pub use self::custom::CustomData;
 pub use self::dynamic::{DerivedType, DynamicData};
 pub use self::enumeration::{EnumerationData, EnumerationTypeVariant};
@@ -55,4 +61,21 @@ pub enum ConfigValue<T> {
 
     /// Replaces any existing data with the provided value.
     Overwrite(T),
+}
+
+impl Constrains {
+    /// Returns `true` if this simple type needs value validation, `false` otherwise.
+    #[must_use]
+    pub fn need_value_validation(&self) -> bool {
+        self.range.start != Bound::Unbounded
+            || self.range.end != Bound::Unbounded
+            || self.min_length.is_some()
+            || self.max_length.is_some()
+    }
+
+    /// Returns `true` if this simple type needs string validation, `false` otherwise.
+    #[must_use]
+    pub fn need_string_validation(&self) -> bool {
+        !self.patterns.is_empty() || self.total_digits.is_some() || self.fraction_digits.is_some()
+    }
 }

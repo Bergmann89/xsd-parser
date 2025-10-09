@@ -1,7 +1,7 @@
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 
 use crate::models::{
-    data::PathData,
+    data::{ConstrainsData, PathData},
     meta::{EnumerationMeta, EnumerationMetaVariant},
 };
 
@@ -12,6 +12,9 @@ use crate::models::{
 pub struct EnumerationData<'types> {
     /// Reference to the original type information.
     pub meta: &'types EnumerationMeta,
+
+    /// Code generator data for the constrains of the type.
+    pub constrains: ConstrainsData<'types>,
 
     /// The identifier of the rendered type.
     pub type_ident: Ident2,

@@ -281,7 +281,7 @@ impl SimpleData<'_> {
             "xsd_parser::quick_xml::SerializeBytes",
         ]);
 
-        let body = if let Some(digits) = self.meta.fraction_digits {
+        let body = if let Some(digits) = self.meta.constrains.fraction_digits {
             let format = format!("{{inner:.0{digits}}}");
 
             quote! {

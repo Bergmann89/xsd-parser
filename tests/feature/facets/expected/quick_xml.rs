@@ -185,9 +185,12 @@ impl RestrictedStringType {
         self.0
     }
     pub fn validate_str(s: &str) -> Result<(), ValidateError> {
-        static PATTERN: LazyLock<Regex> = LazyLock::new(|| Regex::new("[A-Z][a-z]{4,9}").unwrap());
-        if !PATTERN.is_match(s) {
-            return Err(ValidateError::Pattern("[A-Z][a-z]{4,9}"));
+        static PATTERNS: LazyLock<[Regex; 1usize]> =
+            LazyLock::new(|| [Regex::new("[A-Z][a-z]{4,9}").unwrap()]);
+        for pattern in PATTERNS.iter() {
+            if !pattern.is_match(s) {
+                return Err(ValidateError::Pattern(pattern.as_str()));
+            }
         }
         Ok(())
     }
