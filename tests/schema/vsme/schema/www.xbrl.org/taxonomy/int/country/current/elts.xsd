@@ -1,0 +1,541 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema 
+    attributeFormDefault="unqualified" 
+    elementFormDefault="qualified" 
+    targetNamespace="https://xbrl.org/2024/iso3166" 
+    xmlns:country="https://xbrl.org/2024/iso3166" 
+    xmlns:link="http://www.xbrl.org/2003/linkbase" 
+    xmlns:dtr="http://www.xbrl.org/dtr/type/2022-03-31" 
+    xmlns:xbrldt="http://xbrl.org/2005/xbrldt" 
+    xmlns:xbrli="http://www.xbrl.org/2003/instance" 
+    xmlns:xlink="http://www.w3.org/1999/xlink" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:annotation>
+		<xs:appinfo>
+			<link:roleType id="roleType_domain" roleURI="http://www.xbrl.org/taxonomy/int/country/roles/domain">
+				<link:definition>Country List</link:definition>
+				<link:usedOn>link:definitionLink</link:usedOn>
+			</link:roleType>
+		</xs:appinfo>
+	</xs:annotation>
+	<xs:import namespace="http://www.xbrl.org/2003/instance" schemaLocation="../../../../2003/xbrl-instance-2003-12-31.xsd"/>
+	<xs:import namespace="http://www.xbrl.org/dtr/type/2022-03-31" schemaLocation="../../../../dtr/type/2022-03-31/types.xsd"/>
+	<xs:import namespace="http://xbrl.org/2005/xbrldt" schemaLocation="../../../../2005/xbrldt-2005.xsd"/>
+	<xs:import namespace='http://www.xbrl.org/2003/linkbase' schemaLocation="../../../../2003/xbrl-linkbase-2003-12-31.xsd"/>
+	
+	<xs:element abstract="true" id="country_CountryDomain" name="CountryDomain" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+
+    
+    <xs:element abstract="true" id="country_AD" name="AD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AE" name="AE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AF" name="AF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AG" name="AG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AI" name="AI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AL" name="AL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AM" name="AM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AN" name="AN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AO" name="AO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AQ" name="AQ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AR" name="AR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AS" name="AS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AT" name="AT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AU" name="AU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AW" name="AW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AX" name="AX" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_AZ" name="AZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BA" name="BA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BB" name="BB" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BD" name="BD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BE" name="BE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BF" name="BF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BG" name="BG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BH" name="BH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BI" name="BI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BJ" name="BJ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BL" name="BL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BM" name="BM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BN" name="BN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BO" name="BO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BQ" name="BQ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BR" name="BR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BS" name="BS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BT" name="BT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BU" name="BU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BV" name="BV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BW" name="BW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BY" name="BY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_BZ" name="BZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CA" name="CA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CC" name="CC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CD" name="CD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CF" name="CF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CG" name="CG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CH" name="CH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CI" name="CI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CK" name="CK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CL" name="CL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CM" name="CM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CN" name="CN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CO" name="CO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CR" name="CR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CS" name="CS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CU" name="CU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CV" name="CV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CW" name="CW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CX" name="CX" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CY" name="CY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_CZ" name="CZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DE" name="DE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DJ" name="DJ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DK" name="DK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DM" name="DM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DO" name="DO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_DZ" name="DZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_EC" name="EC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_EE" name="EE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_EG" name="EG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_EH" name="EH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ER" name="ER" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ES" name="ES" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ET" name="ET" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FI" name="FI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FJ" name="FJ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FK" name="FK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FM" name="FM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FO" name="FO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_FR" name="FR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GA" name="GA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GB" name="GB" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GD" name="GD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GE" name="GE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GF" name="GF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GG" name="GG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GH" name="GH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GI" name="GI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GL" name="GL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GM" name="GM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GN" name="GN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GP" name="GP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GQ" name="GQ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GR" name="GR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GS" name="GS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GT" name="GT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GU" name="GU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GW" name="GW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_GY" name="GY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HK" name="HK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HM" name="HM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HN" name="HN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HR" name="HR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HT" name="HT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_HU" name="HU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ID" name="ID" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IE" name="IE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IL" name="IL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IM" name="IM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IN" name="IN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IO" name="IO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IQ" name="IQ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IR" name="IR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IS" name="IS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_IT" name="IT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_JE" name="JE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_JM" name="JM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_JO" name="JO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_JP" name="JP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KE" name="KE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KG" name="KG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KH" name="KH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KI" name="KI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KM" name="KM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KN" name="KN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KP" name="KP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KR" name="KR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KW" name="KW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KY" name="KY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_KZ" name="KZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LA" name="LA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LB" name="LB" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LC" name="LC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LI" name="LI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LK" name="LK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LR" name="LR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LS" name="LS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LT" name="LT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LU" name="LU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LV" name="LV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_LY" name="LY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MA" name="MA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MC" name="MC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MD" name="MD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ME" name="ME" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MF" name="MF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MG" name="MG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MH" name="MH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MK" name="MK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ML" name="ML" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MM" name="MM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MN" name="MN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MO" name="MO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MP" name="MP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MQ" name="MQ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MR" name="MR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MS" name="MS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MT" name="MT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MU" name="MU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MV" name="MV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MW" name="MW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MX" name="MX" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MY" name="MY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_MZ" name="MZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NA" name="NA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NC" name="NC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NE" name="NE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NF" name="NF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NG" name="NG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NI" name="NI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NL" name="NL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NO" name="NO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NP" name="NP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NR" name="NR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NT" name="NT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NU" name="NU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_NZ" name="NZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_OM" name="OM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PA" name="PA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PE" name="PE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PF" name="PF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PG" name="PG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PH" name="PH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PK" name="PK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PL" name="PL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PM" name="PM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PN" name="PN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PR" name="PR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PS" name="PS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PT" name="PT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PW" name="PW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_PY" name="PY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_QA" name="QA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_RE" name="RE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_RO" name="RO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_RS" name="RS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_RU" name="RU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_RW" name="RW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SA" name="SA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SB" name="SB" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SC" name="SC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SD" name="SD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SE" name="SE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SG" name="SG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SH" name="SH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SI" name="SI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SJ" name="SJ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SK" name="SK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SL" name="SL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SM" name="SM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SN" name="SN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SO" name="SO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SR" name="SR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SS" name="SS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ST" name="ST" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SV" name="SV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SX" name="SX" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SY" name="SY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_SZ" name="SZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TC" name="TC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TD" name="TD" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TF" name="TF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TG" name="TG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TH" name="TH" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TJ" name="TJ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TK" name="TK" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TL" name="TL" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TM" name="TM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TN" name="TN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TO" name="TO" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TP" name="TP" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TR" name="TR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TT" name="TT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TV" name="TV" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TW" name="TW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_TZ" name="TZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_UA" name="UA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_UG" name="UG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_UM" name="UM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_US" name="US" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_UY" name="UY" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_UZ" name="UZ" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VA" name="VA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VC" name="VC" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VE" name="VE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VG" name="VG" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VI" name="VI" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VN" name="VN" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_VU" name="VU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_WF" name="WF" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_WS" name="WS" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_YE" name="YE" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_YT" name="YT" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_YU" name="YU" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ZA" name="ZA" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ZM" name="ZM" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ZR" name="ZR" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+    <xs:element abstract="true" id="country_ZW" name="ZW" nillable="true" substitutionGroup="xbrli:item" type="dtr:domainItemType" xbrli:periodType="duration"/>
+    
+</xs:schema>

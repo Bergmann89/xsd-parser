@@ -8,6 +8,7 @@ mod ofd;
 mod onix;
 mod shiporder;
 mod sitemap;
+mod vsme;
 mod xcb;
 mod xccdf_1_2;
 mod xml_catalogs;
