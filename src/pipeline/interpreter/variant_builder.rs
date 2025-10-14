@@ -170,8 +170,6 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 .state
                 .name_builder()
                 .auto_extend(false, true, self.state)
-                .remove_suffix("Type")
-                .remove_suffix("Content")
                 .unique_name("Inner")
                 .finish();
 
