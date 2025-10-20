@@ -45,6 +45,7 @@ url = "2.5"
 [dev-dependencies]
 clap = { version = "4.5", features = [ "derive" ] }
 num = { version = "*", features = [ "serde" ] }
+rust_decimal = "1.39"
 serde-xml-rs = "0.8"
 serde-xml-rs-v7 = { package = "serde-xml-rs", version = "0.7" }
 text-diff = "0.4"

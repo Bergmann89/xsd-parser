@@ -9,6 +9,7 @@ mod choice_with_sequence;
 mod complex_type_empty;
 mod complex_type_with_group;
 mod complex_type_with_repeated_content;
+mod custom_type;
 mod documentation;
 mod dynamic_types;
 mod element_without_type;

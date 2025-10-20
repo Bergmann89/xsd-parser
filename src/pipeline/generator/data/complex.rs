@@ -110,7 +110,8 @@ impl<'types> ComplexData<'types> {
                 | MetaTypeVariant::Union(_)
                 | MetaTypeVariant::Enumeration(_)
                 | MetaTypeVariant::Reference(_)
-                | MetaTypeVariant::SimpleType(_),
+                | MetaTypeVariant::SimpleType(_)
+                | MetaTypeVariant::Custom(_),
                 ident,
             )) => (TypeMode::Simple { simple_type: ident }, &[][..]),
             Some((x, _)) => {
