@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="urn:example:minimal"
+    xmlns="urn:example:minimal"
+    elementFormDefault="qualified">
+
+    <!-- Define a restricted decimal type -->
+    <xs:simpleType name="AmountType">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="18" />
+            <xs:fractionDigits value="5" />
+            <xs:minInclusive value="0" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Define a complex type with an attribute -->
+    <xs:complexType name="CurrencyAmount">
+        <xs:simpleContent>
+            <xs:extension base="AmountType">
+                <xs:attribute name="Ccy" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <!-- Root element -->
+    <xs:element name="Amount" type="CurrencyAmount" />
+
+</xs:schema>
