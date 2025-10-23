@@ -1299,6 +1299,10 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                 ci.content.get_or_insert(base_ident);
             }
             (None, TypeMode::Complex, ContentMode::Simple | ContentMode::Complex) => {
+                if let MetaTypeVariant::ComplexType(ci) = &mut base {
+                    ci.is_mixed = self.state.is_mixed();
+                }
+
                 self.variant = Some(base);
             }
             (_, _, _) => crate::unreachable!("Unset or invalid combination!"),
