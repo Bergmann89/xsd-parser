@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:element name="AttributeValue" type="tns:AttributeValueType" />
+
+    <xs:complexType name="AttributeValueType" mixed="true">
+        <xs:complexContent mixed="true">
+            <xs:extension base="tns:ExpressionType">
+                <xs:sequence>
+                    <xs:any namespace="##any" processContents="lax" minOccurs="0"
+                        maxOccurs="unbounded" />
+                </xs:sequence>
+                <xs:attribute name="DataType" type="xs:anyURI" use="required" />
+                <xs:anyAttribute namespace="##any" processContents="lax" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ExpressionType">
+        <xs:sequence>
+            <xs:element name="BaseElement" type="xs:string" />
+        </xs:sequence>
+        <xs:attribute name="BaseAttrib" type="xs:string" use="required" />
+    </xs:complexType>
+</xs:schema>
