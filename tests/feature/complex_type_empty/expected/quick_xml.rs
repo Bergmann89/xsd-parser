@@ -4,7 +4,7 @@ use xsd_parser::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
+pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"http://www.iata.org/IATA/2007/00");
 #[derive(Debug)]
 pub struct SuccessType;
 impl WithSerializer for SuccessType {
@@ -127,7 +127,7 @@ pub mod quick_xml_serialize {
                         *self.state = SuccessTypeSerializerState::Done__;
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
                         }
                         return Ok(Some(Event::Empty(bytes)));
                     }

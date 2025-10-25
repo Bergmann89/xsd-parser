@@ -4,7 +4,7 @@ use xsd_parser::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace = Namespace::new_const(b"urn:example:minimal");
+pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"urn:example:minimal");
 pub type Amount = CurrencyAmountType;
 #[derive(Debug)]
 pub struct CurrencyAmountType {
@@ -57,7 +57,7 @@ pub mod quick_xml_deserialize {
             for attrib in filter_xmlns_attributes(bytes_start) {
                 let attrib = attrib?;
                 if matches!(
-                    reader.resolve_local_name(attrib.key, &super::NS_DEFAULT),
+                    reader.resolve_local_name(attrib.key, &super::NS_UNNAMED_2),
                     Some(b"Ccy")
                 ) {
                     reader.read_attrib(&mut ccy, b"Ccy", &attrib.value)?;
@@ -214,7 +214,7 @@ pub mod quick_xml_serialize {
                         );
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
                         }
                         write_attrib(&mut bytes, "Ccy", &self.value.ccy)?;
                         return Ok(Some(Event::Start(bytes)));

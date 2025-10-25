@@ -4,7 +4,7 @@ use xsd_parser::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace = Namespace::new_const(b"http://example.com");
+pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"http://example.com");
 pub type Foo = FooType;
 #[derive(Debug)]
 pub struct FooType {
@@ -419,7 +419,7 @@ pub mod quick_xml_deserialize {
                     (S::Once(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"Once",
                             false,
                         )?;
@@ -436,7 +436,7 @@ pub mod quick_xml_deserialize {
                     (S::Optional(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"Optional",
                             false,
                         )?;
@@ -453,7 +453,7 @@ pub mod quick_xml_deserialize {
                     (S::OnceSpecify(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"OnceSpecify",
                             false,
                         )?;
@@ -470,7 +470,7 @@ pub mod quick_xml_deserialize {
                     (S::TwiceOrMore(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"TwiceOrMore",
                             false,
                         )?;
@@ -558,7 +558,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }

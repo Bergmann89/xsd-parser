@@ -8,7 +8,7 @@ use xsd_parser::{
 };
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace =
+pub const NS_UNNAMED_2: Namespace =
     Namespace::new_const(b"http://www.sitemaps.org/schemas/sitemap/0.9");
 pub type Urlset = UrlsetType;
 #[derive(Debug)]
@@ -259,7 +259,7 @@ pub mod quick_xml_deserialize {
                     (S::Url(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"url",
                             true,
                         )?;
@@ -674,7 +674,7 @@ pub mod quick_xml_deserialize {
                     (S::Loc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"loc",
                             true,
                         )?;
@@ -691,7 +691,7 @@ pub mod quick_xml_deserialize {
                     (S::Lastmod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"lastmod",
                             true,
                         )?;
@@ -708,7 +708,7 @@ pub mod quick_xml_deserialize {
                     (S::Changefreq(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"changefreq",
                             true,
                         )?;
@@ -725,7 +725,7 @@ pub mod quick_xml_deserialize {
                     (S::Priority(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                         let output = reader.init_start_tag_deserializer(
                             event,
-                            Some(&super::NS_DEFAULT),
+                            Some(&super::NS_UNNAMED_2),
                             b"priority",
                             true,
                         )?;
@@ -808,7 +808,7 @@ pub mod quick_xml_serialize {
                         ));
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }
@@ -871,7 +871,7 @@ pub mod quick_xml_serialize {
                         )?);
                         let mut bytes = BytesStart::new(self.name);
                         if self.is_root {
-                            bytes.push_attribute((&b"xmlns"[..], &super::NS_DEFAULT[..]));
+                            bytes.push_attribute((&b"xmlns"[..], &super::NS_UNNAMED_2[..]));
                         }
                         return Ok(Some(Event::Start(bytes)));
                     }

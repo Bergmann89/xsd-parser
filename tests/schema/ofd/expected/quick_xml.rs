@@ -1,7 +1,7 @@
 use xsd_parser::models::schema::Namespace;
 pub const NS_XS: Namespace = Namespace::new_const(b"http://www.w3.org/2001/XMLSchema");
 pub const NS_XML: Namespace = Namespace::new_const(b"http://www.w3.org/XML/1998/namespace");
-pub const NS_DEFAULT: Namespace = Namespace::new_const(b"http://www.ofdspec.org/2016");
+pub const NS_UNNAMED_2: Namespace = Namespace::new_const(b"http://www.ofdspec.org/2016");
 pub mod annotations {
     use xsd_parser::quick_xml::{Error, WithDeserializer, WithSerializer};
     pub type Annotations = AnnotationsXElementType;
@@ -218,7 +218,7 @@ pub mod annotations {
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Page",
                                 false,
                             )?;
@@ -286,7 +286,7 @@ pub mod annotations {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"PageID")
                     ) {
                         reader.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
@@ -446,7 +446,7 @@ pub mod annotations {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -534,8 +534,10 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -597,8 +599,10 @@ pub mod annotations {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -994,7 +998,7 @@ pub mod annotion {
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Annot",
                                 false,
                             )?;
@@ -1092,52 +1096,52 @@ pub mod annotion {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Creator")
                     ) {
                         reader.read_attrib(&mut creator, b"Creator", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LastModDate")
                     ) {
                         reader.read_attrib(&mut last_mod_date, b"LastModDate", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Subtype")
                     ) {
                         reader.read_attrib(&mut subtype, b"Subtype", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Print")
                     ) {
                         reader.read_attrib(&mut print, b"Print", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"NoZoom")
                     ) {
                         reader.read_attrib(&mut no_zoom, b"NoZoom", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"NoRotate")
                     ) {
                         reader.read_attrib(&mut no_rotate, b"NoRotate", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ReadOnly")
                     ) {
                         reader.read_attrib(&mut read_only, b"ReadOnly", &attrib.value)?;
@@ -1480,7 +1484,7 @@ pub mod annotion {
                         (S::Remark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Remark",
                                 false,
                             )?;
@@ -1497,7 +1501,7 @@ pub mod annotion {
                         (S::Parameters(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Parameters",
                                 false,
                             )?;
@@ -1514,7 +1518,7 @@ pub mod annotion {
                         (S::Appearance(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Appearance",
                                 true,
                             )?;
@@ -1746,7 +1750,7 @@ pub mod annotion {
                         (S::Parameter(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Parameter",
                                 false,
                             )?;
@@ -1815,7 +1819,7 @@ pub mod annotion {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
@@ -2001,7 +2005,7 @@ pub mod annotion {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -2013,7 +2017,7 @@ pub mod annotion {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -2025,7 +2029,7 @@ pub mod annotion {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -2037,7 +2041,7 @@ pub mod annotion {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -2049,7 +2053,7 @@ pub mod annotion {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: super :: page :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -2597,7 +2601,7 @@ pub mod annotion {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -2611,7 +2615,7 @@ pub mod annotion {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -2625,7 +2629,7 @@ pub mod annotion {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -2639,7 +2643,7 @@ pub mod annotion {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -2658,7 +2662,7 @@ pub mod annotion {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -2735,8 +2739,10 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2810,8 +2816,10 @@ pub mod annotion {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
@@ -2921,8 +2929,10 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -2995,8 +3005,10 @@ pub mod annotion {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Boundary", &self.value.boundary)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -3302,7 +3314,7 @@ pub mod attachments {
                         (S::Attachment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Attachment",
                                 false,
                             )?;
@@ -3386,42 +3398,42 @@ pub mod attachments {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Format")
                     ) {
                         reader.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CreationDate")
                     ) {
                         reader.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ModDate")
                     ) {
                         reader.read_attrib(&mut mod_date, b"ModDate", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Size")
                     ) {
                         reader.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Usage")
                     ) {
                         reader.read_attrib(&mut usage, b"Usage", &attrib.value)?;
@@ -3580,7 +3592,7 @@ pub mod attachments {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -3676,8 +3688,10 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -3739,8 +3753,10 @@ pub mod attachments {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "Name", &self.value.name)?;
@@ -4008,7 +4024,7 @@ pub mod custom_tags {
                         (S::CustomTag(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CustomTag",
                                 false,
                             )?;
@@ -4080,7 +4096,7 @@ pub mod custom_tags {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"NameSpace")
                     ) {
                         reader.read_attrib(&mut name_space, b"NameSpace", &attrib.value)?;
@@ -4321,7 +4337,7 @@ pub mod custom_tags {
                         (S::SchemaLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"SchemaLoc",
                                 false,
                             )?;
@@ -4338,7 +4354,7 @@ pub mod custom_tags {
                         (S::FileLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FileLoc",
                                 false,
                             )?;
@@ -4434,8 +4450,10 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -4500,8 +4518,10 @@ pub mod custom_tags {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "NameSpace", &self.value.name_space)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -5132,7 +5152,7 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Event")
                     ) {
                         reader.read_attrib(&mut event, b"Event", &attrib.value)?;
@@ -5340,7 +5360,7 @@ pub mod definition {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Region")
                     ) {
                         let output =
@@ -5355,7 +5375,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Goto")
                     ) {
                         let output = < super :: CtActionGotoXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -5367,14 +5387,14 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"URI")
                     ) {
                         let output = < super :: CtActionUriXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         return self.handle_uri(reader, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"GotoA")
                     ) {
                         let output = < super :: CtActionGotoAxElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -5386,7 +5406,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Sound")
                     ) {
                         let output = < super :: CtActionSoundXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -5398,7 +5418,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Movie")
                     ) {
                         let output = < super :: CtActionMovieXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -6016,7 +6036,7 @@ pub mod definition {
                         (S::Region(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Region",
                                 true,
                             )?;
@@ -6030,7 +6050,7 @@ pub mod definition {
                         (S::Goto(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Goto",
                                 false,
                             )?;
@@ -6044,7 +6064,7 @@ pub mod definition {
                         (S::Uri(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"URI",
                                 false,
                             )?;
@@ -6058,7 +6078,7 @@ pub mod definition {
                         (S::GotoA(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"GotoA",
                                 false,
                             )?;
@@ -6072,7 +6092,7 @@ pub mod definition {
                         (S::Sound(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Sound",
                                 false,
                             )?;
@@ -6086,7 +6106,7 @@ pub mod definition {
                         (S::Movie(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Movie",
                                 false,
                             )?;
@@ -6153,37 +6173,37 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"PageID")
                     ) {
                         reader.read_attrib(&mut page_id, b"PageID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Left")
                     ) {
                         reader.read_attrib(&mut left, b"Left", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Top")
                     ) {
                         reader.read_attrib(&mut top, b"Top", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Right")
                     ) {
                         reader.read_attrib(&mut right, b"Right", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Bottom")
                     ) {
                         reader.read_attrib(&mut bottom, b"Bottom", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Zoom")
                     ) {
                         reader.read_attrib(&mut zoom, b"Zoom", &attrib.value)?;
@@ -6655,7 +6675,7 @@ pub mod definition {
                         (S::PhysicalBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PhysicalBox",
                                 false,
                             )?;
@@ -6672,7 +6692,7 @@ pub mod definition {
                         (S::ApplicationBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ApplicationBox",
                                 false,
                             )?;
@@ -6689,7 +6709,7 @@ pub mod definition {
                         (S::ContentBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ContentBox",
                                 false,
                             )?;
@@ -6706,7 +6726,7 @@ pub mod definition {
                         (S::BleedBox(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"BleedBox",
                                 false,
                             )?;
@@ -6916,7 +6936,7 @@ pub mod definition {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Area",
                                 true,
                             )?;
@@ -6992,7 +7012,7 @@ pub mod definition {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Dest")
                     ) {
                         let output = <super::CtDestXType as WithDeserializer>::Deserializer::init(
@@ -7006,7 +7026,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Bookmark")
                     ) {
                         let output = < super :: CtActionGotoBookmarkXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -7276,7 +7296,7 @@ pub mod definition {
                         (S::Dest(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Dest",
                                 false,
                             )?;
@@ -7290,7 +7310,7 @@ pub mod definition {
                         (S::Bookmark(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Bookmark",
                                 false,
                             )?;
@@ -7349,17 +7369,17 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"URI")
                     ) {
                         reader.read_attrib(&mut uri, b"URI", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Base")
                     ) {
                         reader.read_attrib(&mut base, b"Base", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Target")
                     ) {
                         reader.read_attrib(&mut target, b"Target", &attrib.value)?;
@@ -7458,12 +7478,12 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"AttachID")
                     ) {
                         reader.read_attrib(&mut attach_id, b"AttachID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"NewWindow")
                     ) {
                         reader.read_attrib(&mut new_window, b"NewWindow", &attrib.value)?;
@@ -7565,22 +7585,22 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Volume")
                     ) {
                         reader.read_attrib(&mut volume, b"Volume", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Repeat")
                     ) {
                         reader.read_attrib(&mut repeat, b"Repeat", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Synchronous")
                     ) {
                         reader.read_attrib(&mut synchronous, b"Synchronous", &attrib.value)?;
@@ -7681,12 +7701,12 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Operator")
                     ) {
                         reader.read_attrib(&mut operator, b"Operator", &attrib.value)?;
@@ -7785,7 +7805,7 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Start")
                     ) {
                         reader.read_attrib(&mut start, b"Start", &attrib.value)?;
@@ -7970,7 +7990,7 @@ pub mod definition {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Move")
                     ) {
                         let output = < super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -7982,7 +8002,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Line")
                     ) {
                         let output = < super :: CtRegionAreaLineXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -7994,7 +8014,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"OuadraticBezier")
                     ) {
                         let output = < super :: CtRegionAreaOuadraticBezierXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -8006,7 +8026,7 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CubicBezier")
                     ) {
                         let output = < super :: CtRegionAreaCubicBezierXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -8018,14 +8038,14 @@ pub mod definition {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Arc")
                     ) {
                         let output = < super :: CtRegionAreaArcXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
                         return self.handle_arc(reader, Default::default(), output, &mut *fallback);
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Close")
                     ) {
                         let output = < super :: super :: xs :: AnyTypeXType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -8714,7 +8734,7 @@ pub mod definition {
                         (S::Move(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Move",
                                 false,
                             )?;
@@ -8728,7 +8748,7 @@ pub mod definition {
                         (S::Line(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Line",
                                 false,
                             )?;
@@ -8742,7 +8762,7 @@ pub mod definition {
                         (S::OuadraticBezier(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"OuadraticBezier",
                                 false,
                             )?;
@@ -8761,7 +8781,7 @@ pub mod definition {
                         (S::CubicBezier(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CubicBezier",
                                 false,
                             )?;
@@ -8775,7 +8795,7 @@ pub mod definition {
                         (S::Arc(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Arc",
                                 false,
                             )?;
@@ -8789,7 +8809,7 @@ pub mod definition {
                         (S::Close(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Close",
                                 true,
                             )?;
@@ -8844,7 +8864,7 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -8938,7 +8958,7 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Point1")
                     ) {
                         reader.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
@@ -9033,12 +9053,12 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Pointl")
                     ) {
                         reader.read_attrib(&mut pointl, b"Pointl", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Point2")
                     ) {
                         reader.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
@@ -9144,17 +9164,17 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Point1")
                     ) {
                         reader.read_attrib(&mut point_1, b"Point1", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Point2")
                     ) {
                         reader.read_attrib(&mut point_2, b"Point2", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Point3")
                     ) {
                         reader.read_attrib(&mut point_3, b"Point3", &attrib.value)?;
@@ -9262,7 +9282,7 @@ pub mod definition {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"SweepDirection")
                     ) {
                         reader.read_attrib(
@@ -9271,12 +9291,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LargeArc")
                     ) {
                         reader.read_attrib(&mut large_arc, b"LargeArc", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"RotationAnglet")
                     ) {
                         reader.read_attrib(
@@ -9285,12 +9305,12 @@ pub mod definition {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EllipseSize")
                     ) {
                         reader.read_attrib(&mut ellipse_size, b"EllipseSize", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EndPoint")
                     ) {
                         reader.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -9418,8 +9438,10 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Event", &self.value.event)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -9580,8 +9602,10 @@ pub mod definition {
                             *self.state = CtDestXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib(&mut bytes, "PageID", &self.value.page_id)?;
@@ -9649,8 +9673,10 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -9758,8 +9784,10 @@ pub mod definition {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -9829,8 +9857,10 @@ pub mod definition {
                             }
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -9894,8 +9924,10 @@ pub mod definition {
                             *self.state = CtActionUriXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "URI", &self.value.uri)?;
                             write_attrib_opt(&mut bytes, "Base", &self.value.base)?;
@@ -9942,8 +9974,10 @@ pub mod definition {
                             *self.state = CtActionGotoAxElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "AttachID", &self.value.attach_id)?;
                             write_attrib(&mut bytes, "NewWindow", &self.value.new_window)?;
@@ -9989,8 +10023,10 @@ pub mod definition {
                             *self.state = CtActionSoundXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
                             write_attrib_opt(&mut bytes, "Volume", &self.value.volume)?;
@@ -10038,8 +10074,10 @@ pub mod definition {
                             *self.state = CtActionMovieXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ResourceID", &self.value.resource_id)?;
                             write_attrib(&mut bytes, "Operator", &self.value.operator)?;
@@ -10095,8 +10133,10 @@ pub mod definition {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Start", &self.value.start)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -10292,8 +10332,10 @@ pub mod definition {
                             *self.state = CtActionGotoBookmarkXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Empty(bytes)));
@@ -10340,8 +10382,10 @@ pub mod definition {
                             *self.state = CtRegionAreaLineXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Point1", &self.value.point_1)?;
                             return Ok(Some(Event::Empty(bytes)));
@@ -10387,8 +10431,10 @@ pub mod definition {
                                 CtRegionAreaOuadraticBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Pointl", &self.value.pointl)?;
                             write_attrib(&mut bytes, "Point2", &self.value.point_2)?;
@@ -10440,8 +10486,10 @@ pub mod definition {
                                 CtRegionAreaCubicBezierXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Point1", &self.value.point_1)?;
                             write_attrib_opt(&mut bytes, "Point2", &self.value.point_2)?;
@@ -10492,8 +10540,10 @@ pub mod definition {
                             *self.state = CtRegionAreaArcXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(
                                 &mut bytes,
@@ -11120,7 +11170,7 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -11269,7 +11319,7 @@ pub mod document {
                         (S::Dest(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Dest",
                                 false,
                             )?;
@@ -11343,17 +11393,17 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Title")
                     ) {
                         reader.read_attrib(&mut title, b"Title", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Count")
                     ) {
                         reader.read_attrib(&mut count, b"Count", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Expanded")
                     ) {
                         reader.read_attrib(&mut expanded, b"Expanded", &attrib.value)?;
@@ -11584,7 +11634,7 @@ pub mod document {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -11601,7 +11651,7 @@ pub mod document {
                         (S::OutlineElem(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"OutlineElem",
                                 true,
                             )?;
@@ -12346,7 +12396,7 @@ pub mod document {
                         (S::Edit(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Edit",
                                 false,
                             )?;
@@ -12363,7 +12413,7 @@ pub mod document {
                         (S::Annot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Annot",
                                 false,
                             )?;
@@ -12380,7 +12430,7 @@ pub mod document {
                         (S::Export(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Export",
                                 false,
                             )?;
@@ -12397,7 +12447,7 @@ pub mod document {
                         (S::Signature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Signature",
                                 false,
                             )?;
@@ -12414,7 +12464,7 @@ pub mod document {
                         (S::Watermark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Watermark",
                                 false,
                             )?;
@@ -12431,7 +12481,7 @@ pub mod document {
                         (S::PrintScreen(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PrintScreen",
                                 false,
                             )?;
@@ -12448,7 +12498,7 @@ pub mod document {
                         (S::Print(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Print",
                                 false,
                             )?;
@@ -12465,7 +12515,7 @@ pub mod document {
                         (S::ValidPeriod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ValidPeriod",
                                 false,
                             )?;
@@ -12756,7 +12806,7 @@ pub mod document {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageMode")
                     ) {
                         let output = < super :: CtVPreferencesPageModeXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -12768,7 +12818,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageLayout")
                     ) {
                         let output = < super :: CtVPreferencesPageLayoutXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -12780,7 +12830,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TabDisplay")
                     ) {
                         let output = < super :: CtVPreferencesTabDisplayXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -12792,7 +12842,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideToolbar")
                     ) {
                         let output =
@@ -12807,7 +12857,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideMenubar")
                     ) {
                         let output =
@@ -12822,7 +12872,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"HideWindowUI")
                     ) {
                         let output =
@@ -12837,7 +12887,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ZoomMode")
                     ) {
                         let output = < super :: CtVPreferencesZoomModeXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -12849,7 +12899,7 @@ pub mod document {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Zoom")
                     ) {
                         let output =
@@ -13713,7 +13763,7 @@ pub mod document {
                         (S::PageMode(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageMode",
                                 false,
                             )?;
@@ -13727,7 +13777,7 @@ pub mod document {
                         (S::PageLayout(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageLayout",
                                 false,
                             )?;
@@ -13741,7 +13791,7 @@ pub mod document {
                         (S::TabDisplay(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TabDisplay",
                                 false,
                             )?;
@@ -13755,7 +13805,7 @@ pub mod document {
                         (S::HideToolbar(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"HideToolbar",
                                 false,
                             )?;
@@ -13769,7 +13819,7 @@ pub mod document {
                         (S::HideMenubar(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"HideMenubar",
                                 false,
                             )?;
@@ -13783,7 +13833,7 @@ pub mod document {
                         (S::HideWindowUi(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"HideWindowUI",
                                 false,
                             )?;
@@ -13802,7 +13852,7 @@ pub mod document {
                         (S::ZoomMode(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ZoomMode",
                                 false,
                             )?;
@@ -13816,7 +13866,7 @@ pub mod document {
                         (S::Zoom(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Zoom",
                                 false,
                             )?;
@@ -14811,7 +14861,7 @@ pub mod document {
                         (S::CommonData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CommonData",
                                 false,
                             )?;
@@ -14828,7 +14878,7 @@ pub mod document {
                         (S::Pages(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Pages",
                                 false,
                             )?;
@@ -14845,7 +14895,7 @@ pub mod document {
                         (S::Outlines(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Outlines",
                                 true,
                             )?;
@@ -14862,7 +14912,7 @@ pub mod document {
                         (S::Permissions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Permissions",
                                 false,
                             )?;
@@ -14879,7 +14929,7 @@ pub mod document {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -14896,7 +14946,7 @@ pub mod document {
                         (S::VPreferences(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"VPreferences",
                                 false,
                             )?;
@@ -14913,7 +14963,7 @@ pub mod document {
                         (S::Bookmarks(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Bookmarks",
                                 false,
                             )?;
@@ -14930,7 +14980,7 @@ pub mod document {
                         (S::Annotations(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Annotations",
                                 false,
                             )?;
@@ -14947,7 +14997,7 @@ pub mod document {
                         (S::CustomTags(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CustomTags",
                                 false,
                             )?;
@@ -14964,7 +15014,7 @@ pub mod document {
                         (S::Attachments(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Attachments",
                                 false,
                             )?;
@@ -14981,7 +15031,7 @@ pub mod document {
                         (S::Extensions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Extensions",
                                 false,
                             )?;
@@ -15064,12 +15114,12 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Printable")
                     ) {
                         reader.read_attrib(&mut printable, b"Printable", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Copies")
                     ) {
                         reader.read_attrib(&mut copies, b"Copies", &attrib.value)?;
@@ -15170,12 +15220,12 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"StartDate")
                     ) {
                         reader.read_attrib(&mut start_date, b"StartDate", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EndDate")
                     ) {
                         reader.read_attrib(&mut end_date, b"EndDate", &attrib.value)?;
@@ -15834,7 +15884,7 @@ pub mod document {
                         (S::MaxUnitId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MaxUnitID",
                                 false,
                             )?;
@@ -15851,7 +15901,7 @@ pub mod document {
                         (S::PageArea(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageArea",
                                 false,
                             )?;
@@ -15868,7 +15918,7 @@ pub mod document {
                         (S::PublicRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PublicRes",
                                 false,
                             )?;
@@ -15885,7 +15935,7 @@ pub mod document {
                         (S::DocumentRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocumentRes",
                                 false,
                             )?;
@@ -15902,7 +15952,7 @@ pub mod document {
                         (S::TemplatePage(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TemplatePage",
                                 false,
                             )?;
@@ -15919,7 +15969,7 @@ pub mod document {
                         (S::DefaultCs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DefaultCs",
                                 false,
                             )?;
@@ -16147,7 +16197,7 @@ pub mod document {
                         (S::Page(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Page",
                                 false,
                             )?;
@@ -16370,7 +16420,7 @@ pub mod document {
                         (S::OutlineElem(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"OutlineElem",
                                 true,
                             )?;
@@ -16592,7 +16642,7 @@ pub mod document {
                         (S::Bookmark(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Bookmark",
                                 false,
                             )?;
@@ -16668,22 +16718,22 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ZOrder")
                     ) {
                         reader.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BaseLoc")
                     ) {
                         reader.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -16791,12 +16841,12 @@ pub mod document {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BaseLoc")
                     ) {
                         reader.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -16909,8 +16959,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Name", &self.value.name)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -16979,8 +17031,10 @@ pub mod document {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Title", &self.value.title)?;
                             write_attrib_opt(&mut bytes, "Count", &self.value.count)?;
@@ -17110,8 +17164,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -17265,8 +17321,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -17533,8 +17591,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -17728,8 +17788,10 @@ pub mod document {
                             *self.state = CtPermissionPrintXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Printable", &self.value.printable)?;
                             write_attrib(&mut bytes, "Copies", &self.value.copies)?;
@@ -17778,8 +17840,10 @@ pub mod document {
                                 CtPermissionValidPeriodXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "StartDate", &self.value.start_date)?;
                             write_attrib_opt(&mut bytes, "EndDate", &self.value.end_date)?;
@@ -17852,8 +17916,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -17997,8 +18063,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -18063,8 +18131,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -18128,8 +18198,10 @@ pub mod document {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -18189,8 +18261,10 @@ pub mod document {
                                 DocumentCommonDataTemplatePageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -18243,8 +18317,10 @@ pub mod document {
                             *self.state = DocumentPagesPageXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
@@ -18417,27 +18493,27 @@ pub mod extensions {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"AppName")
                     ) {
                         reader.read_attrib(&mut app_name, b"AppName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Company")
                     ) {
                         reader.read_attrib(&mut company, b"Company", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"AppVersion")
                     ) {
                         reader.read_attrib(&mut app_version, b"AppVersion", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Date")
                     ) {
                         reader.read_attrib(&mut date, b"Date", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"RefId")
                     ) {
                         reader.read_attrib(&mut ref_id, b"RefId", &attrib.value)?;
@@ -18641,7 +18717,7 @@ pub mod extensions {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Property")
                     ) {
                         let output = < super :: CtExtensionPropertyXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -18653,7 +18729,7 @@ pub mod extensions {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Data")
                     ) {
                         let output = < super :: super :: xs :: AnyTypeXType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -18665,7 +18741,7 @@ pub mod extensions {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ExtendData")
                     ) {
                         let output =
@@ -19038,7 +19114,7 @@ pub mod extensions {
                         (S::Property(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Property",
                                 false,
                             )?;
@@ -19052,7 +19128,7 @@ pub mod extensions {
                         (S::Data(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Data",
                                 true,
                             )?;
@@ -19066,7 +19142,7 @@ pub mod extensions {
                         (S::ExtendData(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ExtendData",
                                 false,
                             )?;
@@ -19268,7 +19344,7 @@ pub mod extensions {
                         (S::Extension(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Extension",
                                 true,
                             )?;
@@ -19339,12 +19415,12 @@ pub mod extensions {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
@@ -19520,8 +19596,10 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "AppName", &self.value.app_name)?;
                             write_attrib_opt(&mut bytes, "Company", &self.value.company)?;
@@ -19668,8 +19746,10 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -19727,8 +19807,10 @@ pub mod extensions {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Name", &self.value.name)?;
                             write_attrib_opt(&mut bytes, "Type", &self.value.type_)?;
@@ -21078,7 +21160,7 @@ pub mod ofd {
                         (S::DocId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocID",
                                 false,
                             )?;
@@ -21095,7 +21177,7 @@ pub mod ofd {
                         (S::Title(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Title",
                                 false,
                             )?;
@@ -21112,7 +21194,7 @@ pub mod ofd {
                         (S::Author(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Author",
                                 false,
                             )?;
@@ -21129,7 +21211,7 @@ pub mod ofd {
                         (S::Subject(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Subject",
                                 false,
                             )?;
@@ -21146,7 +21228,7 @@ pub mod ofd {
                         (S::Abstract(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Abstract",
                                 false,
                             )?;
@@ -21163,7 +21245,7 @@ pub mod ofd {
                         (S::CreationDate(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CreationDate",
                                 false,
                             )?;
@@ -21180,7 +21262,7 @@ pub mod ofd {
                         (S::ModDate(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ModDate",
                                 false,
                             )?;
@@ -21197,7 +21279,7 @@ pub mod ofd {
                         (S::DocUsage(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocUsage",
                                 false,
                             )?;
@@ -21214,7 +21296,7 @@ pub mod ofd {
                         (S::Cover(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Cover",
                                 false,
                             )?;
@@ -21231,7 +21313,7 @@ pub mod ofd {
                         (S::Keywords(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Keywords",
                                 false,
                             )?;
@@ -21248,7 +21330,7 @@ pub mod ofd {
                         (S::Creator(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Creator",
                                 false,
                             )?;
@@ -21265,7 +21347,7 @@ pub mod ofd {
                         (S::CreatorVersion(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CreatorVersion",
                                 false,
                             )?;
@@ -21282,7 +21364,7 @@ pub mod ofd {
                         (S::CustomDatas(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CustomDatas",
                                 false,
                             )?;
@@ -21368,12 +21450,12 @@ pub mod ofd {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Version")
                     ) {
                         reader.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DocType")
                     ) {
                         reader.read_attrib(&mut doc_type, b"DocType", &attrib.value)?;
@@ -21528,7 +21610,7 @@ pub mod ofd {
                         (S::DocBody(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocBody",
                                 false,
                             )?;
@@ -21752,7 +21834,7 @@ pub mod ofd {
                         (S::Keyword(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Keyword",
                                 false,
                             )?;
@@ -21973,7 +22055,7 @@ pub mod ofd {
                         (S::CustomData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CustomData",
                                 false,
                             )?;
@@ -22434,7 +22516,7 @@ pub mod ofd {
                         (S::DocInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocInfo",
                                 false,
                             )?;
@@ -22451,7 +22533,7 @@ pub mod ofd {
                         (S::DocRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocRoot",
                                 false,
                             )?;
@@ -22468,7 +22550,7 @@ pub mod ofd {
                         (S::Versions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Versions",
                                 false,
                             )?;
@@ -22485,7 +22567,7 @@ pub mod ofd {
                         (S::Signatures(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Signatures",
                                 false,
                             )?;
@@ -22561,7 +22643,7 @@ pub mod ofd {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
@@ -22873,7 +22955,7 @@ pub mod ofd {
                         (S::Version(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Version",
                                 false,
                             )?;
@@ -22949,22 +23031,22 @@ pub mod ofd {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Index")
                     ) {
                         reader.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Current")
                     ) {
                         reader.read_attrib(&mut current, b"Current", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BaseLoc")
                     ) {
                         reader.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -23129,8 +23211,10 @@ pub mod ofd {
                                 )?);
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -23336,8 +23420,10 @@ pub mod ofd {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Version", &self.value.version)?;
                             write_attrib(&mut bytes, "DocType", &self.value.doc_type)?;
@@ -23399,8 +23485,10 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -23474,8 +23562,10 @@ pub mod ofd {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -23553,8 +23643,10 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -23647,7 +23739,7 @@ pub mod ofd {
         impl<'ser> CtDocInfoCustomDatasCustomDataXElementTypeSerializer<'ser> {
             fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Init__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_DEFAULT [..])) ; } write_attrib (& mut bytes , "Name" , & self . value . name) ? ; return Ok (Some (Event :: Start (bytes))) } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ , } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ => return Ok (None) , CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Init__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (WithSerializer :: serializer (& self . value . content , None , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "Name" , & self . value . name) ? ; return Ok (Some (Event :: Start (bytes))) } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Content__ (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ , } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: End__ => { * self . state = CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Done__ => return Ok (None) , CtDocInfoCustomDatasCustomDataXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -23700,8 +23792,10 @@ pub mod ofd {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -23761,8 +23855,10 @@ pub mod ofd {
                                 OfdDocBodyVersionsVersionXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "Index", &self.value.index)?;
@@ -25827,27 +25923,27 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MapType")
                     ) {
                         reader.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MapUnit")
                     ) {
                         reader.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Extend")
                     ) {
                         reader.read_attrib(&mut extend, b"Extend", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"StartPoint")
                     ) {
                         reader.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EndPoint")
                     ) {
                         reader.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
@@ -26005,7 +26101,7 @@ pub mod page {
                         (S::Segment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Segment",
                                 true,
                             )?;
@@ -26084,17 +26180,17 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CodePosition")
                     ) {
                         reader.read_attrib(&mut code_position, b"CodePosition", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CodeCount")
                     ) {
                         reader.read_attrib(&mut code_count, b"CodeCount", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"GlyphCount")
                     ) {
                         reader.read_attrib(&mut glyph_count, b"GlyphCount", &attrib.value)?;
@@ -26243,7 +26339,7 @@ pub mod page {
                         (S::Glyphs(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Glyphs",
                                 false,
                             )?;
@@ -26448,7 +26544,7 @@ pub mod page {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Area",
                                 true,
                             )?;
@@ -26519,22 +26615,22 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Value")
                     ) {
                         reader.read_attrib(&mut value, b"Value", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Index")
                     ) {
                         reader.read_attrib(&mut index, b"Index", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ColorSpace")
                     ) {
                         reader.read_attrib(&mut color_space, b"ColorSpace", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -26725,7 +26821,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Pattern")
                     ) {
                         let output =
@@ -26740,7 +26836,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"AxialShd")
                     ) {
                         let output =
@@ -26755,7 +26851,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"RadialShd")
                     ) {
                         let output =
@@ -26770,7 +26866,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"GouraudShd")
                     ) {
                         let output =
@@ -26785,7 +26881,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"LaGourandShd")
                     ) {
                         let output =
@@ -27346,7 +27442,7 @@ pub mod page {
                         (S::Pattern(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Pattern",
                                 true,
                             )?;
@@ -27360,7 +27456,7 @@ pub mod page {
                         (S::AxialShd(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"AxialShd",
                                 true,
                             )?;
@@ -27374,7 +27470,7 @@ pub mod page {
                         (S::RadialShd(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"RadialShd",
                                 true,
                             )?;
@@ -27388,7 +27484,7 @@ pub mod page {
                         (S::GouraudShd(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"GouraudShd",
                                 true,
                             )?;
@@ -27402,7 +27498,7 @@ pub mod page {
                         (S::LaGourandShd(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"LaGourandShd",
                                 true,
                             )?;
@@ -27495,67 +27591,67 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
@@ -27795,7 +27891,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -27812,7 +27908,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -27898,7 +27994,7 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Extend")
                     ) {
                         reader.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -28124,7 +28220,7 @@ pub mod page {
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Point",
                                 true,
                             )?;
@@ -28141,7 +28237,7 @@ pub mod page {
                         (S::BackColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"BackColor",
                                 true,
                             )?;
@@ -28241,62 +28337,62 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
@@ -28536,7 +28632,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -28553,7 +28649,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -28672,77 +28768,77 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Substitution")
                     ) {
                         reader.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ImageMask")
                     ) {
                         reader.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
@@ -29058,7 +29154,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -29075,7 +29171,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -29092,7 +29188,7 @@ pub mod page {
                         (S::Border(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Border",
                                 true,
                             )?;
@@ -29182,7 +29278,7 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"VerticesPerRow")
                     ) {
                         reader.read_attrib(
@@ -29191,7 +29287,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Extend")
                     ) {
                         reader.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -29421,7 +29517,7 @@ pub mod page {
                         (S::Point(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Point",
                                 true,
                             )?;
@@ -29438,7 +29534,7 @@ pub mod page {
                         (S::BackColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"BackColor",
                                 true,
                             )?;
@@ -29513,12 +29609,12 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
@@ -29691,7 +29787,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -29703,7 +29799,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -29715,7 +29811,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -29727,7 +29823,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -29739,7 +29835,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -30304,7 +30400,7 @@ pub mod page {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -30318,7 +30414,7 @@ pub mod page {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -30332,7 +30428,7 @@ pub mod page {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -30346,7 +30442,7 @@ pub mod page {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -30365,7 +30461,7 @@ pub mod page {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -30589,7 +30685,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -30601,7 +30697,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -30613,7 +30709,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -30625,7 +30721,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -30637,7 +30733,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -31210,7 +31306,7 @@ pub mod page {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -31224,7 +31320,7 @@ pub mod page {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -31238,7 +31334,7 @@ pub mod page {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -31252,7 +31348,7 @@ pub mod page {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -31271,7 +31367,7 @@ pub mod page {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -31369,77 +31465,77 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Stroke")
                     ) {
                         reader.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Fill")
                     ) {
                         reader.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Rule")
                     ) {
                         reader.read_attrib(&mut rule, b"Rule", &attrib.value)?;
@@ -31902,7 +31998,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -31919,7 +32015,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -31936,7 +32032,7 @@ pub mod page {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -31953,7 +32049,7 @@ pub mod page {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -31970,7 +32066,7 @@ pub mod page {
                         (S::AbbreviatedData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"AbbreviatedData",
                                 false,
                             )?;
@@ -32072,37 +32168,37 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Width")
                     ) {
                         reader.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Height")
                     ) {
                         reader.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"XStep")
                     ) {
                         reader.read_attrib(&mut x_step, b"XStep", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"YStep")
                     ) {
                         reader.read_attrib(&mut y_step, b"YStep", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ReflectMethod")
                     ) {
                         reader.read_attrib(&mut reflect_method, b"ReflectMethod", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"RelativeTo")
                     ) {
                         reader.read_attrib(&mut relative_to, b"RelativeTo", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -32268,7 +32364,7 @@ pub mod page {
                         (S::CellContent(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CellContent",
                                 true,
                             )?;
@@ -32365,47 +32461,47 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MapType")
                     ) {
                         reader.read_attrib(&mut map_type, b"MapType", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MapUnit")
                     ) {
                         reader.read_attrib(&mut map_unit, b"MapUnit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Eccentricity")
                     ) {
                         reader.read_attrib(&mut eccentricity, b"Eccentricity", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Angle")
                     ) {
                         reader.read_attrib(&mut angle, b"Angle", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"StartPoint")
                     ) {
                         reader.read_attrib(&mut start_point, b"StartPoint", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"StartRadius")
                     ) {
                         reader.read_attrib(&mut start_radius, b"StartRadius", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EndPoint")
                     ) {
                         reader.read_attrib(&mut end_point, b"EndPoint", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EndRadius")
                     ) {
                         reader.read_attrib(&mut end_radius, b"EndRadius", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Extend")
                     ) {
                         reader.read_attrib(&mut extend, b"Extend", &attrib.value)?;
@@ -32572,7 +32668,7 @@ pub mod page {
                         (S::Seqment(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Seqment",
                                 true,
                             )?;
@@ -32691,107 +32787,107 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Font")
                     ) {
                         reader.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Size")
                     ) {
                         reader.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Stroke")
                     ) {
                         reader.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Fill")
                     ) {
                         reader.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"HScale")
                     ) {
                         reader.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ReadDirection")
                     ) {
                         reader.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CharDirection")
                     ) {
                         reader.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Weight")
                     ) {
                         reader.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Italic")
                     ) {
                         reader.read_attrib(&mut italic, b"Italic", &attrib.value)?;
@@ -33036,7 +33132,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Actions")
                     ) {
                         let output = < super :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -33048,7 +33144,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Clips")
                     ) {
                         let output = < super :: CtGraphicUnitClipsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -33060,7 +33156,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"FillColor")
                     ) {
                         let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
@@ -33074,7 +33170,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"StrokeColor")
                     ) {
                         let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
@@ -33088,7 +33184,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CGTransform")
                     ) {
                         let output =
@@ -33103,7 +33199,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextCode")
                     ) {
                         let output = < super :: CtTextTextCodeXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -33736,7 +33832,7 @@ pub mod page {
                         (S::Actions(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -33750,7 +33846,7 @@ pub mod page {
                         (S::Clips(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -33764,7 +33860,7 @@ pub mod page {
                         (S::FillColor(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -33778,7 +33874,7 @@ pub mod page {
                         (S::StrokeColor(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -33792,7 +33888,7 @@ pub mod page {
                         (S::CgTransform(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CGTransform",
                                 false,
                             )?;
@@ -33806,7 +33902,7 @@ pub mod page {
                         (S::TextCode(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextCode",
                                 false,
                             )?;
@@ -34297,7 +34393,7 @@ pub mod page {
                         (S::Template(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Template",
                                 false,
                             )?;
@@ -34314,7 +34410,7 @@ pub mod page {
                         (S::PageRes(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageRes",
                                 false,
                             )?;
@@ -34331,7 +34427,7 @@ pub mod page {
                         (S::Area(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Area",
                                 false,
                             )?;
@@ -34348,7 +34444,7 @@ pub mod page {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Content",
                                 true,
                             )?;
@@ -34365,7 +34461,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -34439,7 +34535,7 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Position")
                     ) {
                         reader.read_attrib(&mut position, b"Position", &attrib.value)?;
@@ -34597,7 +34693,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Color",
                                 true,
                             )?;
@@ -34675,12 +34771,12 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
@@ -34862,7 +34958,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Path")
                     ) {
                         let output = <super::CtPathXType as WithDeserializer>::Deserializer::init(
@@ -34876,7 +34972,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Text")
                     ) {
                         let output = <super::CtTextXType as WithDeserializer>::Deserializer::init(
@@ -35157,7 +35253,7 @@ pub mod page {
                         (S::Path(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Path",
                                 true,
                             )?;
@@ -35171,7 +35267,7 @@ pub mod page {
                         (S::Text(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Text",
                                 true,
                             )?;
@@ -35386,7 +35482,7 @@ pub mod page {
                         (S::Action(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Action",
                                 true,
                             )?;
@@ -35605,7 +35701,7 @@ pub mod page {
                         (S::Clip(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clip",
                                 true,
                             )?;
@@ -35680,17 +35776,17 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"X")
                     ) {
                         reader.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"y")
                     ) {
                         reader.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"EdgeFlag")
                     ) {
                         reader.read_attrib(&mut edge_flag, b"EdgeFlag", &attrib.value)?;
@@ -35850,7 +35946,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Color",
                                 true,
                             )?;
@@ -35936,12 +36032,12 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"HorizonalCornerRadius")
                     ) {
                         reader.read_attrib(
@@ -35950,7 +36046,7 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"VerticalCornerRadius")
                     ) {
                         reader.read_attrib(
@@ -35959,12 +36055,12 @@ pub mod page {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
@@ -36126,7 +36222,7 @@ pub mod page {
                         (S::BorderColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"BorderColor",
                                 true,
                             )?;
@@ -36203,12 +36299,12 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"X")
                     ) {
                         reader.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"y")
                     ) {
                         reader.read_attrib(&mut y, b"y", &attrib.value)?;
@@ -36368,7 +36464,7 @@ pub mod page {
                         (S::Color(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Color",
                                 true,
                             )?;
@@ -36489,112 +36585,112 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Font")
                     ) {
                         reader.read_attrib(&mut font, b"Font", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Size")
                     ) {
                         reader.read_attrib(&mut size, b"Size", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Stroke")
                     ) {
                         reader.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Fill")
                     ) {
                         reader.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"HScale")
                     ) {
                         reader.read_attrib(&mut h_scale, b"HScale", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ReadDirection")
                     ) {
                         reader.read_attrib(&mut read_direction, b"ReadDirection", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CharDirection")
                     ) {
                         reader.read_attrib(&mut char_direction, b"CharDirection", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Weight")
                     ) {
                         reader.read_attrib(&mut weight, b"Weight", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Italic")
                     ) {
                         reader.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -36878,7 +36974,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Actions")
                     ) {
                         let output = < super :: CtGraphicUnitActionsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -36890,7 +36986,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Clips")
                     ) {
                         let output = < super :: CtGraphicUnitClipsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -36902,7 +36998,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"FillColor")
                     ) {
                         let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
@@ -36916,7 +37012,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"StrokeColor")
                     ) {
                         let output = <super::CtColorXType as WithDeserializer>::Deserializer::init(
@@ -36930,7 +37026,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CGTransform")
                     ) {
                         let output =
@@ -36945,7 +37041,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextCode")
                     ) {
                         let output = < super :: CtTextTextCodeXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -37680,7 +37776,7 @@ pub mod page {
                         (S::Actions(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -37694,7 +37790,7 @@ pub mod page {
                         (S::Clips(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -37708,7 +37804,7 @@ pub mod page {
                         (S::FillColor(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -37722,7 +37818,7 @@ pub mod page {
                         (S::StrokeColor(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -37736,7 +37832,7 @@ pub mod page {
                         (S::CgTransform(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CGTransform",
                                 false,
                             )?;
@@ -37750,7 +37846,7 @@ pub mod page {
                         (S::TextCode(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextCode",
                                 false,
                             )?;
@@ -37853,82 +37949,82 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Stroke")
                     ) {
                         reader.read_attrib(&mut stroke, b"Stroke", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Fill")
                     ) {
                         reader.read_attrib(&mut fill, b"Fill", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Rule")
                     ) {
                         reader.read_attrib(&mut rule, b"Rule", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -38452,7 +38548,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -38469,7 +38565,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -38486,7 +38582,7 @@ pub mod page {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -38503,7 +38599,7 @@ pub mod page {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -38520,7 +38616,7 @@ pub mod page {
                         (S::AbbreviatedData(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"AbbreviatedData",
                                 false,
                             )?;
@@ -38653,82 +38749,82 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Substitution")
                     ) {
                         reader.read_attrib(&mut substitution, b"Substitution", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ImageMask")
                     ) {
                         reader.read_attrib(&mut image_mask, b"ImageMask", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -39086,7 +39182,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -39103,7 +39199,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -39120,7 +39216,7 @@ pub mod page {
                         (S::Border(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Border",
                                 true,
                             )?;
@@ -39243,72 +39339,72 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Visible")
                     ) {
                         reader.read_attrib(&mut visible, b"Visible", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CTM")
                     ) {
                         reader.read_attrib(&mut ctm, b"CTM", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Alpha")
                     ) {
                         reader.read_attrib(&mut alpha, b"Alpha", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ResourceID")
                     ) {
                         reader.read_attrib(&mut resource_id, b"ResourceID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -39580,7 +39676,7 @@ pub mod page {
                         (S::Actions(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Actions",
                                 true,
                             )?;
@@ -39597,7 +39693,7 @@ pub mod page {
                         (S::Clips(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Clips",
                                 true,
                             )?;
@@ -39687,7 +39783,7 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -39878,7 +39974,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -39890,7 +39986,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -39902,7 +39998,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -39914,7 +40010,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -39926,7 +40022,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -40530,7 +40626,7 @@ pub mod page {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -40544,7 +40640,7 @@ pub mod page {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -40558,7 +40654,7 @@ pub mod page {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -40572,7 +40668,7 @@ pub mod page {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -40591,7 +40687,7 @@ pub mod page {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -40654,7 +40750,7 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Thumbnail")
                     ) {
                         reader.read_attrib(&mut thumbnail, b"Thumbnail", &attrib.value)?;
@@ -40843,7 +40939,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -40855,7 +40951,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -40867,7 +40963,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -40879,7 +40975,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -40891,7 +40987,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -41495,7 +41591,7 @@ pub mod page {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -41509,7 +41605,7 @@ pub mod page {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -41523,7 +41619,7 @@ pub mod page {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -41537,7 +41633,7 @@ pub mod page {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -41556,7 +41652,7 @@ pub mod page {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -41622,22 +41718,22 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"X")
                     ) {
                         reader.read_attrib(&mut x, b"X", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"y")
                     ) {
                         reader.read_attrib(&mut y, b"y", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DeltaX")
                     ) {
                         reader.read_attrib(&mut delta_x, b"DeltaX", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Deltay")
                     ) {
                         reader.read_attrib(&mut deltay, b"Deltay", &attrib.value)?;
@@ -41794,12 +41890,12 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"TemplateID")
                     ) {
                         reader.read_attrib(&mut template_id, b"TemplateID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ZOrder")
                     ) {
                         reader.read_attrib(&mut z_order, b"ZOrder", &attrib.value)?;
@@ -42046,7 +42142,7 @@ pub mod page {
                         (S::Layer(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Layer",
                                 true,
                             )?;
@@ -42120,17 +42216,17 @@ pub mod page {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DrawParam")
                     ) {
                         reader.read_attrib(&mut draw_param, b"DrawParam", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -42322,7 +42418,7 @@ pub mod page {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"TextObject")
                     ) {
                         let output = < super :: CtPageBlockTextObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -42334,7 +42430,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PathObject")
                     ) {
                         let output = < super :: CtPageBlockPathObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -42346,7 +42442,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ImageObject")
                     ) {
                         let output = < super :: CtPageBlockImageObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -42358,7 +42454,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeObject")
                     ) {
                         let output = < super :: CtPageBlockCompositeObjectXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -42370,7 +42466,7 @@ pub mod page {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"PageBlock")
                     ) {
                         let output = < super :: CtPageBlockPageBlockXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -42984,7 +43080,7 @@ pub mod page {
                         (S::TextObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"TextObject",
                                 true,
                             )?;
@@ -42998,7 +43094,7 @@ pub mod page {
                         (S::PathObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PathObject",
                                 true,
                             )?;
@@ -43012,7 +43108,7 @@ pub mod page {
                         (S::ImageObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ImageObject",
                                 true,
                             )?;
@@ -43026,7 +43122,7 @@ pub mod page {
                         (S::CompositeObject(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeObject",
                                 true,
                             )?;
@@ -43045,7 +43141,7 @@ pub mod page {
                         (S::PageBlock(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"PageBlock",
                                 true,
                             )?;
@@ -43125,8 +43221,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
@@ -43192,8 +43290,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "CodePosition", &self.value.code_position)?;
                             write_attrib(&mut bytes, "CodeCount", &self.value.code_count)?;
@@ -43262,8 +43362,10 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -43325,8 +43427,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Value", &self.value.value)?;
                             write_attrib_opt(&mut bytes, "Index", &self.value.index)?;
@@ -43498,8 +43602,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -43588,8 +43694,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Extend", &self.value.extend)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -43676,8 +43784,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -43784,8 +43894,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -43885,8 +43997,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(
                                 &mut bytes,
@@ -43970,8 +44084,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
@@ -44141,8 +44257,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -44341,8 +44459,10 @@ pub mod page {
                             ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -44466,8 +44586,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Width", &self.value.width)?;
                             write_attrib(&mut bytes, "Height", &self.value.height)?;
@@ -44541,8 +44663,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "MapType", &self.value.map_type)?;
                             write_attrib_opt(&mut bytes, "MapUnit", &self.value.map_unit)?;
@@ -44611,8 +44735,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -44828,8 +44954,10 @@ pub mod page {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -44943,8 +45071,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Position", &self.value.position)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -45008,8 +45138,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
                             write_attrib_opt(&mut bytes, "CTM", &self.value.ctm)?;
@@ -45143,8 +45275,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -45207,8 +45341,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -45275,8 +45411,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "X", &self.value.x)?;
                             write_attrib(&mut bytes, "y", &self.value.y)?;
@@ -45348,8 +45486,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
                             write_attrib(
@@ -45425,8 +45565,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             write_attrib_opt(&mut bytes, "y", &self.value.y)?;
@@ -45498,8 +45640,10 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -45646,8 +45790,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -45810,8 +45956,10 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -45940,8 +46088,10 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Boundary", &self.value.boundary)?;
                             write_attrib_opt(&mut bytes, "Name", &self.value.name)?;
@@ -46043,8 +46193,10 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -46162,8 +46314,10 @@ pub mod page {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Thumbnail", &self.value.thumbnail)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -46274,8 +46428,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "X", &self.value.x)?;
                             write_attrib_opt(&mut bytes, "y", &self.value.y)?;
@@ -46334,8 +46490,10 @@ pub mod page {
                             *self.state = PageTemplateXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "TemplateID", &self.value.template_id)?;
                             write_attrib(&mut bytes, "ZOrder", &self.value.z_order)?;
@@ -46391,8 +46549,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -46456,8 +46616,10 @@ pub mod page {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib_opt(&mut bytes, "DrawParam", &self.value.draw_param)?;
@@ -47292,12 +47454,12 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BitsPerComponent")
                     ) {
                         reader.read_attrib(
@@ -47306,7 +47468,7 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Profile")
                     ) {
                         reader.read_attrib(&mut profile, b"Profile", &attrib.value)?;
@@ -47457,7 +47619,7 @@ pub mod res {
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Palette",
                                 false,
                             )?;
@@ -47546,37 +47708,37 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Relative")
                     ) {
                         reader.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
@@ -47813,7 +47975,7 @@ pub mod res {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -47830,7 +47992,7 @@ pub mod res {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -47920,37 +48082,37 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FontName")
                     ) {
                         reader.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FamilyName")
                     ) {
                         reader.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Charset")
                     ) {
                         reader.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Italic")
                     ) {
                         reader.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Bold")
                     ) {
                         reader.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Serif")
                     ) {
                         reader.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FixedWidth")
                     ) {
                         reader.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
@@ -48099,7 +48261,7 @@ pub mod res {
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FontFile",
                                 false,
                             )?;
@@ -48175,12 +48337,12 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Format")
                     ) {
                         reader.read_attrib(&mut format, b"Format", &attrib.value)?;
@@ -48334,7 +48496,7 @@ pub mod res {
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MediaFile",
                                 false,
                             )?;
@@ -48416,12 +48578,12 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Width")
                     ) {
                         reader.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Height")
                     ) {
                         reader.read_attrib(&mut height, b"Height", &attrib.value)?;
@@ -48724,7 +48886,7 @@ pub mod res {
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Thumbnail",
                                 false,
                             )?;
@@ -48741,7 +48903,7 @@ pub mod res {
                         (S::Substitution(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Substitution",
                                 false,
                             )?;
@@ -48758,7 +48920,7 @@ pub mod res {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Content",
                                 true,
                             )?;
@@ -48834,7 +48996,7 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BaseLoc")
                     ) {
                         reader.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -49035,7 +49197,7 @@ pub mod res {
             {
                 if let Event::Start(x) | Event::Empty(x) = &event {
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"ColorSpaces")
                     ) {
                         let output = < super :: ResColorSpacesXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -49047,7 +49209,7 @@ pub mod res {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"DrawParams")
                     ) {
                         let output = < super :: ResDrawParamsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -49059,7 +49221,7 @@ pub mod res {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"Fonts")
                     ) {
                         let output =
@@ -49074,7 +49236,7 @@ pub mod res {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"MultiMedias")
                     ) {
                         let output = < super :: ResMultiMediasXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -49086,7 +49248,7 @@ pub mod res {
                         );
                     }
                     if matches!(
-                        reader.resolve_local_name(x.name(), &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(x.name(), &super::super::NS_UNNAMED_2),
                         Some(b"CompositeGraphicUnits")
                     ) {
                         let output = < super :: ResCompositeGraphicUnitsXElementType as WithDeserializer > :: Deserializer :: init (reader , event) ? ;
@@ -49658,7 +49820,7 @@ pub mod res {
                         (S::ColorSpaces(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ColorSpaces",
                                 false,
                             )?;
@@ -49672,7 +49834,7 @@ pub mod res {
                         (S::DrawParams(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DrawParams",
                                 true,
                             )?;
@@ -49686,7 +49848,7 @@ pub mod res {
                         (S::Fonts(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Fonts",
                                 false,
                             )?;
@@ -49700,7 +49862,7 @@ pub mod res {
                         (S::MultiMedias(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MultiMedias",
                                 false,
                             )?;
@@ -49714,7 +49876,7 @@ pub mod res {
                         (S::CompositeGraphicUnits(values, None), event) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeGraphicUnits",
                                 false,
                             )?;
@@ -49923,7 +50085,7 @@ pub mod res {
                         (S::Cv(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CV",
                                 false,
                             )?;
@@ -50153,7 +50315,7 @@ pub mod res {
                         (S::ColorSpace(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"ColorSpace",
                                 false,
                             )?;
@@ -50378,7 +50540,7 @@ pub mod res {
                         (S::DrawParam(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DrawParam",
                                 true,
                             )?;
@@ -50584,7 +50746,7 @@ pub mod res {
                         (S::Font(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Font",
                                 false,
                             )?;
@@ -50811,7 +50973,7 @@ pub mod res {
                         (S::MultiMedia(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MultiMedia",
                                 false,
                             )?;
@@ -51030,7 +51192,7 @@ pub mod res {
                         ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CompositeGraphicUnit",
                                 false,
                             )?;
@@ -51115,12 +51277,12 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BitsPerComponent")
                     ) {
                         reader.read_attrib(
@@ -51129,12 +51291,12 @@ pub mod res {
                             &attrib.value,
                         )?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Profile")
                     ) {
                         reader.read_attrib(&mut profile, b"Profile", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -51304,7 +51466,7 @@ pub mod res {
                         (S::Palette(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Palette",
                                 false,
                             )?;
@@ -51399,42 +51561,42 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Relative")
                     ) {
                         reader.read_attrib(&mut relative, b"Relative", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"LineWidth")
                     ) {
                         reader.read_attrib(&mut line_width, b"LineWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Join")
                     ) {
                         reader.read_attrib(&mut join, b"Join", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Cap")
                     ) {
                         reader.read_attrib(&mut cap, b"Cap", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashOffset")
                     ) {
                         reader.read_attrib(&mut dash_offset, b"DashOffset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"DashPattern")
                     ) {
                         reader.read_attrib(&mut dash_pattern, b"DashPattern", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"MiterLimit")
                     ) {
                         reader.read_attrib(&mut miter_limit, b"MiterLimit", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -51684,7 +51846,7 @@ pub mod res {
                         (S::FillColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FillColor",
                                 true,
                             )?;
@@ -51701,7 +51863,7 @@ pub mod res {
                         (S::StrokeColor(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StrokeColor",
                                 true,
                             )?;
@@ -51797,42 +51959,42 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FontName")
                     ) {
                         reader.read_attrib(&mut font_name, b"FontName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FamilyName")
                     ) {
                         reader.read_attrib(&mut family_name, b"FamilyName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Charset")
                     ) {
                         reader.read_attrib(&mut charset, b"Charset", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Italic")
                     ) {
                         reader.read_attrib(&mut italic, b"Italic", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Bold")
                     ) {
                         reader.read_attrib(&mut bold, b"Bold", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Serif")
                     ) {
                         reader.read_attrib(&mut serif, b"Serif", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FixedWidth")
                     ) {
                         reader.read_attrib(&mut fixed_width, b"FixedWidth", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -51995,7 +52157,7 @@ pub mod res {
                         (S::FontFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FontFile",
                                 false,
                             )?;
@@ -52077,17 +52239,17 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Format")
                     ) {
                         reader.read_attrib(&mut format, b"Format", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -52251,7 +52413,7 @@ pub mod res {
                         (S::MediaFile(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MediaFile",
                                 false,
                             )?;
@@ -52339,17 +52501,17 @@ pub mod res {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Width")
                     ) {
                         reader.read_attrib(&mut width, b"Width", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Height")
                     ) {
                         reader.read_attrib(&mut height, b"Height", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -52643,7 +52805,7 @@ pub mod res {
                         (S::Thumbnail(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Thumbnail",
                                 false,
                             )?;
@@ -52660,7 +52822,7 @@ pub mod res {
                         (S::Substitution(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Substitution",
                                 false,
                             )?;
@@ -52677,7 +52839,7 @@ pub mod res {
                         (S::Content(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Content",
                                 true,
                             )?;
@@ -52775,8 +52937,10 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib(
@@ -52857,8 +53021,10 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Relative", &self.value.relative)?;
                             write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
@@ -52942,8 +53108,10 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             write_attrib_opt(&mut bytes, "FamilyName", &self.value.family_name)?;
@@ -53010,8 +53178,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -53080,8 +53250,10 @@ pub mod res {
                                 ));
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Width", &self.value.width)?;
                             write_attrib(&mut bytes, "Height", &self.value.height)?;
@@ -53173,8 +53345,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "BaseLoc", &self.value.base_loc)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -53336,8 +53510,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -53410,8 +53586,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -53480,8 +53658,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -53546,8 +53726,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -53615,8 +53797,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -53674,7 +53858,7 @@ pub mod res {
         impl<'ser> ResCompositeGraphicUnitsXElementTypeSerializer<'ser> {
             fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_DEFAULT [..])) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (IterSerializer :: new (& self . value . composite_graphic_unit [..] , Some ("CompositeGraphicUnit") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsXElementTypeSerializerState :: CompositeGraphicUnit (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -53727,8 +53911,10 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib(
@@ -53820,8 +54006,10 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib_opt(&mut bytes, "Relative", &self.value.relative)?;
                             write_attrib(&mut bytes, "LineWidth", &self.value.line_width)?;
@@ -53913,8 +54101,10 @@ pub mod res {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "FontName", &self.value.font_name)?;
                             write_attrib_opt(&mut bytes, "FamilyName", &self.value.family_name)?;
@@ -53986,8 +54176,10 @@ pub mod res {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
                             write_attrib_opt(&mut bytes, "Format", &self.value.format)?;
@@ -54058,7 +54250,7 @@ pub mod res {
         impl<'ser> ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializer<'ser> {
             fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_DEFAULT [..])) ; } write_attrib (& mut bytes , "Width" , & self . value . width) ? ; write_attrib (& mut bytes , "Height" , & self . value . height) ? ; write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Init__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (IterSerializer :: new (self . value . thumbnail . as_ref () , Some ("Thumbnail") , false)) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "Width" , & self . value . width) ? ; write_attrib (& mut bytes , "Height" , & self . value . height) ? ; write_attrib (& mut bytes , "ID" , & self . value . id) ? ; return Ok (Some (Event :: Start (bytes))) } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Thumbnail (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (IterSerializer :: new (self . value . substitution . as_ref () , Some ("Substitution") , false)) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Substitution (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (WithSerializer :: serializer (& self . value . content , Some ("Content") , false) ?) , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Content (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ , } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: End__ => { * self . state = ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Done__ => return Ok (None) , ResCompositeGraphicUnitsCompositeGraphicUnitXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -54536,7 +54728,7 @@ pub mod signature {
                         (S::SiqnedInfo(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"SiqnedInfo",
                                 false,
                             )?;
@@ -54553,7 +54745,7 @@ pub mod signature {
                         (S::SignedValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"SignedValue",
                                 false,
                             )?;
@@ -55189,7 +55381,7 @@ pub mod signature {
                         (S::Provider(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Provider",
                                 false,
                             )?;
@@ -55206,7 +55398,7 @@ pub mod signature {
                         (S::SignatureMethod(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"SignatureMethod",
                                 false,
                             )?;
@@ -55226,7 +55418,7 @@ pub mod signature {
                         ) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"SianatureDateTime",
                                 false,
                             )?;
@@ -55243,7 +55435,7 @@ pub mod signature {
                         (S::References(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"References",
                                 false,
                             )?;
@@ -55260,7 +55452,7 @@ pub mod signature {
                         (S::StampAnnot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"StampAnnot",
                                 false,
                             )?;
@@ -55277,7 +55469,7 @@ pub mod signature {
                         (S::Seal(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Seal",
                                 false,
                             )?;
@@ -55360,17 +55552,17 @@ pub mod signature {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ProviderName")
                     ) {
                         reader.read_attrib(&mut provider_name, b"ProviderName", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Version")
                     ) {
                         reader.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Company")
                     ) {
                         reader.read_attrib(&mut company, b"Company", &attrib.value)?;
@@ -55472,7 +55664,7 @@ pub mod signature {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CheckMethod")
                     ) {
                         reader.read_attrib(&mut check_method, b"CheckMethod", &attrib.value)?;
@@ -55639,7 +55831,7 @@ pub mod signature {
                         (S::Reference(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Reference",
                                 false,
                             )?;
@@ -55716,22 +55908,22 @@ pub mod signature {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"PageRef")
                     ) {
                         reader.read_attrib(&mut page_ref, b"PageRef", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Boundary")
                     ) {
                         reader.read_attrib(&mut boundary, b"Boundary", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Clip")
                     ) {
                         reader.read_attrib(&mut clip, b"Clip", &attrib.value)?;
@@ -55993,7 +56185,7 @@ pub mod signature {
                         (S::BaseLoc(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"BaseLoc",
                                 false,
                             )?;
@@ -56068,7 +56260,7 @@ pub mod signature {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"FileRef")
                     ) {
                         reader.read_attrib(&mut file_ref, b"FileRef", &attrib.value)?;
@@ -56221,7 +56413,7 @@ pub mod signature {
                         (S::CheckValue(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"CheckValue",
                                 false,
                             )?;
@@ -56314,8 +56506,10 @@ pub mod signature {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -56409,7 +56603,7 @@ pub mod signature {
         impl<'ser> SianatureSiqnedInfoXElementTypeSerializer<'ser> {
             fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_DEFAULT [..])) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Provider (WithSerializer :: serializer (& self . value . provider , Some ("Provider") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoXElementTypeSerializerState :: Provider (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (IterSerializer :: new (self . value . signature_method . as_ref () , Some ("SignatureMethod") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SignatureMethod (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (IterSerializer :: new (self . value . sianature_date_time . as_ref () , Some ("SianatureDateTime") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: SianatureDateTime (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: References (WithSerializer :: serializer (& self . value . references , Some ("References") , false) ?) , } SianatureSiqnedInfoXElementTypeSerializerState :: References (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (IterSerializer :: new (& self . value . stamp_annot [..] , Some ("StampAnnot") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: StampAnnot (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Seal (IterSerializer :: new (self . value . seal . as_ref () , Some ("Seal") , false)) , } SianatureSiqnedInfoXElementTypeSerializerState :: Seal (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -56448,8 +56642,10 @@ pub mod signature {
                                 SianatureSiqnedInfoProviderXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ProviderName", &self.value.provider_name)?;
                             write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
@@ -56516,8 +56712,10 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "CheckMethod", &self.value.check_method)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -56580,8 +56778,10 @@ pub mod signature {
                                 SianatureSiqnedInfoStampAnnotXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "PageRef", &self.value.page_ref)?;
@@ -56643,8 +56843,10 @@ pub mod signature {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -56704,7 +56906,7 @@ pub mod signature {
         impl<'ser> SianatureSiqnedInfoReferencesReferenceXElementTypeSerializer<'ser> {
             fn next_event(&mut self) -> Result<Option<Event<'ser>>, Error> {
                 loop {
-                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_DEFAULT [..])) ; } write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
+                    match & mut * self . state { SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Init__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (WithSerializer :: serializer (& self . value . check_value , Some ("CheckValue") , false) ?) ; let mut bytes = BytesStart :: new (self . name) ; if self . is_root { bytes . push_attribute ((& b"xmlns" [..] , & super :: super :: NS_UNNAMED_2 [..])) ; } write_attrib (& mut bytes , "FileRef" , & self . value . file_ref) ? ; return Ok (Some (Event :: Start (bytes))) } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: CheckValue (x) => match x . next () . transpose () ? { Some (event) => return Ok (Some (event)) , None => * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ , } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: End__ => { * self . state = SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ ; return Ok (Some (Event :: End (BytesEnd :: new (self . name)))) ; } SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Done__ => return Ok (None) , SianatureSiqnedInfoReferencesReferenceXElementTypeSerializerState :: Phantom__ (_) => unreachable ! () , }
                 }
             }
         }
@@ -57062,7 +57264,7 @@ pub mod signatures {
                         (S::MaxSignId(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"MaxSignId",
                                 false,
                             )?;
@@ -57079,7 +57281,7 @@ pub mod signatures {
                         (S::Signature(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"Signature",
                                 false,
                             )?;
@@ -57151,17 +57353,17 @@ pub mod signatures {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Type")
                     ) {
                         reader.read_attrib(&mut type_, b"Type", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"BaseLoc")
                     ) {
                         reader.read_attrib(&mut base_loc, b"BaseLoc", &attrib.value)?;
@@ -57289,8 +57491,10 @@ pub mod signatures {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -57358,8 +57562,10 @@ pub mod signatures {
                             *self.state = SiqnaturesSignatureXElementTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib(&mut bytes, "Type", &self.value.type_)?;
@@ -57503,22 +57709,22 @@ pub mod version {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Version")
                     ) {
                         reader.read_attrib(&mut version, b"Version", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"Name")
                     ) {
                         reader.read_attrib(&mut name, b"Name", &attrib.value)?;
                     } else if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"CreationDate")
                     ) {
                         reader.read_attrib(&mut creation_date, b"CreationDate", &attrib.value)?;
@@ -57760,7 +57966,7 @@ pub mod version {
                         (S::FileList(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"FileList",
                                 false,
                             )?;
@@ -57777,7 +57983,7 @@ pub mod version {
                         (S::DocRoot(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"DocRoot",
                                 false,
                             )?;
@@ -58009,7 +58215,7 @@ pub mod version {
                         (S::File(None), event @ (Event::Start(_) | Event::Empty(_))) => {
                             let output = reader.init_start_tag_deserializer(
                                 event,
-                                Some(&super::super::NS_DEFAULT),
+                                Some(&super::super::NS_UNNAMED_2),
                                 b"File",
                                 false,
                             )?;
@@ -58079,7 +58285,7 @@ pub mod version {
                 for attrib in filter_xmlns_attributes(bytes_start) {
                     let attrib = attrib?;
                     if matches!(
-                        reader.resolve_local_name(attrib.key, &super::super::NS_DEFAULT),
+                        reader.resolve_local_name(attrib.key, &super::super::NS_UNNAMED_2),
                         Some(b"ID")
                     ) {
                         reader.read_attrib(&mut id, b"ID", &attrib.value)?;
@@ -58253,8 +58459,10 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             write_attrib_opt(&mut bytes, "Version", &self.value.version)?;
@@ -58340,8 +58548,10 @@ pub mod version {
                             );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Start(bytes)));
                         }
@@ -58405,8 +58615,10 @@ pub mod version {
                                 );
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             write_attrib(&mut bytes, "ID", &self.value.id)?;
                             return Ok(Some(Event::Start(bytes)));
@@ -58653,8 +58865,10 @@ pub mod xs {
                             *self.state = AnyTypeXTypeSerializerState::Done__;
                             let mut bytes = BytesStart::new(self.name);
                             if self.is_root {
-                                bytes
-                                    .push_attribute((&b"xmlns"[..], &super::super::NS_DEFAULT[..]));
+                                bytes.push_attribute((
+                                    &b"xmlns"[..],
+                                    &super::super::NS_UNNAMED_2[..],
+                                ));
                             }
                             return Ok(Some(Event::Empty(bytes)));
                         }
