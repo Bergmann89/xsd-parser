@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="Foo"
+    xmlns:bar="Bar"
+    xmlns:baz="Baz"
+    targetNamespace="Foo">
+
+    <xs:import namespace="Bar" schemaLocation="bar.xsd" />
+    <xs:import namespace="Baz" schemaLocation="baz.xsd" />
+
+    <xs:group name="inner">
+        <xs:sequence>
+            <xs:element name="Value" type="xs:string" />
+        </xs:sequence>
+    </xs:group>
+
+    <xs:element name="Outer">
+        <xs:complexType>
+            <xs:choice>
+                <xs:group ref="inner" />
+                <xs:group ref="bar:inner" />
+                <xs:group ref="baz:inner" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

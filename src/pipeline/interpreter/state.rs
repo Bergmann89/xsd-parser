@@ -24,7 +24,7 @@ pub(super) struct State<'a> {
 #[derive(Debug)]
 pub(super) enum StackEntry {
     Type(Ident, HashMap<Ident, Ident>),
-    GroupRef(Ident),
+    GroupRef(Ident, Option<String>),
     AttributeGroupRef,
     Mixed(bool),
     Group,
@@ -78,7 +78,7 @@ impl<'a> State<'a> {
         for x in self.type_stack.iter().rev() {
             match x {
                 StackEntry::Type(x, _) if x.name.is_named() => return Some(x.name.as_str()),
-                StackEntry::GroupRef(_) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
+                StackEntry::GroupRef(_, _) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
                     return None
                 }
                 _ => (),
@@ -88,9 +88,14 @@ impl<'a> State<'a> {
         None
     }
 
-    pub(super) fn named_group(&self) -> Option<&str> {
-        if let StackEntry::GroupRef(x) = self.type_stack.last()? {
-            Some(x.name.as_str())
+    pub(super) fn named_group(&self) -> Option<String> {
+        if let StackEntry::GroupRef(x, prefix) = self.type_stack.last()? {
+            let name = x.name.as_str();
+            if let Some(prefix) = prefix {
+                Some(format!("{prefix}:{name}"))
+            } else {
+                Some(name.to_owned())
+            }
         } else {
             None
         }

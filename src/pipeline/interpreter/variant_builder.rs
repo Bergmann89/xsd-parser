@@ -791,6 +791,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         use crate::models::schema::xs::GroupTypeContent as C;
 
         let ref_ = ty.ref_.as_ref().ok_or(Error::GroupMissingRef)?;
+        let prefix = ref_.prefix();
         let ref_ = self.parse_qname(ref_)?.with_type(IdentType::Group);
         let group = self
             .find_group(ref_.clone())
@@ -798,7 +799,17 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
         let mut ret = Ok(());
 
-        self.state.type_stack.push(StackEntry::GroupRef(ref_));
+        let prefix = if ref_.ns == self.state.current_ns() {
+            None
+        } else {
+            prefix
+                .and_then(|prefix| from_utf8(prefix).ok())
+                .map(ToOwned::to_owned)
+        };
+
+        self.state
+            .type_stack
+            .push(StackEntry::GroupRef(ref_, prefix));
 
         for c in &group.content {
             ret = match c {
@@ -1422,7 +1433,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
         }
 
         let group_ident = self.state.type_stack.last().and_then(|x| {
-            if let StackEntry::GroupRef(x) = x {
+            if let StackEntry::GroupRef(x, _) = x {
                 Some(x.clone())
             } else {
                 None

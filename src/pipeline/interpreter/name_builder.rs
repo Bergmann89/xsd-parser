@@ -12,7 +12,7 @@ impl NameBuilder {
         for x in state.type_stack.iter().rev() {
             match x {
                 StackEntry::Type(x, _) => return self.extend(replace, Some(x.name.as_str())),
-                StackEntry::GroupRef(_) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
+                StackEntry::GroupRef(_, _) | StackEntry::AttributeGroupRef if stop_at_group_ref => {
                     break
                 }
                 _ => (),
