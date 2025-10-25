@@ -2928,7 +2928,7 @@ impl ComplexDataElement<'_> {
 
                         ElementHandlerOutput::from_event(event, allow_any)
                     } else {
-                        let data = #deserializer_ident::finish_state(#deserializer_state_ident::#variant_ident(values, None))?;
+                        let data = #deserializer_ident::finish_state(reader, #deserializer_state_ident::#variant_ident(values, None))?;
                         *self.state__ = #deserializer_state_ident::Done__(data);
 
                         ElementHandlerOutput::Break {
