@@ -240,19 +240,35 @@ impl ConstrainsData<'_> {
     }
 
     fn render_validate_min_length(&self) -> Option<TokenStream> {
-        self.meta.min_length.as_ref().map(|x| {
-            quote! {
-                if value.len() < #x {
+        self.meta.min_length.as_ref().and_then(|x| {
+            if *x == 0 {
+                return None;
+            }
+
+            let check = if *x == 1 {
+                quote!(value.is_empty())
+            } else {
+                quote!(value.len() < #x)
+            };
+
+            Some(quote! {
+                if #check {
                     return Err(ValidateError::MinLength(#x));
                 }
-            }
+            })
         })
     }
 
     fn render_validate_max_length(&self) -> Option<TokenStream> {
         self.meta.max_length.as_ref().map(|x| {
+            let check = if *x == 0 {
+                quote!(!value.is_empty())
+            } else {
+                quote!(value.len() > #x)
+            };
+
             quote! {
-                if value.len() > #x {
+                if #check {
                     return Err(ValidateError::MaxLength(#x));
                 }
             }

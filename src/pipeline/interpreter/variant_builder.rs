@@ -254,16 +254,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
             }
         }
 
-        if ty.abstract_ {
-            let type_ = match self.variant.take() {
-                None => None,
-                Some(MetaTypeVariant::Reference(ti)) => Some(ti.type_),
-                e => crate::unreachable!("Unexpected type: {:?}", e),
-            };
-
-            let ai = init_any!(self, Dynamic);
-            ai.type_ = type_;
-        } else if ty.nillable.unwrap_or_default() {
+        if ty.nillable.unwrap_or_default() {
             let mut ident = self.state.current_ident().unwrap().clone();
             ident.type_ = IdentType::NillableContent;
 
@@ -302,6 +293,17 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
 
                 Ok(())
             })?;
+        }
+
+        if ty.abstract_ {
+            let type_ = match self.variant.take() {
+                None => None,
+                Some(MetaTypeVariant::Reference(ti)) => Some(ti.type_),
+                e => crate::unreachable!("Unexpected type: {:?}", e),
+            };
+
+            let ai = init_any!(self, Dynamic);
+            ai.type_ = type_;
         }
 
         Ok(())

@@ -92,4 +92,4 @@ jobs:
 
     - name: cargo run
       working-directory: examples/read_write
-      run: cargo run
+      run: cargo run --release

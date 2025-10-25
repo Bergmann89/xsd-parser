@@ -980,7 +980,7 @@ impl ComplexDataElement<'_> {
             Occurs::None => unreachable!(),
             Occurs::Single if self.need_indirection => quote!(&**x),
             Occurs::Single => quote!(x),
-            Occurs::Optional if self.need_indirection => quote!(x.as_ref().map(|x| &**x)),
+            Occurs::Optional if self.need_indirection => quote!(x.as_deref()),
             Occurs::Optional => quote!(x.as_ref()),
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(&x[..]),
         };
@@ -1000,7 +1000,7 @@ impl ComplexDataElement<'_> {
             Occurs::Single if self.need_indirection => quote!(&*self.value.#field_ident),
             Occurs::Single => quote!(&self.value.#field_ident),
             Occurs::Optional if self.need_indirection => {
-                quote!(self.value.#field_ident.as_ref().map(|x| &**x))
+                quote!(self.value.#field_ident.as_deref())
             }
             Occurs::Optional => quote!(self.value.#field_ident.as_ref()),
             Occurs::DynamicList | Occurs::StaticList(_) => quote!(&self.value.#field_ident[..]),

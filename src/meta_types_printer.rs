@@ -185,7 +185,12 @@ impl<'a> MetaTypesPrinter<'a> {
                 s.level += 1;
 
                 indentln!("display_name={:?}", &ty.display_name);
-                indentln!("type={:?}", &x.type_);
+                indentln!(
+                    "type={}",
+                    x.type_
+                        .as_ref()
+                        .map_or_else(|| String::from("None"), ToString::to_string)
+                );
                 indentln!("derived_types:");
 
                 s.level += 1;
