@@ -43,6 +43,9 @@ pub struct ModuleMeta {
     /// Namespace of the module.
     pub namespace: Option<Namespace>,
 
+    /// Id of the namespace the module was created from.
+    pub namespace_id: NamespaceId,
+
     /// Number of schemas assigned to this module/namespace.
     pub schema_count: usize,
 }

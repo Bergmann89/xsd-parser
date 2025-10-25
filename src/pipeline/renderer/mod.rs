@@ -306,10 +306,12 @@ impl ModuleMeta {
     pub(super) fn make_ns_const(&self) -> PathData {
         let ident = format_ident!(
             "NS_{}",
-            self.name.as_ref().or(self.prefix.as_ref()).map_or_else(
-                || String::from("DEFAULT"),
-                |name| name.as_str().to_screaming_snake_case()
-            )
+            self.name
+                .as_ref()
+                .or(self.prefix.as_ref())
+                .map(|name| name.as_str().to_screaming_snake_case())
+                .or_else(|| Some(format!("UNNAMED_{}", self.namespace_id.0)))
+                .unwrap_or_else(|| String::from("DEFAULT"))
         );
 
         let path = IdentPath::from_parts([], ident);

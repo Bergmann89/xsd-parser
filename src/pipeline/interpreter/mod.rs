@@ -405,6 +405,7 @@ impl<'a> Interpreter<'a> {
                 name,
                 prefix,
                 namespace,
+                namespace_id: *id,
                 schema_count,
             };
 
