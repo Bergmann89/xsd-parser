@@ -21294,7 +21294,7 @@ pub mod onix {
             self.0
         }
         pub fn validate_value(value: &Vec<List91>) -> Result<(), ValidateError> {
-            if value.len() < 1usize {
+            if value.is_empty() {
                 return Err(ValidateError::MinLength(1usize));
             }
             Ok(())
@@ -21337,7 +21337,7 @@ pub mod onix {
             self.0
         }
         pub fn validate_value(value: &Vec<List49>) -> Result<(), ValidateError> {
-            if value.len() < 1usize {
+            if value.is_empty() {
                 return Err(ValidateError::MinLength(1usize));
             }
             Ok(())

@@ -990,7 +990,7 @@ impl NotNamespaceType {
         self.0
     }
     pub fn validate_value(value: &Vec<BasicNamespaceListItemType>) -> Result<(), ValidateError> {
-        if value.len() < 1usize {
+        if value.is_empty() {
             return Err(ValidateError::MinLength(1usize));
         }
         Ok(())

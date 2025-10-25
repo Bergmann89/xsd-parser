@@ -43707,7 +43707,7 @@ pub mod page {
                             None => {
                                 *self.state = CtGouraudShdXTypeSerializerState::BackColor(
                                     IterSerializer::new(
-                                        self.value.back_color.as_ref().map(|x| &**x),
+                                        self.value.back_color.as_deref(),
                                         Some("BackColor"),
                                         false,
                                     ),
@@ -44016,7 +44016,7 @@ pub mod page {
                                 None => {
                                     *self.state = CtLaGouraudShdXTypeSerializerState::BackColor(
                                         IterSerializer::new(
-                                            self.value.back_color.as_ref().map(|x| &**x),
+                                            self.value.back_color.as_deref(),
                                             Some("BackColor"),
                                             false,
                                         ),
