@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://example.com"
+    targetNamespace="http://example.com"
+    elementFormDefault="qualified">
+
+    <xs:complexType name="Entity">
+        <xs:choice>
+            <xs:element name="EntityA" type="tns:EntityA" />
+            <xs:element name="EntityB" type="tns:EntityB" />
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="EntityA">
+        <xs:sequence>
+            <xs:element name="Inner" type="tns:EntityAHelper" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EntityB">
+        <xs:sequence>
+            <xs:element name="Inner" type="tns:EntityBHelper" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EntityAHelper">
+        <xs:sequence>
+            <xs:element name="ToB" type="tns:EntityB" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="EntityBHelper">
+        <xs:sequence>
+            <xs:element name="ToA" type="tns:EntityA" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

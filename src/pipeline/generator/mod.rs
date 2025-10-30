@@ -25,9 +25,9 @@ mod data;
 mod error;
 mod meta;
 mod state;
-mod walk;
 
-use std::collections::{BTreeMap, HashSet, VecDeque};
+use std::collections::btree_map::{Entry, VacantEntry};
+use std::collections::{BTreeMap, VecDeque};
 
 use proc_macro2::Ident as Ident2;
 use quote::format_ident;
@@ -38,7 +38,7 @@ use crate::models::code::{ModuleIdent, ModulePath};
 use crate::models::{
     code::{format_module_ident, format_type_ident, IdentPath},
     data::{DataType, DataTypes, PathData},
-    meta::{ElementMetaVariant, MetaType, MetaTypeVariant, MetaTypes},
+    meta::{MetaType, MetaTypeVariant, MetaTypes},
     schema::{MaxOccurs, NamespaceId},
     Ident, IdentType, Name,
 };
@@ -47,8 +47,7 @@ pub use self::context::Context;
 pub use self::error::Error;
 pub use self::meta::MetaData;
 
-use self::state::{PendingType, State, TraitInfos, TypeRef};
-use self::walk::Walk;
+use self::state::{LoopDetection, PendingType, State, TraitInfos, TypeRef};
 
 /// Configurable Rust code generator for schema-derived type information.
 ///
@@ -114,6 +113,7 @@ impl<'types> Generator<'types> {
             cache: BTreeMap::new(),
             pending: VecDeque::new(),
             trait_infos: None,
+            loop_detection: LoopDetection::default(),
         };
 
         Self { meta, state }
@@ -212,10 +212,9 @@ impl<'types> Generator<'types> {
         let type_ident = format_ident!("{}", ident.name.to_string());
         let path = PathData::from_path(IdentPath::from_parts(module_ident, type_ident));
 
-        let type_ref = TypeRef {
-            path,
-            boxed_elements: HashSet::new(),
-        };
+        let id = self.state.loop_detection.next_id(ident.clone());
+        let type_ref = TypeRef::new_fixed(id, path);
+
         self.state.cache.insert(ident, type_ref);
 
         Ok(self)
@@ -287,7 +286,7 @@ impl<'types> GeneratorFixed<'types> {
     #[instrument(err, level = "trace", skip(self))]
     pub fn generate_type(mut self, ident: Ident) -> Result<GeneratorFixed<'types>, Error> {
         self.state
-            .get_or_create_type_ref(&self.data_types.meta, &ident)?;
+            .get_or_create_type_ref_mut(&self.data_types.meta, &ident)?;
         self.generate_pending()?;
 
         Ok(self)
@@ -312,7 +311,7 @@ impl<'types> GeneratorFixed<'types> {
     pub fn generate_all_types(mut self) -> Result<Self, Error> {
         for ident in self.data_types.meta.types.items.keys() {
             self.state
-                .get_or_create_type_ref(&self.data_types.meta, ident)?;
+                .get_or_create_type_ref_mut(&self.data_types.meta, ident)?;
         }
         self.generate_pending()?;
 
@@ -340,7 +339,7 @@ impl<'types> GeneratorFixed<'types> {
         for ident in self.data_types.meta.types.items.keys() {
             if ident.name.is_named() {
                 self.state
-                    .get_or_create_type_ref(&self.data_types.meta, ident)?;
+                    .get_or_create_type_ref_mut(&self.data_types.meta, ident)?;
             }
         }
         self.generate_pending()?;
@@ -381,106 +380,81 @@ impl<'types> GeneratorFixed<'types> {
 
 impl<'types> State<'types> {
     #[instrument(level = "trace", skip(self, meta))]
-    fn get_or_create_type_ref(
+    fn get_or_create_type_ref_mut(
         &mut self,
         meta: &MetaData<'types>,
         ident: &Ident,
-    ) -> Result<&TypeRef, Error> {
-        if !self.cache.contains_key(ident) {
-            let ty = meta
-                .types
-                .items
-                .get(ident)
-                .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-            let name = make_type_name(&meta.postfixes, ty, ident);
-            let path = match &ty.variant {
-                MetaTypeVariant::BuildIn(x) => {
-                    let path =
-                        if meta.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS) {
-                            x.absolute_ident_path()
-                        } else {
-                            x.ident_path()
-                        };
+    ) -> Result<&mut TypeRef, Error> {
+        match self.cache.entry(ident.clone()) {
+            Entry::Occupied(e) => Ok(e.into_mut()),
+            Entry::Vacant(e) => {
+                let id = self.loop_detection.next_id(e.key().clone());
 
-                    PathData::from_path(path)
-                }
-                MetaTypeVariant::Custom(x) => {
-                    let path = IdentPath::from_ident(format_ident!("{}", x.name()));
-
-                    if let Some(using) = x.include() {
-                        PathData::from_path(path).with_using(using)
-                    } else {
-                        PathData::from_path(path.with_path(None))
-                    }
-                }
-                _ => {
-                    let module_ident = ModuleIdent::new(
-                        meta.types,
-                        ident,
-                        meta.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
-                        meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
-                    );
-                    let module_path = ModulePath::from_ident(meta.types, module_ident);
-                    let type_ident = format_type_ident(&name, ty.display_name.as_deref());
-
-                    let path = IdentPath::from_parts(module_path.0, type_ident);
-
-                    PathData::from_path(path)
-                }
-            };
-
-            tracing::debug!("Queue new type generation: {ident}");
-
-            let boxed_elements = get_boxed_elements(ident, ty, meta.types, &self.cache);
-            self.pending.push_back(PendingType {
-                ty,
-                ident: ident.clone(),
-            });
-
-            let type_ref = TypeRef {
-                path,
-                boxed_elements,
-            };
-
-            assert!(self.cache.insert(ident.clone(), type_ref).is_none());
+                Self::create_type_ref(id, &mut self.pending, e, meta, ident)
+            }
         }
+    }
 
-        Ok(self.cache.get_mut(ident).unwrap())
+    fn create_type_ref<'a>(
+        id: usize,
+        pending: &mut VecDeque<PendingType<'types>>,
+        entry: VacantEntry<'a, Ident, TypeRef>,
+        meta: &MetaData<'types>,
+        ident: &Ident,
+    ) -> Result<&'a mut TypeRef, Error> {
+        let ty = meta
+            .types
+            .items
+            .get(ident)
+            .ok_or_else(|| Error::UnknownType(ident.clone()))?;
+        let name = make_type_name(&meta.postfixes, ty, ident);
+        let path = match &ty.variant {
+            MetaTypeVariant::BuildIn(x) => {
+                let path = if meta.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS) {
+                    x.absolute_ident_path()
+                } else {
+                    x.ident_path()
+                };
+
+                PathData::from_path(path)
+            }
+            MetaTypeVariant::Custom(x) => {
+                let path = IdentPath::from_ident(format_ident!("{}", x.name()));
+
+                if let Some(using) = x.include() {
+                    PathData::from_path(path).with_using(using)
+                } else {
+                    PathData::from_path(path.with_path(None))
+                }
+            }
+            _ => {
+                let module_ident = ModuleIdent::new(
+                    meta.types,
+                    ident,
+                    meta.check_generator_flags(GeneratorFlags::USE_NAMESPACE_MODULES),
+                    meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
+                );
+                let module_path = ModulePath::from_ident(meta.types, module_ident);
+                let type_ident = format_type_ident(&name, ty.display_name.as_deref());
+
+                let path = IdentPath::from_parts(module_path.0, type_ident);
+
+                PathData::from_path(path)
+            }
+        };
+
+        tracing::debug!("Queue new type generation: {ident}");
+
+        pending.push_back(PendingType {
+            ty,
+            ident: ident.clone(),
+        });
+
+        Ok(entry.insert(TypeRef::new_pending(id, path)))
     }
 }
 
 /* Helper */
-
-fn get_boxed_elements<'a>(
-    ident: &Ident,
-    mut ty: &'a MetaType,
-    types: &'a MetaTypes,
-    cache: &BTreeMap<Ident, TypeRef>,
-) -> HashSet<Ident> {
-    if let MetaTypeVariant::ComplexType(ci) = &ty.variant {
-        if let Some(type_) = ci.content.as_ref().and_then(|ident| types.items.get(ident)) {
-            ty = type_;
-        }
-    }
-
-    match &ty.variant {
-        MetaTypeVariant::All(si) | MetaTypeVariant::Choice(si) | MetaTypeVariant::Sequence(si) => {
-            si.elements
-                .iter()
-                .filter_map(|f| {
-                    if let ElementMetaVariant::Type { type_, .. } = &f.variant {
-                        if Walk::new(types, cache).is_loop(ident, type_) {
-                            return Some(f.ident.clone());
-                        }
-                    }
-
-                    None
-                })
-                .collect()
-        }
-        _ => HashSet::new(),
-    }
-}
 
 fn make_type_name(postfixes: &[String], ty: &MetaType, ident: &Ident) -> Name {
     if let MetaTypeVariant::Reference(ti) = &ty.variant {

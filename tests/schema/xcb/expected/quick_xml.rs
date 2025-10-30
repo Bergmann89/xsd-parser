@@ -834,10 +834,10 @@ pub struct OpType {
 #[derive(Debug)]
 pub enum OpTypeContent {
     Op(Box<OpType>),
-    Unop(Box<UnopType>),
+    Unop(UnopType),
     Fieldref(String),
     Enumref(EnumrefType),
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     Sumof(SumofType),
     Value(DecOrHexIntegerType),
     Bit(i32),
@@ -889,7 +889,7 @@ pub enum UnopTypeContent {
     Unop(Box<UnopType>),
     Fieldref(String),
     Enumref(EnumrefType),
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     Sumof(SumofType),
     Value(DecOrHexIntegerType),
     Bit(i32),
@@ -14280,9 +14280,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_unop(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Unop(Box::new(values.ok_or_else(
-                        || ErrorKind::MissingElement("unop".into()),
-                    )?)))
+                    Ok(super::OpTypeContent::Unop(
+                        values.ok_or_else(|| ErrorKind::MissingElement("unop".into()))?,
+                    ))
                 }
                 S::Fieldref(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -14307,9 +14307,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::OpTypeContent::Popcount(Box::new(
-                        values.ok_or_else(|| ErrorKind::MissingElement("popcount".into()))?,
-                    )))
+                    Ok(super::OpTypeContent::Popcount(values.ok_or_else(|| {
+                        ErrorKind::MissingElement("popcount".into())
+                    })?))
                 }
                 S::Sumof(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -15406,9 +15406,9 @@ pub mod quick_xml_deserialize {
                         let value = deserializer.finish(reader)?;
                         Self::store_popcount(&mut values, value)?;
                     }
-                    Ok(super::UnopTypeContent::Popcount(Box::new(
-                        values.ok_or_else(|| ErrorKind::MissingElement("popcount".into()))?,
-                    )))
+                    Ok(super::UnopTypeContent::Popcount(values.ok_or_else(
+                        || ErrorKind::MissingElement("popcount".into()),
+                    )?))
                 }
                 S::Sumof(mut values, deserializer) => {
                     if let Some(deserializer) = deserializer {
@@ -21759,7 +21759,7 @@ pub mod quick_xml_serialize {
                         }
                         super::OpTypeContent::Unop(x) => {
                             *self.state = OpTypeContentSerializerState::Unop(
-                                WithSerializer::serializer(&**x, Some("unop"), false)?,
+                                WithSerializer::serializer(x, Some("unop"), false)?,
                             )
                         }
                         super::OpTypeContent::Fieldref(x) => {
@@ -21774,7 +21774,7 @@ pub mod quick_xml_serialize {
                         }
                         super::OpTypeContent::Popcount(x) => {
                             *self.state = OpTypeContentSerializerState::Popcount(
-                                WithSerializer::serializer(&**x, Some("popcount"), false)?,
+                                WithSerializer::serializer(x, Some("popcount"), false)?,
                             )
                         }
                         super::OpTypeContent::Sumof(x) => {
@@ -21944,7 +21944,7 @@ pub mod quick_xml_serialize {
                         }
                         super::UnopTypeContent::Popcount(x) => {
                             *self.state = UnopTypeContentSerializerState::Popcount(
-                                WithSerializer::serializer(&**x, Some("popcount"), false)?,
+                                WithSerializer::serializer(x, Some("popcount"), false)?,
                             )
                         }
                         super::UnopTypeContent::Sumof(x) => {

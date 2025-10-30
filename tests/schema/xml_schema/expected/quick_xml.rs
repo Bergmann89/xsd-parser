@@ -690,7 +690,7 @@ pub struct ListElementType {
     pub id: Option<String>,
     pub item_type: Option<String>,
     pub annotation: Option<AnnotationElementType>,
-    pub simple_type: Option<SimpleBaseType>,
+    pub simple_type: Option<Box<SimpleBaseType>>,
 }
 impl WithDeserializer for ListElementType {
     type Deserializer = quick_xml_deserialize::ListElementTypeDeserializer;
@@ -15869,7 +15869,7 @@ pub mod quick_xml_deserialize {
                 id: self.id,
                 item_type: self.item_type,
                 annotation: self.annotation,
-                simple_type: self.simple_type,
+                simple_type: self.simple_type.map(Box::new),
             })
         }
     }

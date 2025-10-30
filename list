@@ -1,7 +1,0 @@
-any: Any elements are not supported
-dynamic_types: Dynamic types are not supported
-enumeration: Complicated Type/Interface?
-mixed_content: Mixed types are not supported
-mixed_content_groups: Mixed types are not supported
-nillable: Nillable types are not supported
-static_list: Array types are not supported

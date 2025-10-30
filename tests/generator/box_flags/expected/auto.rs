@@ -6,7 +6,7 @@ pub struct MyChoiceType {
 pub enum MyChoiceTypeContent {
     A(i32),
     B(String),
-    C(Box<MySequenceType>),
+    C(MySequenceType),
 }
 #[derive(Debug)]
 pub struct MySequenceType {

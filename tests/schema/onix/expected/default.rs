@@ -14276,11 +14276,11 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum FontstyleElement {
-        Tt(AbbrElementType),
-        I(AbbrElementType),
-        B(AbbrElementType),
-        Big(AbbrElementType),
-        Small(AbbrElementType),
+        Tt(Box<AbbrElementType>),
+        I(Box<AbbrElementType>),
+        B(Box<AbbrElementType>),
+        Big(Box<AbbrElementType>),
+        Small(Box<AbbrElementType>),
     }
     #[derive(Debug)]
     pub struct QElementType {
@@ -19863,19 +19863,19 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum PhraseElement {
-        Em(AbbrElementType),
-        Strong(AbbrElementType),
-        Dfn(AbbrElementType),
-        Code(AbbrElementType),
-        Samp(AbbrElementType),
-        Kbd(AbbrElementType),
-        Var(AbbrElementType),
-        Cite(AbbrElementType),
-        Abbr(AbbrElementType),
-        Acronym(AbbrElementType),
-        Q(QElementType),
-        Sub(AbbrElementType),
-        Sup(AbbrElementType),
+        Em(Box<AbbrElementType>),
+        Strong(Box<AbbrElementType>),
+        Dfn(Box<AbbrElementType>),
+        Code(Box<AbbrElementType>),
+        Samp(Box<AbbrElementType>),
+        Kbd(Box<AbbrElementType>),
+        Var(Box<AbbrElementType>),
+        Cite(Box<AbbrElementType>),
+        Abbr(Box<AbbrElementType>),
+        Acronym(Box<AbbrElementType>),
+        Q(Box<QElementType>),
+        Sub(Box<AbbrElementType>),
+        Sup(Box<AbbrElementType>),
     }
     #[derive(Debug)]
     pub enum TFrame {
@@ -19948,11 +19948,11 @@ pub mod onix {
     }
     #[derive(Debug)]
     pub enum SpecialElement {
-        Span(AbbrElementType),
-        Bdo(BdoElementType),
+        Span(Box<AbbrElementType>),
+        Bdo(Box<BdoElementType>),
         Br(BrElementType),
         Img(ImgElementType),
-        Map(MapElementType),
+        Map(Box<MapElementType>),
     }
     #[derive(Debug)]
     pub struct RubyContent363 {
@@ -23950,7 +23950,7 @@ pub mod onix {
     #[derive(Debug)]
     pub struct RubyContent365 {
         pub rp: RpElementType,
-        pub rt: RtElementType,
+        pub rt: Box<RtElementType>,
     }
     #[derive(Debug)]
     pub enum NameIdTypeRefname {
