@@ -3132,7 +3132,8 @@ impl ComplexDataElement<'_> {
         let target_type = ctx.resolve_type_for_deserialize_module(&self.target_type);
         let target_type = match self.occurs {
             Occurs::Single | Occurs::Optional => quote!(Option<#target_type>),
-            Occurs::DynamicList | Occurs::StaticList(_) => quote!(Vec<#target_type>),
+            Occurs::StaticList(_) if self.need_indirection => quote!(Vec<Box<#target_type>>),
+            Occurs::StaticList(_) | Occurs::DynamicList => quote!(Vec<#target_type>),
             e => crate::unreachable!("{:?}", e),
         };
 
@@ -3269,6 +3270,9 @@ impl ComplexDataElement<'_> {
                     self.#field_ident = Some(value);
                 }
             }
+            Occurs::StaticList(_) if self.need_indirection => quote! {
+                self.#field_ident.push(Box::new(value));
+            },
             Occurs::DynamicList | Occurs::StaticList(_) => quote! {
                 self.#field_ident.push(value);
             },
