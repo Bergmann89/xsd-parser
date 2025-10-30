@@ -2,6 +2,7 @@ use std::borrow::Cow;
 use std::fmt::Debug;
 use std::io::Write;
 use std::mem::replace;
+use std::ops::Deref;
 
 use quick_xml::{
     escape::escape,
@@ -381,6 +382,39 @@ where
             name,
             iter: value.into_iter(),
         }
+    }
+}
+
+/* DerefIter */
+
+/// An iterator that emits the dereferenced item of `T`.
+///
+/// This implements [`Option::as_deref`] for iterators.
+#[derive(Debug)]
+pub struct DerefIter<T>(pub T::IntoIter)
+where
+    T: IntoIterator;
+
+impl<T> DerefIter<T>
+where
+    T: IntoIterator,
+{
+    /// Create a new [`DerefIter`] from the passed `inner` value.
+    pub fn new(inner: T) -> Self {
+        Self(inner.into_iter())
+    }
+}
+
+impl<'x, T, TItem> Iterator for DerefIter<T>
+where
+    T: IntoIterator,
+    T::IntoIter: Iterator<Item = &'x TItem>,
+    TItem: Deref + 'x,
+{
+    type Item = &'x TItem::Target;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next().map(Deref::deref)
     }
 }
 

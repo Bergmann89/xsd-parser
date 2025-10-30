@@ -904,9 +904,10 @@ impl ComplexDataStruct<'_> {
 
 impl ComplexDataContent<'_> {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> Option<TokenStream> {
-        let serializer = self
-            .occurs
-            .make_serializer_type(&ctx.resolve_type_for_serialize_module(&self.target_type))?;
+        let serializer = self.occurs.make_serializer_type(
+            &ctx.resolve_type_for_serialize_module(&self.target_type),
+            false,
+        )?;
 
         Some(quote! {
             Content__(#serializer),
@@ -963,7 +964,9 @@ impl ComplexDataElement<'_> {
     fn render_serializer_state_variant(&self, ctx: &Context<'_, '_>) -> TokenStream {
         let target_type = ctx.resolve_type_for_serialize_module(&self.target_type);
         let variant_ident = &self.variant_ident;
-        let serializer = self.occurs.make_serializer_type(&target_type);
+        let serializer = self
+            .occurs
+            .make_serializer_type(&target_type, self.need_indirection);
 
         quote! {
             #variant_ident(#serializer),
@@ -1039,6 +1042,22 @@ impl ComplexDataElement<'_> {
                     )
                 }
             }
+            Occurs::StaticList(_) if self.need_indirection => {
+                ctx.add_quick_xml_serialize_usings([
+                    "xsd_parser::quick_xml::DerefIter",
+                    "xsd_parser::quick_xml::IterSerializer",
+                ]);
+
+                quote! {
+                    *self.state = #state_ident::#variant_ident(
+                        IterSerializer::new(
+                            DerefIter::new(#value),
+                            Some(#field_name),
+                            #is_root
+                        )
+                    )
+                }
+            }
             Occurs::Optional | Occurs::DynamicList | Occurs::StaticList(_) => {
                 ctx.add_quick_xml_serialize_usings(["xsd_parser::quick_xml::IterSerializer"]);
 
@@ -1057,13 +1076,20 @@ impl ComplexDataElement<'_> {
 }
 
 impl Occurs {
-    fn make_serializer_type(&self, target_type: &TokenStream) -> Option<TokenStream> {
+    fn make_serializer_type(
+        &self,
+        target_type: &TokenStream,
+        need_indirection: bool,
+    ) -> Option<TokenStream> {
         match self {
             Occurs::None => None,
             Occurs::Single => Some(quote!(<#target_type as WithSerializer>::Serializer<'ser>)),
             Occurs::Optional => {
                 Some(quote!(IterSerializer<'ser, Option<&'ser #target_type>, #target_type>))
             }
+            Occurs::StaticList(..) if need_indirection => Some(
+                quote!(IterSerializer<'ser, DerefIter<&'ser [Box<#target_type>]>, #target_type>),
+            ),
             Occurs::DynamicList | Occurs::StaticList(..) => {
                 Some(quote!(IterSerializer<'ser, &'ser [#target_type], #target_type>))
             }
