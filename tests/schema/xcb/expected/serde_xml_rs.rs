@@ -396,13 +396,13 @@ pub enum OpTypeContent {
     #[serde(rename = "op")]
     Op(Box<OpType>),
     #[serde(rename = "unop")]
-    Unop(Box<UnopType>),
+    Unop(UnopType),
     #[serde(rename = "fieldref")]
     Fieldref(String),
     #[serde(rename = "enumref")]
     Enumref(EnumrefType),
     #[serde(rename = "popcount")]
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     #[serde(rename = "sumof")]
     Sumof(SumofType),
     #[serde(rename = "value")]
@@ -428,7 +428,7 @@ pub enum UnopTypeContent {
     #[serde(rename = "enumref")]
     Enumref(EnumrefType),
     #[serde(rename = "popcount")]
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     #[serde(rename = "sumof")]
     Sumof(SumofType),
     #[serde(rename = "value")]

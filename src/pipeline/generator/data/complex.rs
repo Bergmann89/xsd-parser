@@ -170,7 +170,7 @@ impl<'types> ComplexData<'types> {
         let base = ComplexBase::new(ctx, false, false, form)?;
         let occurs = Occurs::from_occurs(min_occurs, max_occurs);
 
-        let content_ref = ctx.get_or_create_type_ref(simple_type)?;
+        let content_ref = ctx.get_or_create_type_ref_for_value(simple_type, occurs.is_direct())?;
         let target_type = content_ref.path.clone();
 
         let mut allow_any_attribute = false;
@@ -572,7 +572,7 @@ impl<'types> ComplexDataElement<'types> {
         let field_ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
         let variant_ident = format_variant_ident(&meta.ident.name, meta.display_name.as_deref());
 
-        let (target_type, target_is_dynamic) = match &meta.variant {
+        let (target_type, target_is_dynamic, need_box) = match &meta.variant {
             ElementMetaVariant::Any { .. } => {
                 let Some(type_) = ctx.any_type.as_ref() else {
                     *allow_any = true;
@@ -585,38 +585,41 @@ impl<'types> ComplexDataElement<'types> {
                     .with_using(format!("{type_}"));
 
                 let target_is_dynamic = false;
+                let need_box = false;
 
-                (target_type, target_is_dynamic)
+                (target_type, target_is_dynamic, need_box)
             }
             ElementMetaVariant::Type { type_, mode } => {
                 let mixed = mixed && *mode == ElementMode::Element;
                 let nillable = meta.nillable
                     && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
 
-                let target_ref = ctx.get_or_create_type_ref(type_)?;
+                if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
+                    occurs = Occurs::Optional;
+                }
+
+                let (target_ref, need_box) = ctx.get_or_create_type_ref_for_element(
+                    type_,
+                    !force_box && direct_usage && occurs.is_direct(),
+                )?;
 
                 let target_type = target_ref.path.clone();
                 let target_type = PathData::from_path_data_mixed(mixed, target_type);
                 let target_type = PathData::from_path_data_nillable(nillable, target_type);
 
-                if occurs == Occurs::Single && ctx.types.group_has_only_optional_elements(type_) {
-                    occurs = Occurs::Optional;
-                }
-
                 let target_is_dynamic = is_dynamic(type_, ctx.types);
 
-                (target_type, target_is_dynamic)
+                (target_type, target_is_dynamic, need_box)
             }
             ElementMetaVariant::Text => {
                 let target_type = PathData::text();
-
                 let target_is_dynamic = false;
+                let need_box = false;
 
-                (target_type, target_is_dynamic)
+                (target_type, target_is_dynamic, need_box)
             }
         };
 
-        let need_box = ctx.current_type_ref().boxed_elements.contains(&meta.ident);
         let need_indirection = (direct_usage && need_box) || force_box;
 
         Ok(Some(Self {

@@ -481,8 +481,8 @@ pub mod page {
         Pattern(CtPatternXType),
         AxialShd(CtAxialShdXType),
         RadialShd(CtRadialShdXType),
-        GouraudShd(Box<CtGouraudShdXType>),
-        LaGourandShd(Box<CtLaGouraudShdXType>),
+        GouraudShd(CtGouraudShdXType),
+        LaGourandShd(CtLaGouraudShdXType),
     }
     #[derive(Debug)]
     pub struct CtCompositeXType {
@@ -685,7 +685,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtAxialShdSegmentXElementType {
         pub position: Option<::core::primitive::f64>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     #[derive(Debug)]
     pub struct CtClipAreaXElementType {
@@ -723,7 +723,7 @@ pub mod page {
         pub x: ::core::primitive::f64,
         pub y: ::core::primitive::f64,
         pub edge_flag: Option<CtGouraudShdPointEdgeFlagXType>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     #[derive(Debug)]
     pub struct CtImageBorderXElementType {
@@ -738,7 +738,7 @@ pub mod page {
     pub struct CtLaGouraudShdPointXElementType {
         pub x: Option<::core::primitive::f64>,
         pub y: Option<::core::primitive::f64>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     #[derive(Debug)]
     pub enum CtLayerTypeXType {

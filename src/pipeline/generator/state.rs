@@ -1,5 +1,7 @@
-use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, VecDeque};
 use std::ops::Deref;
+
+use bit_set::BitSet;
 
 use crate::models::{
     data::PathData,
@@ -14,6 +16,7 @@ pub(super) struct State<'types> {
     pub cache: BTreeMap<Ident, TypeRef>,
     pub pending: VecDeque<PendingType<'types>>,
     pub trait_infos: Option<TraitInfos>,
+    pub loop_detection: LoopDetection,
 }
 
 /* PendingType */
@@ -28,8 +31,27 @@ pub(super) struct PendingType<'types> {
 
 #[derive(Debug)]
 pub(super) struct TypeRef {
+    pub id: usize,
     pub path: PathData,
-    pub boxed_elements: HashSet<Ident>,
+    pub reachable: BitSet<u64>,
+}
+
+impl TypeRef {
+    pub(super) fn new_pending(id: usize, path: PathData) -> Self {
+        Self {
+            id,
+            path,
+            reachable: BitSet::default(),
+        }
+    }
+
+    pub(super) fn new_fixed(id: usize, path: PathData) -> Self {
+        Self {
+            id,
+            path,
+            reachable: BitSet::default(),
+        }
+    }
 }
 
 /* TraitInfos */
@@ -119,4 +141,47 @@ impl Deref for TraitInfos {
 pub(super) struct TraitInfo {
     pub traits_all: BTreeSet<Ident>,
     pub traits_direct: BTreeSet<Ident>,
+}
+
+/* LoopDetection */
+
+#[derive(Debug, Default)]
+pub(super) struct LoopDetection {
+    pub types: Vec<Ident>,
+}
+
+impl LoopDetection {
+    pub(super) fn next_id(&mut self, ident: Ident) -> usize {
+        let ret = self.types.len();
+
+        self.types.push(ident);
+
+        ret
+    }
+
+    pub(super) fn get_reachable(
+        &self,
+        cache: &BTreeMap<Ident, TypeRef>,
+        ident: &Ident,
+    ) -> BitSet<u64> {
+        let type_ref = cache.get(ident).unwrap();
+        let mut reachable = BitSet::default();
+        reachable.insert(type_ref.id);
+
+        for id in type_ref.reachable.iter() {
+            let ident = &self.types[id];
+            let type_ref = cache.get(ident).unwrap();
+            reachable.insert(id);
+            reachable.union_with(&type_ref.reachable);
+        }
+
+        // TODO
+        // println!(
+        //     "render_type(ident={ident})\n    id={}\n    reachable={:?}",
+        //     type_ref.id,
+        //     reachable.iter().collect::<Vec<_>>()
+        // );
+
+        reachable
+    }
 }

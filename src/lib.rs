@@ -352,6 +352,8 @@ pub fn exec_generator<'types>(
 ///
 /// Returns a suitable [`Error`] type if the process was not successful.
 pub fn exec_render(config: RendererConfig, types: &DataTypes<'_>) -> Result<Module, RendererError> {
+    tracing::info!("Render Module");
+
     let mut renderer = Renderer::new(types)
         .flags(config.flags)
         .xsd_parser_crate(config.xsd_parser);

@@ -23,6 +23,7 @@ update-expectations = [ ]
 [dependencies]
 anyhow = "1.0"
 bitflags = "2.7"
+bit-set = "0.8"
 encoding_rs = "0.8"
 futures = "0.3"
 indexmap = "2.9"

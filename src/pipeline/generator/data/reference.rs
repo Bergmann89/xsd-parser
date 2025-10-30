@@ -17,7 +17,7 @@ impl<'types> ReferenceData<'types> {
             meta.nillable && ctx.check_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT);
         let type_ident = ctx.current_type_ref().path.ident().clone();
 
-        let target_ref = ctx.get_or_create_type_ref(&meta.type_)?;
+        let target_ref = ctx.get_or_create_type_ref_for_value(&meta.type_, occurs.is_direct())?;
         let target_type = target_ref.path.clone();
         let target_type = PathData::from_path_data_nillable(nillable, target_type);
 

@@ -242,10 +242,10 @@ pub struct OpType {
 #[derive(Debug)]
 pub enum OpTypeContent {
     Op(Box<OpType>),
-    Unop(Box<UnopType>),
+    Unop(UnopType),
     Fieldref(String),
     Enumref(EnumrefType),
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     Sumof(SumofType),
     Value(DecOrHexIntegerType),
     Bit(i32),
@@ -261,7 +261,7 @@ pub enum UnopTypeContent {
     Unop(Box<UnopType>),
     Fieldref(String),
     Enumref(EnumrefType),
-    Popcount(Box<PopcountType>),
+    Popcount(PopcountType),
     Sumof(SumofType),
     Value(DecOrHexIntegerType),
     Bit(i32),

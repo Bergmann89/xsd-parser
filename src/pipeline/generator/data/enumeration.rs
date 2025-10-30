@@ -46,7 +46,7 @@ impl EnumerationMetaVariant {
             Use::Prohibited => None,
             Use::Required | Use::Optional => {
                 let type_ref = if let Some(t) = &self.type_ {
-                    match ctx.get_or_create_type_ref(t) {
+                    match ctx.get_or_create_type_ref_for_value(t, true) {
                         Ok(target_ref) => Some(target_ref),
                         Err(error) => return Some(Err(error)),
                     }

@@ -1,9 +1,12 @@
+use std::collections::BTreeMap;
 use std::ops::Deref;
 
+use bit_set::BitSet;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use crate::config::GeneratorFlags;
+use crate::models::schema::xs::Use;
 use crate::models::{
     code::{format_variant_ident, ModuleIdent, ModulePath},
     data::Occurs,
@@ -23,6 +26,7 @@ pub struct Context<'a, 'types> {
     pub ident: &'a Ident,
 
     state: &'a mut State<'types>,
+    reachable: BitSet<u64>,
 }
 
 impl<'a, 'types> Context<'a, 'types> {
@@ -31,7 +35,14 @@ impl<'a, 'types> Context<'a, 'types> {
         ident: &'a Ident,
         state: &'a mut State<'types>,
     ) -> Self {
-        Self { meta, ident, state }
+        let reachable = state.loop_detection.get_reachable(&state.cache, ident);
+
+        Self {
+            meta,
+            ident,
+            state,
+            reachable,
+        }
     }
 
     pub(super) fn current_module(&self) -> ModuleIdent {
@@ -54,7 +65,68 @@ impl<'a, 'types> Context<'a, 'types> {
     }
 
     pub(super) fn get_or_create_type_ref(&mut self, ident: &Ident) -> Result<&TypeRef, Error> {
-        self.state.get_or_create_type_ref(self.meta, ident)
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        // TODO println!("    get_or_create_type_ref(ident={ident})");
+
+        Ok(type_ref)
+    }
+
+    pub(super) fn get_or_create_type_ref_for_value(
+        &mut self,
+        ident: &Ident,
+        by_value: bool,
+    ) -> Result<&TypeRef, Error> {
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        // TODO
+        // println!(
+        //     "    get_or_create_type_ref_for_value(ident={ident}, id={}, by_value={by_value})",
+        //     type_ref.id
+        // );
+
+        if by_value {
+            // TODO
+            // println!(
+            //     "        before update = {:?}",
+            //     type_ref.reachable.iter().collect::<Vec<_>>()
+            // );
+            type_ref.reachable.union_with(&self.reachable);
+            // TODO
+            // println!(
+            //     "        after update = {:?}",
+            //     type_ref.reachable.iter().collect::<Vec<_>>()
+            // );
+        }
+
+        Ok(type_ref)
+    }
+
+    pub(super) fn get_or_create_type_ref_for_element(
+        &mut self,
+        ident: &Ident,
+        by_value: bool,
+    ) -> Result<(&TypeRef, bool), Error> {
+        let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
+        let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
+
+        // TODO println!("    get_or_create_type_ref_for_element(ident={ident}, id={}, by_value={by_value}, boxed={boxed})", type_ref.id);
+
+        if !boxed {
+            // TODO
+            // println!(
+            //     "        before update = {:?}",
+            //     type_ref.reachable.iter().collect::<Vec<_>>()
+            // );
+            type_ref.reachable.union_with(&self.reachable);
+            // TODO
+            // println!(
+            //     "        after update = {:?}",
+            //     type_ref.reachable.iter().collect::<Vec<_>>()
+            // );
+        }
+
+        Ok((type_ref, boxed))
     }
 
     pub(super) fn make_trait_impls(&mut self) -> Result<Vec<TokenStream>, Error> {
@@ -228,4 +300,61 @@ impl<'types> Deref for Context<'_, 'types> {
     fn deref(&self) -> &Self::Target {
         self.meta
     }
+}
+
+fn need_box(
+    reachable: &mut BitSet<u64>,
+    cache: &BTreeMap<Ident, TypeRef>,
+    meta: &MetaData<'_>,
+    ident: &Ident,
+) -> bool {
+    let Some(ty) = meta.types.items.get(ident) else {
+        return false;
+    };
+
+    let Some(type_ref) = cache.get(ident) else {
+        return false;
+    };
+
+    if !reachable.insert(type_ref.id) {
+        return true;
+    }
+
+    let mut ret = false;
+
+    match &ty.variant {
+        MetaTypeVariant::Reference(x) => {
+            let occurs = Occurs::from_occurs(x.min_occurs, x.max_occurs);
+
+            if occurs.is_direct() {
+                ret = need_box(reachable, cache, meta, &x.type_);
+            }
+        }
+        MetaTypeVariant::Union(x) => {
+            for var in x.types.iter() {
+                ret = ret || need_box(reachable, cache, meta, &var.type_);
+            }
+        }
+        MetaTypeVariant::Enumeration(x) => {
+            for var in x.variants.iter() {
+                if let Some(type_) = &var.type_ {
+                    if var.use_ != Use::Prohibited {
+                        ret = ret || need_box(reachable, cache, meta, type_);
+                    }
+                }
+            }
+        }
+        MetaTypeVariant::All(_)
+        | MetaTypeVariant::Choice(_)
+        | MetaTypeVariant::Sequence(_)
+        | MetaTypeVariant::ComplexType(_)
+        | MetaTypeVariant::Dynamic(_)
+        | MetaTypeVariant::SimpleType(_)
+        | MetaTypeVariant::BuildIn(_)
+        | MetaTypeVariant::Custom(_) => (),
+    }
+
+    reachable.remove(type_ref.id);
+
+    ret
 }

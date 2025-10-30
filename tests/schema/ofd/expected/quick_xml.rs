@@ -24004,8 +24004,8 @@ pub mod page {
         Pattern(CtPatternXType),
         AxialShd(CtAxialShdXType),
         RadialShd(CtRadialShdXType),
-        GouraudShd(Box<CtGouraudShdXType>),
-        LaGourandShd(Box<CtLaGouraudShdXType>),
+        GouraudShd(CtGouraudShdXType),
+        LaGourandShd(CtLaGouraudShdXType),
     }
     impl CtColorXType {
         #[must_use]
@@ -24802,7 +24802,7 @@ pub mod page {
     #[derive(Debug)]
     pub struct CtAxialShdSegmentXElementType {
         pub position: Option<::core::primitive::f64>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     impl WithSerializer for CtAxialShdSegmentXElementType {
         type Serializer<'x> = quick_xml_serialize::CtAxialShdSegmentXElementTypeSerializer<'x>;
@@ -24987,7 +24987,7 @@ pub mod page {
         pub x: ::core::primitive::f64,
         pub y: ::core::primitive::f64,
         pub edge_flag: Option<CtGouraudShdPointEdgeFlagXType>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     impl WithSerializer for CtGouraudShdPointXElementType {
         type Serializer<'x> = quick_xml_serialize::CtGouraudShdPointXElementTypeSerializer<'x>;
@@ -25062,7 +25062,7 @@ pub mod page {
     pub struct CtLaGouraudShdPointXElementType {
         pub x: Option<::core::primitive::f64>,
         pub y: Option<::core::primitive::f64>,
-        pub color: CtColorXType,
+        pub color: Box<CtColorXType>,
     }
     impl WithSerializer for CtLaGouraudShdPointXElementType {
         type Serializer<'x> = quick_xml_serialize::CtLaGouraudShdPointXElementTypeSerializer<'x>;
@@ -26943,19 +26943,19 @@ pub mod page {
                             let value = deserializer.finish(reader)?;
                             Self::store_gouraud_shd(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::GouraudShd(Box::new(
-                            values.ok_or_else(|| ErrorKind::MissingElement("GouraudShd".into()))?,
-                        )))
+                        Ok(super::CtColorXTypeContent::GouraudShd(values.ok_or_else(
+                            || ErrorKind::MissingElement("GouraudShd".into()),
+                        )?))
                     }
                     S::LaGourandShd(mut values, deserializer) => {
                         if let Some(deserializer) = deserializer {
                             let value = deserializer.finish(reader)?;
                             Self::store_la_gourand_shd(&mut values, value)?;
                         }
-                        Ok(super::CtColorXTypeContent::LaGourandShd(Box::new(
+                        Ok(super::CtColorXTypeContent::LaGourandShd(
                             values
                                 .ok_or_else(|| ErrorKind::MissingElement("LaGourandShd".into()))?,
-                        )))
+                        ))
                     }
                     S::Done__(data) => Ok(data),
                     S::Unknown__ => unreachable!(),
@@ -34741,9 +34741,10 @@ pub mod page {
                 self.finish_state(reader, state)?;
                 Ok(super::CtAxialShdSegmentXElementType {
                     position: self.position,
-                    color: self
-                        .color
-                        .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    color: Box::new(
+                        self.color
+                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    ),
                 })
             }
         }
@@ -35996,9 +35997,10 @@ pub mod page {
                     x: self.x,
                     y: self.y,
                     edge_flag: self.edge_flag,
-                    color: self
-                        .color
-                        .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    color: Box::new(
+                        self.color
+                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    ),
                 })
             }
         }
@@ -36513,9 +36515,10 @@ pub mod page {
                 Ok(super::CtLaGouraudShdPointXElementType {
                     x: self.x,
                     y: self.y,
-                    color: self
-                        .color
-                        .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    color: Box::new(
+                        self.color
+                            .ok_or_else(|| ErrorKind::MissingElement("Color".into()))?,
+                    ),
                 })
             }
         }
@@ -43503,12 +43506,12 @@ pub mod page {
                             }
                             super::CtColorXTypeContent::GouraudShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::GouraudShd(
-                                    WithSerializer::serializer(&**x, Some("GouraudShd"), false)?,
+                                    WithSerializer::serializer(x, Some("GouraudShd"), false)?,
                                 )
                             }
                             super::CtColorXTypeContent::LaGourandShd(x) => {
                                 *self.state = CtColorXTypeContentSerializerState::LaGourandShd(
-                                    WithSerializer::serializer(&**x, Some("LaGourandShd"), false)?,
+                                    WithSerializer::serializer(x, Some("LaGourandShd"), false)?,
                                 )
                             }
                         },
@@ -45064,7 +45067,7 @@ pub mod page {
                         CtAxialShdSegmentXElementTypeSerializerState::Init__ => {
                             *self.state = CtAxialShdSegmentXElementTypeSerializerState::Color(
                                 WithSerializer::serializer(
-                                    &self.value.color,
+                                    &*self.value.color,
                                     Some("Color"),
                                     false,
                                 )?,
@@ -45404,7 +45407,7 @@ pub mod page {
                         CtGouraudShdPointXElementTypeSerializerState::Init__ => {
                             *self.state = CtGouraudShdPointXElementTypeSerializerState::Color(
                                 WithSerializer::serializer(
-                                    &self.value.color,
+                                    &*self.value.color,
                                     Some("Color"),
                                     false,
                                 )?,
@@ -45558,7 +45561,7 @@ pub mod page {
                         CtLaGouraudShdPointXElementTypeSerializerState::Init__ => {
                             *self.state = CtLaGouraudShdPointXElementTypeSerializerState::Color(
                                 WithSerializer::serializer(
-                                    &self.value.color,
+                                    &*self.value.color,
                                     Some("Color"),
                                     false,
                                 )?,
