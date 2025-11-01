@@ -5,11 +5,11 @@ mod serde;
 mod types;
 mod with_namespace_trait;
 
-use std::fmt::Display;
 use std::ops::Bound;
+use std::str::FromStr;
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use quote::{quote, ToTokens};
 
 use crate::config::RendererFlags;
 use crate::models::{
@@ -335,9 +335,11 @@ impl ConstrainsData<'_> {
 fn get_derive<I>(ctx: &Context<'_, '_>, extra: I) -> TokenStream
 where
     I: IntoIterator,
-    I::Item: Display,
+    I::Item: AsRef<str>,
 {
-    let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+    let extra = extra
+        .into_iter()
+        .map(|x| IdentPath::from_str(x.as_ref()).expect("Invalid identifier path"));
     let types = ctx.derive.iter().cloned().chain(extra);
 
     let types = match &ctx.data.derive {

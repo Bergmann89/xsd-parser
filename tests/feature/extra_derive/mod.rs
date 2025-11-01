@@ -1,10 +1,11 @@
 use std::path::PathBuf;
+use std::str::FromStr;
 
-use quote::{format_ident, ToTokens};
+use quote::ToTokens;
 use xsd_parser::{
     config::{IdentTriple, OptimizerFlags, Schema},
     exec_generator, exec_interpreter, exec_optimizer, exec_parser, exec_render,
-    models::data::ConfigValue,
+    models::{code::IdentPath, data::ConfigValue},
     Config, IdentType,
 };
 
@@ -46,10 +47,10 @@ fn generate_default() {
         .get_mut(&ident)
         .expect("Unable to get data type");
     data_type.derive = ConfigValue::Extend(vec![
-        format_ident!("Default"),
-        format_ident!("Eq"),
-        format_ident!("PartialEq"),
-        format_ident!("Hash"),
+        IdentPath::from_str("Default").unwrap(),
+        IdentPath::from_str("Eq").unwrap(),
+        IdentPath::from_str("PartialEq").unwrap(),
+        IdentPath::from_str("Hash").unwrap(),
     ]);
 
     // Set overwrite derive for `tns:BarType`

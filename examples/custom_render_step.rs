@@ -22,23 +22,27 @@
 
 #![allow(missing_docs)]
 
-use std::fmt::Display;
 use std::fs::write;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use anyhow::Error;
 use clap::Parser as ClapParser;
 use proc_macro2::{Ident as Ident2, TokenStream};
-use quote::{format_ident, quote, ToTokens};
+use quote::{quote, ToTokens};
 use tracing_subscriber::{fmt, EnvFilter};
 
 use xsd_parser::{
     config::{GeneratorFlags, OptimizerFlags, ParserFlags, Schema, TypedefMode},
     generate,
-    models::data::{
-        ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-        ComplexDataStruct, CustomData, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
+    models::{
+        code::IdentPath,
+        data::{
+            ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
+            ComplexDataEnum, ComplexDataStruct, CustomData, DataTypeVariant, DynamicData,
+            EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData,
+            UnionTypeVariant,
+        },
     },
     pipeline::renderer::{Context, RenderStep, RenderStepType},
     Config,
@@ -493,9 +497,11 @@ impl CustomRenderStep {
 fn get_derive<I>(ctx: &Context<'_, '_>, extra: I) -> TokenStream
 where
     I: IntoIterator,
-    I::Item: Display,
+    I::Item: AsRef<str>,
 {
-    let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+    let extra = extra
+        .into_iter()
+        .map(|x| IdentPath::from_str(x.as_ref()).expect("Invalid identifier path"));
     let types = ctx.derive.iter().cloned().chain(extra).collect::<Vec<_>>();
 
     if types.is_empty() {

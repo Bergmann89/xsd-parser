@@ -7,8 +7,8 @@ use quote::{format_ident, quote, ToTokens};
 use smallvec::SmallVec;
 use thiserror::Error;
 
-use crate::models::code::format_module_ident;
 use crate::models::{
+    code::format_module_ident,
     meta::MetaTypes,
     schema::{NamespaceId, SchemaId},
     Ident,
