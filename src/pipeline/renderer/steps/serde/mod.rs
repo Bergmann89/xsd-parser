@@ -2,7 +2,6 @@ mod quick_xml;
 mod serde_xml_rs_v7;
 mod serde_xml_rs_v8;
 
-use std::fmt::Display;
 use std::str::FromStr;
 
 use proc_macro2::TokenStream;
@@ -36,7 +35,6 @@ impl ComplexDataContent<'_> {
 fn get_derive<I>(ctx: &Context<'_, '_>, extra: I) -> TokenStream
 where
     I: IntoIterator<Item = &'static str>,
-    I::Item: Display,
 {
     ctx.add_usings([quote!(serde::Serialize), quote!(serde::Deserialize)]);
 

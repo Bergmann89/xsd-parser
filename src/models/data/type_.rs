@@ -1,8 +1,6 @@
 use std::ops::Deref;
 
-use proc_macro2::Ident as Ident2;
-
-use crate::models::meta::MetaType;
+use crate::models::{code::IdentPath, meta::MetaType};
 
 use super::{
     BuildInData, ComplexData, ConfigValue, CustomData, DynamicData, EnumerationData, ReferenceData,
@@ -24,7 +22,7 @@ pub struct DataType<'types> {
     pub meta: &'types MetaType,
 
     /// Defines traits to derive the type from.
-    pub derive: ConfigValue<Vec<Ident2>>,
+    pub derive: ConfigValue<Vec<IdentPath>>,
 
     /// The variant of the data type.
     pub variant: DataTypeVariant<'types>,
