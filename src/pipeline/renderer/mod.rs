@@ -72,7 +72,7 @@ impl<'types> Renderer<'types> {
         let meta = MetaData {
             types,
             flags: RendererFlags::empty(),
-            derive: vec![format_ident!("Debug")],
+            derive: vec![IdentPath::from_ident(format_ident!("Debug"))],
             dyn_type_traits: Vec::new(),
             xsd_parser_crate: format_ident!("xsd_parser"),
         };
@@ -136,7 +136,10 @@ impl<'types> Renderer<'types> {
         I: IntoIterator,
         I::Item: Display,
     {
-        self.meta.derive = value.into_iter().map(|x| format_ident!("{x}")).collect();
+        self.meta.derive = value
+            .into_iter()
+            .map(|x| IdentPath::from_str(&x.to_string()).expect("Invalid identifier path"))
+            .collect();
 
         self
     }
@@ -200,13 +203,11 @@ impl<'types> Renderer<'types> {
                 let traits = meta.derive.iter().map(|x| match x.to_string().as_ref() {
                     "Debug" => IdentPath::from_str("core::fmt::Debug").unwrap(),
                     "Hash" => IdentPath::from_str("core::hash::Hash").unwrap(),
-                    _ => IdentPath::from_ident(x.clone()),
+                    _ => x.clone(),
                 });
 
-                let as_any = IdentPath::from_parts(
-                    Some(meta.xsd_parser_crate.clone()),
-                    format_ident!("AsAny"),
-                );
+                let as_any =
+                    IdentPath::from_parts([meta.xsd_parser_crate.clone()], format_ident!("AsAny"));
 
                 traits.chain(Some(as_any)).collect()
             }

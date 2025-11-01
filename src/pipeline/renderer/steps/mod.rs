@@ -7,6 +7,7 @@ mod with_namespace_trait;
 
 use std::fmt::Display;
 use std::ops::Bound;
+use std::str::FromStr;
 
 use proc_macro2::{Ident as Ident2, Literal, TokenStream};
 use quote::{format_ident, quote, ToTokens};
@@ -337,13 +338,20 @@ where
     I: IntoIterator,
     I::Item: Display,
 {
-    let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+    let extra = extra
+        .into_iter()
+        .map(|x| IdentPath::from_str(&x.to_string()).expect("Invalid identifier path"));
     let types = ctx.derive.iter().cloned().chain(extra);
 
     let types = match &ctx.data.derive {
         ConfigValue::Default => types.collect::<Vec<_>>(),
-        ConfigValue::Extend(extra) => types.chain(extra.iter().cloned()).collect::<Vec<_>>(),
-        ConfigValue::Overwrite(types) => types.clone(),
+        ConfigValue::Extend(extra) => types
+            .chain(extra.iter().map(|x| IdentPath::from_ident(x.clone())))
+            .collect::<Vec<_>>(),
+        ConfigValue::Overwrite(types) => types
+            .iter()
+            .map(|x| IdentPath::from_ident(x.clone()))
+            .collect::<Vec<_>>(),
     };
 
     if types.is_empty() {

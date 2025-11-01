@@ -18,7 +18,7 @@ pub struct MetaData<'types> {
     pub flags: RendererFlags,
 
     /// Traits the renderer should derive all types from.
-    pub derive: Vec<Ident2>,
+    pub derive: Vec<IdentPath>,
 
     /// List of traits that should be implemented by dynamic types.
     pub dyn_type_traits: Vec<IdentPath>,

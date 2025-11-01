@@ -35,10 +35,14 @@ use tracing_subscriber::{fmt, EnvFilter};
 use xsd_parser::{
     config::{GeneratorFlags, OptimizerFlags, ParserFlags, Schema, TypedefMode},
     generate,
-    models::data::{
-        ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement, ComplexDataEnum,
-        ComplexDataStruct, CustomData, DataTypeVariant, DynamicData, EnumerationData,
-        EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData, UnionTypeVariant,
+    models::{
+        code::IdentPath,
+        data::{
+            ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
+            ComplexDataEnum, ComplexDataStruct, CustomData, DataTypeVariant, DynamicData,
+            EnumerationData, EnumerationTypeVariant, Occurs, ReferenceData, SimpleData, UnionData,
+            UnionTypeVariant,
+        },
     },
     pipeline::renderer::{Context, RenderStep, RenderStepType},
     Config,
@@ -495,7 +499,9 @@ where
     I: IntoIterator,
     I::Item: Display,
 {
-    let extra = extra.into_iter().map(|x| format_ident!("{x}"));
+    let extra = extra
+        .into_iter()
+        .map(|x| IdentPath::from_ident(format_ident!("{x}")));
     let types = ctx.derive.iter().cloned().chain(extra).collect::<Vec<_>>();
 
     if types.is_empty() {
