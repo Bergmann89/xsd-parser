@@ -175,13 +175,6 @@ impl LoopDetection {
             reachable.union_with(&type_ref.reachable);
         }
 
-        // TODO
-        // println!(
-        //     "render_type(ident={ident})\n    id={}\n    reachable={:?}",
-        //     type_ref.id,
-        //     reachable.iter().collect::<Vec<_>>()
-        // );
-
         reachable
     }
 }
