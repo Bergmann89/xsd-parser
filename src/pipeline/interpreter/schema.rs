@@ -3,7 +3,6 @@ use std::str::from_utf8;
 
 use tracing::instrument;
 
-use crate::models::schema::SchemaId;
 use crate::models::{
     meta::{MetaType, MetaTypeVariant},
     schema::{
@@ -11,10 +10,11 @@ use crate::models::{
             AttributeGroupType, AttributeType, ComplexBaseType, ElementType, GroupType, Schema,
             SchemaContent, SimpleBaseType,
         },
-        Namespace, NamespaceId, QName, Schemas,
+        Namespace, NamespaceId, QName, SchemaId, Schemas,
     },
     Ident, IdentType, Name, RawByteStr,
 };
+use crate::traits::NameBuilderExt as _;
 
 use super::{state::StackEntry, Error, Node, State, VariantBuilder};
 

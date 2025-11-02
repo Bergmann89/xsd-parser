@@ -5,11 +5,11 @@ pub mod config;
 pub mod models;
 pub mod pipeline;
 pub mod quick_xml;
+pub mod traits;
 pub mod xml;
 
 mod macros;
 mod meta_types_printer;
-mod traits;
 
 /// Type alias for [`pipeline::renderer::Error`].
 pub type RendererError = self::pipeline::renderer::Error;
@@ -179,6 +179,10 @@ pub fn exec_interpreter(config: InterpreterConfig, schemas: &Schemas) -> Result<
     tracing::info!("Interpret Schema");
 
     let mut interpreter = Interpreter::new(schemas);
+
+    if let Some(naming) = config.naming {
+        interpreter = interpreter.with_naming_boxed(naming);
+    }
 
     if config.flags.contains(InterpreterFlags::BUILDIN_TYPES) {
         interpreter = interpreter.with_buildin_types()?;

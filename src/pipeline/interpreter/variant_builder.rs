@@ -22,9 +22,9 @@ use crate::models::{
     },
     Ident, IdentType, Name,
 };
-use crate::traits::VecHelper;
+use crate::traits::{NameBuilderExt as _, VecHelper};
 
-use super::{Error, SchemaInterpreter, StackEntry};
+use super::{name_builder::NameBuilderExt as _, Error, SchemaInterpreter, StackEntry};
 
 #[derive(Debug)]
 pub(super) struct VariantBuilder<'a, 'schema, 'state> {
@@ -1646,7 +1646,7 @@ impl<'a, 'schema, 'state> VariantBuilder<'a, 'schema, 'state> {
                     .generate_id()
                     .shared_name("Content")
             });
-        let field_name = name.clone().finish();
+        let field_name = name.finish();
         let type_name = self
             .state
             .name_builder()

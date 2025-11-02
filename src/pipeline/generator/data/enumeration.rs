@@ -2,7 +2,6 @@ use proc_macro2::Literal;
 use quote::format_ident;
 
 use crate::models::{
-    code::format_variant_ident,
     data::{ConstrainsData, EnumerationData, EnumerationTypeVariant},
     meta::{EnumerationMeta, EnumerationMetaVariant},
     schema::xs::Use,
@@ -45,6 +44,7 @@ impl EnumerationMetaVariant {
         match self.use_ {
             Use::Prohibited => None,
             Use::Required | Use::Optional => {
+                let types = ctx.types;
                 let type_ref = if let Some(t) = &self.type_ {
                     match ctx.get_or_create_type_ref_for_value(t, true) {
                         Ok(target_ref) => Some(target_ref),
@@ -61,9 +61,11 @@ impl EnumerationMetaVariant {
                 } else if self.ident.name.as_str().is_empty() {
                     *unknown += 1;
 
-                    format_ident!("Unknown{unknown}")
+                    types.naming.make_unknown_variant(*unknown)
                 } else {
-                    format_variant_ident(&self.ident.name, self.display_name.as_deref())
+                    types
+                        .naming
+                        .format_variant_ident(&self.ident.name, self.display_name.as_deref())
                 };
 
                 let s_name = self.ident.name.to_string();

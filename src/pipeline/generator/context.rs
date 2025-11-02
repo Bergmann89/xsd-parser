@@ -8,7 +8,7 @@ use quote::{format_ident, quote};
 use crate::config::GeneratorFlags;
 use crate::models::schema::xs::Use;
 use crate::models::{
-    code::{format_variant_ident, ModuleIdent, ModulePath},
+    code::{ModuleIdent, ModulePath},
     data::Occurs,
     meta::{BuildInMeta, MetaTypeVariant},
     Ident,
@@ -185,8 +185,10 @@ impl<'a, 'types> Context<'a, 'types> {
 
                 for var in &*ei.variants {
                     if var.type_.is_none() && var.ident.name.as_str() == default {
-                        let variant_ident =
-                            format_variant_ident(&var.ident.name, var.display_name.as_deref());
+                        let variant_ident = self
+                            .types
+                            .naming
+                            .format_variant_ident(&var.ident.name, var.display_name.as_deref());
 
                         return Ok(quote!(#target_type :: #variant_ident));
                     }
@@ -199,7 +201,7 @@ impl<'a, 'types> Context<'a, 'types> {
                                 Some(type_ref) if var.ident.name.is_generated() => {
                                     type_ref.path.ident().clone()
                                 }
-                                _ => format_variant_ident(
+                                _ => self.types.naming.format_variant_ident(
                                     &var.ident.name,
                                     var.display_name.as_deref(),
                                 ),
@@ -221,7 +223,10 @@ impl<'a, 'types> Context<'a, 'types> {
                             Some(type_ref) if ty.type_.name.is_generated() => {
                                 type_ref.path.ident().clone()
                             }
-                            _ => format_variant_ident(&ty.type_.name, ty.display_name.as_deref()),
+                            _ => self
+                                .types
+                                .naming
+                                .format_variant_ident(&ty.type_.name, ty.display_name.as_deref()),
                         };
 
                         return Ok(quote! {

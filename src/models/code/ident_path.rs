@@ -8,7 +8,6 @@ use smallvec::SmallVec;
 use thiserror::Error;
 
 use crate::models::{
-    code::format_module_ident,
     meta::MetaTypes,
     schema::{NamespaceId, SchemaId},
     Ident,
@@ -287,11 +286,11 @@ impl ModulePath {
         let namespace = namespace
             .and_then(|id| types.modules.get(&id))
             .and_then(|module| module.name.as_ref())
-            .map(format_module_ident);
+            .map(|name| types.naming.format_module_ident(name));
         let schema = schema
             .and_then(|id| types.schemas.get(&id))
             .and_then(|schema| schema.name.as_ref())
-            .map(format_module_ident);
+            .map(|name| types.naming.format_module_ident(name));
 
         Self(namespace.into_iter().chain(schema).collect())
     }

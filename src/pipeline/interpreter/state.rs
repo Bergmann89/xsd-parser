@@ -1,7 +1,7 @@
 use std::collections::{btree_map::Entry, BTreeMap, HashMap};
 
 use crate::models::{
-    meta::{MetaType, MetaTypes, NameBuilder},
+    meta::{MetaType, MetaTypes},
     schema::{
         xs::{
             AttributeGroupType, ComplexBaseType, ElementType, GroupType, Schema, SchemaContent,
@@ -11,8 +11,9 @@ use crate::models::{
     },
     Ident, IdentType, Name,
 };
+use crate::traits::{NameBuilder, NameBuilderExt as _};
 
-use super::Error;
+use super::{name_builder::NameBuilderExt as _, Error};
 
 #[derive(Default, Debug)]
 pub(super) struct State<'a> {
@@ -115,7 +116,7 @@ impl<'a> State<'a> {
             .unwrap_or_default()
     }
 
-    pub(super) fn name_builder(&mut self) -> NameBuilder {
+    pub(super) fn name_builder(&self) -> Box<dyn NameBuilder> {
         self.types.name_builder()
     }
 

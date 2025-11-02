@@ -45,6 +45,7 @@ use crate::models::{
     schema::{xs::ProcessContentsType, MaxOccurs, Schemas},
     Ident, IdentType, Name,
 };
+use crate::traits::{NameBuilderExt as _, Naming};
 
 pub use error::Error;
 
@@ -378,6 +379,30 @@ impl<'a> Interpreter<'a> {
         add!(xs, "nonPositiveInteger", "BigInt");
 
         Ok(self)
+    }
+
+    /// Set the [`Naming`](Naming) trait that is used to generate and format names.
+    ///
+    /// This accepts any type that implements the [`Naming`](Naming) trait.
+    /// If you want to use an already boxed version have a look at
+    /// [`with_naming_boxed`](Self::with_naming_boxed).
+    #[instrument(level = "trace", skip(self))]
+    pub fn with_naming<X>(self, naming: X) -> Self
+    where
+        X: Naming + 'static,
+    {
+        self.with_naming_boxed(Box::new(naming))
+    }
+
+    /// Set the [`Naming`] trait that is used to generate and format names.
+    ///
+    /// This accepts only boxed [`Naming`](Naming) trait. For easier use you can
+    /// use [`with_naming`](Self::with_naming) instead.
+    #[instrument(level = "trace", skip(self))]
+    pub fn with_naming_boxed(mut self, naming: Box<dyn Naming>) -> Self {
+        self.state.types.naming = naming;
+
+        self
     }
 
     /// Finishes the interpretation of the [`Schemas`] structure and returns

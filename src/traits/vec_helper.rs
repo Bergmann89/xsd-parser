@@ -5,44 +5,6 @@ use crate::models::{
     Ident,
 };
 
-/// Trait that is used to get the [`Any`](core::any::Any) trait for a specific type.
-pub trait AsAny: core::any::Any {
-    /// Convert the boxed object into a boxed any.
-    fn into_any(self: Box<Self>) -> Box<dyn core::any::Any>;
-
-    /// Get a reference to the current object as [`Any`](core::any::Any).
-    fn as_any(&self) -> &dyn core::any::Any;
-
-    /// Get a mutable reference to the current object as [`Any`](core::any::Any).
-    fn as_any_mut(&mut self) -> &mut dyn core::any::Any;
-}
-
-impl<X: 'static> AsAny for X {
-    #[inline]
-    fn into_any(self: Box<Self>) -> Box<dyn core::any::Any> {
-        self
-    }
-
-    #[inline]
-    fn as_any(&self) -> &dyn core::any::Any {
-        self
-    }
-
-    #[inline]
-    fn as_any_mut(&mut self) -> &mut dyn core::any::Any {
-        self
-    }
-}
-
-/// Trait that adds namespace information to a type.
-pub trait WithNamespace {
-    /// The default namespace prefix for this type.
-    fn prefix() -> Option<&'static str>;
-
-    /// The namespace for this type.
-    fn namespace() -> Option<&'static str>;
-}
-
 /// Helper trait that implements additional methods for vectors.
 pub trait VecHelper {
     /// Item stored in the vector.

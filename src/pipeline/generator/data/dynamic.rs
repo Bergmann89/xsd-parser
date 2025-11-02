@@ -2,7 +2,6 @@ use proc_macro2::Literal;
 use quote::format_ident;
 
 use crate::models::{
-    code::format_variant_ident,
     data::{DerivedType, DynamicData, PathData},
     meta::{DynamicMeta, MetaTypeVariant},
     Ident,
@@ -78,7 +77,7 @@ fn make_derived_type_data<'types>(
     let ident = base_ident.unwrap_or(ident.clone());
     let target_ref = ctx.get_or_create_type_ref(&ident)?;
     let target_type = target_ref.path.clone();
-    let variant_ident = format_variant_ident(&ident.name, None);
+    let variant_ident = ctx.types.naming.format_variant_ident(&ident.name, None);
 
     Ok(DerivedType {
         ident,

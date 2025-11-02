@@ -5,7 +5,7 @@ use quote::format_ident;
 
 use crate::config::{BoxFlags, GeneratorFlags};
 use crate::models::{
-    code::{format_field_ident, format_variant_ident, IdentPath},
+    code::IdentPath,
     data::{
         ComplexBase, ComplexData, ComplexDataAttribute, ComplexDataContent, ComplexDataElement,
         ComplexDataElementOrigin, ComplexDataEnum, ComplexDataStruct, Occurs, PathData, StructMode,
@@ -279,7 +279,7 @@ impl<'types> ComplexData<'types> {
             StructMode::Empty { allow_any }
         } else if mixed_mode == MixedMode::Complex {
             let elements = vec![
-                ComplexDataElement::new_text_before("text_before"),
+                ComplexDataElement::new_text_before(ctx, "text_before"),
                 ComplexDataElement::new_content(ctx, min_occurs, max_occurs, content_ident),
             ];
 
@@ -358,11 +358,14 @@ impl<'types> ComplexData<'types> {
             })
             .collect::<Result<Vec<_>, _>>()?;
         let text_before = (mixed_mode == MixedMode::Complex).then(|| {
-            ComplexDataElement::new_text_before(if normal_fields.is_empty() {
-                "text"
-            } else {
-                "text_before"
-            })
+            ComplexDataElement::new_text_before(
+                ctx,
+                if normal_fields.is_empty() {
+                    "text"
+                } else {
+                    "text_before"
+                },
+            )
         });
 
         if flatten {
@@ -569,8 +572,14 @@ impl<'types> ComplexDataElement<'types> {
         let tag_name = TagName::new(ctx.types, &meta.ident, meta.form);
         let s_name = meta.ident.name.to_string();
         let b_name = Literal::byte_string(s_name.as_bytes());
-        let field_ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
-        let variant_ident = format_variant_ident(&meta.ident.name, meta.display_name.as_deref());
+        let field_ident = ctx
+            .types
+            .naming
+            .format_field_ident(&meta.ident.name, meta.display_name.as_deref());
+        let variant_ident = ctx
+            .types
+            .naming
+            .format_variant_ident(&meta.ident.name, meta.display_name.as_deref());
 
         let (target_type, target_is_dynamic, need_box) = match &meta.variant {
             ElementMetaVariant::Any { .. } => {
@@ -636,7 +645,7 @@ impl<'types> ComplexDataElement<'types> {
         }))
     }
 
-    fn new_text_before(ident: &'static str) -> Self {
+    fn new_text_before(ctx: &Context<'_, 'types>, ident: &'static str) -> Self {
         let meta = ElementMeta {
             ident: Ident::element(ident),
             variant: ElementMetaVariant::Text,
@@ -648,8 +657,11 @@ impl<'types> ComplexDataElement<'types> {
             documentation: Vec::new(),
         };
 
-        let field_ident = format_field_ident(&meta.ident.name, None);
-        let variant_ident = format_variant_ident(&meta.ident.name, None);
+        let field_ident = ctx.types.naming.format_field_ident(&meta.ident.name, None);
+        let variant_ident = ctx
+            .types
+            .naming
+            .format_variant_ident(&meta.ident.name, None);
         let origin = ComplexDataElementOrigin::Generated(Box::new(meta));
 
         Self {
@@ -719,7 +731,10 @@ impl<'types> ComplexDataAttribute<'types> {
         }
 
         let current_module = ctx.current_module();
-        let ident = format_field_ident(&meta.ident.name, meta.display_name.as_deref());
+        let ident = ctx
+            .types
+            .naming
+            .format_field_ident(&meta.ident.name, meta.display_name.as_deref());
 
         let (target_type, default_value) = match &meta.variant {
             AttributeMetaVariant::Any(_) => {

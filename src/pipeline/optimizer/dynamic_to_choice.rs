@@ -2,7 +2,7 @@ use crate::models::{
     meta::{ComplexMeta, ElementMeta, ElementMode, GroupMeta, MetaType, MetaTypeVariant},
     Ident,
 };
-use crate::traits::VecHelper;
+use crate::traits::{NameBuilderExt as _, VecHelper};
 
 use super::Optimizer;
 
