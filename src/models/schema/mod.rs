@@ -269,6 +269,17 @@ impl NamespaceInfo {
             module_name: None,
         }
     }
+
+    /// Return the name of the namespace.
+    ///
+    /// This is either the [custom name](Self::module_name) or the namespace
+    /// [`prefix`](Self::prefix).
+    #[must_use]
+    pub fn name(&self) -> Option<String> {
+        self.module_name
+            .clone()
+            .or_else(|| self.prefix.as_ref().map(ToString::to_string))
+    }
 }
 
 /* SchemaInfo */
