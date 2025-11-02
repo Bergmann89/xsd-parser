@@ -25,6 +25,7 @@
 
 mod error;
 mod name_builder;
+mod post_process;
 mod schema;
 mod state;
 mod variant_builder;
@@ -393,11 +394,7 @@ impl<'a> Interpreter<'a> {
                 .as_ref()
                 .map(ToString::to_string)
                 .map(Name::new_named);
-            let name = info
-                .module_name
-                .clone()
-                .map(Name::new_named)
-                .or_else(|| prefix.clone());
+            let name = info.name().map(Name::new_named);
             let namespace = info.namespace.clone();
             let schema_count = info.schemas.len();
 
@@ -428,6 +425,8 @@ impl<'a> Interpreter<'a> {
                 info.namespace_id(),
             )?;
         }
+
+        post_process::fix_element_naming_conflicts(self.schemas, &mut self.state.types);
 
         Ok(self.state.types)
     }
