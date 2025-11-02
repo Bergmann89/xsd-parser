@@ -12,6 +12,7 @@ pub use crate::models::{
     Ident, IdentType, Name,
 };
 
+use crate::traits::Naming;
 use crate::InterpreterError;
 
 pub use self::generator::{
@@ -379,6 +380,16 @@ impl Config {
     /// Enable support for nillable types.
     pub fn with_nillable_type_support(self) -> Self {
         self.with_generator_flags(GeneratorFlags::NILLABLE_TYPE_SUPPORT)
+    }
+
+    /// Set the [`Naming`] trait that is used to generated names in the interpreter.
+    pub fn with_naming<X>(mut self, naming: X) -> Self
+    where
+        X: Naming + 'static,
+    {
+        self.interpreter.naming = Some(Box::new(naming));
+
+        self
     }
 }
 

@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
-use std::sync::{atomic::AtomicUsize, Arc};
 
 use crate::models::{
     schema::{Namespace, NamespaceId, SchemaId},
-    Ident, Name,
+    Ident, Name, Naming,
 };
+use crate::traits::{NameBuilder as NameBuilderTrait, Naming as NamingTrait};
 
-use super::{MetaType, MetaTypeVariant, NameBuilder};
+use super::{MetaType, MetaTypeVariant};
 
 /// Intermediate representation of all resolved type and module metadata.
 ///
@@ -17,7 +17,7 @@ use super::{MetaType, MetaTypeVariant, NameBuilder};
 /// This type acts as the canonical source of truth for all derived type definitions,
 /// which can be passed to the [`Optimizer`](crate::Optimizer) for post-processing,
 /// or used directly by the code [`Generator`](crate::Generator).
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct MetaTypes {
     /// Map of the different types.
     pub items: BTreeMap<Ident, MetaType>,
@@ -28,7 +28,8 @@ pub struct MetaTypes {
     /// Map of the different schemas.
     pub schemas: BTreeMap<SchemaId, SchemaMeta>,
 
-    next_name_id: Arc<AtomicUsize>,
+    /// Trait to control how name generation is done in `xsd_parser`.
+    pub naming: Box<dyn NamingTrait>,
 }
 
 /// Represents a module used by type information in the [`MetaTypes`] structure.
@@ -61,9 +62,10 @@ pub struct SchemaMeta {
 }
 
 impl MetaTypes {
-    /// Create a new [`NameBuilder`] instance, that can be used to build type named.
-    pub fn name_builder(&mut self) -> NameBuilder {
-        NameBuilder::new(self.next_name_id.clone())
+    /// Create a new boxed [`NameBuilder`](NameBuilderTrait), that can be used to build type names.
+    #[must_use]
+    pub fn name_builder(&self) -> Box<dyn NameBuilderTrait> {
+        self.naming.builder()
     }
 
     /// Get the identifier and the type of the passed `ident` with all single
@@ -113,6 +115,17 @@ impl MetaTypes {
     #[must_use]
     pub fn get_variant_mut(&mut self, ident: &Ident) -> Option<&mut MetaTypeVariant> {
         self.items.get_mut(ident).map(|ty| &mut ty.variant)
+    }
+}
+
+impl Default for MetaTypes {
+    fn default() -> Self {
+        Self {
+            items: Default::default(),
+            modules: Default::default(),
+            schemas: Default::default(),
+            naming: Box::new(Naming::default()),
+        }
     }
 }
 

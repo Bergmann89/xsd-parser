@@ -65,6 +65,10 @@ This library provides the following features:
 
 Below you can find a short list of the most important changes for each released version.
 
+## Next
+
+- Make the whole name generation and formatting customizable
+
 ## Version 1.3
 
 This release introduces new configuration options, enhanced schema modularization, extended type handling, improved serializer support, and broader schema compatibility. It also addresses a range of long-standing issues with stability and schema validation.

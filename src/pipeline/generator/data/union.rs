@@ -1,7 +1,6 @@
 use proc_macro2::Literal;
 
 use crate::models::{
-    code::format_variant_ident,
     data::{ConstrainsData, UnionData, UnionTypeVariant},
     meta::{UnionMeta, UnionMetaType},
 };
@@ -42,7 +41,10 @@ impl UnionMetaType {
 
         let type_ref = ctx.get_or_create_type_ref_for_value(&self.type_, true)?;
         let target_type = type_ref.path.clone();
-        let variant_ident = format_variant_ident(&self.type_.name, self.display_name.as_deref());
+        let variant_ident = ctx
+            .types
+            .naming
+            .format_variant_ident(&self.type_.name, self.display_name.as_deref());
 
         Ok(UnionTypeVariant {
             meta: self,

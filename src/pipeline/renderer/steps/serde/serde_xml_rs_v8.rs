@@ -12,6 +12,7 @@ use crate::models::{
     schema::xs::Use,
     Ident,
 };
+use crate::traits::Naming;
 
 use super::super::super::{Context, DataTypeVariant, RenderStep, RenderStepType};
 use super::super::{format_traits, render_trait_impls};
@@ -221,7 +222,7 @@ impl EnumerationData<'_> {
             ..
         } = self;
 
-        let values_ident = format_enum_values_ident(ctx.ident);
+        let values_ident = format_enum_values_ident(&*ctx.meta.types.naming, ctx.ident);
 
         let docs = ctx.render_type_docs();
         let derive = get_derive(ctx, []);
@@ -454,7 +455,7 @@ impl ComplexDataContent<'_> {
             .map(|(ident, meta)| (ident, &meta.variant))
         {
             Some((ident, MetaTypeVariant::Enumeration(_))) => {
-                let enum_values_type = format_enum_values_ident(ident);
+                let enum_values_type = format_enum_values_ident(&*ctx.meta.types.naming, ident);
 
                 Some(quote! {
                     #[serde(#default rename = "#text")]
@@ -591,8 +592,8 @@ impl ComplexDataElement<'_> {
     }
 }
 
-fn format_enum_values_ident(ident: &Ident) -> Ident2 {
-    let values_ident = ident.name.to_type_name();
+fn format_enum_values_ident(naming: &dyn Naming, ident: &Ident) -> Ident2 {
+    let values_ident = naming.format_type_name(ident.name.as_str());
 
     format_ident!("{values_ident}Value")
 }

@@ -3,11 +3,12 @@ use std::path::PathBuf;
 use bitflags::bitflags;
 
 use crate::models::meta::MetaType;
+use crate::traits::Naming;
 
 use super::IdentTriple;
 
 /// Configuration for the schema interpreter.
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct InterpreterConfig {
     /// List of user defined types to add to the interpreter before the schemas
     /// are actually interpreted.
@@ -20,6 +21,9 @@ pub struct InterpreterConfig {
 
     /// Wether to enable the debug output and where to write it to.
     pub debug_output: Option<PathBuf>,
+
+    /// Controls how names are generated in the interpreter.
+    pub naming: Option<Box<dyn Naming>>,
 }
 
 impl Default for InterpreterConfig {
@@ -30,6 +34,18 @@ impl Default for InterpreterConfig {
             flags: InterpreterFlags::BUILDIN_TYPES
                 | InterpreterFlags::DEFAULT_TYPEDEFS
                 | InterpreterFlags::WITH_XS_ANY_TYPE,
+            naming: None,
+        }
+    }
+}
+
+impl Clone for InterpreterConfig {
+    fn clone(&self) -> Self {
+        Self {
+            types: self.types.clone(),
+            debug_output: self.debug_output.clone(),
+            flags: self.flags.clone(),
+            naming: self.naming.as_deref().map(Naming::clone_boxed),
         }
     }
 }

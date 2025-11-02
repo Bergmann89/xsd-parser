@@ -11,10 +11,12 @@ pub mod schema;
 
 mod ident;
 mod name;
+mod naming;
 mod raw_byte_str;
 
 pub use self::ident::{Ident, IdentType};
 pub use self::name::Name;
+pub use self::naming::{NameBuilder, Naming};
 pub use self::raw_byte_str::RawByteStr;
 
 pub(crate) use self::raw_byte_str::format_utf8_slice;

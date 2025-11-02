@@ -29,19 +29,17 @@ mod state;
 use std::collections::btree_map::{Entry, VacantEntry};
 use std::collections::{BTreeMap, VecDeque};
 
-use proc_macro2::Ident as Ident2;
 use quote::format_ident;
 use tracing::instrument;
 
 use crate::config::{BoxFlags, GeneratorFlags, TypedefMode};
-use crate::models::code::{ModuleIdent, ModulePath};
 use crate::models::{
-    code::{format_module_ident, format_type_ident, IdentPath},
+    code::{IdentPath, ModuleIdent, ModulePath},
     data::{DataType, DataTypes, PathData},
-    meta::{MetaType, MetaTypeVariant, MetaTypes},
-    schema::{MaxOccurs, NamespaceId},
-    Ident, IdentType, Name,
+    meta::{MetaTypeVariant, MetaTypes},
+    Ident, IdentType,
 };
+use crate::traits::Naming;
 
 pub use self::context::Context;
 pub use self::error::Error;
@@ -208,7 +206,11 @@ impl<'types> Generator<'types> {
     ///     .with_type(Ident::type_("UserDefinedType"));
     /// ```
     pub fn with_type(mut self, ident: Ident) -> Result<Self, Error> {
-        let module_ident = format_module(self.meta.types, ident.ns)?;
+        let module_ident = self
+            .meta
+            .types
+            .naming
+            .format_module(self.meta.types, ident.ns);
         let type_ident = format_ident!("{}", ident.name.to_string());
         let path = PathData::from_path(IdentPath::from_parts(module_ident, type_ident));
 
@@ -390,13 +392,14 @@ impl<'types> State<'types> {
             Entry::Vacant(e) => {
                 let id = self.loop_detection.next_id(e.key().clone());
 
-                Self::create_type_ref(id, &mut self.pending, e, meta, ident)
+                Self::create_type_ref(id, &*meta.naming, &mut self.pending, e, meta, ident)
             }
         }
     }
 
     fn create_type_ref<'a>(
         id: usize,
+        naming: &dyn Naming,
         pending: &mut VecDeque<PendingType<'types>>,
         entry: VacantEntry<'a, Ident, TypeRef>,
         meta: &MetaData<'types>,
@@ -407,7 +410,7 @@ impl<'types> State<'types> {
             .items
             .get(ident)
             .ok_or_else(|| Error::UnknownType(ident.clone()))?;
-        let name = make_type_name(&meta.postfixes, ty, ident);
+        let name = naming.make_type_name(&meta.postfixes, ty, ident);
         let path = match &ty.variant {
             MetaTypeVariant::BuildIn(x) => {
                 let path = if meta.check_generator_flags(GeneratorFlags::BUILD_IN_ABSOLUTE_PATHS) {
@@ -435,7 +438,7 @@ impl<'types> State<'types> {
                     meta.check_generator_flags(GeneratorFlags::USE_SCHEMA_MODULES),
                 );
                 let module_path = ModulePath::from_ident(meta.types, module_ident);
-                let type_ident = format_type_ident(&name, ty.display_name.as_deref());
+                let type_ident = naming.format_type_ident(&name, ty.display_name.as_deref());
 
                 let path = IdentPath::from_parts(module_path.0, type_ident);
 
@@ -452,45 +455,4 @@ impl<'types> State<'types> {
 
         Ok(entry.insert(TypeRef::new_pending(id, path)))
     }
-}
-
-/* Helper */
-
-fn make_type_name(postfixes: &[String], ty: &MetaType, ident: &Ident) -> Name {
-    if let MetaTypeVariant::Reference(ti) = &ty.variant {
-        if ident.name.is_generated() && ti.type_.name.is_named() {
-            let s = ti.type_.name.to_type_name();
-
-            if ti.max_occurs > MaxOccurs::Bounded(1) {
-                return Name::new_generated(format!("{s}List"));
-            } else if ti.min_occurs == 0 {
-                return Name::new_generated(format!("{s}Opt"));
-            }
-        }
-    }
-
-    let postfix = postfixes
-        .get(ident.type_ as usize)
-        .map_or("", |s| s.as_str());
-
-    let s = ident.name.to_type_name();
-
-    if s.ends_with(postfix) {
-        ident.name.clone()
-    } else {
-        Name::new_generated(format!("{s}{postfix}"))
-    }
-}
-
-fn format_module(types: &MetaTypes, ns: Option<NamespaceId>) -> Result<Option<Ident2>, Error> {
-    let Some(ns) = ns else {
-        return Ok(None);
-    };
-
-    let module = types.modules.get(&ns).ok_or(Error::UnknownNamespace(ns))?;
-    let Some(name) = &module.name else {
-        return Ok(None);
-    };
-
-    Ok(Some(format_module_ident(name)))
 }
