@@ -67,8 +67,6 @@ impl<'a, 'types> Context<'a, 'types> {
     pub(super) fn get_or_create_type_ref(&mut self, ident: &Ident) -> Result<&TypeRef, Error> {
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
 
-        // TODO println!("    get_or_create_type_ref(ident={ident})");
-
         Ok(type_ref)
     }
 
@@ -79,24 +77,8 @@ impl<'a, 'types> Context<'a, 'types> {
     ) -> Result<&TypeRef, Error> {
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
 
-        // TODO
-        // println!(
-        //     "    get_or_create_type_ref_for_value(ident={ident}, id={}, by_value={by_value})",
-        //     type_ref.id
-        // );
-
         if by_value {
-            // TODO
-            // println!(
-            //     "        before update = {:?}",
-            //     type_ref.reachable.iter().collect::<Vec<_>>()
-            // );
             type_ref.reachable.union_with(&self.reachable);
-            // TODO
-            // println!(
-            //     "        after update = {:?}",
-            //     type_ref.reachable.iter().collect::<Vec<_>>()
-            // );
         }
 
         Ok(type_ref)
@@ -110,20 +92,8 @@ impl<'a, 'types> Context<'a, 'types> {
         let boxed = by_value && need_box(&mut self.reachable, &self.state.cache, self.meta, ident);
         let type_ref = self.state.get_or_create_type_ref_mut(self.meta, ident)?;
 
-        // TODO println!("    get_or_create_type_ref_for_element(ident={ident}, id={}, by_value={by_value}, boxed={boxed})", type_ref.id);
-
         if !boxed {
-            // TODO
-            // println!(
-            //     "        before update = {:?}",
-            //     type_ref.reachable.iter().collect::<Vec<_>>()
-            // );
             type_ref.reachable.union_with(&self.reachable);
-            // TODO
-            // println!(
-            //     "        after update = {:?}",
-            //     type_ref.reachable.iter().collect::<Vec<_>>()
-            // );
         }
 
         Ok((type_ref, boxed))
