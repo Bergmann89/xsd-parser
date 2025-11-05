@@ -13,11 +13,11 @@
 
     <xs:element name="Outer">
         <xs:complexType>
-            <xs:choice>
+            <xs:sequence>
                 <xs:element ref="bar:Inner" />
                 <xs:element ref="baz:Inner" />
                 <xs:element ref="biz:Inner" />
-            </xs:choice>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>
 </xs:schema>
